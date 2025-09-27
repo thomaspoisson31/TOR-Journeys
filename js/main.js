@@ -1150,23 +1150,25 @@
 
             imageTab.innerHTML = `
                 <div class="space-y-4">
-                    <div class="bg-gray-700 p-3 rounded-md">
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Images (max 5)</label>
+                    <div class="edit-section">
+                        <label class="edit-section-label">Images (max 5)</label>
                         <div id="edit-images-container">${imagesHtml}</div>
-                        <button id="add-image-btn" class="mt-2 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-md text-sm">Ajouter une image</button>
+                        <button id="add-image-btn" class="edit-add-button">Ajouter une image</button>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Couleur</label>
+                    <div class="edit-section">
+                        <label class="edit-section-label">Couleur</label>
                         <div class="flex space-x-2" id="edit-color-picker">${colorPickerHtml}</div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center">
-                            <input id="edit-known" type="checkbox" ${location.known ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            <label for="edit-known" class="ml-2 block text-sm text-gray-300">Connu</label>
-                        </div>
-                        <div class="flex items-center">
-                            <input id="edit-visited" type="checkbox" ${location.visited ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            <label for="edit-visited" class="ml-2 block text-sm text-gray-300">Visité</label>
+                    <div class="edit-section">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <input id="edit-known" type="checkbox" ${location.known ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <label for="edit-known" class="ml-2 block text-sm text-gray-300">Connu</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="edit-visited" type="checkbox" ${location.visited ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <label for="edit-visited" class="ml-2 block text-sm text-gray-300">Visité</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1181,14 +1183,14 @@
             const textTab = document.getElementById('text-tab');
             textTab.innerHTML = `
                 <div class="text-view space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Nom</label>
-                        <input type="text" id="edit-name" value="${location.name}" placeholder="Nom" class="w-full bg-gray-800 border border-gray-600 rounded-md py-2 px-3 text-white">
+                    <div class="edit-section">
+                        <label class="edit-section-label">Nom</label>
+                        <input type="text" id="edit-name" value="${location.name}" placeholder="Nom" class="edit-input">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                    <div class="edit-section">
+                        <label class="edit-section-label">Description</label>
                         <div class="flex items-start space-x-2">
-                            <textarea id="edit-desc" rows="4" placeholder="Description" class="flex-1 bg-gray-800 border border-gray-600 rounded-md py-2 px-3 text-white">${location.description || ''}</textarea>
+                            <textarea id="edit-desc" rows="4" placeholder="Description" class="edit-textarea flex-1">${location.description || ''}</textarea>
                             <button id="generate-edit-desc" class="p-2 bg-purple-600 hover:bg-purple-700 rounded-md" title="Générer une description"><span class="gemini-icon">✨</span></button>
                         </div>
                     </div>
@@ -1383,13 +1385,13 @@
             }
 
             return images.map((image, index) => `
-                <div class="image-edit-item flex items-center space-x-2 p-2 rounded">
-                    <input type="url" class="image-url-input flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white text-sm" value="${image.url || ''}" placeholder="URL de l'image">
+                <div class="edit-item-row">
+                    <input type="url" class="edit-item-input" value="${image.url || ''}" placeholder="URL de l'image">
                     <label class="flex items-center text-sm">
-                        <input type="checkbox" class="default-image-checkbox mr-1" ${image.isDefault ? 'checked' : ''}>
+                        <input type="checkbox" class="edit-item-checkbox" ${image.isDefault ? 'checked' : ''}>
                         <span class="text-gray-300">Défaut</span>
                     </label>
-                    <button class="remove-image-btn text-red-400 hover:text-red-300 px-2 py-1" data-index="${index}">
+                    <button class="edit-item-remove" data-index="${index}">
                         <i class="fas fa-trash text-xs"></i>
                     </button>
                 </div>
@@ -1417,9 +1419,9 @@
                 });
 
                 container.addEventListener('change', (e) => {
-                    if (e.target.classList.contains('default-image-checkbox') && e.target.checked) {
+                    if (e.target.classList.contains('edit-item-checkbox') && e.target.checked) {
                         // Uncheck other default checkboxes
-                        container.querySelectorAll('.default-image-checkbox').forEach(cb => {
+                        container.querySelectorAll('.edit-item-checkbox').forEach(cb => {
                             if (cb !== e.target) cb.checked = false;
                         });
                     }
@@ -1474,8 +1476,8 @@
             const images = [];
 
             container.querySelectorAll('.image-edit-item').forEach(item => {
-                const url = item.querySelector('.image-url-input').value.trim();
-                const isDefault = item.querySelector('.default-image-checkbox').checked;
+                const url = item.querySelector('.edit-item-input').value.trim();
+                const isDefault = item.querySelector('.edit-item-checkbox').checked;
 
                 if (url) {
                     images.push({ url, isDefault });
@@ -4615,19 +4617,6 @@
                         const tooltip = document.createElement('div');
                         tooltip.className = 'discovery-tooltip';
                         tooltip.innerHTML = tooltipContent;
-                        tooltip.style.cssText = `
-                            position: absolute;
-                            background: rgba(17, 24, 39, 0.95);
-                            color: white;
-                            padding: 12px;
-                            border-radius: 8px;
-                            border: 1px solid #4b5563;
-                            font-size: 14px;
-                            max-width: 320px;
-                            z-index: 1000;
-                            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-                            line-height: 1.4;
-                        `;
 
                         document.body.appendChild(tooltip);
 
