@@ -121,6 +121,175 @@
 
         
 
+        // --- Settings Management Functions ---
+        function loadSettings() {
+            console.log('📖 Chargement des paramètres...');
+            
+            // Load adventurers group
+            const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
+            const adventurersContent = document.getElementById('adventurers-content');
+            if (adventurersContent) {
+                if (adventurersGroup) {
+                    adventurersContent.innerHTML = marked ? marked.parse(adventurersGroup) : adventurersGroup.replace(/\n/g, '<br>');
+                } else {
+                    adventurersContent.innerHTML = '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
+                }
+            }
+
+            // Load quest
+            const adventurersQuest = localStorage.getItem('adventurersQuest') || '';
+            const questContent = document.getElementById('quest-content');
+            if (questContent) {
+                if (adventurersQuest) {
+                    questContent.innerHTML = marked ? marked.parse(adventurersQuest) : adventurersQuest.replace(/\n/g, '<br>');
+                } else {
+                    questContent.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
+                }
+            }
+        }
+
+        function setupAdventurersListeners() {
+            const editBtn = document.getElementById('edit-adventurers-btn');
+            const saveBtn = document.getElementById('save-adventurers-edit');
+            const cancelBtn = document.getElementById('cancel-adventurers-edit');
+
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    enterAdventurersEditMode();
+                });
+            }
+
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => {
+                    saveAdventurersEdit();
+                });
+            }
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => {
+                    exitAdventurersEditMode();
+                });
+            }
+        }
+
+        function setupQuestListeners() {
+            const editBtn = document.getElementById('edit-quest-btn');
+            const saveBtn = document.getElementById('save-quest-edit');
+            const cancelBtn = document.getElementById('cancel-quest-edit');
+
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    enterQuestEditMode();
+                });
+            }
+
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => {
+                    saveQuestEdit();
+                });
+            }
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => {
+                    exitQuestEditMode();
+                });
+            }
+        }
+
+        function enterAdventurersEditMode() {
+            const readMode = document.getElementById('adventurers-read-mode');
+            const editMode = document.getElementById('adventurers-edit-mode');
+            const textarea = document.getElementById('adventurers-group');
+
+            if (readMode && editMode && textarea) {
+                readMode.classList.add('hidden');
+                editMode.classList.remove('hidden');
+
+                // Load current content
+                const currentContent = localStorage.getItem('adventurersGroup') || '';
+                textarea.value = currentContent;
+                textarea.focus();
+            }
+        }
+
+        function exitAdventurersEditMode() {
+            const readMode = document.getElementById('adventurers-read-mode');
+            const editMode = document.getElementById('adventurers-edit-mode');
+
+            if (readMode && editMode) {
+                editMode.classList.add('hidden');
+                readMode.classList.remove('hidden');
+            }
+        }
+
+        function saveAdventurersEdit() {
+            const textarea = document.getElementById('adventurers-group');
+            if (textarea) {
+                const content = textarea.value.trim();
+                localStorage.setItem('adventurersGroup', content);
+                
+                // Update display
+                const adventurersContent = document.getElementById('adventurers-content');
+                if (adventurersContent) {
+                    if (content) {
+                        adventurersContent.innerHTML = marked ? marked.parse(content) : content.replace(/\n/g, '<br>');
+                    } else {
+                        adventurersContent.innerHTML = '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
+                    }
+                }
+
+                exitAdventurersEditMode();
+                scheduleAutoSync();
+            }
+        }
+
+        function enterQuestEditMode() {
+            const readMode = document.getElementById('quest-read-mode');
+            const editMode = document.getElementById('quest-edit-mode');
+            const textarea = document.getElementById('adventurers-quest');
+
+            if (readMode && editMode && textarea) {
+                readMode.classList.add('hidden');
+                editMode.classList.remove('hidden');
+
+                // Load current content
+                const currentContent = localStorage.getItem('adventurersQuest') || '';
+                textarea.value = currentContent;
+                textarea.focus();
+            }
+        }
+
+        function exitQuestEditMode() {
+            const readMode = document.getElementById('quest-read-mode');
+            const editMode = document.getElementById('quest-edit-mode');
+
+            if (readMode && editMode) {
+                editMode.classList.add('hidden');
+                readMode.classList.remove('hidden');
+            }
+        }
+
+        function saveQuestEdit() {
+            const textarea = document.getElementById('adventurers-quest');
+            if (textarea) {
+                const content = textarea.value.trim();
+                localStorage.setItem('adventurersQuest', content);
+                
+                // Update display
+                const questContent = document.getElementById('quest-content');
+                if (questContent) {
+                    if (content) {
+                        questContent.innerHTML = marked ? marked.parse(content) : content.replace(/\n/g, '<br>');
+                    } else {
+                        questContent.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
+                    }
+                }
+
+                exitQuestEditMode();
+                scheduleAutoSync();
+            }
+        }
+
         // --- Missing functions that are called but not defined ---
         function updateSyncStatus(message) {
             console.log("🔄 Sync Status:", message);
@@ -178,6 +347,7 @@
             if (settingsBtn) {
                 settingsBtn.addEventListener('click', () => {
                     settingsModal.classList.remove('hidden');
+                    loadSettings();
                 });
             }
 
@@ -197,6 +367,8 @@
             });
 
             setupSeasonListeners();
+            setupAdventurersListeners();
+            setupQuestListeners();
         }
 
         function loadSavedContexts() {
