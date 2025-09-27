@@ -127,6 +127,150 @@
         };
         let editingMapIndex = -1;
 
+        // --- Missing functions that are called but not defined ---
+        function updateSyncStatus(message) {
+            console.log("🔄 Sync Status:", message);
+        }
+
+        function checkAuthStatus() {
+            console.log("🔐 Checking auth status...");
+            return fetch('/api/auth/user')
+                .then(response => response.json())
+                .then(data => {
+                    currentUser = data.authenticated ? data.user : null;
+                    updateAuthUI();
+                    return data;
+                });
+        }
+
+        function setupAuthEventListeners() {
+            console.log("🔐 [AUTH] Configuration des event listeners d'authentification...");
+            // Auth button
+            const authBtn = document.getElementById('auth-btn');
+            if (authBtn) {
+                authBtn.addEventListener('click', toggleAuthModal);
+                console.log("🔐 [AUTH] Bouton d'authentification trouvé et configuré");
+            }
+
+            // Close auth modal
+            const closeAuthModal = document.getElementById('close-auth-modal');
+            if (closeAuthModal) {
+                closeAuthModal.addEventListener('click', toggleAuthModal);
+                console.log("🔐 [AUTH] Bouton de fermeture modal trouvé et configuré");
+            }
+
+            // Save context button
+            const saveContextBtn = document.getElementById('save-context-btn');
+            if (saveContextBtn) {
+                saveContextBtn.addEventListener('click', saveCurrentContext);
+                console.log("🔐 [AUTH] Bouton de sauvegarde contexte trouvé et configuré");
+            }
+
+            // Google sign-in button
+            const googleSigninBtn = document.getElementById('google-signin-btn');
+            if (googleSigninBtn) {
+                googleSigninBtn.addEventListener('click', () => {
+                    window.location.href = '/auth/google';
+                });
+                console.log("🔐 [AUTH] Bouton Google Sign-In trouvé et configuré");
+            }
+        }
+
+        function setupSettingsEventListeners() {
+            const settingsBtn = document.getElementById('settings-btn');
+            const settingsModal = document.getElementById('settings-modal');
+            const closeSettingsBtn = document.getElementById('close-settings-modal');
+
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', () => {
+                    settingsModal.classList.remove('hidden');
+                });
+            }
+
+            if (closeSettingsBtn) {
+                closeSettingsBtn.addEventListener('click', () => {
+                    settingsModal.classList.add('hidden');
+                });
+            }
+
+            // Setup tabs
+            const tabButtons = document.querySelectorAll('.settings-tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tab = button.dataset.tab;
+                    activateSettingsTab(tab);
+                });
+            });
+
+            // Setup maps event listeners
+            setupMapsEventListeners();
+            setupSeasonListeners();
+        }
+
+        function loadSavedContexts() {
+            if (!currentUser) return;
+            // Placeholder for loading saved contexts
+            console.log("Loading saved contexts...");
+        }
+
+        function resetVoyageSegments() {
+            // Reset voyage segments
+            currentVoyage = null;
+            voyageSegments = [];
+            currentSegmentIndex = -1;
+            isVoyageActive = false;
+            activatedSegments.clear();
+        }
+
+        function saveCurrentContext() {
+            // Placeholder for saving current context
+            console.log("Saving current context...");
+        }
+
+        function updateAuthUI() {
+            const authIcon = document.getElementById('auth-icon');
+            const userProfilePic = document.getElementById('user-profile-pic');
+            
+            if (currentUser) {
+                authIcon.style.display = 'none';
+                userProfilePic.style.display = 'block';
+                userProfilePic.src = currentUser.picture || '';
+                enableAutoSync();
+            } else {
+                authIcon.style.display = 'block';
+                userProfilePic.style.display = 'none';
+                disableAutoSync();
+            }
+        }
+
+        function activateSettingsTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.settings-tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.settings-tab-button').forEach(button => {
+                button.classList.remove('active');
+                button.classList.add('text-gray-400');
+                button.classList.remove('text-white', 'border-blue-500');
+                button.classList.add('border-transparent');
+            });
+
+            // Show selected tab content
+            const selectedContent = document.getElementById(`${tabName}-tab`);
+            if (selectedContent) {
+                selectedContent.style.display = 'block';
+            }
+
+            // Activate selected tab button
+            const selectedButton = document.querySelector(`[data-tab="${tabName}"]`);
+            if (selectedButton) {
+                selectedButton.classList.add('active', 'text-white', 'border-blue-500');
+                selectedButton.classList.remove('text-gray-400', 'border-transparent');
+            }
+        }
+
         // --- DOM Helper ---
         const dom = {
             getElementById: (id) => document.getElementById(id),
