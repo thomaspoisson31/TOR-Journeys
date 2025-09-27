@@ -504,23 +504,6 @@ class VoyageManager {
             `;
         }
 
-        // Récupérer le style de narration pour l'affichage
-        const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
-        let styleText = '';
-        switch (narrationStyle) {
-            case 'detailed':
-                styleText = ' (Détaillée)';
-                break;
-            case 'brief':
-                styleText = ' (Brève)';
-                break;
-            case 'keywords':
-                styleText = ' (Points clés)';
-                break;
-            default:
-                styleText = ' (Brève)';
-        }
-
         // Ajouter les boutons en bas
         let buttonsHtml = `
             <div class="mt-3 pt-3 border-t border-gray-600 space-y-3">
@@ -530,7 +513,7 @@ class VoyageManager {
                 </div>
                 <button id="describe-journey-btn" class="w-full py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors" style="background-color: white; color: #940000; border: 1px solid #940000;">
                     <span class="gemini-icon">✨</span>
-                    <span>Décrire le voyage${styleText}</span>
+                    <span>Décrire le voyage (Points clés)</span>
                 </button>
         `;
 
@@ -1077,13 +1060,11 @@ class VoyageManager {
     }
 
     createAllJourneyDescriptionPrompt(journeyData) {
-        // Récupérer le style de narration
-        const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
-        console.log('📖 Style de narration pour le voyage complet:', narrationStyle);
+        console.log('📖 Génération du prompt pour voyage complet en mode points clés');
 
-        let prompt = `Rédige des descriptions évocatrices pour toutes les journées d'un voyage en Terre du Milieu dont le détail est présenté ci-après. 
+        let prompt = `Génère des points clés évocateurs pour toutes les journées d'un voyage en Terre du Milieu dont le détail est présenté ci-après. 
 
-Ces descriptions sont destinées à un meneur de jeu qui va les lire à ses joueurs pour les immerger dans l'ambiance du voyage.
+Ces points clés sont destinés à un meneur de jeu pour l'inspirer lors de l'improvisation en jeu.
 
 **Contexte du groupe :**
 ${journeyData.adventurersGroup || 'Groupe d\'aventuriers non défini'}
@@ -1114,44 +1095,6 @@ ${journeyData.adventurersQuest || 'Quête non définie'}
             prompt += '\n';
         });
 
-        // Ajouter les instructions spécifiques selon le style de narration
-        let styleInstructions = '';
-        switch (narrationStyle) {
-            case 'detailed':
-                styleInstructions = `
-
-**STYLE DE NARRATION : DÉTAILLÉE**
-- Rédigez des descriptions riches et immersives de plusieurs paragraphes par journée
-- Rédigez au présent de la deuxième personne du pluriel ("Vous traversez...")
-- Développez l'atmosphère avec des détails sensoriels précis
-- Explorez les émotions et réflexions intimes des personnages
-- Utilisez un style littéraire évocateur et poétique
-- Chaque description doit faire 3-4 paragraphes pour une immersion maximale
-- Variez les tons : contemplatif, aventureux, mélancolique selon les découvertes`;
-                break;
-            case 'brief':
-                styleInstructions = `
-
-**STYLE DE NARRATION : BRÈVE**
-- Rédigez des descriptions concises mais évocatrices (1-2 paragraphes par journée)
-- Rédigez au présent de la deuxième personne du pluriel ("Vous traversez...")
-- Concentrez-vous sur l'essentiel : ambiance, découvertes importantes, ressenti général
-- Style narratif fluide et accessible, idéal pour une lecture rapide en jeu
-- Capturez l'essence de chaque journée sans s'attarder sur les détails`;
-                break;
-            case 'keywords':
-                styleInstructions = `
-
-**STYLE DE NARRATION : POINTS CLÉS**
-- Organisez l'information sous forme de listes structurées de mots-clés thématiques
-- Ne faites pas de phrases complètes, mais des listes de mots-clés et expressions évocatrices
-- Utilisez des puces et des catégories claires (Paysage, Météo, Ambiance, Événements, etc.)
-- Présentez les informations de manière synthétique et facilement exploitable
-- Optimisé pour une consultation rapide et une improvisation en jeu
-- Format : utilisez des tirets et des catégories courtes pour structurer l'information`;
-                break;
-        }
-
         prompt += `
 **Instructions importantes :**
 - Répondez UNIQUEMENT avec un objet JSON valide de cette structure :
@@ -1168,7 +1111,13 @@ ${journeyData.adventurersQuest || 'Quête non définie'}
   ]
 }
 
-${styleInstructions}
+**STYLE DE NARRATION : POINTS CLÉS**
+- Organisez l'information sous forme de listes structurées de mots-clés thématiques
+- Ne faites pas de phrases complètes, mais des listes de mots-clés et expressions évocatrices
+- Utilisez des puces et des catégories claires (Paysage, Météo, Ambiance, Événements, etc.)
+- Présentez les informations de manière synthétique et facilement exploitable
+- Optimisé pour une consultation rapide et une improvisation en jeu
+- Format : utilisez des tirets et des catégories courtes pour structurer l'information
 
 **Règles générales :**
 - Variez les descriptions selon les jours en mettant en avant :
@@ -1178,11 +1127,8 @@ ${styleInstructions}
   • Tantôt l'accumulation de la fatigue
   • Tantôt l'attitude de certains membres du groupe
 
-- Rédigez au présent de la 2ème personne du pluriel ("Vous traversez...")
-- Faites appel à plusieurs sens (vue, ouïe, odorat, toucher) pour une immersion totale
-- Évoquez l'état physique et mental des personnages en tenant compte du nombre de jours de voyage accumulés
 - Adaptez l'ambiance à la saison
-- Le ton doit être immersif et narratif, adapté à une lecture en jeu de rôle
+- Optimisé pour une improvisation en jeu de rôle
 - Évitez les redondances entre les descriptions des différentes journées
 - Assurez-vous que chaque description soit unique et apporte sa propre atmosphère
 

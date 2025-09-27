@@ -2139,75 +2139,9 @@
             URL.revokeObjectURL(url);
         }
 
-        // --- Narration Functions ---
-        function updateJourneyButtonTitle() {
-            const button = document.getElementById('describe-journey-btn');
-            const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
-            
-            if (button) {
-                let styleText = '';
-                switch (narrationStyle) {
-                    case 'detailed':
-                        styleText = ' (Détaillée)';
-                        break;
-                    case 'brief':
-                        styleText = ' (Brève)';
-                        break;
-                    case 'keywords':
-                        styleText = ' (Points clés)';
-                        break;
-                    default:
-                        styleText = ' (Brève)';
-                }
-                
-                const span = button.querySelector('span:last-child');
-                if (span) {
-                    span.textContent = `Décrire le voyage${styleText}`;
-                }
-                console.log("📖 Mise à jour du titre du bouton:", narrationStyle, "Titre mis à jour");
-            } else {
-                console.log("📖 Mise à jour du titre du bouton:", narrationStyle, "Bouton non trouvé");
-            }
-        }
-
-        function setupNarrationListeners() {
-            console.log("📖 Configuration des listeners de narration...");
-            
-            const radioButtons = document.querySelectorAll('input[name="narration-style"]');
-            console.log("📖 Radio buttons de narration trouvés:", radioButtons.length);
-            
-            radioButtons.forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    if (e.target.checked) {
-                        localStorage.setItem('narrationStyle', e.target.value);
-                        updateJourneyButtonTitle();
-                        console.log("📖 Style de narration changé:", e.target.value);
-                        scheduleAutoSync();
-                    }
-                });
-            });
-
-            // Load saved narration style
-            const savedStyle = localStorage.getItem('narrationStyle') || 'brief';
-            const savedRadio = document.querySelector(`input[name="narration-style"][value="${savedStyle}"]`);
-            if (savedRadio) {
-                savedRadio.checked = true;
-            }
-        }
-
+        // --- Narration Functions (Points clés uniquement) ---
         function getNarrationPromptAddition() {
-            const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
-            
-            switch (narrationStyle) {
-                case 'detailed':
-                    return '\n\nRédige une narration détaillée avec plusieurs paragraphes, dans un style littéraire évocateur digne des grands récits de fantasy.';
-                case 'brief':
-                    return '\n\nSois concis, un seul paragraphe par jour de voyage.';
-                case 'keywords':
-                    return '\n\nFournis seulement des mots-clés évocateurs séparés par des virgules, pour inspiration du Meneur de Jeu.';
-                default:
-                    return '\n\nSois concis, un seul paragraphe par jour de voyage.';
-            }
+            return '\n\nFournis seulement des mots-clés évocateurs séparés par des virgules, pour inspiration du Meneur de Jeu.';
         }
 
         // --- Season Functions ---
@@ -2594,9 +2528,6 @@
 
                 // Setup settings event listeners
                 setupSettingsEventListeners();
-                
-                // Setup narration listeners
-                setupNarrationListeners();
 
                 // Test DOM elements after a delay
                 setTimeout(() => {
