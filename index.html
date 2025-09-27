@@ -256,58 +256,7 @@
             </div>
         </div>
 
-        <!-- Add/Edit Map Modal -->
-        <div id="map-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
-            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold" id="map-modal-title"><i class="fas fa-map-marked-alt mr-2"></i>Ajouter une carte</h3>
-                    <button id="close-map-modal" class="text-gray-400 hover:text-white">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label for="map-name-input" class="block text-sm font-medium text-gray-300 mb-2">Nom de la carte</label>
-                        <input type="text" id="map-name-input" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Nom de la carte">
-                    </div>
-
-                    <div>
-                        <label for="map-file-input" class="block text-sm font-medium text-gray-300 mb-2">Fichier image</label>
-                        <input type="file" id="map-file-input" accept=".webp,.png,.jpg,.jpeg" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white">
-                        <div class="text-xs text-gray-400 mt-1">Formats acceptés : WEBP, PNG, JPG (recommandé : 5103 × 3296 px)</div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Type de carte</label>
-                        <div class="flex space-x-4">
-                            <label class="flex items-center">
-                                <input type="radio" name="map-type" value="player" class="mr-2" checked>
-                                <span class="text-sm">Carte Joueur</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="radio" name="map-type" value="loremaster" class="mr-2">
-                                <span class="text-sm">Carte Gardien</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div id="map-preview-container" class="hidden">
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Aperçu</label>
-                        <div class="aspect-video bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
-                            <img id="map-preview-image" class="w-full h-full object-cover" alt="Aperçu">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button id="cancel-map-btn" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg">Annuler</button>
-                    <button id="save-map-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg">
-                        <span id="save-map-text">Ajouter</span>
-                    </button>
-                </div>
-            </div>
-        </div>
+        
 
         <!-- Authentication Panel Modal -->
         <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
@@ -449,10 +398,7 @@
 
                 <!-- Tabs -->
                 <div id="settings-tabs" class="flex border-b border-gray-600 mb-6 flex-shrink-0">
-                    <button class="settings-tab-button active px-6 py-3 text-white border-b-2 border-blue-500 font-medium" data-tab="maps">
-                        <i class="fas fa-map-marked-alt mr-2"></i>Cartes
-                    </button>
-                    <button class="settings-tab-button px-6 py-3 text-gray-400 border-b-2 border-transparent font-medium hover:text-white" data-tab="adventurers">
+                    <button class="settings-tab-button active px-6 py-3 text-white border-b-2 border-blue-500 font-medium" data-tab="adventurers">
                         <i class="fas fa-users mr-2"></i>Aventuriers
                     </button>
                     <button class="settings-tab-button px-6 py-3 text-gray-400 border-b-2 border-transparent font-medium hover:text-white" data-tab="quest">
@@ -465,54 +411,8 @@
 
                 <!-- Tab Content -->
                 <div class="flex-grow overflow-hidden">
-                    <!-- Cartes Tab -->
-                    <div id="maps-tab" class="settings-tab-content active h-full flex flex-col">
-                        <div class="flex justify-between items-center mb-4 flex-shrink-0">
-                            <h4 class="text-lg font-semibold">Gestion des cartes</h4>
-                            <div class="text-sm text-gray-400">
-                                Dimensions recommandées : 5103 × 3296 pixels
-                            </div>
-                        </div>
-
-                        <!-- Cartes actives -->
-                        <div class="mb-6 flex-shrink-0">
-                            <h5 class="text-blue-400 font-semibold mb-3">🎯 Cartes actives</h5>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
-                                    <h6 class="text-white font-medium mb-2">Carte Joueur</h6>
-                                    <div class="aspect-video bg-gray-800 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                                        <img id="active-player-map-preview" src="fr_tor_2nd_eriadors_map_page-0001.webp" alt="Carte Joueur" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="text-xs text-gray-400">Visible par les joueurs</div>
-                                </div>
-                                <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
-                                    <h6 class="text-white font-medium mb-2">Carte Gardien</h6>
-                                    <div class="aspect-video bg-gray-800 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                                        <img id="active-loremaster-map-preview" src="fr_tor_2nd_eriadors_map_page_loremaster.webp" alt="Carte Gardien" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="text-xs text-gray-400">Réservée au Gardien</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Liste des cartes disponibles -->
-                        <div class="flex-grow overflow-hidden flex flex-col">
-                            <div class="flex justify-between items-center mb-3 flex-shrink-0">
-                                <h5 class="text-blue-400 font-semibold">📋 Toutes les cartes</h5>
-                                <button id="add-map-btn" class="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm">
-                                    <i class="fas fa-plus mr-1"></i>Ajouter une carte
-                                </button>
-                            </div>
-                            <div id="maps-list" class="flex-grow overflow-y-auto bg-gray-900 rounded-lg p-4 border border-gray-600">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="maps-grid">
-                                    <!-- Les cartes seront ajoutées ici dynamiquement -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Aventuriers Tab -->
-                    <div id="adventurers-tab" class="settings-tab-content h-full flex flex-col" style="display: none;">
+                    <div id="adventurers-tab" class="settings-tab-content active h-full flex flex-col">
                         <div class="flex justify-between items-center mb-4 flex-shrink-0">
                             <h4 class="text-lg font-semibold">Description du groupe d'aventuriers</h4>
                             <div class="flex items-center space-x-2">
