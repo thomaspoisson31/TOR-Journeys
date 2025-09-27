@@ -141,7 +141,7 @@
             const questContent = document.getElementById('quest-content');
             if (questContent) {
                 if (adventurersQuest) {
-                    questContent.innerHTML = marked ? marked.parse(adventurersQuest) : adventurersQuest.replace(/\n/g, '<br>');
+                    questContent.innerHTML = marked ? marked.parse(adventurersQuest) : questContent.replace(/\n/g, '<br>');
                 } else {
                     questContent.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
                 }
@@ -346,8 +346,13 @@
 
             if (settingsBtn) {
                 settingsBtn.addEventListener('click', () => {
-                    settingsModal.classList.remove('hidden');
-                    loadSettings();
+                    try {
+                        settingsModal.classList.remove('hidden');
+                        loadSettings();
+                    } catch (error) {
+                        console.error('Erreur lors de l\'ouverture des paramètres:', error);
+                        settingsModal.classList.remove('hidden'); // Ouvrir quand même la modal
+                    }
                 });
             }
 
