@@ -119,12 +119,12 @@
         let lastSyncTime = 0;
         const SYNC_DELAY = 2000; // 2 seconds delay before auto-sync
 
-        
+
 
         // --- Settings Management Functions ---
         function loadSettings() {
             console.log('📖 Chargement des paramètres...');
-            
+
             // Load adventurers group
             const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
             const adventurersContent = document.getElementById('adventurers-content');
@@ -227,7 +227,7 @@
             if (textarea) {
                 const content = textarea.value.trim();
                 localStorage.setItem('adventurersGroup', content);
-                
+
                 // Update display
                 const adventurersContent = document.getElementById('adventurers-content');
                 if (adventurersContent) {
@@ -274,7 +274,7 @@
             if (textarea) {
                 const content = textarea.value.trim();
                 localStorage.setItem('adventurersQuest', content);
-                
+
                 // Update display
                 const questContent = document.getElementById('quest-content');
                 if (questContent) {
@@ -394,7 +394,7 @@
         function updateAuthUI() {
             const authIcon = document.getElementById('auth-icon');
             const userProfilePic = document.getElementById('user-profile-pic');
-            
+
             if (currentUser) {
                 authIcon.style.display = 'none';
                 userProfilePic.style.display = 'block';
@@ -444,10 +444,7 @@
             voyageSegmentsModal: document.getElementById('voyage-segments-modal')
         };
 
-        // --- Voyage Manager ---
-        let voyageManager;
 
-        
 
         // --- Authentication Debug Logs ---
         function logAuth(message, data = null) {
@@ -1298,7 +1295,7 @@
         function addNewTableRow() {
             const container = document.getElementById('edit-tables-container');
             const currentTables = container.querySelectorAll('.table-edit-item');
-            
+
             if (currentTables.length >= 5) {
                 alert('Maximum 5 tables autorisées');
                 return;
@@ -1317,7 +1314,7 @@
                     <i class="fas fa-trash text-xs"></i>
                 </button>
             `;
-            
+
             container.appendChild(newRow);
             updateTableIndices();
         }
@@ -1433,7 +1430,7 @@
         function addNewImageRow() {
             const container = document.getElementById('edit-images-container');
             const currentImages = container.querySelectorAll('.image-edit-item');
-            
+
             if (currentImages.length >= 5) {
                 alert('Maximum 5 images autorisées');
                 return;
@@ -1452,7 +1449,7 @@
                     <i class="fas fa-trash text-xs"></i>
                 </button>
             `;
-            
+
             container.appendChild(newRow);
             updateImageIndices();
         }
@@ -4227,66 +4224,133 @@
 
             if (!traversedRegionsInfo || !nearbyLocationsInfo) return;
 
-            // Calculer les durées de traversée des régions
-            const regionTraversalInfo = calculateRegionTraversalDurations();
-            
-            // Séparer les découvertes par type
-            const regions = [];
-            const locations = [];
-            
-            journeyDiscoveries.forEach(discovery => {
-                if (discovery.type === 'region') {
-                    const traversalData = regionTraversalInfo.get(discovery.name);
-                    if (traversalData) {
-                        regions.push({
-                            name: discovery.name,
-                            duration: traversalData.duration,
-                            distance: traversalData.distance
-                        });
-                    }
-                } else if (discovery.type === 'location') {
-                    locations.push(discovery);
-                }
-            });
+            // Sort discoveries by discovery order, keeping them mixed
+            const chronologicalDiscoveries = journeyDiscoveries.sort((a, b) => a.discoveryIndex - b.discoveryIndex);
 
-            // Affichage des régions avec durées
-            if (regions.length > 0) {
+            if (chronologicalDiscoveries.length > 0) {
+                // Calculate travel times for each discovery
+                const discoveryElements = chronologicalDiscoveries.map((discovery, index) => {
+                    const icon = discovery.type === 'region' ? '🗺️' : '📍';
+
+                    // Calculate reach time for this discovery
+                    let startIndex = 0;
+                    if (index > 0) {
+                        // Find the end point of the previous discovery
+                        const prevDiscovery = chronologicalDiscoveries[index - 1];
+                        if (prevDiscovery.type === 'region' && window.regionSegments) {
+                            const segment = window.regionSegments.get(prevDiscovery.name);
+                            startIndex = segment ? segment.exitIndex : prevDiscovery.discoveryIndex;
+                        } else {
+                            startIndex = prevDiscovery.discoveryIndex;
+                        }
+                    }
+
+                    const reachDistance = calculatePathDistance(startIndex, discovery.discoveryIndex);
+                    const reachMiles = pixelsToMiles(reachDistance);
+                    const reachDays = milesToDays(reachMiles);
+
+                    // Check if this is a starting location (close to journey start)
+                    let travelInfo;
+                    if (discovery.type === 'location' && startPoint && discovery.discoveryIndex === 0) {
+                        // Find the actual location to check distance from start point
+                        const location = locationsData.locations.find(loc => loc.name === discovery.name);
+                        if (location && location.coordinates) {
+                            const distanceFromStart = Math.sqrt(
+                                Math.pow(location.coordinates.x - startPoint.x, 2) +
+                                Math.pow(location.coordinates.y - startPoint.y, 2)
+                            );
+                            if (distanceFromStart <= 20) {
+                                travelInfo = "(point de départ)";
+                            } else {
+                                // Add proximity information for locations
+                                let proximityText = '';
+                                if (discovery.proximityType === 'traversed') {
+                                    proximityText = ', traversé';
+                                } else if (discovery.proximityType === 'nearby') {
+                                    proximityText = ', passage à proximité';
+                                }
+                                travelInfo = `(atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}${proximityText})`;
+                            }
+                        } else {
+                            // Add proximity information for locations
+                            let proximityText = '';
+                            if (discovery.proximityType === 'traversed') {
+                                proximityText = ', traversé';
+                            } else if (discovery.proximityType === 'nearby') {
+                                proximityText = ', passage à proximité';
+                            }
+                            travelInfo = `(atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}${proximityText})`;
+                        }
+                    } else {
+                        // Add proximity information for locations
+                        let proximityText = '';
+                        if (discovery.type === 'location') {
+                            if (discovery.proximityType === 'traversed') {
+                                proximityText = ', traversé';
+                            } else if (discovery.proximityType === 'nearby') {
+                                proximityText = ', passage à proximité';
+                            }
+                        }
+                        travelInfo = `(atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}${proximityText})`;
+                    }
+
+                    let displayText = `${icon} ${discovery.name} ${travelInfo}`;
+
+                    // For regions, also calculate duration inside the region
+                    if (discovery.type === 'region') {
+                        // Utiliser les durées calculées par calculateRegionTraversalDurations
+                        const regionTraversalInfo = calculateRegionTraversalDurations();
+                        const traversalData = regionTraversalInfo.get(discovery.name);
+
+                        if (traversalData) {
+                            const regionDays = traversalData.duration;
+                            const regionMiles = traversalData.distance;
+
+                            // Replace travelInfo for regions to include duration
+                            if (travelInfo === "(point de départ)") {
+                                displayText = `${icon} ${discovery.name} (point de départ, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
+                            } else {
+                                displayText = `${icon} ${discovery.name} (atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
+                            }
+                        }
+                    }
+
+                    // Get tooltip content
+                    const tooltipContent = getDiscoveryTooltipContent(discovery.name, discovery.type);
+
+                    // Create span sans tooltip par défaut
+                    return `<span class="discovery-item clickable-discovery" data-discovery-name="${discovery.name}" data-discovery-type="region">${displayText}</span>`;
+                });
+
+                // Join with line breaks instead of commas
+                const discoveryListHTML = discoveryElements.join('<br>');
+
+                // Show only one section with all discoveries
                 traversedRegionsInfo.classList.remove('hidden');
-                const regionsHtml = regions.map(region => {
-                    const durationText = region.duration >= 1 ? 
-                        `${region.duration.toFixed(1)} jour${region.duration > 1 ? 's' : ''}` : 
-                        `${Math.round(region.duration * 24)} heures`;
-                    const distanceText = `(${Math.round(region.distance)} miles)`;
-                    
-                    return `<div class="mb-1">
-                        <span class="font-medium">${region.name}</span>
-                        <span class="text-gray-400 text-xs ml-2">${durationText} ${distanceText}</span>
-                    </div>`;
-                }).join('');
-                traversedRegionsList.innerHTML = regionsHtml;
+                traversedRegionsList.innerHTML = discoveryListHTML;
+                nearbyLocationsInfo.classList.add('hidden');
+
+                // Update the title to reflect mixed content
+                const regionsTitle = traversedRegionsInfo.querySelector('.font-semibold');
+                if (regionsTitle) {
+                    regionsTitle.textContent = 'Découvertes du voyage :';
+                    regionsTitle.className = 'font-semibold text-blue-400 mb-1';
+                }
+
+                // Setup enhanced tooltips
+                setupDiscoveryTooltips();
+
+                console.log("🌟 Journey discoveries (chronological):", chronologicalDiscoveries.map(d => `${d.type}: ${d.name}`));
             } else {
                 traversedRegionsInfo.classList.add('hidden');
-            }
-
-            // Affichage des lieux
-            if (locations.length > 0) {
-                nearbyLocationsInfo.classList.remove('hidden');
-                const locationsHtml = locations.map(location => {
-                    const proximityText = location.proximityType === 'traversed' ? '(traversé)' : '(à proximité)';
-                    return `<div class="mb-1">
-                        <span class="font-medium">${location.name}</span>
-                        <span class="text-gray-400 text-xs ml-2">${proximityText}</span>
-                    </div>`;
-                }).join('');
-                nearbyLocationsList.innerHTML = locationsHtml;
-            } else {
                 nearbyLocationsInfo.classList.add('hidden');
+                console.log("🌟 No discoveries made");
             }
         }
 
         function calculateRegionTraversalDurations() {
             const regionTraversalInfo = new Map();
-            
+
             if (!journeyPath || journeyPath.length < 2 || !regionsData || !regionsData.regions) {
                 return regionTraversalInfo;
             }
@@ -4316,7 +4380,7 @@
                     if (!previousRegions.has(regionName)) {
                         // Étape 2 : Entrée dans une nouvelle région A
                         console.log(`🔧 [REGION DURATION] Point ${z}: Entrée dans région ${regionName}`);
-                        
+
                         // Si un calcul d'une autre région était en cours, le finaliser
                         currentRegionsActive.forEach((data, activeRegionName) => {
                             if (activeRegionName !== regionName) {
@@ -4338,7 +4402,7 @@
                     if (!currentRegions.has(regionName)) {
                         // Sortie de région
                         console.log(`🔧 [REGION DURATION] Point ${z}: Sortie de région ${regionName}`);
-                        
+
                         if (currentRegionsActive.has(regionName)) {
                             const regionData = currentRegionsActive.get(regionName);
                             finalizeRegionDuration(regionName, regionData, z - 1, regionTraversalInfo);
@@ -4350,7 +4414,7 @@
                 // Étape 4-5 : Pour chaque région active, calculer la distance du segment précédent
                 if (z > 0) {
                     const previousPoint = journeyPath[z - 1];
-                    
+
                     currentRegionsActive.forEach((data, regionName) => {
                         if (currentRegions.has(regionName)) {
                             // Étape 5a : La région continue, incrémenter la distance
@@ -4358,7 +4422,7 @@
                                 Math.pow(currentPoint.x - previousPoint.x, 2) + 
                                 Math.pow(currentPoint.y - previousPoint.y, 2)
                             );
-                            
+
                             data.pixelDistance += segmentDistance;
                             console.log(`🔧 [REGION DURATION] Région ${regionName}: +${segmentDistance.toFixed(1)} pixels (total: ${data.pixelDistance.toFixed(1)})`);
                         }
@@ -4383,12 +4447,12 @@
             // Convertir les pixels en miles puis en jours
             const distanceInMiles = pixelsToMiles(regionData.pixelDistance);
             const durationInDays = milesToDays(distanceInMiles);
-            
+
             // Arrondir au 0.5 jour le plus proche (minimum 0.5 jour)
             const roundedDuration = Math.max(0.5, Math.round(durationInDays * 2) / 2);
-            
+
             console.log(`🔧 [REGION DURATION] Région ${regionName}: ${regionData.pixelDistance.toFixed(1)} pixels → ${distanceInMiles.toFixed(1)} miles → ${roundedDuration} jour(s)`);
-            
+
             regionTraversalInfo.set(regionName, {
                 distance: distanceInMiles,
                 duration: roundedDuration,
@@ -4483,7 +4547,7 @@
                         // Utiliser les durées calculées par calculateRegionTraversalDurations
                         const regionTraversalInfo = calculateRegionTraversalDurations();
                         const traversalData = regionTraversalInfo.get(discovery.name);
-                        
+
                         if (traversalData) {
                             const regionDays = traversalData.duration;
                             const regionMiles = traversalData.distance;
@@ -4870,7 +4934,7 @@
 
                     let displayText = `${icon} ${discovery.name} ${travelInfo}`;
 
-                    // Pour les régions, ajouter la durée de traversée
+                    // For regions, also calculate duration inside the region
                     if (discovery.type === 'region' && window.regionSegments) {
                         const segment = window.regionSegments.get(discovery.name);
                         if (segment) {
@@ -4880,9 +4944,9 @@
 
                             // Replace travelInfo for regions to include duration
                             if (travelInfo === "(point de départ)") {
-                                displayText = `${icon} ${discovery.name} (point de départ, durée ${regionDays} jour${regionDays !== 1 ? 's' : ''})`;
+                                displayText = `${icon} ${discovery.name} (point de départ, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
                             } else {
-                                displayText = `${icon} ${discovery.name} (atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}, durée ${regionDays} jour${regionDays !== 1 ? 's' : ''})`;
+                                displayText = `${icon} ${discovery.name} (atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
                             }
                         }
                     }
@@ -5107,34 +5171,34 @@
             settingsTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const targetTab = tab.dataset.tab;
-                    
+
                     // Update active tab
                     settingsTabs.forEach(t => t.classList.remove('active', 'text-white', 'border-blue-500'));
-                    settingsTabs.forEach(t => t.classList.add('text-gray-400', 'border-transparent'));
-                    tab.classList.remove('text-gray-400', 'border-transparent');
+                    settingsTabs.forEach(t => t.classList.add('border-transparent', 'text-gray-400'));
+                    tab.classList.remove('border-transparent', 'text-gray-400');
                     tab.classList.add('active', 'text-white', 'border-blue-500');
-                    
+
                     // Update active content
                     settingsTabContents.forEach(content => {
                         content.classList.remove('active');
-                        content.style.display = 'none';
+                        content.classList.add('hidden');
                     });
-                    
+
                     const targetContent = document.getElementById(`${targetTab}-tab`);
                     if (targetContent) {
                         targetContent.classList.add('active');
-                        targetContent.style.display = 'flex';
+                        targetContent.classList.remove('hidden');
                     }
                 });
             });
 
             // Maps management listeners
             setupMapsEventListeners();
-            
+
             // Season indicator click
             const seasonIndicator = document.getElementById('season-indicator');
             const calendarDateIndicator = document.getElementById('calendar-date-indicator');
-            
+
             if (seasonIndicator) {
                 seasonIndicator.addEventListener('click', () => {
                     settingsModal.classList.remove('hidden');
@@ -5145,7 +5209,7 @@
                     }
                 });
             }
-            
+
             if (calendarDateIndicator) {
                 calendarDateIndicator.addEventListener('click', () => {
                     settingsModal.classList.remove('hidden');
@@ -5159,7 +5223,7 @@
 
             // Adventurers tab functionality
             setupAdventurersTab();
-            
+
             // Quest tab functionality
             setupQuestTab();
         }
