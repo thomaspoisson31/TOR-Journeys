@@ -1,3 +1,4 @@
+replit_final_file>
 // --- Import des constantes ---
         import {
             colorMap,
@@ -3687,44 +3688,44 @@
 
         // --- Google Authentication Functions ---
         async function checkAuthStatus() {
-            logAuth("🔐 [AUTH] Vérification du statut d'authentification...", "");
+            // logAuth("🔐 [AUTH] Vérification du statut d'authentification...", "");
             try {
                 const response = await fetch('/api/auth/user');
-                logAuth("🔐 [AUTH] Réponse reçue:", response.status);
+                // logAuth("🔐 [AUTH] Réponse reçue:", response.status);
 
                 if (response.ok) {
                     const data = await response.json();
-                    logAuth("🔐 [AUTH] Données d'authentification reçues:", data);
+                    // logAuth("🔐 [AUTH] Données d'authentification reçues:", data);
 
                     if (data.authenticated && data.user) {
                         currentUser = data.user;
-                        logAuth("🔐 [AUTH] Utilisateur authentifié:", currentUser.name);
+                        // logAuth("🔐 [AUTH] Utilisateur authentifié:", currentUser.name);
                         updateAuthUI(true);
                         await loadSavedContexts();
                         enableAutoSync();
                     } else {
                         currentUser = null;
-                        logAuth("🔐 [AUTH] Utilisateur non authentifié", "");
+                        // logAuth("🔐 [AUTH] Utilisateur non authentifié", "");
                         updateAuthUI(false);
                     }
                 } else {
                     throw new Error(`HTTP ${response.status}`);
                 }
             } catch (error) {
-                logAuth("🔐 [AUTH] Erreur lors de la vérification d'authentification:", error.message || error);
+                // logAuth("🔐 [AUTH] Erreur lors de la vérification d'authentification:", error.message || error);
                 currentUser = null;
                 updateAuthUI(false);
             }
         }
 
         function handleGoogleSignIn() {
-            logAuth("Redirection vers Google OAuth...");
+            // logAuth("Redirection vers Google OAuth...");
             // Redirect to Google OAuth flow on the server
             window.location.href = '/auth/google';
         }
 
         function updateAuthUI(isAuthenticated) {
-            logAuth("Mise à jour de l'interface utilisateur d'authentification");
+            // logAuth("Mise à jour de l'interface utilisateur d'authentification");
             authStatusPanel.classList.add('hidden');
             authContentPanel.classList.remove('hidden');
 
@@ -3733,7 +3734,7 @@
             const authBtn = document.getElementById('auth-btn');
 
             if (isAuthenticated) {
-                logAuth("Affichage du panneau utilisateur connecté");
+                // logAuth("Affichage du panneau utilisateur connecté");
                 loggedInPanel.classList.remove('hidden');
                 loggedOutPanel.classList.add('hidden');
                 authUserName.textContent = currentUser.name || currentUser.email || 'Utilisateur';
@@ -3755,7 +3756,7 @@
                 // loadSavedContexts() est appelé dans checkAuthStatus après la confirmation de connexion
                 // enableAutoSync() est appelé dans checkAuthStatus après la confirmation de connexion
             } else {
-                logAuth("Affichage du panneau utilisateur non connecté");
+                // logAuth("Affichage du panneau utilisateur non connecté");
                 loggedInPanel.classList.add('hidden');
                 loggedOutPanel.classList.remove('hidden');
 
@@ -4030,12 +4031,12 @@
 
         // Setup authentication event listeners
         function setupAuthEventListeners() {
-            logAuth("Configuration des event listeners d'authentification...");
+            // logAuth("Configuration des event listeners d'authentification...");
 
             waitForElement('#auth-btn', (authBtn) => {
-                logAuth("Bouton d'authentification trouvé et configuré");
+                // logAuth("Bouton d'authentification trouvé et configuré");
                 authBtn.addEventListener('click', (event) => {
-                    logAuth("Clic sur le bouton d'authentification détecté!");
+                    // logAuth("Clic sur le bouton d'authentification détecté!");
                     event.preventDefault();
                     event.stopPropagation();
                     toggleAuthModal();
@@ -4043,9 +4044,9 @@
             });
 
             waitForElement('#close-auth-modal', (closeAuthModalBtn) => {
-                logAuth("Bouton de fermeture modal trouvé et configuré");
+                // logAuth("Bouton de fermeture modal trouvé et configuré");
                 closeAuthModalBtn.addEventListener('click', (event) => {
-                    logAuth("Clic sur le bouton de fermeture modal détecté!");
+                    // logAuth("Clic sur le bouton de fermeture modal détecté!");
                     event.preventDefault();
                     event.stopPropagation();
                     const authModal = document.getElementById('auth-modal');
@@ -4056,12 +4057,12 @@
             });
 
             waitForElement('#save-context-btn', (saveContextBtn) => {
-                logAuth("Bouton de sauvegarde contexte trouvé et configuré");
+                // logAuth("Bouton de sauvegarde contexte trouvé et configuré");
                 saveContextBtn.addEventListener('click', saveCurrentContext);
             });
 
             waitForElement('#google-signin-btn', (googleSigninBtn) => {
-                logAuth("Bouton Google Sign-In trouvé et configuré");
+                // logAuth("Bouton Google Sign-In trouvé et configuré");
                 googleSigninBtn.addEventListener('click', handleGoogleSignIn);
             });
         }
@@ -4077,7 +4078,7 @@
                 } else if (Date.now() - startTime < maxWait) {
                     setTimeout(check, 100);
                 } else {
-                    logAuth("TIMEOUT: Élément non trouvé:", selector);
+                    // logAuth("TIMEOUT: Élément non trouvé:", selector);
                 }
             }
 
@@ -5080,7 +5081,7 @@
             }
         }
 
-        // === FONCTIONS POUR LE STYLE DE NARRATION ===
+        // --- STYLE DE NARRATION ===
 
         function setupNarrationStyleListeners() {
             console.log('📖 Configuration des listeners de narration...');
@@ -5223,3 +5224,4 @@ Reste fidèle à l'univers de Tolkien, à la géographie et l'histoire de l'Eria
         } else {
             initializeApp();
         }
+</replit_final_file>
