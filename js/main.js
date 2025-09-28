@@ -16,6 +16,9 @@ import {
     seasonNames
 } from './utils/constants.js';
 
+// --- Import des managers ---
+import DataManager from './managers/data-manager.js';
+
 console.log("✅ Constants loaded successfully");
 
 // --- Variables globales essentielles ---
@@ -23,6 +26,9 @@ let locationsData;
 let regionsData = getDefaultRegions();
 let MAP_WIDTH = 0, MAP_HEIGHT = 0;
 let scale = 1, panX = 0, panY = 0;
+
+// --- Managers ---
+let dataManager;
 
 console.log("✅ Global variables initialized");
 
@@ -44,16 +50,28 @@ async function initializeApp() {
     console.log('🚀 Starting simplified application...');
 
     try {
-        // Test de chargement des données
+        // Initialiser les managers
+        dataManager = new DataManager();
+        console.log("✅ DataManager initialized");
+
+        // Charger les données
         console.log("📍 Loading initial locations...");
-        await loadInitialLocations();
+        await dataManager.loadInitialLocations();
+        locationsData = dataManager.locationsData;
         console.log("✅ Locations loaded successfully");
+
+        // Charger les régions
+        dataManager.loadRegionsFromLocal();
+        regionsData = dataManager.regionsData;
+        console.log("✅ Regions loaded successfully");
 
         // Test d'initialisation de la carte
         if (mapImage) {
             mapImage.onload = () => {
                 console.log("🗺️ Map image loaded successfully");
                 initializeMap();
+                // Afficher les lieux après l'initialisation de la carte
+                renderLocations();
             };
             mapImage.onerror = () => {
                 console.error("❌ Map image failed to load");
@@ -77,48 +95,52 @@ async function initializeApp() {
     }
 }
 
-// --- Chargement des locations (simplifié) ---
-async function loadInitialLocations() {
-    console.log("Attempting to load locations...");
-    const savedData = localStorage.getItem('middleEarthLocations');
-    if (savedData) {
-        try {
-            const parsedData = JSON.parse(savedData);
-            if (parsedData && Array.isArray(parsedData.locations)) {
-               locationsData = parsedData;
-               console.log("✅ Success: Loaded saved locations from localStorage.");
-               return;
-            }
-        } catch (e) {
-            console.error("Failed to parse saved locations, will fetch from URL.", e);
-        }
+// --- Fonction d'affichage des lieux ---
+function renderLocations() {
+    console.log("🎯 Rendering locations...");
+    
+    const locationsLayer = document.getElementById('locations-layer');
+    if (!locationsLayer) {
+        console.error("❌ Locations layer not found");
+        return;
     }
 
-    console.log("No valid saved data found. Fetching from URL:", LOCATIONS_URL);
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+    // Nettoyer les marqueurs existants
+    locationsLayer.innerHTML = '';
 
-        const response = await fetch(LOCATIONS_URL, {
-            signal: controller.signal,
-            cache: 'no-cache'
-        });
-        clearTimeout(timeoutId);
-
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        if (data && Array.isArray(data.locations)) {
-            locationsData = data;
-            console.log("✅ Success: Loaded default locations from URL.");
-            saveLocationsToLocal();
-        } else {
-            throw new Error("Invalid JSON structure from URL");
-        }
-    } catch (error) {
-        console.error("❌ Error fetching locations from URL, using empty list as fallback.", error);
-        locationsData = getDefaultLocations();
-        saveLocationsToLocal();
+    if (!locationsData || !locationsData.locations) {
+        console.log("⚠️ No locations data to render");
+        return;
     }
+
+    let renderedCount = 0;
+    
+    locationsData.locations.forEach(location => {
+        if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
+            console.warn(`⚠️ Location ${location.name} has invalid coordinates`);
+            return;
+        }
+
+        // Créer le marqueur
+        const marker = document.createElement('div');
+        marker.className = 'location-marker';
+        marker.dataset.id = location.id;
+        marker.title = location.name;
+        
+        // Positionner le marqueur
+        marker.style.left = `${location.coordinates.x}px`;
+        marker.style.top = `${location.coordinates.y}px`;
+        
+        // Appliquer la couleur
+        const color = colorMap[location.color] || colorMap.blue;
+        marker.style.backgroundColor = color;
+        
+        // Ajouter à la couche des lieux
+        locationsLayer.appendChild(marker);
+        renderedCount++;
+    });
+
+    console.log(`✅ Rendered ${renderedCount} location markers`);
 }
 
 // --- Initialisation carte simplifiée ---
@@ -154,9 +176,7 @@ function initializeMap() {
 }
 
 // --- Fonctions de base ---
-function saveLocationsToLocal() {
-    localStorage.setItem('middleEarthLocations', JSON.stringify(locationsData));
-}
+// Les fonctions de sauvegarde sont maintenant gérées par DataManager
 
 // --- Démarrage de l'application ---
 if (document.readyState === 'loading') {
