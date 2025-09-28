@@ -14,6 +14,9 @@
             seasonNames
         } from './utils/constants.js';
 
+        // --- Import des managers ---
+        import AuthManager from './managers/auth-manager.js';
+
         let locationsData;
         let regionsData = getDefaultRegions();
 
@@ -122,12 +125,12 @@
 
         // --- Managers ---
         let voyageManager;
+        let authManager;
         // Les managers sont maintenant chargés dynamiquement via import() ou construits directement
         // let eventManager;
         // let renderManager;
         // let infoBoxManager;
         // let dataManager;
-        // let authManager;
         // CalendarManager (ajouté)
         let calendarManager;
 
@@ -378,58 +381,11 @@
             closeMapModal();
         }
 
-        // --- Authentication Debug Logs ---
-        function logAuth(message, data = null) {
-            console.log(`🔐 [AUTH] ${message}`, data || '');
-        }
-
         // --- HTML Escape Function ---
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
-        }
-
-        // --- Check Google Authentication Status ---
-        function checkGoogleAuth() {
-            logAuth("Vérification du statut d'authentification...");
-            checkAuthStatus();
-        }
-
-        // --- Check for authentication errors in URL ---
-        function checkAuthError() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('auth_error') === '1') {
-                logAuth("ERREUR: Échec de l'authentification Google détecté dans l'URL");
-                alert("Erreur lors de l'authentification Google. Veuillez réessayer.");
-                // Nettoyer l'URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } else if (urlParams.get('auth_success') === '1') {
-                logAuth("SUCCÈS: Authentification Google réussie détectée dans l'URL");
-                // Nettoyer l'URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-                // Forcer une nouvelle vérification de l'authentification
-                setTimeout(() => {
-                    checkGoogleAuth();
-                }, 1000);
-            }
-        }
-
-        // --- Toggle Authentication Modal ---
-        function toggleAuthModal() {
-            logAuth("Basculement de la modal d'authentification");
-            const authModal = document.getElementById('auth-modal');
-            if (authModal) {
-                if (authModal.classList.contains('hidden')) {
-                    authModal.classList.remove('hidden');
-                    logAuth("Modal d'authentification ouverte");
-                } else {
-                    authModal.classList.add('hidden');
-                    logAuth("Modal d'authentification fermée");
-                }
-            } else {
-                logAuth("Erreur: Modal d'authentification non trouvée!");
-            }
         }
 
         // --- Initialization ---
@@ -528,6 +484,10 @@
             } else {
                 console.warn("CalendarManager is not defined. Calendar features might be unavailable.");
             }
+
+            // Initialize AuthManager
+            authManager = new AuthManager(dom);
+            console.log("🔐 AuthManager initialized.");
 
             console.log("✅ Map initialized successfully");
         }
@@ -1604,20 +1564,19 @@
             }, 30000); // 30 seconds timeout
 
             // Check for authentication errors in the URL
-            checkAuthError();
+            authManager.checkAuthError();
 
             loadInitialLocations().then(() => {
                 loadRegionsFromLocal();
-                loadSavedContexts();
                 setupFilters();
                 // Load season at startup
                 // loadSavedSeason(); // This is now handled by CalendarManager init
                 loadMapsData(); // Load maps data at startup
-                logAuth("Initialisation de l'authentification...");
+                authManager.logAuth("Initialisation de l'authentification...");
 
                 // Initialize authentication after a short delay to ensure DOM is ready
                 setTimeout(() => {
-                    checkGoogleAuth();
+                    authManager.checkGoogleAuth();
                 }, 100);
 
                 if (mapImage) {
@@ -1638,31 +1597,31 @@
                     infoBoxClose.addEventListener('click', hideInfoBox);
                 }
 
-                logAuth("Configuration des event listeners d'authentification...");
-                setupAuthEventListeners();
+                authManager.logAuth("Configuration des event listeners d'authentification...");
+                authManager.setupAuthEventListeners();
 
                 // Setup settings event listeners
                 setupSettingsEventListeners();
 
                 // Test DOM elements after a delay
                 setTimeout(() => {
-                    logAuth("=== TEST DES ÉLÉMENTS DOM ===");
-                    logAuth("authModal element:", !!document.getElementById('auth-modal'));
-                    logAuth("auth-btn element:", !!document.getElementById('auth-btn'));
-                    logAuth("close-auth-modal element:", !!document.getElementById('close-auth-modal'));
-                    logAuth("google-signin-btn element:", !!document.getElementById('google-signin-btn'));
-                    logAuth("save-context-btn element:", !!document.getElementById('save-context-btn'));
-                    logAuth("settings-btn element:", !!document.getElementById('settings-btn'));
-                    logAuth("settings-modal element:", !!document.getElementById('settings-modal'));
-                    logAuth("close-settings-modal element:", !!document.getElementById('close-settings-modal'));
+                    authManager.logAuth("=== TEST DES ÉLÉMENTS DOM ===");
+                    authManager.logAuth("authModal element:", !!document.getElementById('auth-modal'));
+                    authManager.logAuth("auth-btn element:", !!document.getElementById('auth-btn'));
+                    authManager.logAuth("close-auth-modal element:", !!document.getElementById('close-auth-modal'));
+                    authManager.logAuth("google-signin-btn element:", !!document.getElementById('google-signin-btn'));
+                    authManager.logAuth("save-context-btn element:", !!document.getElementById('save-context-btn'));
+                    authManager.logAuth("settings-btn element:", !!document.getElementById('settings-btn'));
+                    authManager.logAuth("settings-modal element:", !!document.getElementById('settings-modal'));
+                    authManager.logAuth("close-settings-modal element:", !!document.getElementById('close-settings-modal'));
 
                     const testAuthBtn = document.getElementById('auth-btn');
                     if (testAuthBtn) {
-                        logAuth("Bouton auth visible:", testAuthBtn.offsetParent !== null);
-                        logAuth("Bouton auth cliquable:", !testAuthBtn.disabled);
-                        logAuth("Classes du bouton auth:", testAuthBtn.className);
+                        authManager.logAuth("Bouton auth visible:", testAuthBtn.offsetParent !== null);
+                        authManager.logAuth("Bouton auth cliquable:", !testAuthBtn.disabled);
+                        authManager.logAuth("Classes du bouton auth:", testAuthBtn.className);
                     }
-                    logAuth("=== FIN TEST DES ÉLÉMENTS DOM ===");
+                    authManager.logAuth("=== FIN TEST DES ÉLÉMENTS DOM ===");
                 }, 2000);
 
             }).catch(error => {
