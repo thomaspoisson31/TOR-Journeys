@@ -149,11 +149,6 @@ function renderLocations() {
     });
 
     console.log(`✅ Rendered ${renderedCount} location markers`);
-    
-    // Appliquer les filtres après le rendu
-    if (typeof applyFilters === 'function') {
-        applyFilters();
-    }
 }
 
 // --- Fonction d'affichage des régions ---
@@ -240,11 +235,6 @@ function renderRegions() {
     });
 
     console.log(`✅ Rendered ${renderedCount} region polygons`);
-    
-    // Appliquer les filtres après le rendu
-    if (typeof applyFilters === 'function') {
-        applyFilters();
-    }
 }
 
 
@@ -297,7 +287,6 @@ function initializeMap() {
     setupInfoBoxListeners();
     setupRegionDrawing(); // Nouveau : tracé de régions
     setupLocationAdding(); // Nouveau : ajout de lieux
-    setupFiltering(); // Nouveau : système de filtrage
     resetView(); // Vue initiale optimale
 
     console.log("✅ Map initialized successfully");
@@ -507,16 +496,6 @@ function setupMapNavigation() {
 
     console.log("✅ Map navigation setup complete");
 }
-
-// --- Variables pour le filtrage ---
-let activeFilters = {
-    colors: new Set(),
-    status: {
-        known: false,
-        visited: false
-    },
-    showRegions: true
-};
 
 // --- Event Listeners pour l'info-box ---
 function setupInfoBoxListeners() {
@@ -1291,226 +1270,6 @@ function setupRegionColorPicker() {
     });
 }
 
-// --- Fonctions de filtrage ---
-function setupFiltering() {
-    console.log("🔍 Setting up filtering system...");
-
-    const filterToggle = document.getElementById('filter-toggle');
-    const filterPanel = document.getElementById('filter-panel');
-    const resetFiltersBtn = document.getElementById('reset-filters');
-
-    // Toggle du panneau de filtres
-    if (filterToggle) {
-        filterToggle.addEventListener('click', () => {
-            if (filterPanel) {
-                filterPanel.classList.toggle('hidden');
-                filterToggle.classList.toggle('btn-active');
-            }
-        });
-    }
-
-    // Reset des filtres
-    if (resetFiltersBtn) {
-        resetFiltersBtn.addEventListener('click', resetAllFilters);
-    }
-
-    // Setup des filtres de couleur
-    setupColorFilters();
-    
-    // Setup des filtres de statut
-    setupStatusFilters();
-    
-    // Setup du filtre d'affichage des régions
-    setupRegionVisibilityFilter();
-
-    console.log("✅ Filtering system setup complete");
-}
-
-function setupColorFilters() {
-    const colorPicker = document.getElementById('filter-color-picker');
-    if (!colorPicker) return;
-
-    const colors = ['blue', 'red', 'green', 'violet', 'orange', 'black'];
-    
-    colorPicker.innerHTML = '';
-    
-    colors.forEach(color => {
-        const colorDiv = document.createElement('div');
-        colorDiv.className = 'flex items-center';
-        
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `filter-color-${color}`;
-        checkbox.className = 'h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500';
-        checkbox.value = color;
-        
-        const label = document.createElement('label');
-        label.htmlFor = `filter-color-${color}`;
-        label.className = 'ml-2 flex items-center text-sm text-gray-300 cursor-pointer';
-        
-        const colorSwatch = document.createElement('div');
-        colorSwatch.className = 'w-4 h-4 rounded-full mr-2';
-        colorSwatch.style.backgroundColor = colorMap[color] || colorMap.blue;
-        
-        const colorName = document.createElement('span');
-        colorName.textContent = color.charAt(0).toUpperCase() + color.slice(1);
-        
-        label.appendChild(colorSwatch);
-        label.appendChild(colorName);
-        colorDiv.appendChild(checkbox);
-        colorDiv.appendChild(label);
-        colorPicker.appendChild(colorDiv);
-        
-        // Event listener pour le changement
-        checkbox.addEventListener('change', () => {
-            if (checkbox.checked) {
-                activeFilters.colors.add(color);
-            } else {
-                activeFilters.colors.delete(color);
-            }
-            applyFilters();
-        });
-    });
-}
-
-function setupStatusFilters() {
-    const knownFilter = document.getElementById('filter-known');
-    const visitedFilter = document.getElementById('filter-visited');
-    
-    if (knownFilter) {
-        knownFilter.addEventListener('change', () => {
-            activeFilters.status.known = knownFilter.checked;
-            applyFilters();
-        });
-    }
-    
-    if (visitedFilter) {
-        visitedFilter.addEventListener('change', () => {
-            activeFilters.status.visited = visitedFilter.checked;
-            applyFilters();
-        });
-    }
-}
-
-function setupRegionVisibilityFilter() {
-    const showRegionsFilter = document.getElementById('filter-show-regions');
-    
-    if (showRegionsFilter) {
-        showRegionsFilter.addEventListener('change', () => {
-            activeFilters.showRegions = showRegionsFilter.checked;
-            applyFilters();
-        });
-    }
-}
-
-function applyFilters() {
-    console.log("🔍 Applying filters...", activeFilters);
-    
-    // Filtrer les lieux
-    filterLocations();
-    
-    // Filtrer les régions
-    filterRegions();
-    
-    console.log("✅ Filters applied");
-}
-
-function filterLocations() {
-    const locationMarkers = document.querySelectorAll('.location-marker');
-    
-    locationMarkers.forEach(marker => {
-        const locationId = marker.dataset.id;
-        const location = locationsData.locations.find(loc => loc.id === locationId);
-        
-        if (!location) {
-            marker.style.display = 'none';
-            return;
-        }
-        
-        let visible = true;
-        
-        // Filtre par couleur
-        if (activeFilters.colors.size > 0) {
-            if (!activeFilters.colors.has(location.color)) {
-                visible = false;
-            }
-        }
-        
-        // Filtre par statut
-        if (activeFilters.status.known && !location.known) {
-            visible = false;
-        }
-        
-        if (activeFilters.status.visited && !location.visited) {
-            visible = false;
-        }
-        
-        marker.style.display = visible ? 'block' : 'none';
-    });
-}
-
-function filterRegions() {
-    const regionPolygons = document.querySelectorAll('#regions-layer polygon');
-    
-    regionPolygons.forEach(polygon => {
-        const regionId = polygon.dataset.id;
-        const region = regionsData.regions.find(reg => reg.id === regionId);
-        
-        if (!region) {
-            polygon.style.display = 'none';
-            return;
-        }
-        
-        let visible = activeFilters.showRegions;
-        
-        // Filtre par couleur des régions
-        if (activeFilters.colors.size > 0) {
-            if (!activeFilters.colors.has(region.color)) {
-                visible = false;
-            }
-        }
-        
-        // Filtre par statut des régions
-        if (activeFilters.status.known && !region.known) {
-            visible = false;
-        }
-        
-        if (activeFilters.status.visited && !region.visited) {
-            visible = false;
-        }
-        
-        polygon.style.display = visible ? 'block' : 'none';
-    });
-}
-
-function resetAllFilters() {
-    console.log("🔍 Resetting all filters...");
-    
-    // Reset des variables
-    activeFilters.colors.clear();
-    activeFilters.status.known = false;
-    activeFilters.status.visited = false;
-    activeFilters.showRegions = true;
-    
-    // Reset de l'interface
-    document.querySelectorAll('#filter-color-picker input[type="checkbox"]').forEach(cb => {
-        cb.checked = false;
-    });
-    
-    const knownFilter = document.getElementById('filter-known');
-    const visitedFilter = document.getElementById('filter-visited');
-    const showRegionsFilter = document.getElementById('filter-show-regions');
-    
-    if (knownFilter) knownFilter.checked = false;
-    if (visitedFilter) visitedFilter.checked = false;
-    if (showRegionsFilter) showRegionsFilter.checked = true;
-    
-    // Réappliquer les filtres (tout montrer)
-    applyFilters();
-    
-    console.log("✅ All filters reset");
-}
-
 // Gestionnaire d'événements pour les clics dans le viewport
 function handleViewportClick(event) {
     if (isRegionDrawingMode) {
@@ -1529,15 +1288,6 @@ function handleViewportClick(event) {
         if (!event.target.classList.contains('location-marker')) {
             hideInfoBox();
         }
-    }
-    
-    // Fermer le panneau de filtres si on clique ailleurs
-    const filterPanel = document.getElementById('filter-panel');
-    const filterToggle = document.getElementById('filter-toggle');
-    if (filterPanel && !filterPanel.classList.contains('hidden') && 
-        !filterPanel.contains(event.target) && event.target !== filterToggle) {
-        filterPanel.classList.add('hidden');
-        filterToggle.classList.remove('btn-active');
     }
 }
 
