@@ -486,10 +486,6 @@ replit_final_file>
                 console.warn("CalendarManager is not defined. Calendar features might be unavailable.");
             }
 
-            // Initialize AuthManager
-            authManager = new AuthManager(dom);
-            console.log("🔐 AuthManager initialized.");
-
             console.log("✅ Map initialized successfully");
         }
 
@@ -1550,6 +1546,10 @@ replit_final_file>
             });
 
             console.log('🚀 Starting application...');
+
+            // Initialize AuthManager early
+            authManager = new AuthManager(dom);
+            console.log("🔐 AuthManager initialized.");
 
             // Global timeout for the application startup
             const startTimeout = setTimeout(() => {
