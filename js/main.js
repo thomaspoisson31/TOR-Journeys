@@ -239,6 +239,7 @@ function initializeMap() {
     setupMapNavigation();
     setupInfoBoxListeners();
     setupRegionDrawing(); // Nouveau : tracé de régions
+    setupLocationAdding(); // Nouveau : ajout de lieux
     resetView(); // Vue initiale optimale
 
     console.log("✅ Map initialized successfully");
@@ -876,13 +877,13 @@ function confirmRegionCreation() {
     const regionDesc = descInput ? descInput.value.trim() : '';
     const regionColor = selectedColorSwatch ? selectedColorSwatch.dataset.color : 'gray';
 
-    // Créer la nouvelle région
+    // Créer la nouvelle région avec le bon format de coordonnées
     const newRegion = {
         id: `region_${Date.now()}`,
         name: regionName,
         description: regionDesc,
         color: regionColor,
-        coordinates: [...regionPoints], // Copie des points
+        coordinates: [...regionPoints], // Format attendu par renderRegions
         known: true,
         visited: false
     };
@@ -894,6 +895,10 @@ function confirmRegionCreation() {
         regionsData.regions = [];
     }
     regionsData.regions.push(newRegion);
+
+    // Mettre à jour les données globales
+    regionsData = { ...regionsData };
+    dataManager.regionsData = regionsData;
 
     // Sauvegarder via DataManager
     if (dataManager) {
@@ -913,6 +918,248 @@ function confirmRegionCreation() {
     exitRegionDrawingMode();
 
     console.log("✅ Region created successfully:", regionName);
+}
+
+// --- Fonctions de création de lieux ---
+let isLocationAddingMode = false;
+
+function setupLocationAdding() {
+    console.log("📍 Setting up location adding...");
+
+    const addLocationBtn = document.getElementById('add-location-mode');
+    const addLocationModal = document.getElementById('add-location-modal');
+    const cancelBtn = document.getElementById('cancel-add-location');
+    const confirmBtn = document.getElementById('confirm-add-location');
+
+    if (addLocationBtn) {
+        addLocationBtn.addEventListener('click', toggleLocationAddingMode);
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', cancelLocationCreation);
+    }
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', confirmLocationCreation);
+    }
+
+    // Setup des sélecteurs de couleur pour les lieux
+    setupLocationColorPicker();
+
+    console.log("✅ Location adding setup complete");
+}
+
+function toggleLocationAddingMode() {
+    isLocationAddingMode = !isLocationAddingMode;
+    const addLocationBtn = document.getElementById('add-location-mode');
+
+    if (isLocationAddingMode) {
+        console.log("📍 Entering location adding mode");
+        
+        // Sortir du mode région si actif
+        if (isRegionDrawingMode) {
+            exitRegionDrawingMode();
+        }
+        
+        // Changer l'apparence du bouton
+        if (addLocationBtn) {
+            addLocationBtn.classList.add('btn-active');
+            addLocationBtn.title = "Arrêter l'ajout de lieu";
+        }
+
+        // Changer le curseur
+        viewport.style.cursor = 'crosshair';
+        viewport.classList.add('adding-location');
+    } else {
+        console.log("📍 Exiting location adding mode");
+        exitLocationAddingMode();
+    }
+}
+
+function exitLocationAddingMode() {
+    isLocationAddingMode = false;
+
+    const addLocationBtn = document.getElementById('add-location-mode');
+    if (addLocationBtn) {
+        addLocationBtn.classList.remove('btn-active');
+        addLocationBtn.title = "Ajouter un lieu";
+    }
+
+    // Restaurer le curseur normal
+    viewport.style.cursor = 'grab';
+    viewport.classList.remove('adding-location');
+}
+
+function handleLocationClick(event) {
+    if (!isLocationAddingMode) return;
+
+    // Empêcher le pan et autres interactions
+    event.stopPropagation();
+    event.preventDefault();
+
+    const rect = viewport.getBoundingClientRect();
+    const viewportX = event.clientX - rect.left;
+    const viewportY = event.clientY - rect.top;
+
+    // Convertir les coordonnées du viewport vers les coordonnées de la carte
+    const mapX = (viewportX - panX) / scale;
+    const mapY = (viewportY - panY) / scale;
+
+    // Sauvegarder les coordonnées pour la création
+    window.pendingLocationCoordinates = { x: Math.round(mapX), y: Math.round(mapY) };
+
+    console.log(`📍 Selected location coordinates: (${Math.round(mapX)}, ${Math.round(mapY)})`);
+
+    // Afficher la modal de création de lieu
+    showLocationCreationModal();
+}
+
+function showLocationCreationModal() {
+    const modal = document.getElementById('add-location-modal');
+    const nameInput = document.getElementById('location-name-input');
+    const descInput = document.getElementById('location-desc-input');
+    const imageInput = document.getElementById('location-image-input');
+    const knownInput = document.getElementById('location-known-input');
+    const visitedInput = document.getElementById('location-visited-input');
+
+    if (modal) {
+        // Réinitialiser les champs
+        if (nameInput) nameInput.value = '';
+        if (descInput) descInput.value = '';
+        if (imageInput) imageInput.value = '';
+        if (knownInput) knownInput.checked = true;
+        if (visitedInput) visitedInput.checked = false;
+
+        // Sélectionner la première couleur par défaut
+        const firstColorSwatch = document.querySelector('#add-color-picker .color-swatch');
+        if (firstColorSwatch) {
+            document.querySelectorAll('#add-color-picker .color-swatch').forEach(swatch => {
+                swatch.classList.remove('selected');
+            });
+            firstColorSwatch.classList.add('selected');
+        }
+
+        modal.classList.remove('hidden');
+        if (nameInput) nameInput.focus();
+    }
+}
+
+function cancelLocationCreation() {
+    const modal = document.getElementById('add-location-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+
+    // Sortir du mode ajout
+    exitLocationAddingMode();
+    window.pendingLocationCoordinates = null;
+}
+
+function confirmLocationCreation() {
+    const nameInput = document.getElementById('location-name-input');
+    const descInput = document.getElementById('location-desc-input');
+    const imageInput = document.getElementById('location-image-input');
+    const knownInput = document.getElementById('location-known-input');
+    const visitedInput = document.getElementById('location-visited-input');
+    const selectedColorSwatch = document.querySelector('#add-color-picker .color-swatch.selected');
+
+    if (!nameInput || !nameInput.value.trim()) {
+        alert("Veuillez entrer un nom pour le lieu.");
+        return;
+    }
+
+    if (!window.pendingLocationCoordinates) {
+        alert("Erreur : aucune coordonnée sélectionnée.");
+        return;
+    }
+
+    const locationName = nameInput.value.trim();
+    const locationDesc = descInput ? descInput.value.trim() : '';
+    const locationImage = imageInput ? imageInput.value.trim() : '';
+    const locationKnown = knownInput ? knownInput.checked : true;
+    const locationVisited = visitedInput ? visitedInput.checked : false;
+    const locationColor = selectedColorSwatch ? selectedColorSwatch.dataset.color : 'blue';
+
+    // Créer le nouveau lieu
+    const newLocation = {
+        id: `location_${Date.now()}`,
+        name: locationName,
+        description: locationDesc,
+        color: locationColor,
+        coordinates: { ...window.pendingLocationCoordinates },
+        known: locationKnown,
+        visited: locationVisited,
+        type: "custom"
+    };
+
+    // Ajouter l'image si fournie
+    if (locationImage) {
+        newLocation.images = [{
+            url: locationImage,
+            isDefault: true
+        }];
+    }
+
+    console.log("💾 Creating new location:", newLocation);
+
+    // Ajouter à la liste des lieux
+    if (!locationsData.locations) {
+        locationsData.locations = [];
+    }
+    locationsData.locations.push(newLocation);
+
+    // Mettre à jour les données globales
+    locationsData = { ...locationsData };
+    dataManager.locationsData = locationsData;
+
+    // Sauvegarder via DataManager
+    if (dataManager) {
+        dataManager.saveLocationsToLocal();
+    }
+
+    // Re-render les lieux
+    renderLocations();
+
+    // Fermer la modal
+    const modal = document.getElementById('add-location-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+
+    // Sortir du mode ajout
+    exitLocationAddingMode();
+    window.pendingLocationCoordinates = null;
+
+    console.log("✅ Location created successfully:", locationName);
+}
+
+function setupLocationColorPicker() {
+    const colorPicker = document.getElementById('add-color-picker');
+    if (!colorPicker) return;
+
+    const colors = ['blue', 'red', 'green', 'violet', 'orange', 'black'];
+    
+    colorPicker.innerHTML = '';
+    
+    colors.forEach((color, index) => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.dataset.color = color;
+        swatch.style.backgroundColor = colorMap[color] || colorMap.blue;
+        
+        if (index === 0) {
+            swatch.classList.add('selected');
+        }
+        
+        swatch.addEventListener('click', () => {
+            document.querySelectorAll('#add-color-picker .color-swatch').forEach(s => {
+                s.classList.remove('selected');
+            });
+            swatch.classList.add('selected');
+        });
+        
+        colorPicker.appendChild(swatch);
+    });
 }
 
 function setupRegionColorPicker() {
@@ -948,6 +1195,11 @@ function setupRegionColorPicker() {
 function handleViewportClick(event) {
     if (isRegionDrawingMode) {
         handleRegionClick(event);
+        return;
+    }
+
+    if (isLocationAddingMode) {
+        handleLocationClick(event);
         return;
     }
 
