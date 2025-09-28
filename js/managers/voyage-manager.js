@@ -1182,3 +1182,6 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         return null;
     }
 }
+
+
+export default VoyageManager;

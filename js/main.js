@@ -61,9 +61,16 @@ async function initializeApp() {
         console.log("✅ DataManager initialized");
         filterManager = new FilterManager(); // DOM elements are implicitly accessed
         console.log("✅ FilterManager initialized");
-        voyageManager = new VoyageManager(); // DOM elements are implicitly accessed
+        voyageManager = new VoyageManager({
+            getElementById: (id) => document.getElementById(id),
+            showModal: (modal) => modal.classList.remove('hidden'),
+            hideModal: (modal) => modal.classList.add('hidden'),
+            voyageSegmentsModal: document.getElementById('voyage-segments-modal')
+        });
         console.log("✅ VoyageManager initialized");
-        pathManager = new PathManager(dataManager); // DOM elements and dataManager are implicitly accessed
+        pathManager = new PathManager({
+            getElementById: (id) => document.getElementById(id)
+        }, dataManager);
         console.log("✅ PathManager initialized");
 
         // Charger les données
