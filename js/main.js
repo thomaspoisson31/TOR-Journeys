@@ -1,8 +1,18 @@
-// --- Data ---
-        const colorMap = { red: 'rgba(239, 68, 68, 0.8)', blue: 'rgba(59, 130, 246, 0.8)', green: 'rgba(34, 197, 94, 0.8)', violet: 'rgba(139, 92, 246, 0.8)', orange: 'rgba(252, 169, 3, 0.8)', black: 'rgba(17, 24, 39, 0.8)' };
-        const regionColorMap = { red: 'rgba(239, 68, 68, 0.15)', blue: 'rgba(59, 130, 246, 0.15)', green: 'rgba(34, 197, 94, 0.15)', violet: 'rgba(139, 92, 246, 0.15)', orange: 'rgba(252, 169, 3, 0.15)', black: 'rgba(17, 24, 39, 0.15)' };
-        const getDefaultLocations = () => ({ "locations": [] }); // Fallback to empty if fetch fails
-        const getDefaultRegions = () => ({ "regions": [] });
+// --- Import des constantes ---
+        import { 
+            colorMap, 
+            regionColorMap, 
+            getDefaultLocations, 
+            getDefaultRegions,
+            MAP_DISTANCE_MILES,
+            PLAYER_MAP_URL,
+            LOREMASTER_MAP_URL,
+            LOCATIONS_URL,
+            PROXIMITY_DISTANCE,
+            SYNC_DELAY,
+            seasonSymbols,
+            seasonNames
+        } from './utils/constants.js';
 
         let locationsData;
         let regionsData = getDefaultRegions();
@@ -44,10 +54,6 @@
 
         // --- Map state ---
         let MAP_WIDTH = 0, MAP_HEIGHT = 0;
-        const MAP_DISTANCE_MILES = 1150;
-        const PLAYER_MAP_URL = "fr_tor_2nd_eriadors_map_page-0001.webp";
-        const LOREMASTER_MAP_URL = "fr_tor_2nd_eriadors_map_page_loremaster.webp";
-        const LOCATIONS_URL = "Landmarks1.json";
         let isPlayerView = true;
 
         // --- Transformation state ---
@@ -68,7 +74,6 @@
         let journeyPath = [];
         let traversedRegions = new Set();
         let nearbyLocations = new Set();
-        const PROXIMITY_DISTANCE = 50;
         let journeyDiscoveries = []; // Chronological list of discoveries (regions and locations)
 
         // --- Voyage Segments ---
@@ -88,27 +93,6 @@
 
         // --- Season state ---
         let currentSeason = 'printemps-debut';
-        const seasonSymbols = {
-            'printemps': '🌱',
-            'ete': '☀️',
-            'automne': '🍂',
-            'hiver': '❄️'
-        };
-
-        const seasonNames = {
-            'printemps-debut': 'Printemps-début',
-            'printemps-milieu': 'Printemps-milieu',
-            'printemps-fin': 'Printemps-fin',
-            'ete-debut': 'Été-début',
-            'ete-milieu': 'Été-milieu',
-            'ete-fin': 'Été-fin',
-            'automne-debut': 'Automne-début',
-            'automne-milieu': 'Automne-milieu',
-            'automne-fin': 'Automne-fin',
-            'hiver-debut': 'Hiver-début',
-            'hiver-milieu': 'Hiver-milieu',
-            'hiver-fin': 'Hiver-fin'
-        };
 
         // --- Calendar state ---
         let calendarData = null;
@@ -118,7 +102,6 @@
         // --- Auto-sync state ---
         let autoSyncEnabled = false;
         let lastSyncTime = 0;
-        const SYNC_DELAY = 2000; // 2 seconds delay before auto-sync
 
         // --- Maps management ---
         let availableMaps = [];

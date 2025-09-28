@@ -1,32 +1,14 @@
 
+import { seasonSymbols, seasonNames } from '../utils/constants.js';
+
 class CalendarManager {
     constructor() {
         this.calendarData = null;
         this.currentCalendarDate = null;
         this.isCalendarMode = false;
         this.currentSeason = 'printemps-debut';
-        
-        this.seasonSymbols = {
-            'printemps': '🌱',
-            'ete': '☀️',
-            'automne': '🍂',
-            'hiver': '❄️'
-        };
-
-        this.seasonNames = {
-            'printemps-debut': 'Printemps-début',
-            'printemps-milieu': 'Printemps-milieu',
-            'printemps-fin': 'Printemps-fin',
-            'ete-debut': 'Été-début',
-            'ete-milieu': 'Été-milieu',
-            'ete-fin': 'Été-fin',
-            'automne-debut': 'Automne-début',
-            'automne-milieu': 'Automne-milieu',
-            'automne-fin': 'Automne-fin',
-            'hiver-debut': 'Hiver-début',
-            'hiver-milieu': 'Hiver-milieu',
-            'hiver-fin': 'Hiver-fin'
-        };
+        this.seasonSymbols = seasonSymbols;
+        this.seasonNames = seasonNames;
     }
 
     init() {
