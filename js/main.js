@@ -154,6 +154,7 @@ function renderLocations() {
 // --- Fonction d'affichage des régions ---
 function renderRegions() {
     console.log("🌍 Rendering regions...");
+    console.log("🌍 RegionsData:", regionsData);
 
     const regionsLayer = document.getElementById('regions-layer');
     if (!regionsLayer) {
@@ -161,8 +162,12 @@ function renderRegions() {
         return;
     }
 
-    // Nettoyer les polygones existants
+    // Nettoyer les polygones existants (conserver les temporaires)
+    const tempPolygon = document.getElementById('temp-region-polygon');
     regionsLayer.innerHTML = '';
+    if (tempPolygon) {
+        regionsLayer.appendChild(tempPolygon);
+    }
 
     if (!regionsData || !regionsData.regions) {
         console.log("⚠️ No regions data to render");
@@ -172,34 +177,50 @@ function renderRegions() {
     let renderedCount = 0;
 
     regionsData.regions.forEach(region => {
+        console.log(`🔍 Processing region: ${region.name}`, region);
+        
         if (!region.coordinates || !Array.isArray(region.coordinates) || region.coordinates.length === 0) {
-            console.warn(`⚠️ Region ${region.name} has invalid coordinates`);
+            console.warn(`⚠️ Region ${region.name} has invalid coordinates:`, region.coordinates);
             return;
         }
 
-        // Créer le polygone
-        const polygon = document.createElement('div');
-        polygon.className = 'region-polygon';
-        polygon.dataset.id = region.id;
-        polygon.title = region.name;
+        // Vérifier que chaque coordonnée a x et y
+        const validCoords = region.coordinates.every(coord => 
+            coord && typeof coord.x === 'number' && typeof coord.y === 'number'
+        );
+
+        if (!validCoords) {
+            console.warn(`⚠️ Region ${region.name} has invalid coordinate format:`, region.coordinates);
+            return;
+        }
+
+        // Créer le polygone SVG directement dans la couche SVG
+        const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        polygon.setAttribute('data-id', region.id);
+        polygon.setAttribute('data-name', region.name);
 
         // Définir les styles du polygone
         const color = regionColorMap[region.color] || regionColorMap.gray;
-        polygon.style.backgroundColor = color;
-        polygon.style.borderColor = color;
-        polygon.style.opacity = '0.3'; // Semi-transparent
+        polygon.setAttribute('fill', color);
+        polygon.setAttribute('stroke', color);
+        polygon.setAttribute('fill-opacity', '0.3');
+        polygon.setAttribute('stroke-opacity', '0.8');
+        polygon.setAttribute('stroke-width', '2');
 
-        // Créer le chemin SVG pour le polygone
+        // Créer les points du polygone
         const points = region.coordinates.map(coord => `${coord.x},${coord.y}`).join(' ');
-        polygon.innerHTML = `
-            <svg width="${MAP_WIDTH}" height="${MAP_HEIGHT}" viewBox="0 0 ${MAP_WIDTH} ${MAP_HEIGHT}" preserveAspectRatio="xMidYMid meet">
-                <polygon points="${points}" />
-            </svg>
-        `;
+        polygon.setAttribute('points', points);
+
+        // Ajouter le titre pour le hover
+        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        title.textContent = region.name;
+        polygon.appendChild(title);
 
         // Ajouter à la couche des régions
         regionsLayer.appendChild(polygon);
         renderedCount++;
+
+        console.log(`✅ Rendered region: ${region.name} with ${region.coordinates.length} points`);
     });
 
     console.log(`✅ Rendered ${renderedCount} region polygons`);
@@ -219,6 +240,21 @@ function initializeMap() {
     MAP_HEIGHT = mapImage.naturalHeight;
     mapContainer.style.width = `${MAP_WIDTH}px`;
     mapContainer.style.height = `${MAP_HEIGHT}px`;
+
+    // Configuration de la couche SVG des régions
+    const regionsLayer = document.getElementById('regions-layer');
+    if (regionsLayer) {
+        regionsLayer.setAttribute('width', MAP_WIDTH);
+        regionsLayer.setAttribute('height', MAP_HEIGHT);
+        regionsLayer.setAttribute('viewBox', `0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`);
+        regionsLayer.style.position = 'absolute';
+        regionsLayer.style.top = '0';
+        regionsLayer.style.left = '0';
+        regionsLayer.style.width = `${MAP_WIDTH}px`;
+        regionsLayer.style.height = `${MAP_HEIGHT}px`;
+        regionsLayer.style.pointerEvents = 'none'; // Permettre les clics à travers
+        console.log("✅ Regions layer configured");
+    }
 
     // Simple reset view
     const viewportWidth = viewport.clientWidth;
@@ -883,12 +919,13 @@ function confirmRegionCreation() {
         name: regionName,
         description: regionDesc,
         color: regionColor,
-        coordinates: [...regionPoints], // Format attendu par renderRegions
+        coordinates: [...regionPoints], // Format: array de {x, y}
         known: true,
         visited: false
     };
 
     console.log("💾 Creating new region:", newRegion);
+    console.log("💾 Region points:", regionPoints);
 
     // Ajouter à la liste des régions
     if (!regionsData.regions) {
@@ -903,9 +940,11 @@ function confirmRegionCreation() {
     // Sauvegarder via DataManager
     if (dataManager) {
         dataManager.saveRegionsToLocal();
+        console.log("💾 Region saved to localStorage");
     }
 
     // Re-render les régions
+    console.log("🌍 Re-rendering regions after creation...");
     renderRegions();
 
     // Fermer la modal
