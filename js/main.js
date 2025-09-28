@@ -1,28 +1,28 @@
 replit_final_file>
 // --- Import des constantes ---
-        import {
-            colorMap,
-            regionColorMap,
-            getDefaultLocations,
-            getDefaultRegions,
-            MAP_DISTANCE_MILES,
-            PLAYER_MAP_URL,
-            LOREMASTER_MAP_URL,
-            LOCATIONS_URL,
-            PROXIMITY_DISTANCE,
-            SYNC_DELAY,
-            seasonSymbols,
-            seasonNames
-        } from './utils/constants.js';
+import {
+    colorMap,
+    regionColorMap,
+    getDefaultLocations,
+    getDefaultRegions,
+    MAP_DISTANCE_MILES,
+    PLAYER_MAP_URL,
+    LOREMASTER_MAP_URL,
+    LOCATIONS_URL,
+    PROXIMITY_DISTANCE,
+    SYNC_DELAY,
+    seasonSymbols,
+    seasonNames
+} from './utils/constants.js';
 
-        // --- Import des managers ---
-        import AuthManager from './managers/auth-manager.js';
+// --- Import des managers ---
+import AuthManager from './managers/auth-manager.js';
 
         let locationsData;
-        let regionsData = getDefaultRegions();
+let regionsData = getDefaultRegions();
 
-        // --- DOM Elements ---
-        const viewport = document.getElementById('viewport');
+// --- DOM Elements ---
+const viewport = document.getElementById('viewport');
         const mapContainer = document.getElementById('map-container');
         const mapImage = document.getElementById('map-image');
         const loremasterMapImage = document.getElementById('loremaster-map-image');
@@ -125,15 +125,15 @@ replit_final_file>
         };
 
         // --- Managers ---
-        let voyageManager;
-        let authManager;
-        // Les managers sont maintenant chargés dynamiquement via import() ou construits directement
-        // let eventManager;
-        // let renderManager;
-        // let infoBoxManager;
-        // let dataManager;
-        // CalendarManager (ajouté)
-        let calendarManager;
+let voyageManager;
+let authManager;
+// Les managers sont maintenant chargés dynamiquement via import() ou construits directement
+// let eventManager;
+// let renderManager;
+// let infoBoxManager;
+// let dataManager;
+// CalendarManager (ajouté)
+let calendarManager;
 
         // --- Maps Management Functions ---
         function loadMapsData() {
