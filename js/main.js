@@ -119,326 +119,13 @@
         let lastSyncTime = 0;
         const SYNC_DELAY = 2000; // 2 seconds delay before auto-sync
 
-
-
-        // --- Settings Management Functions ---
-        function loadSettings() {
-            console.log('📖 Chargement des paramètres...');
-
-            // Load adventurers group
-            const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
-            const adventurersContent = document.getElementById('adventurers-content');
-            if (adventurersContent) {
-                if (adventurersGroup) {
-                    adventurersContent.innerHTML = marked ? marked.parse(adventurersGroup) : adventurersGroup.replace(/\n/g, '<br>');
-                } else {
-                    adventurersContent.innerHTML = '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
-                }
-            }
-
-            // Load quest
-            const adventurersQuest = localStorage.getItem('adventurersQuest') || '';
-            const questContent = document.getElementById('quest-content');
-            if (questContent) {
-                if (adventurersQuest) {
-                    questContent.innerHTML = marked ? marked.parse(adventurersQuest) : adventurersQuest.replace(/\n/g, '<br>');
-                } else {
-                    questContent.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
-                }
-            }
-        }
-
-        function setupAdventurersListeners() {
-            const editBtn = document.getElementById('edit-adventurers-btn');
-            const saveBtn = document.getElementById('save-adventurers-edit');
-            const cancelBtn = document.getElementById('cancel-adventurers-edit');
-
-            if (editBtn) {
-                editBtn.addEventListener('click', () => {
-                    enterAdventurersEditMode();
-                });
-            }
-
-            if (saveBtn) {
-                saveBtn.addEventListener('click', () => {
-                    saveAdventurersEdit();
-                });
-            }
-
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', () => {
-                    exitAdventurersEditMode();
-                });
-            }
-        }
-
-        function setupQuestListeners() {
-            const editBtn = document.getElementById('edit-quest-btn');
-            const saveBtn = document.getElementById('save-quest-edit');
-            const cancelBtn = document.getElementById('cancel-quest-edit');
-
-            if (editBtn) {
-                editBtn.addEventListener('click', () => {
-                    enterQuestEditMode();
-                });
-            }
-
-            if (saveBtn) {
-                saveBtn.addEventListener('click', () => {
-                    saveQuestEdit();
-                });
-            }
-
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', () => {
-                    exitQuestEditMode();
-                });
-            }
-        }
-
-        function enterAdventurersEditMode() {
-            const readMode = document.getElementById('adventurers-read-mode');
-            const editMode = document.getElementById('adventurers-edit-mode');
-            const textarea = document.getElementById('adventurers-group');
-
-            if (readMode && editMode && textarea) {
-                readMode.classList.add('hidden');
-                editMode.classList.remove('hidden');
-
-                // Load current content
-                const currentContent = localStorage.getItem('adventurersGroup') || '';
-                textarea.value = currentContent;
-                textarea.focus();
-            }
-        }
-
-        function exitAdventurersEditMode() {
-            const readMode = document.getElementById('adventurers-read-mode');
-            const editMode = document.getElementById('adventurers-edit-mode');
-
-            if (readMode && editMode) {
-                editMode.classList.add('hidden');
-                readMode.classList.remove('hidden');
-            }
-        }
-
-        function saveAdventurersEdit() {
-            const textarea = document.getElementById('adventurers-group');
-            if (textarea) {
-                const content = textarea.value.trim();
-                localStorage.setItem('adventurersGroup', content);
-
-                // Update display
-                const adventurersContent = document.getElementById('adventurers-content');
-                if (adventurersContent) {
-                    if (content) {
-                        adventurersContent.innerHTML = marked ? marked.parse(content) : content.replace(/\n/g, '<br>');
-                    } else {
-                        adventurersContent.innerHTML = '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
-                    }
-                }
-
-                exitAdventurersEditMode();
-                scheduleAutoSync();
-            }
-        }
-
-        function enterQuestEditMode() {
-            const readMode = document.getElementById('quest-read-mode');
-            const editMode = document.getElementById('quest-edit-mode');
-            const textarea = document.getElementById('adventurers-quest');
-
-            if (readMode && editMode && textarea) {
-                readMode.classList.add('hidden');
-                editMode.classList.remove('hidden');
-
-                // Load current content
-                const currentContent = localStorage.getItem('adventurersQuest') || '';
-                textarea.value = currentContent;
-                textarea.focus();
-            }
-        }
-
-        function exitQuestEditMode() {
-            const readMode = document.getElementById('quest-read-mode');
-            const editMode = document.getElementById('quest-edit-mode');
-
-            if (readMode && editMode) {
-                editMode.classList.add('hidden');
-                readMode.classList.remove('hidden');
-            }
-        }
-
-        function saveQuestEdit() {
-            const textarea = document.getElementById('adventurers-quest');
-            if (textarea) {
-                const content = textarea.value.trim();
-                localStorage.setItem('adventurersQuest', content);
-
-                // Update display
-                const questContent = document.getElementById('quest-content');
-                if (questContent) {
-                    if (content) {
-                        questContent.innerHTML = marked ? marked.parse(content) : content.replace(/\n/g, '<br>');
-                    } else {
-                        questContent.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
-                    }
-                }
-
-                exitQuestEditMode();
-                scheduleAutoSync();
-            }
-        }
-
-        // --- Missing functions that are called but not defined ---
-        function updateSyncStatus(message) {
-            console.log("🔄 Sync Status:", message);
-        }
-
-        function checkAuthStatus() {
-            console.log("🔐 Checking auth status...");
-            return fetch('/api/auth/user')
-                .then(response => response.json())
-                .then(data => {
-                    currentUser = data.authenticated ? data.user : null;
-                    updateAuthUI();
-                    return data;
-                });
-        }
-
-        function setupAuthEventListeners() {
-            console.log("🔐 [AUTH] Configuration des event listeners d'authentification...");
-            // Auth button
-            const authBtn = document.getElementById('auth-btn');
-            if (authBtn) {
-                authBtn.addEventListener('click', toggleAuthModal);
-                console.log("🔐 [AUTH] Bouton d'authentification trouvé et configuré");
-            }
-
-            // Close auth modal
-            const closeAuthModal = document.getElementById('close-auth-modal');
-            if (closeAuthModal) {
-                closeAuthModal.addEventListener('click', toggleAuthModal);
-                console.log("🔐 [AUTH] Bouton de fermeture modal trouvé et configuré");
-            }
-
-            // Save context button
-            const saveContextBtn = document.getElementById('save-context-btn');
-            if (saveContextBtn) {
-                saveContextBtn.addEventListener('click', saveCurrentContext);
-                console.log("🔐 [AUTH] Bouton de sauvegarde contexte trouvé et configuré");
-            }
-
-            // Google sign-in button
-            const googleSigninBtn = document.getElementById('google-signin-btn');
-            if (googleSigninBtn) {
-                googleSigninBtn.addEventListener('click', () => {
-                    window.location.href = '/auth/google';
-                });
-                console.log("🔐 [AUTH] Bouton Google Sign-In trouvé et configuré");
-            }
-        }
-
-        function setupSettingsEventListeners() {
-            const settingsBtn = document.getElementById('settings-btn');
-            const settingsModal = document.getElementById('settings-modal');
-            const closeSettingsBtn = document.getElementById('close-settings-modal');
-
-            if (settingsBtn) {
-                settingsBtn.addEventListener('click', () => {
-                    try {
-                        settingsModal.classList.remove('hidden');
-                        loadSettings();
-                    } catch (error) {
-                        console.error('Erreur lors de l\'ouverture des paramètres:', error);
-                        settingsModal.classList.remove('hidden'); // Ouvrir quand même la modal
-                    }
-                });
-            }
-
-            if (closeSettingsBtn) {
-                closeSettingsBtn.addEventListener('click', () => {
-                    settingsModal.classList.add('hidden');
-                });
-            }
-
-            // Setup tabs
-            const tabButtons = document.querySelectorAll('.settings-tab-button');
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const tab = button.dataset.tab;
-                    activateSettingsTab(tab);
-                });
-            });
-
-            setupSeasonListeners();
-            setupAdventurersListeners();
-            setupQuestListeners();
-        }
-
-        function loadSavedContexts() {
-            if (!currentUser) return;
-            // Placeholder for loading saved contexts
-            console.log("Loading saved contexts...");
-        }
-
-        function resetVoyageSegments() {
-            // Reset voyage segments
-            currentVoyage = null;
-            voyageSegments = [];
-            currentSegmentIndex = -1;
-            isVoyageActive = false;
-            activatedSegments.clear();
-        }
-
-        function saveCurrentContext() {
-            // Placeholder for saving current context
-            console.log("Saving current context...");
-        }
-
-        function updateAuthUI() {
-            const authIcon = document.getElementById('auth-icon');
-            const userProfilePic = document.getElementById('user-profile-pic');
-
-            if (currentUser) {
-                authIcon.style.display = 'none';
-                userProfilePic.style.display = 'block';
-                userProfilePic.src = currentUser.picture || '';
-                enableAutoSync();
-            } else {
-                authIcon.style.display = 'block';
-                userProfilePic.style.display = 'none';
-                disableAutoSync();
-            }
-        }
-
-        function activateSettingsTab(tabName) {
-            // Hide all tab contents
-            document.querySelectorAll('.settings-tab-content').forEach(content => {
-                content.style.display = 'none';
-            });
-
-            // Remove active class from all tab buttons
-            document.querySelectorAll('.settings-tab-button').forEach(button => {
-                button.classList.remove('active');
-                button.classList.add('text-gray-400');
-                button.classList.remove('text-white', 'border-blue-500');
-                button.classList.add('border-transparent');
-            });
-
-            // Show selected tab content
-            const selectedContent = document.getElementById(`${tabName}-tab`);
-            if (selectedContent) {
-                selectedContent.style.display = 'block';
-            }
-
-            // Activate selected tab button
-            const selectedButton = document.querySelector(`[data-tab="${tabName}"]`);
-            if (selectedButton) {
-                selectedButton.classList.add('active', 'text-white', 'border-blue-500');
-                selectedButton.classList.remove('text-gray-400', 'border-transparent');
-            }
-        }
+        // --- Maps management ---
+        let availableMaps = [];
+        let currentMapConfig = {
+            playerMap: 'fr_tor_2nd_eriadors_map_page-0001.webp',
+            loremasterMap: 'fr_tor_2nd_eriadors_map_page_loremaster.webp'
+        };
+        let editingMapIndex = -1;
 
         // --- DOM Helper ---
         const dom = {
@@ -449,7 +136,255 @@
             voyageSegmentsModal: document.getElementById('voyage-segments-modal')
         };
 
+        // --- Voyage Manager ---
+        let voyageManager;
 
+        // --- Maps Management Functions ---
+        function loadMapsData() {
+            const savedMaps = localStorage.getItem('availableMaps');
+            const savedConfig = localStorage.getItem('currentMapConfig');
+
+            if (savedMaps) {
+                try {
+                    availableMaps = JSON.parse(savedMaps);
+                } catch (e) {
+                    console.error('Error loading maps data:', e);
+                    availableMaps = [];
+                }
+            }
+
+            if (savedConfig) {
+                try {
+                    currentMapConfig = JSON.parse(savedConfig);
+                } catch (e) {
+                    console.error('Error loading map config:', e);
+                }
+            }
+
+            // Ajouter les cartes par défaut si la liste est vide
+            if (availableMaps.length === 0) {
+                availableMaps = [
+                    {
+                        id: 1,
+                        name: 'Carte Joueur - Eriador',
+                        filename: 'fr_tor_2nd_eriadors_map_page-0001.webp',
+                        type: 'player',
+                        isDefault: true
+                    },
+                    {
+                        id: 2,
+                        name: 'Carte Gardien - Eriador',
+                        filename: 'fr_tor_2nd_eriadors_map_page_loremaster.webp',
+                        type: 'loremaster',
+                        isDefault: true
+                    }
+                ];
+                saveMapsData();
+            }
+        }
+
+        function saveMapsData() {
+            localStorage.setItem('availableMaps', JSON.stringify(availableMaps));
+            localStorage.setItem('currentMapConfig', JSON.stringify(currentMapConfig));
+            scheduleAutoSync();
+        }
+
+        function renderMapsGrid() {
+            const mapsGrid = document.getElementById('maps-grid');
+            if (!mapsGrid) return;
+
+            mapsGrid.innerHTML = availableMaps.map(map => {
+                const isActive = (map.type === 'player' && currentMapConfig.playerMap === map.filename) ||
+                                (map.type === 'loremaster' && currentMapConfig.loremasterMap === map.filename);
+
+                return `
+                    <div class="bg-gray-800 rounded-lg p-3 border ${isActive ? 'border-blue-500' : 'border-gray-600'} relative">
+                        ${isActive ? '<div class="absolute top-2 right-2 text-blue-400"><i class="fas fa-check-circle"></i></div>' : ''}
+                        <div class="aspect-video bg-gray-700 rounded-lg mb-2 overflow-hidden">
+                            <img src="${map.filename}" alt="${map.name}" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiHElaaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjc3NDhDIi8+Cjwvc3ZnPg=='">
+                        </div>
+                        <div class="text-sm font-medium text-white mb-1">${map.name}</div>
+                        <div class="text-xs text-gray-400 mb-2">${map.type === 'player' ? 'Carte Joueur' : 'Carte Gardien'}</div>
+                        <div class="flex space-x-2">
+                            <button class="flex-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs ${isActive ? 'opacity-50 cursor-not-allowed' : ''}"
+                                    onclick="setActiveMap('${map.filename}', '${map.type}')"
+                                    ${isActive ? 'disabled' : ''}>
+                                ${isActive ? 'Active' : 'Activer'}
+                            </button>
+                            <button class="px-2 py-1 bg-yellow-600 hover:bg-yellow-700 rounded text-xs" onclick="editMap(${availableMaps.indexOf(map)})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            ${!map.isDefault ? `<button class="px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-xs" onclick="deleteMap(${availableMaps.indexOf(map)})"><i class="fas fa-trash"></i></button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setActiveMap(filename, type) {
+            if (type === 'player') {
+                currentMapConfig.playerMap = filename;
+                // Mettre à jour l'image active
+                mapImage.src = filename;
+                document.getElementById('active-player-map-preview').src = filename;
+            } else if (type === 'loremaster') {
+                currentMapConfig.loremasterMap = filename;
+                // Mettre à jour l'image du gardien
+                loremasterMapImage.src = filename;
+                document.getElementById('active-loremaster-map-preview').src = filename;
+            }
+
+            saveMapsData();
+            renderMapsGrid();
+        }
+
+        function openMapModal(editIndex = -1) {
+            editingMapIndex = editIndex;
+            const modal = document.getElementById('map-modal');
+            const title = document.getElementById('map-modal-title');
+            const nameInput = document.getElementById('map-name-input');
+            const fileInput = document.getElementById('map-file-input');
+            const previewContainer = document.getElementById('map-preview-container');
+            const previewImage = document.getElementById('map-preview-image');
+            const saveText = document.getElementById('save-map-text');
+
+            if (editIndex >= 0) {
+                const map = availableMaps[editIndex];
+                title.innerHTML = '<i class="fas fa-map-marked-alt mr-2"></i>Modifier la carte';
+                nameInput.value = map.name;
+                previewContainer.classList.remove('hidden');
+                previewImage.src = map.filename;
+                document.querySelector(`input[name="map-type"][value="${map.type}"]`).checked = true;
+                saveText.textContent = 'Modifier';
+            } else {
+                title.innerHTML = '<i class="fas fa-map-marked-alt mr-2"></i>Ajouter une carte';
+                nameInput.value = '';
+                fileInput.value = '';
+                previewContainer.classList.add('hidden');
+                document.querySelector('input[name="map-type"][value="player"]').checked = true;
+                saveText.textContent = 'Ajouter';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeMapModal() {
+            document.getElementById('map-modal').classList.add('hidden');
+            editingMapIndex = -1;
+        }
+
+        function editMap(index) {
+            openMapModal(index);
+        }
+
+        function deleteMap(index) {
+            if (availableMaps[index].isDefault) {
+                alert('Impossible de supprimer une carte par défaut.');
+                return;
+            }
+
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette carte ?')) {
+                availableMaps.splice(index, 1);
+                saveMapsData();
+                renderMapsGrid();
+            }
+        }
+
+        function setupMapsEventListeners() {
+            // Bouton ajouter une carte
+            document.getElementById('add-map-btn')?.addEventListener('click', () => openMapModal());
+
+            // Boutons de la modal
+            document.getElementById('close-map-modal')?.addEventListener('click', closeMapModal);
+            document.getElementById('cancel-map-btn')?.addEventListener('click', closeMapModal);
+            document.getElementById('save-map-btn')?.addEventListener('click', saveMap);
+
+            // Preview de l'image lors de la sélection
+            document.getElementById('map-file-input')?.addEventListener('change', handleMapFileSelect);
+        }
+
+        function handleMapFileSelect(event) {
+            const file = event.target.files[0];
+            const previewContainer = document.getElementById('map-preview-container');
+            const previewImage = document.getElementById('map-preview-image');
+
+            if (file && file.type.match('image.*')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveMap() {
+            const nameInput = document.getElementById('map-name-input');
+            const fileInput = document.getElementById('map-file-input');
+            const mapType = document.querySelector('input[name="map-type"]:checked').value;
+
+            if (!nameInput.value.trim()) {
+                alert('Veuillez entrer un nom pour la carte.');
+                return;
+            }
+
+            if (editingMapIndex >= 0) {
+                // Modification d'une carte existante
+                availableMaps[editingMapIndex].name = nameInput.value.trim();
+                availableMaps[editingMapIndex].type = mapType;
+
+                if (fileInput.files.length > 0) {
+                    // Nouvelle image sélectionnée
+                    const file = fileInput.files[0];
+                    const filename = `map_${Date.now()}_${file.name}`;
+                    availableMaps[editingMapIndex].filename = filename;
+
+                    // Note: Dans un vrai système, ici on uploadrait le fichier
+                    // Pour cette démo, on utilise un data URL
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        availableMaps[editingMapIndex].dataUrl = e.target.result;
+                        saveMapsData();
+                        renderMapsGrid();
+                        closeMapModal();
+                    };
+                    reader.readAsDataURL(file);
+                    return;
+                }
+            } else {
+                // Nouvelle carte
+                if (fileInput.files.length === 0) {
+                    alert('Veuillez sélectionner un fichier image.');
+                    return;
+                }
+
+                const file = fileInput.files[0];
+                const filename = `map_${Date.now()}_${file.name}`;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const newMap = {
+                        id: Date.now(),
+                        name: nameInput.value.trim(),
+                        filename: filename,
+                        type: mapType,
+                        isDefault: false,
+                        dataUrl: e.target.result
+                    };
+
+                    availableMaps.push(newMap);
+                    saveMapsData();
+                    renderMapsGrid();
+                    closeMapModal();
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+
+            saveMapsData();
+            renderMapsGrid();
+            closeMapModal();
+        }
 
         // --- Authentication Debug Logs ---
         function logAuth(message, data = null) {
@@ -735,48 +670,12 @@
 
             // Update rumeurs tab content
             const rumeursTab = document.getElementById('rumeurs-tab');
-            // Ajouter les sections Rumeurs (support multiple) et Tradition_Ancienne si elles existent
-            let rumeursContent = '';
-            if (location.Rumeurs && location.Rumeurs.length > 0) {
-                const rumeursValides = location.Rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
-
-                if (rumeursValides.length > 0) {
-                    rumeursContent += `
-                        <div class="mt-4 bg-yellow-800 bg-opacity-30 border border-yellow-600 rounded-lg p-4">
-                            <div class="font-bold text-yellow-300 mb-2 flex items-center">
-                                <i class="fas fa-ear-listen mr-2"></i>
-                                ${rumeursValides.length > 1 ? 'Rumeurs' : 'Rumeur'}
-                            </div>
-                    `;
-
-                    rumeursValides.forEach((rumeur, index) => {
-                        const marginClass = index > 0 ? 'mt-3 pt-3 border-t border-yellow-600 border-opacity-50' : '';
-                        rumeursContent += `
-                            <div class="${marginClass} text-yellow-100 text-sm italic leading-relaxed">
-                                ${rumeur}
-                            </div>
-                        `;
-                    });
-
-                    rumeursContent += `</div>`;
-                }
-            }
-            // Support de l'ancienne structure avec Rumeur simple
-            else if (location.Rumeur && location.Rumeur !== "A définir") {
-                rumeursContent += `
-                    <div class="mt-4 bg-yellow-800 bg-opacity-30 border border-yellow-600 rounded-lg p-4">
-                        <div class="font-bold text-yellow-300 mb-2 flex items-center">
-                            <i class="fas fa-ear-listen mr-2"></i>
-                            Rumeur
-                        </div>
-                        <div class="text-yellow-100 text-sm italic leading-relaxed">
-                            ${location.Rumeur}
-                        </div>
-                    </div>
-                `;
-            }
-            rumeursTab.innerHTML = `<div class="text-view">${rumeursContent || '<p class="text-gray-500 italic">Aucune rumeur connue.</p>'}</div>`;
-
+            rumeursTab.innerHTML = `
+                <div class="text-view">
+                    <h3>Rumeurs</h3>
+                    <p>${location.Rumeur || 'Aucune rumeur connue.'}</p>
+                </div>
+            `;
 
             // Update tradition tab content
             const traditionTab = document.getElementById('tradition-tab');
@@ -786,67 +685,6 @@
                     <p>${location.Tradition_Ancienne || 'Aucune tradition ancienne connue.'}</p>
                 </div>
             `;
-
-            // Update tables tab content
-            const tablesTab = document.getElementById('tables-tab');
-            const tables = getLocationTables(location);
-
-            if (tables.length > 0) {
-                if (infoBox.classList.contains('expanded') && tables.length > 1) {
-                    // Multi-tab view for expanded mode with multiple tables
-                    const tableTabs = tables.map((table, index) =>
-                        `<button class="image-tab-button ${index === 0 ? 'active' : ''}" data-image-index="${index}">Table ${index + 1}</button>`
-                    ).join('');
-
-                    const tableContents = tables.map((table, index) =>
-                        `<div class="image-content ${index === 0 ? 'active' : ''}" data-image-index="${index}">
-                            <div class="image-view">
-                                <img src="${table}" alt="Table aléatoire ${location.name}" title="${table.split('/').pop()}" onerror="handleImageError(this)">
-                            </div>
-                        </div>`
-                    ).join('');
-
-                    tablesTab.innerHTML = `
-                        <div class="image-tabs-container">
-                            <div class="image-tabs">${tableTabs}</div>
-                            <div class="image-contents">${tableContents}</div>
-                        </div>
-                    `;
-
-                    setupImageTabSwitching();
-                    setupImageClickHandlers();
-                } else {
-                    // Single table view (compact mode or single table)
-                    const defaultTable = getDefaultLocationTable(location);
-                    const titleHtml = !infoBox.classList.contains('expanded') ? `<div class="compact-title">
-                                    <span style="font-family: 'Merriweather', serif;">Tables - ${location.name}</span>
-                                </div>` : '';
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            ${titleHtml}
-                            <img src="${defaultTable}" alt="Table aléatoire ${location.name}" title="${defaultTable.split('/').pop()}" onerror="handleImageError(this)" class="modal-image">
-                        </div>
-                    `;
-                    setupImageClickHandlers();
-                }
-            } else {
-                // No tables - show placeholder
-                if (!infoBox.classList.contains('expanded')) {
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            <div class="compact-title">
-                                <span style="font-family: 'Merriweather', serif;">Tables - ${location.name}</span>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            <div class="image-placeholder">Aucune table disponible</div>
-                        </div>
-                    `;
-                }
-            }
 
             // Update header title
             updateInfoBoxHeaderTitle(location.name);
@@ -1040,36 +878,6 @@
             return '';
         }
 
-        function getLocationTables(location) {
-            if (location.tables && Array.isArray(location.tables)) {
-                return location.tables.map(table => table.url).filter(url => url);
-            }
-            return [];
-        }
-
-        function getDefaultLocationTable(location) {
-            if (location.tables && Array.isArray(location.tables)) {
-                const defaultTable = location.tables.find(table => table.isDefault);
-                return defaultTable ? defaultTable.url : (location.tables[0] ? location.tables[0].url : '');
-            }
-            return '';
-        }
-
-        function getRegionTables(region) {
-            if (region.tables && Array.isArray(region.tables)) {
-                return region.tables.map(table => table.url).filter(url => url);
-            }
-            return [];
-        }
-
-        function getDefaultRegionTable(region) {
-            if (region.tables && Array.isArray(region.tables)) {
-                const defaultTable = region.tables.find(table => table.isDefault);
-                return defaultTable ? defaultTable.url : (region.tables[0] ? region.tables[0].url : '');
-            }
-            return '';
-        }
-
         function startDrawingFromLocation(event, location) {
             console.log("🎯 Starting drawing from location:", location.name);
 
@@ -1137,9 +945,6 @@
             // Update tradition tab to show tradition editing interface
             updateTraditionTabForEdit(location);
 
-            // Update tables tab to show tables editing interface
-            updateTablesTabForEdit(location);
-
             // Add edit controls at the bottom
             addEditControls();
         }
@@ -1155,25 +960,23 @@
 
             imageTab.innerHTML = `
                 <div class="space-y-4">
-                    <div class="edit-section">
-                        <label class="edit-section-label">Images (max 5)</label>
+                    <div class="bg-gray-700 p-3 rounded-md">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Images (max 5)</label>
                         <div id="edit-images-container">${imagesHtml}</div>
-                        <button id="add-image-btn" class="edit-add-button">Ajouter une image</button>
+                        <button id="add-image-btn" class="mt-2 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-md text-sm">Ajouter une image</button>
                     </div>
-                    <div class="edit-section">
-                        <label class="edit-section-label">Couleur</label>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Couleur</label>
                         <div class="flex space-x-2" id="edit-color-picker">${colorPickerHtml}</div>
                     </div>
-                    <div class="edit-section">
-                        <div class="flex items-center space-x-4">
-                            <div class="flex items-center">
-                                <input id="edit-known" type="checkbox" ${location.known ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <label for="edit-known" class="ml-2 block text-sm text-gray-300">Connu</label>
-                            </div>
-                            <div class="flex items-center">
-                                <input id="edit-visited" type="checkbox" ${location.visited ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <label for="edit-visited" class="ml-2 block text-sm text-gray-300">Visité</label>
-                            </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center">
+                            <input id="edit-known" type="checkbox" ${location.known ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <label for="edit-known" class="ml-2 block text-sm text-gray-300">Connu</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input id="edit-visited" type="checkbox" ${location.visited ? 'checked' : ''} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <label for="edit-visited" class="ml-2 block text-sm text-gray-300">Visité</label>
                         </div>
                     </div>
                 </div>
@@ -1188,14 +991,14 @@
             const textTab = document.getElementById('text-tab');
             textTab.innerHTML = `
                 <div class="text-view space-y-4">
-                    <div class="edit-section">
-                        <label class="edit-section-label">Nom</label>
-                        <input type="text" id="edit-name" value="${location.name}" placeholder="Nom" class="edit-input">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nom</label>
+                        <input type="text" id="edit-name" value="${location.name}" placeholder="Nom" class="w-full bg-gray-800 border border-gray-600 rounded-md py-2 px-3 text-white">
                     </div>
-                    <div class="edit-section">
-                        <label class="edit-section-label">Description</label>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
                         <div class="flex items-start space-x-2">
-                            <textarea id="edit-desc" rows="4" placeholder="Description" class="edit-textarea flex-1">${location.description || ''}</textarea>
+                            <textarea id="edit-desc" rows="4" placeholder="Description" class="flex-1 bg-gray-800 border border-gray-600 rounded-md py-2 px-3 text-white">${location.description || ''}</textarea>
                             <button id="generate-edit-desc" class="p-2 bg-purple-600 hover:bg-purple-700 rounded-md" title="Générer une description"><span class="gemini-icon">✨</span></button>
                         </div>
                     </div>
@@ -1207,13 +1010,11 @@
 
         function updateRumeursTabForEdit(location) {
             const rumeursTab = document.getElementById('rumeurs-tab');
-            // Utiliser un champ textarea pour les rumeurs multiples, séparées par des sauts de ligne
-            const rumeursString = Array.isArray(location.Rumeurs) ? location.Rumeurs.join('\n') : (location.Rumeur || '');
             rumeursTab.innerHTML = `
                 <div class="text-view space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Rumeurs</label>
-                        <textarea id="edit-rumeur" rows="6" placeholder="Rumeur" class="w-full bg-gray-800 border border-gray-600 rounded-md py-2 px-3 text-white">${rumeursString}</textarea>
+                        <textarea id="edit-rumeur" rows="6" placeholder="Rumeur" class="w-full bg-gray-800 border border-gray-600 rounded-md py-2 px-3 text-white">${location.Rumeur || ''}</textarea>
                     </div>
                 </div>
             `;
@@ -1229,129 +1030,6 @@
                     </div>
                 </div>
             `;
-        }
-
-        function updateTablesTabForEdit(location) {
-            const tablesTab = document.getElementById('tables-tab');
-            const tables = location.tables || [];
-            const tablesHtml = generateTablesEditHTML(tables);
-
-            tablesTab.innerHTML = `
-                <div class="space-y-4">
-                    <div class="bg-gray-700 p-3 rounded-md">
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Tables aléatoires (max 5)</label>
-                        <div id="edit-tables-container">${tablesHtml}</div>
-                        <button id="add-table-btn" class="mt-2 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-md text-sm">Ajouter une table</button>
-                    </div>
-                </div>
-            `;
-
-            setupTablesEditListeners();
-        }
-
-        function generateTablesEditHTML(tables) {
-            if (!tables || tables.length === 0) {
-                return '<div class="text-gray-400 text-sm">Aucune table</div>';
-            }
-
-            return tables.map((table, index) => `
-                <div class="table-edit-item flex items-center space-x-2 p-2 rounded">
-                    <input type="url" class="table-url-input flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white text-sm" value="${table.url || ''}" placeholder="Chemin vers la table (ex: images/Tables/Table-Bois-de-Chet.jpg)">
-                    <label class="flex items-center text-sm">
-                        <input type="checkbox" class="default-table-checkbox mr-1" ${table.isDefault ? 'checked' : ''}>
-                        <span class="text-gray-300">Défaut</span>
-                    </label>
-                    <button class="remove-table-btn text-red-400 hover:text-red-300 px-2 py-1" data-index="${index}">
-                        <i class="fas fa-trash text-xs"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function setupTablesEditListeners() {
-            const container = document.getElementById('edit-tables-container');
-            const addButton = document.getElementById('add-table-btn');
-
-            if (addButton) {
-                addButton.addEventListener('click', addNewTableRow);
-            }
-
-            if (container) {
-                container.addEventListener('click', (e) => {
-                    if (e.target.closest('.remove-table-btn')) {
-                        const button = e.target.closest('.remove-table-btn');
-                        const item = button.closest('.table-edit-item');
-                        if (item) {
-                            item.remove();
-                            updateTableIndices();
-                        }
-                    }
-                });
-
-                container.addEventListener('change', (e) => {
-                    if (e.target.classList.contains('default-table-checkbox') && e.target.checked) {
-                        // Uncheck other default checkboxes
-                        container.querySelectorAll('.default-table-checkbox').forEach(cb => {
-                            if (cb !== e.target) cb.checked = false;
-                        });
-                    }
-                });
-            }
-        }
-
-        function addNewTableRow() {
-            const container = document.getElementById('edit-tables-container');
-            const currentTables = container.querySelectorAll('.table-edit-item');
-
-            if (currentTables.length >= 5) {
-                alert('Maximum 5 tables autorisées');
-                return;
-            }
-
-            const newIndex = currentTables.length;
-            const newRow = document.createElement('div');
-            newRow.className = 'table-edit-item flex items-center space-x-2 p-2 rounded';
-            newRow.innerHTML = `
-                <input type="url" class="table-url-input flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white text-sm" placeholder="Chemin vers la table (ex: images/Tables/Table-Bois-de-Chet.jpg)">
-                <label class="flex items-center text-sm">
-                    <input type="checkbox" class="default-table-checkbox mr-1" ${newIndex === 0 ? 'checked' : ''}>
-                    <span class="text-gray-300">Défaut</span>
-                </label>
-                <button class="remove-table-btn text-red-400 hover:text-red-300 px-2 py-1" data-index="${newIndex}">
-                    <i class="fas fa-trash text-xs"></i>
-                </button>
-            `;
-
-            container.appendChild(newRow);
-            updateTableIndices();
-        }
-
-        function updateTableIndices() {
-            const container = document.getElementById('edit-tables-container');
-            container.querySelectorAll('.remove-table-btn').forEach((btn, index) => {
-                btn.dataset.index = index;
-            });
-        }
-
-        function collectTablesFromEdit() {
-            const container = document.getElementById('edit-tables-container');
-            const tables = [];
-
-            container.querySelectorAll('.table-edit-item').forEach(item => {
-                const url = item.querySelector('.table-url-input').value.trim();
-                const isDefault = item.querySelector('.default-table-checkbox').checked;
-
-                if (url) {
-                    tables.push({ url, isDefault });
-                }
-            });
-
-            // Ensure at least one default if tables exist
-            if (tables.length > 0 && !tables.some(table => table.isDefault)) {
-                tables[0].isDefault = true;
-            }
-
-            return tables;
         }
 
         function addEditControls() {
@@ -1384,90 +1062,6 @@
             });
         }
 
-        function generateImageEditHTML(images) {
-            if (!images || images.length === 0) {
-                return '<div class="text-gray-400 text-sm">Aucune image</div>';
-            }
-
-            return images.map((image, index) => `
-                <div class="edit-item-row">
-                    <input type="url" class="edit-item-input" value="${image.url || ''}" placeholder="URL de l'image">
-                    <label class="flex items-center text-sm">
-                        <input type="checkbox" class="edit-item-checkbox" ${image.isDefault ? 'checked' : ''}>
-                        <span class="text-gray-300">Défaut</span>
-                    </label>
-                    <button class="edit-item-remove" data-index="${index}">
-                        <i class="fas fa-trash text-xs"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function setupImageEditListeners() {
-            const container = document.getElementById('edit-images-container');
-            const addButton = document.getElementById('add-image-btn');
-
-            if (addButton) {
-                addButton.addEventListener('click', addNewImageRow);
-            }
-
-            if (container) {
-                container.addEventListener('click', (e) => {
-                    if (e.target.closest('.remove-image-btn')) {
-                        const button = e.target.closest('.remove-image-btn');
-                        const item = button.closest('.image-edit-item');
-                        if (item) {
-                            item.remove();
-                            updateImageIndices();
-                        }
-                    }
-                });
-
-                container.addEventListener('change', (e) => {
-                    if (e.target.classList.contains('edit-item-checkbox') && e.target.checked) {
-                        // Uncheck other default checkboxes
-                        container.querySelectorAll('.edit-item-checkbox').forEach(cb => {
-                            if (cb !== e.target) cb.checked = false;
-                        });
-                    }
-                });
-            }
-        }
-
-        function addNewImageRow() {
-            const container = document.getElementById('edit-images-container');
-            const currentImages = container.querySelectorAll('.image-edit-item');
-
-            if (currentImages.length >= 5) {
-                alert('Maximum 5 images autorisées');
-                return;
-            }
-
-            const newIndex = currentImages.length;
-            const newRow = document.createElement('div');
-            newRow.className = 'image-edit-item flex items-center space-x-2 p-2 rounded';
-            newRow.innerHTML = `
-                <input type="url" class="image-url-input flex-1 bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white text-sm" placeholder="URL de l'image">
-                <label class="flex items-center text-sm">
-                    <input type="checkbox" class="default-image-checkbox mr-1" ${newIndex === 0 ? 'checked' : ''}>
-                    <span class="text-gray-300">Défaut</span>
-                </label>
-                <button class="remove-image-btn text-red-400 hover:text-red-300 px-2 py-1" data-index="${newIndex}">
-                    <i class="fas fa-trash text-xs"></i>
-                </button>
-            `;
-
-            container.appendChild(newRow);
-            updateImageIndices();
-        }
-
-        function updateImageIndices() {
-            const container = document.getElementById('edit-images-container');
-            container.querySelectorAll('.remove-image-btn').forEach((btn, index) => {
-                btn.dataset.index = index;
-            });
-        }
-
         function setupStatusCheckboxListeners() {
             document.getElementById('edit-visited').addEventListener('change', (e) => {
                 if (e.target.checked) {
@@ -1481,8 +1075,8 @@
             const images = [];
 
             container.querySelectorAll('.image-edit-item').forEach(item => {
-                const url = item.querySelector('.edit-item-input').value.trim();
-                const isDefault = item.querySelector('.edit-item-checkbox').checked;
+                const url = item.querySelector('.image-url-input').value.trim();
+                const isDefault = item.querySelector('.default-image-checkbox').checked;
 
                 if (url) {
                     images.push({ url, isDefault });
@@ -1503,8 +1097,8 @@
 
             location.name = document.getElementById('edit-name').value;
             location.description = document.getElementById('edit-desc').value;
-            location.Rumeurs = document.getElementById('edit-rumeur').value.split('\n').filter(r => r.trim() !== ''); // Split by newline for multiple rumors
-            location.Tradition_Ancienne = document.getElementById('edit-tradition').value;
+            location.Rumeur = document.getElementById('edit-rumeur').value || 'A définir';
+            location.Tradition_Ancienne = document.getElementById('edit-tradition').value || 'A définir';
             location.color = document.querySelector('#edit-color-picker .color-swatch.selected').dataset.color;
             location.known = document.getElementById('edit-known').checked;
             location.visited = document.getElementById('edit-visited').checked;
@@ -1521,14 +1115,6 @@
                 delete location.imageUrl;
             }
 
-            // Handle tables
-            const tables = collectTablesFromEdit();
-            if (tables.length > 0) {
-                location.tables = tables;
-            } else {
-                delete location.tables;
-            }
-
             saveLocationsToLocal();
             renderLocations();
             hideInfoBox();
@@ -1537,13 +1123,14 @@
         function cancelEdit() {
             // Remove edit mode flag
             delete infoBox.dataset.editMode;
+
             // Remove edit controls
             const editControls = document.getElementById('edit-controls');
             if (editControls) {
                 editControls.remove();
             }
 
-            // Re-show the location info without edit mode - reload fresh content
+            // Re-show the location info without edit mode
             const location = locationsData.locations.find(loc => loc.id === activeLocationId);
             if (location) {
                 showLocationContent(location);
@@ -1623,48 +1210,12 @@
 
             // Update rumeurs tab content
             const rumeursTab = document.getElementById('rumeurs-tab');
-            // Ajouter les sections Rumeurs (support multiple) et Tradition_Ancienne si elles existent
-            let rumeursContent = '';
-            if (location.Rumeurs && location.Rumeurs.length > 0) {
-                const rumeursValides = location.Rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
-
-                if (rumeursValides.length > 0) {
-                    rumeursContent += `
-                        <div class="mt-4 bg-yellow-800 bg-opacity-30 border border-yellow-600 rounded-lg p-4">
-                            <div class="font-bold text-yellow-300 mb-2 flex items-center">
-                                <i class="fas fa-ear-listen mr-2"></i>
-                                ${rumeursValides.length > 1 ? 'Rumeurs' : 'Rumeur'}
-                            </div>
-                    `;
-
-                    rumeursValides.forEach((rumeur, index) => {
-                        const marginClass = index > 0 ? 'mt-3 pt-3 border-t border-yellow-600 border-opacity-50' : '';
-                        rumeursContent += `
-                            <div class="${marginClass} text-yellow-100 text-sm italic leading-relaxed">
-                                ${rumeur}
-                            </div>
-                        `;
-                    });
-
-                    rumeursContent += `</div>`;
-                }
-            }
-            // Support de l'ancienne structure avec Rumeur simple
-            else if (location.Rumeur && location.Rumeur !== "A définir") {
-                rumeursContent += `
-                    <div class="mt-4 bg-yellow-800 bg-opacity-30 border border-yellow-600 rounded-lg p-4">
-                        <div class="font-bold text-yellow-300 mb-2 flex items-center">
-                            <i class="fas fa-ear-listen mr-2"></i>
-                            Rumeur
-                        </div>
-                        <div class="text-yellow-100 text-sm italic leading-relaxed">
-                            ${location.Rumeur}
-                        </div>
-                    </div>
-                `;
-            }
-            rumeursTab.innerHTML = `<div class="text-view">${rumeursContent || '<p class="text-gray-500 italic">Aucune rumeur connue.</p>'}</div>`;
-
+            rumeursTab.innerHTML = `
+                <div class="text-view">
+                    <h3>Rumeurs</h3>
+                    <p>${location.Rumeur || 'Aucune rumeur connue.'}</p>
+                </div>
+            `;
 
             // Update tradition tab content
             const traditionTab = document.getElementById('tradition-tab');
@@ -1674,67 +1225,6 @@
                     <p>${location.Tradition_Ancienne || 'Aucune tradition ancienne connue.'}</p>
                 </div>
             `;
-
-            // Update tables tab content - FIX: Utiliser la même logique que dans showInfoBox
-            const tablesTab = document.getElementById('tables-tab');
-            const tables = getLocationTables(location);
-
-            if (tables.length > 0) {
-                if (infoBox.classList.contains('expanded') && tables.length > 1) {
-                    // Multi-tab view for expanded mode with multiple tables
-                    const tableTabs = tables.map((table, index) =>
-                        `<button class="image-tab-button ${index === 0 ? 'active' : ''}" data-image-index="${index}">Table ${index + 1}</button>`
-                    ).join('');
-
-                    const tableContents = tables.map((table, index) =>
-                        `<div class="image-content ${index === 0 ? 'active' : ''}" data-image-index="${index}">
-                            <div class="image-view">
-                                <img src="${table}" alt="Table aléatoire ${location.name}" title="${table.split('/').pop()}" onerror="handleImageError(this)">
-                            </div>
-                        </div>`
-                    ).join('');
-
-                    tablesTab.innerHTML = `
-                        <div class="image-tabs-container">
-                            <div class="image-tabs">${tableTabs}</div>
-                            <div class="image-contents">${tableContents}</div>
-                        </div>
-                    `;
-
-                    setupImageTabSwitching();
-                    setupImageClickHandlers();
-                } else {
-                    // Single table view (compact mode or single table)
-                    const defaultTable = getDefaultLocationTable(location);
-                    const titleHtml = !infoBox.classList.contains('expanded') ? `<div class="compact-title">
-                                    <span style="font-family: 'Merriweather', serif;">Tables - ${location.name}</span>
-                                </div>` : '';
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            ${titleHtml}
-                            <img src="${defaultTable}" alt="Table aléatoire ${location.name}" title="${defaultTable.split('/').pop()}" onerror="handleImageError(this)" class="modal-image">
-                        </div>
-                    `;
-                    setupImageClickHandlers();
-                }
-            } else {
-                // No tables - show placeholder
-                if (!infoBox.classList.contains('expanded')) {
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            <div class="compact-title">
-                                <span style="font-family: 'Merriweather', serif;">Tables - ${location.name}</span>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            <div class="image-placeholder">Aucune table disponible</div>
-                        </div>
-                    `;
-                }
-            }
         }
 
         // --- Info box sizing/positioning ---
@@ -1883,12 +1373,183 @@
             }, SYNC_DELAY);
         }
 
-        // --- Calendar Functions (externalisées vers js/calendar.js) ---
-        // Les fonctions calendrier sont maintenant dans le module Calendar
+        // --- Calendar Functions ---
+        function loadCalendarFromCSV(csvContent) {
+            const lines = csvContent.trim().split('\n');
+            const calendar = [];
 
-        // --- Narration Functions (Points clés uniquement) ---
-        function getNarrationPromptAddition() {
-            return '\n\nFournis seulement des mots-clés évocateurs séparés par des virgules, pour inspiration du Meneur de Jeu.';
+            for (const line of lines) {
+                const parts = line.split(',');
+                if (parts.length >= 3) {
+                    const monthName = parts[0].trim();
+                    const season = parts[1].trim();
+                    const days = parts.slice(2).map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+
+                    calendar.push({
+                        name: monthName,
+                        season: season,
+                        days: days
+                    });
+                }
+            }
+
+            return calendar;
+        }
+
+        function saveCalendarToLocal() {
+            if (calendarData) {
+                localStorage.setItem('calendarData', JSON.stringify(calendarData));
+            }
+            if (currentCalendarDate) {
+                localStorage.setItem('currentCalendarDate', JSON.stringify(currentCalendarDate));
+            }
+            localStorage.setItem('isCalendarMode', isCalendarMode.toString());
+        }
+
+        function loadCalendarFromLocal() {
+            const savedCalendar = localStorage.getItem('calendarData');
+            const savedDate = localStorage.getItem('currentCalendarDate');
+            const savedMode = localStorage.getItem('isCalendarMode');
+
+            if (savedCalendar) {
+                try {
+                    calendarData = JSON.parse(savedCalendar);
+                } catch (e) {
+                    console.error('Error loading calendar:', e);
+                }
+            }
+
+            if (savedDate) {
+                try {
+                    currentCalendarDate = JSON.parse(savedDate);
+                } catch (e) {
+                    console.error('Error loading calendar date:', e);
+                }
+            }
+
+            isCalendarMode = savedMode === 'true';
+        }
+
+        function updateCalendarUI() {
+            const calendarStatus = document.getElementById('calendar-status-text');
+            const dateSelector = document.getElementById('calendar-date-selector');
+            const monthSelect = document.getElementById('calendar-month-select');
+            const daySelect = document.getElementById('calendar-day-select');
+            const manualSeasons = document.getElementById('manual-seasons-section');
+            const seasonModeInfo = document.getElementById('season-mode-info');
+
+            if (calendarData && calendarData.length > 0) {
+                isCalendarMode = true;
+                calendarStatus.textContent = `Calendrier chargé (${calendarData.length} mois)`;
+                calendarStatus.className = 'text-green-400';
+                dateSelector.classList.remove('hidden');
+
+                // Populate month selector with season icons
+                monthSelect.innerHTML = '<option value="">Sélectionner un mois</option>';
+                calendarData.forEach((month, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    // Get season icon
+                    const seasonMainName = month.season.toLowerCase().split('-')[0];
+                    const seasonIcon = seasonSymbols[seasonMainName] || '🌿';
+                    option.textContent = `${seasonIcon} ${month.name}`;
+                    monthSelect.appendChild(option);
+                });
+
+                // Set current selections
+                if (currentCalendarDate) {
+                    const monthIndex = calendarData.findIndex(m => m.name === currentCalendarDate.month);
+                    if (monthIndex >= 0) {
+                        monthSelect.value = monthIndex;
+                        updateDaySelector();
+                        daySelect.value = currentCalendarDate.day;
+                    }
+                }
+
+                // Hide manual seasons completely
+                manualSeasons.style.display = 'none';
+                seasonModeInfo.textContent = 'Mode calendrier : la saison est déterminée automatiquement par la date sélectionnée.';
+            } else {
+                isCalendarMode = false;
+                calendarStatus.textContent = 'Aucun calendrier chargé';
+                calendarStatus.className = 'text-gray-400';
+                dateSelector.classList.add('hidden');
+
+                // Show manual seasons
+                manualSeasons.style.display = 'block';
+                seasonModeInfo.textContent = 'Mode manuel : sélectionnez une saison. Importez un calendrier CSV pour synchroniser automatiquement les saisons avec les dates.';
+            }
+        }
+
+        function updateDaySelector() {
+            const monthSelect = document.getElementById('calendar-month-select');
+            const daySelect = document.getElementById('calendar-day-select');
+            const monthIndex = parseInt(monthSelect.value);
+
+            daySelect.innerHTML = '<option value="">Sélectionner un jour</option>';
+
+            if (monthIndex >= 0 && calendarData[monthIndex]) {
+                const month = calendarData[monthIndex];
+                month.days.forEach(day => {
+                    const option = document.createElement('option');
+                    option.value = day;
+                    option.textContent = day;
+                    daySelect.appendChild(option);
+                });
+            }
+        }
+
+        function updateCalendarDate() {
+            const monthSelect = document.getElementById('calendar-month-select');
+            const daySelect = document.getElementById('calendar-day-select');
+            const monthIndex = parseInt(monthSelect.value);
+            const day = parseInt(daySelect.value);
+
+            if (monthIndex >= 0 && !isNaN(day) && calendarData[monthIndex]) {
+                const month = calendarData[monthIndex];
+                currentCalendarDate = {
+                    month: month.name,
+                    day: day
+                };
+
+                // Update season based on exact calendar season - use the season directly from CSV
+                const calendarSeason = month.season.toLowerCase();
+                console.log("📅 Saison du calendrier CSV:", calendarSeason, "pour le mois:", month.name);
+
+                // Use the exact season from the CSV as-is
+                currentSeason = calendarSeason;
+
+                // Save the season for consistency
+                localStorage.setItem('currentSeason', currentSeason);
+
+                updateSeasonDisplay();
+                saveCalendarToLocal();
+                scheduleAutoSync();
+            }
+        }
+
+        function exportCalendarToCSV() {
+            if (!calendarData || calendarData.length === 0) {
+                alert('Aucun calendrier à exporter');
+                return;
+            }
+
+            const csvLines = calendarData.map(month => {
+                const daysStr = month.days.join(',');
+                return `${month.name},${month.season},${daysStr}`;
+            });
+
+            const csvContent = csvLines.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'calendrier.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // --- Season Functions ---
@@ -1939,11 +1600,6 @@
             }
         }
 
-        // Exposer les fonctions globalement pour le module Calendar
-        window.updateSeasonDisplay = updateSeasonDisplay;
-        window.scheduleAutoSync = scheduleAutoSync;
-        window.seasonSymbols = seasonSymbols;
-
         function setupSeasonListeners() {
             // Season radio buttons (manual mode)
             document.querySelectorAll('input[name="season"]').forEach(radio => {
@@ -1957,14 +1613,72 @@
                 });
             });
 
-            // Les event listeners du calendrier sont maintenant gérés par le module Calendar
+            // Calendar upload button
+            const uploadBtn = document.getElementById('upload-calendar-btn');
+            const fileInput = document.getElementById('calendar-file-input');
+
+            if (uploadBtn && fileInput) {
+                uploadBtn.addEventListener('click', () => {
+                    fileInput.click();
+                });
+
+                fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file && file.type === 'text/csv') {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            try {
+                                calendarData = loadCalendarFromCSV(event.target.result);
+                                if (calendarData.length > 0) {
+                                    // Set default date (first day of first month)
+                                    currentCalendarDate = {
+                                        month: calendarData[0].name,
+                                        day: calendarData[0].days[0]
+                                    };
+                                    updateCalendarUI();
+                                    updateCalendarDate();
+                                    alert(`Calendrier importé avec succès (${calendarData.length} mois)`);
+                                } else {
+                                    alert('Fichier CSV invalide ou vide');
+                                }
+                            } catch (error) {
+                                console.error('Error importing calendar:', error);
+                                alert('Erreur lors de l\'importation du calendrier');
+                            }
+                        };
+                        reader.readAsText(file);
+                    } else {
+                        alert('Veuillez sélectionner un fichier CSV valide');
+                    }
+                    fileInput.value = ''; // Reset input
+                });
+            }
+
+            // Calendar export button
+            const exportBtn = document.getElementById('export-calendar-btn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', exportCalendarToCSV);
+            }
+
+            // Calendar month selector
+            const monthSelect = document.getElementById('calendar-month-select');
+            if (monthSelect) {
+                monthSelect.addEventListener('change', () => {
+                    updateDaySelector();
+                    updateCalendarDate();
+                });
+            }
+
+            // Calendar day selector
+            const daySelect = document.getElementById('calendar-day-select');
+            if (daySelect) {
+                daySelect.addEventListener('change', updateCalendarDate);
+            }
         }
 
         function loadSavedSeason() {
-            // Initialize Calendar module
-            if (window.Calendar) {
-                window.Calendar.init();
-            }
+            // Load calendar data first
+            loadCalendarFromLocal();
 
             const saved = localStorage.getItem('currentSeason');
             if (saved && seasonNames[saved]) {
@@ -1973,13 +1687,14 @@
 
             // Update UI based on calendar mode
             if (isCalendarMode && calendarData) {
-                // Calendar UI is handled by Calendar module
+                updateCalendarUI();
             } else {
                 // Update radio button for manual mode
                 const radioButton = document.querySelector(`input[name="season"][value="${currentSeason}"]`);
                 if (radioButton) {
                     radioButton.checked = true;
                 }
+                updateCalendarUI();
             }
 
             updateSeasonDisplay();
@@ -2190,6 +1905,7 @@
                 loadSavedContexts();
                 setupFilters();
                 loadSavedSeason(); // Load season at startup
+                loadMapsData(); // Load maps data at startup
                 logAuth("Initialisation de l'authentification...");
 
                 // Initialize authentication after a short delay to ensure DOM is ready
@@ -2384,48 +2100,12 @@
 
             // Update rumeurs tab content
             const rumeursTab = document.getElementById('rumeurs-tab');
-            // Ajouter les sections Rumeurs (support multiple) et Tradition_Ancienne si elles existent
-            let rumeursContent = '';
-            if (region.Rumeurs && region.Rumeurs.length > 0) {
-                const rumeursValides = region.Rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
-
-                if (rumeursValides.length > 0) {
-                    rumeursContent += `
-                        <div class="mt-4 bg-yellow-800 bg-opacity-30 border border-yellow-600 rounded-lg p-4">
-                            <div class="font-bold text-yellow-300 mb-2 flex items-center">
-                                <i class="fas fa-ear-listen mr-2"></i>
-                                ${rumeursValides.length > 1 ? 'Rumeurs' : 'Rumeur'}
-                            </div>
-                    `;
-
-                    rumeursValides.forEach((rumeur, index) => {
-                        const marginClass = index > 0 ? 'mt-3 pt-3 border-t border-yellow-600 border-opacity-50' : '';
-                        rumeursContent += `
-                            <div class="${marginClass} text-yellow-100 text-sm italic leading-relaxed">
-                                ${rumeur}
-                            </div>
-                        `;
-                    });
-
-                    rumeursContent += `</div>`;
-                }
-            }
-            // Support de l'ancienne structure avec Rumeur simple
-            else if (region.Rumeur && region.Rumeur !== "A définir") {
-                rumeursContent += `
-                    <div class="mt-4 bg-yellow-800 bg-opacity-30 border border-yellow-600 rounded-lg p-4">
-                        <div class="font-bold text-yellow-300 mb-2 flex items-center">
-                            <i class="fas fa-ear-listen mr-2"></i>
-                            Rumeur
-                        </div>
-                        <div class="text-yellow-100 text-sm italic leading-relaxed">
-                            ${region.Rumeur}
-                        </div>
-                    </div>
-                `;
-            }
-            rumeursTab.innerHTML = `<div class="text-view">${rumeursContent || '<p class="text-gray-500 italic">Aucune rumeur connue.</p>'}</div>`;
-
+            rumeursTab.innerHTML = `
+                <div class="text-view">
+                    <h3>Rumeurs</h3>
+                    <p>${region.Rumeur || 'Aucune rumeur connue.'}</p>
+                </div>
+            `;
 
             // Update tradition tab content
             const traditionTab = document.getElementById('tradition-tab');
@@ -2435,67 +2115,6 @@
                     <p>${region.Tradition_Ancienne || 'Aucune tradition ancienne connue.'}</p>
                 </div>
             `;
-
-            // Update tables tab content
-            const tablesTab = document.getElementById('tables-tab');
-            const tables = getRegionTables(region);
-
-            if (tables.length > 0) {
-                if (infoBox.classList.contains('expanded') && tables.length > 1) {
-                    // Multi-tab view for expanded mode with multiple tables
-                    const tableTabs = tables.map((table, index) =>
-                        `<button class="image-tab-button ${index === 0 ? 'active' : ''}" data-image-index="${index}">Table ${index + 1}</button>`
-                    ).join('');
-
-                    const tableContents = tables.map((table, index) =>
-                        `<div class="image-content ${index === 0 ? 'active' : ''}" data-image-index="${index}">
-                            <div class="image-view">
-                                <img src="${table}" alt="Table aléatoire ${region.name}" title="${table.split('/').pop()}" onerror="handleImageError(this)">
-                            </div>
-                        </div>`
-                    ).join('');
-
-                    tablesTab.innerHTML = `
-                        <div class="image-tabs-container">
-                            <div class="image-tabs">${tableTabs}</div>
-                            <div class="image-contents">${tableContents}</div>
-                        </div>
-                    `;
-
-                    setupImageTabSwitching();
-                    setupImageClickHandlers();
-                } else {
-                    // Single table view (compact mode or single table)
-                    const defaultTable = getDefaultRegionTable(region);
-                    const titleHtml = !infoBox.classList.contains('expanded') ? `<div class="compact-title">
-                                    <span style="font-family: 'Merriweather', serif;">Tables - ${region.name}</span>
-                                </div>` : '';
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            ${titleHtml}
-                            <img src="${defaultTable}" alt="Table aléatoire ${region.name}" title="${defaultTable.split('/').pop()}" onerror="handleImageError(this)" class="modal-image">
-                        </div>
-                    `;
-                    setupImageClickHandlers();
-                }
-            } else {
-                // No tables - show placeholder
-                if (!infoBox.classList.contains('expanded')) {
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            <div class="compact-title">
-                                <span style="font-family: 'Merriweather', serif;">Tables - ${region.name}</span>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            <div class="image-placeholder">Aucune table disponible</div>
-                        </div>
-                    `;
-                }
-            }
 
             // Update header title
             updateInfoBoxHeaderTitle(region.name);
@@ -2551,9 +2170,6 @@
             // Update tradition tab to show tradition editing interface
             updateTraditionTabForRegionEdit(region);
 
-            // Update tables tab to show tables editing interface
-            updateTablesTabForRegionEdit(region);
-
             // Add edit controls at the bottom
             addRegionEditControls();
         }
@@ -2608,13 +2224,11 @@
 
         function updateRumeursTabForRegionEdit(region) {
             const rumeursTab = document.getElementById('rumeurs-tab');
-            // Utiliser un champ textarea pour les rumeurs multiples, séparées par des sauts de ligne
-            const rumeursString = Array.isArray(region.Rumeurs) ? region.Rumeurs.join('\n') : (region.Rumeur || '');
             rumeursTab.innerHTML = `
                 <div class="text-view space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Rumeurs</label>
-                        <textarea id="edit-region-rumeur" rows="6" placeholder="Rumeur" class="w-full bg-gray-800 border border-gray-600 rounded-md py-2 px-3 text-white">${rumeursString}</textarea>
+                        <textarea id="edit-region-rumeur" rows="6" placeholder="Rumeur" class="w-full bg-gray-800 border border-gray-600 rounded-md py-2 px-3 text-white">${region.Rumeur || ''}</textarea>
                     </div>
                 </div>
             `;
@@ -2630,24 +2244,6 @@
                     </div>
                 </div>
             `;
-        }
-
-        function updateTablesTabForRegionEdit(region) {
-            const tablesTab = document.getElementById('tables-tab');
-            const tables = region.tables || [];
-            const tablesHtml = generateTablesEditHTML(tables);
-
-            tablesTab.innerHTML = `
-                <div class="space-y-4">
-                    <div class="bg-gray-700 p-3 rounded-md">
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Tables aléatoires (max 5)</label>
-                        <div id="edit-tables-container">${tablesHtml}</div>
-                        <button id="add-table-btn" class="mt-2 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-md text-sm">Ajouter une table</button>
-                    </div>
-                </div>
-            `;
-
-            setupTablesEditListeners();
         }
 
         function addRegionEditControls() {
@@ -2686,8 +2282,8 @@
 
             region.name = document.getElementById('edit-region-name').value;
             region.description = document.getElementById('edit-region-desc').value;
-            region.Rumeurs = document.getElementById('edit-region-rumeur').value.split('\n').filter(r => r.trim() !== ''); // Split by newline for multiple rumors
-            region.Tradition_Ancienne = document.getElementById('edit-region-tradition').value;
+            region.Rumeur = document.getElementById('edit-region-rumeur').value || 'A définir';
+            region.Tradition_Ancienne = document.getElementById('edit-region-tradition').value || 'A définir';
             region.color = document.querySelector('#edit-region-color-picker .color-swatch.selected').dataset.color;
 
             // Handle images
@@ -2696,14 +2292,6 @@
                 region.images = images;
             } else {
                 delete region.images;
-            }
-
-            // Handle tables
-            const tables = collectTablesFromEdit();
-            if (tables.length > 0) {
-                region.tables = tables;
-            } else {
-                delete region.tables;
             }
 
             saveRegionsToLocal();
@@ -2802,48 +2390,12 @@
 
             // Update rumeurs tab content
             const rumeursTab = document.getElementById('rumeurs-tab');
-            // Ajouter les sections Rumeurs (support multiple) et Tradition_Ancienne si elles existent
-            let rumeursContent = '';
-            if (region.Rumeurs && region.Rumeurs.length > 0) {
-                const rumeursValides = region.Rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
-
-                if (rumeursValides.length > 0) {
-                    rumeursContent += `
-                        <div class="mt-4 bg-yellow-800 bg-opacity-30 border border-yellow-600 rounded-lg p-4">
-                            <div class="font-bold text-yellow-300 mb-2 flex items-center">
-                                <i class="fas fa-ear-listen mr-2"></i>
-                                ${rumeursValides.length > 1 ? 'Rumeurs' : 'Rumeur'}
-                            </div>
-                    `;
-
-                    rumeursValides.forEach((rumeur, index) => {
-                        const marginClass = index > 0 ? 'mt-3 pt-3 border-t border-yellow-600 border-opacity-50' : '';
-                        rumeursContent += `
-                            <div class="${marginClass} text-yellow-100 text-sm italic leading-relaxed">
-                                ${rumeur}
-                            </div>
-                        `;
-                    });
-
-                    rumeursContent += `</div>`;
-                }
-            }
-            // Support de l'ancienne structure avec Rumeur simple
-            else if (region.Rumeur && region.Rumeur !== "A définir") {
-                rumeursContent += `
-                    <div class="mt-4 bg-yellow-800 bg-opacity-30 border border-yellow-600 rounded-lg p-4">
-                        <div class="font-bold text-yellow-300 mb-2 flex items-center">
-                            <i class="fas fa-ear-listen mr-2"></i>
-                            Rumeur
-                        </div>
-                        <div class="text-yellow-100 text-sm italic leading-relaxed">
-                            ${region.Rumeur}
-                        </div>
-                    </div>
-                `;
-            }
-            rumeursTab.innerHTML = `<div class="text-view">${rumeursContent || '<p class="text-gray-500 italic">Aucune rumeur connue.</p>'}</div>`;
-
+            rumeursTab.innerHTML = `
+                <div class="text-view">
+                    <h3>Rumeurs</h3>
+                    <p>${region.Rumeur || 'Aucune rumeur connue.'}</p>
+                </div>
+            `;
 
             // Update tradition tab content
             const traditionTab = document.getElementById('tradition-tab');
@@ -2853,67 +2405,6 @@
                     <p>${region.Tradition_Ancienne || 'Aucune tradition ancienne connue.'}</p>
                 </div>
             `;
-
-            // Update tables tab content
-            const tablesTab = document.getElementById('tables-tab');
-            const tables = getRegionTables(region);
-
-            if (tables.length > 0) {
-                if (infoBox.classList.contains('expanded') && tables.length > 1) {
-                    // Multi-tab view for expanded mode with multiple tables
-                    const tableTabs = tables.map((table, index) =>
-                        `<button class="image-tab-button ${index === 0 ? 'active' : ''}" data-image-index="${index}">Table ${index + 1}</button>`
-                    ).join('');
-
-                    const tableContents = tables.map((table, index) =>
-                        `<div class="image-content ${index === 0 ? 'active' : ''}" data-image-index="${index}">
-                            <div class="image-view">
-                                <img src="${table}" alt="Table aléatoire ${region.name}" title="${table.split('/').pop()}" onerror="handleImageError(this)">
-                            </div>
-                        </div>`
-                    ).join('');
-
-                    tablesTab.innerHTML = `
-                        <div class="image-tabs-container">
-                            <div class="image-tabs">${tableTabs}</div>
-                            <div class="image-contents">${tableContents}</div>
-                        </div>
-                    `;
-
-                    setupImageTabSwitching();
-                    setupImageClickHandlers();
-                } else {
-                    // Single table view (compact mode or single table)
-                    const defaultTable = getDefaultRegionTable(region);
-                    const titleHtml = !infoBox.classList.contains('expanded') ? `<div class="compact-title">
-                                    <span style="font-family: 'Merriweather', serif;">Tables - ${region.name}</span>
-                                </div>` : '';
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            ${titleHtml}
-                            <img src="${defaultTable}" alt="Table aléatoire ${region.name}" title="${defaultTable.split('/').pop()}" onerror="handleImageError(this)" class="modal-image">
-                        </div>
-                    `;
-                    setupImageClickHandlers();
-                }
-            } else {
-                // No tables - show placeholder
-                if (!infoBox.classList.contains('expanded')) {
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            <div class="compact-title">
-                                <span style="font-family: 'Merriweather', serif;">Tables - ${region.name}</span>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    tablesTab.innerHTML = `
-                        <div class="image-view">
-                            <div class="image-placeholder">Aucune table disponible</div>
-                        </div>
-                    `;
-                }
-            }
         }
 
         function deleteLocation(locationId) {
@@ -3047,7 +2538,7 @@
                     description: descInput.value,
                     color: selectedColor,
                     points: [...currentRegionPoints],
-                    Rumeurs: [], // Initialize Rumeurs as an empty array
+                    Rumeur: "A définir",
                     Tradition_Ancienne: "A définir"
                 };
 
@@ -3083,17 +2574,6 @@
             if (saved) {
                 try {
                     regionsData = JSON.parse(saved);
-                    // Ensure Rumeurs is an array for all regions
-                    regionsData.regions.forEach(region => {
-                        if (!Array.isArray(region.Rumeurs)) {
-                            if (region.Rumeur && region.Rumeur !== "A définir") {
-                                region.Rumeurs = [region.Rumeur];
-                            } else {
-                                region.Rumeurs = [];
-                            }
-                            delete region.Rumeur; // Remove the old Rumeur property
-                        }
-                    });
                 } catch (e) {
                     console.error('Failed to load regions from localStorage:', e);
                     regionsData = getDefaultRegions();
@@ -3448,7 +2928,7 @@
                 mapSwitchBtn.title = "Vue Joueurs";
             }
         });
-        document.getElementById('confirm-add-location').addEventListener('click', () => { const nameInput = document.getElementById('location-name-input'); const descInput = document.getElementById('location-desc-input'); const imageInput = document.getElementById('location-image-input'); const color = document.querySelector('#add-color-picker .selected').dataset.color; const known = document.getElementById('location-known-input').checked; const visited = document.getElementById('location-visited-input').checked; if (nameInput.value && newLocationCoords) { const newLocation = { id: Date.now(), name: nameInput.value, description: descInput.value, imageUrl: imageInput.value, color: color, known: known, visited: visited, type: "custom", coordinates: newLocationCoords, Rumeurs: [], Tradition_Ancienne: "A définir" }; locationsData.locations.push(newLocation); renderLocations(); saveLocationsToLocal(); } addLocationModal.classList.add('hidden'); nameInput.value = ''; descInput.value = ''; imageInput.value = ''; newLocationCoords = null; });
+        document.getElementById('confirm-add-location').addEventListener('click', () => { const nameInput = document.getElementById('location-name-input'); const descInput = document.getElementById('location-desc-input'); const imageInput = document.getElementById('location-image-input'); const color = document.querySelector('#add-color-picker .selected').dataset.color; const known = document.getElementById('location-known-input').checked; const visited = document.getElementById('location-visited-input').checked; if (nameInput.value && newLocationCoords) { const newLocation = { id: Date.now(), name: nameInput.value, description: descInput.value, imageUrl: imageInput.value, color: color, known: known, visited: visited, type: "custom", coordinates: newLocationCoords, Rumeur: "A définir", Tradition_Ancienne: "A définir" }; locationsData.locations.push(newLocation); renderLocations(); saveLocationsToLocal(); } addLocationModal.classList.add('hidden'); nameInput.value = ''; descInput.value = ''; imageInput.value = ''; newLocationCoords = null; });
         document.getElementById('cancel-add-location').addEventListener('click', () => { addLocationModal.classList.add('hidden'); document.getElementById('location-name-input').value = ''; document.getElementById('location-desc-input').value = ''; document.getElementById('location-image-input').value = ''; newLocationCoords = null; });
         function addLocation(event) { newLocationCoords = getCanvasCoordinates(event); addLocationModal.classList.remove('hidden'); document.getElementById('location-name-input').focus(); isAddingLocationMode = false; viewport.classList.remove('adding-location'); document.getElementById('add-location-mode').classList.remove('btn-active'); const addColorPicker = document.getElementById('add-color-picker'); addColorPicker.innerHTML = Object.keys(colorMap).map((color, index) => `<div class="color-swatch ${index === 0 ? 'selected' : ''}" data-color="${color}" style="background-color: ${colorMap[color]}"></div>`).join(''); addColorPicker.querySelectorAll('.color-swatch').forEach(swatch => { swatch.addEventListener('click', () => { addColorPicker.querySelector('.color-swatch.selected').classList.remove('selected'); swatch.classList.add('selected'); }); }); document.getElementById('generate-add-desc').addEventListener('click', handleGenerateDescription); document.getElementById('location-known-input').checked = true; document.getElementById('location-visited-input').checked = false; const addVisitedCheckbox = document.getElementById('location-visited-input'); const addKnownCheckbox = document.getElementById('location-known-input'); if(addVisitedCheckbox && addKnownCheckbox) { addVisitedCheckbox.addEventListener('change', () => { if (addVisitedCheckbox.checked) { addKnownCheckbox.checked = true; } }); } }
         function saveLocationsToLocal() {
@@ -3458,77 +2938,42 @@
         // === FONCTIONS UNIFIÉES D'IMPORT/EXPORT ===
 
         function exportUnifiedData() {
+            // Fusionner les lieux et les régions dans un seul tableau locations
             const allLocations = [];
 
-            // Ajouter les lieux normaux
+            // Ajouter tous les lieux normaux
             if (locationsData.locations) {
                 locationsData.locations.forEach(location => {
-                    const exportLocation = {
-                        id: location.id,
-                        name: location.name,
-                        description: location.description || "",
-                        imageUrl: location.imageUrl || "",
-                        images: location.images || [],
-                        color: location.color,
-                        known: location.known !== undefined ? location.known : true,
-                        visited: location.visited !== undefined ? location.visited : false,
-                        type: location.type || "custom",
-                        coordinates: location.coordinates || { x: 0, y: 0 }
-                    };
-
-                    // Ajouter les rumeurs multiples si elles existent
-                    if (location.Rumeurs && location.Rumeurs.length > 0) {
-                        location.Rumeurs.forEach(rumeur => {
-                            exportLocation.Rumeur = rumeur;
-                        });
-                    }
-                    // Support de l'ancienne structure avec Rumeur simple
-                    else if (location.Rumeur) {
-                        exportLocation.Rumeur = location.Rumeur;
-                    }
-
-                    if (location.Tradition_Ancienne) {
-                        exportLocation.Tradition_Ancienne = location.Tradition_Ancienne;
-                    }
-
-                    allLocations.push(exportLocation);
+                    allLocations.push({
+                        ...location,
+                        type: location.type || "custom" // S'assurer qu'il y a un type
+                    });
                 });
             }
 
-            // Ajouter les régions converties en format unifié
+            // Ajouter toutes les régions (converties en format location avec type="region")
             if (regionsData.regions) {
                 regionsData.regions.forEach(region => {
-                    const exportRegion = {
+                    // Convertir la structure de région en format location unifié
+                    const regionAsLocation = {
                         id: region.id,
                         name: region.name,
                         description: region.description || "",
                         imageUrl: region.imageUrl || "",
-                        images: region.images || [],
                         color: region.color,
                         known: region.known !== undefined ? region.known : true,
                         visited: region.visited !== undefined ? region.visited : false,
                         type: "region",
                         coordinates: {
-                            points: region.points || []
+                            points: region.points || [] // Les points du polygone de la région
                         }
                     };
 
-                    // Ajouter les rumeurs multiples si elles existent
-                    if (region.Rumeurs && region.Rumeurs.length > 0) {
-                        region.Rumeurs.forEach(rumeur => {
-                            exportRegion.Rumeur = rumeur;
-                        });
-                    }
-                    // Support de l'ancienne structure avec Rumeur simple
-                    else if (region.Rumeur) {
-                        exportRegion.Rumeur = region.Rumeur;
-                    }
+                    // Ajouter les propriétés additionnelles si elles existent
+                    if (region.Rumeur) regionAsLocation.Rumeur = region.Rumeur;
+                    if (region.Tradition_Ancienne) regionAsLocation.Tradition_Ancienne = region.Tradition_Ancienne;
 
-                    if (region.Tradition_Ancienne) {
-                        exportRegion.Tradition_Ancienne = region.Tradition_Ancienne;
-                    }
-
-                    allLocations.push(exportRegion);
+                    allLocations.push(regionAsLocation);
                 });
             }
 
@@ -3580,7 +3025,7 @@
                             coordinates: {
                                 points: region.points || []
                             },
-                            ...(region.Rumeur && { Rumeur: region.Rumeur }), // Ancienne structure Rumeur simple
+                            ...(region.Rumeur && { Rumeur: region.Rumeur }),
                             ...(region.Tradition_Ancienne && { Tradition_Ancienne: region.Tradition_Ancienne })
                         }));
                     }
@@ -3609,27 +3054,14 @@
                                 name: item.name,
                                 description: item.description || "",
                                 imageUrl: item.imageUrl || "",
-                                images: item.images || [], // Conserver les images pour les régions aussi
                                 color: item.color,
                                 known: item.known !== undefined ? item.known : true,
                                 visited: item.visited !== undefined ? item.visited : false,
-                                type: item.type || "region",
                                 points: item.coordinates?.points || []
                             };
 
-                            // Fonction pour extraire les rumeurs multiples
-                            const extractRumeurs = (item) => {
-                                const rumeurs = [];
-                                // Parcourir toutes les propriétés pour trouver les rumeurs
-                                for (const key in item) {
-                                    if (key.startsWith('Rumeur') && item[key] !== "A définir") { // Check for Rumeur, Rumeur1, Rumeur2 etc.
-                                        rumeurs.push(item[key]);
-                                    }
-                                }
-                                return rumeurs;
-                            };
-
-                            region.Rumeurs = extractRumeurs(item);
+                            // Ajouter les propriétés additionnelles si elles existent
+                            if (item.Rumeur) region.Rumeur = item.Rumeur;
                             if (item.Tradition_Ancienne) region.Tradition_Ancienne = item.Tradition_Ancienne;
 
                             regionLocations.push(region);
@@ -3646,24 +3078,7 @@
                                     x: item.coordinates.x,
                                     y: item.coordinates.y
                                 };
-                            } else {
-                                location.coordinates = { x: 0, y: 0 }; // Coordonnées par défaut si manquantes
                             }
-
-                            // Fonction pour extraire les rumeurs multiples
-                            const extractRumeurs = (item) => {
-                                const rumeurs = [];
-                                // Parcourir toutes les propriétés pour trouver les rumeurs
-                                for (const key in item) {
-                                    if (key.startsWith('Rumeur') && item[key] !== "A définir") { // Check for Rumeur, Rumeur1, Rumeur2 etc.
-                                        rumeurs.push(item[key]);
-                                    }
-                                }
-                                return rumeurs;
-                            };
-
-                            location.Rumeurs = extractRumeurs(item);
-                            if (item.Tradition_Ancienne) location.Tradition_Ancienne = item.Tradition_Ancienne;
 
                             normalLocations.push(location);
                         }
@@ -3999,8 +3414,6 @@
             const nearbyLocationsInfo = document.getElementById('nearby-locations-info');
             const nearbyLocationsList = document.getElementById('nearby-locations-list');
 
-            if (!traversedRegionsInfo || !nearbyLocationsInfo) return;
-
             // Sort discoveries by discovery order, keeping them mixed
             const chronologicalDiscoveries = journeyDiscoveries.sort((a, b) => a.discoveryIndex - b.discoveryIndex);
 
@@ -4074,266 +3487,18 @@
                     let displayText = `${icon} ${discovery.name} ${travelInfo}`;
 
                     // For regions, also calculate duration inside the region
-                    if (discovery.type === 'region') {
-                        // Utiliser les durées calculées par calculateRegionTraversalDurations
-                        const regionTraversalInfo = calculateRegionTraversalDurations();
-                        const traversalData = regionTraversalInfo.get(discovery.name);
-
-                        if (traversalData) {
-                            const regionDays = traversalData.duration;
-                            const regionMiles = traversalData.distance;
+                    if (discovery.type === 'region' && window.regionSegments) {
+                        const segment = window.regionSegments.get(discovery.name);
+                        if (segment) {
+                            const regionDistance = calculatePathDistance(segment.entryIndex, segment.exitIndex);
+                            const regionMiles = pixelsToMiles(regionDistance);
+                            const regionDays = milesToDays(regionMiles);
 
                             // Replace travelInfo for regions to include duration
                             if (travelInfo === "(point de départ)") {
-                                displayText = `${icon} ${discovery.name} (point de départ, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
+                                displayText = `${icon} ${discovery.name} (point de départ, durée ${regionDays} jour${regionDays !== 1 ? 's' : ''})`;
                             } else {
-                                displayText = `${icon} ${discovery.name} (atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
-                            }
-                        }
-                    }
-
-                    // Get tooltip content
-                    const tooltipContent = getDiscoveryTooltipContent(discovery.name, discovery.type);
-
-                    // Create span sans tooltip par défaut
-                    return `<span class="discovery-item clickable-discovery" data-discovery-name="${discovery.name}" data-discovery-type="region">${displayText}</span>`;
-                });
-
-                // Join with line breaks instead of commas
-                const discoveryListHTML = discoveryElements.join('<br>');
-
-                // Show only one section with all discoveries
-                traversedRegionsInfo.classList.remove('hidden');
-                traversedRegionsList.innerHTML = discoveryListHTML;
-                nearbyLocationsInfo.classList.add('hidden');
-
-                // Update the title to reflect mixed content
-                const regionsTitle = traversedRegionsInfo.querySelector('.font-semibold');
-                if (regionsTitle) {
-                    regionsTitle.textContent = 'Découvertes du voyage :';
-                    regionsTitle.className = 'font-semibold text-blue-400 mb-1';
-                }
-
-                // Setup enhanced tooltips
-                setupDiscoveryTooltips();
-
-                console.log("🌟 Journey discoveries (chronological):", chronologicalDiscoveries.map(d => `${d.type}: ${d.name}`));
-            } else {
-                traversedRegionsInfo.classList.add('hidden');
-                nearbyLocationsInfo.classList.add('hidden');
-                console.log("🌟 No discoveries made");
-            }
-        }
-
-        function calculateRegionTraversalDurations() {
-            const regionTraversalInfo = new Map();
-
-            if (!journeyPath || journeyPath.length < 2 || !regionsData || !regionsData.regions) {
-                return regionTraversalInfo;
-            }
-
-            // Variables pour suivre l'état de traversée
-            let currentRegionsActive = new Map(); // regionName -> {entryIndex, pixelDistance}
-            let previousRegions = new Set();
-
-            console.log("🔧 [REGION DURATION] Début du calcul séquentiel pour", journeyPath.length, "points");
-
-            // Parcourir séquentiellement chaque point du tracé (logique étapes 1-5)
-            for (let z = 0; z < journeyPath.length; z++) {
-                const currentPoint = journeyPath[z];
-                const currentRegions = new Set();
-
-                // Étape 1 : Identifier dans quelles régions se trouve le point actuel
-                regionsData.regions.forEach(region => {
-                    if (region.points && region.points.length >= 3) {
-                        if (isPointInPolygon(currentPoint, region.points)) {
-                            currentRegions.add(region.name);
-                        }
-                    }
-                });
-
-                // Étape 2 : Détecter les changements de région (entrée/sortie)
-                currentRegions.forEach(regionName => {
-                    if (!previousRegions.has(regionName)) {
-                        // Étape 2 : Entrée dans une nouvelle région A
-                        console.log(`🔧 [REGION DURATION] Point ${z}: Entrée dans région ${regionName}`);
-
-                        // Si un calcul d'une autre région était en cours, le finaliser
-                        currentRegionsActive.forEach((data, activeRegionName) => {
-                            if (activeRegionName !== regionName) {
-                                console.log(`🔧 [REGION DURATION] Finalisation région ${activeRegionName} (interrompue par ${regionName})`);
-                                finalizeRegionDuration(activeRegionName, data, z - 1, regionTraversalInfo);
-                            }
-                        });
-
-                        // Étape 3 : Mémoriser le point d'entrée (x,y,z)
-                        currentRegionsActive.set(regionName, {
-                            entryIndex: z,
-                            pixelDistance: 0
-                        });
-                    }
-                });
-
-                // Détecter les sorties de région
-                previousRegions.forEach(regionName => {
-                    if (!currentRegions.has(regionName)) {
-                        // Sortie de région
-                        console.log(`🔧 [REGION DURATION] Point ${z}: Sortie de région ${regionName}`);
-
-                        if (currentRegionsActive.has(regionName)) {
-                            const regionData = currentRegionsActive.get(regionName);
-                            finalizeRegionDuration(regionName, regionData, z - 1, regionTraversalInfo);
-                            currentRegionsActive.delete(regionName);
-                        }
-                    }
-                });
-
-                // Étape 4-5 : Pour chaque région active, calculer la distance du segment précédent
-                if (z > 0) {
-                    const previousPoint = journeyPath[z - 1];
-
-                    currentRegionsActive.forEach((data, regionName) => {
-                        if (currentRegions.has(regionName)) {
-                            // Étape 5a : La région continue, incrémenter la distance
-                            const segmentDistance = Math.sqrt(
-                                Math.pow(currentPoint.x - previousPoint.x, 2) + 
-                                Math.pow(currentPoint.y - previousPoint.y, 2)
-                            );
-
-                            data.pixelDistance += segmentDistance;
-                            console.log(`🔧 [REGION DURATION] Région ${regionName}: +${segmentDistance.toFixed(1)} pixels (total: ${data.pixelDistance.toFixed(1)})`);
-                        }
-                    });
-                }
-
-                // Mise à jour pour le prochain tour
-                previousRegions = new Set(currentRegions);
-            }
-
-            // Finaliser toutes les régions encore actives à la fin du tracé
-            currentRegionsActive.forEach((data, regionName) => {
-                console.log(`🔧 [REGION DURATION] Finalisation région ${regionName} (fin de tracé)`);
-                finalizeRegionDuration(regionName, data, journeyPath.length - 1, regionTraversalInfo);
-            });
-
-            console.log("🔧 [REGION DURATION] Résultats finaux:", regionTraversalInfo);
-            return regionTraversalInfo;
-        }
-
-        function finalizeRegionDuration(regionName, regionData, exitIndex, regionTraversalInfo) {
-            // Convertir les pixels en miles puis en jours
-            const distanceInMiles = pixelsToMiles(regionData.pixelDistance);
-            const durationInDays = milesToDays(distanceInMiles);
-
-            // Arrondir au 0.5 jour le plus proche (minimum 0.5 jour)
-            const roundedDuration = Math.max(0.5, Math.round(durationInDays * 2) / 2);
-
-            console.log(`🔧 [REGION DURATION] Région ${regionName}: ${regionData.pixelDistance.toFixed(1)} pixels → ${distanceInMiles.toFixed(1)} miles → ${roundedDuration} jour(s)`);
-
-            regionTraversalInfo.set(regionName, {
-                distance: distanceInMiles,
-                duration: roundedDuration,
-                pixelDistance: regionData.pixelDistance,
-                entryIndex: regionData.entryIndex,
-                exitIndex: exitIndex
-            });
-        }
-
-        function displayJourneyInfo() {
-            const traversedRegionsInfo = document.getElementById('traversed-regions-info');
-            const traversedRegionsList = document.getElementById('traversed-regions-list');
-            const nearbyLocationsInfo = document.getElementById('nearby-locations-info');
-            const nearbyLocationsList = document.getElementById('nearby-locations-list');
-
-            if (!traversedRegionsInfo || !nearbyLocationsInfo) return;
-
-            // Sort discoveries by discovery order, keeping them mixed
-            const chronologicalDiscoveries = journeyDiscoveries.sort((a, b) => a.discoveryIndex - b.discoveryIndex);
-
-            if (chronologicalDiscoveries.length > 0) {
-                // Calculate travel times for each discovery
-                const discoveryElements = chronologicalDiscoveries.map((discovery, index) => {
-                    const icon = discovery.type === 'region' ? '🗺️' : '📍';
-
-                    // Calculate reach time for this discovery
-                    let startIndex = 0;
-                    if (index > 0) {
-                        // Find the end point of the previous discovery
-                        const prevDiscovery = chronologicalDiscoveries[index - 1];
-                        if (prevDiscovery.type === 'region' && window.regionSegments) {
-                            const segment = window.regionSegments.get(prevDiscovery.name);
-                            startIndex = segment ? segment.exitIndex : prevDiscovery.discoveryIndex;
-                        } else {
-                            startIndex = prevDiscovery.discoveryIndex;
-                        }
-                    }
-
-                    const reachDistance = calculatePathDistance(startIndex, discovery.discoveryIndex);
-                    const reachMiles = pixelsToMiles(reachDistance);
-                    const reachDays = milesToDays(reachMiles);
-
-                    // Check if this is a starting location (close to journey start)
-                    let travelInfo;
-                    if (discovery.type === 'location' && startPoint && discovery.discoveryIndex === 0) {
-                        // Find the actual location to check distance from start point
-                        const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                        if (location && location.coordinates) {
-                            const distanceFromStart = Math.sqrt(
-                                Math.pow(location.coordinates.x - startPoint.x, 2) +
-                                Math.pow(location.coordinates.y - startPoint.y, 2)
-                            );
-                            if (distanceFromStart <= 20) {
-                                travelInfo = "(point de départ)";
-                            } else {
-                                // Add proximity information for locations
-                                let proximityText = '';
-                                if (discovery.proximityType === 'traversed') {
-                                    proximityText = ', traversé';
-                                } else if (discovery.proximityType === 'nearby') {
-                                    proximityText = ', passage à proximité';
-                                }
-                                travelInfo = `(atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}${proximityText})`;
-                            }
-                        } else {
-                            // Add proximity information for locations
-                            let proximityText = '';
-                            if (discovery.proximityType === 'traversed') {
-                                proximityText = ', traversé';
-                            } else if (discovery.proximityType === 'nearby') {
-                                proximityText = ', passage à proximité';
-                            }
-                            travelInfo = `(atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}${proximityText})`;
-                        }
-                    } else {
-                        // Add proximity information for locations
-                        let proximityText = '';
-                        if (discovery.type === 'location') {
-                            if (discovery.proximityType === 'traversed') {
-                                proximityText = ', traversé';
-                            } else if (discovery.proximityType === 'nearby') {
-                                proximityText = ', passage à proximité';
-                            }
-                        }
-                        travelInfo = `(atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}${proximityText})`;
-                    }
-
-                    let displayText = `${icon} ${discovery.name} ${travelInfo}`;
-
-                    // For regions, also calculate duration inside the region
-                    if (discovery.type === 'region') {
-                        // Utiliser les durées calculées par calculateRegionTraversalDurations
-                        const regionTraversalInfo = calculateRegionTraversalDurations();
-                        const traversalData = regionTraversalInfo.get(discovery.name);
-
-                        if (traversalData) {
-                            const regionDays = traversalData.duration;
-                            const regionMiles = traversalData.distance;
-
-                            // Replace travelInfo for regions to include duration
-                            if (travelInfo === "(point de départ)") {
-                                displayText = `${icon} ${discovery.name} (point de départ, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
-                            } else {
-                                displayText = `${icon} ${discovery.name} (atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
+                                displayText = `${icon} ${discovery.name} (atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}, durée ${regionDays} jour${regionDays !== 1 ? 's' : ''})`;
                             }
                         }
                     }
@@ -4392,6 +3557,19 @@
                         const tooltip = document.createElement('div');
                         tooltip.className = 'discovery-tooltip';
                         tooltip.innerHTML = tooltipContent;
+                        tooltip.style.cssText = `
+                            position: absolute;
+                            background: rgba(17, 24, 39, 0.95);
+                            color: white;
+                            padding: 12px;
+                            border-radius: 8px;
+                            border: 1px solid #4b5563;
+                            font-size: 14px;
+                            max-width: 320px;
+                            z-index: 1000;
+                            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                            line-height: 1.4;
+                        `;
 
                         document.body.appendChild(tooltip);
 
@@ -4520,7 +3698,8 @@
         // document.getElementById('generate-journey-log').addEventListener('click', handleGenerateJourneyLog);
         document.getElementById('close-journey-log').addEventListener('click', () => journeyLogModal.classList.add('hidden'));
 
-        // The journey button will be updated when the voyage manager is initialized
+        // Mettre à jour le titre du bouton après qu'il soit créé
+        updateJourneyButtonTitle();
 
         // --- Gemini API Functions ---
         async function callGemini(prompt, button) {
@@ -4578,7 +3757,7 @@
 
                 const result = await response.json();
                 console.log("🤖 [GEMINI API] Réponse reçue:", result);
-
+                
                 if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
                     const responseText = result.candidates[0].content.parts[0].text;
                     console.log("✅ [GEMINI API] Texte généré (longueur: " + responseText.length + " caractères)");
@@ -4635,7 +3814,7 @@
                 const discoveryList = chronologicalDiscoveries.map((discovery, index) => {
                     const icon = discovery.type === 'region' ? '🗺️' : '📍';
 
-                    // Calculate reach time for this discovery
+                    // Calculer le temps pour atteindre cette découverte
                     let startIndex = 0;
                     if (index > 0) {
                         const prevDiscovery = chronologicalDiscoveries[index - 1];
@@ -4651,7 +3830,7 @@
                     const reachMiles = pixelsToMiles(reachDistance);
                     const reachDays = milesToDays(reachMiles);
 
-                    // Check if this is a starting location (close to journey start)
+                    // Vérifier si c'est un point de départ
                     let travelInfo;
                     if (discovery.type === 'location' && startPoint && discovery.discoveryIndex === 0) {
                         // Find the actual location to check distance from start point
@@ -4698,7 +3877,7 @@
 
                     let displayText = `${icon} ${discovery.name} ${travelInfo}`;
 
-                    // For regions, also calculate duration inside the region
+                    // Pour les régions, ajouter la durée de traversée
                     if (discovery.type === 'region' && window.regionSegments) {
                         const segment = window.regionSegments.get(discovery.name);
                         if (segment) {
@@ -4706,11 +3885,10 @@
                             const regionMiles = pixelsToMiles(regionDistance);
                             const regionDays = milesToDays(regionMiles);
 
-                            // Replace travelInfo for regions to include duration
                             if (travelInfo === "(point de départ)") {
-                                displayText = `${icon} ${discovery.name} (point de départ, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
+                                displayText = `${icon} ${discovery.name} (point de départ, durée ${regionDays} jour${regionDays !== 1 ? 's' : ''})`;
                             } else {
-                                displayText = `${icon} ${discovery.name} (atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}, durée ${regionDays.toFixed(1)} jour${regionDays > 1 ? 's' : ''})`;
+                                displayText = `${icon} ${discovery.name} (atteint en ${reachDays} jour${reachDays !== 1 ? 's' : ''}, durée ${regionDays} jour${regionDays !== 1 ? 's' : ''})`;
                             }
                         }
                     }
@@ -4907,188 +4085,6 @@
                 console.error('Erreur lors du chargement des contextes:', error.message || error);
                 savedContextsDiv.innerHTML = '<p class="text-red-500">Impossible de charger les contextes.</p>';
             }
-        }
-
-        function setupSettingsEventListeners() {
-            // Settings modal event listeners
-            const settingsBtn = document.getElementById('settings-btn');
-            const settingsModal = document.getElementById('settings-modal');
-            const closeSettingsBtn = document.getElementById('close-settings-modal');
-
-            if (settingsBtn) {
-                settingsBtn.addEventListener('click', () => {
-                    settingsModal.classList.remove('hidden');
-                });
-                console.log("🔐 [AUTH] Bouton paramètres trouvé et configuré");
-            }
-
-            if (closeSettingsBtn) {
-                closeSettingsBtn.addEventListener('click', () => {
-                    settingsModal.classList.add('hidden');
-                });
-            }
-
-            // Settings tabs
-            const settingsTabs = document.querySelectorAll('.settings-tab-button');
-            const settingsTabContents = document.querySelectorAll('.settings-tab-content');
-
-            settingsTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const targetTab = tab.dataset.tab;
-
-                    // Update active tab
-                    settingsTabs.forEach(t => t.classList.remove('active', 'text-white', 'border-blue-500'));
-                    settingsTabs.forEach(t => t.classList.add('border-transparent', 'text-gray-400'));
-                    tab.classList.remove('border-transparent', 'text-gray-400');
-                    tab.classList.add('active', 'text-white', 'border-blue-500');
-
-                    // Update active content
-                    settingsTabContents.forEach(content => {
-                        content.classList.remove('active');
-                        content.classList.add('hidden');
-                    });
-
-                    const targetContent = document.getElementById(`${targetTab}-tab`);
-                    if (targetContent) {
-                        targetContent.classList.add('active');
-                        targetContent.classList.remove('hidden');
-                    }
-                });
-            });
-
-            // Maps management listeners
-            setupMapsEventListeners();
-
-            // Season indicator click
-            const seasonIndicator = document.getElementById('season-indicator');
-            const calendarDateIndicator = document.getElementById('calendar-date-indicator');
-
-            if (seasonIndicator) {
-                seasonIndicator.addEventListener('click', () => {
-                    settingsModal.classList.remove('hidden');
-                    // Switch to season tab
-                    const seasonTab = document.querySelector('[data-tab="season"]');
-                    if (seasonTab) {
-                        seasonTab.click();
-                    }
-                });
-            }
-
-            if (calendarDateIndicator) {
-                calendarDateIndicator.addEventListener('click', () => {
-                    settingsModal.classList.remove('hidden');
-                    // Switch to season tab
-                    const seasonTab = document.querySelector('[data-tab="season"]');
-                    if (seasonTab) {
-                        seasonTab.click();
-                    }
-                });
-            }
-
-            // Adventurers tab functionality
-            setupAdventurersTab();
-
-            // Quest tab functionality
-            setupQuestTab();
-        }
-
-        function setupAdventurersTab() {
-            const editBtn = document.getElementById('edit-adventurers-btn');
-            const readMode = document.getElementById('adventurers-read-mode');
-            const editMode = document.getElementById('adventurers-edit-mode');
-            const textarea = document.getElementById('adventurers-group');
-            const content = document.getElementById('adventurers-content');
-            const saveBtn = document.getElementById('save-adventurers-edit');
-            const cancelBtn = document.getElementById('cancel-adventurers-edit');
-
-            if (editBtn) {
-                editBtn.addEventListener('click', () => {
-                    readMode.classList.add('hidden');
-                    editMode.classList.remove('hidden');
-                    textarea.focus();
-                });
-            }
-
-            if (saveBtn) {
-                saveBtn.addEventListener('click', () => {
-                    const adventurersData = textarea.value;
-                    localStorage.setItem('adventurersGroup', adventurersData);
-                    content.innerHTML = adventurersData ? marked(adventurersData) : '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
-                    editMode.classList.add('hidden');
-                    readMode.classList.remove('hidden');
-                    scheduleAutoSync();
-                });
-            }
-
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', () => {
-                    editMode.classList.add('hidden');
-                    readMode.classList.remove('hidden');
-                });
-            }
-
-            // Load saved data
-            const savedAdventurers = localStorage.getItem('adventurersGroup');
-            if (savedAdventurers && textarea) {
-                textarea.value = savedAdventurers;
-                content.innerHTML = marked(savedAdventurers);
-            }
-        }
-
-        function setupQuestTab() {
-            const editBtn = document.getElementById('edit-quest-btn');
-            const readMode = document.getElementById('quest-read-mode');
-            const editMode = document.getElementById('quest-edit-mode');
-            const textarea = document.getElementById('adventurers-quest');
-            const content = document.getElementById('quest-content');
-            const saveBtn = document.getElementById('save-quest-edit');
-            const cancelBtn = document.getElementById('cancel-quest-edit');
-
-            if (editBtn) {
-                editBtn.addEventListener('click', () => {
-                    readMode.classList.add('hidden');
-                    editMode.classList.remove('hidden');
-                    textarea.focus();
-                });
-            }
-
-            if (saveBtn) {
-                saveBtn.addEventListener('click', () => {
-                    const questData = textarea.value;
-                    localStorage.setItem('adventurersQuest', questData);
-                    content.innerHTML = questData ? marked(questData) : '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
-                    editMode.classList.add('hidden');
-                    readMode.classList.remove('hidden');
-                    scheduleAutoSync();
-                });
-            }
-
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', () => {
-                    editMode.classList.add('hidden');
-                    readMode.classList.remove('hidden');
-                });
-            }
-
-            // Load saved data
-            const savedQuest = localStorage.getItem('adventurersQuest');
-            if (savedQuest && textarea) {
-                textarea.value = savedQuest;
-                content.innerHTML = marked(savedQuest);
-            }
-        }
-
-        // Simple markdown parser for basic formatting
-        function marked(text) {
-            return text
-                .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-                .replace(/\*\*(.*)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*)\*/g, '<em>$1</em>')
-                .replace(/^- (.*$)/gm, '<li>$1</li>')
-                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-                .replace(/\n/g, '<br>');
         }
 
         function displaySavedContexts(contexts) {
@@ -5727,6 +4723,34 @@
             progressBar.classList.remove('hidden');
         }
 
+        function updateSegmentProgressBar() {
+            if (!voyageSegments[currentSegmentIndex]) return;
+
+            // Calculer les jours cumulés jusqu'au segment actuel (inclus)
+            let cumulativeDays = 0;
+            for (let i = 0; i <= currentSegmentIndex; i++) {
+                cumulativeDays += voyageSegments[i].duration;
+            }
+
+            // Calculer le total de jours basé sur la distance du tracé (valeur fixe)
+            const totalVoyageDays = getTotalJourneyDays();
+
+            // Calculer le pourcentage de progression
+            const progressPercent = totalVoyageDays > 0 ? (cumulativeDays / totalVoyageDays) * 100 : 0;
+
+            const progressFill = document.getElementById('progress-fill');
+            const progressMarker = document.getElementById('progress-marker');
+            const progressIndicator = document.getElementById('progress-indicator');
+            const totalDaysSpan = document.getElementById('total-days');
+
+            progressFill.style.width = `${progressPercent}%`;
+            progressMarker.style.left = `calc(${progressPercent}% - 12px)`;
+            progressMarker.querySelector('span').textContent = cumulativeDays;
+
+            progressIndicator.textContent = `Progression : ${cumulativeDays} / ${totalVoyageDays} jours`;
+            totalDaysSpan.textContent = totalVoyageDays;
+        }
+
         function navigateToSegment(direction) {
             console.log("🧭 Navigation segment:", {
                 direction: direction,
@@ -5790,7 +4814,9 @@
                 updateCurrentSegmentDisplay();
                 scheduleAutoSync();
             }
-        }        function removeFollowingSegments() {
+        }
+
+        function removeFollowingSegments() {
             // Supprimer tous les segments après le segment actuel
             voyageSegments = voyageSegments.slice(0, currentSegmentIndex + 1);
 

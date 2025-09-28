@@ -52,101 +52,83 @@ class VoyageManager {
     }
 
     updateDisplay() {
-        console.log('🔧 [DEBUG] === DÉBUT updateDisplay() ===');
-        console.log('🔧 [DEBUG] journeyPath défini?', typeof journeyPath !== 'undefined');
-        console.log('🔧 [DEBUG] journeyPath.length:', typeof journeyPath !== 'undefined' ? journeyPath.length : 'undefined');
-
         const noVoyageMessage = this.dom.getElementById('no-voyage-message');
         const currentSegmentDisplay = this.dom.getElementById('current-segment-display');
 
         // Utiliser les variables globales existantes
         if (typeof journeyPath === 'undefined' || journeyPath.length === 0) {
-            console.log('🔧 [DEBUG] ❌ Pas de trajet - affichage du message "no voyage"');
             noVoyageMessage.classList.remove('hidden');
             currentSegmentDisplay.classList.add('hidden');
         } else {
-            console.log('🔧 [DEBUG] ✅ Trajet détecté - génération des données de voyage');
             noVoyageMessage.classList.add('hidden');
             currentSegmentDisplay.classList.remove('hidden');
             this.generateJourneyData();
             this.renderCurrentDay();
         }
-        console.log('🔧 [DEBUG] === FIN updateDisplay() ===');
     }
 
     generateJourneyData() {
-        if (typeof journeyPath === 'undefined' || journeyPath.length === 0) {
-            this.totalJourneyDays = 0;
-            this.dayByDayData = [];
-            return;
-        }
+        // Calculate total journey duration using global variables
+        const miles = totalPathPixels * (MAP_DISTANCE_MILES / MAP_WIDTH);
+        const days = Math.ceil(miles / 20); // 20 miles per day
+        this.totalJourneyDays = Math.max(1, days);
 
-        // Calculer la distance totale et les jours
-        const totalPixels = typeof totalPathPixels !== 'undefined' ? totalPathPixels : 0;
-        const totalMiles = totalPixels * (MAP_DISTANCE_MILES / MAP_WIDTH);
-        this.totalJourneyDays = Math.ceil(totalMiles / 20); // 20 miles par jour
+        // Récupérer ou définir la date de début du voyage
+        this.journeyStartDate = this.getJourneyStartDate();
 
-        console.log(`🗓️ Voyage de ${this.totalJourneyDays} jours calculé`);
+        // Build absolute timeline
+        const absoluteTimeline = this.buildAbsoluteTimeline();
 
-        // Calculer les découvertes jour par jour
-        const dailyDiscoveries = this.calculateDailyDiscoveries();
-
-        // Générer les données pour chaque jour
+        // Generate day by day data
         this.dayByDayData = [];
         for (let day = 1; day <= this.totalJourneyDays; day++) {
-            const calendarDate = this.getCalendarDateForDay(day);
-
-            this.dayByDayData.push({
+            const dayData = {
                 day: day,
-                calendarDate: calendarDate,
-                discoveries: dailyDiscoveries[day] || []
+                discoveries: [],
+                calendarDate: this.getCalendarDateForDay(day)
+            };
+
+            // Find discoveries for this day
+            absoluteTimeline.forEach(timelineItem => {
+                if (timelineItem.type === 'location') {
+                    if (timelineItem.absoluteDay === day) {
+                        dayData.discoveries.push(timelineItem.discovery);
+                    }
+                } else if (timelineItem.type === 'region') {
+                    if (day >= timelineItem.absoluteStartDay && day <= timelineItem.absoluteEndDay) {
+                        const exists = dayData.discoveries.some(d =>
+                            d.name === timelineItem.discovery.name && d.type === timelineItem.discovery.type
+                        );
+                        if (!exists) {
+                            dayData.discoveries.push(timelineItem.discovery);
+                        }
+                    }
+                }
             });
+
+            this.dayByDayData.push(dayData);
         }
 
-        console.log(`📅 Données journalières générées avec découvertes:`, this.dayByDayData);
+        // Initialize to first day if not set
+        if (this.currentDayIndex >= this.totalJourneyDays) {
+            this.currentDayIndex = 0;
+        }
     }
 
     buildAbsoluteTimeline() {
-        console.log('🔧 [DEBUG] Construction de la timeline absolue - début');
-
         // Utiliser les variables globales journeyDiscoveries
         const discoveries = journeyDiscoveries.sort((a, b) => a.discoveryIndex - b.discoveryIndex);
         const totalMiles = totalPathPixels * (MAP_DISTANCE_MILES / MAP_WIDTH);
         const totalPathPoints = journeyPath.length;
 
-        console.log(`🔧 [DEBUG] Découvertes brutes:`, discoveries);
-        console.log(`🔧 [DEBUG] Points de trajet total: ${totalPathPoints}, voyage total: ${this.totalJourneyDays} jours`);
-        console.log(`🔧 [DEBUG] Segments de région disponibles:`, window.regionSegments);
-
-        // Forcer la mise à jour des segments de région si ils sont vides
-        if (!window.regionSegments || Object.keys(window.regionSegments).size === 0) {
-            console.log(`🔧 [DEBUG] ⚠️ Segments de région vides, tentative de reconstruction...`);
-            if (typeof updateDiscoveriesChronologically === 'function') {
-                console.log(`🔧 [DEBUG] Appel de updateDiscoveriesChronologically()...`);
-                updateDiscoveriesChronologically();
-                console.log(`🔧 [DEBUG] Segments de région après reconstruction:`, window.regionSegments);
-            } else {
-                console.log(`🔧 [DEBUG] updateDiscoveriesChronologically non disponible, reconstruction manuelle...`);
-                this.rebuildRegionSegments();
-            }
-        }
-
         const absoluteTimeline = [];
         let currentAbsoluteDay = 1;
 
-        console.log(`🔧 [DEBUG] DÉBUT BOUCLE - Total découvertes à traiter: ${discoveries.length}`);
-        discoveries.forEach((discovery, index) => {
-            console.log(`🔧 [DEBUG] === Traitement découverte ${index}: ${discovery.name} (${discovery.type}) ===`);
-            console.log(`🔧 [DEBUG] Objet découverte complet:`, discovery);
-            console.log(`🔧 [DEBUG] Type exact: "${discovery.type}", Longueur: ${discovery.type?.length}`);
-
+        discoveries.forEach(discovery => {
             if (discovery.type === 'location') {
-                console.log(`🔧 [DEBUG] 🎯 LOCATION DÉTECTÉE: ${discovery.name}`);
                 // Calculer le jour où le lieu est atteint
                 const discoveryRatio = discovery.discoveryIndex / totalPathPoints;
                 const discoveryDay = Math.max(1, Math.ceil(discoveryRatio * this.totalJourneyDays));
-
-                console.log(`🔧 [DEBUG] Lieu ${discovery.name}: index ${discovery.discoveryIndex}, ratio ${discoveryRatio.toFixed(3)}, jour ${discoveryDay}`);
 
                 absoluteTimeline.push({
                     discovery: discovery,
@@ -154,82 +136,27 @@ class VoyageManager {
                     type: 'location'
                 });
             } else if (discovery.type === 'region') {
-                console.log(`🔧 [DEBUG] 🎯 RÉGION DÉTECTÉE: ${discovery.name}`);
-                console.log(`🔧 [DEBUG] Région ${discovery.name}: index découverte ${discovery.discoveryIndex}`);
-                console.log(`🔧 [DEBUG] window.regionSegments existe:`, !!window.regionSegments);
-                console.log(`🔧 [DEBUG] regionSegments contient ${discovery.name}:`, window.regionSegments ? window.regionSegments.has(discovery.name) : 'N/A');
-
                 // Utiliser les segments de région s'ils existent
                 if (window.regionSegments && window.regionSegments.has(discovery.name)) {
                     const regionSegment = window.regionSegments.get(discovery.name);
-                    console.log(`🔧 [DEBUG] Segment trouvé pour ${discovery.name}:`, regionSegment);
 
                     // Calculer les jours basés sur les indices
                     const startRatio = regionSegment.entryIndex / totalPathPoints;
                     const endRatio = regionSegment.exitIndex / totalPathPoints;
 
                     const regionStartDay = Math.max(1, Math.ceil(startRatio * this.totalJourneyDays));
-                    // Utiliser Math.ceil pour endRatio aussi, mais s'assurer que ce soit au moins startDay + durée minimale si la région est traversée
                     const regionEndDay = Math.max(regionStartDay, Math.ceil(endRatio * this.totalJourneyDays));
 
-                    // Si les indices d'entrée et de sortie sont significativement différents, 
-                    // s'assurer que la région apparaît sur plusieurs jours
-                    const indexDifference = regionSegment.exitIndex - regionSegment.entryIndex;
-                    const pathPointsPerDay = totalPathPoints / this.totalJourneyDays;
-
-                    console.log(`🔧 [DEBUG] Région ${discovery.name}: entrée index ${regionSegment.entryIndex} (ratio ${startRatio.toFixed(3)}, jour ${regionStartDay}), sortie index ${regionSegment.exitIndex} (ratio ${endRatio.toFixed(3)}, jour ${regionEndDay})`);
-                    console.log(`🔧 [DEBUG] Région ${discovery.name}: différence d'indices ${indexDifference}, points par jour ${pathPointsPerDay.toFixed(2)}`);
-
-                    // Calculer une durée minimale basée sur la différence d'indices et le ratio de traversée
-                    let finalRegionEndDay = regionEndDay;
-
-                    // Calculer le pourcentage du trajet que représente cette région
-                    const regionTraversalRatio = indexDifference / totalPathPoints;
-                    console.log(`🔧 [DEBUG] Région ${discovery.name}: ratio de traversée ${(regionTraversalRatio * 100).toFixed(1)}% (${indexDifference} points sur ${totalPathPoints})`);
-
-                    // Forcer une durée minimale basée sur le ratio de traversée
-                    if (regionTraversalRatio > 0.05) { // Si plus de 5% du trajet
-                        // Calculer une durée proportionnelle au trajet total
-                        const proportionalDays = Math.max(2, Math.ceil(regionTraversalRatio * this.totalJourneyDays));
-                        finalRegionEndDay = Math.max(regionEndDay, regionStartDay + proportionalDays - 1);
-
-                        // S'assurer que ça ne dépasse pas la durée totale du voyage
-                        finalRegionEndDay = Math.min(finalRegionEndDay, this.totalJourneyDays);
-
-                        console.log(`🔧 [DEBUG] Région ${discovery.name}: traversée significative (${(regionTraversalRatio * 100).toFixed(1)}%), durée proportionnelle ${proportionalDays} jours, jour fin ajusté à ${finalRegionEndDay}`);
-                    }
-
-                    // Règle spéciale pour les très longues traversées (plus de 20% du trajet)
-                    if (regionTraversalRatio > 0.2) {
-                        const longTraversalDays = Math.max(4, Math.ceil(regionTraversalRatio * this.totalJourneyDays * 1.2));
-                        finalRegionEndDay = Math.max(finalRegionEndDay, regionStartDay + longTraversalDays - 1);
-                        finalRegionEndDay = Math.min(finalRegionEndDay, this.totalJourneyDays);
-                        console.log(`🔧 [DEBUG] Région ${discovery.name}: très longue traversée (${(regionTraversalRatio * 100).toFixed(1)}%), durée étendue à ${longTraversalDays} jours, jour fin final ${finalRegionEndDay}`);
-                    }
-
-                    // Assurer une durée minimale de 2 jours pour toute région traversée (sauf si voyage très court)
-                    if (this.totalJourneyDays > 3 && finalRegionEndDay === regionStartDay) {
-                        finalRegionEndDay = Math.min(regionStartDay + 1, this.totalJourneyDays);
-                        console.log(`🔧 [DEBUG] Région ${discovery.name}: durée minimale forcée à 2 jours (${regionStartDay}-${finalRegionEndDay})`);
-                    }
-
-                    const timelineItem = {
+                    absoluteTimeline.push({
                         discovery: discovery,
                         absoluteStartDay: regionStartDay,
-                        absoluteEndDay: finalRegionEndDay,
+                        absoluteEndDay: regionEndDay,
                         type: 'region'
-                    };
-
-                    absoluteTimeline.push(timelineItem);
-                    console.log(`🔧 [DEBUG] ✅ AJOUTÉ À LA TIMELINE - Région ${discovery.name}: période réelle ${timelineItem.absoluteStartDay}-${timelineItem.absoluteEndDay}`);
+                    });
                 } else {
-                    console.log(`🔧 [DEBUG] Pas de segment pour ${discovery.name}, utilisation fallback`);
-
                     // Fallback si pas de segment
                     const discoveryRatio = discovery.discoveryIndex / totalPathPoints;
                     const discoveryDay = Math.max(1, Math.ceil(discoveryRatio * this.totalJourneyDays));
-
-                    console.log(`🔧 [DEBUG] Région ${discovery.name} (fallback): ratio ${discoveryRatio.toFixed(3)}, jour ${discoveryDay}`);
 
                     absoluteTimeline.push({
                         discovery: discovery,
@@ -238,108 +165,10 @@ class VoyageManager {
                         type: 'region'
                     });
                 }
-            } else {
-                console.log(`🔧 [DEBUG] ⚠️ TYPE NON RECONNU: "${discovery.type}" pour ${discovery.name} - discovery:`, discovery);
             }
         });
 
-        console.log('🔧 [DEBUG] Timeline absolue construite:', absoluteTimeline);
-        console.log('🔧 [DEBUG] Construction de la timeline absolue - terminée');
         return absoluteTimeline;
-    }
-
-    rebuildRegionSegments() {
-        console.log(`🔧 [DEBUG] === DÉBUT rebuildRegionSegments ===`);
-
-        if (!window.regionsData || !window.regionsData.regions) {
-            console.log(`🔧 [DEBUG] ❌ regionsData non disponible`);
-            return;
-        }
-
-        // Initialiser regionSegments si nécessaire
-        if (!window.regionSegments) {
-            window.regionSegments = new Map();
-        }
-
-        // Fonction pour vérifier si un point est dans un polygone
-        const isPointInPolygon = (point, polygon) => {
-            let inside = false;
-            for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-                const xi = polygon[i].x, yi = polygon[i].y;
-                const xj = polygon[j].x, yj = polygon[j].y;
-
-                if (((yi > point.y) !== (yj > point.y)) && (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi)) {
-                    inside = !inside;
-                }
-            }
-            return inside;
-        };
-
-        const currentRegions = new Set();
-        let regionSegments = new Map();
-
-        console.log(`🔧 [DEBUG] Traitement de ${journeyPath.length} points du trajet...`);
-
-        // Parcourir tous les points du trajet
-        for (let i = 0; i < journeyPath.length; i++) {
-            const currentPoint = journeyPath[i];
-            let pointRegions = new Set();
-
-            // Vérifier dans quelles régions se trouve ce point
-            window.regionsData.regions.forEach(region => {
-                if (region.points && region.points.length >= 3) {
-                    if (isPointInPolygon(currentPoint, region.points)) {
-                        pointRegions.add(region.name);
-
-                        // Si cette région n'était pas encore traversée
-                        if (!currentRegions.has(region.name)) {
-                            currentRegions.add(region.name);
-                            // Marquer le point d'entrée
-                            if (!regionSegments.has(region.name)) {
-                                regionSegments.set(region.name, {
-                                    entryIndex: i,
-                                    exitIndex: i // sera mis à jour
-                                });
-                                console.log(`🔧 [DEBUG] Région ${region.name} - entrée à l'index ${i}`);
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Mettre à jour les points de sortie pour les régions qui ne sont plus traversées
-            for (let regionName of currentRegions) {
-                if (!pointRegions.has(regionName)) {
-                    // Cette région n'est plus traversée, marquer le point de sortie
-                    if (regionSegments.has(regionName)) {
-                        regionSegments.get(regionName).exitIndex = i - 1;
-                        console.log(`🔧 [DEBUG] Région ${regionName} - sortie à l'index ${i - 1}`);
-                    }
-                    currentRegions.delete(regionName);
-                }
-            }
-
-            // Mettre à jour les index de sortie pour toutes les régions encore traversées
-            for (let regionName of pointRegions) {
-                if (regionSegments.has(regionName)) {
-                    regionSegments.get(regionName).exitIndex = i;
-                }
-            }
-        }
-
-        // Finaliser les régions qui sont encore traversées à la fin
-        for (let regionName of currentRegions) {
-            if (regionSegments.has(regionName)) {
-                regionSegments.get(regionName).exitIndex = journeyPath.length - 1;
-                console.log(`🔧 [DEBUG] Région ${regionName} - sortie finale à l'index ${journeyPath.length - 1}`);
-            }
-        }
-
-        // Mettre à jour window.regionSegments
-        window.regionSegments = regionSegments;
-
-        console.log(`🔧 [DEBUG] Segments de région reconstruits:`, regionSegments);
-        console.log(`🔧 [DEBUG] === FIN rebuildRegionSegments ===`);
     }
 
     getJourneyStartDate() {
@@ -418,7 +247,6 @@ class VoyageManager {
             return `${calendarDay} ${calendarData[monthIndex].name}`;
         }
 
-        // Fallback générique
         return `Jour ${day}`;
     }
 
@@ -482,16 +310,12 @@ class VoyageManager {
                 // Obtenir l'image pour la miniature
                 const imageUrl = this.getDiscoveryImage(discovery);
 
-                // Vérifier s'il y a des tables aléatoires pour ce lieu/région
-                const hasTables = this.discoveryHasTables(discovery);
-                const diceIcon = hasTables ? ' <span class="dice-icon cursor-pointer hover:scale-110 transition-transform" data-discovery-name="' + discovery.name + '" data-discovery-type="' + discovery.type + '" title="Voir les tables aléatoires">🎲</span>' : '';
-
                 return `
                     <div class="inline-block m-2 p-3 bg-gray-800 rounded-lg hover:bg-gray-700 cursor-pointer transition-colors discovery-item text-center" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" style="width: 180px; vertical-align: top;">
                         <div class="w-[150px] h-[150px] mx-auto mb-2 bg-gray-600 rounded-lg overflow-hidden">
                             ${imageUrl ? `<img src="${imageUrl}" alt="${discovery.name}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-400 text-sm">Aucune image</div>'}
                         </div>
-                        <div class="font-medium text-white text-sm mb-1">${discovery.name}${diceIcon}</div>
+                        <div class="font-medium text-white text-sm mb-1">${discovery.name}</div>
                         <div class="text-xs text-gray-400">${typeText} - ${actionText}</div>
                     </div>
                 `;
@@ -504,6 +328,23 @@ class VoyageManager {
             `;
         }
 
+        // Récupérer le style de narration pour l'affichage
+        const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
+        let styleText = '';
+        switch (narrationStyle) {
+            case 'detailed':
+                styleText = ' (Détaillée)';
+                break;
+            case 'brief':
+                styleText = ' (Brève)';
+                break;
+            case 'keywords':
+                styleText = ' (Points clés)';
+                break;
+            default:
+                styleText = ' (Brève)';
+        }
+
         // Ajouter les boutons en bas
         let buttonsHtml = `
             <div class="mt-3 pt-3 border-t border-gray-600 space-y-3">
@@ -513,7 +354,7 @@ class VoyageManager {
                 </div>
                 <button id="describe-journey-btn" class="w-full py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors" style="background-color: white; color: #940000; border: 1px solid #940000;">
                     <span class="gemini-icon">✨</span>
-                    <span>Décrire le voyage (Points clés)</span>
+                    <span>Décrire le voyage${styleText}</span>
                 </button>
         `;
 
@@ -681,26 +522,8 @@ class VoyageManager {
             });
 
             // Clic - ouvrir la modal
-            item.addEventListener('click', (e) => {
-                // Vérifier si le clic provient de l'icône dé
-                if (e.target.classList.contains('dice-icon')) {
-                    e.stopPropagation();
-                    this.openDiscoveryModalOnTablesTab(discoveryName, discoveryType);
-                } else {
-                    this.openDiscoveryModal(discoveryName, discoveryType);
-                }
-            });
-        });
-
-        // Event listeners spécifiques pour les icônes dé
-        const diceIcons = document.querySelectorAll('.dice-icon');
-        diceIcons.forEach(icon => {
-            const discoveryName = icon.dataset.discoveryName;
-            const discoveryType = icon.dataset.discoveryType;
-
-            icon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.openDiscoveryModalOnTablesTab(discoveryName, discoveryType);
+            item.addEventListener('click', () => {
+                this.openDiscoveryModal(discoveryName, discoveryType);
             });
         });
     }
@@ -769,76 +592,6 @@ class VoyageManager {
                                 toggleInfoBoxExpand();
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    openDiscoveryModalOnTablesTab(discoveryName, discoveryType) {
-        // Fermer la modal des segments de voyage
-        this.dom.hideModal(this.dom.voyageSegmentsModal);
-
-        if (discoveryType === 'location') {
-            // Trouver le lieu et ouvrir sa modal
-            if (typeof locationsData !== 'undefined' && locationsData.locations) {
-                const location = locationsData.locations.find(loc => loc.name === discoveryName);
-                if (location) {
-                    // Simuler un événement de clic sur le marqueur
-                    const fakeEvent = {
-                        currentTarget: { dataset: { id: location.id.toString() } },
-                        stopPropagation: () => {},
-                        preventDefault: () => {}
-                    };
-
-                    if (typeof showInfoBox === 'function') {
-                        showInfoBox(fakeEvent);
-
-                        // Forcer l'expansion de la info box et activer l'onglet Tables
-                        setTimeout(() => {
-                            const infoBox = document.getElementById('info-box');
-                            if (infoBox && !infoBox.classList.contains('expanded')) {
-                                if (typeof toggleInfoBoxExpand === 'function') {
-                                    toggleInfoBoxExpand();
-                                }
-                            }
-
-                            // Activer l'onglet Tables aléatoires
-                            if (typeof activateTab === 'function') {
-                                activateTab('tables');
-                            }
-                        }, 100);
-                    }
-                }
-            }
-        } else if (discoveryType === 'region') {
-            // Trouver la région et ouvrir sa modal
-            if (typeof regionsData !== 'undefined' && regionsData.regions) {
-                const region = regionsData.regions.find(reg => reg.name === discoveryName);
-                if (region) {
-                    // Simuler un événement de clic sur la région
-                    const fakeEvent = {
-                        stopPropagation: () => {},
-                        preventDefault: () => {}
-                    };
-
-                    if (typeof showRegionInfo === 'function') {
-                        showRegionInfo(fakeEvent, region);
-
-                        // Forcer l'expansion de la info box et activer l'onglet Tables
-                        setTimeout(() => {
-                            const infoBox = document.getElementById('info-box');
-                            if (infoBox && !infoBox.classList.contains('expanded')) {
-                                if (typeof toggleInfoBoxExpand === 'function') {
-                                    toggleInfoBoxExpand();
-                                }
-                            }
-
-                            // Activer l'onglet Tables aléatoires
-                            if (typeof activateTab === 'function') {
-                                activateTab('tables');
-                            }
-                        }, 100);
                     }
                 }
             }
@@ -1060,11 +813,13 @@ class VoyageManager {
     }
 
     createAllJourneyDescriptionPrompt(journeyData) {
-        console.log('📖 Génération du prompt pour voyage complet en mode points clés');
+        // Récupérer le style de narration
+        const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
+        console.log('📖 Style de narration pour le voyage complet:', narrationStyle);
 
-        let prompt = `Génère des points clés évocateurs pour toutes les journées d'un voyage en Terre du Milieu dont le détail est présenté ci-après. 
+        let prompt = `Rédige des descriptions évocatrices pour toutes les journées d'un voyage en Terre du Milieu dont le détail est présenté ci-après. 
 
-Ces points clés sont destinés à un meneur de jeu pour l'inspirer lors de l'improvisation en jeu.
+Ces descriptions sont destinées à un meneur de jeu qui va les lire à ses joueurs pour les immerger dans l'ambiance du voyage.
 
 **Contexte du groupe :**
 ${journeyData.adventurersGroup || 'Groupe d\'aventuriers non défini'}
@@ -1095,6 +850,44 @@ ${journeyData.adventurersQuest || 'Quête non définie'}
             prompt += '\n';
         });
 
+        // Ajouter les instructions spécifiques selon le style de narration
+        let styleInstructions = '';
+        switch (narrationStyle) {
+            case 'detailed':
+                styleInstructions = `
+
+**STYLE DE NARRATION : DÉTAILLÉE**
+- Rédigez des descriptions riches et immersives de plusieurs paragraphes par journée
+- Rédigez au présent de la deuxième personne du pluriel ("Vous traversez...")
+- Développez l'atmosphère avec des détails sensoriels précis
+- Explorez les émotions et réflexions intimes des personnages
+- Utilisez un style littéraire évocateur et poétique
+- Chaque description doit faire 3-4 paragraphes pour une immersion maximale
+- Variez les tons : contemplatif, aventureux, mélancolique selon les découvertes`;
+                break;
+            case 'brief':
+                styleInstructions = `
+
+**STYLE DE NARRATION : BRÈVE**
+- Rédigez des descriptions concises mais évocatrices (1-2 paragraphes par journée)
+- Rédigez au présent de la deuxième personne du pluriel ("Vous traversez...")
+- Concentrez-vous sur l'essentiel : ambiance, découvertes importantes, ressenti général
+- Style narratif fluide et accessible, idéal pour une lecture rapide en jeu
+- Capturez l'essence de chaque journée sans s'attarder sur les détails`;
+                break;
+            case 'keywords':
+                styleInstructions = `
+
+**STYLE DE NARRATION : POINTS CLÉS**
+- Organisez l'information sous forme de listes structurées de mots-clés thématiques
+- Ne faites pas de phrases complètes, mais des listes de mots-clés et expressions évocatrices
+- Utilisez des puces et des catégories claires (Paysage, Météo, Ambiance, Événements, etc.)
+- Présentez les informations de manière synthétique et facilement exploitable
+- Optimisé pour une consultation rapide et une improvisation en jeu
+- Format : utilisez des tirets et des catégories courtes pour structurer l'information`;
+                break;
+        }
+
         prompt += `
 **Instructions importantes :**
 - Répondez UNIQUEMENT avec un objet JSON valide de cette structure :
@@ -1111,13 +904,7 @@ ${journeyData.adventurersQuest || 'Quête non définie'}
   ]
 }
 
-**STYLE DE NARRATION : POINTS CLÉS**
-- Organisez l'information sous forme de listes structurées de mots-clés thématiques
-- Ne faites pas de phrases complètes, mais des listes de mots-clés et expressions évocatrices
-- Utilisez des puces et des catégories claires (Paysage, Météo, Ambiance, Événements, etc.)
-- Présentez les informations de manière synthétique et facilement exploitable
-- Optimisé pour une consultation rapide et une improvisation en jeu
-- Format : utilisez des tirets et des catégories courtes pour structurer l'information
+${styleInstructions}
 
 **Règles générales :**
 - Variez les descriptions selon les jours en mettant en avant :
@@ -1127,8 +914,11 @@ ${journeyData.adventurersQuest || 'Quête non définie'}
   • Tantôt l'accumulation de la fatigue
   • Tantôt l'attitude de certains membres du groupe
 
+- Rédigez au présent de la 2ème personne du pluriel ("Vous traversez...")
+- Faites appel à plusieurs sens (vue, ouïe, odorat, toucher) pour une immersion totale
+- Évoquez l'état physique et mental des personnages en tenant compte du nombre de jours de voyage accumulés
 - Adaptez l'ambiance à la saison
-- Optimisé pour une improvisation en jeu de rôle
+- Le ton doit être immersif et narratif, adapté à une lecture en jeu de rôle
 - Évitez les redondances entre les descriptions des différentes journées
 - Assurez-vous que chaque description soit unique et apporte sa propre atmosphère
 
@@ -1205,37 +995,32 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                         </button>
                     </div>
 
-                    <!-- Modal content and navigation -->
-                    <div class="mb-4 flex-grow overflow-y-auto">
-                        <div class="bg-gray-800 rounded-lg p-4 mb-3">
-                            <div class="text-sm text-gray-400 mb-2">Description du jour :</div>
-                            <div id="journey-description-content" class="text-gray-200 leading-relaxed text-sm"></div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 pt-4 border-t border-gray-600 flex justify-center items-center">
-                        <div class="flex items-center justify-between w-full">
-                            <button id="prev-day-desc" class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm transition-colors opacity-50 cursor-not-allowed" style="background-color: #940000; border: 2px solid #940000;" disabled>
+                    <!-- Barre de progression avec navigation -->
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <button id="prev-day-desc" class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm transition-colors" style="background-color: #940000; border: 2px solid #940000;">
                                 <i class="fas fa-chevron-left"></i>
                             </button>
 
                             <div class="flex-1 mx-4">
                                 <div class="bg-gray-300 h-2 rounded-full relative">
-                                    <div id="journey-progress-fill" class="h-2 rounded-full transition-all duration-300" style="background-color: #940000; width: 0%;"></div>
-                                    <div id="journey-progress-marker" class="absolute top-0 w-4 h-4 rounded-full border-2 border-white transform -translate-y-1" style="background-color: #940000; left: calc(0% - 8px);"></div>
+                                    <div id="journey-progress-fill" class="h-2 rounded-full transition-all duration-300" style="background-color: #940000;"></div>
+                                    <div id="journey-progress-marker" class="absolute top-0 w-4 h-4 rounded-full border-2 border-white transform -translate-y-1" style="background-color: #940000;"></div>
                                 </div>
                             </div>
 
-                            <button id="next-day-desc" class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm transition-colors opacity-50 cursor-not-allowed" style="background-color: #940000; border: 2px solid #940000;" disabled>
+                            <button id="next-day-desc" class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm transition-colors" style="background-color: #940000; border: 2px solid #940000;">
                                 <i class="fas fa-chevron-right"></i>
                             </button>
                         </div>
-                        <div class="text-center mt-2 w-full">
+
+                        <div class="text-center">
                             <span id="current-day-indicator" class="text-sm font-medium" style="color: #940000;">Jour 1</span>
                         </div>
                     </div>
 
-                    <div class="mt-4 pt-4 border-t border-gray-600 flex justify-end">
+                    <div id="journey-description-content" class="prose prose-invert overflow-y-auto text-gray-300 leading-relaxed flex-1"></div>
+                    <div id="journey-description-controls" class="mt-4 pt-4 border-t border-gray-600 flex justify-end">
                         <button id="copy-journey-description" class="px-4 py-2 rounded-lg text-white font-medium transition-colors" style="background-color: #940000; border: 1px solid #940000;">
                             <i class="fas fa-copy mr-2"></i>Copier
                         </button>
@@ -1263,6 +1048,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     updateDescriptionModal(description, showNavigation = false) {
         const title = document.getElementById('journey-description-title');
         const content = document.getElementById('journey-description-content');
+        const navigationControls = document.getElementById('day-navigation-controls');
         const copyButton = document.getElementById('copy-journey-description');
 
         // Mettre à jour le titre
@@ -1276,7 +1062,10 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         // Gérer la navigation si on a plusieurs descriptions
         if (showNavigation && this.journeyDescriptions) {
+            navigationControls.classList.remove('hidden');
             this.setupDescriptionNavigation();
+        } else {
+            navigationControls.classList.add('hidden');
         }
 
         // Mettre à jour le bouton copier
@@ -1313,24 +1102,20 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             prevBtn.style.opacity = '1';
             prevBtn.style.backgroundColor = '#940000';
             prevBtn.disabled = false;
-            prevBtn.style.cursor = 'pointer';
         } else {
             prevBtn.style.opacity = '0.5';
             prevBtn.style.backgroundColor = '#940000';
             prevBtn.disabled = true;
-            prevBtn.style.cursor = 'not-allowed';
         }
 
         if (this.currentDescriptionDay < this.totalJourneyDays) {
             nextBtn.style.opacity = '1';
             nextBtn.style.backgroundColor = '#940000';
             nextBtn.disabled = false;
-            nextBtn.style.cursor = 'pointer';
         } else {
             nextBtn.style.opacity = '0.5';
             nextBtn.style.backgroundColor = '#940000';
             nextBtn.disabled = true;
-            nextBtn.style.cursor = 'not-allowed';
         }
 
         // Event listeners
@@ -1395,227 +1180,5 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         }
 
         return null;
-    }
-
-    discoveryHasTables(discovery) {
-        if (discovery.type === 'location') {
-            // Chercher dans les données de lieux
-            if (typeof locationsData !== 'undefined' && locationsData.locations) {
-                const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                if (location && location.tables && Array.isArray(location.tables)) {
-                    // Vérifier s'il y a au moins une table avec une URL valide
-                    return location.tables.some(table => table.url && table.url.trim() !== '');
-                }
-            }
-        } else if (discovery.type === 'region') {
-            // Chercher dans les données de régions
-            if (typeof regionsData !== 'undefined' && regionsData.regions) {
-                const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                if (region && region.tables && Array.isArray(region.tables)) {
-                    // Vérifier s'il y a au moins une table avec une URL valide
-                    return region.tables.some(table => table.url && table.url.trim() !== '');
-                }
-            }
-        }
-
-        return false;
-    }
-
-    calculateDailyDiscoveries() {
-        const dailyDiscoveries = {}; // jour -> array de découvertes
-        const milesPerDay = 20;
-        const pixelsPerDay = milesPerDay * (MAP_WIDTH / MAP_DISTANCE_MILES);
-
-        // Variables pour suivre l'état de traversée des régions
-        let currentRegionsActive = new Set();
-        let regionsDiscoveredToday = new Set();
-        let currentDay = 1;
-        let currentDayDistance = 0;
-
-        console.log("🔧 [DAILY DISCOVERIES] Début du calcul jour par jour");
-
-        // Parcourir séquentiellement chaque point du tracé
-        for (let pointIndex = 0; pointIndex < journeyPath.length; pointIndex++) {
-            const currentPoint = journeyPath[pointIndex];
-
-            // Calculer la distance depuis le point précédent
-            let segmentDistance = 0;
-            if (pointIndex > 0) {
-                const previousPoint = journeyPath[pointIndex - 1];
-                segmentDistance = Math.sqrt(
-                    Math.pow(currentPoint.x - previousPoint.x, 2) + 
-                    Math.pow(currentPoint.y - previousPoint.y, 2)
-                );
-            }
-
-            currentDayDistance += segmentDistance;
-
-            // Vérifier si on change de jour
-            if (currentDayDistance >= pixelsPerDay && currentDay < this.totalJourneyDays) {
-                // Finaliser le jour actuel
-                if (!dailyDiscoveries[currentDay]) {
-                    dailyDiscoveries[currentDay] = [];
-                }
-
-                // Passer au jour suivant
-                currentDay++;
-                currentDayDistance = currentDayDistance - pixelsPerDay;
-                regionsDiscoveredToday.clear();
-            }
-
-            // Initialiser le jour si nécessaire
-            if (!dailyDiscoveries[currentDay]) {
-                dailyDiscoveries[currentDay] = [];
-            }
-
-            // Identifier les régions au point actuel
-            const currentRegions = new Set();
-            if (typeof regionsData !== 'undefined' && regionsData.regions) {
-                regionsData.regions.forEach(region => {
-                    if (region.points && region.points.length >= 3) {
-                        if (this.isPointInPolygon(currentPoint, region.points)) {
-                            currentRegions.add(region.name);
-                        }
-                    }
-                });
-            }
-
-            // Détecter les nouvelles régions découvertes ce jour
-            currentRegions.forEach(regionName => {
-                if (!currentRegionsActive.has(regionName) && !regionsDiscoveredToday.has(regionName)) {
-                    // Nouvelle région découverte
-                    regionsDiscoveredToday.add(regionName);
-                    dailyDiscoveries[currentDay].push({
-                        name: regionName,
-                        type: 'region',
-                        status: 'discovered'
-                    });
-                    console.log(`🔧 [DAILY DISCOVERIES] Jour ${currentDay}: Découverte région ${regionName}`);
-                }
-            });
-
-            // Mettre à jour les régions actives
-            currentRegionsActive = new Set(currentRegions);
-
-            // Vérifier les lieux à proximité
-            if (typeof locationsData !== 'undefined' && locationsData.locations) {
-                locationsData.locations.forEach(location => {
-                    if (!location.coordinates || typeof location.coordinates.x === 'undefined' || typeof location.coordinates.y === 'undefined') {
-                        return;
-                    }
-
-                    const distance = Math.sqrt(
-                        Math.pow(location.coordinates.x - currentPoint.x, 2) +
-                        Math.pow(location.coordinates.y - currentPoint.y, 2)
-                    );
-
-                    if (distance <= 50) { // PROXIMITY_DISTANCE
-                        // Vérifier si le lieu n'est pas déjà dans les découvertes du jour
-                        const alreadyDiscovered = dailyDiscoveries[currentDay].some(d => 
-                            d.name === location.name && d.type === 'location'
-                        );
-
-                        if (!alreadyDiscovered) {
-                            const proximityType = distance <= 10 ? 'traversed' : 'nearby';
-                            dailyDiscoveries[currentDay].push({
-                                name: location.name,
-                                type: 'location',
-                                status: proximityType
-                            });
-                            console.log(`🔧 [DAILY DISCOVERIES] Jour ${currentDay}: ${proximityType} lieu ${location.name}`);
-                        }
-                    }
-                });
-            }
-        }
-
-        // Ajouter les régions en cours de traversée pour chaque jour
-        Object.keys(dailyDiscoveries).forEach(day => {
-            const dayNum = parseInt(day);
-            const discoveries = dailyDiscoveries[dayNum];
-
-            // Calculer quelles régions sont traversées ce jour-là
-            const dayStartDistance = (dayNum - 1) * pixelsPerDay;
-            const dayEndDistance = dayNum * pixelsPerDay;
-
-            // Trouver les points correspondant à ce jour
-            let currentDistance = 0;
-            let dayStartPointIndex = 0;
-            let dayEndPointIndex = journeyPath.length - 1;
-
-            for (let i = 1; i < journeyPath.length; i++) {
-                const prevPoint = journeyPath[i - 1];
-                const currPoint = journeyPath[i];
-                const segmentDist = Math.sqrt(
-                    Math.pow(currPoint.x - prevPoint.x, 2) + 
-                    Math.pow(currPoint.y - prevPoint.y, 2)
-                );
-
-                if (currentDistance <= dayStartDistance && currentDistance + segmentDist > dayStartDistance) {
-                    dayStartPointIndex = i;
-                }
-                if (currentDistance <= dayEndDistance && currentDistance + segmentDist > dayEndDistance) {
-                    dayEndPointIndex = i;
-                    break;
-                }
-
-                currentDistance += segmentDist;
-            }
-
-            // Identifier les régions traversées pendant ce jour
-            const regionsInDay = new Set();
-            for (let i = dayStartPointIndex; i <= dayEndPointIndex && i < journeyPath.length; i++) {
-                const point = journeyPath[i];
-                if (typeof regionsData !== 'undefined' && regionsData.regions) {
-                    regionsData.regions.forEach(region => {
-                        if (region.points && region.points.length >= 3) {
-                            if (this.isPointInPolygon(point, region.points)) {
-                                regionsInDay.add(region.name);
-                            }
-                        }
-                    });
-                }
-            }
-
-            // Ajouter les régions en cours de traversée (qui ne sont pas des découvertes du jour)
-            regionsInDay.forEach(regionName => {
-                const alreadyDiscovered = discoveries.some(d => 
-                    d.name === regionName && d.type === 'region' && d.status === 'discovered'
-                );
-
-                if (!alreadyDiscovered) {
-                    discoveries.push({
-                        name: regionName,
-                        type: 'region',
-                        status: 'traversing'
-                    });
-                }
-            });
-        });
-
-        console.log("🔧 [DAILY DISCOVERIES] Résultats finaux:", dailyDiscoveries);
-        return dailyDiscoveries;
-    }
-
-    isPointInPolygon(point, polygon) {
-        let inside = false;
-        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-            if (((polygon[i].y > point.y) !== (polygon[j].y > point.y)) &&
-                (point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x)) {
-                inside = !inside;
-            }
-        }
-        return inside;
-    }
-
-    setupDiscoveryClickHandlers() {
-        const clickableDiscoveries = document.querySelectorAll('.clickable-discovery');
-        clickableDiscoveries.forEach(item => {
-            item.addEventListener('click', (e) => {
-                const discoveryName = e.currentTarget.dataset.discoveryName;
-                const discoveryType = e.currentTarget.dataset.discoveryType;
-                this.openDiscoveryModal(discoveryName, discoveryType);
-            });
-        });
     }
 }
