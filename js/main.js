@@ -217,6 +217,16 @@ function renderRegions() {
         title.textContent = region.name;
         polygon.appendChild(title);
 
+        // Rendre le polygone cliquable
+        polygon.style.pointerEvents = 'auto';
+        polygon.style.cursor = 'pointer';
+        
+        // Ajouter l'événement de clic pour afficher la modal commune
+        polygon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showInfoBox(e, region, 'region');
+        });
+
         // Ajouter à la couche des régions
         regionsLayer.appendChild(polygon);
         renderedCount++;
@@ -253,7 +263,7 @@ function initializeMap() {
         regionsLayer.style.left = '0';
         regionsLayer.style.width = `${MAP_WIDTH}px`;
         regionsLayer.style.height = `${MAP_HEIGHT}px`;
-        regionsLayer.style.pointerEvents = 'none'; // Permettre les clics à travers
+        regionsLayer.style.pointerEvents = 'auto'; // Permettre les clics sur les régions
         console.log("✅ Regions layer configured");
     }
 
@@ -550,8 +560,8 @@ function setupInfoBoxListeners() {
 let currentInfoBox = null;
 let isInfoBoxExpanded = false;
 
-function showInfoBox(event, location) {
-    console.log("📋 Showing info box for:", location.name);
+function showInfoBox(event, locationOrRegion, type = 'location') {
+    console.log("📋 Showing info box for:", locationOrRegion.name, "Type:", type);
 
     const infoBox = document.getElementById('info-box');
     const infoBoxTitle = document.getElementById('info-box-title');
@@ -565,12 +575,12 @@ function showInfoBox(event, location) {
         return;
     }
 
-    // Sauvegarder la référence du lieu actuel
-    currentInfoBox = location;
+    // Sauvegarder la référence de l'objet actuel
+    currentInfoBox = locationOrRegion;
 
     // Mettre à jour le titre (caché en mode compact)
     if (infoBoxTitle) {
-        infoBoxTitle.textContent = location.name;
+        infoBoxTitle.textContent = locationOrRegion.name;
         infoBoxTitle.classList.add('hidden');
     }
 
@@ -579,17 +589,18 @@ function showInfoBox(event, location) {
         const imageView = imageTab.querySelector('.image-view');
         if (imageView) {
             // Vérifier s'il y a des images
-            if (location.images && location.images.length > 0) {
-                const defaultImage = location.images.find(img => img.isDefault) || location.images[0];
+            if (locationOrRegion.images && locationOrRegion.images.length > 0) {
+                const defaultImage = locationOrRegion.images.find(img => img.isDefault) || locationOrRegion.images[0];
                 imageView.innerHTML = `
-                    <img src="${defaultImage.url}" alt="${location.name}" class="modal-image">
-                    <div class="image-caption">${location.name}</div>
+                    <img src="${defaultImage.url}" alt="${locationOrRegion.name}" class="modal-image">
+                    <div class="image-caption">${locationOrRegion.name}</div>
                 `;
             } else {
                 // Pas d'image - afficher le titre en mode compact
+                const typeLabel = type === 'region' ? 'Région' : 'Lieu';
                 imageView.innerHTML = `
-                    <div class="compact-title">${location.name}</div>
-                    <div class="image-placeholder">Aucune image disponible</div>
+                    <div class="compact-title">${locationOrRegion.name}</div>
+                    <div class="image-placeholder">Aucune image disponible pour cette ${typeLabel.toLowerCase()}</div>
                 `;
             }
         }
@@ -602,8 +613,16 @@ function showInfoBox(event, location) {
             const h3 = textView.querySelector('h3');
             const p = textView.querySelector('p');
 
-            if (h3) h3.textContent = location.name;
-            if (p) p.textContent = location.description || 'Aucune description disponible.';
+            if (h3) h3.textContent = locationOrRegion.name;
+            if (p) {
+                let description = '';
+                if (type === 'region') {
+                    description = locationOrRegion.description || 'Aucune description disponible pour cette région.';
+                } else {
+                    description = locationOrRegion.description || 'Aucune description disponible.';
+                }
+                p.textContent = description;
+            }
         }
     }
 
@@ -612,7 +631,13 @@ function showInfoBox(event, location) {
         const textView = rumeursTab.querySelector('.text-view');
         if (textView) {
             const p = textView.querySelector('p');
-            if (p) p.textContent = location.Rumeur || 'Aucune rumeur disponible.';
+            if (p) {
+                if (type === 'region') {
+                    p.textContent = locationOrRegion.Rumeur || 'Aucune rumeur disponible pour cette région.';
+                } else {
+                    p.textContent = locationOrRegion.Rumeur || 'Aucune rumeur disponible.';
+                }
+            }
         }
     }
 
@@ -621,17 +646,31 @@ function showInfoBox(event, location) {
         const textView = traditionTab.querySelector('.text-view');
         if (textView) {
             const p = textView.querySelector('p');
-            if (p) p.textContent = location.Tradition_Ancienne || 'Aucune tradition ancienne disponible.';
+            if (p) {
+                if (type === 'region') {
+                    p.textContent = locationOrRegion.Tradition_Ancienne || 'Aucune tradition ancienne disponible pour cette région.';
+                } else {
+                    p.textContent = locationOrRegion.Tradition_Ancienne || 'Aucune tradition ancienne disponible.';
+                }
+            }
         }
     }
 
     // Positionner et afficher l'info-box
-    const rect = event.currentTarget.getBoundingClientRect();
-    const viewportRect = viewport.getBoundingClientRect();
-
-    // Position relative au viewport
-    const x = rect.left - viewportRect.left + rect.width / 2;
-    const y = rect.top - viewportRect.top + rect.height / 2;
+    let x, y;
+    
+    if (type === 'region') {
+        // Pour les régions, utiliser la position du clic
+        const viewportRect = viewport.getBoundingClientRect();
+        x = event.clientX - viewportRect.left;
+        y = event.clientY - viewportRect.top;
+    } else {
+        // Pour les lieux, utiliser la position du marqueur
+        const rect = event.currentTarget.getBoundingClientRect();
+        const viewportRect = viewport.getBoundingClientRect();
+        x = rect.left - viewportRect.left + rect.width / 2;
+        y = rect.top - viewportRect.top + rect.height / 2;
+    }
 
     // Ajuster pour éviter de sortir de l'écran
     const infoBoxWidth = 280; // Largeur approximative de l'info-box
