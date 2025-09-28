@@ -5064,40 +5064,7 @@
             }
         }
 
-        function loadSettings(activeTab = 'maps') {
-            // Load data
-            loadMapsData();
-            renderMapsGrid();
-
-            // Load adventurers and quest from localStorage
-            const adventurersGroup = localStorage.getItem('adventurersGroup');
-            const adventurersQuest = localStorage.getItem('adventurersQuest');
-
-            // Update markdown content displays
-            updateMarkdownContent('adventurers-content', adventurersGroup);
-            updateMarkdownContent('quest-content', adventurersQuest);
-
-            // Load narration style
-            const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
-            const narrationRadio = document.querySelector(`input[name="narration-style"][value="${narrationStyle}"]`);
-            if (narrationRadio) {
-                narrationRadio.checked = true;
-            }
-
-            // Load season settings
-            loadSavedSeason();
-            setupSeasonListeners();
-
-            // Render maps
-            renderMapsGrid();
-
-            // Show modal and activate correct tab
-            settingsModal.classList.remove('hidden');
-            switchSettingsTab(activeTab);
-
-            // Setup edit mode listeners
-            setupEditModeListeners();
-        }
+        
 
         function updateMarkdownContent(elementId, content) {
             const element = document.getElementById(elementId);
