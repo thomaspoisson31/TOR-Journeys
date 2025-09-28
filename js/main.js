@@ -1627,7 +1627,7 @@
                     };
                     mapImage.addEventListener('error', () => {
                         clearTimeout(startTimeout);
-                        handleImageError();
+                        handleMapImageError();
                     });
 
                     console.log("🗺️ Loading map image:", PLAYER_MAP_URL);
@@ -2288,7 +2288,7 @@
             }
         }
 
-        function handleImageError() {
+        function handleMapImageError() {
             console.error("❌ Erreur de chargement de l'image de carte");
             loaderOverlay.innerHTML = `<div class="text-2xl text-red-500 text-center p-4"><i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>Erreur de chargement de la carte.<br><span class="text-sm text-gray-400 mt-2">Vérifiez que les fichiers de carte sont disponibles.</span></div>`;
         }
