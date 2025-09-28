@@ -4112,31 +4112,11 @@
             }
             
             if (seasonIndicator) {
-                seasonIndicator.addEventListener('click', () => {
-                    const settingsModal = document.getElementById('settings-modal');
-                    if (settingsModal) {
-                        settingsModal.classList.remove('hidden');
-                        // Switch to season tab
-                        const seasonTabButton = document.querySelector('[data-tab="season"]');
-                        if (seasonTabButton) {
-                            seasonTabButton.click();
-                        }
-                    }
-                });
+                seasonIndicator.addEventListener('click', openSettingsOnSeasonTab);
             }
 
             if (calendarDateIndicator) {
-                calendarDateIndicator.addEventListener('click', () => {
-                    const settingsModal = document.getElementById('settings-modal');
-                    if (settingsModal) {
-                        settingsModal.classList.remove('hidden');
-                        // Switch to season tab
-                        const seasonTabButton = document.querySelector('[data-tab="season"]');
-                        if (seasonTabButton) {
-                            seasonTabButton.click();
-                        }
-                    }
-                });
+                calendarDateIndicator.addEventListener('click', openSettingsOnSeasonTab);
             }
         }
 
@@ -4945,10 +4925,10 @@
         // --- Settings Modal Functions ---
         function openSettingsOnSeasonTab() {
             try {
-                settingsModal.classList.remove('hidden');
-                    loadSettings();
-                    setupSettingsTabSwitching();
-
+                const settingsModal = document.getElementById('settings-modal');
+                if (settingsModal) {
+                    settingsModal.classList.remove('hidden');
+                    
                     // Ouvrir directement l'onglet "Saisons"
                     setTimeout(() => {
                         const seasonTabButton = document.querySelector('.settings-tab-button[data-tab="season"]');
@@ -4956,10 +4936,11 @@
                             seasonTabButton.click();
                         }
                     }, 100);
-                } catch (error) {
-                    console.error('Erreur lors de l\'ouverture des paramètres:', error);
                 }
+            } catch (error) {
+                console.error('Erreur lors de l\'ouverture des paramètres:', error);
             }
+        }
 
             function setupSettingsEventListeners() {
                 waitForElement('#settings-btn', (settingsBtn) => {
