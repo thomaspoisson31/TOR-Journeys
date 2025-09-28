@@ -4935,6 +4935,24 @@
             loadAdventurersQuest();
         }
 
+        function loadAdventurersGroup() {
+            const saved = localStorage.getItem('adventurersGroup');
+            const textarea = document.getElementById('adventurers-group');
+            if (textarea) {
+                textarea.value = saved || '';
+            }
+            updateMarkdownContent('adventurers-content', saved);
+        }
+
+        function loadAdventurersQuest() {
+            const saved = localStorage.getItem('adventurersQuest');
+            const textarea = document.getElementById('adventurers-quest');
+            if (textarea) {
+                textarea.value = saved || '';
+            }
+            updateMarkdownContent('quest-content', saved);
+        }
+
         function setupSettingsTabSwitching() {
             // Attendre que le DOM soit complètement chargé
             setTimeout(() => {
@@ -5064,47 +5082,6 @@
             }
         }
 
-        
-
-        function updateMarkdownContent(elementId, content) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-
-            if (!content || content.trim() === '') {
-                if (elementId === 'adventurers-content') {
-                    element.innerHTML = '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
-                } else {
-                    element.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
-                }
-                return;
-            }
-
-            // Simple Markdown parsing
-            let html = content
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-                .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
-                .replace(/`(.*?)`/g, '<code>$1</code>')
-                .replace(/^- (.*$)/gim, '<li>$1</li>')
-                .replace(/^(\d+)\. (.*$)/gim, '<li>$2</li>')
-                .replace(/\n\n/g, '</p><p>')
-                .replace(/\n/g, '<br>');
-
-            // Wrap with paragraph tags and handle lists
-            html = '<p>' + html + '</p>';
-            html = html.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
-            html = html.replace(/<\/ul><ul>/g, '');
-            html = html.replace(/<p><\/p>/g, '');
-            html = html.replace(/<p>(<h[123]>)/g, '$1').replace(/(<\/h[123]>)<\/p>/g, '$1');
-            html = html.replace(/<p>(<ul>)/g, '$1').replace(/(<\/ul>)<\/p>/g, '$1');
-            html = html.replace(/<p>(<blockquote>)/g, '$1').replace(/(<\/blockquote>)<\/p>/g, '$1');
-
-            element.innerHTML = html;
-        }
-
         // === FONCTIONS POUR LE STYLE DE NARRATION ===
 
         function setupNarrationStyleListeners() {
@@ -5167,30 +5144,6 @@
 
             console.log('📖 Nouveau titre du bouton:', journeyButton.title);
             console.log('📖 Nouveau texte du bouton:', shortStyleText);
-        }
-
-        function getNarrationPromptAddition() {
-            const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
-            console.log('📖 Style de narration pour le prompt:', narrationStyle);
-
-            let addition = '';
-            switch (narrationStyle) {
-                case 'detailed':
-                    addition = ' Organise le récit jour par jour. Pour chaque journée, rédige plusieurs paragraphes dans un style littéraire évocateur et riche. Décris l\'atmosphère, les sensations, les conversations entre les personnages, les détails du paysage et les émotions ressenties avec un style narratif immersif et poétique.';
-                    break;
-
-                case 'keywords':
-                    addition = ' Organise le récit jour par jour. Pour chaque journée, plutôt que des phrases complètes, présente une liste structurée de mots-clés et expressions évocateurs organisés par thèmes (Météo/Climat, Ambiance du groupe, Paysages traversés, Événements marquants, Sensations/Émotions). Utilise un vocabulaire riche et évocateur que le Meneur de Jeu pourra utiliser pour créer ses propres descriptions.';
-                    break;
-
-                case 'brief':
-                default:
-                    addition = ' Organise le récit par étapes journalières, en décrivant brièvement l\'ambiance et les paysages rencontrés dans un style concis mais évocateur, avec un paragraphe par jour.';
-                    break;
-            }
-
-            console.log('📖 Addition au prompt:', addition.substring(0, 100) + '...');
-            return addition;
         }
 
         async function handleGenerateAdventurers(event) {
