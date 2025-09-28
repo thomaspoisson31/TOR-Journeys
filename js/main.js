@@ -4055,6 +4055,8 @@
                     const settingsModal = document.getElementById('settings-modal');
                     if (settingsModal) {
                         settingsModal.classList.remove('hidden');
+                        // Configurer les onglets à chaque ouverture
+                        setupSettingsTabSwitching();
                     }
                 });
             }
@@ -4069,35 +4071,6 @@
                     }
                 });
             }
-
-            // Settings tabs
-            const settingsTabButtons = document.querySelectorAll('.settings-tab-button');
-            const settingsTabContents = document.querySelectorAll('.settings-tab-content');
-
-            settingsTabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const targetTab = button.dataset.tab;
-                    
-                    // Update active tab button
-                    settingsTabButtons.forEach(btn => {
-                        btn.classList.remove('active', 'text-white', 'border-blue-500');
-                        btn.classList.add('text-gray-400', 'border-transparent');
-                    });
-                    button.classList.add('active', 'text-white', 'border-blue-500');
-                    button.classList.remove('text-gray-400', 'border-transparent');
-
-                    // Update active tab content
-                    settingsTabContents.forEach(content => {
-                        content.style.display = 'none';
-                        content.classList.remove('active');
-                    });
-                    const targetContent = document.getElementById(`${targetTab}-tab`);
-                    if (targetContent) {
-                        targetContent.style.display = 'flex';
-                        targetContent.classList.add('active');
-                    }
-                });
-            });
 
             // Maps event listeners
             setupMapsEventListeners();
@@ -4929,6 +4902,9 @@
                 if (settingsModal) {
                     settingsModal.classList.remove('hidden');
                     
+                    // S'assurer que les event listeners des onglets sont configurés
+                    setupSettingsTabSwitching();
+                    
                     // Ouvrir directement l'onglet "Saisons"
                     setTimeout(() => {
                         const seasonTabButton = document.querySelector('.settings-tab-button[data-tab="season"]');
@@ -4940,6 +4916,44 @@
             } catch (error) {
                 console.error('Erreur lors de l\'ouverture des paramètres:', error);
             }
+        }
+
+        function setupSettingsTabSwitching() {
+            const settingsTabButtons = document.querySelectorAll('.settings-tab-button');
+            const settingsTabContents = document.querySelectorAll('.settings-tab-content');
+
+            // Retirer les anciens event listeners pour éviter les doublons
+            settingsTabButtons.forEach(button => {
+                button.replaceWith(button.cloneNode(true));
+            });
+
+            // Récupérer les nouveaux éléments après clonage
+            const newSettingsTabButtons = document.querySelectorAll('.settings-tab-button');
+            
+            newSettingsTabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.dataset.tab;
+                    
+                    // Update active tab button
+                    newSettingsTabButtons.forEach(btn => {
+                        btn.classList.remove('active', 'text-white', 'border-blue-500');
+                        btn.classList.add('text-gray-400', 'border-transparent');
+                    });
+                    button.classList.add('active', 'text-white', 'border-blue-500');
+                    button.classList.remove('text-gray-400', 'border-transparent');
+
+                    // Update active tab content
+                    settingsTabContents.forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+                    const targetContent = document.getElementById(`${targetTab}-tab`);
+                    if (targetContent) {
+                        targetContent.style.display = 'flex';
+                        targetContent.classList.add('active');
+                    }
+                });
+            });
         }
 
             function setupSettingsEventListeners() {
