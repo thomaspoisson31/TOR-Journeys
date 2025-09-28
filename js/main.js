@@ -1564,7 +1564,7 @@ let calendarManager;
             }, 30000); // 30 seconds timeout
 
             // Check for authentication errors in the URL (now that authManager exists)
-            authManager.checkAuthError();
+            // authManager.checkAuthError(); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
 
             loadInitialLocations().then(() => {
                 loadRegionsFromLocal();
@@ -1572,13 +1572,13 @@ let calendarManager;
                 // Load season at startup
                 // loadSavedSeason(); // This is now handled by CalendarManager init
                 loadMapsData(); // Load maps data at startup
-                
-                authManager.logAuth("Initialisation de l'authentification...");
+
+                // authManager.logAuth("Initialisation de l'authentification..."); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
 
                 // Initialize authentication after a short delay to ensure DOM is ready
-                setTimeout(() => {
-                    authManager.checkGoogleAuth();
-                }, 100);
+                // setTimeout(() => {
+                //     authManager.checkGoogleAuth();
+                // }, 100); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
 
                 if (mapImage) {
                     mapImage.onload = () => {
@@ -1598,31 +1598,31 @@ let calendarManager;
                     infoBoxClose.addEventListener('click', hideInfoBox);
                 }
 
-                authManager.logAuth("Configuration des event listeners d'authentification...");
-                authManager.setupAuthEventListeners();
+                // authManager.logAuth("Configuration des event listeners d'authentification..."); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                setupAuthEventListeners();
 
                 // Setup settings event listeners
                 setupSettingsEventListeners();
 
                 // Test DOM elements after a delay
                 setTimeout(() => {
-                    authManager.logAuth("=== TEST DES ÉLÉMENTS DOM ===");
-                    authManager.logAuth("authModal element:", !!document.getElementById('auth-modal'));
-                    authManager.logAuth("auth-btn element:", !!document.getElementById('auth-btn'));
-                    authManager.logAuth("close-auth-modal element:", !!document.getElementById('close-auth-modal'));
-                    authManager.logAuth("google-signin-btn element:", !!document.getElementById('google-signin-btn'));
-                    authManager.logAuth("save-context-btn element:", !!document.getElementById('save-context-btn'));
-                    authManager.logAuth("settings-btn element:", !!document.getElementById('settings-btn'));
-                    authManager.logAuth("settings-modal element:", !!document.getElementById('settings-modal'));
-                    authManager.logAuth("close-settings-modal element:", !!document.getElementById('close-settings-modal'));
+                    // authManager.logAuth("=== TEST DES ÉLÉMENTS DOM ==="); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                    // authManager.logAuth("authModal element:", !!document.getElementById('auth-modal')); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                    // authManager.logAuth("auth-btn element:", !!document.getElementById('auth-btn')); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                    // authManager.logAuth("close-auth-modal element:", !!document.getElementById('close-auth-modal')); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                    // authManager.logAuth("google-signin-btn element:", !!document.getElementById('google-signin-btn')); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                    // authManager.logAuth("save-context-btn element:", !!document.getElementById('save-context-btn')); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                    // authManager.logAuth("settings-btn element:", !!document.getElementById('settings-btn')); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                    // authManager.logAuth("settings-modal element:", !!document.getElementById('settings-modal')); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                    // authManager.logAuth("close-settings-modal element:", !!document.getElementById('close-settings-modal')); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
 
                     const testAuthBtn = document.getElementById('auth-btn');
                     if (testAuthBtn) {
-                        authManager.logAuth("Bouton auth visible:", testAuthBtn.offsetParent !== null);
-                        authManager.logAuth("Bouton auth cliquable:", !testAuthBtn.disabled);
-                        authManager.logAuth("Classes du bouton auth:", testAuthBtn.className);
+                        // authManager.logAuth("Bouton auth visible:", testAuthBtn.offsetParent !== null); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                        // authManager.logAuth("Bouton auth cliquable:", !testAuthBtn.disabled); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
+                        // authManager.logAuth("Classes du bouton auth:", testAuthBtn.className); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
                     }
-                    authManager.logAuth("=== FIN TEST DES ÉLÉMENTS DOM ===");
+                    // authManager.logAuth("=== FIN TEST DES ÉLÉMENTS DOM ==="); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
                 }, 2000);
 
             }).catch(error => {
@@ -4039,12 +4039,12 @@ let calendarManager;
 
         // Setup authentication event listeners
         function setupAuthEventListeners() {
-            // logAuth("Configuration des event listeners d'authentification...");
+            // logAuth("Configuration des event listeners d'authentification..."); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
 
             waitForElement('#auth-btn', (authBtn) => {
-                // logAuth("Bouton d'authentification trouvé et configuré");
+                // logAuth("Bouton d'authentification trouvé et configuré"); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
                 authBtn.addEventListener('click', (event) => {
-                    // logAuth("Clic sur le bouton d'authentification détecté!");
+                    // logAuth("Clic sur le bouton d'authentification détecté!"); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
                     event.preventDefault();
                     event.stopPropagation();
                     toggleAuthModal();
@@ -4052,9 +4052,9 @@ let calendarManager;
             });
 
             waitForElement('#close-auth-modal', (closeAuthModalBtn) => {
-                // logAuth("Bouton de fermeture modal trouvé et configuré");
+                // logAuth("Bouton de fermeture modal trouvé et configuré"); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
                 closeAuthModalBtn.addEventListener('click', (event) => {
-                    // logAuth("Clic sur le bouton de fermeture modal détecté!");
+                    // logAuth("Clic sur le bouton de fermeture modal détecté!"); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
                     event.preventDefault();
                     event.stopPropagation();
                     const authModal = document.getElementById('auth-modal');
@@ -4065,12 +4065,12 @@ let calendarManager;
             });
 
             waitForElement('#save-context-btn', (saveContextBtn) => {
-                // logAuth("Bouton de sauvegarde contexte trouvé et configuré");
+                // logAuth("Bouton de sauvegarde contexte trouvé et configuré"); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
                 saveContextBtn.addEventListener('click', saveCurrentContext);
             });
 
             waitForElement('#google-signin-btn', (googleSigninBtn) => {
-                // logAuth("Bouton Google Sign-In trouvé et configuré");
+                // logAuth("Bouton Google Sign-In trouvé et configuré"); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
                 googleSigninBtn.addEventListener('click', handleGoogleSignIn);
             });
         }
@@ -4086,7 +4086,7 @@ let calendarManager;
                 } else if (Date.now() - startTime < maxWait) {
                     setTimeout(check, 100);
                 } else {
-                    // logAuth("TIMEOUT: Élément non trouvé:", selector);
+                    // logAuth("TIMEOUT: Élément non trouvé:", selector); // TEMPORAIREMENT COMMENTÉ POUR DEBUG
                 }
             }
 
@@ -5232,4 +5232,3 @@ Reste fidèle à l'univers de Tolkien, à la géographie et l'histoire de l'Eria
         } else {
             initializeApp();
         }
-</replit_final_file>
