@@ -1399,7 +1399,17 @@
         // Les fonctions relatives au calendrier sont maintenant gérées par CalendarManager
 
         // --- Season Functions ---
-        // Les fonctions relatives aux saisons sont maintenant gérées par CalendarManager
+        function updateSeasonDisplay() {
+            if (calendarManager) {
+                calendarManager.updateSeasonDisplay();
+            }
+        }
+
+        function loadSavedSeason() {
+            if (calendarManager) {
+                calendarManager.loadSavedSeason();
+            }
+        }
 
         // --- Auto-sync Functions ---
         async function autoSyncUserData() {
@@ -3413,7 +3423,104 @@
         document.getElementById('close-journey-log').addEventListener('click', () => journeyLogModal.classList.add('hidden'));
 
         // Mettre à jour le titre du bouton après qu'il soit créé
-        updateJourneyButtonTitle();
+        // updateJourneyButtonTitle(); // Fonction gérée par voyage-manager
+
+        // --- Narration Functions ---
+        function getNarrationPromptAddition() {
+            const selectedStyle = document.querySelector('input[name="narration-style"]:checked');
+            const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
+            const adventurersQuest = localStorage.getItem('adventurersQuest') || '';
+            
+            let addition = '';
+            
+            // Add group and quest info if available
+            if (adventurersGroup.trim()) {
+                addition += `\n\nGroupe d'aventuriers : ${adventurersGroup}`;
+            }
+            
+            if (adventurersQuest.trim()) {
+                addition += `\n\nQuête : ${adventurersQuest}`;
+            }
+            
+            // Add style instruction
+            if (selectedStyle) {
+                const style = selectedStyle.value;
+                switch (style) {
+                    case 'detailed':
+                        addition += '\n\nStyle : Rédigez une narration détaillée en plusieurs paragraphes avec un style littéraire évocateur.';
+                        break;
+                    case 'brief':
+                        addition += '\n\nStyle : Rédigez une narration brève en un seul paragraphe concis.';
+                        break;
+                    case 'keywords':
+                        addition += '\n\nStyle : Fournissez uniquement des mots-clés évocateurs pour inspiration du Meneur de Jeu.';
+                        break;
+                }
+            }
+            
+            return addition;
+        }
+
+        // --- Image Edit Functions ---
+        function generateImageEditHTML(images) {
+            return images.map((img, index) => `
+                <div class="image-edit-item bg-gray-800 p-3 rounded mb-2">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <input type="url" class="image-url-input flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm" value="${img.url}" placeholder="URL de l'image">
+                        <label class="flex items-center text-sm">
+                            <input type="checkbox" class="default-image-checkbox mr-1" ${img.isDefault ? 'checked' : ''}>
+                            Défaut
+                        </label>
+                        <button type="button" class="remove-image-btn text-red-400 hover:text-red-300 text-sm px-2 py-1">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    ${img.url ? `<img src="${img.url}" alt="Aperçu" class="w-20 h-20 object-cover rounded" onerror="this.style.display='none'">` : ''}
+                </div>
+            `).join('');
+        }
+
+        function setupImageEditListeners() {
+            const container = document.getElementById('edit-images-container');
+            const addBtn = document.getElementById('add-image-btn');
+
+            if (addBtn) {
+                addBtn.addEventListener('click', () => {
+                    const existingImages = container.querySelectorAll('.image-edit-item').length;
+                    if (existingImages >= 5) {
+                        alert('Maximum 5 images par lieu/région.');
+                        return;
+                    }
+
+                    const newImageHtml = generateImageEditHTML([{ url: '', isDefault: false }]);
+                    container.insertAdjacentHTML('beforeend', newImageHtml);
+                    setupImageEditItemListeners(container.lastElementChild);
+                });
+            }
+
+            // Setup existing items
+            container.querySelectorAll('.image-edit-item').forEach(setupImageEditItemListeners);
+        }
+
+        function setupImageEditItemListeners(item) {
+            const removeBtn = item.querySelector('.remove-image-btn');
+            const defaultCheckbox = item.querySelector('.default-image-checkbox');
+
+            if (removeBtn) {
+                removeBtn.addEventListener('click', () => item.remove());
+            }
+
+            if (defaultCheckbox) {
+                defaultCheckbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        // Uncheck other default checkboxes
+                        document.querySelectorAll('.default-image-checkbox').forEach(cb => {
+                            if (cb !== e.target) cb.checked = false;
+                        });
+                    }
+                });
+            }
+        }
 
         // --- Gemini API Functions ---
         async function callGemini(prompt, button) {
@@ -3936,6 +4043,95 @@
             } catch (error) {
                 console.error("Error deleting context:", error);
                 alert("Erreur lors de la suppression du contexte.");
+            }
+        }
+
+        // Setup settings event listeners
+        function setupSettingsEventListeners() {
+            // Settings button
+            const settingsBtn = document.getElementById('settings-btn');
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', () => {
+                    const settingsModal = document.getElementById('settings-modal');
+                    if (settingsModal) {
+                        settingsModal.classList.remove('hidden');
+                    }
+                });
+            }
+
+            // Close settings modal
+            const closeSettingsBtn = document.getElementById('close-settings-modal');
+            if (closeSettingsBtn) {
+                closeSettingsBtn.addEventListener('click', () => {
+                    const settingsModal = document.getElementById('settings-modal');
+                    if (settingsModal) {
+                        settingsModal.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Settings tabs
+            const settingsTabButtons = document.querySelectorAll('.settings-tab-button');
+            const settingsTabContents = document.querySelectorAll('.settings-tab-content');
+
+            settingsTabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.dataset.tab;
+                    
+                    // Update active tab button
+                    settingsTabButtons.forEach(btn => {
+                        btn.classList.remove('active', 'text-white', 'border-blue-500');
+                        btn.classList.add('text-gray-400', 'border-transparent');
+                    });
+                    button.classList.add('active', 'text-white', 'border-blue-500');
+                    button.classList.remove('text-gray-400', 'border-transparent');
+
+                    // Update active tab content
+                    settingsTabContents.forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+                    const targetContent = document.getElementById(`${targetTab}-tab`);
+                    if (targetContent) {
+                        targetContent.style.display = 'flex';
+                        targetContent.classList.add('active');
+                    }
+                });
+            });
+
+            // Maps event listeners
+            setupMapsEventListeners();
+
+            // Season indicator click to open settings
+            const seasonIndicator = document.getElementById('season-indicator');
+            const calendarDateIndicator = document.getElementById('calendar-date-indicator');
+            
+            if (seasonIndicator) {
+                seasonIndicator.addEventListener('click', () => {
+                    const settingsModal = document.getElementById('settings-modal');
+                    if (settingsModal) {
+                        settingsModal.classList.remove('hidden');
+                        // Switch to season tab
+                        const seasonTabButton = document.querySelector('[data-tab="season"]');
+                        if (seasonTabButton) {
+                            seasonTabButton.click();
+                        }
+                    }
+                });
+            }
+
+            if (calendarDateIndicator) {
+                calendarDateIndicator.addEventListener('click', () => {
+                    const settingsModal = document.getElementById('settings-modal');
+                    if (settingsModal) {
+                        settingsModal.classList.remove('hidden');
+                        // Switch to season tab
+                        const seasonTabButton = document.querySelector('[data-tab="season"]');
+                        if (seasonTabButton) {
+                            seasonTabButton.click();
+                        }
+                    }
+                });
             }
         }
 
