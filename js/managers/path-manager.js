@@ -14,7 +14,12 @@ class PathManager {
     }
 
     init() {
-        this.canvas = this.dom.getElementById('drawing-canvas');
+        this.canvas = document.getElementById('drawing-canvas');
+        if (!this.canvas) {
+            console.error('❌ Drawing canvas not found');
+            return;
+        }
+        
         this.ctx = this.canvas.getContext('2d');
         this.setupEventListeners();
         this.setupCanvasStyle();
@@ -60,16 +65,40 @@ class PathManager {
 
     toggleDrawingMode() {
         this.isDrawingMode = !this.isDrawingMode;
-        const drawModeBtn = this.dom.getElementById('draw-mode');
-        const viewport = this.dom.getElementById('viewport');
+        const drawModeBtn = document.getElementById('draw-mode');
+        const viewport = document.getElementById('viewport');
 
         if (this.isDrawingMode) {
-            drawModeBtn.classList.add('btn-active');
-            viewport.classList.add('drawing');
+            if (drawModeBtn) {
+                drawModeBtn.classList.add('btn-active');
+                drawModeBtn.title = 'Arrêter le tracé';
+            }
+            if (viewport) {
+                viewport.classList.add('drawing');
+                viewport.style.cursor = 'crosshair';
+            }
+            
+            // Activer les événements sur le canvas
+            if (typeof window.toggleDrawingEvents === 'function') {
+                window.toggleDrawingEvents(true);
+            }
+            
             console.log('✏️ Mode dessin activé');
         } else {
-            drawModeBtn.classList.remove('btn-active');
-            viewport.classList.remove('drawing');
+            if (drawModeBtn) {
+                drawModeBtn.classList.remove('btn-active');
+                drawModeBtn.title = 'Tracer un voyage';
+            }
+            if (viewport) {
+                viewport.classList.remove('drawing');
+                viewport.style.cursor = 'grab';
+            }
+            
+            // Désactiver les événements sur le canvas
+            if (typeof window.toggleDrawingEvents === 'function') {
+                window.toggleDrawingEvents(false);
+            }
+            
             console.log('✏️ Mode dessin désactivé');
         }
 
@@ -245,7 +274,9 @@ class PathManager {
         if (!this.dataManager.regionsData?.regions) return;
 
         this.dataManager.regionsData.regions.forEach(region => {
-            if (!region.points || region.points.length < 3) return;
+            // Utiliser 'coordinates' au lieu de 'points' pour le nouveau format
+            const regionCoords = region.coordinates || region.points;
+            if (!regionCoords || regionCoords.length < 3) return;
 
             const intersections = [];
             
@@ -253,7 +284,7 @@ class PathManager {
             for (let i = 1; i < this.path.length; i++) {
                 const point = this.path[i];
                 
-                if (this.isPointInPolygon(point, region.points)) {
+                if (this.isPointInPolygon(point, regionCoords)) {
                     intersections.push(i);
                 }
             }

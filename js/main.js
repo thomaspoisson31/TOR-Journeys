@@ -336,6 +336,9 @@ function initializeMap() {
         console.error("❌ PathManager not initialized");
     }
 
+    // Configurer les événements de dessin après que tous les managers soient initialisés
+    setupDrawingEvents();
+
     resetView(); // Vue initiale optimale
 
     console.log("✅ Map initialized successfully");
@@ -1338,6 +1341,49 @@ function handleViewportClick(event) {
             hideInfoBox();
         }
     }
+}
+
+// --- Fonctions de dessin ---
+function setupDrawingEvents() {
+    console.log("🖌️ Setting up drawing events...");
+
+    // Gérer les clics pour le tracé de régions et l'ajout de lieux
+    // Ces gestionnaires sont ajoutés/retirés dans toggleRegionDrawingMode et toggleLocationAddingMode
+    // pour éviter les conflits pendant le dessin.
+
+    // Initialiser les icônes de dessin (si elles existent)
+    const drawIcon = document.getElementById('draw-path-icon');
+    if (drawIcon) {
+        drawIcon.addEventListener('click', () => {
+            if (voyageManager) {
+                voyageManager.startDrawingPath();
+            }
+        });
+    }
+
+    const stopDrawIcon = document.getElementById('stop-draw-path-icon');
+    if (stopDrawIcon) {
+        stopDrawIcon.addEventListener('click', () => {
+            if (voyageManager) {
+                voyageManager.stopDrawingPath();
+            }
+        });
+    }
+    
+    // Ajout des écouteurs pour le dessin de voyage
+    if (voyageManager) {
+        console.log("👂 Adding VoyageManager drawing listeners...");
+        // Clic sur la carte pour ajouter un point de voyage
+        viewport.addEventListener('click', voyageManager.handleMapClick);
+        // Clic droit pour terminer le tracé de voyage
+        viewport.addEventListener('contextmenu', voyageManager.handleMapRightClick);
+        console.log("✅ VoyageManager drawing listeners added");
+    } else {
+        console.error("❌ VoyageManager not available for drawing listeners");
+    }
+
+
+    console.log("✅ Drawing events setup complete");
 }
 
 // --- Fonctions de base ---
