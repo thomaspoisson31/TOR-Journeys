@@ -13,7 +13,7 @@ export function getCanvasCoordinates(event, mapContainer, scale) {
     return { x, y };
 }
 
-export function pixelsToMiles(pixels, MAP_DISTANCE_MILES, MAP_WIDTH) {
+export function pixelsToMiles(pixels) {
     return pixels * (MAP_DISTANCE_MILES / MAP_WIDTH);
 }
 
@@ -22,7 +22,7 @@ export function milesToDays(miles) {
     return Math.round(days * 2) / 2;
 }
 
-export function calculatePathDistance(startIndex, endIndex, journeyPath) {
+export function calculatePathDistance(startIndex, endIndex) {
     if (startIndex >= endIndex || startIndex < 0 || endIndex >= journeyPath.length) {
         return 0;
     }
