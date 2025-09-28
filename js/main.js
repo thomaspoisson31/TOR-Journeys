@@ -1547,13 +1547,6 @@ replit_final_file>
 
             console.log('🚀 Starting application...');
 
-            // Initialize AuthManager first, before any usage
-            authManager = new AuthManager(dom);
-            console.log("🔐 AuthManager initialized.");
-
-            // Check for authentication errors in the URL (now that authManager exists)
-            authManager.checkAuthError();
-
             // Global timeout for the application startup
             const startTimeout = setTimeout(() => {
                 if (loaderOverlay && loaderOverlay.style.display !== 'none') {
@@ -1573,6 +1566,14 @@ replit_final_file>
                 // Load season at startup
                 // loadSavedSeason(); // This is now handled by CalendarManager init
                 loadMapsData(); // Load maps data at startup
+                
+                // Initialize AuthManager after all initial data is loaded
+                authManager = new AuthManager(dom);
+                console.log("🔐 AuthManager initialized.");
+                
+                // Check for authentication errors in the URL
+                authManager.checkAuthError();
+                
                 authManager.logAuth("Initialisation de l'authentification...");
 
                 // Initialize authentication after a short delay to ensure DOM is ready
