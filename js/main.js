@@ -4935,6 +4935,45 @@
             loadAdventurersQuest();
         }
 
+        function updateMarkdownContent(elementId, content) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            if (!content || content.trim() === '') {
+                if (elementId === 'adventurers-content') {
+                    element.innerHTML = '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
+                } else {
+                    element.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
+                }
+                return;
+            }
+
+            // Simple Markdown parsing
+            let html = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/^- (.*$)/gim, '<li>$1</li>')
+                .replace(/^(\d+)\. (.*$)/gim, '<li>$2</li>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+
+            // Wrap with paragraph tags and handle lists
+            html = '<p>' + html + '</p>';
+            html = html.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
+            html = html.replace(/<\/ul><ul>/g, '');
+            html = html.replace(/<p><\/p>/g, '');
+            html = html.replace(/<p>(<h[123]>)/g, '$1').replace(/(<\/h[123]>)<\/p>/g, '$1');
+            html = html.replace(/<p>(<ul>)/g, '$1').replace(/(<\/ul>)<\/p>/g, '$1');
+            html = html.replace(/<p>(<blockquote>)/g, '$1').replace(/(<\/blockquote>)<\/p>/g, '$1');
+
+            element.innerHTML = html;
+        }
+
         function loadAdventurersGroup() {
             const saved = localStorage.getItem('adventurersGroup');
             const textarea = document.getElementById('adventurers-group');
