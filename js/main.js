@@ -3,14 +3,15 @@
         const regionColorMap = { red: 'rgba(239, 68, 68, 0.15)', blue: 'rgba(59, 130, 246, 0.15)', green: 'rgba(34, 197, 94, 0.15)', violet: 'rgba(139, 92, 246, 0.15)', orange: 'rgba(252, 169, 3, 0.15)', black: 'rgba(17, 24, 39, 0.15)' };
         const getDefaultLocations = () => ({ "locations": [] }); // Fallback to empty if fetch fails
         const getDefaultRegions = () => ({ "regions": [] });
-        // --- Imports des modules ---
-        import { escapeHtml, getCanvasCoordinates, pixelsToMiles, milesToDays, calculatePathDistance, isPointInPolygon } from './utils/helpers.js';
-
         let locationsData;
         let regionsData = getDefaultRegions();
 
-        // --- Import des fonctions utilitaires ---
-        // Ces fonctions sont maintenant dans js/utils/helpers.js
+        // --- Imports des modules ---
+        import EventManager from './managers/event-manager.js';
+        import RenderManager from './managers/render-manager.js';
+        import InfoBoxManager from './managers/infobox-manager.js';
+        import DataManager from './managers/data-manager.js';
+        import AuthManager from './managers/auth-manager.js';
 
         // --- DOM Elements ---
         const viewport = document.getElementById('viewport');
@@ -91,18 +92,6 @@
         let currentUser = null; // Renamed from googleUser for broader compatibility
         let savedContexts = [];
 
-        // --- Global functions ---
-        function handleImageError(imgElement) {
-            if (imgElement) {
-                imgElement.parentElement.innerHTML = '<div class="image-placeholder">Erreur de chargement de l\'image</div>';
-            } else {
-                console.error("❌ Erreur de chargement de l'image de carte");
-                if (loaderOverlay) {
-                    loaderOverlay.innerHTML = `<div class="text-2xl text-red-500 text-center p-4"><i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>Erreur de chargement de la carte.<br><span class="text-sm text-gray-400 mt-2">Vérifiez que les fichiers de carte sont disponibles.</span></div>`;
-                }
-            }
-        }
-
         // --- Season state ---
         let currentSeason = 'printemps-debut';
         const seasonSymbols = {
@@ -156,6 +145,11 @@
 
         // --- Managers ---
         let voyageManager;
+        let eventManager;
+        let renderManager;
+        let infoBoxManager;
+        let dataManager;
+        let authManager;
 
         // --- Maps Management Functions ---
         function loadMapsData() {
@@ -409,7 +403,12 @@
             console.log(`🔐 [AUTH] ${message}`, data || '');
         }
 
-        
+        // --- HTML Escape Function ---
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
         // --- Check Google Authentication Status ---
         function checkGoogleAuth() {
@@ -795,7 +794,9 @@
             document.getElementById(`${tabName}-tab`).classList.add('active');
         }
 
-        
+        function handleImageError(imgElement) {
+            imgElement.parentElement.innerHTML = '<div class="image-placeholder">Erreur de chargement de l\'image</div>';
+        }
 
         function getLocationImages(location) {
             // Support both old format (imageUrl) and new format (images array)
@@ -1881,15 +1882,6 @@
         }
 
         // --- Start the app ---
-        // --- Fonctions globales accessibles ---
-        window.handleImageError = handleImageError;
-        window.showInfoBox = showInfoBox;
-        window.showRegionInfo = showRegionInfo;
-        window.toggleInfoBoxExpand = toggleInfoBoxExpand;
-        window.highlightDiscoveryOnMap = highlightDiscoveryOnMap;
-        window.callGemini = callGemini;
-        window.navigateToSegment = navigateToSegment;
-
         // Ensure the app starts only once when the DOM is ready
         function initializeApp() {
             // Global error handlers
@@ -2601,7 +2593,10 @@
             }
         }
 
-        
+        function handleImageError() {
+            console.error("❌ Erreur de chargement de l'image de carte");
+            loaderOverlay.innerHTML = `<div class="text-2xl text-red-500 text-center p-4"><i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>Erreur de chargement de la carte.<br><span class="text-sm text-gray-400 mt-2">Vérifiez que les fichiers de carte sont disponibles.</span></div>`;
+        }
         function startDragMarker(e) { e.stopPropagation(); draggedMarker = e.target; dragStartX = e.clientX; dragStartY = e.clientY; document.addEventListener('mousemove', dragMarker); document.addEventListener('mouseup', stopDragMarker); }
         function dragMarker(e) { if (!draggedMarker) return; const deltaX = e.clientX - dragStartX; const deltaY = e.clientY - dragStartY; const newX = parseFloat(draggedMarker.style.left) + (deltaX / scale); const newY = parseFloat(draggedMarker.style.top) + (deltaY / scale); draggedMarker.style.left = `${newX}px`; draggedMarker.style.top = `${newY}px`; dragStartX = e.clientX; dragStartY = e.clientY; }
         function stopDragMarker() { if (!draggedMarker) return; const locationId = parseInt(draggedMarker.dataset.id, 10); const location = locationsData.locations.find(loc => loc.id === locationId); if (location) { location.coordinates.x = parseFloat(draggedMarker.style.left); location.coordinates.y = parseFloat(draggedMarker.style.top); } draggedMarker = null; document.removeEventListener('mousemove', dragMarker); document.removeEventListener('mouseup', stopDragMarker); saveLocationsToLocal(); }
@@ -2731,7 +2726,7 @@
 
             if (isAddingRegionMode) {
                 console.log("🌍 Adding region mode active");
-                const coords = getCanvasCoordinates(event, mapContainer, scale);
+                const coords = getCanvasCoordinates(event);
                 console.log("🌍 Adding region point at:", coords);
                 addRegionPoint(coords);
                 return;
@@ -2780,7 +2775,7 @@
                 // Réinitialiser les segments de voyage
                 resetVoyageSegments();
 
-                startPoint = getCanvasCoordinates(event, mapContainer, scale);
+                startPoint = getCanvasCoordinates(event);
                 lastPoint = startPoint;
 
                 // Add start point to journey path
@@ -2803,7 +2798,7 @@
             if (!isDrawing || !isDrawingMode) return;
 
             console.log("✏️ Mouse move during drawing");
-            const currentPoint = getCanvasCoordinates(event, mapContainer, scale);
+            const currentPoint = getCanvasCoordinates(event);
             const segmentLength = Math.sqrt(Math.pow(currentPoint.x - lastPoint.x, 2) + Math.pow(currentPoint.y - lastPoint.y, 2));
             totalPathPixels += segmentLength;
 
@@ -2947,7 +2942,7 @@
         });
         document.getElementById('confirm-add-location').addEventListener('click', () => { const nameInput = document.getElementById('location-name-input'); const descInput = document.getElementById('location-desc-input'); const imageInput = document.getElementById('location-image-input'); const color = document.querySelector('#add-color-picker .selected').dataset.color; const known = document.getElementById('location-known-input').checked; const visited = document.getElementById('location-visited-input').checked; if (nameInput.value && newLocationCoords) { const newLocation = { id: Date.now(), name: nameInput.value, description: descInput.value, imageUrl: imageInput.value, color: color, known: known, visited: visited, type: "custom", coordinates: newLocationCoords, Rumeur: "A définir", Tradition_Ancienne: "A définir" }; locationsData.locations.push(newLocation); renderLocations(); saveLocationsToLocal(); } addLocationModal.classList.add('hidden'); nameInput.value = ''; descInput.value = ''; imageInput.value = ''; newLocationCoords = null; });
         document.getElementById('cancel-add-location').addEventListener('click', () => { addLocationModal.classList.add('hidden'); document.getElementById('location-name-input').value = ''; document.getElementById('location-desc-input').value = ''; document.getElementById('location-image-input').value = ''; newLocationCoords = null; });
-        function addLocation(event) { newLocationCoords = getCanvasCoordinates(event, mapContainer, scale); addLocationModal.classList.remove('hidden'); document.getElementById('location-name-input').focus(); isAddingLocationMode = false; viewport.classList.remove('adding-location'); document.getElementById('add-location-mode').classList.remove('btn-active'); const addColorPicker = document.getElementById('add-color-picker'); addColorPicker.innerHTML = Object.keys(colorMap).map((color, index) => `<div class="color-swatch ${index === 0 ? 'selected' : ''}" data-color="${color}" style="background-color: ${colorMap[color]}"></div>`).join(''); addColorPicker.querySelectorAll('.color-swatch').forEach(swatch => { swatch.addEventListener('click', () => { addColorPicker.querySelector('.color-swatch.selected').classList.remove('selected'); swatch.classList.add('selected'); }); }); document.getElementById('generate-add-desc').addEventListener('click', handleGenerateDescription); document.getElementById('location-known-input').checked = true; document.getElementById('location-visited-input').checked = false; const addVisitedCheckbox = document.getElementById('location-visited-input'); const addKnownCheckbox = document.getElementById('location-known-input'); if(addVisitedCheckbox && addKnownCheckbox) { addVisitedCheckbox.addEventListener('change', () => { if (addVisitedCheckbox.checked) { addKnownCheckbox.checked = true; } }); } }
+        function addLocation(event) { newLocationCoords = getCanvasCoordinates(event); addLocationModal.classList.remove('hidden'); document.getElementById('location-name-input').focus(); isAddingLocationMode = false; viewport.classList.remove('adding-location'); document.getElementById('add-location-mode').classList.remove('btn-active'); const addColorPicker = document.getElementById('add-color-picker'); addColorPicker.innerHTML = Object.keys(colorMap).map((color, index) => `<div class="color-swatch ${index === 0 ? 'selected' : ''}" data-color="${color}" style="background-color: ${colorMap[color]}"></div>`).join(''); addColorPicker.querySelectorAll('.color-swatch').forEach(swatch => { swatch.addEventListener('click', () => { addColorPicker.querySelector('.color-swatch.selected').classList.remove('selected'); swatch.classList.add('selected'); }); }); document.getElementById('generate-add-desc').addEventListener('click', handleGenerateDescription); document.getElementById('location-known-input').checked = true; document.getElementById('location-visited-input').checked = false; const addVisitedCheckbox = document.getElementById('location-visited-input'); const addKnownCheckbox = document.getElementById('location-known-input'); if(addVisitedCheckbox && addKnownCheckbox) { addVisitedCheckbox.addEventListener('change', () => { if (addVisitedCheckbox.checked) { addKnownCheckbox.checked = true; } }); } }
         function saveLocationsToLocal() {
             localStorage.setItem('middleEarthLocations', JSON.stringify(locationsData));
             scheduleAutoSync(); // Synchroniser après modification
@@ -3223,7 +3218,7 @@
             importUnifiedData(event); // Rediriger vers la fonction unifiée
         }
 
-        
+        function getCanvasCoordinates(event) { const rect = mapContainer.getBoundingClientRect(); const x = (event.clientX - rect.left) / scale; const y = (event.clientY - rect.top) / scale; return { x, y }; }
         function updateDistanceDisplay() {
             const voyageBtn = document.getElementById('voyage-segments-btn');
 
