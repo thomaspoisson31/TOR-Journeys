@@ -135,6 +135,12 @@ function renderLocations() {
         const color = colorMap[location.color] || colorMap.blue;
         marker.style.backgroundColor = color;
         
+        // Ajouter l'événement de clic
+        marker.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showInfoBox(e, location);
+        });
+
         // Ajouter à la couche des lieux
         locationsLayer.appendChild(marker);
         renderedCount++;
@@ -174,6 +180,7 @@ function initializeMap() {
 
     // Initialiser la navigation après que la carte soit chargée
     setupMapNavigation();
+    setupInfoBoxListeners();
     resetView(); // Vue initiale optimale
 
     console.log("✅ Map initialized successfully");
@@ -372,6 +379,217 @@ function setupMapNavigation() {
     viewport.style.cursor = 'grab';
 
     console.log("✅ Map navigation setup complete");
+}
+
+// --- Event Listeners pour l'info-box ---
+function setupInfoBoxListeners() {
+    console.log("📋 Setting up info-box listeners...");
+
+    // Bouton fermer
+    const closeBtn = document.getElementById('info-box-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', hideInfoBox);
+    }
+
+    // Bouton étendre/réduire
+    const expandBtn = document.getElementById('info-box-expand');
+    if (expandBtn) {
+        expandBtn.addEventListener('click', toggleInfoBoxExpand);
+    }
+
+    // Gestion des onglets
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const targetTab = e.target.dataset.tab;
+            
+            // Désactiver tous les onglets
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Activer l'onglet cliqué
+            e.target.classList.add('active');
+            const targetContent = document.getElementById(`${targetTab}-tab`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+
+    // Fermer l'info-box en cliquant ailleurs
+    viewport.addEventListener('click', (e) => {
+        const infoBox = document.getElementById('info-box');
+        if (infoBox && infoBox.style.display === 'block' && !infoBox.contains(e.target)) {
+            // Ne fermer que si on ne clique pas sur un marqueur
+            if (!e.target.classList.contains('location-marker')) {
+                hideInfoBox();
+            }
+        }
+    });
+
+    // Touche Échap pour fermer
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const infoBox = document.getElementById('info-box');
+            if (infoBox && infoBox.style.display === 'block') {
+                hideInfoBox();
+            }
+        }
+    });
+
+    console.log("✅ Info-box listeners setup complete");
+}
+
+// --- Fonctions d'info-box des lieux ---
+let currentInfoBox = null;
+let isInfoBoxExpanded = false;
+
+function showInfoBox(event, location) {
+    console.log("📋 Showing info box for:", location.name);
+    
+    const infoBox = document.getElementById('info-box');
+    const infoBoxTitle = document.getElementById('info-box-title');
+    const imageTab = document.getElementById('image-tab');
+    const textTab = document.getElementById('text-tab');
+    const rumeursTab = document.getElementById('rumeurs-tab');
+    const traditionTab = document.getElementById('tradition-tab');
+    
+    if (!infoBox) {
+        console.error("❌ Info box element not found");
+        return;
+    }
+
+    // Sauvegarder la référence du lieu actuel
+    currentInfoBox = location;
+    
+    // Mettre à jour le titre (caché en mode compact)
+    if (infoBoxTitle) {
+        infoBoxTitle.textContent = location.name;
+        infoBoxTitle.classList.add('hidden');
+    }
+
+    // Onglet Image
+    if (imageTab) {
+        const imageView = imageTab.querySelector('.image-view');
+        if (imageView) {
+            // Vérifier s'il y a des images
+            if (location.images && location.images.length > 0) {
+                const defaultImage = location.images.find(img => img.isDefault) || location.images[0];
+                imageView.innerHTML = `
+                    <img src="${defaultImage.url}" alt="${location.name}" class="modal-image">
+                    <div class="image-caption">${location.name}</div>
+                `;
+            } else {
+                // Pas d'image - afficher le titre en mode compact
+                imageView.innerHTML = `
+                    <div class="compact-title">${location.name}</div>
+                    <div class="image-placeholder">Aucune image disponible</div>
+                `;
+            }
+        }
+    }
+
+    // Onglet Texte
+    if (textTab) {
+        const textView = textTab.querySelector('.text-view');
+        if (textView) {
+            const h3 = textView.querySelector('h3');
+            const p = textView.querySelector('p');
+            
+            if (h3) h3.textContent = location.name;
+            if (p) p.textContent = location.description || 'Aucune description disponible.';
+        }
+    }
+
+    // Onglet Rumeurs
+    if (rumeursTab) {
+        const textView = rumeursTab.querySelector('.text-view');
+        if (textView) {
+            const p = textView.querySelector('p');
+            if (p) p.textContent = location.Rumeur || 'Aucune rumeur disponible.';
+        }
+    }
+
+    // Onglet Tradition
+    if (traditionTab) {
+        const textView = traditionTab.querySelector('.text-view');
+        if (textView) {
+            const p = textView.querySelector('p');
+            if (p) p.textContent = location.Tradition_Ancienne || 'Aucune tradition ancienne disponible.';
+        }
+    }
+
+    // Positionner et afficher l'info-box
+    const rect = event.currentTarget.getBoundingClientRect();
+    const viewportRect = viewport.getBoundingClientRect();
+    
+    // Position relative au viewport
+    const x = rect.left - viewportRect.left + rect.width / 2;
+    const y = rect.top - viewportRect.top + rect.height / 2;
+    
+    // Ajuster pour éviter de sortir de l'écran
+    const infoBoxWidth = 280; // Largeur approximative de l'info-box
+    const infoBoxHeight = 300; // Hauteur approximative
+    
+    let finalX = Math.max(10, Math.min(x, viewport.clientWidth - infoBoxWidth - 10));
+    let finalY = Math.max(10, Math.min(y, viewport.clientHeight - infoBoxHeight - 10));
+    
+    infoBox.style.left = `${finalX}px`;
+    infoBox.style.top = `${finalY}px`;
+    infoBox.style.display = 'block';
+    
+    // S'assurer que l'onglet Image est actif par défaut
+    const tabButtons = infoBox.querySelectorAll('.tab-button');
+    const tabContents = infoBox.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    const imageTabButton = infoBox.querySelector('.tab-button[data-tab="image"]');
+    if (imageTabButton) {
+        imageTabButton.classList.add('active');
+        imageTab.classList.add('active');
+    }
+
+    console.log("✅ Info box displayed successfully");
+}
+
+function hideInfoBox() {
+    const infoBox = document.getElementById('info-box');
+    if (infoBox) {
+        infoBox.style.display = 'none';
+        currentInfoBox = null;
+        isInfoBoxExpanded = false;
+        infoBox.classList.remove('expanded');
+    }
+}
+
+function toggleInfoBoxExpand() {
+    const infoBox = document.getElementById('info-box');
+    const infoBoxTitle = document.getElementById('info-box-title');
+    
+    if (!infoBox) return;
+
+    isInfoBoxExpanded = !isInfoBoxExpanded;
+    
+    if (isInfoBoxExpanded) {
+        infoBox.classList.add('expanded');
+        if (infoBoxTitle) infoBoxTitle.classList.remove('hidden');
+        
+        // Centrer l'info-box étendue
+        infoBox.style.left = '50%';
+        infoBox.style.top = '50%';
+        infoBox.style.transform = 'translate(-50%, -50%)';
+    } else {
+        infoBox.classList.remove('expanded');
+        if (infoBoxTitle) infoBoxTitle.classList.add('hidden');
+        infoBox.style.transform = 'none';
+        
+        // Repositionner si nécessaire
+        if (currentInfoBox) {
+            // Garder la position actuelle en mode compact
+        }
+    }
 }
 
 // --- Fonctions de base ---
