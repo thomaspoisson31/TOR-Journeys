@@ -49,6 +49,126 @@ class CalendarManager {
             localStorage.setItem('currentCalendarDate', JSON.stringify(this.currentCalendarDate));
         }
         localStorage.setItem('isCalendarMode', this.isCalendarMode.toString());
+        localStorage.setItem('currentSeason', this.currentSeason);
+    }
+
+    loadCalendarFromLocal() {
+        const savedCalendarData = localStorage.getItem('calendarData');
+        const savedCurrentCalendarDate = localStorage.getItem('currentCalendarDate');
+        const savedIsCalendarMode = localStorage.getItem('isCalendarMode');
+
+        if (savedCalendarData) {
+            try {
+                this.calendarData = JSON.parse(savedCalendarData);
+            } catch (e) {
+                console.error('Error loading calendar data:', e);
+            }
+        }
+
+        if (savedCurrentCalendarDate) {
+            try {
+                this.currentCalendarDate = JSON.parse(savedCurrentCalendarDate);
+            } catch (e) {
+                console.error('Error loading calendar date:', e);
+            }
+        }
+
+        if (savedIsCalendarMode) {
+            this.isCalendarMode = savedIsCalendarMode === 'true';
+        }
+    }
+
+    loadSavedSeason() {
+        const saved = localStorage.getItem('currentSeason');
+        if (saved && this.seasonNames[saved]) {
+            this.currentSeason = saved;
+        }
+        this.updateSeasonDisplay();
+    }
+
+    updateSeasonDisplay() {
+        const seasonIndicator = document.getElementById('season-indicator');
+        const calendarDateIndicator = document.getElementById('calendar-date-indicator');
+
+        if (!seasonIndicator) return;
+
+        // Déterminer la saison principale (printemps, été, automne, hiver)
+        const seasonMainName = this.currentSeason.split('-')[0];
+        const symbol = this.seasonSymbols[seasonMainName] || '🌱';
+        const fullName = this.seasonNames[this.currentSeason] || 'Printemps-début';
+
+        console.log("🌱 Affichage saison:", {
+            currentSeason: this.currentSeason,
+            seasonMainName: seasonMainName,
+            symbol: symbol,
+            fullName: fullName,
+            isCalendarMode: this.isCalendarMode
+        });
+
+        seasonIndicator.innerHTML = `${symbol} ${fullName}`;
+        seasonIndicator.title = `Saison actuelle : ${fullName}`;
+
+        // Afficher la date du calendrier si elle existe
+        if (calendarDateIndicator) {
+            if (this.isCalendarMode && this.currentCalendarDate) {
+                calendarDateIndicator.innerHTML = `📅 ${this.currentCalendarDate.day} ${this.currentCalendarDate.month}`;
+                calendarDateIndicator.classList.remove('hidden');
+            } else {
+                calendarDateIndicator.classList.add('hidden');
+            }
+        }
+    }
+
+    setupSeasonListeners() {
+        // Cette méthode sera appelée pour configurer les listeners dans les paramètres
+        console.log("📅 Configuration des listeners de saison via CalendarManager");
+    }
+
+    reinitializeListeners() {
+        // Réinitialiser les listeners si nécessaire
+        console.log("📅 Réinitialisation des listeners CalendarManager");
+        this.setupSeasonListeners();
+    }
+
+    // Getters et setters pour compatibilité
+    getCurrentSeason() {
+        return this.currentSeason;
+    }
+
+    setCurrentSeason(season) {
+        if (this.seasonNames[season]) {
+            this.currentSeason = season;
+            localStorage.setItem('currentSeason', this.currentSeason);
+            this.updateSeasonDisplay();
+        }
+    }
+
+    getCalendarData() {
+        return this.calendarData;
+    }
+
+    setCalendarData(data) {
+        this.calendarData = data;
+        this.saveCalendarToLocal();
+    }
+
+    getCurrentCalendarDate() {
+        return this.currentCalendarDate;
+    }
+
+    setCurrentCalendarDate(date) {
+        this.currentCalendarDate = date;
+        this.saveCalendarToLocal();
+    }
+
+    getIsCalendarMode() {
+        return this.isCalendarMode;
+    }
+
+    setIsCalendarMode(mode) {
+        this.isCalendarMode = mode;
+        this.saveCalendarToLocal();
+        this.updateSeasonDisplay();
     }
 
     loadCalendarFromLocal() {

@@ -1314,7 +1314,7 @@
         }
 
         function toggleInfoBoxExpand() {
-            const isExpanded = infoBox.classList.toggle('expanded');
+            const isExpanded = infoBox.toggle('expanded');
             const expandBtn = document.getElementById('info-box-expand');
             const titleElement = document.getElementById('info-box-title');
 
@@ -1669,11 +1669,7 @@
                 clearTimeout(startTimeout);
                 console.error("❌ Error during app startup:", error);
                 if (loaderOverlay) {
-                    loaderOverlay.innerHTML = `<div class="text-2xl text-red-500 text-center p-4">
-                        <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>
-                        Erreur lors du démarrage.<br>
-                        <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg">Recharger</button>
-                    </div>`;
+                    loaderOverlay.innerHTML = `<div class="text-2xl text-red-500 text-center p-4"><i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>Erreur lors du démarrage.<br><button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg">Recharger</button></div>`;
                 }
             });
 
@@ -4281,7 +4277,9 @@
         }
 
         function calculateSegmentDailyContent(segmentIndex) {
-            if (!currentVoyage || !voyageSegments[segmentIndex]) return [];
+            if (!currentVoyage || !voyageSegments[segmentIndex]) {
+                return [];
+            }
 
             // Ne calculer que si le segment est activé
             if (!activatedSegments.has(segmentIndex)) {
