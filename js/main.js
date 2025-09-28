@@ -238,6 +238,7 @@ function initializeMap() {
     // Initialiser la navigation après que la carte soit chargée
     setupMapNavigation();
     setupInfoBoxListeners();
+    setupRegionDrawing(); // Nouveau : tracé de régions
     resetView(); // Vue initiale optimale
 
     console.log("✅ Map initialized successfully");
@@ -249,6 +250,11 @@ let lastMouseX = 0;
 let lastMouseY = 0;
 let minScale = 0.1;
 let maxScale = 4.0;
+
+// --- Variables d'état pour le tracé de régions ---
+let isRegionDrawingMode = false;
+let regionPoints = [];
+let tempRegionPolygon = null;
 
 // --- Fonctions de navigation de la carte ---
 function updateMapTransform() {
@@ -313,6 +319,19 @@ function resetView() {
     }
 }
 
+function handlePanStart(e) {
+    // Ne pas permettre le pan si on est en mode tracé
+    if (isRegionDrawingMode) return;
+
+    if (e.button === 0) { // Clic gauche uniquement
+        isPanning = true;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+        viewport.style.cursor = 'grabbing';
+        e.preventDefault();
+    }
+}
+
 // --- Event Listeners pour la navigation ---
 function setupMapNavigation() {
     console.log("🎮 Setting up map navigation...");
@@ -325,15 +344,7 @@ function setupMapNavigation() {
     });
 
     // Déplacement par glisser-déposer
-    viewport.addEventListener('mousedown', (e) => {
-        if (e.button === 0) { // Clic gauche uniquement
-            isPanning = true;
-            lastMouseX = e.clientX;
-            lastMouseY = e.clientY;
-            viewport.style.cursor = 'grabbing';
-            e.preventDefault();
-        }
-    });
+    viewport.addEventListener('mousedown', handlePanStart);
 
     viewport.addEventListener('mousemove', (e) => {
         if (isPanning) {
@@ -473,14 +484,14 @@ function setupInfoBoxListeners() {
         });
     });
 
-    // Fermer l'info-box en cliquant ailleurs
-    viewport.addEventListener('click', (e) => {
-        const infoBox = document.getElementById('info-box');
-        if (infoBox && infoBox.style.display === 'block' && !infoBox.contains(e.target)) {
-            // Ne fermer que si on ne clique pas sur un marqueur
-            if (!e.target.classList.contains('location-marker')) {
-                hideInfoBox();
-            }
+    // Gestionnaire principal pour les clics dans le viewport
+    viewport.addEventListener('click', handleViewportClick);
+
+    // Clic droit pour finir le tracé de région
+    viewport.addEventListener('contextmenu', (e) => {
+        if (isRegionDrawingMode && regionPoints.length >= 3) {
+            e.preventDefault();
+            finishRegionDrawing();
         }
     });
 
@@ -645,6 +656,306 @@ function toggleInfoBoxExpand() {
         // Repositionner si nécessaire
         if (currentInfoBox) {
             // Garder la position actuelle en mode compact
+        }
+    }
+}
+
+// --- Fonctions de tracé de régions ---
+function setupRegionDrawing() {
+    console.log("🎨 Setting up region drawing...");
+
+    const addRegionBtn = document.getElementById('add-region-mode');
+    const addRegionModal = document.getElementById('add-region-modal');
+    const cancelBtn = document.getElementById('cancel-add-region');
+    const confirmBtn = document.getElementById('confirm-add-region');
+
+    if (addRegionBtn) {
+        addRegionBtn.addEventListener('click', toggleRegionDrawingMode);
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', cancelRegionCreation);
+    }
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', confirmRegionCreation);
+    }
+
+    // Setup des sélecteurs de couleur pour les régions
+    setupRegionColorPicker();
+
+    console.log("✅ Region drawing setup complete");
+}
+
+function toggleRegionDrawingMode() {
+    isRegionDrawingMode = !isRegionDrawingMode;
+    const addRegionBtn = document.getElementById('add-region-mode');
+
+    if (isRegionDrawingMode) {
+        console.log("🎨 Entering region drawing mode");
+        regionPoints = [];
+        clearTempRegionPolygon();
+        
+        // Changer l'apparence du bouton
+        if (addRegionBtn) {
+            addRegionBtn.classList.add('btn-active');
+            addRegionBtn.title = "Arrêter le tracé de région";
+        }
+
+        // Changer le curseur
+        viewport.style.cursor = 'crosshair';
+        viewport.classList.add('adding-region');
+
+        // Désactiver le pan temporairement
+        viewport.removeEventListener('mousedown', handlePanStart);
+    } else {
+        console.log("🎨 Exiting region drawing mode");
+        exitRegionDrawingMode();
+    }
+}
+
+function exitRegionDrawingMode() {
+    isRegionDrawingMode = false;
+    regionPoints = [];
+    clearTempRegionPolygon();
+
+    const addRegionBtn = document.getElementById('add-region-mode');
+    if (addRegionBtn) {
+        addRegionBtn.classList.remove('btn-active');
+        addRegionBtn.title = "Créer une région";
+    }
+
+    // Restaurer le curseur normal
+    viewport.style.cursor = 'grab';
+    viewport.classList.remove('adding-region');
+
+    // Réactiver le pan
+    setupMapNavigation();
+}
+
+function handleRegionClick(event) {
+    if (!isRegionDrawingMode) return;
+
+    // Empêcher le pan et autres interactions
+    event.stopPropagation();
+    event.preventDefault();
+
+    const rect = viewport.getBoundingClientRect();
+    const viewportX = event.clientX - rect.left;
+    const viewportY = event.clientY - rect.top;
+
+    // Convertir les coordonnées du viewport vers les coordonnées de la carte
+    const mapX = (viewportX - panX) / scale;
+    const mapY = (viewportY - panY) / scale;
+
+    // Ajouter le point
+    regionPoints.push({ x: Math.round(mapX), y: Math.round(mapY) });
+
+    console.log(`🎯 Added region point: (${Math.round(mapX)}, ${Math.round(mapY)})`);
+
+    // Mettre à jour l'affichage temporaire
+    updateTempRegionDisplay();
+
+    // Si on a au moins 3 points, on peut fermer la région
+    if (regionPoints.length >= 3) {
+        // Double-clic ou clic droit pour fermer
+        if (event.detail === 2 || event.button === 2) {
+            finishRegionDrawing();
+        }
+    }
+}
+
+function updateTempRegionDisplay() {
+    clearTempRegionPolygon();
+
+    if (regionPoints.length < 2) return;
+
+    const regionsLayer = document.getElementById('regions-layer');
+    if (!regionsLayer) return;
+
+    // Créer un polygone temporaire
+    const tempGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    tempGroup.id = 'temp-region-polygon';
+
+    // Ligne temporaire pour montrer la forme en cours
+    if (regionPoints.length >= 2) {
+        const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        const points = regionPoints.map(p => `${p.x},${p.y}`).join(' ');
+        
+        polygon.setAttribute('points', points);
+        polygon.setAttribute('fill', 'rgba(34, 197, 94, 0.2)');
+        polygon.setAttribute('stroke', 'rgba(34, 197, 94, 0.8)');
+        polygon.setAttribute('stroke-width', '2');
+        polygon.setAttribute('stroke-dasharray', '5,5');
+        
+        tempGroup.appendChild(polygon);
+    }
+
+    // Points de contrôle
+    regionPoints.forEach((point, index) => {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', point.x);
+        circle.setAttribute('cy', point.y);
+        circle.setAttribute('r', '6');
+        circle.setAttribute('fill', 'rgba(34, 197, 94, 0.8)');
+        circle.setAttribute('stroke', 'white');
+        circle.setAttribute('stroke-width', '2');
+        
+        tempGroup.appendChild(circle);
+    });
+
+    regionsLayer.appendChild(tempGroup);
+    tempRegionPolygon = tempGroup;
+}
+
+function clearTempRegionPolygon() {
+    const tempPolygon = document.getElementById('temp-region-polygon');
+    if (tempPolygon) {
+        tempPolygon.remove();
+    }
+    tempRegionPolygon = null;
+}
+
+function finishRegionDrawing() {
+    if (regionPoints.length < 3) {
+        alert("Une région doit avoir au moins 3 points.");
+        return;
+    }
+
+    console.log(`🎨 Finishing region with ${regionPoints.length} points`);
+
+    // Afficher la modal de création de région
+    showRegionCreationModal();
+}
+
+function showRegionCreationModal() {
+    const modal = document.getElementById('add-region-modal');
+    const nameInput = document.getElementById('region-name-input');
+    const descInput = document.getElementById('region-desc-input');
+
+    if (modal) {
+        // Réinitialiser les champs
+        if (nameInput) nameInput.value = '';
+        if (descInput) descInput.value = '';
+
+        // Sélectionner la première couleur par défaut
+        const firstColorSwatch = document.querySelector('#region-color-picker .color-swatch');
+        if (firstColorSwatch) {
+            document.querySelectorAll('#region-color-picker .color-swatch').forEach(swatch => {
+                swatch.classList.remove('selected');
+            });
+            firstColorSwatch.classList.add('selected');
+        }
+
+        modal.classList.remove('hidden');
+        if (nameInput) nameInput.focus();
+    }
+}
+
+function cancelRegionCreation() {
+    const modal = document.getElementById('add-region-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+
+    // Sortir du mode tracé
+    exitRegionDrawingMode();
+}
+
+function confirmRegionCreation() {
+    const nameInput = document.getElementById('region-name-input');
+    const descInput = document.getElementById('region-desc-input');
+    const selectedColorSwatch = document.querySelector('#region-color-picker .color-swatch.selected');
+
+    if (!nameInput || !nameInput.value.trim()) {
+        alert("Veuillez entrer un nom pour la région.");
+        return;
+    }
+
+    const regionName = nameInput.value.trim();
+    const regionDesc = descInput ? descInput.value.trim() : '';
+    const regionColor = selectedColorSwatch ? selectedColorSwatch.dataset.color : 'gray';
+
+    // Créer la nouvelle région
+    const newRegion = {
+        id: `region_${Date.now()}`,
+        name: regionName,
+        description: regionDesc,
+        color: regionColor,
+        coordinates: [...regionPoints], // Copie des points
+        known: true,
+        visited: false
+    };
+
+    console.log("💾 Creating new region:", newRegion);
+
+    // Ajouter à la liste des régions
+    if (!regionsData.regions) {
+        regionsData.regions = [];
+    }
+    regionsData.regions.push(newRegion);
+
+    // Sauvegarder via DataManager
+    if (dataManager) {
+        dataManager.saveRegionsToLocal();
+    }
+
+    // Re-render les régions
+    renderRegions();
+
+    // Fermer la modal
+    const modal = document.getElementById('add-region-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+
+    // Sortir du mode tracé
+    exitRegionDrawingMode();
+
+    console.log("✅ Region created successfully:", regionName);
+}
+
+function setupRegionColorPicker() {
+    const colorPicker = document.getElementById('region-color-picker');
+    if (!colorPicker) return;
+
+    const colors = ['green', 'red', 'blue', 'yellow', 'purple', 'orange', 'gray'];
+    
+    colorPicker.innerHTML = '';
+    
+    colors.forEach((color, index) => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.dataset.color = color;
+        swatch.style.backgroundColor = regionColorMap[color] || regionColorMap.gray;
+        
+        if (index === 0) {
+            swatch.classList.add('selected');
+        }
+        
+        swatch.addEventListener('click', () => {
+            document.querySelectorAll('#region-color-picker .color-swatch').forEach(s => {
+                s.classList.remove('selected');
+            });
+            swatch.classList.add('selected');
+        });
+        
+        colorPicker.appendChild(swatch);
+    });
+}
+
+// Gestionnaire d'événements pour les clics dans le viewport
+function handleViewportClick(event) {
+    if (isRegionDrawingMode) {
+        handleRegionClick(event);
+        return;
+    }
+
+    // Gérer les autres types de clics (info-box, etc.)
+    const infoBox = document.getElementById('info-box');
+    if (infoBox && infoBox.style.display === 'block' && !infoBox.contains(event.target)) {
+        if (!event.target.classList.contains('location-marker')) {
+            hideInfoBox();
         }
     }
 }
