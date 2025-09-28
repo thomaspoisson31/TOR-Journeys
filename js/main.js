@@ -1547,6 +1547,10 @@ replit_final_file>
 
             console.log('🚀 Starting application...');
 
+            // Initialize AuthManager FIRST, before anything else that might use it
+            authManager = new AuthManager(dom);
+            console.log("🔐 AuthManager initialized.");
+
             // Global timeout for the application startup
             const startTimeout = setTimeout(() => {
                 if (loaderOverlay && loaderOverlay.style.display !== 'none') {
@@ -1560,19 +1564,15 @@ replit_final_file>
                 }
             }, 30000); // 30 seconds timeout
 
+            // Check for authentication errors in the URL (now that authManager exists)
+            authManager.checkAuthError();
+
             loadInitialLocations().then(() => {
                 loadRegionsFromLocal();
                 setupFilters();
                 // Load season at startup
                 // loadSavedSeason(); // This is now handled by CalendarManager init
                 loadMapsData(); // Load maps data at startup
-                
-                // Initialize AuthManager after all initial data is loaded
-                authManager = new AuthManager(dom);
-                console.log("🔐 AuthManager initialized.");
-                
-                // Check for authentication errors in the URL
-                authManager.checkAuthError();
                 
                 authManager.logAuth("Initialisation de l'authentification...");
 
@@ -2230,7 +2230,9 @@ replit_final_file>
 
         function saveRegionsToLocal() {
             localStorage.setItem('middleEarthRegions', JSON.stringify(regionsData));
-            scheduleAutoSync(); // Synchroniser après modification
+            if (authManager && authManager.scheduleAutoSync) {
+                authManager.scheduleAutoSync();
+            }
         }
 
         function loadRegionsFromLocal() {
@@ -2309,7 +2311,9 @@ replit_final_file>
 
             // Sauvegarder les filtres dans le localStorage
             saveFiltersToLocal();
-            scheduleAutoSync();
+            if (authManager && authManager.scheduleAutoSync) {
+                authManager.scheduleAutoSync();
+            }
         }
         function resetFilters() {
             document.getElementById('filter-known').checked = false;
@@ -2557,7 +2561,9 @@ replit_final_file>
 
             updateDistanceDisplay();
             console.log("🔄 Synchronisation après effacement du tracé");
-            scheduleAutoSync(); // Synchroniser après effacement du tracé
+            if (authManager && authManager.scheduleAutoSync) {
+                authManager.scheduleAutoSync();
+            }
         });
         document.getElementById('export-locations').addEventListener('click', exportUnifiedData);
         document.getElementById('import-locations').addEventListener('click', () => document.getElementById('import-file-input').click());
@@ -2597,7 +2603,9 @@ replit_final_file>
         function addLocation(event) { newLocationCoords = getCanvasCoordinates(event); addLocationModal.classList.remove('hidden'); document.getElementById('location-name-input').focus(); isAddingLocationMode = false; viewport.classList.remove('adding-location'); document.getElementById('add-location-mode').classList.remove('btn-active'); const addColorPicker = document.getElementById('add-color-picker'); addColorPicker.innerHTML = Object.keys(colorMap).map((color, index) => `<div class="color-swatch ${index === 0 ? 'selected' : ''}" data-color="${color}" style="background-color: ${colorMap[color]}"></div>`).join(''); addColorPicker.querySelectorAll('.color-swatch').forEach(swatch => { swatch.addEventListener('click', () => { addColorPicker.querySelector('.color-swatch.selected').classList.remove('selected'); swatch.classList.add('selected'); }); }); document.getElementById('generate-add-desc').addEventListener('click', handleGenerateDescription); document.getElementById('location-known-input').checked = true; document.getElementById('location-visited-input').checked = false; const addVisitedCheckbox = document.getElementById('location-visited-input'); const addKnownCheckbox = document.getElementById('location-known-input'); if(addVisitedCheckbox && addKnownCheckbox) { addVisitedCheckbox.addEventListener('change', () => { if (addVisitedCheckbox.checked) { addKnownCheckbox.checked = true; } }); } }
         function saveLocationsToLocal() {
             localStorage.setItem('middleEarthLocations', JSON.stringify(locationsData));
-            scheduleAutoSync(); // Synchroniser après modification
+            if (authManager && authManager.scheduleAutoSync) {
+                authManager.scheduleAutoSync();
+            }
         }
         // === FONCTIONS UNIFIÉES D'IMPORT/EXPORT ===
 
