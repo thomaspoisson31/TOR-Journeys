@@ -172,7 +172,206 @@ function initializeMap() {
         setTimeout(() => { loaderOverlay.style.display = 'none'; }, 500);
     }
 
+    // Initialiser la navigation après que la carte soit chargée
+    setupMapNavigation();
+    resetView(); // Vue initiale optimale
+
     console.log("✅ Map initialized successfully");
+}
+
+// --- Variables d'état pour la navigation ---
+let isPanning = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
+let minScale = 0.1;
+let maxScale = 4.0;
+
+// --- Fonctions de navigation de la carte ---
+function updateMapTransform() {
+    mapContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+}
+
+function constrainPan() {
+    const viewportWidth = viewport.clientWidth;
+    const viewportHeight = viewport.clientHeight;
+    const scaledMapWidth = MAP_WIDTH * scale;
+    const scaledMapHeight = MAP_HEIGHT * scale;
+
+    // Contraintes horizontales
+    const maxPanX = Math.max(0, (scaledMapWidth - viewportWidth) / 2);
+    const minPanX = Math.min(0, -(scaledMapWidth - viewportWidth) / 2);
+    panX = Math.max(minPanX, Math.min(maxPanX, panX));
+
+    // Contraintes verticales
+    const maxPanY = Math.max(0, (scaledMapHeight - viewportHeight) / 2);
+    const minPanY = Math.min(0, -(scaledMapHeight - viewportHeight) / 2);
+    panY = Math.max(minPanY, Math.min(maxPanY, panY));
+}
+
+function zoomToPoint(zoomFactor, clientX, clientY) {
+    const rect = viewport.getBoundingClientRect();
+    const viewportX = clientX - rect.left;
+    const viewportY = clientY - rect.top;
+
+    // Point dans le système de coordonnées de la carte avant zoom
+    const mapX = (viewportX - panX) / scale;
+    const mapY = (viewportY - panY) / scale;
+
+    // Nouveau scale avec contraintes
+    const newScale = Math.max(minScale, Math.min(maxScale, scale * zoomFactor));
+    
+    if (newScale !== scale) {
+        // Ajuster le pan pour garder le point sous le curseur
+        panX = viewportX - mapX * newScale;
+        panY = viewportY - mapY * newScale;
+        scale = newScale;
+
+        constrainPan();
+        updateMapTransform();
+    }
+}
+
+function resetView() {
+    const viewportWidth = viewport.clientWidth;
+    const viewportHeight = viewport.clientHeight;
+    
+    if (viewportWidth > 0 && viewportHeight > 0 && MAP_WIDTH > 0 && MAP_HEIGHT > 0) {
+        // Calculer le zoom pour faire rentrer la carte dans le viewport
+        const scaleX = viewportWidth / MAP_WIDTH;
+        const scaleY = viewportHeight / MAP_HEIGHT;
+        scale = Math.min(scaleX, scaleY) * 0.9; // 90% pour laisser un peu de marge
+        
+        // Centrer la carte
+        panX = (viewportWidth - MAP_WIDTH * scale) / 2;
+        panY = (viewportHeight - MAP_HEIGHT * scale) / 2;
+        
+        updateMapTransform();
+    }
+}
+
+// --- Event Listeners pour la navigation ---
+function setupMapNavigation() {
+    console.log("🎮 Setting up map navigation...");
+
+    // Zoom avec la molette
+    viewport.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        zoomToPoint(zoomFactor, e.clientX, e.clientY);
+    });
+
+    // Déplacement par glisser-déposer
+    viewport.addEventListener('mousedown', (e) => {
+        if (e.button === 0) { // Clic gauche uniquement
+            isPanning = true;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+            viewport.style.cursor = 'grabbing';
+            e.preventDefault();
+        }
+    });
+
+    viewport.addEventListener('mousemove', (e) => {
+        if (isPanning) {
+            const deltaX = e.clientX - lastMouseX;
+            const deltaY = e.clientY - lastMouseY;
+            
+            panX += deltaX;
+            panY += deltaY;
+            
+            constrainPan();
+            updateMapTransform();
+            
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        }
+    });
+
+    viewport.addEventListener('mouseup', (e) => {
+        if (e.button === 0) {
+            isPanning = false;
+            viewport.style.cursor = 'grab';
+        }
+    });
+
+    viewport.addEventListener('mouseleave', () => {
+        isPanning = false;
+        viewport.style.cursor = 'grab';
+    });
+
+    // Double-clic pour centrer et zoomer
+    viewport.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        zoomToPoint(1.5, e.clientX, e.clientY);
+    });
+
+    // Touches clavier pour la navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            return; // Ignorer si on tape dans un champ
+        }
+
+        const panSpeed = 50;
+        let moved = false;
+
+        switch(e.key) {
+            case 'ArrowUp':
+            case 'w':
+            case 'W':
+                panY += panSpeed;
+                moved = true;
+                break;
+            case 'ArrowDown':
+            case 's':
+            case 'S':
+                panY -= panSpeed;
+                moved = true;
+                break;
+            case 'ArrowLeft':
+            case 'a':
+            case 'A':
+                panX += panSpeed;
+                moved = true;
+                break;
+            case 'ArrowRight':
+            case 'd':
+            case 'D':
+                panX -= panSpeed;
+                moved = true;
+                break;
+            case '+':
+            case '=':
+                zoomToPoint(1.2, viewport.clientWidth / 2, viewport.clientHeight / 2);
+                moved = true;
+                break;
+            case '-':
+                zoomToPoint(0.8, viewport.clientWidth / 2, viewport.clientHeight / 2);
+                moved = true;
+                break;
+            case '0':
+            case 'Home':
+                resetView();
+                moved = true;
+                break;
+        }
+
+        if (moved) {
+            e.preventDefault();
+            constrainPan();
+            updateMapTransform();
+        }
+    });
+
+    // Redimensionnement de la fenêtre
+    window.addEventListener('resize', () => {
+        constrainPan();
+        updateMapTransform();
+    });
+
+    // Curseur par défaut
+    viewport.style.cursor = 'grab';
+
+    console.log("✅ Map navigation setup complete");
 }
 
 // --- Fonctions de base ---
