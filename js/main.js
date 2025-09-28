@@ -19,6 +19,8 @@ import {
 // --- Import des managers ---
 import DataManager from './managers/data-manager.js';
 import FilterManager from './managers/filter-manager.js';
+import VoyageManager from './managers/voyage-manager.js';
+import PathManager from './managers/path-manager.js';
 
 console.log("✅ Constants loaded successfully");
 
@@ -31,6 +33,8 @@ let scale = 1, panX = 0, panY = 0;
 // --- Managers ---
 let dataManager;
 let filterManager;
+let voyageManager;
+let pathManager;
 
 console.log("✅ Global variables initialized");
 
@@ -55,9 +59,12 @@ async function initializeApp() {
         // Initialiser les managers
         dataManager = new DataManager();
         console.log("✅ DataManager initialized");
-
-        filterManager = new FilterManager();
+        filterManager = new FilterManager(); // DOM elements are implicitly accessed
         console.log("✅ FilterManager initialized");
+        voyageManager = new VoyageManager(); // DOM elements are implicitly accessed
+        console.log("✅ VoyageManager initialized");
+        pathManager = new PathManager(dataManager); // DOM elements and dataManager are implicitly accessed
+        console.log("✅ PathManager initialized");
 
         // Charger les données
         console.log("📍 Loading initial locations...");
@@ -185,7 +192,7 @@ function renderRegions() {
 
     regionsData.regions.forEach(region => {
         console.log(`🔍 Processing region: ${region.name}`, region);
-        
+
         if (!region.coordinates || !Array.isArray(region.coordinates) || region.coordinates.length === 0) {
             console.warn(`⚠️ Region ${region.name} has invalid coordinates:`, region.coordinates);
             return;
@@ -227,7 +234,7 @@ function renderRegions() {
         // Rendre le polygone cliquable
         polygon.style.pointerEvents = 'auto';
         polygon.style.cursor = 'pointer';
-        
+
         // Ajouter l'événement de clic pour afficher la modal commune
         polygon.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -294,7 +301,7 @@ function initializeMap() {
     setupInfoBoxListeners();
     setupRegionDrawing(); // Nouveau : tracé de régions
     setupLocationAdding(); // Nouveau : ajout de lieux
-    
+
     // Configurer le système de filtres
     if (filterManager) {
         console.log("🔍 Setting up FilterManager...");
@@ -305,7 +312,23 @@ function initializeMap() {
     } else {
         console.error("❌ FilterManager not initialized");
     }
-    
+
+    // Initialiser les gestionnaires après chargement de la carte
+    if (voyageManager) {
+        console.log("🚀 Setting up VoyageManager...");
+        voyageManager.init();
+        console.log("✅ VoyageManager setup complete");
+    } else {
+        console.error("❌ VoyageManager not initialized");
+    }
+    if (pathManager) {
+        console.log("🗺️ Setting up PathManager...");
+        pathManager.init();
+        console.log("✅ PathManager setup complete");
+    } else {
+        console.error("❌ PathManager not initialized");
+    }
+
     resetView(); // Vue initiale optimale
 
     console.log("✅ Map initialized successfully");
@@ -677,7 +700,7 @@ function showInfoBox(event, locationOrRegion, type = 'location') {
 
     // Positionner et afficher l'info-box
     let x, y;
-    
+
     if (type === 'region') {
         // Pour les régions, utiliser la position du clic
         const viewportRect = viewport.getBoundingClientRect();
@@ -791,7 +814,7 @@ function toggleRegionDrawingMode() {
         console.log("🎨 Entering region drawing mode");
         regionPoints = [];
         clearTempRegionPolygon();
-        
+
         // Changer l'apparence du bouton
         if (addRegionBtn) {
             addRegionBtn.classList.add('btn-active');
@@ -877,13 +900,13 @@ function updateTempRegionDisplay() {
     if (regionPoints.length >= 2) {
         const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
         const points = regionPoints.map(p => `${p.x},${p.y}`).join(' ');
-        
+
         polygon.setAttribute('points', points);
         polygon.setAttribute('fill', 'rgba(34, 197, 94, 0.2)');
         polygon.setAttribute('stroke', 'rgba(34, 197, 94, 0.8)');
         polygon.setAttribute('stroke-width', '2');
         polygon.setAttribute('stroke-dasharray', '5,5');
-        
+
         tempGroup.appendChild(polygon);
     }
 
@@ -896,7 +919,7 @@ function updateTempRegionDisplay() {
         circle.setAttribute('fill', 'rgba(34, 197, 94, 0.8)');
         circle.setAttribute('stroke', 'white');
         circle.setAttribute('stroke-width', '2');
-        
+
         tempGroup.appendChild(circle);
     });
 
@@ -1053,12 +1076,12 @@ function toggleLocationAddingMode() {
 
     if (isLocationAddingMode) {
         console.log("📍 Entering location adding mode");
-        
+
         // Sortir du mode région si actif
         if (isRegionDrawingMode) {
             exitRegionDrawingMode();
         }
-        
+
         // Changer l'apparence du bouton
         if (addLocationBtn) {
             addLocationBtn.classList.add('btn-active');
@@ -1236,26 +1259,26 @@ function setupLocationColorPicker() {
     if (!colorPicker) return;
 
     const colors = ['blue', 'red', 'green', 'violet', 'orange', 'black'];
-    
+
     colorPicker.innerHTML = '';
-    
+
     colors.forEach((color, index) => {
         const swatch = document.createElement('div');
         swatch.className = 'color-swatch';
         swatch.dataset.color = color;
         swatch.style.backgroundColor = colorMap[color] || colorMap.blue;
-        
+
         if (index === 0) {
             swatch.classList.add('selected');
         }
-        
+
         swatch.addEventListener('click', () => {
             document.querySelectorAll('#add-color-picker .color-swatch').forEach(s => {
                 s.classList.remove('selected');
             });
             swatch.classList.add('selected');
         });
-        
+
         colorPicker.appendChild(swatch);
     });
 }
@@ -1265,26 +1288,26 @@ function setupRegionColorPicker() {
     if (!colorPicker) return;
 
     const colors = ['green', 'red', 'blue', 'violet', 'orange', 'black', 'yellow', 'purple', 'gray'];
-    
+
     colorPicker.innerHTML = '';
-    
+
     colors.forEach((color, index) => {
         const swatch = document.createElement('div');
         swatch.className = 'color-swatch';
         swatch.dataset.color = color;
         swatch.style.backgroundColor = regionColorMap[color] || regionColorMap.gray;
-        
+
         if (index === 0) {
             swatch.classList.add('selected');
         }
-        
+
         swatch.addEventListener('click', () => {
             document.querySelectorAll('#region-color-picker .color-swatch').forEach(s => {
                 s.classList.remove('selected');
             });
             swatch.classList.add('selected');
         });
-        
+
         colorPicker.appendChild(swatch);
     });
 }
@@ -1321,3 +1344,52 @@ if (document.readyState === 'loading') {
 }
 
 console.log("📋 Simplified main.js loaded - waiting for DOM ready");
+
+// Fonctions utilitaires pour la compatibilité avec l'ancien code
+window.updateDistanceDisplay = function() {
+    if (pathManager) {
+        pathManager.updateDistanceDisplay();
+    }
+};
+
+window.updateJourneyInfo = function() {
+    if (pathManager) {
+        pathManager.updatePathData();
+    }
+};
+
+// Fonction pour mettre en surbrillance les découvertes sur la carte
+window.highlightDiscoveryOnMap = function(discoveryName, discoveryType, highlight) {
+    if (discoveryType === 'location') {
+        const marker = document.querySelector(`[data-id*="${discoveryName}"]`);
+        if (marker) {
+            if (highlight) {
+                marker.style.boxShadow = '0 0 20px 5px rgba(59, 130, 246, 0.8)';
+                marker.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                marker.style.zIndex = '1000';
+            } else {
+                marker.style.boxShadow = '';
+                marker.style.transform = 'translate(-50%, -50%) scale(1)';
+                marker.style.zIndex = '';
+            }
+        }
+    } else if (discoveryType === 'region') {
+        const regionElement = document.querySelector(`[data-region-name="${discoveryName}"]`);
+        if (regionElement) {
+            if (highlight) {
+                regionElement.style.stroke = '#3b82f6';
+                regionElement.style.strokeWidth = '4';
+                regionElement.style.fill = 'rgba(59, 130, 246, 0.3)';
+            } else {
+                // Restaurer les styles originaux
+                const region = regionsData.regions.find(r => r.name === discoveryName);
+                if (region) {
+                    const color = regionColorMap[region.color] || regionColorMap['gray'];
+                    regionElement.style.stroke = color;
+                    regionElement.style.strokeWidth = '3'; // Use the original stroke width
+                    regionElement.style.fill = color;
+                }
+            }
+        }
+    }
+};
