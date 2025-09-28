@@ -88,6 +88,18 @@
         let currentUser = null; // Renamed from googleUser for broader compatibility
         let savedContexts = [];
 
+        // --- Global functions ---
+        function handleImageError(imgElement) {
+            if (imgElement) {
+                imgElement.parentElement.innerHTML = '<div class="image-placeholder">Erreur de chargement de l\'image</div>';
+            } else {
+                console.error("❌ Erreur de chargement de l'image de carte");
+                if (loaderOverlay) {
+                    loaderOverlay.innerHTML = `<div class="text-2xl text-red-500 text-center p-4"><i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>Erreur de chargement de la carte.<br><span class="text-sm text-gray-400 mt-2">Vérifiez que les fichiers de carte sont disponibles.</span></div>`;
+                }
+            }
+        }
+
         // --- Season state ---
         let currentSeason = 'printemps-debut';
         const seasonSymbols = {
@@ -780,9 +792,7 @@
             document.getElementById(`${tabName}-tab`).classList.add('active');
         }
 
-        function handleImageError(imgElement) {
-            imgElement.parentElement.innerHTML = '<div class="image-placeholder">Erreur de chargement de l\'image</div>';
-        }
+        
 
         function getLocationImages(location) {
             // Support both old format (imageUrl) and new format (images array)
@@ -1868,6 +1878,28 @@
         }
 
         // --- Start the app ---
+        // --- Exports pour compatibilité module ---
+        window.handleImageError = handleImageError;
+        window.showInfoBox = showInfoBox;
+        window.showRegionInfo = showRegionInfo;
+        window.toggleInfoBoxExpand = toggleInfoBoxExpand;
+        window.highlightDiscoveryOnMap = highlightDiscoveryOnMap;
+        window.callGemini = callGemini;
+        window.locationsData = locationsData;
+        window.regionsData = regionsData;
+        window.journeyPath = journeyPath;
+        window.journeyDiscoveries = journeyDiscoveries;
+        window.totalPathPixels = totalPathPixels;
+        window.MAP_DISTANCE_MILES = MAP_DISTANCE_MILES;
+        window.MAP_WIDTH = MAP_WIDTH;
+        window.currentSeason = currentSeason;
+        window.isCalendarMode = isCalendarMode;
+        window.currentCalendarDate = currentCalendarDate;
+        window.calendarData = calendarData;
+        window.saveCalendarToLocal = saveCalendarToLocal;
+        window.updateSeasonDisplay = updateSeasonDisplay;
+        window.scheduleAutoSync = scheduleAutoSync;
+
         // Ensure the app starts only once when the DOM is ready
         function initializeApp() {
             // Global error handlers
@@ -2579,10 +2611,7 @@
             }
         }
 
-        function handleImageError() {
-            console.error("❌ Erreur de chargement de l'image de carte");
-            loaderOverlay.innerHTML = `<div class="text-2xl text-red-500 text-center p-4"><i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>Erreur de chargement de la carte.<br><span class="text-sm text-gray-400 mt-2">Vérifiez que les fichiers de carte sont disponibles.</span></div>`;
-        }
+        
         function startDragMarker(e) { e.stopPropagation(); draggedMarker = e.target; dragStartX = e.clientX; dragStartY = e.clientY; document.addEventListener('mousemove', dragMarker); document.addEventListener('mouseup', stopDragMarker); }
         function dragMarker(e) { if (!draggedMarker) return; const deltaX = e.clientX - dragStartX; const deltaY = e.clientY - dragStartY; const newX = parseFloat(draggedMarker.style.left) + (deltaX / scale); const newY = parseFloat(draggedMarker.style.top) + (deltaY / scale); draggedMarker.style.left = `${newX}px`; draggedMarker.style.top = `${newY}px`; dragStartX = e.clientX; dragStartY = e.clientY; }
         function stopDragMarker() { if (!draggedMarker) return; const locationId = parseInt(draggedMarker.dataset.id, 10); const location = locationsData.locations.find(loc => loc.id === locationId); if (location) { location.coordinates.x = parseFloat(draggedMarker.style.left); location.coordinates.y = parseFloat(draggedMarker.style.top); } draggedMarker = null; document.removeEventListener('mousemove', dragMarker); document.removeEventListener('mouseup', stopDragMarker); saveLocationsToLocal(); }
