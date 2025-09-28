@@ -1,5 +1,5 @@
 
-class AuthManager {
+export default class AuthManager {
     constructor(domElements) {
         this.dom = domElements;
         this.currentUser = null;
