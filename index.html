@@ -47,35 +47,16 @@
         </div>
 
         <!-- Filter Panel -->
-        <div id="filter-panel" class="hidden absolute top-4 left-20 z-10 bg-gray-900 bg-opacity-80 p-4 rounded-lg shadow-xl border border-gray-700 w-80 max-h-96 overflow-y-auto">
+        <div id="filter-panel" class="hidden absolute top-4 left-20 z-10 bg-gray-900 bg-opacity-80 p-4 rounded-lg shadow-xl border border-gray-700 w-80">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold">Filtres</h3>
                 <button id="close-filter-panel" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
             </div>
-            
-            <!-- Compteurs -->
-            <div id="filter-counts" class="mb-4 text-center text-sm text-gray-400">
-                <!-- Les compteurs seront affichés ici -->
-            </div>
-            
-            <!-- Champ de recherche -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-2">Recherche</label>
-                <input type="text" id="filter-search" placeholder="Rechercher un lieu ou une région..." class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white">
-            </div>
 
-            <!-- Filtres de couleurs pour les lieux -->
+            <!-- Filtres de couleurs unifiés -->
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-2">Couleurs des lieux</label>
-                <div id="location-colors" class="space-y-2">
-                    <!-- Les couleurs seront générées par JavaScript -->
-                </div>
-            </div>
-
-            <!-- Filtres de couleurs pour les régions -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-2">Couleurs des régions</label>
-                <div id="region-colors" class="space-y-2">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Couleurs</label>
+                <div id="unified-colors" class="grid grid-cols-6 gap-2">
                     <!-- Les couleurs seront générées par JavaScript -->
                 </div>
             </div>

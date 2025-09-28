@@ -4,11 +4,10 @@
 export default class FilterManager {
     constructor() {
         this.activeFilters = {
-            colors: [],
+            colors: [], // Unifié pour lieux et régions
             visited: null, // null = tous, true = visités, false = non visités
             known: null,   // null = tous, true = connus, false = inconnus
-            types: [],
-            search: ''
+            types: []
         };
         
         this.isFilterPanelOpen = false;
@@ -46,20 +45,8 @@ export default class FilterManager {
             applyFiltersBtn.addEventListener('click', () => this.applyFilters());
         }
 
-        // Champ de recherche
-        const searchInput = document.getElementById('filter-search');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                this.activeFilters.search = e.target.value.toLowerCase();
-                this.applyFilters();
-            });
-        }
-
-        // Filtres de couleurs (lieux)
-        this.setupColorFilters('location-colors', 'location');
-
-        // Filtres de couleurs (régions)
-        this.setupColorFilters('region-colors', 'region');
+        // Filtres de couleurs unifiés
+        this.setupUnifiedColorFilters();
 
         // Filtres visited/known
         this.setupStatusFilters();
@@ -70,13 +57,12 @@ export default class FilterManager {
         console.log("✅ Filter listeners setup complete");
     }
 
-    setupColorFilters(containerId, type) {
-        const container = document.getElementById(containerId);
+    setupUnifiedColorFilters() {
+        const container = document.getElementById('unified-colors');
         if (!container) return;
 
-        const colors = type === 'location' 
-            ? ['blue', 'red', 'green', 'violet', 'orange', 'black']
-            : ['green', 'red', 'blue', 'violet', 'orange', 'black', 'yellow', 'purple', 'gray'];
+        // Couleurs communes (intersection entre lieux et régions)
+        const colors = ['blue', 'red', 'green', 'violet', 'orange', 'black'];
 
         container.innerHTML = '';
 
@@ -86,9 +72,9 @@ export default class FilterManager {
             
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            checkbox.id = `filter-${type}-${color}`;
+            checkbox.id = `filter-color-${color}`;
             checkbox.value = color;
-            checkbox.addEventListener('change', () => this.updateColorFilter(type, color, checkbox.checked));
+            checkbox.addEventListener('change', () => this.updateUnifiedColorFilter(color, checkbox.checked));
 
             const label = document.createElement('label');
             label.htmlFor = checkbox.id;
@@ -96,15 +82,9 @@ export default class FilterManager {
             
             const colorSwatch = document.createElement('div');
             colorSwatch.className = 'filter-color-swatch';
-            colorSwatch.style.backgroundColor = type === 'location' 
-                ? this.getLocationColor(color) 
-                : this.getRegionColor(color);
-
-            const colorName = document.createElement('span');
-            colorName.textContent = this.getColorName(color);
+            colorSwatch.style.backgroundColor = this.getLocationColor(color);
 
             label.appendChild(colorSwatch);
-            label.appendChild(colorName);
             filterItem.appendChild(checkbox);
             filterItem.appendChild(label);
             container.appendChild(filterItem);
@@ -147,19 +127,13 @@ export default class FilterManager {
         });
     }
 
-    updateColorFilter(type, color, isChecked) {
-        const filterKey = type === 'location' ? 'colors' : 'regionColors';
-        
-        if (!this.activeFilters[filterKey]) {
-            this.activeFilters[filterKey] = [];
-        }
-
+    updateUnifiedColorFilter(color, isChecked) {
         if (isChecked) {
-            if (!this.activeFilters[filterKey].includes(color)) {
-                this.activeFilters[filterKey].push(color);
+            if (!this.activeFilters.colors.includes(color)) {
+                this.activeFilters.colors.push(color);
             }
         } else {
-            this.activeFilters[filterKey] = this.activeFilters[filterKey].filter(c => c !== color);
+            this.activeFilters.colors = this.activeFilters.colors.filter(c => c !== color);
         }
         
         this.applyFilters();
@@ -186,7 +160,6 @@ export default class FilterManager {
         if (this.isFilterPanelOpen) {
             filterPanel.classList.remove('hidden');
             filterBtn.classList.add('btn-active');
-            this.updateFilterCounts();
         } else {
             filterPanel.classList.add('hidden');
             filterBtn.classList.remove('btn-active');
@@ -213,20 +186,14 @@ export default class FilterManager {
         // Réinitialiser les filtres actifs
         this.activeFilters = {
             colors: [],
-            regionColors: [],
             visited: null,
             known: null,
-            types: [],
-            search: ''
+            types: []
         };
 
         // Réinitialiser l'interface
-        // Recherche
-        const searchInput = document.getElementById('filter-search');
-        if (searchInput) searchInput.value = '';
-
         // Checkboxes couleurs
-        document.querySelectorAll('input[type="checkbox"][id^="filter-"]').forEach(cb => {
+        document.querySelectorAll('input[type="checkbox"][id^="filter-color-"]').forEach(cb => {
             cb.checked = false;
         });
 
@@ -266,8 +233,8 @@ export default class FilterManager {
         // Mettre à jour l'affichage
         this.updateDisplay();
 
-        // Mettre à jour les compteurs
-        this.updateFilterCounts();
+        // Mettre à jour l'indicateur du bouton de filtre
+        this.updateFilterButton();
 
         // Déclencher un événement personnalisé pour notifier les autres composants
         document.dispatchEvent(new CustomEvent('filtersApplied', {
@@ -282,14 +249,7 @@ export default class FilterManager {
 
     filterLocations(locations) {
         return locations.filter(location => {
-            // Filtre par recherche
-            if (this.activeFilters.search && 
-                !location.name.toLowerCase().includes(this.activeFilters.search) &&
-                !location.description?.toLowerCase().includes(this.activeFilters.search)) {
-                return false;
-            }
-
-            // Filtre par couleur
+            // Filtre par couleur unifiée
             if (this.activeFilters.colors?.length > 0 && 
                 !this.activeFilters.colors.includes(location.color)) {
                 return false;
@@ -319,16 +279,9 @@ export default class FilterManager {
 
     filterRegions(regions) {
         return regions.filter(region => {
-            // Filtre par recherche
-            if (this.activeFilters.search && 
-                !region.name.toLowerCase().includes(this.activeFilters.search) &&
-                !region.description?.toLowerCase().includes(this.activeFilters.search)) {
-                return false;
-            }
-
-            // Filtre par couleur
-            if (this.activeFilters.regionColors?.length > 0 && 
-                !this.activeFilters.regionColors.includes(region.color)) {
+            // Filtre par couleur unifiée
+            if (this.activeFilters.colors?.length > 0 && 
+                !this.activeFilters.colors.includes(region.color)) {
                 return false;
             }
 
@@ -368,21 +321,7 @@ export default class FilterManager {
         console.log(`✅ Display updated - ${this.filteredLocations.length} locations, ${this.filteredRegions.length} regions visible`);
     }
 
-    updateFilterCounts() {
-        const countsElement = document.getElementById('filter-counts');
-        if (countsElement) {
-            const totalLocations = window.locationsData?.locations?.length || 0;
-            const totalRegions = window.regionsData?.regions?.length || 0;
-            
-            countsElement.innerHTML = `
-                <div class="text-sm text-gray-400">
-                    Lieux: ${this.filteredLocations.length}/${totalLocations} |
-                    Régions: ${this.filteredRegions.length}/${totalRegions}
-                </div>
-            `;
-        }
-
-        // Mettre à jour l'indicateur du bouton de filtre
+    updateFilterButton() {
         const filterBtn = document.getElementById('filter-btn');
         if (filterBtn) {
             const hasActiveFilters = this.hasActiveFilters();
@@ -397,9 +336,7 @@ export default class FilterManager {
     }
 
     hasActiveFilters() {
-        return this.activeFilters.search !== '' ||
-               (this.activeFilters.colors && this.activeFilters.colors.length > 0) ||
-               (this.activeFilters.regionColors && this.activeFilters.regionColors.length > 0) ||
+        return (this.activeFilters.colors && this.activeFilters.colors.length > 0) ||
                this.activeFilters.visited !== null ||
                this.activeFilters.known !== null ||
                (this.activeFilters.types && this.activeFilters.types.length > 0);
