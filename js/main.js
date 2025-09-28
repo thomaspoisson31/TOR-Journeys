@@ -200,12 +200,13 @@ function renderRegions() {
         polygon.setAttribute('data-name', region.name);
 
         // Définir les styles du polygone
-        const color = regionColorMap[region.color] || regionColorMap.gray;
-        polygon.setAttribute('fill', color);
-        polygon.setAttribute('stroke', color);
-        polygon.setAttribute('fill-opacity', '0.3');
-        polygon.setAttribute('stroke-opacity', '0.8');
-        polygon.setAttribute('stroke-width', '2');
+        const fillColor = regionColorMap[region.color] || regionColorMap.gray;
+        const strokeColor = fillColor.replace(/0\.\d+\)$/, '0.8)'); // Bordure plus opaque
+        polygon.setAttribute('fill', fillColor);
+        polygon.setAttribute('stroke', strokeColor);
+        polygon.setAttribute('fill-opacity', '1');
+        polygon.setAttribute('stroke-opacity', '1');
+        polygon.setAttribute('stroke-width', '3');
 
         // Créer les points du polygone
         const points = region.coordinates.map(coord => `${coord.x},${coord.y}`).join(' ');
@@ -1205,7 +1206,7 @@ function setupRegionColorPicker() {
     const colorPicker = document.getElementById('region-color-picker');
     if (!colorPicker) return;
 
-    const colors = ['green', 'red', 'blue', 'yellow', 'purple', 'orange', 'gray'];
+    const colors = ['green', 'red', 'blue', 'violet', 'orange', 'black', 'yellow', 'purple', 'gray'];
     
     colorPicker.innerHTML = '';
     

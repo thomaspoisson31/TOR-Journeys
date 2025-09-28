@@ -10,12 +10,15 @@ export const colorMap = {
 };
 
 export const regionColorMap = { 
-    red: 'rgba(239, 68, 68, 0.15)', 
-    blue: 'rgba(59, 130, 246, 0.15)', 
-    green: 'rgba(34, 197, 94, 0.15)', 
-    violet: 'rgba(139, 92, 246, 0.15)', 
-    orange: 'rgba(252, 169, 3, 0.15)', 
-    black: 'rgba(17, 24, 39, 0.15)' 
+    red: 'rgba(239, 68, 68, 0.4)', 
+    blue: 'rgba(59, 130, 246, 0.4)', 
+    green: 'rgba(34, 197, 94, 0.4)', 
+    violet: 'rgba(139, 92, 246, 0.4)', 
+    orange: 'rgba(252, 169, 3, 0.4)', 
+    black: 'rgba(17, 24, 39, 0.4)',
+    yellow: 'rgba(234, 179, 8, 0.4)',
+    purple: 'rgba(168, 85, 247, 0.4)',
+    gray: 'rgba(107, 114, 128, 0.4)'
 };
 
 // === DONNÉES PAR DÉFAUT ===
