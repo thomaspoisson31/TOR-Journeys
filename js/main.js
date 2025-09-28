@@ -6,6 +6,13 @@
         let locationsData;
         let regionsData = getDefaultRegions();
 
+        // --- Imports des modules ---
+        import EventManager from './managers/event-manager.js';
+        import RenderManager from './managers/render-manager.js';
+        import InfoBoxManager from './managers/infobox-manager.js';
+        import DataManager from './managers/data-manager.js';
+        import AuthManager from './managers/auth-manager.js';
+
         // --- DOM Elements ---
         const viewport = document.getElementById('viewport');
         const mapContainer = document.getElementById('map-container');
@@ -136,8 +143,13 @@
             voyageSegmentsModal: document.getElementById('voyage-segments-modal')
         };
 
-        // --- Voyage Manager ---
+        // --- Managers ---
         let voyageManager;
+        let eventManager;
+        let renderManager;
+        let infoBoxManager;
+        let dataManager;
+        let authManager;
 
         // --- Maps Management Functions ---
         function loadMapsData() {
