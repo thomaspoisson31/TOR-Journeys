@@ -1,4 +1,3 @@
-replit_final_file>
 // --- Import des constantes ---
 import {
     colorMap,
