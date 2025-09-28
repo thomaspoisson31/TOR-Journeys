@@ -297,9 +297,13 @@ function initializeMap() {
     
     // Configurer le système de filtres
     if (filterManager) {
+        console.log("🔍 Setting up FilterManager...");
         filterManager.setupFilterListeners();
         // Appliquer les filtres initiaux (montrer tout)
         filterManager.applyFilters();
+        console.log("✅ FilterManager setup complete");
+    } else {
+        console.error("❌ FilterManager not initialized");
     }
     
     resetView(); // Vue initiale optimale
