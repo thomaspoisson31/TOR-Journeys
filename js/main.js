@@ -7,11 +7,7 @@
         let regionsData = getDefaultRegions();
 
         // --- Imports des modules ---
-        import EventManager from './managers/event-manager.js';
-        import RenderManager from './managers/render-manager.js';
-        import InfoBoxManager from './managers/infobox-manager.js';
-        import DataManager from './managers/data-manager.js';
-        import AuthManager from './managers/auth-manager.js';
+        import { escapeHtml, getCanvasCoordinates, pixelsToMiles, milesToDays, calculatePathDistance, isPointInPolygon } from './utils/helpers.js';
 
         // --- DOM Elements ---
         const viewport = document.getElementById('viewport');
@@ -145,11 +141,6 @@
 
         // --- Managers ---
         let voyageManager;
-        let eventManager;
-        let renderManager;
-        let infoBoxManager;
-        let dataManager;
-        let authManager;
 
         // --- Maps Management Functions ---
         function loadMapsData() {
@@ -403,12 +394,7 @@
             console.log(`🔐 [AUTH] ${message}`, data || '');
         }
 
-        // --- HTML Escape Function ---
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        
 
         // --- Check Google Authentication Status ---
         function checkGoogleAuth() {
@@ -2726,7 +2712,7 @@
 
             if (isAddingRegionMode) {
                 console.log("🌍 Adding region mode active");
-                const coords = getCanvasCoordinates(event);
+                const coords = getCanvasCoordinates(event, mapContainer, scale);
                 console.log("🌍 Adding region point at:", coords);
                 addRegionPoint(coords);
                 return;
@@ -2775,7 +2761,7 @@
                 // Réinitialiser les segments de voyage
                 resetVoyageSegments();
 
-                startPoint = getCanvasCoordinates(event);
+                startPoint = getCanvasCoordinates(event, mapContainer, scale);
                 lastPoint = startPoint;
 
                 // Add start point to journey path
@@ -2798,7 +2784,7 @@
             if (!isDrawing || !isDrawingMode) return;
 
             console.log("✏️ Mouse move during drawing");
-            const currentPoint = getCanvasCoordinates(event);
+            const currentPoint = getCanvasCoordinates(event, mapContainer, scale);
             const segmentLength = Math.sqrt(Math.pow(currentPoint.x - lastPoint.x, 2) + Math.pow(currentPoint.y - lastPoint.y, 2));
             totalPathPixels += segmentLength;
 
@@ -2942,7 +2928,7 @@
         });
         document.getElementById('confirm-add-location').addEventListener('click', () => { const nameInput = document.getElementById('location-name-input'); const descInput = document.getElementById('location-desc-input'); const imageInput = document.getElementById('location-image-input'); const color = document.querySelector('#add-color-picker .selected').dataset.color; const known = document.getElementById('location-known-input').checked; const visited = document.getElementById('location-visited-input').checked; if (nameInput.value && newLocationCoords) { const newLocation = { id: Date.now(), name: nameInput.value, description: descInput.value, imageUrl: imageInput.value, color: color, known: known, visited: visited, type: "custom", coordinates: newLocationCoords, Rumeur: "A définir", Tradition_Ancienne: "A définir" }; locationsData.locations.push(newLocation); renderLocations(); saveLocationsToLocal(); } addLocationModal.classList.add('hidden'); nameInput.value = ''; descInput.value = ''; imageInput.value = ''; newLocationCoords = null; });
         document.getElementById('cancel-add-location').addEventListener('click', () => { addLocationModal.classList.add('hidden'); document.getElementById('location-name-input').value = ''; document.getElementById('location-desc-input').value = ''; document.getElementById('location-image-input').value = ''; newLocationCoords = null; });
-        function addLocation(event) { newLocationCoords = getCanvasCoordinates(event); addLocationModal.classList.remove('hidden'); document.getElementById('location-name-input').focus(); isAddingLocationMode = false; viewport.classList.remove('adding-location'); document.getElementById('add-location-mode').classList.remove('btn-active'); const addColorPicker = document.getElementById('add-color-picker'); addColorPicker.innerHTML = Object.keys(colorMap).map((color, index) => `<div class="color-swatch ${index === 0 ? 'selected' : ''}" data-color="${color}" style="background-color: ${colorMap[color]}"></div>`).join(''); addColorPicker.querySelectorAll('.color-swatch').forEach(swatch => { swatch.addEventListener('click', () => { addColorPicker.querySelector('.color-swatch.selected').classList.remove('selected'); swatch.classList.add('selected'); }); }); document.getElementById('generate-add-desc').addEventListener('click', handleGenerateDescription); document.getElementById('location-known-input').checked = true; document.getElementById('location-visited-input').checked = false; const addVisitedCheckbox = document.getElementById('location-visited-input'); const addKnownCheckbox = document.getElementById('location-known-input'); if(addVisitedCheckbox && addKnownCheckbox) { addVisitedCheckbox.addEventListener('change', () => { if (addVisitedCheckbox.checked) { addKnownCheckbox.checked = true; } }); } }
+        function addLocation(event) { newLocationCoords = getCanvasCoordinates(event, mapContainer, scale); addLocationModal.classList.remove('hidden'); document.getElementById('location-name-input').focus(); isAddingLocationMode = false; viewport.classList.remove('adding-location'); document.getElementById('add-location-mode').classList.remove('btn-active'); const addColorPicker = document.getElementById('add-color-picker'); addColorPicker.innerHTML = Object.keys(colorMap).map((color, index) => `<div class="color-swatch ${index === 0 ? 'selected' : ''}" data-color="${color}" style="background-color: ${colorMap[color]}"></div>`).join(''); addColorPicker.querySelectorAll('.color-swatch').forEach(swatch => { swatch.addEventListener('click', () => { addColorPicker.querySelector('.color-swatch.selected').classList.remove('selected'); swatch.classList.add('selected'); }); }); document.getElementById('generate-add-desc').addEventListener('click', handleGenerateDescription); document.getElementById('location-known-input').checked = true; document.getElementById('location-visited-input').checked = false; const addVisitedCheckbox = document.getElementById('location-visited-input'); const addKnownCheckbox = document.getElementById('location-known-input'); if(addVisitedCheckbox && addKnownCheckbox) { addVisitedCheckbox.addEventListener('change', () => { if (addVisitedCheckbox.checked) { addKnownCheckbox.checked = true; } }); } }
         function saveLocationsToLocal() {
             localStorage.setItem('middleEarthLocations', JSON.stringify(locationsData));
             scheduleAutoSync(); // Synchroniser après modification
@@ -3218,7 +3204,7 @@
             importUnifiedData(event); // Rediriger vers la fonction unifiée
         }
 
-        function getCanvasCoordinates(event) { const rect = mapContainer.getBoundingClientRect(); const x = (event.clientX - rect.left) / scale; const y = (event.clientY - rect.top) / scale; return { x, y }; }
+        
         function updateDistanceDisplay() {
             const voyageBtn = document.getElementById('voyage-segments-btn');
 
