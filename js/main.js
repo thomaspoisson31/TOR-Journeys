@@ -1547,9 +1547,12 @@ replit_final_file>
 
             console.log('🚀 Starting application...');
 
-            // Initialize AuthManager early
+            // Initialize AuthManager first, before any usage
             authManager = new AuthManager(dom);
             console.log("🔐 AuthManager initialized.");
+
+            // Check for authentication errors in the URL (now that authManager exists)
+            authManager.checkAuthError();
 
             // Global timeout for the application startup
             const startTimeout = setTimeout(() => {
@@ -1563,9 +1566,6 @@ replit_final_file>
                     </div>`;
                 }
             }, 30000); // 30 seconds timeout
-
-            // Check for authentication errors in the URL
-            authManager.checkAuthError();
 
             loadInitialLocations().then(() => {
                 loadRegionsFromLocal();
