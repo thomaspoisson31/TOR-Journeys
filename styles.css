@@ -730,3 +730,202 @@ body {
     background: none;
     padding: 0;
 }
+
+/* Filter Panel styles */
+.filter-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.98) 0%, rgba(55, 65, 81, 0.98) 100%);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(75, 85, 99, 0.6);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    width: 320px;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 1001;
+    color: white;
+    font-size: 14px;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+.filter-content {
+    padding: 20px;
+}
+
+.filter-section {
+    margin-bottom: 24px;
+}
+
+.filter-section-title {
+    font-weight: 600;
+    color: #E5E7EB;
+    margin-bottom: 12px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-input {
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(55, 65, 81, 0.8);
+    border: 1px solid rgba(75, 85, 99, 0.6);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #3B82F6;
+    background: rgba(55, 65, 81, 0.9);
+}
+
+.filter-colors-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+
+.filter-color-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-color-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    flex: 1;
+}
+
+.filter-color-label:hover {
+    background: rgba(55, 65, 81, 0.5);
+}
+
+.filter-color-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+}
+
+.filter-radio-group, .filter-checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-radio-label, .filter-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.filter-radio-label:hover, .filter-checkbox-label:hover {
+    background: rgba(55, 65, 81, 0.5);
+}
+
+.filter-radio-label input, .filter-checkbox-label input {
+    margin: 0;
+}
+
+.filter-counts {
+    padding: 12px;
+    background: rgba(55, 65, 81, 0.3);
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.filter-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-btn-primary {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    color: white;
+}
+
+.filter-btn-primary:hover {
+    background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+    transform: translateY(-1px);
+}
+
+.filter-btn-secondary {
+    background: rgba(75, 85, 99, 0.6);
+    color: #E5E7EB;
+    border: 1px solid rgba(75, 85, 99, 0.8);
+}
+
+.filter-btn-secondary:hover {
+    background: rgba(75, 85, 99, 0.8);
+    border-color: rgba(107, 114, 128, 0.8);
+}
+
+/* Indicateur de filtres actifs sur le bouton principal */
+.has-active-filters {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+}
+
+.has-active-filters::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background: #EF4444;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+/* Info Box styles */
+.info-box {
+    position: absolute;
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(55, 65, 81, 0.95) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(75, 85, 99, 0.5);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    width: 280px;
+    min-height: 200px;
+    z-index: 1000;
+    color: white;
+    font-size: 14px;
+}

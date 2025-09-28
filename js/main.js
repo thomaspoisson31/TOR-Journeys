@@ -18,6 +18,7 @@ import {
 
 // --- Import des managers ---
 import DataManager from './managers/data-manager.js';
+import FilterManager from './managers/filter-manager.js';
 
 console.log("✅ Constants loaded successfully");
 
@@ -29,6 +30,7 @@ let scale = 1, panX = 0, panY = 0;
 
 // --- Managers ---
 let dataManager;
+let filterManager;
 
 console.log("✅ Global variables initialized");
 
@@ -54,15 +56,20 @@ async function initializeApp() {
         dataManager = new DataManager();
         console.log("✅ DataManager initialized");
 
+        filterManager = new FilterManager();
+        console.log("✅ FilterManager initialized");
+
         // Charger les données
         console.log("📍 Loading initial locations...");
         await dataManager.loadInitialLocations();
         locationsData = dataManager.locationsData;
+        window.locationsData = locationsData; // Exposer globalement pour les filtres
         console.log("✅ Locations loaded successfully");
 
         // Charger les régions
         dataManager.loadRegionsFromLocal();
         regionsData = dataManager.regionsData;
+        window.regionsData = regionsData; // Exposer globalement pour les filtres
         console.log("✅ Regions loaded successfully");
 
         // Test d'initialisation de la carte
@@ -287,6 +294,14 @@ function initializeMap() {
     setupInfoBoxListeners();
     setupRegionDrawing(); // Nouveau : tracé de régions
     setupLocationAdding(); // Nouveau : ajout de lieux
+    
+    // Configurer le système de filtres
+    if (filterManager) {
+        filterManager.setupFilterListeners();
+        // Appliquer les filtres initiaux (montrer tout)
+        filterManager.applyFilters();
+    }
+    
     resetView(); // Vue initiale optimale
 
     console.log("✅ Map initialized successfully");
