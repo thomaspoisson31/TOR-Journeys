@@ -72,6 +72,8 @@ async function initializeApp() {
                 initializeMap();
                 // Afficher les lieux après l'initialisation de la carte
                 renderLocations();
+                // Afficher les régions après l'initialisation de la carte
+                renderRegions();
             };
             mapImage.onerror = () => {
                 console.error("❌ Map image failed to load");
@@ -98,7 +100,7 @@ async function initializeApp() {
 // --- Fonction d'affichage des lieux ---
 function renderLocations() {
     console.log("🎯 Rendering locations...");
-    
+
     const locationsLayer = document.getElementById('locations-layer');
     if (!locationsLayer) {
         console.error("❌ Locations layer not found");
@@ -114,7 +116,7 @@ function renderLocations() {
     }
 
     let renderedCount = 0;
-    
+
     locationsData.locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
             console.warn(`⚠️ Location ${location.name} has invalid coordinates`);
@@ -126,15 +128,15 @@ function renderLocations() {
         marker.className = 'location-marker';
         marker.dataset.id = location.id;
         marker.title = location.name;
-        
+
         // Positionner le marqueur
         marker.style.left = `${location.coordinates.x}px`;
         marker.style.top = `${location.coordinates.y}px`;
-        
+
         // Appliquer la couleur
         const color = colorMap[location.color] || colorMap.blue;
         marker.style.backgroundColor = color;
-        
+
         // Ajouter l'événement de clic
         marker.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -148,6 +150,61 @@ function renderLocations() {
 
     console.log(`✅ Rendered ${renderedCount} location markers`);
 }
+
+// --- Fonction d'affichage des régions ---
+function renderRegions() {
+    console.log("🌍 Rendering regions...");
+
+    const regionsLayer = document.getElementById('regions-layer');
+    if (!regionsLayer) {
+        console.error("❌ Regions layer not found");
+        return;
+    }
+
+    // Nettoyer les polygones existants
+    regionsLayer.innerHTML = '';
+
+    if (!regionsData || !regionsData.regions) {
+        console.log("⚠️ No regions data to render");
+        return;
+    }
+
+    let renderedCount = 0;
+
+    regionsData.regions.forEach(region => {
+        if (!region.coordinates || !Array.isArray(region.coordinates) || region.coordinates.length === 0) {
+            console.warn(`⚠️ Region ${region.name} has invalid coordinates`);
+            return;
+        }
+
+        // Créer le polygone
+        const polygon = document.createElement('div');
+        polygon.className = 'region-polygon';
+        polygon.dataset.id = region.id;
+        polygon.title = region.name;
+
+        // Définir les styles du polygone
+        const color = regionColorMap[region.color] || regionColorMap.gray;
+        polygon.style.backgroundColor = color;
+        polygon.style.borderColor = color;
+        polygon.style.opacity = '0.3'; // Semi-transparent
+
+        // Créer le chemin SVG pour le polygone
+        const points = region.coordinates.map(coord => `${coord.x},${coord.y}`).join(' ');
+        polygon.innerHTML = `
+            <svg width="${MAP_WIDTH}" height="${MAP_HEIGHT}" viewBox="0 0 ${MAP_WIDTH} ${MAP_HEIGHT}" preserveAspectRatio="xMidYMid meet">
+                <polygon points="${points}" />
+            </svg>
+        `;
+
+        // Ajouter à la couche des régions
+        regionsLayer.appendChild(polygon);
+        renderedCount++;
+    });
+
+    console.log(`✅ Rendered ${renderedCount} region polygons`);
+}
+
 
 // --- Initialisation carte simplifiée ---
 function initializeMap() {
@@ -226,7 +283,7 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
 
     // Nouveau scale avec contraintes
     const newScale = Math.max(minScale, Math.min(maxScale, scale * zoomFactor));
-    
+
     if (newScale !== scale) {
         // Ajuster le pan pour garder le point sous le curseur
         panX = viewportX - mapX * newScale;
@@ -241,17 +298,17 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
 function resetView() {
     const viewportWidth = viewport.clientWidth;
     const viewportHeight = viewport.clientHeight;
-    
+
     if (viewportWidth > 0 && viewportHeight > 0 && MAP_WIDTH > 0 && MAP_HEIGHT > 0) {
         // Calculer le zoom pour faire rentrer la carte dans le viewport
         const scaleX = viewportWidth / MAP_WIDTH;
         const scaleY = viewportHeight / MAP_HEIGHT;
         scale = Math.min(scaleX, scaleY) * 0.9; // 90% pour laisser un peu de marge
-        
+
         // Centrer la carte
         panX = (viewportWidth - MAP_WIDTH * scale) / 2;
         panY = (viewportHeight - MAP_HEIGHT * scale) / 2;
-        
+
         updateMapTransform();
     }
 }
@@ -282,13 +339,13 @@ function setupMapNavigation() {
         if (isPanning) {
             const deltaX = e.clientX - lastMouseX;
             const deltaY = e.clientY - lastMouseY;
-            
+
             panX += deltaX;
             panY += deltaY;
-            
+
             constrainPan();
             updateMapTransform();
-            
+
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
         }
@@ -402,11 +459,11 @@ function setupInfoBoxListeners() {
     tabButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             const targetTab = e.target.dataset.tab;
-            
+
             // Désactiver tous les onglets
             tabButtons.forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
+
             // Activer l'onglet cliqué
             e.target.classList.add('active');
             const targetContent = document.getElementById(`${targetTab}-tab`);
@@ -446,14 +503,14 @@ let isInfoBoxExpanded = false;
 
 function showInfoBox(event, location) {
     console.log("📋 Showing info box for:", location.name);
-    
+
     const infoBox = document.getElementById('info-box');
     const infoBoxTitle = document.getElementById('info-box-title');
     const imageTab = document.getElementById('image-tab');
     const textTab = document.getElementById('text-tab');
     const rumeursTab = document.getElementById('rumeurs-tab');
     const traditionTab = document.getElementById('tradition-tab');
-    
+
     if (!infoBox) {
         console.error("❌ Info box element not found");
         return;
@@ -461,7 +518,7 @@ function showInfoBox(event, location) {
 
     // Sauvegarder la référence du lieu actuel
     currentInfoBox = location;
-    
+
     // Mettre à jour le titre (caché en mode compact)
     if (infoBoxTitle) {
         infoBoxTitle.textContent = location.name;
@@ -495,7 +552,7 @@ function showInfoBox(event, location) {
         if (textView) {
             const h3 = textView.querySelector('h3');
             const p = textView.querySelector('p');
-            
+
             if (h3) h3.textContent = location.name;
             if (p) p.textContent = location.description || 'Aucune description disponible.';
         }
@@ -522,29 +579,29 @@ function showInfoBox(event, location) {
     // Positionner et afficher l'info-box
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportRect = viewport.getBoundingClientRect();
-    
+
     // Position relative au viewport
     const x = rect.left - viewportRect.left + rect.width / 2;
     const y = rect.top - viewportRect.top + rect.height / 2;
-    
+
     // Ajuster pour éviter de sortir de l'écran
     const infoBoxWidth = 280; // Largeur approximative de l'info-box
     const infoBoxHeight = 300; // Hauteur approximative
-    
+
     let finalX = Math.max(10, Math.min(x, viewport.clientWidth - infoBoxWidth - 10));
     let finalY = Math.max(10, Math.min(y, viewport.clientHeight - infoBoxHeight - 10));
-    
+
     infoBox.style.left = `${finalX}px`;
     infoBox.style.top = `${finalY}px`;
     infoBox.style.display = 'block';
-    
+
     // S'assurer que l'onglet Image est actif par défaut
     const tabButtons = infoBox.querySelectorAll('.tab-button');
     const tabContents = infoBox.querySelectorAll('.tab-content');
-    
+
     tabButtons.forEach(btn => btn.classList.remove('active'));
     tabContents.forEach(content => content.classList.remove('active'));
-    
+
     const imageTabButton = infoBox.querySelector('.tab-button[data-tab="image"]');
     if (imageTabButton) {
         imageTabButton.classList.add('active');
@@ -567,15 +624,15 @@ function hideInfoBox() {
 function toggleInfoBoxExpand() {
     const infoBox = document.getElementById('info-box');
     const infoBoxTitle = document.getElementById('info-box-title');
-    
+
     if (!infoBox) return;
 
     isInfoBoxExpanded = !isInfoBoxExpanded;
-    
+
     if (isInfoBoxExpanded) {
         infoBox.classList.add('expanded');
         if (infoBoxTitle) infoBoxTitle.classList.remove('hidden');
-        
+
         // Centrer l'info-box étendue
         infoBox.style.left = '50%';
         infoBox.style.top = '50%';
@@ -584,7 +641,7 @@ function toggleInfoBoxExpand() {
         infoBox.classList.remove('expanded');
         if (infoBoxTitle) infoBoxTitle.classList.add('hidden');
         infoBox.style.transform = 'none';
-        
+
         // Repositionner si nécessaire
         if (currentInfoBox) {
             // Garder la position actuelle en mode compact
