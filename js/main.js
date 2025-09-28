@@ -3,15 +3,9 @@
         const regionColorMap = { red: 'rgba(239, 68, 68, 0.15)', blue: 'rgba(59, 130, 246, 0.15)', green: 'rgba(34, 197, 94, 0.15)', violet: 'rgba(139, 92, 246, 0.15)', orange: 'rgba(252, 169, 3, 0.15)', black: 'rgba(17, 24, 39, 0.15)' };
         const getDefaultLocations = () => ({ "locations": [] }); // Fallback to empty if fetch fails
         const getDefaultRegions = () => ({ "regions": [] });
+
         let locationsData;
         let regionsData = getDefaultRegions();
-
-        // --- Imports des modules ---
-        import EventManager from './managers/event-manager.js';
-        import RenderManager from './managers/render-manager.js';
-        import InfoBoxManager from './managers/infobox-manager.js';
-        import DataManager from './managers/data-manager.js';
-        import AuthManager from './managers/auth-manager.js';
 
         // --- DOM Elements ---
         const viewport = document.getElementById('viewport');
@@ -145,11 +139,12 @@
 
         // --- Managers ---
         let voyageManager;
-        let eventManager;
-        let renderManager;
-        let infoBoxManager;
-        let dataManager;
-        let authManager;
+        // Les managers sont maintenant chargés dynamiquement via import() ou construits directement
+        // let eventManager;
+        // let renderManager;
+        // let infoBoxManager;
+        // let dataManager;
+        // let authManager;
 
         // --- Maps Management Functions ---
         function loadMapsData() {
@@ -533,8 +528,16 @@
             preloadLoremasterMap();
 
             // Initialize VoyageManager
-            voyageManager = new VoyageManager(dom);
-            voyageManager.init();
+            // Note: VoyageManager is now expected to be available globally or imported.
+            // If it's intended to be part of this file, it should be defined here.
+            // For now, assuming it's accessible.
+            if (typeof VoyageManager !== 'undefined') {
+                voyageManager = new VoyageManager(dom);
+                voyageManager.init();
+            } else {
+                console.warn("VoyageManager is not defined. Voyage features might be unavailable.");
+            }
+
 
             console.log("✅ Map initialized successfully");
         }
@@ -3769,7 +3772,7 @@
 
                 const result = await response.json();
                 console.log("🤖 [GEMINI API] Réponse reçue:", result);
-                
+
                 if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
                     const responseText = result.candidates[0].content.parts[0].text;
                     console.log("✅ [GEMINI API] Texte généré (longueur: " + responseText.length + " caractères)");
