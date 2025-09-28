@@ -1,0 +1,184 @@
+🗺️ Gestion de Carte Interactive
+Affichage et Navigation
+Double carte : Vue Joueur/Gardien avec basculement
+mapImage et loremasterMapImage dans index.html
+Fonction preloadLoremasterMap() dans main.js
+Bouton map-switch avec icône dynamique
+Navigation pan/zoom
+Variables globales scale, panX, panY
+Event listeners mousedown, mousemove, wheel sur viewport
+Fonction applyTransform() pour transformation CSS
+Fonction resetView() pour centrage initial
+Système de Coordonnées
+Conversion coordonnées écran/carte
+Variables MAP_WIDTH, MAP_HEIGHT, MAP_DISTANCE_MILES
+Calculs basés sur les dimensions naturelles de l'image
+📍 Gestion des Lieux (Locations)
+CRUD Lieux
+Ajout interactif
+Mode isAddingLocationMode
+Modal add-location-modal avec formulaire complet
+Fonction saveLocation() avec génération ID unique
+Picker couleur et statuts (connu/visité)
+Affichage et rendu
+Fonction renderLocations() avec filtrage
+Marqueurs CSS positionnés absolument
+Support multi-images avec gestion par défaut
+Tooltips au survol
+Édition en place
+Mode édition avec enterEditMode()
+Interface d'édition dans info-box
+Support images multiples et tables aléatoires
+Validation et sauvegarde
+Suppression
+Fonction deleteLocation() avec confirmation
+Nettoyage automatique des références
+Structure de Données
+Format JSON étendu
+Champs : id, name, description, coordinates, color, known, visited
+images[] : tableau avec url et isDefault
+tables[] : tableau de tables aléatoires
+Rumeurs[] : tableau de rumeurs multiples
+Tradition_Ancienne : texte libre
+🗾 Gestion des Régions
+Création Régions
+Dessin polygonal
+Mode isAddingRegionMode
+Array currentRegionPoints pour construction
+Double-clic pour finalisation
+Preview temps réel avec tempRegionPath
+Sauvegarde et rendu
+Rendu SVG avec regionsLayer
+Couleurs semi-transparentes avec contours
+Click handlers pour interaction
+Édition Régions
+Interface complète
+Même système que lieux avec adaptations
+Support images et tables multiples
+Couleurs spécifiques régions
+🎨 Système de Tracé de Voyage
+Dessin Interactif
+Mode dessin
+Toggle isDrawingMode avec bouton toolbar
+Canvas HTML5 pour tracé
+Variables isDrawing, startPoint, lastPoint
+Calcul distance en temps réel
+Suivi du trajet
+Array journeyPath avec points séquentiels
+Calcul totalPathPixels progressif
+Conversion miles avec MAP_DISTANCE_MILES/MAP_WIDTH
+Découvertes Automatiques
+Détection proximité
+Constante PROXIMITY_DISTANCE = 50
+Sets nearbyLocations et traversedRegions
+Array journeyDiscoveries chronologique
+Fonction updateJourneyInfo() en temps réel
+Segments de régions
+Map regionSegments avec indices entrée/sortie
+Fonction isPointInPolygon() pour détection
+Tracking des régions actives pendant tracé
+🚢 Gestionnaire de Voyage (VoyageManager)
+Organisation Temporelle
+Calcul jour par jour
+Classe VoyageManager dans fichier séparé
+Règle : 20 miles/jour pour calcul durée
+Fonction generateJourneyData() avec répartition découvertes
+Navigation temporelle
+Variables currentDayIndex, totalJourneyDays
+Boutons navigation prev/next avec état
+Barre de progression visuelle
+Interface Voyage
+Modal dédiée (voyage-segments-modal)
+Affichage jour courant avec date calendaire
+Miniatures découvertes cliquables
+Hover highlighting sur carte
+Boutons action (description, fin voyage)
+Génération de Contenu
+Intégration IA
+Fonction generateJourneyDescription() avec Gemini
+Prompts contextualisés avec aventuriers/quête
+Stockage descriptions par jour
+Format points clés pour MJ
+📅 Système de Calendrier
+Module Calendar
+Fichier séparé js/calendar.js
+Import/export CSV personnalisé
+Mapping mois/saisons automatique
+Interface sélection mois/jour
+Synchronisation saisons
+Variables globales currentSeason, isCalendarMode
+Mise à jour automatique selon date
+Symbols saisonniers dans header
+Gestion du Temps
+Persistance voyage
+Date début voyage sauvée avec signature trajet
+Calcul dates progressives pendant voyage
+Mise à jour globale à fin voyage
+🔍 Système de Filtrage
+Interface Filtres
+Panel dédié (filter-panel)
+Checkboxes statuts (connu/visité)
+Picker couleurs multiples
+Toggle affichage régions
+Bouton reset
+Logique Filtrage
+Objet activeFilters
+Propriétés : known, visited, colors[]
+Fonction applyFilters() avec re-rendu
+Sauvegarde localStorage et cloud
+💾 Persistance et Sauvegarde
+Local Storage
+Clés multiples
+middleEarthLocations : données lieux
+middleEarthRegions : données régions
+currentSeason, calendarData : temporel
+Fonctions saveToLocal() dédiées
+Synchronisation Cloud
+Backend Flask (app.py)
+Base SQLite avec tables users/contexts
+API REST complète (/api/user/data)
+Auto-sync avec debounce 2 secondes
+🔐 Système d'Authentification
+OAuth Google
+Configuration complète
+Variables environnement GOOGLE_CLIENT_ID/SECRET
+Routes Flask /auth/google et callback
+Gestion sessions avec persistance
+Interface Auth
+Modal dédiée (auth-modal)
+Bouton Google Sign-In
+Gestion contextes utilisateur
+Indicateur statut dans toolbar
+⚙️ Interface Paramètres
+Modal Settings
+Système onglets
+Aventuriers : description groupe (Markdown)
+Quête : objectifs (Markdown)
+Saison : sélection manuelle + calendrier
+Édition In-Place
+Modes lecture/écriture
+Basculement avec boutons édition
+Textareas avec preview Markdown
+Sauvegarde auto avec sync
+📱 Interface Utilisateur
+Toolbar Principal
+Boutons mode : dessin, ajout lieu/région
+Outils : import/export, filtres, paramètres
+Indicateurs : auth, saison, date
+Info-Box Dynamique
+Système onglets : Image, Texte, Rumeurs, Tradition, Tables
+Modes vue : compact/étendu avec repositionnement
+Édition : interface complète avec validation
+Responsive Design
+CSS adaptatif avec Tailwind
+Positionnement intelligent évitant toolbar
+Gestion erreurs avec timeouts et fallbacks
+🔧 Architecture Technique
+Modularité
+Fichiers séparés : main.js, calendar.js, voyage-manager.js
+Classes : VoyageManager avec encapsulation
+Modules : Calendar avec namespace
+Gestion d'État
+Variables globales partagées entre modules
+Event system avec listeners dédiés
+Synchronisation état UI/données avec fonctions update
