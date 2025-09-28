@@ -145,6 +145,8 @@
         // let infoBoxManager;
         // let dataManager;
         // let authManager;
+        // CalendarManager (ajouté)
+        let calendarManager;
 
         // --- Maps Management Functions ---
         function loadMapsData() {
@@ -528,9 +530,6 @@
             preloadLoremasterMap();
 
             // Initialize VoyageManager
-            // Note: VoyageManager is now expected to be available globally or imported.
-            // If it's intended to be part of this file, it should be defined here.
-            // For now, assuming it's accessible.
             if (typeof VoyageManager !== 'undefined') {
                 voyageManager = new VoyageManager(dom);
                 voyageManager.init();
@@ -538,6 +537,14 @@
                 console.warn("VoyageManager is not defined. Voyage features might be unavailable.");
             }
 
+            // Initialize CalendarManager
+            if (typeof CalendarManager !== 'undefined') {
+                calendarManager = new CalendarManager();
+                calendarManager.init();
+                console.log("📅 CalendarManager initialized.");
+            } else {
+                console.warn("CalendarManager is not defined. Calendar features might be unavailable.");
+            }
 
             console.log("✅ Map initialized successfully");
         }
@@ -1389,332 +1396,12 @@
         }
 
         // --- Calendar Functions ---
-        function loadCalendarFromCSV(csvContent) {
-            const lines = csvContent.trim().split('\n');
-            const calendar = [];
-
-            for (const line of lines) {
-                const parts = line.split(',');
-                if (parts.length >= 3) {
-                    const monthName = parts[0].trim();
-                    const season = parts[1].trim();
-                    const days = parts.slice(2).map(d => parseInt(d.trim())).filter(d => !isNaN(d));
-
-                    calendar.push({
-                        name: monthName,
-                        season: season,
-                        days: days
-                    });
-                }
-            }
-
-            return calendar;
-        }
-
-        function saveCalendarToLocal() {
-            if (calendarData) {
-                localStorage.setItem('calendarData', JSON.stringify(calendarData));
-            }
-            if (currentCalendarDate) {
-                localStorage.setItem('currentCalendarDate', JSON.stringify(currentCalendarDate));
-            }
-            localStorage.setItem('isCalendarMode', isCalendarMode.toString());
-        }
-
-        function loadCalendarFromLocal() {
-            const savedCalendar = localStorage.getItem('calendarData');
-            const savedDate = localStorage.getItem('currentCalendarDate');
-            const savedMode = localStorage.getItem('isCalendarMode');
-
-            if (savedCalendar) {
-                try {
-                    calendarData = JSON.parse(savedCalendar);
-                } catch (e) {
-                    console.error('Error loading calendar:', e);
-                }
-            }
-
-            if (savedDate) {
-                try {
-                    currentCalendarDate = JSON.parse(savedDate);
-                } catch (e) {
-                    console.error('Error loading calendar date:', e);
-                }
-            }
-
-            isCalendarMode = savedMode === 'true';
-        }
-
-        function updateCalendarUI() {
-            const calendarStatus = document.getElementById('calendar-status-text');
-            const dateSelector = document.getElementById('calendar-date-selector');
-            const monthSelect = document.getElementById('calendar-month-select');
-            const daySelect = document.getElementById('calendar-day-select');
-            const manualSeasons = document.getElementById('manual-seasons-section');
-            const seasonModeInfo = document.getElementById('season-mode-info');
-
-            if (calendarData && calendarData.length > 0) {
-                isCalendarMode = true;
-                calendarStatus.textContent = `Calendrier chargé (${calendarData.length} mois)`;
-                calendarStatus.className = 'text-green-400';
-                dateSelector.classList.remove('hidden');
-
-                // Populate month selector with season icons
-                monthSelect.innerHTML = '<option value="">Sélectionner un mois</option>';
-                calendarData.forEach((month, index) => {
-                    const option = document.createElement('option');
-                    option.value = index;
-                    // Get season icon
-                    const seasonMainName = month.season.toLowerCase().split('-')[0];
-                    const seasonIcon = seasonSymbols[seasonMainName] || '🌿';
-                    option.textContent = `${seasonIcon} ${month.name}`;
-                    monthSelect.appendChild(option);
-                });
-
-                // Set current selections
-                if (currentCalendarDate) {
-                    const monthIndex = calendarData.findIndex(m => m.name === currentCalendarDate.month);
-                    if (monthIndex >= 0) {
-                        monthSelect.value = monthIndex;
-                        updateDaySelector();
-                        daySelect.value = currentCalendarDate.day;
-                    }
-                }
-
-                // Hide manual seasons completely
-                manualSeasons.style.display = 'none';
-                seasonModeInfo.textContent = 'Mode calendrier : la saison est déterminée automatiquement par la date sélectionnée.';
-            } else {
-                isCalendarMode = false;
-                calendarStatus.textContent = 'Aucun calendrier chargé';
-                calendarStatus.className = 'text-gray-400';
-                dateSelector.classList.add('hidden');
-
-                // Show manual seasons
-                manualSeasons.style.display = 'block';
-                seasonModeInfo.textContent = 'Mode manuel : sélectionnez une saison. Importez un calendrier CSV pour synchroniser automatiquement les saisons avec les dates.';
-            }
-        }
-
-        function updateDaySelector() {
-            const monthSelect = document.getElementById('calendar-month-select');
-            const daySelect = document.getElementById('calendar-day-select');
-            const monthIndex = parseInt(monthSelect.value);
-
-            daySelect.innerHTML = '<option value="">Sélectionner un jour</option>';
-
-            if (monthIndex >= 0 && calendarData[monthIndex]) {
-                const month = calendarData[monthIndex];
-                month.days.forEach(day => {
-                    const option = document.createElement('option');
-                    option.value = day;
-                    option.textContent = day;
-                    daySelect.appendChild(option);
-                });
-            }
-        }
-
-        function updateCalendarDate() {
-            const monthSelect = document.getElementById('calendar-month-select');
-            const daySelect = document.getElementById('calendar-day-select');
-            const monthIndex = parseInt(monthSelect.value);
-            const day = parseInt(daySelect.value);
-
-            if (monthIndex >= 0 && !isNaN(day) && calendarData[monthIndex]) {
-                const month = calendarData[monthIndex];
-                currentCalendarDate = {
-                    month: month.name,
-                    day: day
-                };
-
-                // Update season based on exact calendar season - use the season directly from CSV
-                const calendarSeason = month.season.toLowerCase();
-                console.log("📅 Saison du calendrier CSV:", calendarSeason, "pour le mois:", month.name);
-
-                // Use the exact season from the CSV as-is
-                currentSeason = calendarSeason;
-
-                // Save the season for consistency
-                localStorage.setItem('currentSeason', currentSeason);
-
-                updateSeasonDisplay();
-                saveCalendarToLocal();
-                scheduleAutoSync();
-            }
-        }
-
-        function exportCalendarToCSV() {
-            if (!calendarData || calendarData.length === 0) {
-                alert('Aucun calendrier à exporter');
-                return;
-            }
-
-            const csvLines = calendarData.map(month => {
-                const daysStr = month.days.join(',');
-                return `${month.name},${month.season},${daysStr}`;
-            });
-
-            const csvContent = csvLines.join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'calendrier.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
+        // Les fonctions relatives au calendrier sont maintenant gérées par CalendarManager
 
         // --- Season Functions ---
-        function updateSeasonDisplay() {
-            const seasonMainName = currentSeason.split('-')[0]; // 'printemps', 'ete', etc.
-            const symbol = seasonSymbols[seasonMainName] || '🌿'; // fallback symbol
+        // Les fonctions relatives aux saisons sont maintenant gérées par CalendarManager
 
-            // Use the season name from seasonNames if available, otherwise use currentSeason directly
-            const fullName = seasonNames[currentSeason] || currentSeason.charAt(0).toUpperCase() + currentSeason.slice(1);
-
-            console.log("🌱 Affichage saison:", {
-                currentSeason: currentSeason,
-                seasonMainName: seasonMainName,
-                symbol: symbol,
-                fullName: fullName,
-                isCalendarMode: isCalendarMode
-            });
-
-            // Update header indicator
-            const seasonIndicator = document.getElementById('season-indicator');
-            if (seasonIndicator) {
-                seasonIndicator.textContent = symbol;
-                seasonIndicator.title = `Saison actuelle: ${fullName}`;
-            }
-
-            // Update calendar date indicator in header
-            const calendarDateIndicator = document.getElementById('calendar-date-indicator');
-            if (calendarDateIndicator && currentCalendarDate && isCalendarMode) {
-                calendarDateIndicator.textContent = `${currentCalendarDate.day} ${currentCalendarDate.month}`;
-                calendarDateIndicator.classList.remove('hidden');
-            } else {
-                calendarDateIndicator.classList.add('hidden');
-            }
-
-            // Update settings display
-            const currentSeasonSymbol = document.getElementById('current-season-symbol');
-            const currentSeasonText = document.getElementById('current-season-text');
-            const currentCalendarDateElement = document.getElementById('current-calendar-date');
-
-            if (currentSeasonSymbol) currentSeasonSymbol.textContent = symbol;
-            if (currentSeasonText) currentSeasonText.textContent = fullName;
-
-            if (currentCalendarDateElement && currentCalendarDate && isCalendarMode) {
-                currentCalendarDateElement.textContent = `${currentCalendarDate.day} ${currentCalendarDate.month}`;
-                currentCalendarDateElement.classList.remove('hidden');
-            } else if (currentCalendarDateElement) {
-                currentCalendarDateElement.classList.add('hidden');
-            }
-        }
-
-        function setupSeasonListeners() {
-            // Season radio buttons (manual mode)
-            document.querySelectorAll('input[name="season"]').forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    if (e.target.checked && !isCalendarMode) {
-                        currentSeason = e.target.value;
-                        localStorage.setItem('currentSeason', currentSeason);
-                        updateSeasonDisplay();
-                        scheduleAutoSync();
-                    }
-                });
-            });
-
-            // Calendar upload button
-            const uploadBtn = document.getElementById('upload-calendar-btn');
-            const fileInput = document.getElementById('calendar-file-input');
-
-            if (uploadBtn && fileInput) {
-                uploadBtn.addEventListener('click', () => {
-                    fileInput.click();
-                });
-
-                fileInput.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    if (file && file.type === 'text/csv') {
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                            try {
-                                calendarData = loadCalendarFromCSV(event.target.result);
-                                if (calendarData.length > 0) {
-                                    // Set default date (first day of first month)
-                                    currentCalendarDate = {
-                                        month: calendarData[0].name,
-                                        day: calendarData[0].days[0]
-                                    };
-                                    updateCalendarUI();
-                                    updateCalendarDate();
-                                    alert(`Calendrier importé avec succès (${calendarData.length} mois)`);
-                                } else {
-                                    alert('Fichier CSV invalide ou vide');
-                                }
-                            } catch (error) {
-                                console.error('Error importing calendar:', error);
-                                alert('Erreur lors de l\'importation du calendrier');
-                            }
-                        };
-                        reader.readAsText(file);
-                    } else {
-                        alert('Veuillez sélectionner un fichier CSV valide');
-                    }
-                    fileInput.value = ''; // Reset input
-                });
-            }
-
-            // Calendar export button
-            const exportBtn = document.getElementById('export-calendar-btn');
-            if (exportBtn) {
-                exportBtn.addEventListener('click', exportCalendarToCSV);
-            }
-
-            // Calendar month selector
-            const monthSelect = document.getElementById('calendar-month-select');
-            if (monthSelect) {
-                monthSelect.addEventListener('change', () => {
-                    updateDaySelector();
-                    updateCalendarDate();
-                });
-            }
-
-            // Calendar day selector
-            const daySelect = document.getElementById('calendar-day-select');
-            if (daySelect) {
-                daySelect.addEventListener('change', updateCalendarDate);
-            }
-        }
-
-        function loadSavedSeason() {
-            // Load calendar data first
-            loadCalendarFromLocal();
-
-            const saved = localStorage.getItem('currentSeason');
-            if (saved && seasonNames[saved]) {
-                currentSeason = saved;
-            }
-
-            // Update UI based on calendar mode
-            if (isCalendarMode && calendarData) {
-                updateCalendarUI();
-            } else {
-                // Update radio button for manual mode
-                const radioButton = document.querySelector(`input[name="season"][value="${currentSeason}"]`);
-                if (radioButton) {
-                    radioButton.checked = true;
-                }
-                updateCalendarUI();
-            }
-
-            updateSeasonDisplay();
-        }
-
+        // --- Auto-sync Functions ---
         async function autoSyncUserData() {
             if (!currentUser || !autoSyncEnabled) return;
 
@@ -1732,17 +1419,26 @@
                 lastPoint: lastPoint,
                 journeyDiscoveries: journeyDiscoveries, // Included journey discoveries
                 currentSeason: currentSeason, // Include season data
-                calendarData: calendarData, // Include calendar data
-                currentCalendarDate: currentCalendarDate,
-                isCalendarMode: isCalendarMode
+                // Calendar data is now managed by CalendarManager
+                // calendarData: calendarData,
+                // currentCalendarDate: currentCalendarDate,
+                // isCalendarMode: isCalendarMode
             };
+
+            // Include calendar data from CalendarManager if it exists
+            if (typeof calendarManager !== 'undefined') {
+                userData.calendarData = calendarManager.getCalendarData();
+                userData.currentCalendarDate = calendarManager.getCurrentCalendarDate();
+                userData.isCalendarMode = calendarManager.getIsCalendarMode();
+            }
 
             console.log("🔄 Synchronisation des données:", {
                 journeyPathLength: journeyPath.length,
                 totalPathPixels: totalPathPixels,
                 hasStartPoint: !!startPoint,
                 hasLastPoint: !!lastPoint,
-                currentSeason: currentSeason
+                currentSeason: currentSeason,
+                isCalendarMode: typeof calendarManager !== 'undefined' ? calendarManager.getIsCalendarMode() : 'N/A'
             });
 
             try {
@@ -1841,18 +1537,20 @@
                         console.log("🌱 Saison utilisateur chargée depuis le cloud:", currentSeason);
                     }
 
-                    // Charger le calendrier depuis le cloud
-                    if (userData.calendarData) {
-                        calendarData = userData.calendarData;
-                        console.log("📅 Calendrier utilisateur chargé depuis le cloud");
-                    }
-                    if (userData.currentCalendarDate) {
-                        currentCalendarDate = userData.currentCalendarDate;
-                        console.log("📅 Date calendrier utilisateur chargée depuis le cloud");
-                    }
-                    if (userData.isCalendarMode !== undefined) {
-                        isCalendarMode = userData.isCalendarMode;
-                        console.log("📅 Mode calendrier utilisateur chargé depuis le cloud:", isCalendarMode);
+                    // Charger le calendrier depuis le cloud (via CalendarManager)
+                    if (typeof calendarManager !== 'undefined') {
+                        if (userData.calendarData) {
+                            calendarManager.setCalendarData(userData.calendarData);
+                            console.log("📅 Calendrier utilisateur chargé depuis le cloud");
+                        }
+                        if (userData.currentCalendarDate) {
+                            calendarManager.setCurrentCalendarDate(userData.currentCalendarDate);
+                            console.log("📅 Date calendrier utilisateur chargée depuis le cloud");
+                        }
+                        if (userData.isCalendarMode !== undefined) {
+                            calendarManager.setIsCalendarMode(userData.isCalendarMode);
+                            console.log("📅 Mode calendrier utilisateur chargé depuis le cloud:", userData.isCalendarMode);
+                        }
                     }
 
                     // Re-render everything
@@ -1919,7 +1617,8 @@
                 loadRegionsFromLocal();
                 loadSavedContexts();
                 setupFilters();
-                loadSavedSeason(); // Load season at startup
+                // Load season at startup
+                // loadSavedSeason(); // This is now handled by CalendarManager init
                 loadMapsData(); // Load maps data at startup
                 logAuth("Initialisation de l'authentification...");
 
@@ -4162,18 +3861,18 @@
                 }
 
                 // Load calendar data
-                if (context.data.calendarData) {
-                    calendarData = context.data.calendarData;
+                if (typeof calendarManager !== 'undefined') {
+                    if (context.data.calendarData) {
+                        calendarManager.setCalendarData(context.data.calendarData);
+                    }
+                    if (context.data.currentCalendarDate) {
+                        calendarManager.setCurrentCalendarDate(context.data.currentCalendarDate);
+                    }
+                    if (context.data.isCalendarMode !== undefined) {
+                        calendarManager.setIsCalendarMode(context.data.isCalendarMode);
+                    }
+                    calendarManager.updateSeasonDisplay(); // Update season display based on loaded calendar data
                 }
-                if (context.data.currentCalendarDate) {
-                    currentCalendarDate = context.data.currentCalendarDate;
-                }
-                if (context.data.isCalendarMode !== undefined) {
-                    isCalendarMode = context.data.isCalendarMode;
-                }
-
-                // Save calendar data locally
-                saveCalendarToLocal();
 
                 // Redraw journey path if it exists
                 if (journeyPath.length > 0) {
@@ -4209,12 +3908,7 @@
                     cb.checked = activeFilters.colors.includes(cb.dataset.color);
                 });
 
-                // Update season UI
-                const seasonRadio = document.querySelector(`input[name="season"][value="${currentSeason}"]`);
-                if (seasonRadio) {
-                    seasonRadio.checked = true;
-                }
-                updateSeasonDisplay();
+                // Update season UI (handled by CalendarManager now)
 
                 alert(`Contexte "${context.name}" chargé.`);
                 authModal.classList.add('hidden'); // Close modal after loading
@@ -4559,9 +4253,12 @@
         }
 
         function getCalendarDateForSegmentDay(segmentIndex, dayInSegment) {
-            if (!isCalendarMode || !currentCalendarDate || !calendarData) {
+            if (!calendarManager || !calendarManager.getIsCalendarMode() || !calendarManager.getCurrentCalendarDate() || !calendarManager.getCalendarData()) {
                 return null;
             }
+
+            const calendarData = calendarManager.getCalendarData();
+            const currentCalendarDate = calendarManager.getCurrentCalendarDate();
 
             // Calculer le jour absolu depuis le début du voyage
             let absoluteDay = dayInSegment;
