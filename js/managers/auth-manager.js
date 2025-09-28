@@ -1,4 +1,3 @@
-
 export default class AuthManager {
     constructor(domElements) {
         this.dom = domElements;
@@ -628,5 +627,3 @@ export default class AuthManager {
         return this.autoSyncEnabled;
     }
 }
-
-export default AuthManager;
