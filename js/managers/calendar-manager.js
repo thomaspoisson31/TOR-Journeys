@@ -371,6 +371,11 @@ class CalendarManager {
         this.updateSeasonDisplay();
     }
 
+    // --- Méthode pour réinitialiser les listeners (utile lors de l'ouverture des paramètres) ---
+    reinitializeListeners() {
+        this.setupSeasonListeners();
+    }
+
     // --- Getters pour exposer les données (compatibilité avec le code existant) ---
     getCurrentSeason() {
         return this.currentSeason;
@@ -394,6 +399,22 @@ class CalendarManager {
 
     getSeasonSymbols() {
         return this.seasonSymbols;
+    }
+
+    // --- Setters pour la compatibilité avec le code existant ---
+    setCalendarData(data) {
+        this.calendarData = data;
+        this.saveCalendarToLocal();
+    }
+
+    setCurrentCalendarDate(date) {
+        this.currentCalendarDate = date;
+        this.saveCalendarToLocal();
+    }
+
+    setIsCalendarMode(mode) {
+        this.isCalendarMode = mode;
+        this.saveCalendarToLocal();
     }
 }
 

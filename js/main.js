@@ -4106,6 +4106,11 @@
             const seasonIndicator = document.getElementById('season-indicator');
             const calendarDateIndicator = document.getElementById('calendar-date-indicator');
             
+            // Réinitialiser les listeners du CalendarManager si nécessaire
+            if (typeof calendarManager !== 'undefined') {
+                calendarManager.reinitializeListeners();
+            }
+            
             if (seasonIndicator) {
                 seasonIndicator.addEventListener('click', () => {
                     const settingsModal = document.getElementById('settings-modal');
