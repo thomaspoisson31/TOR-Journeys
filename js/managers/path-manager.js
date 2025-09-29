@@ -10,6 +10,8 @@ class PathManager {
         this.path = [];
         this.totalDistance = 0;
         this.lastPoint = null;
+        this.startPoint = null;
+        this.isDrawing = false;
         this.regionSegments = new Map();
         this.discoveries = [];
     }
@@ -32,6 +34,7 @@ class PathManager {
         window.regionSegments = this.regionSegments;
         window.totalPathPixels = 0;
         window.lastPoint = null;
+        window.isDrawingMode = false;
         
         console.log('🛤️ PathManager initialized');
     }
@@ -71,98 +74,102 @@ class PathManager {
             });
         }
 
-        // Variables pour le tracé
-        this.isDrawing = false;
-
-        // Événements de tracé sur le viewport (pas le canvas)
+        // Événements de tracé sur le viewport (comme dans l'ancienne version)
         const viewport = document.getElementById('viewport');
         if (viewport) {
-            viewport.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-            viewport.addEventListener('mousemove', (e) => this.handleMouseMove(e));
-            viewport.addEventListener('mouseup', (e) => this.handleMouseUp(e));
-            viewport.addEventListener('mouseleave', (e) => this.handleMouseUp(e));
+            // Gestionnaire mousedown principal - inspiré de l'ancienne version
+            viewport.addEventListener('mousedown', (e) => this.handleViewportMouseDown(e));
+            viewport.addEventListener('mousemove', (e) => this.handleViewportMouseMove(e));
+            viewport.addEventListener('mouseup', (e) => this.handleViewportMouseUp(e));
+            viewport.addEventListener('mouseleave', (e) => this.handleViewportMouseUp(e));
         }
     }
 
-    handleMouseDown(e) {
-        if (!this.isDrawingMode || e.button !== 0) return; // Seulement bouton gauche
-        
-        e.preventDefault();
-        e.stopPropagation();
-        
-        this.isDrawing = true;
-        const point = this.getMapCoordinates(e);
-        
-        // Forcer le curseur croix pendant le dessin
-        const viewport = document.getElementById('viewport');
-        if (viewport) {
-            viewport.style.cursor = 'crosshair';
-        }
-        
-        if (this.path.length === 0) {
-            // Premier point - commencer le tracé
-            this.path.push(point);
+    handleViewportMouseDown(event) {
+        console.log("🖱️ Viewport mousedown event fired, isDrawingMode:", this.isDrawingMode);
+
+        // Handle drawing mode specifically - logique de l'ancienne version
+        if (this.isDrawingMode) {
+            // Vérifier qu'on ne clique pas sur un marqueur ou autre élément
+            if (event.target.closest('.location-marker, #info-box')) {
+                console.log("❌ Clicked on marker or info box, ignoring");
+                return;
+            }
+
+            console.log("🎨 Starting drawing...");
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Clear canvas et reset comme dans l'ancienne version
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.isDrawing = true;
+            this.totalDistance = 0;
+
+            // Reset journey tracking
+            this.path = [];
+            this.regionSegments.clear();
+            this.discoveries = [];
+
+            this.startPoint = this.getCanvasCoordinates(event);
+            this.lastPoint = this.startPoint;
+
+            // Add start point to journey path
+            this.path.push({x: this.startPoint.x, y: this.startPoint.y});
+
+            console.log("📍 Start point:", this.startPoint);
             this.ctx.beginPath();
-            this.ctx.moveTo(point.x, point.y);
-            console.log('🎯 Début du tracé de chemin à', point);
-        } else {
-            // Ajouter le point au tracé existant
-            this.path.push(point);
-            this.ctx.lineTo(point.x, point.y);
-            this.ctx.stroke();
+            this.ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
+            this.updatePathData();
+            this.showDistanceContainer();
+            console.log("✅ Drawing initialized");
+            return;
         }
 
-        this.lastPoint = point;
-        this.updatePathData();
+        // Si pas en mode dessin, ne pas gérer l'événement ici
+        // Laisser les autres gestionnaires s'en occuper
     }
 
-    handleMouseMove(e) {
-        if (!this.isDrawingMode) return;
+    handleViewportMouseMove(event) {
+        if (!this.isDrawing || !this.isDrawingMode || !this.lastPoint) return;
 
-        // Maintenir le curseur croix même en mouvement
-        const viewport = document.getElementById('viewport');
-        if (viewport && this.isDrawingMode) {
-            viewport.style.cursor = 'crosshair';
-        }
+        console.log("✏️ Mouse move during drawing");
+        const currentPoint = this.getCanvasCoordinates(event);
+        const segmentLength = Math.sqrt(
+            Math.pow(currentPoint.x - this.lastPoint.x, 2) + 
+            Math.pow(currentPoint.y - this.lastPoint.y, 2)
+        );
+        this.totalDistance += segmentLength;
 
-        if (!this.isDrawing || !this.lastPoint) return;
-
-        e.preventDefault();
-        const currentPoint = this.getMapCoordinates(e);
-
-        // Dessiner une ligne fluide continue
-        this.path.push(currentPoint);
-        this.ctx.lineTo(currentPoint.x, currentPoint.y);
-        this.ctx.stroke();
+        // Add current point to journey path for region/location detection
+        this.path.push({x: currentPoint.x, y: currentPoint.y});
 
         this.lastPoint = currentPoint;
+        this.ctx.lineTo(currentPoint.x, currentPoint.y);
+        this.ctx.stroke();
         this.updatePathData();
+        console.log("✏️ Drawing segment, total pixels:", this.totalDistance.toFixed(1));
     }
 
-    handleMouseUp(e) {
-        if (!this.isDrawingMode || e.button !== 0) return; // Seulement bouton gauche
-        
-        this.isDrawing = false;
-        this.lastPoint = null;
-        
-        // Maintenir le curseur croix même après avoir relâché
-        const viewport = document.getElementById('viewport');
-        if (viewport) {
-            viewport.style.cursor = 'crosshair';
+    handleViewportMouseUp(event) {
+        if (!this.isDrawingMode) return;
+
+        if (this.isDrawing) {
+            console.log("🛑 Drawing stopped");
+            this.isDrawing = false;
+            // Auto-sync sera géré par le main.js
+            console.log("🔄 Drawing segment completed");
         }
-        
-        console.log(`🛤️ Segment de chemin complété (${this.path.length} points)`);
     }
 
-    getMapCoordinates(e) {
+    getCanvasCoordinates(event) {
         const viewport = document.getElementById('viewport');
         const mapContainer = document.getElementById('map-container');
         
         if (!viewport || !mapContainer) return { x: 0, y: 0 };
 
         const viewportRect = viewport.getBoundingClientRect();
-        const viewportX = e.clientX - viewportRect.left;
-        const viewportY = e.clientY - viewportRect.top;
+        const viewportX = event.clientX - viewportRect.left;
+        const viewportY = event.clientY - viewportRect.top;
 
         // Récupérer les transformations actuelles de la carte
         const transform = mapContainer.style.transform;
@@ -190,16 +197,19 @@ class PathManager {
     }
 
     setupCanvasStyle() {
-        this.ctx.strokeStyle = '#ff6b35';
-        this.ctx.lineWidth = 3;
+        this.ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
+        this.ctx.lineWidth = 5;
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
     }
 
     toggleDrawingMode() {
+        // Logique simplifiée de l'ancienne version
         this.isDrawingMode = !this.isDrawingMode;
         const drawModeBtn = document.getElementById('draw-mode');
         const viewport = document.getElementById('viewport');
+
+        console.log("🎨 Drawing mode is now:", this.isDrawingMode);
 
         if (this.isDrawingMode) {
             if (drawModeBtn) {
@@ -208,13 +218,15 @@ class PathManager {
             }
             if (viewport) {
                 viewport.classList.add('drawing');
-                viewport.style.cursor = 'crosshair !important';
             }
             
-            // Le canvas reste en pointer-events: none pour que les événements passent au viewport
-            this.canvas.style.pointerEvents = 'none';
+            // Ensure canvas has proper pointer events when in drawing mode
+            if (this.canvas) {
+                this.canvas.style.pointerEvents = 'auto';
+                console.log("✅ Canvas pointer events enabled");
+            }
             
-            console.log('✏️ Mode dessin activé - Maintenez le bouton gauche enfoncé pour tracer');
+            console.log('✏️ Mode dessin activé');
         } else {
             // Arrêter tout tracé en cours
             this.isDrawing = false;
@@ -226,17 +238,24 @@ class PathManager {
             }
             if (viewport) {
                 viewport.classList.remove('drawing');
-                viewport.style.cursor = 'grab';
+            }
+            
+            if (this.canvas) {
+                this.canvas.style.pointerEvents = 'none';
+                console.log("❌ Canvas pointer events disabled");
             }
             
             console.log('✏️ Mode dessin désactivé');
         }
 
-        // Mettre à jour les variables globales
+        // Mettre à jour les variables globales pour compatibilité
         window.isDrawingMode = this.isDrawingMode;
+        
+        // Re-render locations to update pointer events (comme dans l'ancienne version)
+        if (window.renderLocations) {
+            window.renderLocations();
+        }
     }
-
-    
 
     clearPath() {
         this.path = [];
@@ -244,6 +263,7 @@ class PathManager {
         this.regionSegments.clear();
         this.totalDistance = 0;
         this.lastPoint = null;
+        this.startPoint = null;
 
         // Nettoyer le canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -424,6 +444,13 @@ class PathManager {
                 <div class="text-gray-400">${days} jour${days > 1 ? 's' : ''} de voyage</div>
             </div>
         `;
+    }
+
+    showDistanceContainer() {
+        const distanceContainer = document.getElementById('distance-container');
+        if (distanceContainer) {
+            distanceContainer.classList.remove('hidden');
+        }
     }
 
     showVoyageButton() {

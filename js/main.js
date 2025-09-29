@@ -1355,10 +1355,6 @@ function handleViewportClick(event) {
 function setupDrawingEvents() {
     console.log("🖌️ Setting up drawing events...");
 
-    // Gérer les clics pour le tracé de régions et l'ajout de lieux
-    // Ces gestionnaires sont ajoutés/retirés dans toggleRegionDrawingMode et toggleLocationAddingMode
-    // pour éviter les conflits pendant le dessin.
-
     // Initialiser les icônes de dessin (si elles existent)
     const drawIcon = document.getElementById('draw-path-icon');
     if (drawIcon) {
@@ -1389,7 +1385,6 @@ function setupDrawingEvents() {
     } else {
         console.error("❌ VoyageManager not available for drawing listeners");
     }
-
 
     console.log("✅ Drawing events setup complete");
 }
