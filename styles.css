@@ -9,7 +9,11 @@ body {
 }
 
 #viewport.drawing, #viewport.adding-location, #viewport.adding-region {
-    cursor: crosshair;
+    cursor: crosshair !important;
+}
+
+#viewport.drawing * {
+    cursor: crosshair !important;
 }
 
 #viewport.panning {

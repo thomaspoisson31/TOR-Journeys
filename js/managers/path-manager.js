@@ -85,13 +85,19 @@ class PathManager {
     }
 
     handleMouseDown(e) {
-        if (!this.isDrawingMode) return;
+        if (!this.isDrawingMode || e.button !== 0) return; // Seulement bouton gauche
         
         e.preventDefault();
         e.stopPropagation();
         
         this.isDrawing = true;
         const point = this.getMapCoordinates(e);
+        
+        // Forcer le curseur croix pendant le dessin
+        const viewport = document.getElementById('viewport');
+        if (viewport) {
+            viewport.style.cursor = 'crosshair';
+        }
         
         if (this.path.length === 0) {
             // Premier point - commencer le tracé
@@ -100,7 +106,7 @@ class PathManager {
             this.ctx.moveTo(point.x, point.y);
             console.log('🎯 Début du tracé de chemin à', point);
         } else {
-            // Continuer le tracé
+            // Ajouter le point au tracé existant
             this.path.push(point);
             this.ctx.lineTo(point.x, point.y);
             this.ctx.stroke();
@@ -111,12 +117,20 @@ class PathManager {
     }
 
     handleMouseMove(e) {
-        if (!this.isDrawingMode || !this.isDrawing || !this.lastPoint) return;
+        if (!this.isDrawingMode) return;
+
+        // Maintenir le curseur croix même en mouvement
+        const viewport = document.getElementById('viewport');
+        if (viewport && this.isDrawingMode) {
+            viewport.style.cursor = 'crosshair';
+        }
+
+        if (!this.isDrawing || !this.lastPoint) return;
 
         e.preventDefault();
         const currentPoint = this.getMapCoordinates(e);
 
-        // Dessiner une ligne continue
+        // Dessiner une ligne fluide continue
         this.path.push(currentPoint);
         this.ctx.lineTo(currentPoint.x, currentPoint.y);
         this.ctx.stroke();
@@ -126,10 +140,17 @@ class PathManager {
     }
 
     handleMouseUp(e) {
-        if (!this.isDrawingMode) return;
+        if (!this.isDrawingMode || e.button !== 0) return; // Seulement bouton gauche
         
         this.isDrawing = false;
         this.lastPoint = null;
+        
+        // Maintenir le curseur croix même après avoir relâché
+        const viewport = document.getElementById('viewport');
+        if (viewport) {
+            viewport.style.cursor = 'crosshair';
+        }
+        
         console.log(`🛤️ Segment de chemin complété (${this.path.length} points)`);
     }
 
@@ -187,14 +208,18 @@ class PathManager {
             }
             if (viewport) {
                 viewport.classList.add('drawing');
-                viewport.style.cursor = 'crosshair';
+                viewport.style.cursor = 'crosshair !important';
             }
             
-            // Activer le canvas pour recevoir les événements
-            this.canvas.style.pointerEvents = 'auto';
+            // Le canvas reste en pointer-events: none pour que les événements passent au viewport
+            this.canvas.style.pointerEvents = 'none';
             
-            console.log('✏️ Mode dessin activé - Cliquez et glissez pour tracer');
+            console.log('✏️ Mode dessin activé - Maintenez le bouton gauche enfoncé pour tracer');
         } else {
+            // Arrêter tout tracé en cours
+            this.isDrawing = false;
+            this.lastPoint = null;
+            
             if (drawModeBtn) {
                 drawModeBtn.classList.remove('btn-active');
                 drawModeBtn.title = 'Tracer un voyage';
@@ -203,9 +228,6 @@ class PathManager {
                 viewport.classList.remove('drawing');
                 viewport.style.cursor = 'grab';
             }
-            
-            // Désactiver le canvas
-            this.canvas.style.pointerEvents = 'none';
             
             console.log('✏️ Mode dessin désactivé');
         }
