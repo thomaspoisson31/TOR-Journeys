@@ -66,6 +66,9 @@ async function initializeApp() {
             showModal: (modal) => modal.classList.remove('hidden'),
             hideModal: (modal) => modal.classList.add('hidden'),
             voyageSegmentsModal: document.getElementById('voyage-segments-modal')
+        }, {
+            MAP_DISTANCE_MILES: MAP_DISTANCE_MILES,
+            MAP_WIDTH: MAP_WIDTH
         });
         console.log("✅ VoyageManager initialized");
         pathManager = new PathManager({

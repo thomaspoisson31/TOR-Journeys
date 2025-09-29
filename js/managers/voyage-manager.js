@@ -1,11 +1,17 @@
+import { MAP_DISTANCE_MILES } from '../utils/constants.js';
+
 class VoyageManager {
-    constructor(domElements) {
+    constructor(domElements, constants = {}) {
         this.dom = domElements;
         this.currentDayIndex = 0;
         this.totalJourneyDays = 0;
         this.dayByDayData = [];
         this.journeyDescriptions = {}; // Pour stocker les descriptions générées
         this.currentDescriptionDay = 1; // Pour suivre le jour affiché dans la modal de description
+        
+        // Stocker les constantes passées en paramètre
+        this.MAP_DISTANCE_MILES = constants.MAP_DISTANCE_MILES || MAP_DISTANCE_MILES;
+        this.MAP_WIDTH = constants.MAP_WIDTH || window.MAP_WIDTH || 5103;
     }
 
     init() {
@@ -69,7 +75,7 @@ class VoyageManager {
 
     generateJourneyData() {
         // Calculate total journey duration using global variables
-        const miles = totalPathPixels * (MAP_DISTANCE_MILES / MAP_WIDTH);
+        const miles = totalPathPixels * (this.MAP_DISTANCE_MILES / this.MAP_WIDTH);
         const days = Math.ceil(miles / 20); // 20 miles per day
         this.totalJourneyDays = Math.max(1, days);
 
@@ -118,7 +124,7 @@ class VoyageManager {
     buildAbsoluteTimeline() {
         // Utiliser les variables globales journeyDiscoveries
         const discoveries = journeyDiscoveries.sort((a, b) => a.discoveryIndex - b.discoveryIndex);
-        const totalMiles = totalPathPixels * (MAP_DISTANCE_MILES / MAP_WIDTH);
+        const totalMiles = totalPathPixels * (this.MAP_DISTANCE_MILES / this.MAP_WIDTH);
         const totalPathPoints = journeyPath.length;
 
         const absoluteTimeline = [];
