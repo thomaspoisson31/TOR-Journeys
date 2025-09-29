@@ -70,7 +70,10 @@ async function initializeApp() {
         console.log("✅ VoyageManager initialized");
         pathManager = new PathManager({
             getElementById: (id) => document.getElementById(id)
-        }, dataManager);
+        }, dataManager, {
+            MAP_DISTANCE_MILES,
+            MAP_WIDTH: MAP_WIDTH || 5103 // Utiliser la valeur globale ou fallback
+        });
         console.log("✅ PathManager initialized");
 
         // Charger les données
@@ -272,6 +275,11 @@ function initializeMap() {
     MAP_HEIGHT = mapImage.naturalHeight;
     mapContainer.style.width = `${MAP_WIDTH}px`;
     mapContainer.style.height = `${MAP_HEIGHT}px`;
+    
+    // Mettre à jour les constantes du PathManager avec les vraies dimensions
+    if (pathManager) {
+        pathManager.mapConstants.MAP_WIDTH = MAP_WIDTH;
+    }
 
     // Configuration de la couche SVG des régions
     const regionsLayer = document.getElementById('regions-layer');

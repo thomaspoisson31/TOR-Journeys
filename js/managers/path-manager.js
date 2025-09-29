@@ -1,8 +1,9 @@
 
 class PathManager {
-    constructor(domElements, dataManager) {
+    constructor(domElements, dataManager, mapConstants) {
         this.dom = domElements;
         this.dataManager = dataManager;
+        this.mapConstants = mapConstants || {};
         this.isDrawingMode = false;
         this.canvas = null;
         this.ctx = null;
@@ -390,6 +391,8 @@ class PathManager {
         }
 
         // Convertir pixels en miles (basé sur les constantes de la carte)
+        const MAP_DISTANCE_MILES = this.mapConstants.MAP_DISTANCE_MILES || 600;
+        const MAP_WIDTH = this.mapConstants.MAP_WIDTH || 5103;
         const miles = this.totalDistance * (MAP_DISTANCE_MILES / MAP_WIDTH);
         const days = Math.ceil(miles / 20); // 20 miles par jour
 
