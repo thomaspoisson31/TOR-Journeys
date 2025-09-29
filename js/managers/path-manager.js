@@ -21,6 +21,7 @@ class PathManager {
         }
         
         this.ctx = this.canvas.getContext('2d');
+        this.setupCanvas();
         this.setupEventListeners();
         this.setupCanvasStyle();
         
@@ -32,6 +33,25 @@ class PathManager {
         window.lastPoint = null;
         
         console.log('🛤️ PathManager initialized');
+    }
+
+    setupCanvas() {
+        // Attendre que la carte soit chargée pour configurer le canvas
+        const setupCanvasSize = () => {
+            const mapImage = document.getElementById('map-image');
+            if (mapImage && mapImage.naturalWidth > 0) {
+                this.canvas.width = mapImage.naturalWidth;
+                this.canvas.height = mapImage.naturalHeight;
+                this.canvas.style.width = `${mapImage.naturalWidth}px`;
+                this.canvas.style.height = `${mapImage.naturalHeight}px`;
+                console.log(`🎨 Canvas configuré : ${this.canvas.width}x${this.canvas.height}`);
+            } else {
+                // Réessayer après un court délai
+                setTimeout(setupCanvasSize, 100);
+            }
+        };
+        
+        setupCanvasSize();
     }
 
     setupEventListeners() {
@@ -50,10 +70,101 @@ class PathManager {
             });
         }
 
-        // Événements de tracé sur le canvas
-        this.canvas.addEventListener('mousedown', (e) => this.onMouseDown(e));
-        this.canvas.addEventListener('mousemove', (e) => this.onMouseMove(e));
-        this.canvas.addEventListener('mouseup', (e) => this.onMouseUp(e));
+        // Variables pour le tracé
+        this.isDrawing = false;
+
+        // Événements de tracé sur le viewport (pas le canvas)
+        const viewport = document.getElementById('viewport');
+        if (viewport) {
+            viewport.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+            viewport.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+            viewport.addEventListener('mouseup', (e) => this.handleMouseUp(e));
+            viewport.addEventListener('mouseleave', (e) => this.handleMouseUp(e));
+        }
+    }
+
+    handleMouseDown(e) {
+        if (!this.isDrawingMode) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        this.isDrawing = true;
+        const point = this.getMapCoordinates(e);
+        
+        if (this.path.length === 0) {
+            // Premier point - commencer le tracé
+            this.path.push(point);
+            this.ctx.beginPath();
+            this.ctx.moveTo(point.x, point.y);
+            console.log('🎯 Début du tracé de chemin à', point);
+        } else {
+            // Continuer le tracé
+            this.path.push(point);
+            this.ctx.lineTo(point.x, point.y);
+            this.ctx.stroke();
+        }
+
+        this.lastPoint = point;
+        this.updatePathData();
+    }
+
+    handleMouseMove(e) {
+        if (!this.isDrawingMode || !this.isDrawing || !this.lastPoint) return;
+
+        e.preventDefault();
+        const currentPoint = this.getMapCoordinates(e);
+
+        // Dessiner une ligne continue
+        this.path.push(currentPoint);
+        this.ctx.lineTo(currentPoint.x, currentPoint.y);
+        this.ctx.stroke();
+
+        this.lastPoint = currentPoint;
+        this.updatePathData();
+    }
+
+    handleMouseUp(e) {
+        if (!this.isDrawingMode) return;
+        
+        this.isDrawing = false;
+        this.lastPoint = null;
+        console.log(`🛤️ Segment de chemin complété (${this.path.length} points)`);
+    }
+
+    getMapCoordinates(e) {
+        const viewport = document.getElementById('viewport');
+        const mapContainer = document.getElementById('map-container');
+        
+        if (!viewport || !mapContainer) return { x: 0, y: 0 };
+
+        const viewportRect = viewport.getBoundingClientRect();
+        const viewportX = e.clientX - viewportRect.left;
+        const viewportY = e.clientY - viewportRect.top;
+
+        // Récupérer les transformations actuelles de la carte
+        const transform = mapContainer.style.transform;
+        let scale = 1, panX = 0, panY = 0;
+
+        if (transform) {
+            const scaleMatch = transform.match(/scale\(([^)]+)\)/);
+            const translateMatch = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+            
+            if (scaleMatch) scale = parseFloat(scaleMatch[1]);
+            if (translateMatch) {
+                panX = parseFloat(translateMatch[1].replace('px', ''));
+                panY = parseFloat(translateMatch[2].replace('px', ''));
+            }
+        }
+
+        // Convertir les coordonnées du viewport vers les coordonnées de la carte
+        const mapX = (viewportX - panX) / scale;
+        const mapY = (viewportY - panY) / scale;
+
+        return {
+            x: Math.round(mapX),
+            y: Math.round(mapY)
+        };
     }
 
     setupCanvasStyle() {
@@ -78,12 +189,10 @@ class PathManager {
                 viewport.style.cursor = 'crosshair';
             }
             
-            // Activer les événements sur le canvas
-            if (typeof window.toggleDrawingEvents === 'function') {
-                window.toggleDrawingEvents(true);
-            }
+            // Activer le canvas pour recevoir les événements
+            this.canvas.style.pointerEvents = 'auto';
             
-            console.log('✏️ Mode dessin activé');
+            console.log('✏️ Mode dessin activé - Cliquez et glissez pour tracer');
         } else {
             if (drawModeBtn) {
                 drawModeBtn.classList.remove('btn-active');
@@ -94,10 +203,8 @@ class PathManager {
                 viewport.style.cursor = 'grab';
             }
             
-            // Désactiver les événements sur le canvas
-            if (typeof window.toggleDrawingEvents === 'function') {
-                window.toggleDrawingEvents(false);
-            }
+            // Désactiver le canvas
+            this.canvas.style.pointerEvents = 'none';
             
             console.log('✏️ Mode dessin désactivé');
         }
@@ -106,63 +213,7 @@ class PathManager {
         window.isDrawingMode = this.isDrawingMode;
     }
 
-    onMouseDown(e) {
-        if (!this.isDrawingMode) return;
-
-        const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
-
-        const point = {
-            x: (e.clientX - rect.left) * scaleX,
-            y: (e.clientY - rect.top) * scaleY
-        };
-
-        if (this.path.length === 0) {
-            // Premier point - commencer le tracé
-            this.path.push(point);
-            this.ctx.beginPath();
-            this.ctx.moveTo(point.x, point.y);
-            console.log('🎯 Début du tracé de chemin');
-        } else {
-            // Continuer le tracé
-            this.path.push(point);
-            this.ctx.lineTo(point.x, point.y);
-            this.ctx.stroke();
-        }
-
-        this.lastPoint = point;
-        this.updatePathData();
-    }
-
-    onMouseMove(e) {
-        if (!this.isDrawingMode || !this.lastPoint) return;
-
-        const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
-
-        const currentPoint = {
-            x: (e.clientX - rect.left) * scaleX,
-            y: (e.clientY - rect.top) * scaleY
-        };
-
-        // Dessiner une ligne continue
-        this.path.push(currentPoint);
-        this.ctx.lineTo(currentPoint.x, currentPoint.y);
-        this.ctx.stroke();
-
-        this.lastPoint = currentPoint;
-        this.updatePathData();
-    }
-
-    onMouseUp(e) {
-        if (!this.isDrawingMode) return;
-        
-        // Finaliser le segment actuel
-        this.lastPoint = null;
-        console.log(`🛤️ Segment de chemin complété (${this.path.length} points)`);
-    }
+    
 
     clearPath() {
         this.path = [];
