@@ -8,7 +8,7 @@ class VoyageManager {
         this.dayByDayData = [];
         this.journeyDescriptions = {}; // Pour stocker les descriptions générées
         this.currentDescriptionDay = 1; // Pour suivre le jour affiché dans la modal de description
-        
+
         // Stocker les constantes passées en paramètre
         this.MAP_DISTANCE_MILES = constants.MAP_DISTANCE_MILES || MAP_DISTANCE_MILES;
         this.MAP_WIDTH = constants.MAP_WIDTH || window.MAP_WIDTH || 5103;
@@ -387,7 +387,7 @@ class VoyageManager {
         const describeBtn = this.dom.getElementById('describe-journey-btn');
         if (describeBtn) {
             describeBtn.addEventListener('click', () => {
-                this.generateJourneyDescription();
+                this.generateAllJourneyDescriptions();
             });
         }
 
@@ -652,30 +652,28 @@ class VoyageManager {
         console.log(`🏁 Voyage terminé ! Date finale : ${lastDayData.calendarDate}`);
     }
 
-    async generateJourneyDescription() {
-        if (this.dayByDayData.length === 0) {
-            alert('Aucune journée de voyage à décrire.');
+    async generateAllJourneyDescriptions() {
+        const allJourneyData = this.collectAllJourneyData();
+
+        // Vérifier que nous avons des données de voyage
+        if (!allJourneyData.totalMiles || allJourneyData.totalMiles === 0) {
+            alert('Aucun voyage à décrire. Tracez d\'abord un chemin sur la carte.');
             return;
         }
 
-        // Collecter les données pour toutes les journées
-        const allJourneyData = this.collectAllJourneyDataForPrompt();
-
-        // Créer le prompt pour Gemini
-        const prompt = this.createAllJourneyDescriptionPrompt(allJourneyData);
-
-        // Appeler Gemini via la fonction globale callGemini
         const button = this.dom.getElementById('describe-journey-btn');
-        if (typeof callGemini === 'function') {
-            try {
-                const response = await callGemini(prompt, button);
-                this.parseAndDisplayAllJourneyDescriptions(response);
-            } catch (error) {
-                console.error('Erreur lors de la génération de la description:', error);
-                alert('Erreur lors de la génération de la description de voyage.');
+
+        try {
+            // Utiliser le GeminiManager global
+            const response = await window.geminiManager.generateJourneyDescription(allJourneyData);
+            this.parseAndDisplayAllJourneyDescriptions(response);
+        } catch (error) {
+            console.error('Erreur lors de la génération de la description:', error);
+            alert('Erreur lors de la génération de la description de voyage: ' + error.message);
+
+            if (button) {
+                window.geminiManager.resetButton(button);
             }
-        } else {
-            alert('La fonction de génération de texte n\'est pas disponible.');
         }
     }
 
@@ -745,7 +743,7 @@ class VoyageManager {
         };
     }
 
-    collectAllJourneyDataForPrompt() {
+    collectAllJourneyData() {
         // Récupérer les données du groupe d'aventuriers et de la quête
         const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
         const adventurersQuest = localStorage.getItem('adventurersQuest') || '';
@@ -767,6 +765,9 @@ class VoyageManager {
             'hiver-fin': 'Hiver-fin'
         };
         const seasonName = seasonNames[currentSeason] || currentSeason;
+
+        // Calculer le total des miles
+        const totalMiles = totalPathPixels * (this.MAP_DISTANCE_MILES / this.MAP_WIDTH);
 
         // Collecter les données pour toutes les journées
         const allDaysData = this.dayByDayData.map((dayData, index) => {
@@ -814,123 +815,9 @@ class VoyageManager {
             adventurersQuest,
             season: seasonName,
             totalDays: this.totalJourneyDays,
+            totalMiles: totalMiles,
             allDays: allDaysData
         };
-    }
-
-    createAllJourneyDescriptionPrompt(journeyData) {
-        // Récupérer le style de narration
-        const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
-        console.log('📖 Style de narration pour le voyage complet:', narrationStyle);
-
-        let prompt = `Rédige des descriptions évocatrices pour toutes les journées d'un voyage en Terre du Milieu dont le détail est présenté ci-après. 
-
-Ces descriptions sont destinées à un meneur de jeu qui va les lire à ses joueurs pour les immerger dans l'ambiance du voyage.
-
-**Contexte du groupe :**
-${journeyData.adventurersGroup || 'Groupe d\'aventuriers non défini'}
-
-**Nature de la quête :**
-${journeyData.adventurersQuest || 'Quête non définie'}
-
-**Saison actuelle :** ${journeyData.season}
-**Durée totale du voyage :** ${journeyData.totalDays} jours
-
-**Détail des journées :**
-`;
-
-        journeyData.allDays.forEach(dayData => {
-            prompt += `\n**Jour ${dayData.dayNumber} (${dayData.calendarDate}) :**`;
-
-            if (dayData.discoveries.length > 0) {
-                prompt += `\n- Lieux et régions (dans l'ordre) :`;
-                dayData.discoveries.forEach(discovery => {
-                    prompt += `\n  • ${discovery.type} : ${discovery.name} (${discovery.action})`;
-                    if (discovery.description) {
-                        prompt += `\n    Description : ${discovery.description}`;
-                    }
-                });
-            } else {
-                prompt += `\n- Voyage tranquille sans découverte particulière`;
-            }
-            prompt += '\n';
-        });
-
-        // Ajouter les instructions spécifiques selon le style de narration
-        let styleInstructions = '';
-        switch (narrationStyle) {
-            case 'detailed':
-                styleInstructions = `
-
-**STYLE DE NARRATION : DÉTAILLÉE**
-- Rédigez des descriptions riches et immersives de plusieurs paragraphes par journée
-- Rédigez au présent de la deuxième personne du pluriel ("Vous traversez...")
-- Développez l'atmosphère avec des détails sensoriels précis
-- Explorez les émotions et réflexions intimes des personnages
-- Utilisez un style littéraire évocateur et poétique
-- Chaque description doit faire 3-4 paragraphes pour une immersion maximale
-- Variez les tons : contemplatif, aventureux, mélancolique selon les découvertes`;
-                break;
-            case 'brief':
-                styleInstructions = `
-
-**STYLE DE NARRATION : BRÈVE**
-- Rédigez des descriptions concises mais évocatrices (1-2 paragraphes par journée)
-- Rédigez au présent de la deuxième personne du pluriel ("Vous traversez...")
-- Concentrez-vous sur l'essentiel : ambiance, découvertes importantes, ressenti général
-- Style narratif fluide et accessible, idéal pour une lecture rapide en jeu
-- Capturez l'essence de chaque journée sans s'attarder sur les détails`;
-                break;
-            case 'keywords':
-                styleInstructions = `
-
-**STYLE DE NARRATION : POINTS CLÉS**
-- Organisez l'information sous forme de listes structurées de mots-clés thématiques
-- Ne faites pas de phrases complètes, mais des listes de mots-clés et expressions évocatrices
-- Utilisez des puces et des catégories claires (Paysage, Météo, Ambiance, Événements, etc.)
-- Présentez les informations de manière synthétique et facilement exploitable
-- Optimisé pour une consultation rapide et une improvisation en jeu
-- Format : utilisez des tirets et des catégories courtes pour structurer l'information`;
-                break;
-        }
-
-        prompt += `
-**Instructions importantes :**
-- Répondez UNIQUEMENT avec un objet JSON valide de cette structure :
-{
-  "descriptions": [
-    {
-      "day": 1,
-      "description": "Description de la journée 1..."
-    },
-    {
-      "day": 2,
-      "description": "Description de la journée 2..."
-    }
-  ]
-}
-
-${styleInstructions}
-
-**Règles générales :**
-- Variez les descriptions selon les jours en mettant en avant :
-  • Tantôt des descriptions de paysages
-  • Tantôt le temps qu'il fait
-  • Tantôt les impressions de voyage
-  • Tantôt l'accumulation de la fatigue
-  • Tantôt l'attitude de certains membres du groupe
-
-- Rédigez au présent de la 2ème personne du pluriel ("Vous traversez...")
-- Faites appel à plusieurs sens (vue, ouïe, odorat, toucher) pour une immersion totale
-- Évoquez l'état physique et mental des personnages en tenant compte du nombre de jours de voyage accumulés
-- Adaptez l'ambiance à la saison
-- Le ton doit être immersif et narratif, adapté à une lecture en jeu de rôle
-- Évitez les redondances entre les descriptions des différentes journées
-- Assurez-vous que chaque description soit unique et apporte sa propre atmosphère
-
-Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
-
-        return prompt;
     }
 
     parseAndDisplayAllJourneyDescriptions(response) {
