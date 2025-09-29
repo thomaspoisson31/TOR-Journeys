@@ -428,8 +428,8 @@ function resetView() {
 }
 
 function handlePanStart(e) {
-    // Ne pas permettre le pan si on est en mode tracé
-    if (isRegionDrawingMode) return;
+    // Ne pas permettre le pan si on est en mode tracé ou dessin
+    if (isRegionDrawingMode || window.isDrawingMode) return;
 
     if (e.button === 0) { // Clic gauche uniquement
         isPanning = true;
@@ -455,7 +455,7 @@ function setupMapNavigation() {
     viewport.addEventListener('mousedown', handlePanStart);
 
     viewport.addEventListener('mousemove', (e) => {
-        if (isPanning) {
+        if (isPanning && !window.isDrawingMode) {
             const deltaX = e.clientX - lastMouseX;
             const deltaY = e.clientY - lastMouseY;
 
@@ -471,15 +471,17 @@ function setupMapNavigation() {
     });
 
     viewport.addEventListener('mouseup', (e) => {
-        if (e.button === 0) {
+        if (e.button === 0 && !window.isDrawingMode) {
             isPanning = false;
             viewport.style.cursor = 'grab';
         }
     });
 
     viewport.addEventListener('mouseleave', () => {
-        isPanning = false;
-        viewport.style.cursor = 'grab';
+        if (!window.isDrawingMode) {
+            isPanning = false;
+            viewport.style.cursor = 'grab';
+        }
     });
 
     // Double-clic pour centrer et zoomer

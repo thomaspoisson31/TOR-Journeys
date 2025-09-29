@@ -226,7 +226,10 @@ class PathManager {
                 console.log("✅ Canvas pointer events enabled");
             }
             
-            console.log('✏️ Mode dessin activé');
+            // Désactiver les gestionnaires de pan
+            this.disablePanHandlers();
+            
+            console.log('✏️ Mode dessin activé - pan désactivé');
         } else {
             // Arrêter tout tracé en cours
             this.isDrawing = false;
@@ -245,7 +248,10 @@ class PathManager {
                 console.log("❌ Canvas pointer events disabled");
             }
             
-            console.log('✏️ Mode dessin désactivé');
+            // Réactiver les gestionnaires de pan
+            this.enablePanHandlers();
+            
+            console.log('✏️ Mode dessin désactivé - pan réactivé');
         }
 
         // Mettre à jour les variables globales pour compatibilité
@@ -255,6 +261,46 @@ class PathManager {
         if (window.renderLocations) {
             window.renderLocations();
         }
+    }
+
+    disablePanHandlers() {
+        const viewport = document.getElementById('viewport');
+        if (!viewport) return;
+
+        // Sauvegarder les gestionnaires existants pour les restaurer plus tard
+        if (!this.originalPanHandlers) {
+            this.originalPanHandlers = {
+                mousedown: null,
+                mousemove: null,
+                mouseup: null,
+                mouseleave: null
+            };
+
+            // Trouver les gestionnaires existants depuis main.js
+            const existingHandlers = viewport.cloneNode(false);
+            this.originalPanHandlers.mousedown = viewport.onmousedown;
+        }
+
+        // Supprimer temporairement le curseur grab
+        viewport.style.cursor = 'crosshair';
+        
+        console.log("🚫 Gestionnaires de pan désactivés");
+    }
+
+    enablePanHandlers() {
+        const viewport = document.getElementById('viewport');
+        if (!viewport) return;
+
+        // Restaurer le curseur normal
+        viewport.style.cursor = 'grab';
+        
+        // Réactiver la navigation de la carte en appelant setupMapNavigation depuis main.js
+        if (window.setupMapNavigation) {
+            // Ne pas rappeler setupMapNavigation car cela doublerait les listeners
+            // À la place, simplement restaurer le curseur
+        }
+        
+        console.log("✅ Gestionnaires de pan réactivés");
     }
 
     clearPath() {
