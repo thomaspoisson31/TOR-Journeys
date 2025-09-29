@@ -21,6 +21,7 @@ import DataManager from './managers/data-manager.js';
 import FilterManager from './managers/filter-manager.js';
 import VoyageManager from './managers/voyage-manager.js';
 import PathManager from './managers/path-manager.js';
+import GeminiManager from './managers/gemini-manager.js';
 
 console.log("✅ Constants loaded successfully");
 
@@ -35,6 +36,7 @@ let dataManager;
 let filterManager;
 let voyageManager;
 let pathManager;
+let geminiManager;
 
 console.log("✅ Global variables initialized");
 
@@ -78,6 +80,11 @@ async function initializeApp() {
             MAP_WIDTH: MAP_WIDTH || 5103 // Utiliser la valeur globale ou fallback
         });
         console.log("✅ PathManager initialized");
+        
+        // Initialiser le GeminiManager
+        geminiManager = new GeminiManager();
+        await geminiManager.init();
+        console.log("✅ GeminiManager initialized");
 
         // Charger les données
         console.log("📍 Loading initial locations...");
@@ -1184,6 +1191,25 @@ function showLocationCreationModal() {
             firstColorSwatch.classList.add('selected');
         }
 
+        // Configurer le bouton de génération de description
+        const generateDescBtn = document.getElementById('generate-add-desc');
+        if (generateDescBtn) {
+            // Supprimer les anciens event listeners
+            const newBtn = generateDescBtn.cloneNode(true);
+            generateDescBtn.parentNode.replaceChild(newBtn, generateDescBtn);
+            
+            // Ajouter le nouvel event listener
+            newBtn.addEventListener('click', async () => {
+                const locationName = nameInput.value.trim();
+                if (!locationName) {
+                    alert("Veuillez d'abord entrer un nom pour le lieu.");
+                    return;
+                }
+
+                await generateLocationDescription(locationName, descInput, newBtn);
+            });
+        }
+
         modal.classList.remove('hidden');
         if (nameInput) nameInput.focus();
     }
@@ -1396,91 +1422,56 @@ function setupDrawingEvents() {
 }
 
 // --- Fonctions de l'API Gemini ---
+let geminiManager = null;
+
 function setupGeminiEventListeners() {
     console.log("♊ Setting up Gemini API event listeners...");
 
-    // Exemple : Bouton pour générer une description de lieu avec Gemini
-    const generateLocationDescBtn = document.getElementById('generate-location-desc-btn');
-    if (generateLocationDescBtn) {
-        generateLocationDescBtn.addEventListener('click', async () => {
-            const locationId = document.getElementById('location-id-input').value; // Assumant que vous avez un champ caché pour cela
-            if (!locationId) {
-                alert("Veuillez sélectionner un lieu pour générer sa description.");
-                return;
-            }
-
-            try {
-                // Supposons que dataManager a une méthode pour récupérer les données d'un lieu
-                const location = dataManager.getLocationById(locationId);
-                if (!location) {
-                    alert("Lieu non trouvé.");
-                    return;
-                }
-
-                // Appel à une fonction qui communique avec l'API Gemini
-                const description = await generateDescriptionWithGemini(location.name, 'lieu');
-
-                // Mettre à jour le champ de description dans la modal ou l'info-box
-                const descInput = document.getElementById('location-desc-input'); // Ou l'élément approprié
-                if (descInput) {
-                    descInput.value = description;
-                }
-                alert("Description générée avec succès !");
-
-            } catch (error) {
-                console.error("Erreur lors de la génération de la description:", error);
-                alert(`Erreur lors de la génération de la description : ${error.message}`);
-            }
+    // Initialiser le GeminiManager
+    import('./managers/gemini-manager.js').then(({ default: GeminiManager }) => {
+        geminiManager = new GeminiManager();
+        geminiManager.init().then(() => {
+            console.log("✅ GeminiManager initialized");
         });
-    }
-
-    // Exemple : Bouton pour générer une description de région avec Gemini
-    const generateRegionDescBtn = document.getElementById('generate-region-desc-btn');
-    if (generateRegionDescBtn) {
-        generateRegionDescBtn.addEventListener('click', async () => {
-            const regionId = document.getElementById('region-id-input').value; // Assumant que vous avez un champ caché pour cela
-            if (!regionId) {
-                alert("Veuillez sélectionner une région pour générer sa description.");
-                return;
-            }
-
-            try {
-                const region = dataManager.getRegionById(regionId);
-                if (!region) {
-                    alert("Région non trouvée.");
-                    return;
-                }
-
-                // Appel à une fonction qui communique avec l'API Gemini
-                const description = await generateDescriptionWithGemini(region.name, 'région');
-
-                // Mettre à jour le champ de description dans la modal ou l'info-box
-                const descInput = document.getElementById('region-desc-input'); // Ou l'élément approprié
-                if (descInput) {
-                    descInput.value = description;
-                }
-                alert("Description générée avec succès !");
-
-            } catch (error) {
-                console.error("Erreur lors de la génération de la description:", error);
-                alert(`Erreur lors de la génération de la description : ${error.message}`);
-            }
-        });
-    }
+    });
 
     console.log("✅ Gemini API event listeners setup complete");
 }
 
-// Fonction fictive pour appeler l'API Gemini (à implémenter réellement)
-async function generateDescriptionWithGemini(name, type) {
-    console.log(`🚀 Calling Gemini API to generate description for ${type}: ${name}`);
-    // Ici, vous intégreriez l'appel réel à l'API Gemini
-    // Par exemple, en utilisant fetch() pour envoyer une requête à votre backend
-    // qui à son tour appelle l'API Gemini.
+// Fonction pour générer une description de lieu
+async function generateLocationDescription(locationName, descriptionTextarea, button) {
+    if (!geminiManager) {
+        alert("Gemini API non initialisée. Veuillez recharger la page.");
+        return;
+    }
 
-    // Simulation d'une réponse de l'API
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simuler un délai réseau
-    return `Ceci est une description générée par l'IA pour ${name} (${type}). Elle est basée sur des informations fictives pour le moment.`;
+    try {
+        const existingDescription = descriptionTextarea.value.trim();
+        const description = await geminiManager.generateLocationDescription(locationName, existingDescription, button);
+        descriptionTextarea.value = description;
+        console.log("✅ Description générée pour le lieu:", locationName);
+    } catch (error) {
+        console.error("❌ Erreur lors de la génération de la description:", error);
+        alert(`Erreur lors de la génération : ${error.message}`);
+    }
+}
+
+// Fonction pour générer une description de région
+async function generateRegionDescription(regionName, descriptionTextarea, button) {
+    if (!geminiManager) {
+        alert("Gemini API non initialisée. Veuillez recharger la page.");
+        return;
+    }
+
+    try {
+        const existingDescription = descriptionTextarea.value.trim();
+        const description = await geminiManager.generateRegionDescription(regionName, existingDescription, button);
+        descriptionTextarea.value = description;
+        console.log("✅ Description générée pour la région:", regionName);
+    } catch (error) {
+        console.error("❌ Erreur lors de la génération de la description:", error);
+        alert(`Erreur lors de la génération : ${error.message}`);
+    }
 }
 
 
