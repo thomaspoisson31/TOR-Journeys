@@ -201,10 +201,19 @@ function renderLocations() {
         const color = colorMap[location.color] || colorMap.blue;
         marker.style.backgroundColor = color;
 
-        // Ajouter l'événement de clic
+        // Ajouter les événements de clic et de glisser-déplacer
+        marker.addEventListener('mousedown', (e) => {
+            if (e.button === 0) { // Clic gauche seulement
+                handleLocationDragStart(e, marker, location);
+            }
+        });
+
         marker.addEventListener('click', (e) => {
-            e.stopPropagation();
-            infoBoxManager.showInfoBox(e, location, 'location');
+            // Éviter d'ouvrir l'info-box si on vient de faire un drag
+            if (!isDraggingLocation) {
+                e.stopPropagation();
+                infoBoxManager.showInfoBox(e, location, 'location');
+            }
         });
 
         // Ajouter à la couche des lieux
@@ -405,6 +414,12 @@ let lastMouseY = 0;
 let minScale = 0.1;
 let maxScale = 4.0;
 
+// --- Variables d'état pour le glisser-déplacer des lieux ---
+let isDraggingLocation = false;
+let draggedLocationMarker = null;
+let dragStartX = 0;
+let dragStartY = 0;
+
 // --- Variables d'état pour le tracé de régions ---
 let isRegionDrawingMode = false;
 let regionPoints = [];
@@ -474,8 +489,8 @@ function resetView() {
 }
 
 function handlePanStart(e) {
-    // Ne pas permettre le pan si on est en mode tracé ou dessin
-    if (isRegionDrawingMode || window.isDrawingMode) return;
+    // Ne pas permettre le pan si on est en mode tracé, dessin ou déplacement de lieu
+    if (isRegionDrawingMode || window.isDrawingMode || isDraggingLocation) return;
 
     if (e.button === 0) { // Clic gauche uniquement
         isPanning = true;
@@ -501,7 +516,7 @@ function setupMapNavigation() {
     viewport.addEventListener('mousedown', handlePanStart);
 
     viewport.addEventListener('mousemove', (e) => {
-        if (isPanning && !window.isDrawingMode) {
+        if (isPanning && !window.isDrawingMode && !isDraggingLocation) {
             const deltaX = e.clientX - lastMouseX;
             const deltaY = e.clientY - lastMouseY;
 
@@ -513,19 +528,28 @@ function setupMapNavigation() {
 
             lastMouseX = e.clientX;
             lastMouseY = e.clientY;
+        } else if (isDraggingLocation && draggedLocationMarker) {
+            handleLocationDrag(e);
         }
     });
 
     viewport.addEventListener('mouseup', (e) => {
         if (e.button === 0 && !window.isDrawingMode) {
-            isPanning = false;
-            viewport.style.cursor = 'grab';
+            if (isDraggingLocation) {
+                handleLocationDragEnd(e);
+            } else {
+                isPanning = false;
+                viewport.style.cursor = 'grab';
+            }
         }
     });
 
     viewport.addEventListener('mouseleave', () => {
         if (!window.isDrawingMode) {
             isPanning = false;
+            if (isDraggingLocation && draggedLocationMarker) {
+                handleLocationDragEnd();
+            }
             viewport.style.cursor = 'grab';
         }
     });
@@ -1293,6 +1317,100 @@ function setupDrawingEvents() {
     }
 
     console.log("✅ Drawing events setup complete");
+}
+
+// --- Fonctions de glisser-déplacer pour les lieux ---
+function handleLocationDragStart(e, marker, location) {
+    // Ne pas permettre le drag si on est en mode tracé ou dessin
+    if (isRegionDrawingMode || window.isDrawingMode || isLocationAddingMode) return;
+
+    e.stopPropagation();
+    e.preventDefault();
+
+    isDraggingLocation = true;
+    draggedLocationMarker = marker;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+
+    // Changer le curseur
+    viewport.style.cursor = 'move';
+    marker.style.cursor = 'move';
+
+    console.log(`🎯 Starting drag for location: ${location.name}`);
+}
+
+function handleLocationDrag(e) {
+    if (!isDraggingLocation || !draggedLocationMarker) return;
+
+    e.preventDefault();
+
+    const deltaX = e.clientX - dragStartX;
+    const deltaY = e.clientY - dragStartY;
+
+    // Convertir le delta en coordonnées de la carte
+    const mapDeltaX = deltaX / scale;
+    const mapDeltaY = deltaY / scale;
+
+    // Obtenir les coordonnées actuelles du marqueur
+    const currentLeft = parseFloat(draggedLocationMarker.style.left);
+    const currentTop = parseFloat(draggedLocationMarker.style.top);
+
+    // Calculer les nouvelles coordonnées
+    const newLeft = currentLeft + mapDeltaX;
+    const newTop = currentTop + mapDeltaY;
+
+    // Contraindre dans les limites de la carte
+    const constrainedLeft = Math.max(0, Math.min(MAP_WIDTH, newLeft));
+    const constrainedTop = Math.max(0, Math.min(MAP_HEIGHT, newTop));
+
+    // Appliquer la nouvelle position
+    draggedLocationMarker.style.left = `${constrainedLeft}px`;
+    draggedLocationMarker.style.top = `${constrainedTop}px`;
+
+    // Mettre à jour les coordonnées de départ pour le prochain mouvement
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+}
+
+function handleLocationDragEnd(e) {
+    if (!isDraggingLocation || !draggedLocationMarker) return;
+
+    console.log("🎯 Ending location drag");
+
+    // Trouver le lieu correspondant et mettre à jour ses coordonnées
+    const locationId = draggedLocationMarker.dataset.id;
+    const location = locationsData.locations.find(loc => loc.id == locationId);
+
+    if (location) {
+        const newX = parseFloat(draggedLocationMarker.style.left);
+        const newY = parseFloat(draggedLocationMarker.style.top);
+
+        location.coordinates.x = newX;
+        location.coordinates.y = newY;
+
+        console.log(`🎯 Updated location ${location.name} coordinates to (${newX.toFixed(1)}, ${newY.toFixed(1)})`);
+
+        // Sauvegarder les changements
+        if (dataManager) {
+            dataManager.saveLocationsToLocal();
+        }
+
+        // Programmer la synchronisation
+        if (typeof scheduleAutoSync === 'function') {
+            scheduleAutoSync();
+        }
+    }
+
+    // Réinitialiser l'état
+    isDraggingLocation = false;
+    draggedLocationMarker.style.cursor = 'pointer';
+    draggedLocationMarker = null;
+    viewport.style.cursor = 'grab';
+
+    // Petit délai pour éviter que le clic se déclenche immédiatement après le drag
+    setTimeout(() => {
+        isDraggingLocation = false;
+    }, 100);
 }
 
 // --- Fonctions utilitaires pour la compatibilité ---
