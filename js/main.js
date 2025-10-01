@@ -456,15 +456,25 @@ function constrainPan() {
     const scaledMapWidth = MAP_WIDTH * scale;
     const scaledMapHeight = MAP_HEIGHT * scale;
 
-    // Contraintes horizontales
-    const maxPanX = Math.max(0, (scaledMapWidth - viewportWidth) / 2);
-    const minPanX = Math.min(0, -(scaledMapWidth - viewportWidth) / 2);
-    panX = Math.max(minPanX, Math.min(maxPanX, panX));
+    // Si la carte est plus petite que le viewport, centrer
+    if (scaledMapWidth <= viewportWidth) {
+        panX = (viewportWidth - scaledMapWidth) / 2;
+    } else {
+        // Contraintes horizontales : la carte peut déborder du viewport
+        const maxPanX = 0; // Bord gauche de la carte aligné avec le bord gauche du viewport
+        const minPanX = viewportWidth - scaledMapWidth; // Bord droit de la carte aligné avec le bord droit du viewport
+        panX = Math.max(minPanX, Math.min(maxPanX, panX));
+    }
 
-    // Contraintes verticales
-    const maxPanY = Math.max(0, (scaledMapHeight - viewportHeight) / 2);
-    const minPanY = Math.min(0, -(scaledMapHeight - viewportHeight) / 2);
-    panY = Math.max(minPanY, Math.min(maxPanY, panY));
+    // Si la carte est plus petite que le viewport, centrer
+    if (scaledMapHeight <= viewportHeight) {
+        panY = (viewportHeight - scaledMapHeight) / 2;
+    } else {
+        // Contraintes verticales : la carte peut déborder du viewport
+        const maxPanY = 0; // Bord haut de la carte aligné avec le bord haut du viewport
+        const minPanY = viewportHeight - scaledMapHeight; // Bord bas de la carte aligné avec le bord bas du viewport
+        panY = Math.max(minPanY, Math.min(maxPanY, panY));
+    }
 }
 
 function zoomToPoint(zoomFactor, clientX, clientY) {
