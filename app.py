@@ -825,6 +825,43 @@ def generate_with_gemini():
             'error': f'Erreur serveur: {str(e)}'
         }), 500
 
+@app.route('/api/gemini/test')
+def test_gemini_api():
+    """Test direct de l'API Gemini avec informations de debug"""
+    if not GOOGLE_API_KEY:
+        return jsonify({'error': 'GOOGLE_API_KEY not configured'}), 500
+    
+    try:
+        api_model = 'gemini-2.0-flash-exp'
+        api_url = f'https://generativelanguage.googleapis.com/v1beta/models/{api_model}:generateContent?key={GOOGLE_API_KEY}'
+        
+        payload = {
+            "contents": [
+                {
+                    "role": "user", 
+                    "parts": [{"text": "Dis juste 'Hello' en réponse."}]
+                }
+            ]
+        }
+        
+        response = requests.post(
+            api_url,
+            headers={'Content-Type': 'application/json'},
+            json=payload,
+            timeout=10
+        )
+        
+        return jsonify({
+            'status_code': response.status_code,
+            'response_text': response.text[:500],
+            'api_key_prefix': GOOGLE_API_KEY[:10] + '...',
+            'request_url': api_url.replace(GOOGLE_API_KEY, '[API_KEY]'),
+            'success': response.ok
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e), 'error_type': type(e).__name__}), 500
+
 @app.route('/auth/verify-config')
 def verify_oauth_config():
     """Vérifier la configuration OAuth avec Google"""
