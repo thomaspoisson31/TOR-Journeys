@@ -26,6 +26,7 @@ import DataManager from './managers/data-manager.js';
 import FilterManager from './managers/filter-manager.js';
 import VoyageManager from './managers/voyage-manager.js';
 import PathManager from './managers/path-manager.js';
+import SettingsManager from './managers/settings-manager.js';
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -42,6 +43,7 @@ let filterManager;
 let voyageManager;
 let pathManager;
 let calendarManager;
+let settingsManager;
 
 console.log("✅ Global variables initialized");
 
@@ -90,6 +92,12 @@ async function initializeApp() {
         calendarManager = new window.CalendarManager();
         calendarManager.init();
         console.log("✅ CalendarManager initialized");
+
+        // Initialiser SettingsManager
+        settingsManager = new SettingsManager();
+        settingsManager.init();
+        window.settingsManager = settingsManager; // Exposer globalement pour les onclick
+        console.log("✅ SettingsManager initialized");
 
         // Charger les données
         console.log("📍 Loading initial locations...");
@@ -362,8 +370,7 @@ function initializeMap() {
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
 
-    // Configurer les paramètres
-    setupSettingsModal();
+    // Les paramètres sont maintenant gérés par SettingsManager
 
     resetView(); // Vue initiale optimale
 
@@ -576,6 +583,8 @@ function setupMapNavigation() {
 
     console.log("✅ Map navigation setup complete");
 }
+
+// --- Fonction setupSettingsModal supprimée - maintenant gérée par SettingsManager ---
 
 // --- Event Listeners pour l'info-box ---
 function setupInfoBoxListeners() {
