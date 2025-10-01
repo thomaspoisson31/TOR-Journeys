@@ -1074,6 +1074,7 @@ function setupLocationAdding() {
     const addLocationModal = document.getElementById('add-location-modal');
     const cancelBtn = document.getElementById('cancel-add-location');
     const confirmBtn = document.getElementById('confirm-add-location');
+    const generateDescBtn = document.getElementById('generate-add-desc');
 
     if (addLocationBtn) {
         addLocationBtn.addEventListener('click', toggleLocationAddingMode);
@@ -1085,6 +1086,11 @@ function setupLocationAdding() {
 
     if (confirmBtn) {
         confirmBtn.addEventListener('click', confirmLocationCreation);
+    }
+
+    if (generateDescBtn) {
+        generateDescBtn.addEventListener('click', handleGenerateLocationDescription);
+        console.log("✅ Generate description button configured");
     }
 
     // Setup des sélecteurs de couleur pour les lieux
@@ -1275,6 +1281,66 @@ function confirmLocationCreation() {
     window.pendingLocationCoordinates = null;
 
     console.log("✅ Location created successfully:", locationName);
+}
+
+// --- Fonction de génération de description Gemini pour les lieux ---
+async function handleGenerateLocationDescription(event) {
+    console.log("🤖 Generating location description...");
+    
+    const button = event.currentTarget;
+    const nameInput = document.getElementById('location-name-input');
+    const descTextarea = document.getElementById('location-desc-input');
+    
+    if (!nameInput || !nameInput.value.trim()) {
+        alert("Veuillez d'abord entrer un nom pour le lieu.");
+        return;
+    }
+
+    const locationName = nameInput.value.trim();
+    
+    // Changer l'état du bouton
+    const originalContent = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    try {
+        const prompt = `Rédige une courte description évocatrice pour un lieu de la Terre du Milieu nommé '${locationName}'. Décris son apparence, son ambiance et son histoire possible, dans le style de J.R.R. Tolkien. Sois concis et évocateur (2-3 phrases maximum).`;
+        
+        console.log("🤖 Sending request to Gemini API...");
+        
+        const response = await fetch('/api/gemini/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                prompt: prompt,
+                type: 'description'
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.content) {
+            descTextarea.value = data.content;
+            console.log("✅ Description generated successfully");
+        } else {
+            throw new Error(data.error || 'Réponse invalide de l\'API');
+        }
+        
+    } catch (error) {
+        console.error("❌ Error generating description:", error);
+        alert(`Erreur lors de la génération : ${error.message}`);
+    } finally {
+        // Restaurer l'état du bouton
+        button.disabled = false;
+        button.innerHTML = originalContent;
+    }
 }
 
 function setupLocationColorPicker() {
