@@ -75,8 +75,6 @@ class InfoBoxManager {
         this.currentType = type;
         this.isEditMode = false;
 
-        this.updateInfoBoxContent();
-        
         // Toujours forcer le mode étendu
         this.isExpanded = true;
         infoBox.classList.add('expanded');
@@ -88,18 +86,15 @@ class InfoBoxManager {
             expandBtn.title = 'Vue compacte';
         }
         
-        // Afficher le titre et les contrôles
-        const infoBoxTitle = document.getElementById('info-box-title');
-        if (infoBoxTitle) {
-            infoBoxTitle.classList.remove('hidden');
-        }
-        
         this.positionInfoBoxExpanded();
         
         infoBox.style.display = 'block';
         
         // S'assurer que l'onglet Image est actif par défaut
         this.switchTab('image');
+
+        // Mettre à jour le contenu après avoir configuré l'affichage
+        this.updateInfoBoxContent();
 
         console.log("✅ Info box displayed successfully in expanded mode");
     }
@@ -172,25 +167,28 @@ class InfoBoxManager {
         if (!this.currentItem) return;
 
         const infoBoxTitle = document.getElementById('info-box-title');
-        const imageTab = document.getElementById('image-tab');
-        const textTab = document.getElementById('text-tab');
-        const rumeursTab = document.getElementById('rumeurs-tab');
-        const traditionTab = document.getElementById('tradition-tab');
+        const editBtn = document.getElementById('info-box-edit');
+        const deleteBtn = document.getElementById('info-box-delete');
 
-        // Mettre à jour le titre
+        // Toujours afficher le titre
         if (infoBoxTitle) {
             infoBoxTitle.textContent = this.currentItem.name;
-            infoBoxTitle.classList.add('hidden');
+            infoBoxTitle.classList.remove('hidden');
         }
 
-        // Afficher/masquer le bouton supprimer selon le mode
-        const deleteBtn = document.getElementById('info-box-delete');
-        if (deleteBtn) {
+        // Toujours afficher les boutons crayon et poubelle
+        if (editBtn) {
+            editBtn.classList.remove('hidden');
+            // Changer la couleur selon le mode
             if (this.isEditMode) {
-                deleteBtn.classList.add('hidden');
+                editBtn.style.color = '#60a5fa'; // bleu clair
             } else {
-                deleteBtn.classList.remove('hidden');
+                editBtn.style.color = '#ffffff'; // blanc
             }
+        }
+
+        if (deleteBtn) {
+            deleteBtn.classList.remove('hidden');
         }
 
         if (this.isEditMode) {
@@ -207,7 +205,9 @@ class InfoBoxManager {
         // Onglet Image
         const imageTab = document.getElementById('image-tab');
         if (imageTab) {
-            const imageView = imageTab.querySelector('.image-view') || this.createImageView(imageTab);
+            // Nettoyer complètement l'onglet et créer la structure
+            imageTab.innerHTML = '';
+            const imageView = this.createImageView(imageTab);
             
             if (item.images && item.images.length > 0) {
                 const defaultImage = item.images.find(img => img.isDefault) || item.images[0];
@@ -227,17 +227,21 @@ class InfoBoxManager {
         // Onglet Texte
         const textTab = document.getElementById('text-tab');
         if (textTab) {
-            const textView = textTab.querySelector('.text-view') || this.createTextView(textTab);
+            // Nettoyer complètement l'onglet et créer la structure
+            textTab.innerHTML = '';
+            const textView = this.createTextView(textTab);
             textView.innerHTML = `
                 <h3>${item.name}</h3>
-                <p>${item.description || 'Aucune description disponible.'}</p>
+                <div class="prose prose-invert">${this.renderMarkdown(item.description || 'Aucune description disponible.')}</div>
             `;
         }
 
         // Onglet Rumeurs
         const rumeursTab = document.getElementById('rumeurs-tab');
         if (rumeursTab) {
-            const textView = rumeursTab.querySelector('.text-view') || this.createTextView(rumeursTab);
+            // Nettoyer complètement l'onglet et créer la structure
+            rumeursTab.innerHTML = '';
+            const textView = this.createTextView(rumeursTab);
             let rumeursContent = '';
             
             if (type === 'region') {
@@ -246,7 +250,7 @@ class InfoBoxManager {
                 if (item.Rumeurs && item.Rumeurs.length > 0) {
                     const rumeursValides = item.Rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
                     if (rumeursValides.length > 0) {
-                        rumeursContent = rumeursValides.map(rumeur => `<p>${rumeur}</p>`).join('');
+                        rumeursContent = rumeursValides.join('\n\n');
                     } else {
                         rumeursContent = 'Aucune rumeur disponible.';
                     }
@@ -256,17 +260,19 @@ class InfoBoxManager {
             }
             
             textView.innerHTML = `
-                <div>${rumeursContent}</div>
+                <div class="prose prose-invert">${this.renderMarkdown(rumeursContent)}</div>
             `;
         }
 
         // Onglet Tradition
         const traditionTab = document.getElementById('tradition-tab');
         if (traditionTab) {
-            const textView = traditionTab.querySelector('.text-view') || this.createTextView(traditionTab);
+            // Nettoyer complètement l'onglet et créer la structure
+            traditionTab.innerHTML = '';
+            const textView = this.createTextView(traditionTab);
             const traditionContent = item.Tradition_Ancienne || 'Aucune tradition ancienne disponible.';
             textView.innerHTML = `
-                <div>${traditionContent}</div>
+                <div class="prose prose-invert">${this.renderMarkdown(traditionContent)}</div>
             `;
         }
     }
@@ -278,6 +284,7 @@ class InfoBoxManager {
         // Onglet Image (mode édition)
         const imageTab = document.getElementById('image-tab');
         if (imageTab) {
+            // Nettoyer complètement l'onglet
             imageTab.innerHTML = `
                 <div class="edit-form p-4">
                     <h4 class="font-bold mb-3">Éditer les images</h4>
@@ -306,6 +313,7 @@ class InfoBoxManager {
         // Onglet Texte (mode édition)
         const textTab = document.getElementById('text-tab');
         if (textTab) {
+            // Nettoyer complètement l'onglet
             textTab.innerHTML = `
                 <div class="edit-form p-4">
                     <div class="mb-3">
@@ -313,8 +321,8 @@ class InfoBoxManager {
                         <input type="text" id="edit-name" value="${item.name}" class="w-full p-2 border rounded bg-white text-black">
                     </div>
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2 text-white">Description :</label>
-                        <textarea id="edit-description" class="w-full p-2 border rounded h-20 bg-white text-black">${item.description || ''}</textarea>
+                        <label class="block text-sm font-medium mb-2 text-white">Description (Markdown supporté) :</label>
+                        <textarea id="edit-description" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.description || ''}</textarea>
                         <button onclick="window.infoBoxManager.generateDescription()" class="mt-2 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded">
                             <i class="fas fa-magic mr-1"></i>Générer avec IA
                         </button>
@@ -330,7 +338,6 @@ class InfoBoxManager {
                     </div>
                 </div>
             `;
-            
         }
 
         // Onglet Rumeurs (mode édition)
@@ -340,11 +347,12 @@ class InfoBoxManager {
                 (item.Rumeur || '') : 
                 (item.Rumeurs ? item.Rumeurs.join('\n') : (item.Rumeur || ''));
             
+            // Nettoyer complètement l'onglet
             rumeursTab.innerHTML = `
                 <div class="edit-form p-4">
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2 text-white">Rumeurs ${type === 'location' ? '(une par ligne)' : ''} :</label>
-                        <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-24 bg-white text-black">${currentRumeurs}</textarea>
+                        <label class="block text-sm font-medium mb-2 text-white">Rumeurs ${type === 'location' ? '(une par ligne)' : ''} (Markdown supporté) :</label>
+                        <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${currentRumeurs}</textarea>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
@@ -361,11 +369,12 @@ class InfoBoxManager {
         // Onglet Tradition (mode édition)
         const traditionTab = document.getElementById('tradition-tab');
         if (traditionTab) {
+            // Nettoyer complètement l'onglet
             traditionTab.innerHTML = `
                 <div class="edit-form p-4">
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2 text-white">Tradition Ancienne :</label>
-                        <textarea id="edit-tradition" class="w-full p-2 border rounded h-24 bg-white text-black">${item.Tradition_Ancienne || ''}</textarea>
+                        <label class="block text-sm font-medium mb-2 text-white">Tradition Ancienne (Markdown supporté) :</label>
+                        <textarea id="edit-tradition" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.Tradition_Ancienne || ''}</textarea>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
@@ -404,6 +413,38 @@ class InfoBoxManager {
     }
 
     
+
+    // Fonction utilitaire pour le rendu Markdown basique
+    renderMarkdown(text) {
+        if (!text) return '';
+        
+        // Conversion Markdown basique
+        return text
+            // Titres
+            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+            // Gras et italique
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            // Listes
+            .replace(/^\- (.*$)/gim, '<li>$1</li>')
+            .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+            // Paragraphes
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/^(.*)$/gim, function(match) {
+                if (match.startsWith('<h') || match.startsWith('<ul') || match.startsWith('<li') || match.startsWith('</')) {
+                    return match;
+                }
+                return match.trim() ? `<p>${match}</p>` : '';
+            })
+            // Nettoyage
+            .replace(/<p><\/p>/g, '')
+            .replace(/<p>(<h[1-6]>)/g, '$1')
+            .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
+            .replace(/<p>(<ul>)/g, '$1')
+            .replace(/(<\/ul>)<\/p>/g, '$1');
+    }
 
     createImageView(parent) {
         const imageView = document.createElement('div');
