@@ -8,6 +8,7 @@ import json
 import os
 from datetime import datetime
 import secrets
+import requests
 
 app = Flask(__name__)
 
@@ -712,6 +713,91 @@ def get_gemini_config():
         'api_key_configured': bool(GOOGLE_API_KEY),
         'api_key': GOOGLE_API_KEY if GOOGLE_API_KEY else None
     })
+
+@app.route('/api/gemini/generate', methods=['POST'])
+def generate_with_gemini():
+    """Générer du contenu avec l'API Gemini"""
+    if not GOOGLE_API_KEY:
+        return jsonify({'error': 'Clé API Gemini non configurée'}), 500
+
+    try:
+        data = request.json
+        if not data or 'prompt' not in data:
+            return jsonify({'error': 'Prompt manquant'}), 400
+
+        prompt = data['prompt']
+        generation_type = data.get('type', 'description')
+
+        # Construire la requête pour l'API Gemini
+        api_model = 'gemini-2.0-flash-exp'
+        api_url = f'https://generativelanguage.googleapis.com/v1beta/models/{api_model}:generateContent?key={GOOGLE_API_KEY}'
+
+        # Payload pour l'API Gemini
+        payload = {
+            "contents": [
+                {
+                    "role": "user",
+                    "parts": [{"text": prompt}]
+                }
+            ]
+        }
+
+        # Appel à l'API Gemini
+        import requests as http_requests
+        
+        response = http_requests.post(
+            api_url,
+            headers={'Content-Type': 'application/json'},
+            json=payload,
+            timeout=30
+        )
+
+        if not response.ok:
+            error_details = response.text
+            print(f"❌ Erreur API Gemini {response.status_code}: {error_details}")
+            return jsonify({
+                'error': f'Erreur API Gemini: {response.status_code}',
+                'details': error_details
+            }), 500
+
+        result = response.json()
+
+        # Extraire le contenu généré
+        if (result.get('candidates') and 
+            len(result['candidates']) > 0 and 
+            result['candidates'][0].get('content') and
+            result['candidates'][0]['content'].get('parts') and
+            len(result['candidates'][0]['content']['parts']) > 0):
+            
+            generated_content = result['candidates'][0]['content']['parts'][0]['text']
+            
+            # Enregistrer l'usage API si l'utilisateur est connecté
+            if 'user_id' in session:
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                cursor.execute(
+                    'INSERT INTO api_usage (user_id, endpoint, tokens_used) VALUES (?, ?, ?)',
+                    (session['user_id'], 'gemini/generate', len(prompt))
+                )
+                conn.commit()
+                conn.close()
+            
+            return jsonify({
+                'success': True,
+                'content': generated_content,
+                'type': generation_type
+            })
+        else:
+            return jsonify({
+                'error': 'Réponse invalide de l\'API Gemini',
+                'details': result
+            }), 500
+
+    except Exception as e:
+        print(f"❌ Erreur lors de la génération Gemini: {e}")
+        return jsonify({
+            'error': f'Erreur serveur: {str(e)}'
+        }), 500
 
 @app.route('/auth/verify-config')
 def verify_oauth_config():
