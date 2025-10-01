@@ -1,4 +1,6 @@
 
+import { LOCATIONS_URL, getDefaultLocations, getDefaultRegions } from '../utils/constants.js';
+
 class DataManager {
     constructor() {
         this.locationsData = null;
