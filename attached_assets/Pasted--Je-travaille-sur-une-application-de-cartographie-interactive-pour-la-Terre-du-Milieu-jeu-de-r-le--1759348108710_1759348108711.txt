@@ -1,0 +1,66 @@
+ Je travaille sur une application de cartographie interactive pour la Terre du Milieu (jeu de rôle) basée sur Flask + JavaScript avec une architecture modulaire.
+
+Architecture actuelle :
+
+Structure modulaire avec managers dans /js/managers/
+main.js minimal avec imports et initialisation
+DataManager avec méthodes d'export/import partiellement implémentées
+Interface avec boutons d'export/import dans la toolbar (#export-locations, #import-locations)
+PROBLÈME ACTUEL : Les boutons d'export/import dans la toolbar ne fonctionnent pas correctement avec l'architecture modulaire actuelle.
+
+OBJECTIF : Créer ImportExportManager dans /js/managers/import-export-manager.js et intégrer les fonctionnalités d'import/export JSON.
+
+Fonctionnalités à implémenter :
+
+Export unifié (lieux + régions) :
+
+Bouton "Exporter lieux et régions" dans la toolbar
+Format JSON unifié avec structure standardisée
+Support des images multiples, rumeurs, traditions anciennes
+Téléchargement automatique du fichier Landmark.json
+Import de fichiers JSON :
+
+Bouton "Importer lieux et régions" avec sélecteur de fichier
+Support des formats JSON variés (anciens et nouveaux)
+Modal de confirmation avec choix : remplacer ou fusionner
+Gestion des conflits par nom (mise à jour ou ajout)
+Validation et nettoyage des données importées
+Formats supportés :
+
+Format unifié actuel (locations + regions)
+Anciens formats séparés (compatibility)
+Auto-détection du type de fichier JSON
+Conversion automatique entre formats
+Structure souhaitée :
+
+class ImportExportManager {
+    constructor(dataManager)
+    exportUnifiedData() // Export lieux + régions
+    importUnifiedData(event) // Import avec gestion des formats
+    validateImportData(data) // Validation des données
+    showImportModal(data) // Modal choix remplacer/fusionner
+    processImport(data, mode) // Traitement import
+}
+Interface existante :
+
+Boutons #export-locations et #import-locations dans la toolbar
+Input file caché #import-file-input
+Fonctions exportUnifiedData() et importUnifiedData() dans DataManager
+Contraintes :
+
+Garder main.js minimal (juste import + initialisation)
+Utiliser les patterns existants de l'architecture modulaire
+Intégrer avec DataManager pour la sauvegarde
+Appeler scheduleAutoSync() après modifications
+Gérer les cas d'erreur avec messages utilisateur appropriés
+Log toutes les opérations d'import/export pour débogage
+Approche souhaitée :
+
+Créer ImportExportManager complet avec toutes les méthodes
+Migrer la logique depuis DataManager vers le nouveau manager
+Améliorer la gestion des formats et la validation
+Intégrer proprement dans main.js avec les event listeners
+Format JSON de référence : Je fournirai un exemple de JSON en pièce jointe qui montre la structure attendue pour l'export/import.
+
+Peux-tu créer le ImportExportManager et adapter le code existant pour une gestion complète de l'import/export des données JSON ?
+
