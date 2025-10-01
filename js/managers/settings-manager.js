@@ -140,18 +140,26 @@ class SettingsManager {
 
         // Désactiver tous les onglets
         document.querySelectorAll('.settings-tab-button').forEach(btn => {
-            btn.classList.remove('active');
+            btn.classList.remove('active', 'text-white', 'border-blue-500');
+            btn.classList.add('text-gray-400', 'border-transparent');
         });
         document.querySelectorAll('.settings-tab-content').forEach(content => {
             content.classList.remove('active');
+            content.style.display = 'none';
         });
 
         // Activer l'onglet cible
         const targetButton = document.querySelector(`.settings-tab-button[data-tab="${tabName}"]`);
         const targetContent = document.getElementById(`${tabName}-tab`);
 
-        if (targetButton) targetButton.classList.add('active');
-        if (targetContent) targetContent.classList.add('active');
+        if (targetButton) {
+            targetButton.classList.add('active', 'text-white', 'border-blue-500');
+            targetButton.classList.remove('text-gray-400', 'border-transparent');
+        }
+        if (targetContent) {
+            targetContent.classList.add('active');
+            targetContent.style.display = 'flex';
+        }
 
         // Actions spécifiques par onglet
         switch (tabName) {
@@ -159,7 +167,7 @@ class SettingsManager {
                 this.renderMapsGrid();
                 this.updateActiveMapPreviews();
                 break;
-            case 'party':
+            case 'adventurers':
                 this.updatePartyContent();
                 break;
             case 'quest':
@@ -391,22 +399,67 @@ class SettingsManager {
 
     // === GESTION DES AVENTURIERS ===
     setupPartyListeners() {
-        const savePartyBtn = document.getElementById('save-party-description-btn');
-        const generatePartyBtn = document.getElementById('generate-party-description-btn');
+        const editBtn = document.getElementById('edit-adventurers-btn');
+        const generateWizardBtn = document.getElementById('generate-adventurers-wizard');
+        const cancelEditBtn = document.getElementById('cancel-adventurers-edit');
+        const saveEditBtn = document.getElementById('save-adventurers-edit');
 
-        if (savePartyBtn) {
-            savePartyBtn.addEventListener('click', () => this.savePartyDescription());
+        if (editBtn) {
+            editBtn.addEventListener('click', () => this.enterAdventurersEditMode());
         }
 
-        if (generatePartyBtn) {
-            generatePartyBtn.addEventListener('click', () => this.generatePartyDescription());
+        if (generateWizardBtn) {
+            generateWizardBtn.addEventListener('click', () => this.generateAdventurersWizard());
+        }
+
+        if (cancelEditBtn) {
+            cancelEditBtn.addEventListener('click', () => this.exitAdventurersEditMode());
+        }
+
+        if (saveEditBtn) {
+            saveEditBtn.addEventListener('click', () => this.saveAdventurersDescription());
         }
     }
 
     updatePartyContent() {
-        const textarea = document.getElementById('party-description-textarea');
+        const readContent = document.getElementById('adventurers-content');
+        if (readContent) {
+            if (this.partyDescription) {
+                readContent.innerHTML = this.markdownToHtml(this.partyDescription);
+            } else {
+                readContent.innerHTML = '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
+            }
+        }
+    }
+
+    enterAdventurersEditMode() {
+        const readMode = document.getElementById('adventurers-read-mode');
+        const editMode = document.getElementById('adventurers-edit-mode');
+        const textarea = document.getElementById('adventurers-group');
+
+        if (readMode) readMode.classList.add('hidden');
+        if (editMode) editMode.classList.remove('hidden');
         if (textarea) {
             textarea.value = this.partyDescription;
+            textarea.focus();
+        }
+    }
+
+    exitAdventurersEditMode() {
+        const readMode = document.getElementById('adventurers-read-mode');
+        const editMode = document.getElementById('adventurers-edit-mode');
+
+        if (readMode) readMode.classList.remove('hidden');
+        if (editMode) editMode.classList.add('hidden');
+    }
+
+    saveAdventurersDescription() {
+        const textarea = document.getElementById('adventurers-group');
+        if (textarea) {
+            this.partyDescription = textarea.value;
+            this.saveDescriptions();
+            this.updatePartyContent();
+            this.exitAdventurersEditMode();
         }
     }
 
@@ -497,9 +550,32 @@ class SettingsManager {
         }
     }
 
+    async generateAdventurersWizard() {
+        const generateBtn = document.getElementById('generate-adventurers-wizard');
+
+        if (!this.geminiManager.isAvailable()) {
+            alert('API Gemini non disponible pour la génération automatique.');
+            return;
+        }
+
+        const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu). 
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
+
+        try {
+            const description = await this.geminiManager.generateContent(prompt, generateBtn, 'adventurers');
+            this.partyDescription = description;
+            this.saveDescriptions();
+            this.updatePartyContent();
+        } catch (error) {
+            console.error('Erreur génération aventuriers:', error);
+            alert('Erreur lors de la génération: ' + error.message);
+        }
+    }
+
     async generateQuestDescription() {
         const generateBtn = document.getElementById('generate-quest-description-btn');
-        const textarea = document.getElementById('quest-description-textarea');
+        const textarea = document.getElementById('adventurers-quest');
 
         if (!this.geminiManager.isAvailable()) {
             alert('API Gemini non disponible pour la génération automatique.');
@@ -521,6 +597,74 @@ class SettingsManager {
             console.error('Erreur génération description quête:', error);
             alert('Erreur lors de la génération: ' + error.message);
         }
+    }
+
+    setupQuestListeners() {
+        const editBtn = document.getElementById('edit-quest-btn');
+        const cancelEditBtn = document.getElementById('cancel-quest-edit');
+        const saveEditBtn = document.getElementById('save-quest-edit');
+
+        if (editBtn) {
+            editBtn.addEventListener('click', () => this.enterQuestEditMode());
+        }
+
+        if (cancelEditBtn) {
+            cancelEditBtn.addEventListener('click', () => this.exitQuestEditMode());
+        }
+
+        if (saveEditBtn) {
+            saveEditBtn.addEventListener('click', () => this.saveQuestDescription());
+        }
+    }
+
+    updateQuestContent() {
+        const readContent = document.getElementById('quest-content');
+        if (readContent) {
+            if (this.questDescription) {
+                readContent.innerHTML = this.markdownToHtml(this.questDescription);
+            } else {
+                readContent.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
+            }
+        }
+    }
+
+    enterQuestEditMode() {
+        const readMode = document.getElementById('quest-read-mode');
+        const editMode = document.getElementById('quest-edit-mode');
+        const textarea = document.getElementById('adventurers-quest');
+
+        if (readMode) readMode.classList.add('hidden');
+        if (editMode) editMode.classList.remove('hidden');
+        if (textarea) {
+            textarea.value = this.questDescription;
+            textarea.focus();
+        }
+    }
+
+    exitQuestEditMode() {
+        const readMode = document.getElementById('quest-read-mode');
+        const editMode = document.getElementById('quest-edit-mode');
+
+        if (readMode) readMode.classList.remove('hidden');
+        if (editMode) editMode.classList.add('hidden');
+    }
+
+    saveQuestDescription() {
+        const textarea = document.getElementById('adventurers-quest');
+        if (textarea) {
+            this.questDescription = textarea.value;
+            this.saveDescriptions();
+            this.updateQuestContent();
+            this.exitQuestEditMode();
+        }
+    }
+
+    markdownToHtml(markdown) {
+        if (window.marked) {
+            return window.marked.parse(markdown);
+        }
+        // Fallback simple si marked.js n'est pas disponible
+        return markdown.replace(/\n/g, '<br>');
     }
 
     // === STYLES DE NARRATION ===
