@@ -210,7 +210,8 @@ function renderLocations() {
 
         marker.addEventListener('click', (e) => {
             // Éviter d'ouvrir l'info-box si on vient de faire un drag
-            if (!hasDraggedLocation) {
+            const isDragging = marker.dataset.dragging === 'true';
+            if (!hasDraggedLocation && !isDragging && totalDragDistance <= dragThreshold) {
                 e.stopPropagation();
                 infoBoxManager.showInfoBox(e, location, 'location');
             }
@@ -419,7 +420,9 @@ let isDraggingLocation = false;
 let draggedLocationMarker = null;
 let dragStartX = 0;
 let dragStartY = 0;
-let hasDraggedLocation = false; // Nouveau flag pour détecter si on a vraiment bougé
+let hasDraggedLocation = false; // Flag pour détecter si on a vraiment bougé
+let dragThreshold = 5; // Seuil en pixels pour considérer qu'il y a eu un drag
+let totalDragDistance = 0; // Distance totale de déplacement
 
 // --- Variables d'état pour le tracé de régions ---
 let isRegionDrawingMode = false;
@@ -1330,6 +1333,7 @@ function handleLocationDragStart(e, marker, location) {
 
     isDraggingLocation = true;
     hasDraggedLocation = false; // Reset du flag
+    totalDragDistance = 0; // Reset de la distance totale
     draggedLocationMarker = marker;
     dragStartX = e.clientX;
     dragStartY = e.clientY;
@@ -1337,6 +1341,9 @@ function handleLocationDragStart(e, marker, location) {
     // Changer le curseur
     viewport.style.cursor = 'move';
     marker.style.cursor = 'move';
+    
+    // Marquer le marqueur comme étant en cours de déplacement
+    marker.dataset.dragging = 'true';
 
     console.log(`🎯 Starting drag for location: ${location.name}`);
 }
@@ -1349,9 +1356,12 @@ function handleLocationDrag(e) {
     const deltaX = e.clientX - dragStartX;
     const deltaY = e.clientY - dragStartY;
 
-    // Détecter si on a bougé de plus de 3 pixels (seuil de tolérance)
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    if (distance > 3) {
+    // Calculer la distance de ce mouvement
+    const movementDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    totalDragDistance += movementDistance;
+
+    // Détecter si on a bougé au-delà du seuil
+    if (totalDragDistance > dragThreshold) {
         hasDraggedLocation = true;
     }
 
@@ -1383,10 +1393,10 @@ function handleLocationDrag(e) {
 function handleLocationDragEnd(e) {
     if (!isDraggingLocation || !draggedLocationMarker) return;
 
-    console.log("🎯 Ending location drag");
+    console.log(`🎯 Ending location drag - Distance: ${totalDragDistance.toFixed(1)}px, Has dragged: ${hasDraggedLocation}`);
 
     // Seulement sauvegarder si on a vraiment bougé
-    if (hasDraggedLocation) {
+    if (hasDraggedLocation && totalDragDistance > dragThreshold) {
         // Trouver le lieu correspondant et mettre à jour ses coordonnées
         const locationId = draggedLocationMarker.dataset.id;
         const location = locationsData.locations.find(loc => loc.id == locationId);
@@ -1412,12 +1422,18 @@ function handleLocationDragEnd(e) {
         }
     }
 
+    // Nettoyer les attributs de drag
+    if (draggedLocationMarker) {
+        draggedLocationMarker.style.cursor = 'pointer';
+        delete draggedLocationMarker.dataset.dragging;
+    }
+
     // Réinitialiser l'état
     isDraggingLocation = false;
-    draggedLocationMarker.style.cursor = 'pointer';
     draggedLocationMarker = null;
     viewport.style.cursor = 'grab';
-    hasDraggedLocation = false; // Reset du flag
+    hasDraggedLocation = false;
+    totalDragDistance = 0;
 }
 
 // --- Fonctions utilitaires pour la compatibilité ---
