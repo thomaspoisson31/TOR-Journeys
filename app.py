@@ -9,6 +9,10 @@ import os
 from datetime import datetime
 import secrets
 import requests
+import uuid
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import FileStorage
+import mimetypes
 
 app = Flask(__name__)
 
@@ -29,6 +33,10 @@ GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 
 # Configuration Google Gemini API
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
+
+# Configuration pour l'upload d'images
+ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 
 # Configuration OAuth pour Replit
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Permet OAuth en développement
@@ -143,6 +151,22 @@ def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
+def allowed_file(filename):
+    """Vérifier si le fichier a une extension autorisée"""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
+
+def get_file_extension(filename):
+    """Obtenir l'extension du fichier"""
+    return filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
+
+def generate_unique_filename(original_filename, category='general'):
+    """Générer un nom de fichier unique"""
+    ext = get_file_extension(original_filename)
+    unique_id = str(uuid.uuid4())
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    return f"{category}/{timestamp}_{unique_id}.{ext}"
 
 def get_or_create_user(google_id, name=None, email=None):
     """Obtenir ou créer un utilisateur basé sur l'ID Google"""
@@ -861,6 +885,81 @@ def test_gemini_api():
         
     except Exception as e:
         return jsonify({'error': str(e), 'error_type': type(e).__name__}), 500
+
+@app.route('/api/upload/image', methods=['POST'])
+def upload_image():
+    """Upload d'une image vers Replit Object Storage"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    try:
+        # Vérifier qu'un fichier a été envoyé
+        if 'file' not in request.files:
+            return jsonify({'error': 'Aucun fichier fourni'}), 400
+
+        file = request.files['file']
+        
+        # Vérifier qu'un fichier a été sélectionné
+        if file.filename == '':
+            return jsonify({'error': 'Aucun fichier sélectionné'}), 400
+
+        # Vérifier l'extension du fichier
+        if not allowed_file(file.filename):
+            return jsonify({
+                'error': f'Type de fichier non autorisé. Extensions autorisées: {", ".join(ALLOWED_IMAGE_EXTENSIONS)}'
+            }), 400
+
+        # Vérifier la taille du fichier
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)
+        
+        if file_size > MAX_FILE_SIZE:
+            return jsonify({
+                'error': f'Fichier trop volumineux. Taille maximale: {MAX_FILE_SIZE // (1024*1024)}MB'
+            }), 400
+
+        # Obtenir la catégorie depuis les paramètres
+        category = request.form.get('category', 'general')
+        if category not in ['locations', 'regions', 'general']:
+            category = 'general'
+
+        # Générer un nom de fichier unique
+        filename = generate_unique_filename(file.filename, category)
+        
+        # Pour Replit Object Storage, nous utiliserons d'abord le stockage local
+        # puis nous pourrons migrer vers Object Storage
+        upload_dir = f'uploads/{category}'
+        os.makedirs(upload_dir, exist_ok=True)
+        
+        file_path = os.path.join(upload_dir, os.path.basename(filename))
+        file.save(file_path)
+
+        # Générer l'URL publique
+        public_url = f'/uploads/{category}/{os.path.basename(filename)}'
+
+        # Log de l'upload
+        print(f"📸 Image uploadée: {filename} par user {session['user_id']}")
+
+        return jsonify({
+            'success': True,
+            'url': public_url,
+            'filename': os.path.basename(filename),
+            'size': file_size,
+            'message': 'Image uploadée avec succès'
+        })
+
+    except Exception as e:
+        print(f"❌ Erreur lors de l'upload: {e}")
+        return jsonify({
+            'error': f'Erreur serveur: {str(e)}'
+        }), 500
+
+@app.route('/uploads/<category>/<filename>')
+def serve_uploaded_file(category, filename):
+    """Servir les fichiers uploadés"""
+    upload_dir = f'uploads/{category}'
+    return send_from_directory(upload_dir, filename)
 
 @app.route('/auth/verify-config')
 def verify_oauth_config():
