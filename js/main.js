@@ -216,6 +216,13 @@ function renderLocations() {
             }
         });
 
+        // Ajouter l'événement de clic droit pour changer la couleur
+        marker.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            showColorChangeModal(e, location, 'location');
+        });
+
         // Ajouter à la couche des lieux
         locationsLayer.appendChild(marker);
         renderedCount++;
@@ -301,6 +308,13 @@ function renderRegions() {
         polygon.addEventListener('click', (e) => {
             e.stopPropagation();
             infoBoxManager.showInfoBox(e, region, 'region');
+        });
+
+        // Ajouter l'événement de clic droit pour changer la couleur
+        polygon.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            showColorChangeModal(e, region, 'region');
         });
 
         // Ajouter à la couche des régions
@@ -425,6 +439,11 @@ let hasDraggedLocation = false; // Flag pour détecter si un drag a eu lieu
 let isRegionDrawingMode = false;
 let regionPoints = [];
 let tempRegionPolygon = null;
+
+// --- Variables d'état pour le changement de couleur ---
+let isColorChangeModalOpen = false;
+let currentColorChangeTarget = null;
+let currentColorChangeType = null; // 'location' ou 'region'
 
 // --- Fonctions de navigation de la carte ---
 function updateMapTransform() {
@@ -642,6 +661,12 @@ function setupInfoBoxListeners() {
         if (isRegionDrawingMode && regionPoints.length >= 3) {
             e.preventDefault();
             finishRegionDrawing();
+        } else if (!isRegionDrawingMode && !isLocationAddingMode) {
+            // Fermer la modale de changement de couleur si ouverte
+            if (isColorChangeModalOpen) {
+                e.preventDefault();
+                hideColorChangeModal();
+            }
         }
     });
 
@@ -970,6 +995,9 @@ function setupLocationAdding() {
 
     // Setup des sélecteurs de couleur pour les lieux
     setupLocationColorPicker();
+
+    // Setup de la modale de changement de couleur
+    setupColorChangeModal();
 
     console.log("✅ Location adding setup complete");
 }
@@ -1304,6 +1332,186 @@ function setupLocationColorPicker() {
             e.target.classList.add('selected');
         }
     });
+}
+
+// --- Fonctions de la modale de changement de couleur ---
+function setupColorChangeModal() {
+    console.log("🎨 Setting up color change modal...");
+
+    const cancelBtn = document.getElementById('cancel-color-change');
+    const confirmBtn = document.getElementById('confirm-color-change');
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', hideColorChangeModal);
+    }
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', confirmColorChange);
+    }
+
+    // Créer les couleurs disponibles
+    setupColorChangeColorPicker();
+
+    // Fermer la modale en cliquant ailleurs
+    document.addEventListener('click', (e) => {
+        if (isColorChangeModalOpen && !document.getElementById('color-change-modal').contains(e.target)) {
+            hideColorChangeModal();
+        }
+    });
+
+    console.log("✅ Color change modal setup complete");
+}
+
+function setupColorChangeColorPicker() {
+    const colorPicker = document.getElementById('color-change-picker');
+    if (!colorPicker) return;
+
+    // Couleurs communes pour lieux et régions
+    const colors = ['blue', 'red', 'green', 'violet', 'orange', 'black'];
+
+    colorPicker.innerHTML = '';
+
+    colors.forEach(color => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.dataset.color = color;
+        swatch.style.backgroundColor = getLocationColorForSwatch(color);
+        
+        swatch.addEventListener('click', () => {
+            // Désélectionner tous les échantillons
+            colorPicker.querySelectorAll('.color-swatch').forEach(s => {
+                s.classList.remove('selected');
+            });
+            // Sélectionner l'échantillon cliqué
+            swatch.classList.add('selected');
+        });
+
+        colorPicker.appendChild(swatch);
+    });
+}
+
+function getLocationColorForSwatch(color) {
+    const colorMap = {
+        blue: '#3B82F6',
+        red: '#EF4444',
+        green: '#10B981',
+        violet: '#8B5CF6',
+        orange: '#F97316',
+        black: '#1F2937'
+    };
+    return colorMap[color] || colorMap.blue;
+}
+
+function showColorChangeModal(event, target, type) {
+    console.log(`🎨 Showing color change modal for ${type}:`, target.name);
+
+    const modal = document.getElementById('color-change-modal');
+    const title = document.getElementById('color-change-title');
+    const colorPicker = document.getElementById('color-change-picker');
+
+    if (!modal || !title || !colorPicker) return;
+
+    // Stocker les informations de l'élément cible
+    currentColorChangeTarget = target;
+    currentColorChangeType = type;
+
+    // Mettre à jour le titre
+    title.textContent = `Changer la couleur de "${target.name}"`;
+
+    // Sélectionner la couleur actuelle
+    colorPicker.querySelectorAll('.color-swatch').forEach(swatch => {
+        swatch.classList.remove('selected');
+        if (swatch.dataset.color === target.color) {
+            swatch.classList.add('selected');
+        }
+    });
+
+    // Positionner la modale à droite du clic
+    const rect = viewport.getBoundingClientRect();
+    const modalWidth = 280; // largeur approximative de la modale
+    const modalHeight = 160; // hauteur approximative de la modale
+
+    let left = event.clientX + 10; // 10px à droite du curseur
+    let top = event.clientY - modalHeight / 2; // centré verticalement sur le curseur
+
+    // Vérifier les limites de l'écran
+    if (left + modalWidth > window.innerWidth) {
+        left = event.clientX - modalWidth - 10; // à gauche si pas assez de place à droite
+    }
+    if (top < 0) {
+        top = 10;
+    }
+    if (top + modalHeight > window.innerHeight) {
+        top = window.innerHeight - modalHeight - 10;
+    }
+
+    modal.style.left = `${left}px`;
+    modal.style.top = `${top}px`;
+    modal.classList.remove('hidden');
+
+    isColorChangeModalOpen = true;
+}
+
+function hideColorChangeModal() {
+    console.log("🎨 Hiding color change modal");
+
+    const modal = document.getElementById('color-change-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+
+    isColorChangeModalOpen = false;
+    currentColorChangeTarget = null;
+    currentColorChangeType = null;
+}
+
+function confirmColorChange() {
+    const selectedSwatch = document.querySelector('#color-change-picker .color-swatch.selected');
+    
+    if (!selectedSwatch || !currentColorChangeTarget || !currentColorChangeType) {
+        console.warn("⚠️ No color selected or no target");
+        return;
+    }
+
+    const newColor = selectedSwatch.dataset.color;
+    const oldColor = currentColorChangeTarget.color;
+
+    if (newColor === oldColor) {
+        console.log("🎨 No color change needed");
+        hideColorChangeModal();
+        return;
+    }
+
+    console.log(`🎨 Changing color from ${oldColor} to ${newColor} for ${currentColorChangeType}: ${currentColorChangeTarget.name}`);
+
+    // Appliquer le changement de couleur
+    currentColorChangeTarget.color = newColor;
+
+    if (currentColorChangeType === 'location') {
+        // Sauvegarder les lieux
+        if (dataManager) {
+            dataManager.saveLocationsToLocal();
+        }
+        // Re-render les lieux
+        renderLocations();
+    } else if (currentColorChangeType === 'region') {
+        // Sauvegarder les régions
+        if (dataManager) {
+            dataManager.saveRegionsToLocal();
+        }
+        // Re-render les régions
+        renderRegions();
+    }
+
+    // Programmer la synchronisation
+    if (typeof scheduleAutoSync === 'function') {
+        scheduleAutoSync();
+    }
+
+    // Fermer la modale
+    hideColorChangeModal();
+
+    console.log(`✅ Color changed successfully for ${currentColorChangeTarget.name}`);
 }
 
 // --- Configuration des événements de dessin ---

@@ -274,6 +274,22 @@
             </div>
         </div>
 
+        <!-- Color Change Modal -->
+        <div id="color-change-modal" class="hidden absolute z-50 bg-gray-900 bg-opacity-95 border border-gray-700 rounded-lg p-4 shadow-xl">
+            <div class="mb-3">
+                <h4 class="text-sm font-semibold text-white" id="color-change-title">Changer la couleur</h4>
+            </div>
+            <div class="mb-4">
+                <div id="color-change-picker" class="grid grid-cols-6 gap-2">
+                    <!-- Les couleurs seront générées par JavaScript -->
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button id="cancel-color-change" class="px-3 py-1 bg-gray-600 hover:bg-gray-700 rounded text-sm text-white">Annuler</button>
+                <button id="confirm-color-change" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm text-white">Valider</button>
+            </div>
+        </div>
+
         <!-- Add/Edit Map Modal -->
         <div id="map-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
             <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-md mx-4 max-h-[90vh] overflow-y-auto">

@@ -933,3 +933,44 @@ body {
     color: white;
     font-size: 14px;
 }
+
+/* Color Change Modal styles */
+#color-change-modal {
+    min-width: 240px;
+    max-width: 280px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+#color-change-picker .color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+#color-change-picker .color-swatch:hover {
+    transform: scale(1.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+#color-change-picker .color-swatch.selected {
+    border-color: white;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+    transform: scale(1.1);
+}
+
+#color-change-picker .color-swatch.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
