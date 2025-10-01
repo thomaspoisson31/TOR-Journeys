@@ -738,10 +738,16 @@ class InfoBoxManager {
                 
                 if (regionIndex !== -1) {
                     this.dataManager.regionsData.regions.splice(regionIndex, 1);
+                    
+                    // Mettre à jour les données globales
+                    window.regionsData = this.dataManager.regionsData;
+                    
                     this.dataManager.saveRegionsToLocal();
                     
-                    // Re-render les régions
-                    if (typeof renderRegions === 'function') {
+                    // Re-render les régions avec la fonction globale
+                    if (typeof window.renderRegions === 'function') {
+                        window.renderRegions();
+                    } else if (typeof renderRegions === 'function') {
                         renderRegions();
                     }
                     
@@ -755,10 +761,16 @@ class InfoBoxManager {
                 
                 if (locationIndex !== -1) {
                     this.dataManager.locationsData.locations.splice(locationIndex, 1);
+                    
+                    // Mettre à jour les données globales
+                    window.locationsData = this.dataManager.locationsData;
+                    
                     this.dataManager.saveLocationsToLocal();
                     
-                    // Re-render les lieux
-                    if (typeof renderLocations === 'function') {
+                    // Re-render les lieux avec la fonction globale
+                    if (typeof window.renderLocations === 'function') {
+                        window.renderLocations();
+                    } else if (typeof renderLocations === 'function') {
                         renderLocations();
                     }
                     

@@ -243,18 +243,21 @@ function renderRegions() {
     regionsData.regions.forEach(region => {
         console.log(`🔍 Processing region: ${region.name}`, region);
 
-        if (!region.coordinates || !Array.isArray(region.coordinates) || region.coordinates.length === 0) {
-            console.warn(`⚠️ Region ${region.name} has invalid coordinates:`, region.coordinates);
+        // Gérer les deux formats de coordonnées : 'coordinates' et 'points'
+        let coords = region.coordinates || region.points;
+
+        if (!coords || !Array.isArray(coords) || coords.length === 0) {
+            console.warn(`⚠️ Region ${region.name} has invalid coordinates:`, coords);
             return;
         }
 
         // Vérifier que chaque coordonnée a x et y
-        const validCoords = region.coordinates.every(coord => 
+        const validCoords = coords.every(coord => 
             coord && typeof coord.x === 'number' && typeof coord.y === 'number'
         );
 
         if (!validCoords) {
-            console.warn(`⚠️ Region ${region.name} has invalid coordinate format:`, region.coordinates);
+            console.warn(`⚠️ Region ${region.name} has invalid coordinate format:`, coords);
             return;
         }
 
@@ -272,8 +275,8 @@ function renderRegions() {
         polygon.setAttribute('stroke-opacity', '1');
         polygon.setAttribute('stroke-width', '3');
 
-        // Créer les points du polygone
-        const points = region.coordinates.map(coord => `${coord.x},${coord.y}`).join(' ');
+        // Créer les points du polygone en utilisant les coordonnées appropriées
+        const points = coords.map(coord => `${coord.x},${coord.y}`).join(' ');
         polygon.setAttribute('points', points);
 
         // Ajouter le titre pour le hover
@@ -295,11 +298,15 @@ function renderRegions() {
         regionsLayer.appendChild(polygon);
         renderedCount++;
 
-        console.log(`✅ Rendered region: ${region.name} with ${region.coordinates.length} points`);
+        console.log(`✅ Rendered region: ${region.name} with ${coords.length} points`);
     });
 
     console.log(`✅ Rendered ${renderedCount} region polygons`);
 }
+
+// Exposer les fonctions de rendu globalement
+window.renderLocations = renderLocations;
+window.renderRegions = renderRegions;
 
 // --- Initialisation carte simplifiée ---
 function initializeMap() {
@@ -616,7 +623,7 @@ function setupInfoBoxListeners() {
     // Clic sur la date du jour pour ouvrir les paramètres
     const calendarDateIndicator = document.getElementById('calendar-date-indicator');
     const seasonIndicator = document.getElementById('season-indicator');
-    
+
     if (calendarDateIndicator) {
         calendarDateIndicator.addEventListener('click', () => {
             if (settingsManager) {
@@ -625,7 +632,7 @@ function setupInfoBoxListeners() {
             }
         });
     }
-    
+
     if (seasonIndicator) {
         seasonIndicator.addEventListener('click', () => {
             if (settingsManager) {
@@ -1329,7 +1336,7 @@ window.highlightDiscoveryOnMap = function(discoveryName, discoveryType, highligh
             }
         }
     } else if (discoveryType === 'region') {
-        const regionElement = document.querySelector(`[data-region-name="${discoveryName}"]`);
+        const regionElement = document.querySelector(`[data-name="${discoveryName}"]`); // Changed to data-name to match polygon attribute
         if (regionElement) {
             if (highlight) {
                 regionElement.style.stroke = '#3b82f6';
@@ -1340,9 +1347,11 @@ window.highlightDiscoveryOnMap = function(discoveryName, discoveryType, highligh
                 const region = regionsData.regions.find(r => r.name === discoveryName);
                 if (region) {
                     const color = regionColorMap[region.color] || regionColorMap['gray'];
-                    regionElement.style.stroke = color;
-                    regionElement.style.strokeWidth = '3'; // Use the original stroke width
-                    regionElement.style.fill = color;
+                    const fillColor = regionColorMap[region.color] || regionColorMap.gray;
+                    const strokeColor = fillColor.replace(/0\.\d+\)$/, '0.8)'); // Bordure plus opaque
+                    regionElement.style.stroke = strokeColor;
+                    regionElement.style.strokeWidth = '3';
+                    regionElement.style.fill = fillColor;
                 }
             }
         }
