@@ -37,6 +37,12 @@ class InfoBoxManager {
             editBtn.addEventListener('click', () => this.enterEditMode());
         }
 
+        // Bouton supprimer (icône poubelle)
+        const deleteBtn = document.getElementById('info-box-delete');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => this.deleteItem());
+        }
+
         // Gestion des onglets
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
@@ -174,6 +180,16 @@ class InfoBoxManager {
         if (infoBoxTitle) {
             infoBoxTitle.textContent = this.currentItem.name;
             infoBoxTitle.classList.add('hidden');
+        }
+
+        // Afficher/masquer le bouton supprimer selon le mode
+        const deleteBtn = document.getElementById('info-box-delete');
+        if (deleteBtn) {
+            if (this.isEditMode) {
+                deleteBtn.classList.add('hidden');
+            } else {
+                deleteBtn.classList.remove('hidden');
+            }
         }
 
         if (this.isEditMode) {
@@ -700,6 +716,67 @@ class InfoBoxManager {
             const generateBtn = event.target;
             generateBtn.disabled = false;
             generateBtn.innerHTML = '<i class="fas fa-magic mr-1"></i>Générer avec IA';
+        }
+    }
+
+    deleteItem() {
+        if (!this.currentItem) return;
+
+        const itemType = this.currentType === 'region' ? 'région' : 'lieu';
+        const confirmed = confirm(`Êtes-vous sûr de vouloir supprimer ${this.currentType === 'region' ? 'cette' : 'ce'} ${itemType} "${this.currentItem.name}" ?\n\nCette action est irréversible.`);
+        
+        if (!confirmed) return;
+
+        console.log(`🗑️ Deleting ${itemType}:`, this.currentItem.name);
+
+        try {
+            if (this.currentType === 'region') {
+                // Supprimer de la liste des régions
+                const regionIndex = this.dataManager.regionsData.regions.findIndex(
+                    region => region.id === this.currentItem.id
+                );
+                
+                if (regionIndex !== -1) {
+                    this.dataManager.regionsData.regions.splice(regionIndex, 1);
+                    this.dataManager.saveRegionsToLocal();
+                    
+                    // Re-render les régions
+                    if (typeof renderRegions === 'function') {
+                        renderRegions();
+                    }
+                    
+                    console.log("✅ Region deleted successfully");
+                }
+            } else {
+                // Supprimer de la liste des lieux
+                const locationIndex = this.dataManager.locationsData.locations.findIndex(
+                    location => location.id === this.currentItem.id
+                );
+                
+                if (locationIndex !== -1) {
+                    this.dataManager.locationsData.locations.splice(locationIndex, 1);
+                    this.dataManager.saveLocationsToLocal();
+                    
+                    // Re-render les lieux
+                    if (typeof renderLocations === 'function') {
+                        renderLocations();
+                    }
+                    
+                    console.log("✅ Location deleted successfully");
+                }
+            }
+
+            // Programmer la synchronisation
+            if (typeof scheduleAutoSync === 'function') {
+                scheduleAutoSync();
+            }
+
+            // Fermer l'info-box
+            this.hideInfoBox();
+
+        } catch (error) {
+            console.error("❌ Error deleting item:", error);
+            alert(`Erreur lors de la suppression : ${error.message}`);
         }
     }
 }
