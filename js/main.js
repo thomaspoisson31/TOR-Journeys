@@ -278,7 +278,7 @@ function initializeMap() {
     MAP_HEIGHT = mapImage.naturalHeight;
     mapContainer.style.width = `${MAP_WIDTH}px`;
     mapContainer.style.height = `${MAP_HEIGHT}px`;
-    
+
     // Mettre à jour les constantes du PathManager avec les vraies dimensions
     if (pathManager) {
         pathManager.mapConstants.MAP_WIDTH = MAP_WIDTH;
@@ -1075,6 +1075,7 @@ function setupLocationAdding() {
     const cancelBtn = document.getElementById('cancel-add-location');
     const confirmBtn = document.getElementById('confirm-add-location');
     const generateDescBtn = document.getElementById('generate-add-desc');
+    const generateEditDescBtn = document.getElementById('generate-edit-desc'); // Bouton pour la modale d'édition
 
     if (addLocationBtn) {
         addLocationBtn.addEventListener('click', toggleLocationAddingMode);
@@ -1092,6 +1093,13 @@ function setupLocationAdding() {
         generateDescBtn.addEventListener('click', handleGenerateLocationDescription);
         console.log("✅ Generate description button configured");
     }
+
+    // Ajout de l'écouteur pour le bouton de génération de description dans la modale d'édition
+    if (generateEditDescBtn) {
+        generateEditDescBtn.addEventListener('click', handleGenerateDescription); // Utilise la même fonction
+        console.log("✅ Generate edit description button configured");
+    }
+
 
     // Setup des sélecteurs de couleur pour les lieux
     setupLocationColorPicker();
@@ -1283,56 +1291,74 @@ function confirmLocationCreation() {
     console.log("✅ Location created successfully:", locationName);
 }
 
-// --- Fonction de génération de description Gemini pour les lieux ---
+// --- Fonctions de génération de description Gemini ---
+
+// Fonction générique pour générer du texte via Gemini
+async function callGemini(prompt, type = 'description') {
+    console.log(`🤖 Calling Gemini API for type: ${type} with prompt:`, prompt);
+    try {
+        const response = await fetch('/api/gemini/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt, type })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.content) {
+            console.log("✅ Gemini API call successful");
+            return data.content;
+        } else {
+            throw new Error(data.error || 'Réponse invalide de l\'API Gemini');
+        }
+    } catch (error) {
+        console.error(`❌ Error calling Gemini API (${type}):`, error);
+        throw error; // Propager l'erreur pour la gestion par l'appelant
+    }
+}
+
+// Fonction pour gérer la génération de description dans la modale d'ajout de lieu
 async function handleGenerateLocationDescription(event) {
     console.log("🤖 Generating location description...");
-    
+
     const button = event.currentTarget;
     const nameInput = document.getElementById('location-name-input');
     const descTextarea = document.getElementById('location-desc-input');
-    
+
+    // Vérifier si l'appel vient de la modale d'édition
+    const isEditing = button.id === 'generate-edit-desc';
+    const editDescTextarea = isEditing ? document.getElementById('edit-location-desc-input') : null;
+
     if (!nameInput || !nameInput.value.trim()) {
         alert("Veuillez d'abord entrer un nom pour le lieu.");
         return;
     }
 
     const locationName = nameInput.value.trim();
-    
+
     // Changer l'état du bouton
     const originalContent = button.innerHTML;
     button.disabled = true;
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    
+
     try {
         const prompt = `Rédige une courte description évocatrice pour un lieu de la Terre du Milieu nommé '${locationName}'. Décris son apparence, son ambiance et son histoire possible, dans le style de J.R.R. Tolkien. Sois concis et évocateur (2-3 phrases maximum).`;
-        
-        console.log("🤖 Sending request to Gemini API...");
-        
-        const response = await fetch('/api/gemini/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                prompt: prompt,
-                type: 'description'
-            })
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        const generatedDescription = await callGemini(prompt, 'location_description');
+
+        if (isEditing && editDescTextarea) {
+            editDescTextarea.value = generatedDescription;
+        } else if (descTextarea) {
+            descTextarea.value = generatedDescription;
         }
-        
-        const data = await response.json();
-        
-        if (data.success && data.content) {
-            descTextarea.value = data.content;
-            console.log("✅ Description generated successfully");
-        } else {
-            throw new Error(data.error || 'Réponse invalide de l\'API');
-        }
-        
+        console.log("✅ Description generated successfully");
+
     } catch (error) {
         console.error("❌ Error generating description:", error);
         alert(`Erreur lors de la génération : ${error.message}`);
@@ -1342,6 +1368,38 @@ async function handleGenerateLocationDescription(event) {
         button.innerHTML = originalContent;
     }
 }
+
+// Fonction pour générer la description d'un voyage dans le VoyageManager
+// Cette fonction sera appelée depuis VoyageManager.js
+async function generateTravelDescription(voyageData) {
+    console.log("🤖 Generating travel description...");
+
+    const { origin, destination, mode, distance, duration, details } = voyageData;
+
+    // Construire un prompt basé sur les données du voyage
+    let prompt = `Décris un voyage dans la Terre du Milieu :`;
+    if (origin) prompt += `\n- Point de départ : ${origin.name}`;
+    if (destination) prompt += `\n- Destination : ${destination.name}`;
+    if (mode) prompt += `\n- Mode de transport : ${mode}`;
+    if (distance) prompt += `\n- Distance : ${distance.toFixed(1)} km`;
+    if (duration) prompt += `\n- Durée estimée : ${duration}`;
+    if (details) prompt += `\n- Détails notables : ${details}`;
+
+    prompt += `\n\nSois descriptif, évocateur et dans le style de Tolkien. Raconte une courte anecdote ou une observation pertinente pour ce voyage. (environ 3-4 phrases)`;
+
+    console.log("Generated prompt for travel description:", prompt);
+
+    try {
+        const generatedDescription = await callGemini(prompt, 'travel_description');
+        console.log("✅ Travel description generated successfully");
+        return generatedDescription;
+    } catch (error) {
+        console.error("❌ Error generating travel description:", error);
+        // Retourner un message d'erreur ou une description par défaut
+        return `Impossible de générer la description du voyage. ${error.message}`;
+    }
+}
+
 
 function setupLocationColorPicker() {
     const colorPicker = document.getElementById('add-color-picker');
@@ -1444,7 +1502,7 @@ function setupDrawingEvents() {
             }
         });
     }
-    
+
     // Ajout des écouteurs pour le dessin de voyage
     if (voyageManager) {
         console.log("👂 Adding VoyageManager drawing listeners...");

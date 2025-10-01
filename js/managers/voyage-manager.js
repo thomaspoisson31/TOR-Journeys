@@ -1,4 +1,5 @@
 import { MAP_DISTANCE_MILES } from '../utils/constants.js';
+import GeminiManager from './gemini-manager.js';
 
 class VoyageManager {
     constructor(domElements, constants = {}) {
@@ -12,6 +13,9 @@ class VoyageManager {
         // Stocker les constantes passées en paramètre
         this.MAP_DISTANCE_MILES = constants.MAP_DISTANCE_MILES || MAP_DISTANCE_MILES;
         this.MAP_WIDTH = constants.MAP_WIDTH || window.MAP_WIDTH || 5103;
+        
+        // Initialiser le gestionnaire Gemini
+        this.geminiManager = new GeminiManager();
     }
 
     init() {
@@ -658,24 +662,25 @@ class VoyageManager {
             return;
         }
 
+        if (!this.geminiManager.isAvailable()) {
+            alert('La fonction de génération de texte n\'est pas disponible. Vérifiez la configuration de l\'API Gemini.');
+            return;
+        }
+
         // Collecter les données pour toutes les journées
         const allJourneyData = this.collectAllJourneyDataForPrompt();
 
         // Créer le prompt pour Gemini
         const prompt = this.createAllJourneyDescriptionPrompt(allJourneyData);
 
-        // Appeler Gemini via la fonction globale callGemini
+        // Appeler Gemini
         const button = this.dom.getElementById('describe-journey-btn');
-        if (typeof callGemini === 'function') {
-            try {
-                const response = await callGemini(prompt, button);
-                this.parseAndDisplayAllJourneyDescriptions(response);
-            } catch (error) {
-                console.error('Erreur lors de la génération de la description:', error);
-                alert('Erreur lors de la génération de la description de voyage.');
-            }
-        } else {
-            alert('La fonction de génération de texte n\'est pas disponible.');
+        try {
+            const response = await this.geminiManager.generateContent(prompt, button, 'journey');
+            this.parseAndDisplayAllJourneyDescriptions(response);
+        } catch (error) {
+            console.error('Erreur lors de la génération de la description:', error);
+            alert(`Erreur lors de la génération de la description de voyage: ${error.message}`);
         }
     }
 
