@@ -208,9 +208,9 @@ function renderLocations() {
             }
         });
 
-        marker.addEventListener('click', (e) => {
-            // Éviter d'ouvrir l'info-box si on vient de faire un drag
-            if (!isDraggingLocation) {
+        marker.addEventListener('mouseup', (e) => {
+            if (e.button === 0 && !hasDraggedLocation) {
+                // Seulement si aucun drag n'a eu lieu
                 e.stopPropagation();
                 infoBoxManager.showInfoBox(e, location, 'location');
             }
@@ -419,6 +419,7 @@ let isDraggingLocation = false;
 let draggedLocationMarker = null;
 let dragStartX = 0;
 let dragStartY = 0;
+let hasDraggedLocation = false; // Flag pour détecter si un drag a eu lieu
 
 // --- Variables d'état pour le tracé de régions ---
 let isRegionDrawingMode = false;
@@ -1327,7 +1328,9 @@ function handleLocationDragStart(e, marker, location) {
     e.stopPropagation();
     e.preventDefault();
 
+    // Initialiser les flags de drag selon la méthode du document
     isDraggingLocation = true;
+    hasDraggedLocation = false; // Reset du flag drag au mousedown
     draggedLocationMarker = marker;
     dragStartX = e.clientX;
     dragStartY = e.clientY;
@@ -1336,13 +1339,16 @@ function handleLocationDragStart(e, marker, location) {
     viewport.style.cursor = 'move';
     marker.style.cursor = 'move';
 
-    console.log(`🎯 Starting drag for location: ${location.name}`);
+    console.log(`🎯 Starting potential drag for location: ${location.name}`);
 }
 
 function handleLocationDrag(e) {
     if (!isDraggingLocation || !draggedLocationMarker) return;
 
     e.preventDefault();
+
+    // Marquer qu'un drag a eu lieu (selon la méthode du document)
+    hasDraggedLocation = true;
 
     const deltaX = e.clientX - dragStartX;
     const deltaY = e.clientY - dragStartY;
@@ -1375,43 +1381,45 @@ function handleLocationDrag(e) {
 function handleLocationDragEnd(e) {
     if (!isDraggingLocation || !draggedLocationMarker) return;
 
-    console.log("🎯 Ending location drag");
+    console.log(`🎯 Ending location interaction - ${hasDraggedLocation ? 'drag' : 'click'} detected`);
 
-    // Trouver le lieu correspondant et mettre à jour ses coordonnées
-    const locationId = draggedLocationMarker.dataset.id;
-    const location = locationsData.locations.find(loc => loc.id == locationId);
+    // Seulement sauvegarder si un vrai drag a eu lieu
+    if (hasDraggedLocation) {
+        // Trouver le lieu correspondant et mettre à jour ses coordonnées
+        const locationId = draggedLocationMarker.dataset.id;
+        const location = locationsData.locations.find(loc => loc.id == locationId);
 
-    if (location) {
-        const newX = parseFloat(draggedLocationMarker.style.left);
-        const newY = parseFloat(draggedLocationMarker.style.top);
+        if (location) {
+            const newX = parseFloat(draggedLocationMarker.style.left);
+            const newY = parseFloat(draggedLocationMarker.style.top);
 
-        location.coordinates.x = newX;
-        location.coordinates.y = newY;
+            location.coordinates.x = newX;
+            location.coordinates.y = newY;
 
-        console.log(`🎯 Updated location ${location.name} coordinates to (${newX.toFixed(1)}, ${newY.toFixed(1)})`);
+            console.log(`🎯 Updated location ${location.name} coordinates to (${newX.toFixed(1)}, ${newY.toFixed(1)})`);
 
-        // Sauvegarder les changements
-        if (dataManager) {
-            dataManager.saveLocationsToLocal();
-        }
+            // Sauvegarder les changements
+            if (dataManager) {
+                dataManager.saveLocationsToLocal();
+            }
 
-        // Programmer la synchronisation
-        if (typeof scheduleAutoSync === 'function') {
-            scheduleAutoSync();
+            // Programmer la synchronisation
+            if (typeof scheduleAutoSync === 'function') {
+                scheduleAutoSync();
+            }
         }
     }
 
     // Réinitialiser l'état
-    const wasDragging = isDraggingLocation;
     isDraggingLocation = false;
     draggedLocationMarker.style.cursor = 'pointer';
     draggedLocationMarker = null;
     viewport.style.cursor = 'grab';
 
-    // Délai plus long pour éviter que le clic se déclenche après le drag
+    // Reset du flag drag pour le prochain événement
     setTimeout(() => {
-        isDraggingLocation = false;
-    }, 300);
+        hasDraggedLocation = false;
+    }, 10); // Délai minimal pour permettre au mouseup de se déclencher
 }
 
 // --- Fonctions utilitaires pour la compatibilité ---
