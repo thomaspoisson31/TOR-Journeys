@@ -1,4 +1,6 @@
 
+import UploadManager from './upload-manager.js';
+
 /**
  * InfoBoxManager - Gestion des info-boxes avec édition
  */
