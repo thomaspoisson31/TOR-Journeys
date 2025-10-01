@@ -211,7 +211,10 @@ function renderLocations() {
         marker.addEventListener('click', (e) => {
             // Éviter d'ouvrir l'info-box si on vient de faire un drag
             const isDragging = marker.dataset.dragging === 'true';
-            if (!hasDraggedLocation && !isDragging && totalDragDistance <= dragThreshold) {
+            const timeSinceLastDrag = Date.now() - dragStartTime;
+            
+            // Plus strict : vérifier plusieurs conditions
+            if (!hasDraggedLocation && !isDragging && !isDraggingLocation && timeSinceLastDrag > 100) {
                 e.stopPropagation();
                 infoBoxManager.showInfoBox(e, location, 'location');
             }
@@ -421,8 +424,8 @@ let draggedLocationMarker = null;
 let dragStartX = 0;
 let dragStartY = 0;
 let hasDraggedLocation = false; // Flag pour détecter si on a vraiment bougé
-let dragThreshold = 5; // Seuil en pixels pour considérer qu'il y a eu un drag
-let totalDragDistance = 0; // Distance totale de déplacement
+let dragStartTime = 0; // Temps de début du drag
+let dragTimeThreshold = 150; // Seuil en ms pour considérer qu'il y a eu un drag
 
 // --- Variables d'état pour le tracé de régions ---
 let isRegionDrawingMode = false;
@@ -1333,7 +1336,7 @@ function handleLocationDragStart(e, marker, location) {
 
     isDraggingLocation = true;
     hasDraggedLocation = false; // Reset du flag
-    totalDragDistance = 0; // Reset de la distance totale
+    dragStartTime = Date.now(); // Enregistrer le temps de début
     draggedLocationMarker = marker;
     dragStartX = e.clientX;
     dragStartY = e.clientY;
@@ -1353,17 +1356,16 @@ function handleLocationDrag(e) {
 
     e.preventDefault();
 
-    const deltaX = e.clientX - dragStartX;
-    const deltaY = e.clientY - dragStartY;
-
-    // Calculer la distance de ce mouvement
-    const movementDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    totalDragDistance += movementDistance;
-
-    // Détecter si on a bougé au-delà du seuil
-    if (totalDragDistance > dragThreshold) {
+    // Détecter si on a bougé pendant assez longtemps pour considérer que c'est un drag
+    const currentTime = Date.now();
+    const dragDuration = currentTime - dragStartTime;
+    
+    if (dragDuration > dragTimeThreshold) {
         hasDraggedLocation = true;
     }
+
+    const deltaX = e.clientX - dragStartX;
+    const deltaY = e.clientY - dragStartY;
 
     // Convertir le delta en coordonnées de la carte
     const mapDeltaX = deltaX / scale;
@@ -1393,10 +1395,11 @@ function handleLocationDrag(e) {
 function handleLocationDragEnd(e) {
     if (!isDraggingLocation || !draggedLocationMarker) return;
 
-    console.log(`🎯 Ending location drag - Distance: ${totalDragDistance.toFixed(1)}px, Has dragged: ${hasDraggedLocation}`);
+    const dragDuration = Date.now() - dragStartTime;
+    console.log(`🎯 Ending location drag - Duration: ${dragDuration}ms, Has dragged: ${hasDraggedLocation}`);
 
-    // Seulement sauvegarder si on a vraiment bougé
-    if (hasDraggedLocation && totalDragDistance > dragThreshold) {
+    // Seulement sauvegarder si on a vraiment bougé (durée > seuil)
+    if (hasDraggedLocation && dragDuration > dragTimeThreshold) {
         // Trouver le lieu correspondant et mettre à jour ses coordonnées
         const locationId = draggedLocationMarker.dataset.id;
         const location = locationsData.locations.find(loc => loc.id == locationId);
@@ -1422,18 +1425,20 @@ function handleLocationDragEnd(e) {
         }
     }
 
-    // Nettoyer les attributs de drag
-    if (draggedLocationMarker) {
-        draggedLocationMarker.style.cursor = 'pointer';
-        delete draggedLocationMarker.dataset.dragging;
-    }
+    // Ajouter un délai avant de permettre les clics pour éviter l'ouverture immédiate
+    setTimeout(() => {
+        if (draggedLocationMarker) {
+            draggedLocationMarker.style.cursor = 'pointer';
+            delete draggedLocationMarker.dataset.dragging;
+        }
+    }, 50);
 
     // Réinitialiser l'état
     isDraggingLocation = false;
     draggedLocationMarker = null;
     viewport.style.cursor = 'grab';
     hasDraggedLocation = false;
-    totalDragDistance = 0;
+    dragStartTime = 0;
 }
 
 // --- Fonctions utilitaires pour la compatibilité ---
