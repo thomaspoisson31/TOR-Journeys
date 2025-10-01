@@ -319,13 +319,7 @@ class InfoBoxManager {
                             <i class="fas fa-magic mr-1"></i>Générer avec IA
                         </button>
                     </div>
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2">Couleur :</label>
-                        <div id="edit-color-picker" class="flex flex-wrap gap-2">
-                            ${this.renderColorPicker(item.color)}
-                        </div>
-                    </div>
-                    ${this.renderStatusCheckboxes()}
+                    
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
                             <i class="fas fa-save mr-1"></i>Sauvegarder
@@ -336,7 +330,7 @@ class InfoBoxManager {
                     </div>
                 </div>
             `;
-            this.setupColorPicker();
+            
         }
 
         // Onglet Rumeurs (mode édition)
@@ -409,49 +403,7 @@ class InfoBoxManager {
         `).join('');
     }
 
-    renderColorPicker(currentColor) {
-        const colors = ['blue', 'green', 'red', 'yellow', 'purple', 'orange', 'pink', 'gray'];
-        return colors.map(color => `
-            <div class="color-swatch w-6 h-6 rounded cursor-pointer border-2 ${currentColor === color ? 'border-white shadow-lg selected' : 'border-gray-300'}" 
-                 style="background-color: var(--color-${color})" 
-                 data-color="${color}"
-                 onclick="window.infoBoxManager.selectColor('${color}')">
-            </div>
-        `).join('');
-    }
-
-    renderStatusCheckboxes() {
-        const item = this.currentItem;
-        const type = this.currentType;
-
-        if (type === 'region') {
-            return `
-                <div class="mb-3">
-                    <label class="flex items-center">
-                        <input type="checkbox" id="edit-known" ${item.known ? 'checked' : ''} class="mr-2">
-                        Région connue
-                    </label>
-                    <label class="flex items-center mt-1">
-                        <input type="checkbox" id="edit-visited" ${item.visited ? 'checked' : ''} class="mr-2">
-                        Région visitée
-                    </label>
-                </div>
-            `;
-        } else {
-            return `
-                <div class="mb-3">
-                    <label class="flex items-center">
-                        <input type="checkbox" id="edit-known" ${item.known ? 'checked' : ''} class="mr-2">
-                        Lieu connu
-                    </label>
-                    <label class="flex items-center mt-1">
-                        <input type="checkbox" id="edit-visited" ${item.visited ? 'checked' : ''} class="mr-2">
-                        Lieu visité
-                    </label>
-                </div>
-            `;
-        }
-    }
+    
 
     createImageView(parent) {
         const imageView = document.createElement('div');
@@ -467,31 +419,7 @@ class InfoBoxManager {
         return textView;
     }
 
-    setupColorPicker() {
-        const colorPicker = document.getElementById('edit-color-picker');
-        if (colorPicker) {
-            colorPicker.addEventListener('click', (e) => {
-                if (e.target.classList.contains('color-swatch')) {
-                    this.selectColor(e.target.dataset.color);
-                }
-            });
-        }
-    }
-
-    selectColor(color) {
-        document.querySelectorAll('#edit-color-picker .color-swatch').forEach(swatch => {
-            swatch.classList.remove('selected');
-            swatch.classList.remove('border-white');
-            swatch.classList.add('border-gray-300');
-        });
-
-        const selectedSwatch = document.querySelector(`#edit-color-picker .color-swatch[data-color="${color}"]`);
-        if (selectedSwatch) {
-            selectedSwatch.classList.add('selected');
-            selectedSwatch.classList.add('border-white');
-            selectedSwatch.classList.remove('border-gray-300');
-        }
-    }
+    
 
     enterEditMode() {
         if (!this.currentItem) return;
@@ -520,9 +448,6 @@ class InfoBoxManager {
             const descField = document.getElementById('edit-description');
             const rumeursField = document.getElementById('edit-rumeurs');
             const traditionField = document.getElementById('edit-tradition');
-            const knownField = document.getElementById('edit-known');
-            const visitedField = document.getElementById('edit-visited');
-            const selectedColorSwatch = document.querySelector('#edit-color-picker .color-swatch.selected');
 
             // Valider les champs obligatoires
             if (nameField && !nameField.value.trim()) {
@@ -533,9 +458,6 @@ class InfoBoxManager {
             // Mettre à jour l'objet
             if (nameField) this.currentItem.name = nameField.value.trim();
             if (descField) this.currentItem.description = descField.value.trim();
-            if (selectedColorSwatch) this.currentItem.color = selectedColorSwatch.dataset.color;
-            if (knownField) this.currentItem.known = knownField.checked;
-            if (visitedField) this.currentItem.visited = visitedField.checked;
 
             // Gestion des rumeurs
             if (rumeursField) {
