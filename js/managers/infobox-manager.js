@@ -25,10 +25,10 @@ class InfoBoxManager {
             closeBtn.addEventListener('click', () => this.hideInfoBox());
         }
 
-        // Bouton étendre/réduire
+        // Bouton étendre/réduire - désactivé (toujours en mode étendu)
         const expandBtn = document.getElementById('info-box-expand');
         if (expandBtn) {
-            expandBtn.addEventListener('click', () => this.toggleExpand());
+            expandBtn.style.display = 'none'; // Masquer le bouton
         }
 
         // Bouton éditer (icône crayon)
@@ -76,14 +76,32 @@ class InfoBoxManager {
         this.isEditMode = false;
 
         this.updateInfoBoxContent();
-        this.positionInfoBox(event, type);
+        
+        // Toujours forcer le mode étendu
+        this.isExpanded = true;
+        infoBox.classList.add('expanded');
+        
+        // Mettre à jour l'icône d'expansion
+        const expandBtn = document.getElementById('info-box-expand');
+        if (expandBtn) {
+            expandBtn.className = 'fas fa-compress';
+            expandBtn.title = 'Vue compacte';
+        }
+        
+        // Afficher le titre et les contrôles
+        const infoBoxTitle = document.getElementById('info-box-title');
+        if (infoBoxTitle) {
+            infoBoxTitle.classList.remove('hidden');
+        }
+        
+        this.positionInfoBoxExpanded();
         
         infoBox.style.display = 'block';
         
         // S'assurer que l'onglet Image est actif par défaut
         this.switchTab('image');
 
-        console.log("✅ Info box displayed successfully");
+        console.log("✅ Info box displayed successfully in expanded mode");
     }
 
     hideInfoBox() {
@@ -99,26 +117,8 @@ class InfoBoxManager {
     }
 
     toggleExpand() {
-        const infoBox = document.getElementById('info-box');
-        const infoBoxTitle = document.getElementById('info-box-title');
-
-        if (!infoBox) return;
-
-        this.isExpanded = !this.isExpanded;
-
-        if (this.isExpanded) {
-            infoBox.classList.add('expanded');
-            if (infoBoxTitle) infoBoxTitle.classList.remove('hidden');
-
-            // Centrer l'info-box étendue
-            infoBox.style.left = '50%';
-            infoBox.style.top = '50%';
-            infoBox.style.transform = 'translate(-50%, -50%)';
-        } else {
-            infoBox.classList.remove('expanded');
-            if (infoBoxTitle) infoBoxTitle.classList.add('hidden');
-            infoBox.style.transform = 'none';
-        }
+        // Fonction désactivée - toujours en mode étendu
+        console.log("📋 Toggle expand disabled - always in expanded mode");
     }
 
     switchTab(tabName) {
@@ -138,33 +138,34 @@ class InfoBoxManager {
     }
 
     positionInfoBox(event, type) {
+        // Toujours utiliser le positionnement étendu
+        this.positionInfoBoxExpanded();
+    }
+
+    positionInfoBoxExpanded() {
         const infoBox = document.getElementById('info-box');
         const viewport = document.getElementById('viewport');
         
-        let x, y;
+        if (!infoBox || !viewport) return;
 
-        if (type === 'region') {
-            // Pour les régions, utiliser la position du clic
-            const viewportRect = viewport.getBoundingClientRect();
-            x = event.clientX - viewportRect.left;
-            y = event.clientY - viewportRect.top;
-        } else {
-            // Pour les lieux, utiliser la position du marqueur
-            const rect = event.currentTarget.getBoundingClientRect();
-            const viewportRect = viewport.getBoundingClientRect();
-            x = rect.left - viewportRect.left + rect.width / 2;
-            y = rect.top - viewportRect.top + rect.height / 2;
-        }
+        const viewportWidth = viewport.clientWidth;
+        const viewportHeight = viewport.clientHeight;
+        const margin = 20;
 
-        // Ajuster pour éviter de sortir de l'écran
-        const infoBoxWidth = 280;
-        const infoBoxHeight = 300;
+        // Utiliser 90% des dimensions du viewport
+        const desiredWidth = Math.floor(viewportWidth * 0.9);
+        const desiredHeight = Math.floor(viewportHeight * 0.9);
 
-        let finalX = Math.max(10, Math.min(x, viewport.clientWidth - infoBoxWidth - 10));
-        let finalY = Math.max(10, Math.min(y, viewport.clientHeight - infoBoxHeight - 10));
+        // Centrer l'info-box
+        const left = Math.floor((viewportWidth - desiredWidth) / 2);
+        const top = Math.floor((viewportHeight - desiredHeight) / 2);
 
-        infoBox.style.left = `${finalX}px`;
-        infoBox.style.top = `${finalY}px`;
+        infoBox.style.left = `${left}px`;
+        infoBox.style.top = `${top}px`;
+        infoBox.style.width = `${desiredWidth}px`;
+        infoBox.style.height = `${desiredHeight}px`;
+        infoBox.style.maxWidth = 'none';
+        infoBox.style.transform = 'none';
     }
 
     updateInfoBoxContent() {
@@ -499,10 +500,7 @@ class InfoBoxManager {
         this.isEditMode = true;
         this.updateInfoBoxContent();
         
-        // Forcer l'expansion si nécessaire
-        if (!this.isExpanded) {
-            this.toggleExpand();
-        }
+        // Déjà en mode étendu par défaut
     }
 
     exitEditMode() {

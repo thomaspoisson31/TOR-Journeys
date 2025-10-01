@@ -1402,15 +1402,16 @@ function handleLocationDragEnd(e) {
     }
 
     // Réinitialiser l'état
+    const wasDragging = isDraggingLocation;
     isDraggingLocation = false;
     draggedLocationMarker.style.cursor = 'pointer';
     draggedLocationMarker = null;
     viewport.style.cursor = 'grab';
 
-    // Petit délai pour éviter que le clic se déclenche immédiatement après le drag
+    // Délai plus long pour éviter que le clic se déclenche après le drag
     setTimeout(() => {
         isDraggingLocation = false;
-    }, 100);
+    }, 300);
 }
 
 // --- Fonctions utilitaires pour la compatibilité ---
