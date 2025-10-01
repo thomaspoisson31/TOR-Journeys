@@ -1116,6 +1116,7 @@ function cancelLocationCreation() {
     // Sortir du mode ajout
     exitLocationAddingMode();
     window.pendingLocationCoordinates = null;
+    window.pendingLocationImage = null; // Nettoyer l'image temporaire
 }
 
 function confirmLocationCreation() {
@@ -1386,7 +1387,7 @@ function setupColorChangeColorPicker() {
         swatch.className = 'color-swatch';
         swatch.dataset.color = color;
         swatch.style.backgroundColor = getLocationColorForSwatch(color);
-        
+
         swatch.addEventListener('click', () => {
             // Désélectionner tous les échantillons
             colorPicker.querySelectorAll('.color-swatch').forEach(s => {
@@ -1489,7 +1490,7 @@ function confirmColorChange() {
     const selectedSwatch = document.querySelector('#color-change-picker .color-swatch.selected');
     const visitedCheckbox = document.getElementById('color-change-visited');
     const knownCheckbox = document.getElementById('color-change-known');
-    
+
     if (!selectedSwatch || !currentColorChangeTarget || !currentColorChangeType) {
         console.warn("⚠️ No color selected or no target");
         return;
@@ -1498,7 +1499,7 @@ function confirmColorChange() {
     const newColor = selectedSwatch.dataset.color;
     const newVisited = visitedCheckbox ? visitedCheckbox.checked : currentColorChangeTarget.visited;
     const newKnown = knownCheckbox ? knownCheckbox.checked : currentColorChangeTarget.known;
-    
+
     const oldColor = currentColorChangeTarget.color;
     const oldVisited = currentColorChangeTarget.visited;
     const oldKnown = currentColorChangeTarget.known;

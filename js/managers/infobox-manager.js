@@ -13,9 +13,12 @@ class InfoBoxManager {
         this.isEditMode = false;
         this.isExpanded = false;
         
+        // Initialiser l'UploadManager
+        this.uploadManager = new UploadManager();
+        
         this.setupEventListeners();
         
-        console.log("📋 InfoBoxManager initialized");
+        console.log("📋 InfoBoxManager initialized with UploadManager");
     }
 
     setupEventListeners() {
@@ -292,11 +295,15 @@ class InfoBoxManager {
                         ${this.renderEditImagesList()}
                     </div>
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2 text-white">Ajouter une image (URL) :</label>
-                        <input type="url" id="new-image-url" class="w-full p-2 border rounded bg-white text-black" placeholder="https://example.com/image.jpg">
-                        <button onclick="window.infoBoxManager.addImage()" class="mt-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-plus mr-1"></i>Ajouter
-                        </button>
+                        <label class="block text-sm font-medium mb-2 text-white">Ajouter une image :</label>
+                        <div id="image-upload-container" class="mb-3"></div>
+                        <div class="text-xs text-gray-400 mb-2">Ou utilisez une URL :</div>
+                        <div class="flex space-x-2">
+                            <input type="url" id="new-image-url" class="flex-1 p-2 border rounded bg-white text-black text-sm" placeholder="https://example.com/image.jpg">
+                            <button onclick="window.infoBoxManager.addImageFromUrl()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                                <i class="fas fa-plus mr-1"></i>Ajouter URL
+                            </button>
+                        </div>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
@@ -308,6 +315,17 @@ class InfoBoxManager {
                     </div>
                 </div>
             `;
+
+            // Créer le composant d'upload d'images
+            const uploadContainer = imageTab.querySelector('#image-upload-container');
+            if (uploadContainer) {
+                const category = this.currentType === 'region' ? 'regions' : 'locations';
+                this.uploadManager.createImageSelector(uploadContainer, category, (result) => {
+                    if (result) {
+                        this.addImageFromUpload(result);
+                    }
+                });
+            }
         }
 
         // Onglet Texte (mode édition)
@@ -550,7 +568,7 @@ class InfoBoxManager {
         }
     }
 
-    addImage() {
+    addImageFromUrl() {
         const urlField = document.getElementById('new-image-url');
         if (!urlField || !urlField.value.trim()) {
             alert("Veuillez entrer une URL d'image valide.");
@@ -581,7 +599,30 @@ class InfoBoxManager {
             imagesList.innerHTML = this.renderEditImagesList();
         }
 
-        console.log("🖼️ Image added:", url);
+        console.log("🖼️ Image added from URL:", url);
+    }
+
+    addImageFromUpload(uploadResult) {
+        // Initialiser le tableau d'images si nécessaire
+        if (!this.currentItem.images) {
+            this.currentItem.images = [];
+        }
+
+        // Ajouter l'image uploadée
+        const newImage = {
+            url: uploadResult.url,
+            isDefault: this.currentItem.images.length === 0 // Première image = par défaut
+        };
+
+        this.currentItem.images.push(newImage);
+        
+        // Re-render la liste des images
+        const imagesList = document.getElementById('edit-images-list');
+        if (imagesList) {
+            imagesList.innerHTML = this.renderEditImagesList();
+        }
+
+        console.log("🖼️ Image added from upload:", uploadResult.url);
     }
 
     removeImage(index) {
