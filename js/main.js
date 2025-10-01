@@ -204,20 +204,12 @@ function renderLocations() {
         // Ajouter les événements de clic et de glisser-déplacer
         marker.addEventListener('mousedown', (e) => {
             if (e.button === 0) { // Clic gauche seulement
-                handleLocationDragStart(e, marker, location);
+                handleLocationMouseDown(e, marker, location);
             }
         });
 
         marker.addEventListener('click', (e) => {
-            // Éviter d'ouvrir l'info-box si on vient de faire un drag
-            const isDragging = marker.dataset.dragging === 'true';
-            const timeSinceLastDrag = Date.now() - dragStartTime;
-            
-            // Plus strict : vérifier plusieurs conditions
-            if (!hasDraggedLocation && !isDragging && !isDraggingLocation && timeSinceLastDrag > 100) {
-                e.stopPropagation();
-                infoBoxManager.showInfoBox(e, location, 'location');
-            }
+            handleLocationClick(e, marker, location);
         });
 
         // Ajouter à la couche des lieux
@@ -425,7 +417,10 @@ let dragStartX = 0;
 let dragStartY = 0;
 let hasDraggedLocation = false; // Flag pour détecter si on a vraiment bougé
 let dragStartTime = 0; // Temps de début du drag
-let dragTimeThreshold = 150; // Seuil en ms pour considérer qu'il y a eu un drag
+let dragTimeThreshold = 100; // Seuil en ms pour considérer qu'il y a eu un drag
+let dragDistanceThreshold = 5; // Seuil en pixels pour considérer qu'il y a eu un drag
+let lastClickTime = 0;
+let isMouseDown = false;
 
 // --- Variables d'état pour le tracé de régions ---
 let isRegionDrawingMode = false;
@@ -523,6 +518,21 @@ function setupMapNavigation() {
     viewport.addEventListener('mousedown', handlePanStart);
 
     viewport.addEventListener('mousemove', (e) => {
+        // Détecter si on commence un drag depuis un mousedown sur une location
+        if (isMouseDown && !isDraggingLocation && draggedLocationMarker) {
+            const deltaX = Math.abs(e.clientX - dragStartX);
+            const deltaY = Math.abs(e.clientY - dragStartY);
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            // Commencer le drag si on dépasse le seuil de distance
+            if (distance > dragDistanceThreshold) {
+                isDraggingLocation = true;
+                viewport.style.cursor = 'move';
+                draggedLocationMarker.style.cursor = 'move';
+                console.log(`🎯 Starting drag for location`);
+            }
+        }
+        
         if (isPanning && !window.isDrawingMode && !isDraggingLocation) {
             const deltaX = e.clientX - lastMouseX;
             const deltaY = e.clientY - lastMouseY;
@@ -548,6 +558,10 @@ function setupMapNavigation() {
                 isPanning = false;
                 viewport.style.cursor = 'grab';
             }
+            
+            // Nettoyer l'état mousedown
+            isMouseDown = false;
+            draggedLocationMarker = null;
         }
     });
 
@@ -558,6 +572,10 @@ function setupMapNavigation() {
                 handleLocationDragEnd();
             }
             viewport.style.cursor = 'grab';
+            
+            // Nettoyer l'état
+            isMouseDown = false;
+            draggedLocationMarker = null;
         }
     });
 
@@ -1327,42 +1345,64 @@ function setupDrawingEvents() {
 }
 
 // --- Fonctions de glisser-déplacer pour les lieux ---
-function handleLocationDragStart(e, marker, location) {
+function handleLocationMouseDown(e, marker, location) {
     // Ne pas permettre le drag si on est en mode tracé ou dessin
     if (isRegionDrawingMode || window.isDrawingMode || isLocationAddingMode) return;
 
     e.stopPropagation();
-    e.preventDefault();
 
-    isDraggingLocation = true;
-    hasDraggedLocation = false; // Reset du flag
-    dragStartTime = Date.now(); // Enregistrer le temps de début
-    draggedLocationMarker = marker;
+    isMouseDown = true;
+    dragStartTime = Date.now();
     dragStartX = e.clientX;
     dragStartY = e.clientY;
-
-    // Changer le curseur
-    viewport.style.cursor = 'move';
-    marker.style.cursor = 'move';
+    hasDraggedLocation = false;
     
-    // Marquer le marqueur comme étant en cours de déplacement
-    marker.dataset.dragging = 'true';
+    // Préparer les données pour un éventuel drag
+    draggedLocationMarker = marker;
+    
+    console.log(`🎯 Mouse down on location: ${location.name}`);
+}
 
-    console.log(`🎯 Starting drag for location: ${location.name}`);
+function handleLocationClick(e, marker, location) {
+    e.stopPropagation();
+    
+    const currentTime = Date.now();
+    const timeSinceMouseDown = currentTime - dragStartTime;
+    
+    // Calculer la distance parcourue depuis mousedown
+    const deltaX = Math.abs(e.clientX - dragStartX);
+    const deltaY = Math.abs(e.clientY - dragStartY);
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    
+    // C'est un clic si :
+    // 1. Le temps depuis mousedown est court
+    // 2. La distance parcourue est petite
+    // 3. On n'est pas en train de faire un drag
+    const isClick = timeSinceMouseDown < dragTimeThreshold && 
+                   distance < dragDistanceThreshold && 
+                   !hasDraggedLocation &&
+                   !isDraggingLocation;
+    
+    console.log(`🖱️ Location click - Time: ${timeSinceMouseDown}ms, Distance: ${distance.toFixed(1)}px, IsClick: ${isClick}`);
+    
+    if (isClick) {
+        // Éviter les double-clics accidentels
+        if (currentTime - lastClickTime > 200) {
+            console.log(`📋 Opening info box for: ${location.name}`);
+            infoBoxManager.showInfoBox(e, location, 'location');
+            lastClickTime = currentTime;
+        }
+    }
+    
+    // Nettoyer l'état
+    isMouseDown = false;
+    hasDraggedLocation = false;
 }
 
 function handleLocationDrag(e) {
     if (!isDraggingLocation || !draggedLocationMarker) return;
 
     e.preventDefault();
-
-    // Détecter si on a bougé pendant assez longtemps pour considérer que c'est un drag
-    const currentTime = Date.now();
-    const dragDuration = currentTime - dragStartTime;
-    
-    if (dragDuration > dragTimeThreshold) {
-        hasDraggedLocation = true;
-    }
 
     const deltaX = e.clientX - dragStartX;
     const deltaY = e.clientY - dragStartY;
@@ -1390,16 +1430,17 @@ function handleLocationDrag(e) {
     // Mettre à jour les coordonnées de départ pour le prochain mouvement
     dragStartX = e.clientX;
     dragStartY = e.clientY;
+    
+    hasDraggedLocation = true;
 }
 
 function handleLocationDragEnd(e) {
     if (!isDraggingLocation || !draggedLocationMarker) return;
 
-    const dragDuration = Date.now() - dragStartTime;
-    console.log(`🎯 Ending location drag - Duration: ${dragDuration}ms, Has dragged: ${hasDraggedLocation}`);
+    console.log(`🎯 Ending location drag - Has dragged: ${hasDraggedLocation}`);
 
-    // Seulement sauvegarder si on a vraiment bougé (durée > seuil)
-    if (hasDraggedLocation && dragDuration > dragTimeThreshold) {
+    // Seulement sauvegarder si on a vraiment bougé
+    if (hasDraggedLocation) {
         // Trouver le lieu correspondant et mettre à jour ses coordonnées
         const locationId = draggedLocationMarker.dataset.id;
         const location = locationsData.locations.find(loc => loc.id == locationId);
@@ -1425,20 +1466,11 @@ function handleLocationDragEnd(e) {
         }
     }
 
-    // Ajouter un délai avant de permettre les clics pour éviter l'ouverture immédiate
-    setTimeout(() => {
-        if (draggedLocationMarker) {
-            draggedLocationMarker.style.cursor = 'pointer';
-            delete draggedLocationMarker.dataset.dragging;
-        }
-    }, 50);
-
     // Réinitialiser l'état
     isDraggingLocation = false;
     draggedLocationMarker = null;
     viewport.style.cursor = 'grab';
-    hasDraggedLocation = false;
-    dragStartTime = 0;
+    isMouseDown = false;
 }
 
 // --- Fonctions utilitaires pour la compatibilité ---
