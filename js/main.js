@@ -2,6 +2,11 @@
 
 // --- Import des constantes ---
 import {
+
+
+// Support pour Marked.js (optionnel, pour le rendu Markdown)
+window.marked = window.marked || null;
+
     colorMap,
     regionColorMap,
     getDefaultLocations,
@@ -21,6 +26,7 @@ import DataManager from './managers/data-manager.js';
 import FilterManager from './managers/filter-manager.js';
 import VoyageManager from './managers/voyage-manager.js';
 import PathManager from './managers/path-manager.js';
+import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
 
@@ -35,6 +41,7 @@ let dataManager;
 let filterManager;
 let voyageManager;
 let pathManager;
+let calendarManager;
 
 console.log("✅ Global variables initialized");
 
@@ -78,6 +85,11 @@ async function initializeApp() {
             MAP_WIDTH: MAP_WIDTH || 5103 // Utiliser la valeur globale ou fallback
         });
         console.log("✅ PathManager initialized");
+
+        // Initialiser CalendarManager
+        calendarManager = new window.CalendarManager();
+        calendarManager.init();
+        console.log("✅ CalendarManager initialized");
 
         // Charger les données
         console.log("📍 Loading initial locations...");
@@ -349,6 +361,9 @@ function initializeMap() {
 
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
+
+    // Configurer les paramètres
+    setupSettingsModal();
 
     resetView(); // Vue initiale optimale
 
@@ -1387,148 +1402,426 @@ async function generateTravelDescription(voyageData) {
 
     prompt += `\n\nSois descriptif, évocateur et dans le style de Tolkien. Raconte une courte anecdote ou une observation pertinente pour ce voyage. (environ 3-4 phrases)`;
 
-    console.log("Generated prompt for travel description:", prompt);
+
+// --- Fonctions de gestion des paramètres ---
+function setupSettingsModal() {
+    console.log("⚙️ Setting up settings modal...");
+
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsModal = document.getElementById('settings-modal');
+    const closeSettingsBtn = document.getElementById('close-settings-modal');
+
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', openSettingsModal);
+    }
+
+    if (closeSettingsBtn) {
+        closeSettingsBtn.addEventListener('click', closeSettingsModal);
+    }
+
+    // Gestion des onglets
+    setupSettingsTabs();
+
+    // Gestion des cartes
+    setupMapsTab();
+
+    // Gestion des aventuriers
+    setupAdventurersTab();
+
+    // Gestion de la quête
+    setupQuestTab();
+
+    // Gestion des saisons (déjà gérée par CalendarManager)
+    setupSeasonTab();
+
+    console.log("✅ Settings modal setup complete");
+}
+
+function openSettingsModal() {
+    const modal = document.getElementById('settings-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+
+        // Réinitialiser les listeners du CalendarManager
+        if (calendarManager) {
+            calendarManager.reinitializeListeners();
+            calendarManager.updateCalendarUI();
+        }
+
+        // Charger les données actuelles
+        loadSettingsData();
+    }
+}
+
+function closeSettingsModal() {
+    const modal = document.getElementById('settings-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function setupSettingsTabs() {
+    const tabButtons = document.querySelectorAll('.settings-tab-button');
+    const tabContents = document.querySelectorAll('.settings-tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const targetTab = e.target.dataset.tab;
+
+            // Désactiver tous les onglets
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.color = '#9ca3af';
+                btn.style.borderColor = 'transparent';
+            });
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                content.style.display = 'none';
+            });
+
+            // Activer l'onglet cliqué
+            e.target.classList.add('active');
+            e.target.style.color = 'white';
+            e.target.style.borderColor = '#3b82f6';
+
+            const targetContent = document.getElementById(`${targetTab}-tab`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+                targetContent.style.display = 'flex';
+            }
+
+            // Actions spécifiques par onglet
+            if (targetTab === 'season' && calendarManager) {
+                calendarManager.reinitializeListeners();
+                calendarManager.updateCalendarUI();
+            } else if (targetTab === 'maps') {
+                loadMapsData();
+            }
+        });
+    });
+}
+
+function setupMapsTab() {
+    console.log("🗺️ Setting up maps tab...");
+
+    const addMapBtn = document.getElementById('add-map-btn');
+    if (addMapBtn) {
+        addMapBtn.addEventListener('click', () => {
+            console.log("🗺️ Add map button clicked");
+            // Pour l'instant, afficher un message
+            alert("Fonctionnalité d'ajout de cartes à implémenter");
+        });
+    }
+}
+
+function setupAdventurersTab() {
+    console.log("👥 Setting up adventurers tab...");
+
+    const editBtn = document.getElementById('edit-adventurers-btn');
+    const saveBtn = document.getElementById('save-adventurers-edit');
+    const cancelBtn = document.getElementById('cancel-adventurers-edit');
+    const wizardBtn = document.getElementById('generate-adventurers-wizard');
+
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            toggleAdventurersEditMode(true);
+        });
+    }
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            saveAdventurersData();
+        });
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            toggleAdventurersEditMode(false);
+        });
+    }
+
+    if (wizardBtn) {
+        wizardBtn.addEventListener('click', () => {
+            generateAdventurersWithWizard();
+        });
+    }
+}
+
+function setupQuestTab() {
+    console.log("🗡️ Setting up quest tab...");
+
+    const editBtn = document.getElementById('edit-quest-btn');
+    const saveBtn = document.getElementById('save-quest-edit');
+    const cancelBtn = document.getElementById('cancel-quest-edit');
+
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            toggleQuestEditMode(true);
+        });
+    }
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            saveQuestData();
+        });
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            toggleQuestEditMode(false);
+        });
+    }
+
+    // Gestion des styles de narration
+    const narrationRadios = document.querySelectorAll('input[name="narration-style"]');
+    narrationRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                localStorage.setItem('narrationStyle', e.target.value);
+                console.log("📖 Style de narration changé:", e.target.value);
+            }
+        });
+    });
+}
+
+function setupSeasonTab() {
+    console.log("🌱 Setting up season tab...");
+
+    // Gestion déjà effectuée par CalendarManager
+    // Ajouter les listeners pour les clics sur les indicateurs de saison dans l'en-tête
+    const seasonIndicator = document.getElementById('season-indicator');
+    const calendarDateIndicator = document.getElementById('calendar-date-indicator');
+
+    if (seasonIndicator) {
+        seasonIndicator.addEventListener('click', () => {
+            openSettingsModal();
+            // Activer l'onglet saison
+            const seasonTabBtn = document.querySelector('.settings-tab-button[data-tab="season"]');
+            if (seasonTabBtn) {
+                seasonTabBtn.click();
+            }
+        });
+    }
+
+    if (calendarDateIndicator) {
+        calendarDateIndicator.addEventListener('click', () => {
+            openSettingsModal();
+            // Activer l'onglet saison
+            const seasonTabBtn = document.querySelector('.settings-tab-button[data-tab="season"]');
+            if (seasonTabBtn) {
+                seasonTabBtn.click();
+            }
+        });
+    }
+}
+
+function loadSettingsData() {
+    console.log("📋 Loading settings data...");
+
+    // Charger les données des aventuriers
+    const savedAdventurers = localStorage.getItem('adventurersGroup');
+    const adventurersContent = document.getElementById('adventurers-content');
+    const adventurersTextarea = document.getElementById('adventurers-group');
+
+    if (savedAdventurers && adventurersContent) {
+        adventurersContent.innerHTML = marked ? marked.parse(savedAdventurers) : `<p>${savedAdventurers}</p>`;
+    } else if (adventurersContent) {
+        adventurersContent.innerHTML = '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
+    }
+
+    if (savedAdventurers && adventurersTextarea) {
+        adventurersTextarea.value = savedAdventurers;
+    }
+
+    // Charger les données de la quête
+    const savedQuest = localStorage.getItem('adventurersQuest');
+    const questContent = document.getElementById('quest-content');
+    const questTextarea = document.getElementById('adventurers-quest');
+
+    if (savedQuest && questContent) {
+        questContent.innerHTML = marked ? marked.parse(savedQuest) : `<p>${savedQuest}</p>`;
+    } else if (questContent) {
+        questContent.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
+    }
+
+    if (savedQuest && questTextarea) {
+        questTextarea.value = savedQuest;
+    }
+
+    // Charger le style de narration
+    const savedNarrationStyle = localStorage.getItem('narrationStyle') || 'brief';
+    const narrationRadio = document.querySelector(`input[name="narration-style"][value="${savedNarrationStyle}"]`);
+    if (narrationRadio) {
+        narrationRadio.checked = true;
+    }
+
+    // Charger les données des cartes
+    loadMapsData();
+}
+
+function loadMapsData() {
+    console.log("🗺️ Loading maps data...");
+
+    // Mettre à jour les aperçus des cartes actives
+    const playerMapPreview = document.getElementById('active-player-map-preview');
+    const loremasterMapPreview = document.getElementById('active-loremaster-map-preview');
+
+    if (playerMapPreview) {
+        playerMapPreview.src = mapImage.src;
+    }
+
+    if (loremasterMapPreview) {
+        const loremasterImg = document.getElementById('loremaster-map-image');
+        if (loremasterImg && loremasterImg.src) {
+            loremasterMapPreview.src = loremasterImg.src;
+        }
+    }
+}
+
+function toggleAdventurersEditMode(edit) {
+    const readMode = document.getElementById('adventurers-read-mode');
+    const editMode = document.getElementById('adventurers-edit-mode');
+
+    if (edit) {
+        readMode.style.display = 'none';
+        editMode.classList.remove('hidden');
+        editMode.style.display = 'flex';
+
+        // Copier le contenu actuel dans le textarea
+        const savedAdventurers = localStorage.getItem('adventurersGroup') || '';
+        const textarea = document.getElementById('adventurers-group');
+        if (textarea) {
+            textarea.value = savedAdventurers;
+            textarea.focus();
+        }
+    } else {
+        readMode.style.display = 'block';
+        editMode.classList.add('hidden');
+        editMode.style.display = 'none';
+    }
+}
+
+function toggleQuestEditMode(edit) {
+    const readMode = document.getElementById('quest-read-mode');
+    const editMode = document.getElementById('quest-edit-mode');
+
+    if (edit) {
+        readMode.style.display = 'none';
+        editMode.classList.remove('hidden');
+        editMode.style.display = 'flex';
+
+        // Copier le contenu actuel dans le textarea
+        const savedQuest = localStorage.getItem('adventurersQuest') || '';
+        const textarea = document.getElementById('adventurers-quest');
+        if (textarea) {
+            textarea.value = savedQuest;
+            textarea.focus();
+        }
+    } else {
+        readMode.style.display = 'block';
+        editMode.classList.add('hidden');
+        editMode.style.display = 'none';
+    }
+}
+
+function saveAdventurersData() {
+    const textarea = document.getElementById('adventurers-group');
+    if (!textarea) return;
+
+    const content = textarea.value.trim();
+    localStorage.setItem('adventurersGroup', content);
+
+    // Mettre à jour l'affichage
+    const adventurersContent = document.getElementById('adventurers-content');
+    if (adventurersContent) {
+        if (content) {
+            adventurersContent.innerHTML = marked ? marked.parse(content) : `<p>${content}</p>`;
+        } else {
+            adventurersContent.innerHTML = '<p class="text-gray-400 italic">Aucune description d\'aventuriers définie.</p>';
+        }
+    }
+
+    toggleAdventurersEditMode(false);
+    console.log("✅ Aventuriers sauvegardés");
+}
+
+function saveQuestData() {
+    const textarea = document.getElementById('adventurers-quest');
+    if (!textarea) return;
+
+    const content = textarea.value.trim();
+    localStorage.setItem('adventurersQuest', content);
+
+    // Mettre à jour l'affichage
+    const questContent = document.getElementById('quest-content');
+    if (questContent) {
+        if (content) {
+            questContent.innerHTML = marked ? marked.parse(content) : `<p>${content}</p>`;
+        } else {
+            questContent.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête définie.</p>';
+        }
+    }
+
+    toggleQuestEditMode(false);
+    console.log("✅ Quête sauvegardée");
+}
+
+async function generateAdventurersWithWizard() {
+    console.log("🧙‍♂️ Generating adventurers with wizard...");
+
+    const wizardBtn = document.getElementById('generate-adventurers-wizard');
+    if (!wizardBtn) return;
+
+    // Changer l'état du bouton
+    const originalContent = wizardBtn.innerHTML;
+    wizardBtn.disabled = true;
+    wizardBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Génération...</span>';
 
     try {
-        const generatedDescription = await callGemini(prompt, 'travel_description');
-        console.log("✅ Travel description generated successfully");
-        return generatedDescription;
+        const prompt = `Génère un groupe d'aventuriers pour une campagne de Jeux de Rôles dans la Terre du Milieu (fin du Troisième Âge, région de l'Eriador). 
+
+Crée un groupe de 3-5 aventuriers avec :
+- Nom et prénom de chaque aventurier
+- Peuple (Hobbit, Homme des Bree, Rôdeur du Nord, Elfe, Nain, etc.)
+- Occupation/classe (Érudit, Guerrier, Chasseur, Ménestrel, etc.)
+- Une courte description de personnalité (2-3 traits)
+- Un objectif commun qui les unit
+
+Format en Markdown avec des titres et listes. Sois créatif mais reste fidèle à l'univers de Tolkien.`;
+
+        const generatedContent = await callGemini(prompt, 'adventurers_wizard');
+
+        // Mettre à jour le textarea en mode édition
+        const textarea = document.getElementById('adventurers-group');
+        if (textarea) {
+            textarea.value = generatedContent;
+        }
+
+        // Activer le mode édition pour permettre les modifications
+        toggleAdventurersEditMode(true);
+
+        console.log("✅ Aventuriers générés avec succès");
+
     } catch (error) {
-        console.error("❌ Error generating travel description:", error);
-        // Retourner un message d'erreur ou une description par défaut
-        return `Impossible de générer la description du voyage. ${error.message}`;
+        console.error("❌ Erreur lors de la génération:", error);
+        alert(`Erreur lors de la génération : ${error.message}`);
+    } finally {
+        // Restaurer l'état du bouton
+        wizardBtn.disabled = false;
+        wizardBtn.innerHTML = originalContent;
     }
 }
 
-
-function setupLocationColorPicker() {
-    const colorPicker = document.getElementById('add-color-picker');
-    if (!colorPicker) return;
-
-    const colors = ['blue', 'red', 'green', 'violet', 'orange', 'black'];
-
-    colorPicker.innerHTML = '';
-
-    colors.forEach((color, index) => {
-        const swatch = document.createElement('div');
-        swatch.className = 'color-swatch';
-        swatch.dataset.color = color;
-        swatch.style.backgroundColor = colorMap[color] || colorMap.blue;
-
-        if (index === 0) {
-            swatch.classList.add('selected');
-        }
-
-        swatch.addEventListener('click', () => {
-            document.querySelectorAll('#add-color-picker .color-swatch').forEach(s => {
-                s.classList.remove('selected');
-            });
-            swatch.classList.add('selected');
-        });
-
-        colorPicker.appendChild(swatch);
-    });
+// --- Fonctions utilitaires pour la compatibilité ---
+function scheduleAutoSync() {
+    // Fonction pour la synchronisation automatique
+    console.log("🔄 Auto-sync scheduled");
 }
 
-function setupRegionColorPicker() {
-    const colorPicker = document.getElementById('region-color-picker');
-    if (!colorPicker) return;
-
-    const colors = ['green', 'red', 'blue', 'violet', 'orange', 'black', 'yellow', 'purple', 'gray'];
-
-    colorPicker.innerHTML = '';
-
-    colors.forEach((color, index) => {
-        const swatch = document.createElement('div');
-        swatch.className = 'color-swatch';
-        swatch.dataset.color = color;
-        swatch.style.backgroundColor = regionColorMap[color] || regionColorMap.gray;
-
-        if (index === 0) {
-            swatch.classList.add('selected');
-        }
-
-        swatch.addEventListener('click', () => {
-            document.querySelectorAll('#region-color-picker .color-swatch').forEach(s => {
-                s.classList.remove('selected');
-            });
-            swatch.classList.add('selected');
-        });
-
-        colorPicker.appendChild(swatch);
-    });
-}
-
-// Gestionnaire d'événements pour les clics dans le viewport
-function handleViewportClick(event) {
-    if (isRegionDrawingMode) {
-        handleRegionClick(event);
-        return;
-    }
-
-    if (isLocationAddingMode) {
-        handleLocationClick(event);
-        return;
-    }
-
-    // Gérer les autres types de clics (info-box, etc.)
-    const infoBox = document.getElementById('info-box');
-    if (infoBox && infoBox.style.display === 'block' && !infoBox.contains(event.target)) {
-        if (!event.target.classList.contains('location-marker')) {
-            hideInfoBox();
-        }
-    }
-}
-
-// --- Fonctions de dessin ---
-function setupDrawingEvents() {
-    console.log("🖌️ Setting up drawing events...");
-
-    // Initialiser les icônes de dessin (si elles existent)
-    const drawIcon = document.getElementById('draw-path-icon');
-    if (drawIcon) {
-        drawIcon.addEventListener('click', () => {
-            if (voyageManager) {
-                voyageManager.startDrawingPath();
-            }
-        });
-    }
-
-    const stopDrawIcon = document.getElementById('stop-draw-path-icon');
-    if (stopDrawIcon) {
-        stopDrawIcon.addEventListener('click', () => {
-            if (voyageManager) {
-                voyageManager.stopDrawingPath();
-            }
-        });
-    }
-
-    // Ajout des écouteurs pour le dessin de voyage
-    if (voyageManager) {
-        console.log("👂 Adding VoyageManager drawing listeners...");
-        // Clic sur la carte pour ajouter un point de voyage
-        viewport.addEventListener('click', voyageManager.handleMapClick);
-        // Clic droit pour terminer le tracé de voyage
-        viewport.addEventListener('contextmenu', voyageManager.handleMapRightClick);
-        console.log("✅ VoyageManager drawing listeners added");
-    } else {
-        console.error("❌ VoyageManager not available for drawing listeners");
-    }
-
-    console.log("✅ Drawing events setup complete");
-}
-
-// --- Fonctions de base ---
-// Les fonctions de sauvegarde sont maintenant gérées par DataManager
-
-// --- Démarrage de l'application ---
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeApp);
-} else {
-    initializeApp();
-}
-
-console.log("📋 Simplified main.js loaded - waiting for DOM ready");
+// Exposer les fonctions nécessaires globalement
+window.openSettingsModal = openSettingsModal;
+window.scheduleAutoSync = scheduleAutoSync;
+window.calendarManager = calendarManager;
 
 // Fonctions utilitaires pour la compatibilité avec l'ancien code
 window.updateDistanceDisplay = function() {
