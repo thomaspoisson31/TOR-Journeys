@@ -275,13 +275,25 @@
         </div>
 
         <!-- Color Change Modal -->
-        <div id="color-change-modal" class="hidden absolute z-50 bg-gray-900 bg-opacity-95 border border-gray-700 rounded-lg p-4 shadow-xl">
+        <div id="color-change-modal" class="hidden absolute z-50 bg-gray-900 bg-opacity-95 border border-gray-700 rounded-lg p-4 shadow-xl min-w-[280px]">
             <div class="mb-3">
                 <h4 class="text-sm font-semibold text-white" id="color-change-title">Changer la couleur</h4>
             </div>
             <div class="mb-4">
                 <div id="color-change-picker" class="grid grid-cols-6 gap-2">
                     <!-- Les couleurs seront générées par JavaScript -->
+                </div>
+            </div>
+            <div class="mb-4">
+                <div class="space-y-2">
+                    <label class="flex items-center text-white text-sm">
+                        <input type="checkbox" id="color-change-visited" class="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        Visitée
+                    </label>
+                    <label class="flex items-center text-white text-sm">
+                        <input type="checkbox" id="color-change-known" class="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        Connue
+                    </label>
                 </div>
             </div>
             <div class="flex justify-end space-x-2">

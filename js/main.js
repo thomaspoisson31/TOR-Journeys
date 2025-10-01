@@ -1408,6 +1408,8 @@ function showColorChangeModal(event, target, type) {
     const modal = document.getElementById('color-change-modal');
     const title = document.getElementById('color-change-title');
     const colorPicker = document.getElementById('color-change-picker');
+    const visitedCheckbox = document.getElementById('color-change-visited');
+    const knownCheckbox = document.getElementById('color-change-known');
 
     if (!modal || !title || !colorPicker) return;
 
@@ -1416,7 +1418,7 @@ function showColorChangeModal(event, target, type) {
     currentColorChangeType = type;
 
     // Mettre à jour le titre
-    title.textContent = `Changer la couleur de "${target.name}"`;
+    title.textContent = `Modifier "${target.name}"`;
 
     // Sélectionner la couleur actuelle
     colorPicker.querySelectorAll('.color-swatch').forEach(swatch => {
@@ -1426,10 +1428,18 @@ function showColorChangeModal(event, target, type) {
         }
     });
 
+    // Mettre à jour les cases à cocher avec les valeurs actuelles
+    if (visitedCheckbox) {
+        visitedCheckbox.checked = target.visited || false;
+    }
+    if (knownCheckbox) {
+        knownCheckbox.checked = target.known !== undefined ? target.known : true;
+    }
+
     // Positionner la modale à droite du clic
     const rect = viewport.getBoundingClientRect();
     const modalWidth = 280; // largeur approximative de la modale
-    const modalHeight = 160; // hauteur approximative de la modale
+    const modalHeight = 220; // hauteur approximative de la modale (augmentée pour les cases à cocher)
 
     let left = event.clientX + 10; // 10px à droite du curseur
     let top = event.clientY - modalHeight / 2; // centré verticalement sur le curseur
@@ -1467,6 +1477,8 @@ function hideColorChangeModal() {
 
 function confirmColorChange() {
     const selectedSwatch = document.querySelector('#color-change-picker .color-swatch.selected');
+    const visitedCheckbox = document.getElementById('color-change-visited');
+    const knownCheckbox = document.getElementById('color-change-known');
     
     if (!selectedSwatch || !currentColorChangeTarget || !currentColorChangeType) {
         console.warn("⚠️ No color selected or no target");
@@ -1474,18 +1486,32 @@ function confirmColorChange() {
     }
 
     const newColor = selectedSwatch.dataset.color;
+    const newVisited = visitedCheckbox ? visitedCheckbox.checked : currentColorChangeTarget.visited;
+    const newKnown = knownCheckbox ? knownCheckbox.checked : currentColorChangeTarget.known;
+    
     const oldColor = currentColorChangeTarget.color;
+    const oldVisited = currentColorChangeTarget.visited;
+    const oldKnown = currentColorChangeTarget.known;
 
-    if (newColor === oldColor) {
-        console.log("🎨 No color change needed");
+    // Vérifier s'il y a des changements
+    const hasChanges = newColor !== oldColor || newVisited !== oldVisited || newKnown !== oldKnown;
+
+    if (!hasChanges) {
+        console.log("🎨 No changes needed");
         hideColorChangeModal();
         return;
     }
 
-    console.log(`🎨 Changing color from ${oldColor} to ${newColor} for ${currentColorChangeType}: ${currentColorChangeTarget.name}`);
+    console.log(`🎨 Updating ${currentColorChangeType}: ${currentColorChangeTarget.name}`, {
+        color: `${oldColor} → ${newColor}`,
+        visited: `${oldVisited} → ${newVisited}`,
+        known: `${oldKnown} → ${newKnown}`
+    });
 
-    // Appliquer le changement de couleur
+    // Appliquer les changements
     currentColorChangeTarget.color = newColor;
+    currentColorChangeTarget.visited = newVisited;
+    currentColorChangeTarget.known = newKnown;
 
     if (currentColorChangeType === 'location') {
         // Sauvegarder les lieux
@@ -1511,7 +1537,7 @@ function confirmColorChange() {
     // Fermer la modale
     hideColorChangeModal();
 
-    console.log(`✅ Color changed successfully for ${currentColorChangeTarget.name}`);
+    console.log(`✅ Changes applied successfully for ${currentColorChangeTarget.name}`);
 }
 
 // --- Configuration des événements de dessin ---
