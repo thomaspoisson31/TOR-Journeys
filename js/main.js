@@ -24,6 +24,7 @@ import PathManager from './managers/path-manager.js';
 import SettingsManager from './managers/settings-manager.js';
 import AuthManager from './managers/auth-manager.js';
 import InfoBoxManager from './managers/infobox-manager.js';
+import ImportExportManager from './managers/import-export-manager.js';
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -46,6 +47,7 @@ let calendarManager;
 let settingsManager;
 let authManager;
 let infoBoxManager;
+let importExportManager;
 
 console.log("✅ Global variables initialized");
 
@@ -115,6 +117,15 @@ async function initializeApp() {
         );
         window.infoBoxManager = infoBoxManager; // Exposer globalement pour les onclick
         console.log("✅ InfoBoxManager initialized");
+
+        // Initialiser ImportExportManager
+        importExportManager = new ImportExportManager(
+            dataManager,
+            window.scheduleAutoSync // Callback pour la synchronisation automatique
+        );
+        importExportManager.init();
+        window.importExportManager = importExportManager; // Exposer globalement pour les onclick
+        console.log("✅ ImportExportManager initialized");
 
         // Charger les données
         console.log("📍 Loading initial locations...");
