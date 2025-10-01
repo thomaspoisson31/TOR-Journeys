@@ -8,7 +8,6 @@ import json
 import os
 from datetime import datetime
 import secrets
-import google.generativeai as genai
 
 app = Flask(__name__)
 
@@ -29,11 +28,6 @@ GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 
 # Configuration Google Gemini API
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
-if GOOGLE_API_KEY:
-    genai.configure(api_key=GOOGLE_API_KEY)
-    gemini_model = genai.GenerativeModel('gemini-pro')
-else:
-    gemini_model = None
 
 # Configuration OAuth pour Replit
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Permet OAuth en développement
@@ -72,17 +66,17 @@ def init_db():
         # Vérifier si la colonne google_id existe
         cursor.execute("PRAGMA table_info(users)")
         columns = [row[1] for row in cursor.fetchall()]
-
+        
         if 'google_id' not in columns:
             print("🔧 Migration nécessaire : recréation de la table users avec google_id")
-
+            
             # Sauvegarder les données existantes
             cursor.execute("SELECT * FROM users")
             existing_users = cursor.fetchall()
-
+            
             # Supprimer l'ancienne table
             cursor.execute("DROP TABLE IF EXISTS users")
-
+            
             # Recréer la table avec le bon schéma
             cursor.execute('''
                 CREATE TABLE users (
@@ -93,7 +87,7 @@ def init_db():
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
-
+            
             # Restaurer les données existantes (sans google_id pour l'instant)
             for user in existing_users:
                 if len(user) >= 5:  # Ancien format avec replit_user_id
@@ -106,7 +100,7 @@ def init_db():
                         'INSERT INTO users (id, email, name, created_at) VALUES (?, ?, ?, ?)',
                         (user[0], user[2] if len(user) > 2 else None, user[3] if len(user) > 3 else None, user[4] if len(user) > 4 else datetime.now())
                     )
-
+            
             print("✅ Table users recréée avec succès avec la colonne google_id")
         else:
             print("ℹ️  Colonne google_id existe déjà")
@@ -377,13 +371,13 @@ def get_user_data():
         return jsonify({'error': 'Non authentifié'}), 401
 
     conn = get_db_connection()
-
+    
     # Chercher les données utilisateur dans un contexte spécial "user_data"
     user_data = conn.execute(
         'SELECT data_json FROM travel_contexts WHERE user_id = ? AND name = "_user_data_"',
         (session['user_id'],)
     ).fetchone()
-
+    
     conn.close()
 
     if user_data is None:
@@ -427,48 +421,6 @@ def update_user_data():
     conn.close()
 
     return jsonify({'message': 'Données utilisateur sauvegardées avec succès'})
-
-# Route pour générer une description de lieu avec Gemini
-@app.route('/api/gemini/generate-description', methods=['POST'])
-def generate_description():
-    """Générer une description de lieu en utilisant l'API Gemini"""
-    if not gemini_model:
-        return jsonify({'error': 'L\'API Gemini n\'est pas configurée'}), 500
-
-    if 'user_id' not in session:
-        return jsonify({'error': 'Non authentifié'}), 401
-
-    data = request.json
-    location_name = data.get('location_name')
-    context = data.get('context') # Informations supplémentaires sur le voyage
-
-    if not location_name:
-        return jsonify({'error': 'Nom de lieu manquant'}), 400
-
-    try:
-        prompt = f"Génère une description attrayante et informative pour le lieu suivant : '{location_name}'. "
-        if context:
-            prompt += f"Les informations contextuelles du voyage sont : {context}. "
-        prompt += "La description doit être conviviale et inciter à la visite."
-
-        response = gemini_model.generate_content(prompt)
-        description = response.text
-
-        # Enregistrer l'usage de l'API (optionnel)
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            'INSERT INTO api_usage (user_id, endpoint, tokens_used) VALUES (?, ?, ?)',
-            (session['user_id'], '/api/gemini/generate-description', len(response.candidates[0].content.parts[0].text) // 4) # Estimation grossière des tokens
-        )
-        conn.commit()
-        conn.close()
-
-        return jsonify({'description': description})
-
-    except Exception as e:
-        print(f"❌ Erreur lors de la génération de description Gemini: {e}")
-        return jsonify({'error': f'Erreur lors de la génération de description: {str(e)}'}), 500
 
 # Routes pour servir les fichiers statiques existants
 @app.route('/<path:filename>')
@@ -837,28 +789,11 @@ if __name__ == '__main__':
     app.config['SESSION_COOKIE_NAME'] = 'tor_journey_session'
     app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 heures
 
-    # Essayer plusieurs ports en cas de conflit
-    ports_to_try = [5000, 8080, 3000, 8000, 9000]
-    port = None
+    # Configuration pour production et développement
+    port = int(os.environ.get('PORT', 8080))
+    debug = os.environ.get('REPLIT_DEV_DOMAIN') is not None
 
-    for try_port in ports_to_try:
-        try:
-            import socket
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.bind(('0.0.0.0', try_port))
-            sock.close()
-            port = try_port
-            break
-        except OSError:
-            continue
-
-    if port is None:
-        print("❌ Aucun port disponible trouvé")
-        port = 5000  # Fallback
-
-    app.debug = os.environ.get('REPLIT_DEV_DOMAIN') is not None # Set debug based on environment
-    print(f"🌐 Démarrage sur le port {port} (debug: {app.debug})")
+    print(f"🌐 Démarrage sur le port {port} (debug: {debug})")
     print(f"🔧 Variables d'environnement: PORT={os.environ.get('PORT')}, REPLIT_DEV_DOMAIN={os.environ.get('REPLIT_DEV_DOMAIN')}")
-    print(f"🔧 Configuration OAuth: CLIENT_ID={GOOGLE_CLIENT_ID[:20] if GOOGLE_CLIENT_ID else 'Non défini'}..., SECRET_SET={bool(GOOGLE_CLIENT_SECRET)}")
-
-    app.run(host='0.0.0.0', port=port, debug=app.debug)
+    print(f"🔧 Configuration OAuth: CLIENT_ID={GOOGLE_CLIENT_ID[:20]}..., SECRET_SET={bool(GOOGLE_CLIENT_SECRET)}")
+    app.run(host='0.0.0.0', port=port, debug=debug)

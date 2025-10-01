@@ -21,7 +21,6 @@ import DataManager from './managers/data-manager.js';
 import FilterManager from './managers/filter-manager.js';
 import VoyageManager from './managers/voyage-manager.js';
 import PathManager from './managers/path-manager.js';
-import GeminiManager from './managers/gemini-manager.js';
 
 console.log("✅ Constants loaded successfully");
 
@@ -36,7 +35,6 @@ let dataManager;
 let filterManager;
 let voyageManager;
 let pathManager;
-let geminiManager;
 
 console.log("✅ Global variables initialized");
 
@@ -80,11 +78,6 @@ async function initializeApp() {
             MAP_WIDTH: MAP_WIDTH || 5103 // Utiliser la valeur globale ou fallback
         });
         console.log("✅ PathManager initialized");
-        
-        // Initialiser le GeminiManager
-        geminiManager = new GeminiManager();
-        await geminiManager.init();
-        console.log("✅ GeminiManager initialized");
 
         // Charger les données
         console.log("📍 Loading initial locations...");
@@ -285,7 +278,7 @@ function initializeMap() {
     MAP_HEIGHT = mapImage.naturalHeight;
     mapContainer.style.width = `${MAP_WIDTH}px`;
     mapContainer.style.height = `${MAP_HEIGHT}px`;
-
+    
     // Mettre à jour les constantes du PathManager avec les vraies dimensions
     if (pathManager) {
         pathManager.mapConstants.MAP_WIDTH = MAP_WIDTH;
@@ -326,7 +319,6 @@ function initializeMap() {
     setupInfoBoxListeners();
     setupRegionDrawing(); // Nouveau : tracé de régions
     setupLocationAdding(); // Nouveau : ajout de lieux
-    setupGeminiEventListeners(); // Nouveau : intégration Gemini
 
     // Configurer le système de filtres
     if (filterManager) {
@@ -1191,25 +1183,6 @@ function showLocationCreationModal() {
             firstColorSwatch.classList.add('selected');
         }
 
-        // Configurer le bouton de génération de description
-        const generateDescBtn = document.getElementById('generate-add-desc');
-        if (generateDescBtn) {
-            // Supprimer les anciens event listeners
-            const newBtn = generateDescBtn.cloneNode(true);
-            generateDescBtn.parentNode.replaceChild(newBtn, generateDescBtn);
-            
-            // Ajouter le nouvel event listener
-            newBtn.addEventListener('click', async () => {
-                const locationName = nameInput.value.trim();
-                if (!locationName) {
-                    alert("Veuillez d'abord entrer un nom pour le lieu.");
-                    return;
-                }
-
-                await generateLocationDescription(locationName, descInput, newBtn);
-            });
-        }
-
         modal.classList.remove('hidden');
         if (nameInput) nameInput.focus();
     }
@@ -1405,7 +1378,7 @@ function setupDrawingEvents() {
             }
         });
     }
-
+    
     // Ajout des écouteurs pour le dessin de voyage
     if (voyageManager) {
         console.log("👂 Adding VoyageManager drawing listeners...");
@@ -1420,60 +1393,6 @@ function setupDrawingEvents() {
 
     console.log("✅ Drawing events setup complete");
 }
-
-// --- Fonctions de l'API Gemini ---
-let geminiManager = null;
-
-function setupGeminiEventListeners() {
-    console.log("♊ Setting up Gemini API event listeners...");
-
-    // Initialiser le GeminiManager
-    import('./managers/gemini-manager.js').then(({ default: GeminiManager }) => {
-        geminiManager = new GeminiManager();
-        geminiManager.init().then(() => {
-            console.log("✅ GeminiManager initialized");
-        });
-    });
-
-    console.log("✅ Gemini API event listeners setup complete");
-}
-
-// Fonction pour générer une description de lieu
-async function generateLocationDescription(locationName, descriptionTextarea, button) {
-    if (!geminiManager) {
-        alert("Gemini API non initialisée. Veuillez recharger la page.");
-        return;
-    }
-
-    try {
-        const existingDescription = descriptionTextarea.value.trim();
-        const description = await geminiManager.generateLocationDescription(locationName, existingDescription, button);
-        descriptionTextarea.value = description;
-        console.log("✅ Description générée pour le lieu:", locationName);
-    } catch (error) {
-        console.error("❌ Erreur lors de la génération de la description:", error);
-        alert(`Erreur lors de la génération : ${error.message}`);
-    }
-}
-
-// Fonction pour générer une description de région
-async function generateRegionDescription(regionName, descriptionTextarea, button) {
-    if (!geminiManager) {
-        alert("Gemini API non initialisée. Veuillez recharger la page.");
-        return;
-    }
-
-    try {
-        const existingDescription = descriptionTextarea.value.trim();
-        const description = await geminiManager.generateRegionDescription(regionName, existingDescription, button);
-        descriptionTextarea.value = description;
-        console.log("✅ Description générée pour la région:", regionName);
-    } catch (error) {
-        console.error("❌ Erreur lors de la génération de la description:", error);
-        alert(`Erreur lors de la génération : ${error.message}`);
-    }
-}
-
 
 // --- Fonctions de base ---
 // Les fonctions de sauvegarde sont maintenant gérées par DataManager
