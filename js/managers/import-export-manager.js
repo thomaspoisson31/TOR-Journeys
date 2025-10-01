@@ -333,12 +333,21 @@ class ImportExportManager {
                 // Remplacer toutes les données
                 if (processedData.locations.length > 0) {
                     this.dataManager.locationsData = { locations: processedData.locations };
-                    window.locationsData = this.dataManager.locationsData;
+                } else {
+                    // Si pas de lieux dans l'import, garder une structure vide
+                    this.dataManager.locationsData = { locations: [] };
                 }
+                
                 if (processedData.regions.length > 0) {
                     this.dataManager.regionsData = { regions: processedData.regions };
-                    window.regionsData = this.dataManager.regionsData;
+                } else {
+                    // Si pas de régions dans l'import, garder une structure vide  
+                    this.dataManager.regionsData = { regions: [] };
                 }
+                
+                // Mettre à jour les références globales APRÈS avoir mis à jour le dataManager
+                window.locationsData = this.dataManager.locationsData;
+                window.regionsData = this.dataManager.regionsData;
             } else if (mode === 'merge') {
                 // Fusionner les données
                 this.mergeLocations(processedData.locations);
@@ -349,9 +358,21 @@ class ImportExportManager {
             this.dataManager.saveLocationsToLocal();
             this.dataManager.saveRegionsToLocal();
 
-            // Re-render
-            if (typeof window.renderLocations === 'function') window.renderLocations();
-            if (typeof window.renderRegions === 'function') window.renderRegions();
+            // Forcer la mise à jour des références globales avant le re-render
+            window.locationsData = this.dataManager.locationsData;
+            window.regionsData = this.dataManager.regionsData;
+
+            // Re-render avec un léger délai pour s'assurer que les données sont bien synchronisées
+            setTimeout(() => {
+                if (typeof window.renderLocations === 'function') {
+                    console.log(`🎯 Re-rendering ${this.dataManager.locationsData?.locations?.length || 0} locations after import`);
+                    window.renderLocations();
+                }
+                if (typeof window.renderRegions === 'function') {
+                    console.log(`🌍 Re-rendering ${this.dataManager.regionsData?.regions?.length || 0} regions after import`);
+                    window.renderRegions();
+                }
+            }, 100);
 
             // Auto-sync si disponible
             if (this.scheduleAutoSync && typeof this.scheduleAutoSync === 'function') {
@@ -396,6 +417,8 @@ class ImportExportManager {
             }
         });
 
+        // S'assurer que les références globales sont bien mises à jour
+        this.dataManager.locationsData = { ...this.dataManager.locationsData };
         window.locationsData = this.dataManager.locationsData;
     }
 
@@ -426,6 +449,8 @@ class ImportExportManager {
             }
         });
 
+        // S'assurer que les références globales sont bien mises à jour
+        this.dataManager.regionsData = { ...this.dataManager.regionsData };
         window.regionsData = this.dataManager.regionsData;
     }
 
