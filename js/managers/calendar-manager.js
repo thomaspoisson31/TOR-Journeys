@@ -171,7 +171,29 @@ class CalendarManager {
         this.updateSeasonDisplay();
     }
 
-    // Méthode déjà définie plus haut, suppression de la duplication
+    loadCalendarFromLocal() {
+        const savedCalendar = localStorage.getItem('calendarData');
+        const savedDate = localStorage.getItem('currentCalendarDate');
+        const savedMode = localStorage.getItem('isCalendarMode');
+
+        if (savedCalendar) {
+            try {
+                this.calendarData = JSON.parse(savedCalendar);
+            } catch (e) {
+                console.error('Error loading calendar:', e);
+            }
+        }
+
+        if (savedDate) {
+            try {
+                this.currentCalendarDate = JSON.parse(savedDate);
+            } catch (e) {
+                console.error('Error loading calendar date:', e);
+            }
+        }
+
+        this.isCalendarMode = savedMode === 'true';
+    }
 
     updateCalendarUI() {
         const calendarStatus = document.getElementById('calendar-status-text');
@@ -369,19 +391,11 @@ class CalendarManager {
         const fileInput = document.getElementById('calendar-file-input');
 
         if (uploadBtn && fileInput) {
-            // Supprimer les anciens listeners pour éviter les doublons
-            uploadBtn.replaceWith(uploadBtn.cloneNode(true));
-            fileInput.replaceWith(fileInput.cloneNode(true));
-            
-            // Récupérer les nouveaux éléments
-            const newUploadBtn = document.getElementById('upload-calendar-btn');
-            const newFileInput = document.getElementById('calendar-file-input');
-            
-            newUploadBtn.addEventListener('click', () => {
-                newFileInput.click();
+            uploadBtn.addEventListener('click', () => {
+                fileInput.click();
             });
 
-            newFileInput.addEventListener('change', (e) => {
+            fileInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file && file.type === 'text/csv') {
                     const reader = new FileReader();
@@ -389,21 +403,13 @@ class CalendarManager {
                         try {
                             this.calendarData = this.loadCalendarFromCSV(event.target.result);
                             if (this.calendarData.length > 0) {
-                                this.isCalendarMode = true;
                                 // Set default date (first day of first month)
                                 this.currentCalendarDate = {
                                     month: this.calendarData[0].name,
                                     day: this.calendarData[0].days[0]
                                 };
-                                
-                                // Mettre à jour la saison basée sur le premier mois
-                                const firstMonth = this.calendarData[0];
-                                this.currentSeason = firstMonth.season.toLowerCase();
-                                
-                                this.saveCalendarToLocal();
                                 this.updateCalendarUI();
                                 this.updateCalendarDate();
-                                
                                 alert(`Calendrier importé avec succès (${this.calendarData.length} mois)`);
                             } else {
                                 alert('Fichier CSV invalide ou vide');
@@ -417,7 +423,7 @@ class CalendarManager {
                 } else {
                     alert('Veuillez sélectionner un fichier CSV valide');
                 }
-                newFileInput.value = ''; // Reset input
+                fileInput.value = ''; // Reset input
             });
         }
 
