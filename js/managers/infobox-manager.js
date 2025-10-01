@@ -31,6 +31,12 @@ class InfoBoxManager {
             expandBtn.addEventListener('click', () => this.toggleExpand());
         }
 
+        // Bouton éditer (icône crayon)
+        const editBtn = document.getElementById('info-box-edit');
+        if (editBtn) {
+            editBtn.addEventListener('click', () => this.enterEditMode());
+        }
+
         // Gestion des onglets
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
@@ -191,18 +197,12 @@ class InfoBoxManager {
                 imageView.innerHTML = `
                     <img src="${defaultImage.url}" alt="${item.name}" class="modal-image">
                     <div class="image-caption">${item.name}</div>
-                    <button onclick="window.infoBoxManager.enterEditMode()" class="edit-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mt-2">
-                        <i class="fas fa-edit mr-1"></i>Éditer
-                    </button>
                 `;
             } else {
                 const typeLabel = type === 'region' ? 'Région' : 'Lieu';
                 imageView.innerHTML = `
                     <div class="compact-title">${item.name}</div>
                     <div class="image-placeholder">Aucune image disponible pour cette ${typeLabel.toLowerCase()}</div>
-                    <button onclick="window.infoBoxManager.enterEditMode()" class="edit-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mt-2">
-                        <i class="fas fa-edit mr-1"></i>Éditer
-                    </button>
                 `;
             }
         }
@@ -214,9 +214,6 @@ class InfoBoxManager {
             textView.innerHTML = `
                 <h3>${item.name}</h3>
                 <p>${item.description || 'Aucune description disponible.'}</p>
-                <button onclick="window.infoBoxManager.enterEditMode()" class="edit-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mt-2">
-                    <i class="fas fa-edit mr-1"></i>Éditer
-                </button>
             `;
         }
 
@@ -243,9 +240,6 @@ class InfoBoxManager {
             
             textView.innerHTML = `
                 <div>${rumeursContent}</div>
-                <button onclick="window.infoBoxManager.enterEditMode()" class="edit-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mt-2">
-                    <i class="fas fa-edit mr-1"></i>Éditer
-                </button>
             `;
         }
 
@@ -256,9 +250,6 @@ class InfoBoxManager {
             const traditionContent = item.Tradition_Ancienne || 'Aucune tradition ancienne disponible.';
             textView.innerHTML = `
                 <div>${traditionContent}</div>
-                <button onclick="window.infoBoxManager.enterEditMode()" class="edit-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded mt-2">
-                    <i class="fas fa-edit mr-1"></i>Éditer
-                </button>
             `;
         }
     }
@@ -277,8 +268,8 @@ class InfoBoxManager {
                         ${this.renderEditImagesList()}
                     </div>
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2">Ajouter une image (URL) :</label>
-                        <input type="url" id="new-image-url" class="w-full p-2 border rounded" placeholder="https://example.com/image.jpg">
+                        <label class="block text-sm font-medium mb-2 text-white">Ajouter une image (URL) :</label>
+                        <input type="url" id="new-image-url" class="w-full p-2 border rounded bg-white text-black" placeholder="https://example.com/image.jpg">
                         <button onclick="window.infoBoxManager.addImage()" class="mt-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
                             <i class="fas fa-plus mr-1"></i>Ajouter
                         </button>
@@ -301,12 +292,12 @@ class InfoBoxManager {
             textTab.innerHTML = `
                 <div class="edit-form p-4">
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2">Nom :</label>
-                        <input type="text" id="edit-name" value="${item.name}" class="w-full p-2 border rounded">
+                        <label class="block text-sm font-medium mb-2 text-white">Nom :</label>
+                        <input type="text" id="edit-name" value="${item.name}" class="w-full p-2 border rounded bg-white text-black">
                     </div>
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2">Description :</label>
-                        <textarea id="edit-description" class="w-full p-2 border rounded h-20">${item.description || ''}</textarea>
+                        <label class="block text-sm font-medium mb-2 text-white">Description :</label>
+                        <textarea id="edit-description" class="w-full p-2 border rounded h-20 bg-white text-black">${item.description || ''}</textarea>
                         <button onclick="window.infoBoxManager.generateDescription()" class="mt-2 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded">
                             <i class="fas fa-magic mr-1"></i>Générer avec IA
                         </button>
@@ -341,8 +332,8 @@ class InfoBoxManager {
             rumeursTab.innerHTML = `
                 <div class="edit-form p-4">
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2">Rumeurs ${type === 'location' ? '(une par ligne)' : ''} :</label>
-                        <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-24">${currentRumeurs}</textarea>
+                        <label class="block text-sm font-medium mb-2 text-white">Rumeurs ${type === 'location' ? '(une par ligne)' : ''} :</label>
+                        <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-24 bg-white text-black">${currentRumeurs}</textarea>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
@@ -362,8 +353,8 @@ class InfoBoxManager {
             traditionTab.innerHTML = `
                 <div class="edit-form p-4">
                     <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2">Tradition Ancienne :</label>
-                        <textarea id="edit-tradition" class="w-full p-2 border rounded h-24">${item.Tradition_Ancienne || ''}</textarea>
+                        <label class="block text-sm font-medium mb-2 text-white">Tradition Ancienne :</label>
+                        <textarea id="edit-tradition" class="w-full p-2 border rounded h-24 bg-white text-black">${item.Tradition_Ancienne || ''}</textarea>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
