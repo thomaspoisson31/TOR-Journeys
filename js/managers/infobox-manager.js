@@ -718,4 +718,7 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = InfoBoxManager;
 }
 
+// Export ES6 par défaut
+export default InfoBoxManager;
+
 console.log("📋 InfoBoxManager module loaded");
