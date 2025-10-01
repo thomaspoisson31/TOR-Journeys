@@ -22,6 +22,7 @@ import FilterManager from './managers/filter-manager.js';
 import VoyageManager from './managers/voyage-manager.js';
 import PathManager from './managers/path-manager.js';
 import SettingsManager from './managers/settings-manager.js';
+import AuthManager from './managers/auth-manager.js';
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -42,6 +43,7 @@ let voyageManager;
 let pathManager;
 let calendarManager;
 let settingsManager;
+let authManager;
 
 console.log("✅ Global variables initialized");
 
@@ -96,6 +98,12 @@ async function initializeApp() {
         settingsManager.init();
         window.settingsManager = settingsManager; // Exposer globalement pour les onclick
         console.log("✅ SettingsManager initialized");
+
+        // Initialiser AuthManager
+        authManager = new AuthManager();
+        authManager.init();
+        window.authManager = authManager; // Exposer globalement pour les onclick
+        console.log("✅ AuthManager initialized");
 
         // Charger les données
         console.log("📍 Loading initial locations...");
@@ -1495,6 +1503,9 @@ function setupDrawingEvents() {
 function scheduleAutoSync() {
     // Fonction pour la synchronisation automatique
     console.log("🔄 Auto-sync scheduled");
+    if (authManager && authManager.isAuthenticated) {
+        authManager.scheduleAutoSync();
+    }
 }
 
 // Exposer les fonctions nécessaires globalement

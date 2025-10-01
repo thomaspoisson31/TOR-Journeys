@@ -315,6 +315,32 @@ def update_context(context_id):
 
     return jsonify({'message': 'Contexte mis à jour avec succès'})
 
+@app.route('/api/contexts/<int:context_id>', methods=['DELETE'])
+def delete_context(context_id):
+    """Supprimer un contexte de voyage"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    conn = get_db_connection()
+
+    # Vérifier que le contexte appartient à l'utilisateur
+    context = conn.execute(
+        'SELECT * FROM travel_contexts WHERE id = ? AND user_id = ?',
+        (context_id, session['user_id'])
+    ).fetchone()
+
+    if context is None:
+        conn.close()
+        return jsonify({'error': 'Contexte non trouvé ou accès refusé'}), 403
+
+    # Supprimer le contexte
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM travel_contexts WHERE id = ?', (context_id,))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'Contexte supprimé avec succès'})
+
 @app.route('/api/contexts/<int:context_id>/share', methods=['POST'])
 def share_context(context_id):
     """Partager un contexte de voyage"""
