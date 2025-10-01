@@ -61,6 +61,13 @@ class VoyageManager {
         }
     }
 
+    setupDrawingListeners() {
+        // Méthode appelée par main.js pour configurer les écouteurs de dessin
+        // Pour l'instant, cette méthode est vide car la gestion du dessin
+        // est principalement gérée par PathManager
+        console.log("🎨 VoyageManager drawing listeners configured");
+    }
+
     updateDisplay() {
         const noVoyageMessage = this.dom.getElementById('no-voyage-message');
         const currentSegmentDisplay = this.dom.getElementById('current-segment-display');
