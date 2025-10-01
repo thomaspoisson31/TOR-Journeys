@@ -23,6 +23,7 @@ import VoyageManager from './managers/voyage-manager.js';
 import PathManager from './managers/path-manager.js';
 import SettingsManager from './managers/settings-manager.js';
 import AuthManager from './managers/auth-manager.js';
+import InfoBoxManager from './managers/infobox-manager.js';
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -44,6 +45,7 @@ let pathManager;
 let calendarManager;
 let settingsManager;
 let authManager;
+let infoBoxManager;
 
 console.log("✅ Global variables initialized");
 
@@ -104,6 +106,15 @@ async function initializeApp() {
         authManager.init();
         window.authManager = authManager; // Exposer globalement pour les onclick
         console.log("✅ AuthManager initialized");
+
+        // Initialiser InfoBoxManager
+        infoBoxManager = new InfoBoxManager(
+            { getElementById: (id) => document.getElementById(id) },
+            dataManager,
+            window.geminiManager
+        );
+        window.infoBoxManager = infoBoxManager; // Exposer globalement pour les onclick
+        console.log("✅ InfoBoxManager initialized");
 
         // Charger les données
         console.log("📍 Loading initial locations...");
@@ -193,7 +204,7 @@ function renderLocations() {
         // Ajouter l'événement de clic
         marker.addEventListener('click', (e) => {
             e.stopPropagation();
-            showInfoBox(e, location);
+            infoBoxManager.showInfoBox(e, location, 'location');
         });
 
         // Ajouter à la couche des lieux
@@ -277,7 +288,7 @@ function renderRegions() {
         // Ajouter l'événement de clic pour afficher la modal commune
         polygon.addEventListener('click', (e) => {
             e.stopPropagation();
-            showInfoBox(e, region, 'region');
+            infoBoxManager.showInfoBox(e, region, 'region');
         });
 
         // Ajouter à la couche des régions
@@ -587,40 +598,9 @@ function setupMapNavigation() {
     console.log("✅ Map navigation setup complete");
 }
 
-// --- Event Listeners pour l'info-box ---
+// --- Event Listeners simplifiés ---
 function setupInfoBoxListeners() {
     console.log("📋 Setting up info-box listeners...");
-
-    // Bouton fermer
-    const closeBtn = document.getElementById('info-box-close');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', hideInfoBox);
-    }
-
-    // Bouton étendre/réduire
-    const expandBtn = document.getElementById('info-box-expand');
-    if (expandBtn) {
-        expandBtn.addEventListener('click', toggleInfoBoxExpand);
-    }
-
-    // Gestion des onglets
-    const tabButtons = document.querySelectorAll('.tab-button');
-    tabButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            const targetTab = e.target.dataset.tab;
-
-            // Désactiver tous les onglets
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-            // Activer l'onglet cliqué
-            e.target.classList.add('active');
-            const targetContent = document.getElementById(`${targetTab}-tab`);
-            if (targetContent) {
-                targetContent.classList.add('active');
-            }
-        });
-    });
 
     // Gestionnaire principal pour les clics dans le viewport
     viewport.addEventListener('click', handleViewportClick);
@@ -630,16 +610,6 @@ function setupInfoBoxListeners() {
         if (isRegionDrawingMode && regionPoints.length >= 3) {
             e.preventDefault();
             finishRegionDrawing();
-        }
-    });
-
-    // Touche Échap pour fermer
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            const infoBox = document.getElementById('info-box');
-            if (infoBox && infoBox.style.display === 'block') {
-                hideInfoBox();
-            }
         }
     });
 
@@ -666,187 +636,6 @@ function setupInfoBoxListeners() {
     }
 
     console.log("✅ Info-box listeners setup complete");
-}
-
-// --- Fonctions d'info-box des lieux ---
-let currentInfoBox = null;
-let isInfoBoxExpanded = false;
-
-function showInfoBox(event, locationOrRegion, type = 'location') {
-    console.log("📋 Showing info box for:", locationOrRegion.name, "Type:", type);
-
-    const infoBox = document.getElementById('info-box');
-    const infoBoxTitle = document.getElementById('info-box-title');
-    const imageTab = document.getElementById('image-tab');
-    const textTab = document.getElementById('text-tab');
-    const rumeursTab = document.getElementById('rumeurs-tab');
-    const traditionTab = document.getElementById('tradition-tab');
-
-    if (!infoBox) {
-        console.error("❌ Info box element not found");
-        return;
-    }
-
-    // Sauvegarder la référence de l'objet actuel
-    currentInfoBox = locationOrRegion;
-
-    // Mettre à jour le titre (caché en mode compact)
-    if (infoBoxTitle) {
-        infoBoxTitle.textContent = locationOrRegion.name;
-        infoBoxTitle.classList.add('hidden');
-    }
-
-    // Onglet Image
-    if (imageTab) {
-        const imageView = imageTab.querySelector('.image-view');
-        if (imageView) {
-            // Vérifier s'il y a des images
-            if (locationOrRegion.images && locationOrRegion.images.length > 0) {
-                const defaultImage = locationOrRegion.images.find(img => img.isDefault) || locationOrRegion.images[0];
-                imageView.innerHTML = `
-                    <img src="${defaultImage.url}" alt="${locationOrRegion.name}" class="modal-image">
-                    <div class="image-caption">${locationOrRegion.name}</div>
-                `;
-            } else {
-                // Pas d'image - afficher le titre en mode compact
-                const typeLabel = type === 'region' ? 'Région' : 'Lieu';
-                imageView.innerHTML = `
-                    <div class="compact-title">${locationOrRegion.name}</div>
-                    <div class="image-placeholder">Aucune image disponible pour cette ${typeLabel.toLowerCase()}</div>
-                `;
-            }
-        }
-    }
-
-    // Onglet Texte
-    if (textTab) {
-        const textView = textTab.querySelector('.text-view');
-        if (textView) {
-            const h3 = textView.querySelector('h3');
-            const p = textView.querySelector('p');
-
-            if (h3) h3.textContent = locationOrRegion.name;
-            if (p) {
-                let description = '';
-                if (type === 'region') {
-                    description = locationOrRegion.description || 'Aucune description disponible pour cette région.';
-                } else {
-                    description = locationOrRegion.description || 'Aucune description disponible.';
-                }
-                p.textContent = description;
-            }
-        }
-    }
-
-    // Onglet Rumeurs
-    if (rumeursTab) {
-        const textView = rumeursTab.querySelector('.text-view');
-        if (textView) {
-            const p = textView.querySelector('p');
-            if (p) {
-                if (type === 'region') {
-                    p.textContent = locationOrRegion.Rumeur || 'Aucune rumeur disponible pour cette région.';
-                } else {
-                    p.textContent = locationOrRegion.Rumeur || 'Aucune rumeur disponible.';
-                }
-            }
-        }
-    }
-
-    // Onglet Tradition
-    if (traditionTab) {
-        const textView = traditionTab.querySelector('.text-view');
-        if (textView) {
-            const p = textView.querySelector('p');
-            if (p) {
-                if (type === 'region') {
-                    p.textContent = locationOrRegion.Tradition_Ancienne || 'Aucune tradition ancienne disponible pour cette région.';
-                } else {
-                    p.textContent = locationOrRegion.Tradition_Ancienne || 'Aucune tradition ancienne disponible.';
-                }
-            }
-        }
-    }
-
-    // Positionner et afficher l'info-box
-    let x, y;
-
-    if (type === 'region') {
-        // Pour les régions, utiliser la position du clic
-        const viewportRect = viewport.getBoundingClientRect();
-        x = event.clientX - viewportRect.left;
-        y = event.clientY - viewportRect.top;
-    } else {
-        // Pour les lieux, utiliser la position du marqueur
-        const rect = event.currentTarget.getBoundingClientRect();
-        const viewportRect = viewport.getBoundingClientRect();
-        x = rect.left - viewportRect.left + rect.width / 2;
-        y = rect.top - viewportRect.top + rect.height / 2;
-    }
-
-    // Ajuster pour éviter de sortir de l'écran
-    const infoBoxWidth = 280; // Largeur approximative de l'info-box
-    const infoBoxHeight = 300; // Hauteur approximative
-
-    let finalX = Math.max(10, Math.min(x, viewport.clientWidth - infoBoxWidth - 10));
-    let finalY = Math.max(10, Math.min(y, viewport.clientHeight - infoBoxHeight - 10));
-
-    infoBox.style.left = `${finalX}px`;
-    infoBox.style.top = `${finalY}px`;
-    infoBox.style.display = 'block';
-
-    // S'assurer que l'onglet Image est actif par défaut
-    const tabButtons = infoBox.querySelectorAll('.tab-button');
-    const tabContents = infoBox.querySelectorAll('.tab-content');
-
-    tabButtons.forEach(btn => btn.classList.remove('active'));
-    tabContents.forEach(content => content.classList.remove('active'));
-
-    const imageTabButton = infoBox.querySelector('.tab-button[data-tab="image"]');
-    if (imageTabButton) {
-        imageTabButton.classList.add('active');
-        imageTab.classList.add('active');
-    }
-
-    console.log("✅ Info box displayed successfully");
-}
-
-function hideInfoBox() {
-    const infoBox = document.getElementById('info-box');
-    if (infoBox) {
-        infoBox.style.display = 'none';
-        currentInfoBox = null;
-        isInfoBoxExpanded = false;
-        infoBox.classList.remove('expanded');
-    }
-}
-
-function toggleInfoBoxExpand() {
-    const infoBox = document.getElementById('info-box');
-    const infoBoxTitle = document.getElementById('info-box-title');
-
-    if (!infoBox) return;
-
-    isInfoBoxExpanded = !isInfoBoxExpanded;
-
-    if (isInfoBoxExpanded) {
-        infoBox.classList.add('expanded');
-        if (infoBoxTitle) infoBoxTitle.classList.remove('hidden');
-
-        // Centrer l'info-box étendue
-        infoBox.style.left = '50%';
-        infoBox.style.top = '50%';
-        infoBox.style.transform = 'translate(-50%, -50%)';
-    } else {
-        infoBox.classList.remove('expanded');
-        if (infoBoxTitle) infoBoxTitle.classList.add('hidden');
-        infoBox.style.transform = 'none';
-
-        // Repositionner si nécessaire
-        if (currentInfoBox) {
-            // Garder la position actuelle en mode compact
-        }
-    }
 }
 
 // --- Fonctions de tracé de régions ---
