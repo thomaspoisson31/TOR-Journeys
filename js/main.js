@@ -300,7 +300,7 @@ function renderRegions() {
         polygon.setAttribute('stroke', strokeColor);
         polygon.setAttribute('fill-opacity', '1');
         polygon.setAttribute('stroke-opacity', '1');
-        polygon.setAttribute('stroke-width', '3');
+        polygon.setAttribute('stroke-width', '6');
 
         // Créer les points du polygone en utilisant les coordonnées appropriées
         const points = coords.map(coord => `${coord.x},${coord.y}`).join(' ');

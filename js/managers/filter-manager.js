@@ -7,7 +7,9 @@ export default class FilterManager {
             colors: [], // Unifié pour lieux et régions
             visited: null, // null = tous, true = visités, false = non visités
             known: null,   // null = tous, true = connus, false = inconnus
-            types: []
+            types: [],
+            showLocations: true, // Afficher les lieux
+            showRegions: true    // Afficher les régions
         };
         
         this.isFilterPanelOpen = false;
@@ -53,6 +55,9 @@ export default class FilterManager {
 
         // Filtres de types
         this.setupTypeFilters();
+
+        // Filtres d'affichage
+        this.setupDisplayFilters();
 
         console.log("✅ Filter listeners setup complete");
     }
@@ -127,6 +132,25 @@ export default class FilterManager {
         });
     }
 
+    setupDisplayFilters() {
+        const showLocationsFilter = document.getElementById('show-locations');
+        const showRegionsFilter = document.getElementById('show-regions');
+
+        if (showLocationsFilter) {
+            showLocationsFilter.addEventListener('change', () => {
+                this.activeFilters.showLocations = showLocationsFilter.checked;
+                this.applyFilters();
+            });
+        }
+
+        if (showRegionsFilter) {
+            showRegionsFilter.addEventListener('change', () => {
+                this.activeFilters.showRegions = showRegionsFilter.checked;
+                this.applyFilters();
+            });
+        }
+    }
+
     updateUnifiedColorFilter(color, isChecked) {
         if (isChecked) {
             if (!this.activeFilters.colors.includes(color)) {
@@ -188,7 +212,9 @@ export default class FilterManager {
             colors: [],
             visited: null,
             known: null,
-            types: []
+            types: [],
+            showLocations: true,
+            showRegions: true
         };
 
         // Réinitialiser l'interface
@@ -207,6 +233,12 @@ export default class FilterManager {
         document.querySelectorAll('input[name="type-filter"]').forEach(cb => {
             cb.checked = false;
         });
+
+        // Cases à cocher d'affichage
+        const showLocationsFilter = document.getElementById('show-locations');
+        const showRegionsFilter = document.getElementById('show-regions');
+        if (showLocationsFilter) showLocationsFilter.checked = true;
+        if (showRegionsFilter) showRegionsFilter.checked = true;
 
         // Appliquer les filtres vides (montrer tout)
         this.applyFilters();
@@ -306,7 +338,8 @@ export default class FilterManager {
         const locationMarkers = document.querySelectorAll('.location-marker');
         locationMarkers.forEach(marker => {
             const locationId = marker.dataset.id;
-            const isVisible = this.filteredLocations.some(loc => loc.id == locationId);
+            const isFiltered = this.filteredLocations.some(loc => loc.id == locationId);
+            const isVisible = this.activeFilters.showLocations && isFiltered;
             marker.style.display = isVisible ? 'block' : 'none';
         });
 
@@ -314,7 +347,8 @@ export default class FilterManager {
         const regionPolygons = document.querySelectorAll('#regions-layer polygon[data-id]');
         regionPolygons.forEach(polygon => {
             const regionId = polygon.getAttribute('data-id');
-            const isVisible = this.filteredRegions.some(reg => reg.id === regionId);
+            const isFiltered = this.filteredRegions.some(reg => reg.id === regionId);
+            const isVisible = this.activeFilters.showRegions && isFiltered;
             polygon.style.display = isVisible ? 'block' : 'none';
         });
 
@@ -339,7 +373,9 @@ export default class FilterManager {
         return (this.activeFilters.colors && this.activeFilters.colors.length > 0) ||
                this.activeFilters.visited !== null ||
                this.activeFilters.known !== null ||
-               (this.activeFilters.types && this.activeFilters.types.length > 0);
+               (this.activeFilters.types && this.activeFilters.types.length > 0) ||
+               !this.activeFilters.showLocations ||
+               !this.activeFilters.showRegions;
     }
 
     // Méthodes utilitaires pour les couleurs

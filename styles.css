@@ -408,22 +408,22 @@ body {
 /* Region styles */
 .region {
     pointer-events: auto;
-    fill: rgba(34, 197, 94, 0.1);
+    fill: rgba(34, 197, 94, 0.05);
     stroke: rgba(34, 197, 94, 0.8);
-    stroke-width: 2;
+    stroke-width: 4;
     cursor: pointer;
     transition: fill 0.3s, stroke-width 0.3s;
 }
 
 .region:hover {
-    fill: rgba(34, 197, 94, 0.2);
-    stroke-width: 3;
+    fill: rgba(34, 197, 94, 0.1);
+    stroke-width: 6;
 }
 
 .region-temp {
-    fill: rgba(34, 197, 94, 0.1);
+    fill: rgba(34, 197, 94, 0.05);
     stroke: rgba(34, 197, 94, 0.8);
-    stroke-width: 2;
+    stroke-width: 4;
     stroke-dasharray: 5,5;
 }
 
