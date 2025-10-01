@@ -635,6 +635,28 @@ function setupInfoBoxListeners() {
         }
     });
 
+    // Clic sur la date du jour pour ouvrir les paramètres
+    const calendarDateIndicator = document.getElementById('calendar-date-indicator');
+    const seasonIndicator = document.getElementById('season-indicator');
+    
+    if (calendarDateIndicator) {
+        calendarDateIndicator.addEventListener('click', () => {
+            if (settingsManager) {
+                settingsManager.openSettings();
+                settingsManager.switchTab('season');
+            }
+        });
+    }
+    
+    if (seasonIndicator) {
+        seasonIndicator.addEventListener('click', () => {
+            if (settingsManager) {
+                settingsManager.openSettings();
+                settingsManager.switchTab('season');
+            }
+        });
+    }
+
     console.log("✅ Info-box listeners setup complete");
 }
 
