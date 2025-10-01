@@ -210,7 +210,7 @@ function renderLocations() {
 
         marker.addEventListener('click', (e) => {
             // Éviter d'ouvrir l'info-box si on vient de faire un drag
-            if (!isDraggingLocation) {
+            if (!hasDraggedLocation) {
                 e.stopPropagation();
                 infoBoxManager.showInfoBox(e, location, 'location');
             }
@@ -419,6 +419,7 @@ let isDraggingLocation = false;
 let draggedLocationMarker = null;
 let dragStartX = 0;
 let dragStartY = 0;
+let hasDraggedLocation = false; // Nouveau flag pour détecter si on a vraiment bougé
 
 // --- Variables d'état pour le tracé de régions ---
 let isRegionDrawingMode = false;
@@ -1328,6 +1329,7 @@ function handleLocationDragStart(e, marker, location) {
     e.preventDefault();
 
     isDraggingLocation = true;
+    hasDraggedLocation = false; // Reset du flag
     draggedLocationMarker = marker;
     dragStartX = e.clientX;
     dragStartY = e.clientY;
@@ -1346,6 +1348,12 @@ function handleLocationDrag(e) {
 
     const deltaX = e.clientX - dragStartX;
     const deltaY = e.clientY - dragStartY;
+
+    // Détecter si on a bougé de plus de 3 pixels (seuil de tolérance)
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    if (distance > 3) {
+        hasDraggedLocation = true;
+    }
 
     // Convertir le delta en coordonnées de la carte
     const mapDeltaX = deltaX / scale;
@@ -1377,41 +1385,39 @@ function handleLocationDragEnd(e) {
 
     console.log("🎯 Ending location drag");
 
-    // Trouver le lieu correspondant et mettre à jour ses coordonnées
-    const locationId = draggedLocationMarker.dataset.id;
-    const location = locationsData.locations.find(loc => loc.id == locationId);
+    // Seulement sauvegarder si on a vraiment bougé
+    if (hasDraggedLocation) {
+        // Trouver le lieu correspondant et mettre à jour ses coordonnées
+        const locationId = draggedLocationMarker.dataset.id;
+        const location = locationsData.locations.find(loc => loc.id == locationId);
 
-    if (location) {
-        const newX = parseFloat(draggedLocationMarker.style.left);
-        const newY = parseFloat(draggedLocationMarker.style.top);
+        if (location) {
+            const newX = parseFloat(draggedLocationMarker.style.left);
+            const newY = parseFloat(draggedLocationMarker.style.top);
 
-        location.coordinates.x = newX;
-        location.coordinates.y = newY;
+            location.coordinates.x = newX;
+            location.coordinates.y = newY;
 
-        console.log(`🎯 Updated location ${location.name} coordinates to (${newX.toFixed(1)}, ${newY.toFixed(1)})`);
+            console.log(`🎯 Updated location ${location.name} coordinates to (${newX.toFixed(1)}, ${newY.toFixed(1)})`);
 
-        // Sauvegarder les changements
-        if (dataManager) {
-            dataManager.saveLocationsToLocal();
-        }
+            // Sauvegarder les changements
+            if (dataManager) {
+                dataManager.saveLocationsToLocal();
+            }
 
-        // Programmer la synchronisation
-        if (typeof scheduleAutoSync === 'function') {
-            scheduleAutoSync();
+            // Programmer la synchronisation
+            if (typeof scheduleAutoSync === 'function') {
+                scheduleAutoSync();
+            }
         }
     }
 
     // Réinitialiser l'état
-    const wasDragging = isDraggingLocation;
     isDraggingLocation = false;
     draggedLocationMarker.style.cursor = 'pointer';
     draggedLocationMarker = null;
     viewport.style.cursor = 'grab';
-
-    // Délai plus long pour éviter que le clic se déclenche après le drag
-    setTimeout(() => {
-        isDraggingLocation = false;
-    }, 300);
+    hasDraggedLocation = false; // Reset du flag
 }
 
 // --- Fonctions utilitaires pour la compatibilité ---
