@@ -99,10 +99,12 @@ class VoyageManager {
         // Generate day by day data
         this.dayByDayData = [];
         for (let day = 1; day <= this.totalJourneyDays; day++) {
+            const calendarDate = this.getCalendarDateForDay(day);
+            console.log(`📅 Jour ${day}: date calendrier = "${calendarDate}"`);
             const dayData = {
                 day: day,
                 discoveries: [],
-                calendarDate: this.getCalendarDateForDay(day)
+                calendarDate: calendarDate
             };
 
             // Find discoveries for this day
@@ -330,6 +332,7 @@ class VoyageManager {
             const weatherData = this.getWeatherForDay(this.currentDayIndex + 1);
             
             // Format: "Jour X : Date Mois Symbole"
+            // dayData.calendarDate contient déjà "18 Narwain" par exemple
             let titleText = `Jour ${this.currentDayIndex + 1} : ${dayData.calendarDate}`;
             
             // Ajouter le symbole météo s'il existe
