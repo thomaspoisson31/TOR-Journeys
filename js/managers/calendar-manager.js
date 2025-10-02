@@ -16,6 +16,23 @@ class CalendarManager {
         this.loadSavedSeason();
         this.setupSeasonListeners();
         this.updateSeasonDisplay();
+        
+        // Exposer les données globalement pour compatibilité
+        this.exposeGlobalData();
+    }
+    
+    exposeGlobalData() {
+        window.calendarData = this.calendarData;
+        window.currentCalendarDate = this.currentCalendarDate;
+        window.isCalendarMode = this.isCalendarMode;
+        window.currentSeason = this.currentSeason;
+        
+        console.log("📅 Données calendrier exposées globalement:", {
+            calendarData: !!window.calendarData,
+            currentCalendarDate: window.currentCalendarDate,
+            isCalendarMode: window.isCalendarMode,
+            currentSeason: window.currentSeason
+        });
     }
 
     // --- Calendar Functions ---
@@ -109,6 +126,9 @@ class CalendarManager {
         }
         localStorage.setItem('isCalendarMode', this.isCalendarMode.toString());
         localStorage.setItem('currentSeason', this.currentSeason);
+        
+        // Synchroniser les variables globales
+        this.exposeGlobalData();
     }
 
     loadCalendarFromLocal() {
@@ -454,8 +474,10 @@ class CalendarManager {
                                     month: this.calendarData[0].name,
                                     day: this.calendarData[0].days[0]
                                 };
+                                this.isCalendarMode = true;
                                 this.updateCalendarUI();
                                 this.updateCalendarDate();
+                                this.exposeGlobalData();
                                 alert(`Calendrier importé avec succès (${this.calendarData.length} mois)`);
                             } else {
                                 alert('Fichier CSV invalide ou vide');
