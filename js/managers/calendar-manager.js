@@ -22,23 +22,82 @@ class CalendarManager {
     loadCalendarFromCSV(csvContent) {
         const lines = csvContent.trim().split('\n');
         const calendar = [];
+        let currentMonth = null;
 
         for (const line of lines) {
-            const parts = line.split(',');
-            if (parts.length >= 3) {
-                const monthName = parts[0].trim();
-                const season = parts[1].trim();
-                const days = parts.slice(2).map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+            const parts = this.parseCSVLine(line);
+            if (parts.length < 3) continue;
 
-                calendar.push({
+            const monthName = parts[0].trim();
+            const season = parts[1].trim();
+            const detailType = parts[2].trim();
+
+            // Nouveau mois
+            if (detailType === 'Jour') {
+                const days = parts.slice(3).filter(d => d && d.trim()).map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+                
+                currentMonth = {
                     name: monthName,
                     season: season,
-                    days: days
+                    days: [],
+                    weather: [],
+                    symbols: []
+                };
+
+                // Créer la structure pour chaque jour
+                days.forEach(day => {
+                    currentMonth.days.push({
+                        day: day,
+                        weather: '',
+                        symbol: ''
+                    });
+                });
+
+                calendar.push(currentMonth);
+            }
+            // Ligne météo
+            else if (detailType === 'Météo' && currentMonth) {
+                const weatherData = parts.slice(3).filter(d => d && d.trim());
+                weatherData.forEach((weather, index) => {
+                    if (currentMonth.days[index]) {
+                        currentMonth.days[index].weather = weather.replace(/^"|"$/g, '').trim();
+                    }
+                });
+            }
+            // Ligne symboles
+            else if (detailType === 'Symbole' && currentMonth) {
+                const symbolData = parts.slice(3).filter(d => d && d.trim());
+                symbolData.forEach((symbol, index) => {
+                    if (currentMonth.days[index]) {
+                        currentMonth.days[index].symbol = symbol.replace(/^"|"$/g, '').trim();
+                    }
                 });
             }
         }
 
         return calendar;
+    }
+
+    parseCSVLine(line) {
+        const parts = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            
+            if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                parts.push(current);
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        parts.push(current);
+        
+        return parts;
     }
 
     saveCalendarToLocal() {
@@ -94,8 +153,16 @@ class CalendarManager {
 
         // Déterminer la saison principale (printemps, été, automne, hiver)
         const seasonMainName = this.currentSeason.split('-')[0];
-        const symbol = this.seasonSymbols[seasonMainName] || '🌱';
+        let symbol = this.seasonSymbols[seasonMainName] || '🌱';
         const fullName = this.seasonNames[this.currentSeason] || 'Printemps-début';
+
+        // Si on a un calendrier avec météo, utiliser le symbole du jour
+        if (this.isCalendarMode && this.currentCalendarDate && this.calendarData) {
+            const dayData = this.getDayData(this.currentCalendarDate.month, this.currentCalendarDate.day);
+            if (dayData && dayData.symbol) {
+                symbol = dayData.symbol;
+            }
+        }
 
         console.log("🌱 Affichage saison:", {
             currentSeason: this.currentSeason,
@@ -105,18 +172,31 @@ class CalendarManager {
             isCalendarMode: this.isCalendarMode
         });
 
-        seasonIndicator.innerHTML = `${symbol} ${fullName}`;
-        seasonIndicator.title = `Saison actuelle : ${fullName}`;
+        seasonIndicator.innerHTML = symbol;
+        seasonIndicator.title = fullName;
 
-        // Afficher la date du calendrier si elle existe
+        // Afficher la date du calendrier avec météo si elle existe
         if (calendarDateIndicator) {
             if (this.isCalendarMode && this.currentCalendarDate) {
-                calendarDateIndicator.innerHTML = `📅 ${this.currentCalendarDate.day} ${this.currentCalendarDate.month}`;
+                const dayData = this.getDayData(this.currentCalendarDate.month, this.currentCalendarDate.day);
+                const weatherInfo = dayData && dayData.weather ? ` - ${dayData.weather}` : '';
+                calendarDateIndicator.innerHTML = `${this.currentCalendarDate.day} ${this.currentCalendarDate.month}`;
+                calendarDateIndicator.title = weatherInfo ? `Météo : ${dayData.weather}` : '';
                 calendarDateIndicator.classList.remove('hidden');
             } else {
                 calendarDateIndicator.classList.add('hidden');
             }
         }
+    }
+
+    getDayData(monthName, day) {
+        if (!this.calendarData) return null;
+        
+        const month = this.calendarData.find(m => m.name === monthName);
+        if (!month) return null;
+        
+        const dayData = month.days.find(d => d.day === day);
+        return dayData || null;
     }
 
     setupSeasonListeners() {
