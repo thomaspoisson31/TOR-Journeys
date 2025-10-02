@@ -350,8 +350,12 @@ export default class FilterManager {
             const isFiltered = this.filteredRegions.some(reg => reg.id === regionId);
             const isVisible = this.activeFilters.showRegions && isFiltered;
             
-            // Utiliser 'inline' au lieu de 'block' pour les éléments SVG
-            polygon.style.display = isVisible ? '' : 'none';
+            // Utiliser 'block' explicitement pour les polygones SVG
+            if (isVisible) {
+                polygon.style.display = 'block';
+            } else {
+                polygon.style.display = 'none';
+            }
         });
 
         console.log(`✅ Display updated - ${this.filteredLocations.length} locations, ${this.filteredRegions.length} regions visible`);
