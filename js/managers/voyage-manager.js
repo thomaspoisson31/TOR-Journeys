@@ -197,11 +197,13 @@ class VoyageManager {
             return savedJourneyData.startDate;
         }
 
-        // Si pas de date sauvée, utiliser la date courante et l'enregistrer
-        if (typeof isCalendarMode !== 'undefined' && isCalendarMode &&
-            typeof currentCalendarDate !== 'undefined' && currentCalendarDate &&
-            typeof calendarData !== 'undefined' && calendarData) {
+        // Accéder aux variables globales via window
+        const isCalendarMode = window.isCalendarMode;
+        const currentCalendarDate = window.currentCalendarDate;
+        const calendarData = window.calendarData;
 
+        // Si pas de date sauvée, utiliser la date courante et l'enregistrer
+        if (isCalendarMode && currentCalendarDate && calendarData && calendarData.length > 0) {
             const startDate = {
                 month: currentCalendarDate.month,
                 day: currentCalendarDate.day,
@@ -252,15 +254,20 @@ class VoyageManager {
     }
 
     getCalendarDateForDay(day) {
+        // Accéder aux variables globales via window
+        const calendarData = window.calendarData;
+        const isCalendarMode = window.isCalendarMode;
+        
         console.log(`📅 DEBUG getCalendarDateForDay(${day}):`, {
             hasJourneyStartDate: !!this.journeyStartDate,
             journeyStartDate: this.journeyStartDate,
-            hasCalendarData: typeof calendarData !== 'undefined' && !!calendarData,
-            calendarDataLength: typeof calendarData !== 'undefined' ? calendarData?.length : 0
+            hasCalendarData: !!calendarData,
+            calendarDataLength: calendarData?.length || 0,
+            isCalendarMode: isCalendarMode
         });
         
         // Utiliser la date de début fixe du voyage plutôt que la date courante
-        if (this.journeyStartDate && typeof calendarData !== 'undefined' && calendarData) {
+        if (this.journeyStartDate && calendarData && calendarData.length > 0) {
             let monthIndex = this.journeyStartDate.monthIndex;
             let calendarDay = this.journeyStartDate.day + day - 1;
 
@@ -283,7 +290,10 @@ class VoyageManager {
     }
 
     getWeatherForDay(day) {
-        if (!this.journeyStartDate || typeof calendarData === 'undefined' || !calendarData) {
+        // Accéder aux variables globales via window
+        const calendarData = window.calendarData;
+        
+        if (!this.journeyStartDate || !calendarData || calendarData.length === 0) {
             return null;
         }
 
@@ -708,9 +718,12 @@ class VoyageManager {
         const lastDayData = this.dayByDayData[this.totalJourneyDays - 1];
         if (!lastDayData) return;
 
+        // Accéder aux variables globales via window
+        const isCalendarMode = window.isCalendarMode;
+        const calendarData = window.calendarData;
+
         // Mettre à jour la date du calendrier principal si on est en mode calendrier
-        if (typeof isCalendarMode !== 'undefined' && isCalendarMode &&
-            this.journeyStartDate && typeof calendarData !== 'undefined' && calendarData) {
+        if (isCalendarMode && this.journeyStartDate && calendarData && calendarData.length > 0) {
 
             // Calculer la nouvelle date basée sur la date de début fixe du voyage
             let monthIndex = this.journeyStartDate.monthIndex;
@@ -723,24 +736,24 @@ class VoyageManager {
             }
 
             // Mettre à jour la date courante globale
-            currentCalendarDate = {
+            window.currentCalendarDate = {
                 month: calendarData[monthIndex].name,
                 day: newDay
             };
 
             // Sauvegarder la nouvelle date
-            if (typeof saveCalendarToLocal === 'function') {
-                saveCalendarToLocal();
+            if (typeof window.saveCalendarToLocal === 'function') {
+                window.saveCalendarToLocal();
             }
 
             // Mettre à jour l'affichage de la saison
-            if (typeof updateSeasonDisplay === 'function') {
-                updateSeasonDisplay();
+            if (typeof window.updateSeasonDisplay === 'function') {
+                window.updateSeasonDisplay();
             }
 
             // Programmer une synchronisation
-            if (typeof scheduleAutoSync === 'function') {
-                scheduleAutoSync();
+            if (typeof window.scheduleAutoSync === 'function') {
+                window.scheduleAutoSync();
             }
         }
 
