@@ -596,11 +596,12 @@ class VoyageManager {
             }
         }
         
-        if (seasonIndicator) {
+        if (seasonIndicator && window.calendarManager) {
             if (dayData && dayData.symbol) {
                 seasonIndicator.textContent = dayData.symbol;
                 if (dayData.weather) {
-                    seasonIndicator.title = `${window.calendarManager.seasonNames[window.calendarManager.currentSeason]} - ${dayData.weather}`;
+                    const seasonName = window.calendarManager.seasonNames[window.calendarManager.currentSeason] || '';
+                    seasonIndicator.title = seasonName ? `${seasonName} - ${dayData.weather}` : dayData.weather;
                 }
             } else {
                 // Rétablir le symbole de saison par défaut
