@@ -329,22 +329,28 @@ class VoyageManager {
             // Récupérer les données météo du jour
             const weatherData = this.getWeatherForDay(this.currentDayIndex + 1);
             
+            // Format: "Jour X : Date Mois Symbole"
+            let titleText = `Jour ${this.currentDayIndex + 1} : ${dayData.calendarDate}`;
+            
+            // Ajouter le symbole météo s'il existe
             if (weatherData && weatherData.symbol) {
-                segmentTitle.textContent = `${weatherData.symbol} ${dayData.calendarDate}`;
-                
-                // Ajouter la météo en tooltip
-                if (weatherData.weather) {
-                    segmentTitle.title = `Météo : ${weatherData.weather}`;
-                }
-            } else {
-                segmentTitle.textContent = dayData.calendarDate;
+                titleText += ` ${weatherData.symbol}`;
             }
             
+            segmentTitle.textContent = titleText;
             segmentTitle.style.color = '#940000';
+            segmentTitle.style.cursor = 'help';
+            
+            // Ajouter la météo détaillée en tooltip
+            if (weatherData && weatherData.weather) {
+                segmentTitle.title = `Météo du jour : ${weatherData.weather}`;
+            } else {
+                segmentTitle.title = '';
+            }
         }
 
         if (dayCounter) {
-            dayCounter.textContent = `(Jour ${this.currentDayIndex + 1} sur ${this.totalJourneyDays})`;
+            dayCounter.textContent = `(sur ${this.totalJourneyDays} jours de voyage)`;
             dayCounter.style.color = '#9CA3AF'; // Couleur grise (gray-400)
         }
     }
