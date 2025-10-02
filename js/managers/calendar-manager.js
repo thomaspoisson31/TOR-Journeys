@@ -160,6 +160,7 @@ class CalendarManager {
         let weatherTooltip = fullName;
         if (this.isCalendarMode && this.currentCalendarDate && this.calendarData) {
             const dayData = this.getDayData(this.currentCalendarDate.month, this.currentCalendarDate.day);
+            console.log("🌤️ Données météo du jour récupérées:", dayData);
             if (dayData && dayData.symbol) {
                 symbol = dayData.symbol;
                 if (dayData.weather) {
@@ -173,7 +174,8 @@ class CalendarManager {
             seasonMainName: seasonMainName,
             symbol: symbol,
             fullName: fullName,
-            isCalendarMode: this.isCalendarMode
+            isCalendarMode: this.isCalendarMode,
+            currentDate: this.currentCalendarDate
         });
 
         seasonIndicator.innerHTML = symbol;
@@ -191,6 +193,21 @@ class CalendarManager {
             } else {
                 calendarDateIndicator.classList.add('hidden');
             }
+        }
+
+        // Update settings display
+        const currentSeasonSymbol = document.getElementById('current-season-symbol');
+        const currentSeasonText = document.getElementById('current-season-text');
+        const currentCalendarDateElement = document.getElementById('current-calendar-date');
+
+        if (currentSeasonSymbol) currentSeasonSymbol.textContent = symbol;
+        if (currentSeasonText) currentSeasonText.textContent = fullName;
+
+        if (currentCalendarDateElement && this.currentCalendarDate && this.isCalendarMode) {
+            currentCalendarDateElement.textContent = `${this.currentCalendarDate.day} ${this.currentCalendarDate.month}`;
+            currentCalendarDateElement.classList.remove('hidden');
+        } else if (currentCalendarDateElement) {
+            currentCalendarDateElement.classList.add('hidden');
         }
     }
 
@@ -266,30 +283,6 @@ class CalendarManager {
         this.isCalendarMode = mode;
         this.saveCalendarToLocal();
         this.updateSeasonDisplay();
-    }
-
-    loadCalendarFromLocal() {
-        const savedCalendar = localStorage.getItem('calendarData');
-        const savedDate = localStorage.getItem('currentCalendarDate');
-        const savedMode = localStorage.getItem('isCalendarMode');
-
-        if (savedCalendar) {
-            try {
-                this.calendarData = JSON.parse(savedCalendar);
-            } catch (e) {
-                console.error('Error loading calendar:', e);
-            }
-        }
-
-        if (savedDate) {
-            try {
-                this.currentCalendarDate = JSON.parse(savedDate);
-            } catch (e) {
-                console.error('Error loading calendar date:', e);
-            }
-        }
-
-        this.isCalendarMode = savedMode === 'true';
     }
 
     updateCalendarUI() {
@@ -420,53 +413,7 @@ class CalendarManager {
         URL.revokeObjectURL(url);
     }
 
-    // --- Season Functions ---
-    updateSeasonDisplay() {
-        const seasonMainName = this.currentSeason.split('-')[0]; // 'printemps', 'ete', etc.
-        const symbol = this.seasonSymbols[seasonMainName] || '🌿'; // fallback symbol
-
-        // Use the season name from seasonNames if available, otherwise use currentSeason directly
-        const fullName = this.seasonNames[this.currentSeason] || this.currentSeason.charAt(0).toUpperCase() + this.currentSeason.slice(1);
-
-        console.log("🌱 Affichage saison:", {
-            currentSeason: this.currentSeason,
-            seasonMainName: seasonMainName,
-            symbol: symbol,
-            fullName: fullName,
-            isCalendarMode: this.isCalendarMode
-        });
-
-        // Update header indicator
-        const seasonIndicator = document.getElementById('season-indicator');
-        if (seasonIndicator) {
-            seasonIndicator.textContent = symbol;
-            seasonIndicator.title = `Saison actuelle: ${fullName}`;
-        }
-
-        // Update calendar date indicator in header
-        const calendarDateIndicator = document.getElementById('calendar-date-indicator');
-        if (calendarDateIndicator && this.currentCalendarDate && this.isCalendarMode) {
-            calendarDateIndicator.textContent = `${this.currentCalendarDate.day} ${this.currentCalendarDate.month}`;
-            calendarDateIndicator.classList.remove('hidden');
-        } else if (calendarDateIndicator) {
-            calendarDateIndicator.classList.add('hidden');
-        }
-
-        // Update settings display
-        const currentSeasonSymbol = document.getElementById('current-season-symbol');
-        const currentSeasonText = document.getElementById('current-season-text');
-        const currentCalendarDateElement = document.getElementById('current-calendar-date');
-
-        if (currentSeasonSymbol) currentSeasonSymbol.textContent = symbol;
-        if (currentSeasonText) currentSeasonText.textContent = fullName;
-
-        if (currentCalendarDateElement && this.currentCalendarDate && this.isCalendarMode) {
-            currentCalendarDateElement.textContent = `${this.currentCalendarDate.day} ${this.currentCalendarDate.month}`;
-            currentCalendarDateElement.classList.remove('hidden');
-        } else if (currentCalendarDateElement) {
-            currentCalendarDateElement.classList.add('hidden');
-        }
-    }
+    // --- Season Functions (méthode updateSeasonDisplay déjà définie plus haut) ---
 
     setupSeasonListeners() {
         // Season radio buttons (manual mode)
