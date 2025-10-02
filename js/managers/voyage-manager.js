@@ -408,27 +408,29 @@ class VoyageManager {
                 styleText = ' (Brève)';
         }
 
-        // Ajouter la météo du jour si disponible
+        // Ajouter la météo du jour en haut du contenu
         const weatherData = this.getWeatherForDay(this.currentDayIndex + 1);
         let weatherHtml = '';
         if (weatherData && (weatherData.weather || weatherData.symbol)) {
             weatherHtml = `
-                <div class="bg-blue-900 bg-opacity-30 rounded-lg p-3 mb-3">
+                <div class="bg-blue-900 bg-opacity-30 rounded-lg p-4 mb-4">
                     <div class="flex items-center space-x-3">
-                        ${weatherData.symbol ? `<div class="text-3xl">${weatherData.symbol}</div>` : ''}
+                        ${weatherData.symbol ? `<div class="text-4xl">${weatherData.symbol}</div>` : ''}
                         <div class="flex-1">
-                            <div class="text-xs text-blue-300 font-semibold">Météo du jour</div>
-                            ${weatherData.weather ? `<div class="text-sm text-gray-200">${weatherData.weather}</div>` : ''}
+                            <div class="text-xs text-blue-300 font-semibold mb-1">MÉTÉO DU JOUR</div>
+                            ${weatherData.weather ? `<div class="text-base text-white font-medium">${weatherData.weather}</div>` : ''}
                         </div>
                     </div>
                 </div>
             `;
         }
 
+        // Insérer la météo avant les découvertes
+        contentHtml = weatherHtml + contentHtml;
+
         // Ajouter les boutons en bas
         let buttonsHtml = `
             <div class="mt-3 pt-3 border-t border-gray-600 space-y-3">
-                ${weatherHtml}
                 <div id="current-day-description" class="hidden bg-gray-800 rounded-lg p-4 mb-3">
                     <div class="text-sm text-gray-400 mb-2">Description de la journée :</div>
                     <div id="current-day-description-text" class="text-gray-200 leading-relaxed text-sm"></div>
