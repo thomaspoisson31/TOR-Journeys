@@ -252,20 +252,33 @@ class VoyageManager {
     }
 
     getCalendarDateForDay(day) {
+        console.log(`📅 DEBUG getCalendarDateForDay(${day}):`, {
+            hasJourneyStartDate: !!this.journeyStartDate,
+            journeyStartDate: this.journeyStartDate,
+            hasCalendarData: typeof calendarData !== 'undefined' && !!calendarData,
+            calendarDataLength: typeof calendarData !== 'undefined' ? calendarData?.length : 0
+        });
+        
         // Utiliser la date de début fixe du voyage plutôt que la date courante
         if (this.journeyStartDate && typeof calendarData !== 'undefined' && calendarData) {
             let monthIndex = this.journeyStartDate.monthIndex;
             let calendarDay = this.journeyStartDate.day + day - 1;
 
+            console.log(`📅 Calcul initial: monthIndex=${monthIndex}, calendarDay=${calendarDay}`);
+
             // Navigate through months if necessary
             while (calendarDay > calendarData[monthIndex].days.length) {
                 calendarDay -= calendarData[monthIndex].days.length;
                 monthIndex = (monthIndex + 1) % calendarData.length;
+                console.log(`📅 Navigation mois: nouveau monthIndex=${monthIndex}, nouveau calendarDay=${calendarDay}`);
             }
 
-            return `${calendarDay} ${calendarData[monthIndex].name}`;
+            const result = `${calendarDay} ${calendarData[monthIndex].name}`;
+            console.log(`📅 Résultat final: "${result}"`);
+            return result;
         }
 
+        console.log(`📅 Pas de calendrier, retour: "Jour ${day}"`);
         return `Jour ${day}`;
     }
 
@@ -328,12 +341,22 @@ class VoyageManager {
         const dayCounter = document.getElementById('day-counter');
 
         if (segmentTitle) {
+            // Récupérer la date calendrier directement (car dayData.calendarDate peut être incorrect)
+            const realCalendarDate = this.getCalendarDateForDay(this.currentDayIndex + 1);
+            console.log(`📅 DEBUG updateDayTitle - Jour ${this.currentDayIndex + 1}:`, {
+                dayDataCalendarDate: dayData.calendarDate,
+                realCalendarDate: realCalendarDate,
+                journeyStartDate: this.journeyStartDate,
+                isCalendarMode: this.isCalendarMode
+            });
+            
             // Récupérer les données météo du jour
             const weatherData = this.getWeatherForDay(this.currentDayIndex + 1);
+            console.log(`🌤️ DEBUG météo:`, weatherData);
             
             // Format: "Jour X : Date Mois Symbole"
-            // dayData.calendarDate contient déjà "18 Narwain" par exemple
-            let titleText = `Jour ${this.currentDayIndex + 1} : ${dayData.calendarDate}`;
+            // Utiliser realCalendarDate au lieu de dayData.calendarDate
+            let titleText = `Jour ${this.currentDayIndex + 1} : ${realCalendarDate}`;
             
             // Ajouter le symbole météo s'il existe
             if (weatherData && weatherData.symbol) {
