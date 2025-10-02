@@ -353,10 +353,27 @@ class VoyageManager {
         const segmentContent = this.dom.getElementById('segment-content');
         if (!segmentContent) return;
 
-        let contentHtml = '';
+        // Ajouter la météo du jour en haut
+        const weatherData = this.getWeatherForDay(this.currentDayIndex + 1);
+        let weatherHtml = '';
+        if (weatherData && (weatherData.weather || weatherData.symbol)) {
+            weatherHtml = `
+                <div class="bg-blue-900 bg-opacity-30 rounded-lg p-4 mb-4">
+                    <div class="flex items-center space-x-3">
+                        ${weatherData.symbol ? `<div class="text-4xl">${weatherData.symbol}</div>` : ''}
+                        <div class="flex-1">
+                            <div class="text-xs text-blue-300 font-semibold mb-1">MÉTÉO DU JOUR</div>
+                            ${weatherData.weather ? `<div class="text-base text-white font-medium">${weatherData.weather}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        let contentHtml = weatherHtml;
 
         if (dayData.discoveries.length === 0) {
-            contentHtml = '<p class="text-gray-500 text-sm italic text-center p-4">Voyage tranquille...</p>';
+            contentHtml += '<p class="text-gray-500 text-sm italic text-center p-4">Voyage tranquille...</p>';
         } else {
             const discoveriesHtml = dayData.discoveries.map(discovery => {
                 const typeText = discovery.type === 'region' ? 'Région' : 'Lieu';
@@ -384,7 +401,7 @@ class VoyageManager {
                 `;
             }).join('');
 
-            contentHtml = `
+            contentHtml += `
                 <div class="text-left">
                     ${discoveriesHtml}
                 </div>
@@ -407,26 +424,6 @@ class VoyageManager {
             default:
                 styleText = ' (Brève)';
         }
-
-        // Ajouter la météo du jour en haut du contenu
-        const weatherData = this.getWeatherForDay(this.currentDayIndex + 1);
-        let weatherHtml = '';
-        if (weatherData && (weatherData.weather || weatherData.symbol)) {
-            weatherHtml = `
-                <div class="bg-blue-900 bg-opacity-30 rounded-lg p-4 mb-4">
-                    <div class="flex items-center space-x-3">
-                        ${weatherData.symbol ? `<div class="text-4xl">${weatherData.symbol}</div>` : ''}
-                        <div class="flex-1">
-                            <div class="text-xs text-blue-300 font-semibold mb-1">MÉTÉO DU JOUR</div>
-                            ${weatherData.weather ? `<div class="text-base text-white font-medium">${weatherData.weather}</div>` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Insérer la météo avant les découvertes
-        contentHtml = weatherHtml + contentHtml;
 
         // Ajouter les boutons en bas
         let buttonsHtml = `
