@@ -343,20 +343,15 @@ export default class FilterManager {
             marker.style.display = isVisible ? 'block' : 'none';
         });
 
-        // Masquer/afficher les régions
-        const regionPolygons = document.querySelectorAll('#regions-layer polygon[data-id]');
-        regionPolygons.forEach(polygon => {
-            const regionId = polygon.getAttribute('data-id');
-            const isFiltered = this.filteredRegions.some(reg => reg.id === regionId);
-            const isVisible = this.activeFilters.showRegions && isFiltered;
-            
-            // Utiliser 'block' explicitement pour les polygones SVG
-            if (isVisible) {
-                polygon.style.display = 'block';
+        // Masquer/afficher le calque de régions
+        const regionsLayer = document.getElementById('regions-layer');
+        if (regionsLayer) {
+            if (this.activeFilters.showRegions) {
+                regionsLayer.style.display = 'block';
             } else {
-                polygon.style.display = 'none';
+                regionsLayer.style.display = 'none';
             }
-        });
+        }
 
         console.log(`✅ Display updated - ${this.filteredLocations.length} locations, ${this.filteredRegions.length} regions visible`);
     }
