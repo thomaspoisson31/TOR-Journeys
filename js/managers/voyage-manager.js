@@ -353,6 +353,10 @@ class VoyageManager {
         const segmentContent = this.dom.getElementById('segment-content');
         if (!segmentContent) return;
 
+        // Vérifier si une description existe pour ce jour
+        const currentDayNumber = this.currentDayIndex + 1;
+        const dayDescription = this.journeyDescriptions[currentDayNumber];
+
         // Ajouter la météo du jour en haut
         const weatherData = this.getWeatherForDay(this.currentDayIndex + 1);
         let weatherHtml = '';
@@ -370,7 +374,18 @@ class VoyageManager {
             `;
         }
 
-        let contentHtml = weatherHtml;
+        // Ajouter la description du jour si elle existe
+        let descriptionHtml = '';
+        if (dayDescription) {
+            descriptionHtml = `
+                <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                    <div class="text-sm text-gray-400 mb-2">📖 Description de la journée :</div>
+                    <div class="text-gray-200 leading-relaxed text-sm">${dayDescription.replace(/\n/g, '<br>')}</div>
+                </div>
+            `;
+        }
+
+        let contentHtml = weatherHtml + descriptionHtml;
 
         if (dayData.discoveries.length === 0) {
             contentHtml += '<p class="text-gray-500 text-sm italic text-center p-4">Voyage tranquille...</p>';
@@ -428,13 +443,9 @@ class VoyageManager {
         // Ajouter les boutons en bas
         let buttonsHtml = `
             <div class="mt-3 pt-3 border-t border-gray-600 space-y-3">
-                <div id="current-day-description" class="hidden bg-gray-800 rounded-lg p-4 mb-3">
-                    <div class="text-sm text-gray-400 mb-2">Description de la journée :</div>
-                    <div id="current-day-description-text" class="text-gray-200 leading-relaxed text-sm"></div>
-                </div>
                 <button id="describe-journey-btn" class="w-full py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors" style="background-color: white; color: #940000; border: 1px solid #940000;">
                     <span class="gemini-icon">✨</span>
-                    <span>Décrire le voyage${styleText}</span>
+                    <span>${dayDescription ? 'Régénérer les descriptions' : 'Décrire le voyage'}${styleText}</span>
                 </button>
         `;
 
@@ -465,9 +476,6 @@ class VoyageManager {
             });
         }
 
-        // Afficher la description de la journée courante si elle existe
-        this.updateCurrentDayDescription();
-
         // Setup event listener for finish journey button if it exists
         if (isLastDay) {
             const finishBtn = this.dom.getElementById('finish-journey-btn');
@@ -488,22 +496,7 @@ class VoyageManager {
         this.renderCurrentDay();
     }
 
-    updateCurrentDayDescription() {
-        const descriptionContainer = document.getElementById('current-day-description');
-        const descriptionText = document.getElementById('current-day-description-text');
-
-        if (!descriptionContainer || !descriptionText) return;
-
-        const currentDayNumber = this.currentDayIndex + 1;
-        const description = this.journeyDescriptions[currentDayNumber];
-
-        if (description) {
-            descriptionText.innerHTML = description.replace(/\n/g, '<br>');
-            descriptionContainer.classList.remove('hidden');
-        } else {
-            descriptionContainer.classList.add('hidden');
-        }
-    }
+    
 
     updateNavigationButtons() {
         const prevBtn = this.dom.getElementById('prev-segment-btn');
@@ -1042,21 +1035,8 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 this.journeyDescriptions[dayDesc.day] = dayDesc.description;
             });
 
-            // Mettre à jour l'affichage de la description courante dans la modale
-            this.updateCurrentDayDescription();
-
-            // Changer le texte du bouton pour indiquer qu'on peut maintenant voir les détails
-            const describeBtn = this.dom.getElementById('describe-journey-btn');
-            if (describeBtn) {
-                const buttonText = describeBtn.querySelector('span:last-child');
-                if (buttonText) {
-                    buttonText.textContent = 'Descriptions générées ✓';
-                }
-
-                // Désactiver le bouton pour indiquer que l'action est terminée
-                describeBtn.style.opacity = '0.7';
-                describeBtn.style.cursor = 'default';
-            }
+            // Rafraîchir l'affichage du jour courant pour montrer la description
+            this.renderCurrentDay();
 
         } catch (error) {
             console.error('Erreur lors du parsing JSON:', error);
