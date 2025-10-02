@@ -567,6 +567,11 @@ class VoyageManager {
             day: newDay
         };
 
+        // Récupérer les données météo AVANT la mise à jour du DOM
+        const dayData = window.calendarManager ? window.calendarManager.getDayData(calendarData[monthIndex].name, newDay) : null;
+        
+        console.log(`📅 Données météo récupérées pour ${newDay} ${calendarData[monthIndex].name}:`, dayData);
+
         // Sauvegarder la nouvelle date et forcer le rafraîchissement de l'affichage
         if (window.calendarManager) {
             window.calendarManager.currentCalendarDate = window.currentCalendarDate;
@@ -577,17 +582,21 @@ class VoyageManager {
             const seasonIndicator = document.getElementById('season-indicator');
             
             if (calendarDateIndicator) {
-                const dayData = window.calendarManager.getDayData(calendarData[monthIndex].name, newDay);
                 calendarDateIndicator.textContent = `${newDay} ${calendarData[monthIndex].name}`;
                 if (dayData && dayData.weather) {
                     calendarDateIndicator.title = `Météo : ${dayData.weather}`;
                 }
             }
             
-            if (seasonIndicator && dayData && dayData.symbol) {
-                seasonIndicator.textContent = dayData.symbol;
-                if (dayData.weather) {
-                    seasonIndicator.title = `${window.calendarManager.seasonNames[window.calendarManager.currentSeason]} - ${dayData.weather}`;
+            if (seasonIndicator) {
+                if (dayData && dayData.symbol) {
+                    seasonIndicator.textContent = dayData.symbol;
+                    if (dayData.weather) {
+                        seasonIndicator.title = `${window.calendarManager.seasonNames[window.calendarManager.currentSeason]} - ${dayData.weather}`;
+                    }
+                } else {
+                    // Garder le symbole de saison par défaut si pas de symbole météo
+                    seasonIndicator.title = window.calendarManager.seasonNames[window.calendarManager.currentSeason] || '';
                 }
             }
         }
