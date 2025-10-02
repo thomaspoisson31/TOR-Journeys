@@ -567,41 +567,51 @@ class VoyageManager {
             day: newDay
         };
 
-        // Récupérer les données météo AVANT la mise à jour du DOM
-        const dayData = window.calendarManager ? window.calendarManager.getDayData(calendarData[monthIndex].name, newDay) : null;
-        
-        console.log(`📅 Données météo récupérées pour ${newDay} ${calendarData[monthIndex].name}:`, dayData);
-
-        // Sauvegarder la nouvelle date et forcer le rafraîchissement de l'affichage
+        // Sauvegarder la nouvelle date AVANT de récupérer les données météo
         if (window.calendarManager) {
             window.calendarManager.currentCalendarDate = window.currentCalendarDate;
             window.calendarManager.saveCalendarToLocal();
-            
-            // Forcer le rafraîchissement immédiat de l'affichage
-            const calendarDateIndicator = document.getElementById('calendar-date-indicator');
-            const seasonIndicator = document.getElementById('season-indicator');
-            
-            if (calendarDateIndicator) {
-                calendarDateIndicator.textContent = `${newDay} ${calendarData[monthIndex].name}`;
-                if (dayData && dayData.weather) {
-                    calendarDateIndicator.title = `Météo : ${dayData.weather}`;
-                }
+        }
+        
+        // Récupérer les données météo APRÈS la mise à jour de currentCalendarDate
+        const dayData = this.getWeatherForDay(currentDay);
+        
+        console.log(`📅 DEBUG updateMainCalendarDate - Jour ${currentDay}:`, {
+            monthIndex: monthIndex,
+            monthName: calendarData[monthIndex].name,
+            newDay: newDay,
+            dayData: dayData
+        });
+
+        // Forcer le rafraîchissement immédiat de l'affichage
+        const calendarDateIndicator = document.getElementById('calendar-date-indicator');
+        const seasonIndicator = document.getElementById('season-indicator');
+        
+        if (calendarDateIndicator) {
+            calendarDateIndicator.textContent = `${newDay} ${calendarData[monthIndex].name}`;
+            if (dayData && dayData.weather) {
+                calendarDateIndicator.title = `Météo : ${dayData.weather}`;
+            } else {
+                calendarDateIndicator.title = '';
             }
-            
-            if (seasonIndicator) {
-                if (dayData && dayData.symbol) {
-                    seasonIndicator.textContent = dayData.symbol;
-                    if (dayData.weather) {
-                        seasonIndicator.title = `${window.calendarManager.seasonNames[window.calendarManager.currentSeason]} - ${dayData.weather}`;
-                    }
-                } else {
-                    // Garder le symbole de saison par défaut si pas de symbole météo
-                    seasonIndicator.title = window.calendarManager.seasonNames[window.calendarManager.currentSeason] || '';
+        }
+        
+        if (seasonIndicator) {
+            if (dayData && dayData.symbol) {
+                seasonIndicator.textContent = dayData.symbol;
+                if (dayData.weather) {
+                    seasonIndicator.title = `${window.calendarManager.seasonNames[window.calendarManager.currentSeason]} - ${dayData.weather}`;
                 }
+            } else {
+                // Rétablir le symbole de saison par défaut
+                const seasonMainName = window.calendarManager.currentSeason.split('-')[0];
+                const defaultSymbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
+                seasonIndicator.textContent = defaultSymbol;
+                seasonIndicator.title = window.calendarManager.seasonNames[window.calendarManager.currentSeason] || '';
             }
         }
 
-        console.log(`📅 Date principale mise à jour : ${newDay} ${calendarData[monthIndex].name}`);
+        console.log(`📅 Date principale mise à jour : ${newDay} ${calendarData[monthIndex].name}`, dayData ? `avec météo: ${dayData.symbol}` : 'sans météo');
     }
 
     
