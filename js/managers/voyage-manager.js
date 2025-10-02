@@ -536,6 +536,45 @@ class VoyageManager {
 
         this.currentDayIndex = targetDayIndex;
         this.renderCurrentDay();
+        
+        // Mettre à jour la date principale du calendrier
+        this.updateMainCalendarDate();
+    }
+
+    updateMainCalendarDate() {
+        // Accéder aux variables globales via window
+        const isCalendarMode = window.isCalendarMode;
+        const calendarData = window.calendarData;
+        
+        if (!isCalendarMode || !this.journeyStartDate || !calendarData || calendarData.length === 0) {
+            return;
+        }
+
+        // Calculer la date du jour actuel basée sur la date de début du voyage
+        const currentDay = this.currentDayIndex + 1;
+        let monthIndex = this.journeyStartDate.monthIndex;
+        let newDay = this.journeyStartDate.day + currentDay - 1;
+
+        // Naviguer à travers les mois si nécessaire
+        while (newDay > calendarData[monthIndex].days.length) {
+            newDay -= calendarData[monthIndex].days.length;
+            monthIndex = (monthIndex + 1) % calendarData.length;
+        }
+
+        // Mettre à jour la date courante globale
+        window.currentCalendarDate = {
+            month: calendarData[monthIndex].name,
+            day: newDay
+        };
+
+        // Sauvegarder la nouvelle date
+        if (window.calendarManager) {
+            window.calendarManager.currentCalendarDate = window.currentCalendarDate;
+            window.calendarManager.saveCalendarToLocal();
+            window.calendarManager.updateSeasonDisplay();
+        }
+
+        console.log(`📅 Date principale mise à jour : ${newDay} ${calendarData[monthIndex].name}`);
     }
 
     
