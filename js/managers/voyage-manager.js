@@ -567,11 +567,29 @@ class VoyageManager {
             day: newDay
         };
 
-        // Sauvegarder la nouvelle date
+        // Sauvegarder la nouvelle date et forcer le rafraîchissement de l'affichage
         if (window.calendarManager) {
             window.calendarManager.currentCalendarDate = window.currentCalendarDate;
             window.calendarManager.saveCalendarToLocal();
-            window.calendarManager.updateSeasonDisplay();
+            
+            // Forcer le rafraîchissement immédiat de l'affichage
+            const calendarDateIndicator = document.getElementById('calendar-date-indicator');
+            const seasonIndicator = document.getElementById('season-indicator');
+            
+            if (calendarDateIndicator) {
+                const dayData = window.calendarManager.getDayData(calendarData[monthIndex].name, newDay);
+                calendarDateIndicator.textContent = `${newDay} ${calendarData[monthIndex].name}`;
+                if (dayData && dayData.weather) {
+                    calendarDateIndicator.title = `Météo : ${dayData.weather}`;
+                }
+            }
+            
+            if (seasonIndicator && dayData && dayData.symbol) {
+                seasonIndicator.textContent = dayData.symbol;
+                if (dayData.weather) {
+                    seasonIndicator.title = `${window.calendarManager.seasonNames[window.calendarManager.currentSeason]} - ${dayData.weather}`;
+                }
+            }
         }
 
         console.log(`📅 Date principale mise à jour : ${newDay} ${calendarData[monthIndex].name}`);
