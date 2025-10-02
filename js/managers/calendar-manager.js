@@ -335,10 +335,12 @@ class CalendarManager {
 
         if (monthIndex >= 0 && this.calendarData[monthIndex]) {
             const month = this.calendarData[monthIndex];
-            month.days.forEach(day => {
+            month.days.forEach(dayData => {
                 const option = document.createElement('option');
-                option.value = day;
-                option.textContent = day;
+                // Gérer à la fois l'ancien format (nombres) et le nouveau format (objets)
+                const dayNumber = typeof dayData === 'object' ? dayData.day : dayData;
+                option.value = dayNumber;
+                option.textContent = dayNumber;
                 daySelect.appendChild(option);
             });
         }
