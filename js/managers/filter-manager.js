@@ -41,12 +41,6 @@ export default class FilterManager {
             resetFiltersBtn.addEventListener('click', () => this.resetFilters());
         }
 
-        // Bouton appliquer les filtres
-        const applyFiltersBtn = document.getElementById('apply-filters');
-        if (applyFiltersBtn) {
-            applyFiltersBtn.addEventListener('click', () => this.applyFilters());
-        }
-
         // Filtres de couleurs unifiés
         this.setupUnifiedColorFilters();
 
