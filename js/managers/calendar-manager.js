@@ -157,10 +157,14 @@ class CalendarManager {
         const fullName = this.seasonNames[this.currentSeason] || 'Printemps-début';
 
         // Si on a un calendrier avec météo, utiliser le symbole du jour
+        let weatherTooltip = fullName;
         if (this.isCalendarMode && this.currentCalendarDate && this.calendarData) {
             const dayData = this.getDayData(this.currentCalendarDate.month, this.currentCalendarDate.day);
             if (dayData && dayData.symbol) {
                 symbol = dayData.symbol;
+                if (dayData.weather) {
+                    weatherTooltip = `${fullName} - ${dayData.weather}`;
+                }
             }
         }
 
@@ -173,15 +177,16 @@ class CalendarManager {
         });
 
         seasonIndicator.innerHTML = symbol;
-        seasonIndicator.title = fullName;
+        seasonIndicator.title = weatherTooltip;
 
         // Afficher la date du calendrier avec météo si elle existe
         if (calendarDateIndicator) {
             if (this.isCalendarMode && this.currentCalendarDate) {
                 const dayData = this.getDayData(this.currentCalendarDate.month, this.currentCalendarDate.day);
-                const weatherInfo = dayData && dayData.weather ? ` - ${dayData.weather}` : '';
                 calendarDateIndicator.innerHTML = `${this.currentCalendarDate.day} ${this.currentCalendarDate.month}`;
-                calendarDateIndicator.title = weatherInfo ? `Météo : ${dayData.weather}` : '';
+                if (dayData && dayData.weather) {
+                    calendarDateIndicator.title = `Météo : ${dayData.weather}`;
+                }
                 calendarDateIndicator.classList.remove('hidden');
             } else {
                 calendarDateIndicator.classList.add('hidden');
@@ -193,9 +198,21 @@ class CalendarManager {
         if (!this.calendarData) return null;
         
         const month = this.calendarData.find(m => m.name === monthName);
-        if (!month) return null;
+        if (!month || !month.days) return null;
         
-        const dayData = month.days.find(d => d.day === day);
+        // Gérer à la fois l'ancien format (nombres) et le nouveau format (objets)
+        const dayData = month.days.find(d => {
+            if (typeof d === 'object') {
+                return d.day === day;
+            }
+            return d === day;
+        });
+        
+        // Si c'est un nombre simple, retourner un objet avec juste le numéro du jour
+        if (typeof dayData === 'number') {
+            return { day: dayData, weather: null, symbol: null };
+        }
+        
         return dayData || null;
     }
 

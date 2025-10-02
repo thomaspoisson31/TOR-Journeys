@@ -284,7 +284,19 @@ class VoyageManager {
         const month = calendarData[monthIndex];
         if (!month || !month.days) return null;
 
-        const dayData = month.days.find(d => d.day === calendarDay);
+        // Gérer à la fois l'ancien format (nombres) et le nouveau format (objets)
+        const dayData = month.days.find(d => {
+            if (typeof d === 'object') {
+                return d.day === calendarDay;
+            }
+            return d === calendarDay;
+        });
+
+        // Si c'est un nombre simple, retourner null (pas de données météo)
+        if (typeof dayData === 'number') {
+            return null;
+        }
+
         return dayData || null;
     }
 
