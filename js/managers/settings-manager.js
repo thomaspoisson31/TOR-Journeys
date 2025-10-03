@@ -145,7 +145,8 @@ class SettingsManager {
         });
         document.querySelectorAll('.settings-tab-content').forEach(content => {
             content.classList.remove('active');
-            content.style.display = 'none';
+            content.classList.add('hidden');
+            content.classList.remove('flex');
         });
 
         // Activer l'onglet cible
@@ -157,8 +158,8 @@ class SettingsManager {
             targetButton.classList.remove('text-gray-400', 'border-transparent');
         }
         if (targetContent) {
-            targetContent.classList.add('active');
-            targetContent.style.display = 'flex';
+            targetContent.classList.add('active', 'flex');
+            targetContent.classList.remove('hidden');
         }
 
         // Actions spécifiques par onglet
