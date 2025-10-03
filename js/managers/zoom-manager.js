@@ -74,12 +74,12 @@ export default class ZoomManager {
     setupEventListeners() {
         // Bouton zoom out
         this.zoomOutBtn.addEventListener('click', () => {
-            this.adjustZoom(-0.2);
+            this.adjustZoom(-0.1);
         });
         
         // Bouton zoom in
         this.zoomInBtn.addEventListener('click', () => {
-            this.adjustZoom(0.2);
+            this.adjustZoom(0.1);
         });
         
         // Bouton reset
@@ -170,6 +170,11 @@ export default class ZoomManager {
         const currentScale = window.scale || 1;
         const newScale = currentScale + delta;
         this.setZoomLevel(newScale);
+        
+        // Mettre à jour l'affichage après le changement
+        setTimeout(() => {
+            this.updateDisplay();
+        }, 50);
     }
     
     updateSliderPosition() {

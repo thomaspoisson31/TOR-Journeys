@@ -577,9 +577,11 @@ function setupMapNavigation() {
         const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
         zoomToPoint(zoomFactor, e.clientX, e.clientY);
         
-        // Synchroniser le ZoomManager
+        // Synchroniser le ZoomManager avec un petit délai pour attendre la fin de l'animation
         if (zoomManager) {
-            zoomManager.updateDisplay();
+            setTimeout(() => {
+                zoomManager.updateDisplay();
+            }, 10);
         }
     });
 
