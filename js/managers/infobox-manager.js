@@ -215,9 +215,10 @@ class InfoBoxManager {
             const imageView = this.createImageView(imageTab);
             
             if (item.images && item.images.length > 0) {
-                const defaultImage = item.images.find(img => img.isDefault) || item.images[0];
+                // Chercher l'image principale, sinon prendre la première
+                const principaleImage = item.images.find(img => img.type === 'principale') || item.images[0];
                 imageView.innerHTML = `
-                    <img src="${defaultImage.url}" alt="${item.name}" class="modal-image">
+                    <img src="${principaleImage.url}" alt="${item.name}" class="modal-image">
                     <div class="image-caption">${item.name}</div>
                 `;
             } else {
@@ -415,21 +416,120 @@ class InfoBoxManager {
             return '<p class="text-gray-500">Aucune image</p>';
         }
 
-        return item.images.map((image, index) => `
+        return item.images.map((image, index) => {
+            const isPrincipale = image.type === 'principale';
+            const isVignette = image.type === 'vignette';
+            
+            return `
             <div class="flex items-center justify-between bg-gray-100 p-2 rounded mb-2">
-                <div class="flex items-center">
+                <div class="flex items-center flex-grow">
                     <img src="${image.url}" alt="Preview" class="w-12 h-12 object-cover rounded mr-3">
-                    <div>
-                        <div class="text-sm font-medium">${image.url.substring(0, 40)}${image.url.length > 40 ? '...' : ''}</div>
-                        ${image.isDefault ? '<span class="text-xs bg-blue-500 text-white px-2 py-1 rounded">Par défaut</span>' : ''}
+                    <div class="flex-grow">
+                        <div class="text-sm font-medium text-gray-800">${image.url.substring(0, 30)}${image.url.length > 30 ? '...' : ''}</div>
+                        <div class="flex items-center space-x-2 mt-1">
+                            ${isPrincipale ? '<span class="text-xs bg-blue-500 text-white px-2 py-1 rounded">Principale</span>' : ''}
+                            ${isVignette ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded">Vignette</span>' : ''}
+                            ${!isPrincipale && !isVignette ? '<span class="text-xs bg-gray-400 text-white px-2 py-1 rounded">Sans type</span>' : ''}
+                        </div>
                     </div>
                 </div>
-                <div class="flex space-x-1">
-                    ${!image.isDefault ? `<button onclick="window.infoBoxManager.setDefaultImage(${index})" class="text-blue-600 hover:text-blue-800" title="Définir par défaut"><i class="fas fa-star"></i></button>` : ''}
-                    <button onclick="window.infoBoxManager.removeImage(${index})" class="text-red-600 hover:text-red-800" title="Supprimer"><i class="fas fa-trash"></i></button>
+                <div class="flex space-x-1 ml-2">
+                    <div class="relative">
+                        <button onclick="window.infoBoxManager.toggleImageTypeMenu(${index})" class="text-blue-600 hover:text-blue-800 p-1" title="Changer le type">
+                            <i class="fas fa-tag"></i>
+                        </button>
+                        <div id="image-type-menu-${index}" class="hidden absolute right-0 mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 w-32">
+                            <button onclick="window.infoBoxManager.setImageType(${index}, 'principale')" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Principale</button>
+                            <button onclick="window.infoBoxManager.setImageType(${index}, 'vignette')" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Vignette</button>
+                            <button onclick="window.infoBoxManager.setImageType(${index}, null)" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Sans type</button>
+                        </div>
+                    </div>
+                    <button onclick="window.infoBoxManager.removeImage(${index})" class="text-red-600 hover:text-red-800 p-1" title="Supprimer">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
+    }
+
+    toggleImageTypeMenu(index) {
+        const menu = document.getElementById(`image-type-menu-${index}`);
+        if (menu) {
+            // Fermer tous les autres menus
+            document.querySelectorAll('[id^="image-type-menu-"]').forEach(m => {
+                if (m !== menu) m.classList.add('hidden');
+            });
+            menu.classList.toggle('hidden');
+        }
+    }
+
+    async setImageType(index, type) {
+        if (!this.currentItem.images || index < 0 || index >= this.currentItem.images.length) {
+            return;
+        }
+
+        const image = this.currentItem.images[index];
+        const oldType = image.type;
+
+        // Si on définit une image comme principale, retirer ce type des autres
+        if (type === 'principale') {
+            this.currentItem.images.forEach((img, i) => {
+                if (i !== index && img.type === 'principale') {
+                    img.type = null;
+                }
+            });
+        }
+
+        // Si on définit une image comme vignette, retirer ce type des autres
+        if (type === 'vignette') {
+            this.currentItem.images.forEach((img, i) => {
+                if (i !== index && img.type === 'vignette') {
+                    img.type = null;
+                    img.thumbnailUrl = null;
+                }
+            });
+
+            // Créer la vignette si elle n'existe pas déjà
+            if (!image.thumbnailUrl) {
+                try {
+                    const category = this.currentType === 'region' ? 'regions' : 'locations';
+                    const response = await fetch('/api/image/create-thumbnail', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            image_url: image.url,
+                            category: category
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de la création de la vignette');
+                    }
+
+                    const result = await response.json();
+                    image.thumbnailUrl = result.thumbnail_url;
+                    console.log("✅ Vignette créée:", result.thumbnail_url);
+                } catch (error) {
+                    console.error("❌ Erreur création vignette:", error);
+                    alert("Erreur lors de la création de la vignette: " + error.message);
+                    return;
+                }
+            }
+        }
+
+        // Définir le nouveau type
+        image.type = type;
+
+        // Re-render la liste des images
+        const imagesList = document.getElementById('edit-images-list');
+        if (imagesList) {
+            imagesList.innerHTML = this.renderEditImagesList();
+        }
+
+        console.log(`🏷️ Type d'image changé (index ${index}): ${oldType} → ${type}`);
     }
 
     
@@ -587,7 +687,8 @@ class InfoBoxManager {
         // Ajouter l'image
         const newImage = {
             url: url,
-            isDefault: this.currentItem.images.length === 0 // Première image = par défaut
+            type: this.currentItem.images.length === 0 ? 'principale' : null, // Première image = principale
+            thumbnailUrl: null
         };
 
         this.currentItem.images.push(newImage);
@@ -613,7 +714,8 @@ class InfoBoxManager {
         // Ajouter l'image uploadée
         const newImage = {
             url: uploadResult.url,
-            isDefault: this.currentItem.images.length === 0 // Première image = par défaut
+            type: this.currentItem.images.length === 0 ? 'principale' : null, // Première image = principale
+            thumbnailUrl: null
         };
 
         this.currentItem.images.push(newImage);
@@ -632,12 +734,12 @@ class InfoBoxManager {
             return;
         }
 
-        const wasDefault = this.currentItem.images[index].isDefault;
+        const wasPrincipale = this.currentItem.images[index].type === 'principale';
         this.currentItem.images.splice(index, 1);
 
-        // Si on supprime l'image par défaut et qu'il reste des images, définir la première comme par défaut
-        if (wasDefault && this.currentItem.images.length > 0) {
-            this.currentItem.images[0].isDefault = true;
+        // Si on supprime l'image principale et qu'il reste des images, définir la première comme principale
+        if (wasPrincipale && this.currentItem.images.length > 0) {
+            this.currentItem.images[0].type = 'principale';
         }
 
         // Re-render la liste des images
@@ -650,23 +752,8 @@ class InfoBoxManager {
     }
 
     setDefaultImage(index) {
-        if (!this.currentItem.images || index < 0 || index >= this.currentItem.images.length) {
-            return;
-        }
-
-        // Retirer le statut par défaut de toutes les images
-        this.currentItem.images.forEach(img => img.isDefault = false);
-        
-        // Définir la nouvelle image par défaut
-        this.currentItem.images[index].isDefault = true;
-
-        // Re-render la liste des images
-        const imagesList = document.getElementById('edit-images-list');
-        if (imagesList) {
-            imagesList.innerHTML = this.renderEditImagesList();
-        }
-
-        console.log("⭐ Default image set to index:", index);
+        // Méthode conservée pour compatibilité, redirige vers setImageType
+        this.setImageType(index, 'principale');
     }
 
     async generateDescription() {

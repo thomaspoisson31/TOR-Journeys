@@ -13,6 +13,8 @@ import uuid
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 import mimetypes
+from PIL import Image
+import io
 
 app = Flask(__name__)
 
@@ -960,6 +962,84 @@ def serve_uploaded_file(category, filename):
     """Servir les fichiers uploadés"""
     upload_dir = f'uploads/{category}'
     return send_from_directory(upload_dir, filename)
+
+@app.route('/api/image/create-thumbnail', methods=['POST'])
+def create_thumbnail():
+    """Créer une vignette 100x100 à partir d'une image existante"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    try:
+        data = request.json
+        if not data or 'image_url' not in data or 'category' not in data:
+            return jsonify({'error': 'Paramètres manquants'}), 400
+
+        image_url = data['image_url']
+        category = data['category']
+        
+        # Extraire le chemin du fichier depuis l'URL
+        # Format attendu: /uploads/category/filename
+        if not image_url.startswith('/uploads/'):
+            return jsonify({'error': 'URL d\'image invalide'}), 400
+        
+        parts = image_url.split('/')
+        if len(parts) < 4:
+            return jsonify({'error': 'Format d\'URL invalide'}), 400
+        
+        original_category = parts[2]
+        original_filename = parts[3]
+        original_path = f'uploads/{original_category}/{original_filename}'
+        
+        if not os.path.exists(original_path):
+            return jsonify({'error': 'Fichier source introuvable'}), 404
+
+        # Ouvrir l'image et créer une vignette 100x100
+        with Image.open(original_path) as img:
+            # Convertir en RGB si nécessaire
+            if img.mode in ('RGBA', 'LA', 'P'):
+                background = Image.new('RGB', img.size, (255, 255, 255))
+                if img.mode == 'P':
+                    img = img.convert('RGBA')
+                background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+                img = background
+            elif img.mode != 'RGB':
+                img = img.convert('RGB')
+            
+            # Redimensionner en conservant les proportions puis cropper au centre
+            img.thumbnail((100, 100), Image.Resampling.LANCZOS)
+            
+            # Créer une image carrée de 100x100
+            thumbnail = Image.new('RGB', (100, 100), (255, 255, 255))
+            offset = ((100 - img.size[0]) // 2, (100 - img.size[1]) // 2)
+            thumbnail.paste(img, offset)
+            
+            # Générer un nom de fichier unique pour la vignette
+            thumbnail_filename = f'thumb_{original_filename.rsplit(".", 1)[0]}.png'
+            thumbnail_dir = f'uploads/{category}'
+            os.makedirs(thumbnail_dir, exist_ok=True)
+            thumbnail_path = os.path.join(thumbnail_dir, thumbnail_filename)
+            
+            # Sauvegarder en PNG
+            thumbnail.save(thumbnail_path, 'PNG', optimize=True)
+            
+            thumbnail_url = f'/uploads/{category}/{thumbnail_filename}'
+            
+            print(f"📸 Vignette créée: {thumbnail_url}")
+            
+            return jsonify({
+                'success': True,
+                'thumbnail_url': thumbnail_url,
+                'original_url': image_url,
+                'message': 'Vignette créée avec succès'
+            })
+
+    except Exception as e:
+        print(f"❌ Erreur lors de la création de la vignette: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'error': f'Erreur serveur: {str(e)}'
+        }), 500
 
 @app.route('/auth/verify-config')
 def verify_oauth_config():
