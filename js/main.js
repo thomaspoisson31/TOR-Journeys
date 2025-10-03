@@ -196,6 +196,8 @@ function renderLocations() {
     }
 
     let renderedCount = 0;
+    const currentScale = window.scale || 1;
+    const showThumbnails = currentScale > 1.0; // Afficher les vignettes si zoom > 100%
 
     locationsData.locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
@@ -213,9 +215,37 @@ function renderLocations() {
         marker.style.left = `${location.coordinates.x}px`;
         marker.style.top = `${location.coordinates.y}px`;
 
-        // Appliquer la couleur
-        const color = colorMap[location.color] || colorMap.blue;
-        marker.style.backgroundColor = color;
+        // Chercher une image de type vignette
+        let thumbnailUrl = null;
+        if (showThumbnails && location.images && Array.isArray(location.images)) {
+            const thumbnailImg = location.images.find(img => img.type === 'vignette');
+            if (thumbnailImg) {
+                thumbnailUrl = thumbnailImg.url;
+            }
+        }
+
+        if (thumbnailUrl) {
+            // Afficher la vignette
+            marker.style.backgroundColor = 'transparent';
+            marker.style.border = 'none';
+            marker.style.width = '32px';
+            marker.style.height = '32px';
+            marker.style.backgroundImage = `url('${thumbnailUrl}')`;
+            marker.style.backgroundSize = 'cover';
+            marker.style.backgroundPosition = 'center';
+            marker.style.borderRadius = '4px';
+            marker.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+        } else {
+            // Afficher le cercle coloré
+            const color = colorMap[location.color] || colorMap.blue;
+            marker.style.backgroundColor = color;
+            marker.style.backgroundImage = 'none';
+            marker.style.width = '32px';
+            marker.style.height = '32px';
+            marker.style.border = '4px solid rgba(255, 255, 255, 0.8)';
+            marker.style.borderRadius = '50%';
+            marker.style.boxShadow = 'none';
+        }
 
         // Ajouter les événements de clic et de glisser-déplacer
         marker.addEventListener('mousedown', (e) => {
@@ -244,7 +274,7 @@ function renderLocations() {
         renderedCount++;
     });
 
-    console.log(`✅ Rendered ${renderedCount} location markers`);
+    console.log(`✅ Rendered ${renderedCount} location markers (thumbnails: ${showThumbnails})`);
 }
 
 // --- Fonction d'affichage des régions ---
@@ -535,6 +565,13 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
         constrainPan();
         updateMapTransform();
         
+        // Rafraîchir les marqueurs si on passe le seuil de 100%
+        const shouldShowThumbnails = newScale > 1.0;
+        const wasShowingThumbnails = oldScale > 1.0;
+        if (shouldShowThumbnails !== wasShowingThumbnails) {
+            renderLocations();
+        }
+        
         console.log(`🔍 [main.js] zoomToPoint: scale mis à jour à ${scale.toFixed(3)}`);
     }
 }
@@ -544,6 +581,8 @@ function resetView() {
     const viewportHeight = viewport.clientHeight;
 
     if (viewportWidth > 0 && viewportHeight > 0 && MAP_WIDTH > 0 && MAP_HEIGHT > 0) {
+        const oldScale = scale;
+        
         // Calculer le zoom pour faire rentrer la carte dans le viewport
         const scaleX = viewportWidth / MAP_WIDTH;
         const scaleY = viewportHeight / MAP_HEIGHT;
@@ -555,6 +594,13 @@ function resetView() {
         panY = (viewportHeight - MAP_HEIGHT * scale) / 2;
 
         updateMapTransform();
+        
+        // Rafraîchir les marqueurs si on passe le seuil de 100%
+        const shouldShowThumbnails = scale > 1.0;
+        const wasShowingThumbnails = oldScale > 1.0;
+        if (shouldShowThumbnails !== wasShowingThumbnails) {
+            renderLocations();
+        }
         
         // Synchroniser le ZoomManager
         if (zoomManager) {
