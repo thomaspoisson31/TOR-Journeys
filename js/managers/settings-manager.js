@@ -4,13 +4,12 @@ import GeminiManager from './gemini-manager.js';
 class SettingsManager {
     constructor() {
         this.geminiManager = new GeminiManager();
+        this.uploadManager = null; // Sera initialisé après
         this.isSettingsOpen = false;
         this.currentTab = 'maps';
         this.availableMaps = [];
-        this.currentMapConfig = {
-            playerMap: 'fr_tor_2nd_eriadors_map_page-0001.webp',
-            loremasterMap: 'fr_tor_2nd_eriadors_map_page_loremaster.webp'
-        };
+        this.activeMapUrl = 'fr_tor_2nd_eriadors_map_page-0001.webp';
+        this.activeMapName = 'Carte Eriador par défaut';
         this.editingMapIndex = -1;
         this.partyDescription = '';
         this.questDescription = '';
@@ -28,7 +27,8 @@ class SettingsManager {
     loadSettingsData() {
         // Charger les cartes
         const savedMaps = localStorage.getItem('availableMaps');
-        const savedConfig = localStorage.getItem('currentMapConfig');
+        const savedActiveMap = localStorage.getItem('activeMapUrl');
+        const savedActiveMapName = localStorage.getItem('activeMapName');
 
         if (savedMaps) {
             try {
@@ -39,12 +39,12 @@ class SettingsManager {
             }
         }
 
-        if (savedConfig) {
-            try {
-                this.currentMapConfig = JSON.parse(savedConfig);
-            } catch (e) {
-                console.error('Error loading map config:', e);
-            }
+        if (savedActiveMap) {
+            this.activeMapUrl = savedActiveMap;
+        }
+        
+        if (savedActiveMapName) {
+            this.activeMapName = savedActiveMapName;
         }
 
         // Ajouter les cartes par défaut si la liste est vide
@@ -52,16 +52,14 @@ class SettingsManager {
             this.availableMaps = [
                 {
                     id: 1,
-                    name: 'Carte Joueur - Eriador',
-                    filename: 'fr_tor_2nd_eriadors_map_page-0001.webp',
-                    type: 'player',
+                    name: 'Carte Eriador par défaut',
+                    url: 'fr_tor_2nd_eriadors_map_page-0001.webp',
                     isDefault: true
                 },
                 {
                     id: 2,
-                    name: 'Carte Gardien - Eriador',
-                    filename: 'fr_tor_2nd_eriadors_map_page_loremaster.webp',
-                    type: 'loremaster',
+                    name: 'Carte Eriador - Gardien',
+                    url: 'fr_tor_2nd_eriadors_map_page_loremaster.webp',
                     isDefault: true
                 }
             ];
@@ -76,7 +74,8 @@ class SettingsManager {
 
     saveMapsData() {
         localStorage.setItem('availableMaps', JSON.stringify(this.availableMaps));
-        localStorage.setItem('currentMapConfig', JSON.stringify(this.currentMapConfig));
+        localStorage.setItem('activeMapUrl', this.activeMapUrl);
+        localStorage.setItem('activeMapName', this.activeMapName);
         this.scheduleAutoSync();
     }
 
@@ -166,7 +165,6 @@ class SettingsManager {
         switch (tabName) {
             case 'maps':
                 this.renderMapsGrid();
-                this.updateActiveMapPreviews();
                 break;
             case 'adventurers':
                 this.updatePartyContent();
@@ -181,27 +179,45 @@ class SettingsManager {
     }
 
     // === GESTION DES CARTES ===
-    setupMapsListeners() {
-        // Bouton ajouter une carte
-        const addMapBtn = document.getElementById('add-map-btn');
-        if (addMapBtn) {
-            addMapBtn.addEventListener('click', () => this.openMapModal());
+    async setupMapsListeners() {
+        // Importer UploadManager dynamiquement
+        const UploadManagerModule = await import('./upload-manager.js');
+        const UploadManager = UploadManagerModule.default;
+        this.uploadManager = new UploadManager();
+
+        // Setup du composant d'upload
+        const uploadContainer = document.getElementById('map-upload-container');
+        if (uploadContainer) {
+            this.uploadManager.createUploadComponent(uploadContainer, 'maps', (result) => {
+                this.handleMapUploaded(result);
+            });
         }
+    }
 
-        // Modal de carte
-        const closeMapModalBtn = document.getElementById('close-map-modal');
-        const cancelMapBtn = document.getElementById('cancel-map-btn');
-        const saveMapBtn = document.getElementById('save-map-btn');
+    handleMapUploaded(uploadResult) {
+        const nameInput = document.getElementById('new-map-name-input');
+        const mapName = nameInput.value.trim() || `Carte ${Date.now()}`;
 
-        if (closeMapModalBtn) closeMapModalBtn.addEventListener('click', () => this.closeMapModal());
-        if (cancelMapBtn) cancelMapBtn.addEventListener('click', () => this.closeMapModal());
-        if (saveMapBtn) saveMapBtn.addEventListener('click', () => this.saveMap());
+        const newMap = {
+            id: Date.now(),
+            name: mapName,
+            url: uploadResult.url,
+            isDefault: false
+        };
 
-        // Preview de l'image
-        const fileInput = document.getElementById('map-file-input');
-        if (fileInput) {
-            fileInput.addEventListener('change', (e) => this.handleMapFileSelect(e));
-        }
+        this.availableMaps.push(newMap);
+        this.saveMapsData();
+        this.renderMapsGrid();
+
+        // Réinitialiser le formulaire
+        nameInput.value = '';
+        
+        // Réinitialiser le composant d'upload
+        const uploadContainer = document.getElementById('map-upload-container');
+        uploadContainer.innerHTML = '';
+        this.uploadManager.createUploadComponent(uploadContainer, 'maps', (result) => {
+            this.handleMapUploaded(result);
+        });
     }
 
     renderMapsGrid() {
@@ -209,100 +225,61 @@ class SettingsManager {
         if (!mapsGrid) return;
 
         mapsGrid.innerHTML = this.availableMaps.map((map, index) => {
-            const isActive = (map.type === 'player' && this.currentMapConfig.playerMap === map.filename) ||
-                            (map.type === 'loremaster' && this.currentMapConfig.loremasterMap === map.filename);
+            const isActive = this.activeMapUrl === map.url;
 
             return `
-                <div class="bg-gray-800 rounded-lg p-3 border ${isActive ? 'border-blue-500' : 'border-gray-600'} relative">
-                    ${isActive ? '<div class="absolute top-2 right-2 text-blue-400"><i class="fas fa-check-circle"></i></div>' : ''}
-                    <div class="aspect-video bg-gray-700 rounded-lg mb-2 overflow-hidden">
-                        <img src="${map.filename}" alt="${map.name}" class="w-full h-full object-cover" 
+                <div class="bg-gray-800 rounded-lg p-3 border ${isActive ? 'border-blue-500' : 'border-gray-600'} flex items-center space-x-3">
+                    <div class="w-20 h-20 bg-gray-700 rounded overflow-hidden flex-shrink-0">
+                        <img src="${map.url}" alt="${map.name}" class="w-full h-full object-cover" 
                              onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjc3NDhDIi8+Cjwvc3ZnPg=='">
                     </div>
-                    <div class="text-sm font-medium text-white mb-1">${map.name}</div>
-                    <div class="text-xs text-gray-400 mb-2">${map.type === 'player' ? 'Carte Joueur' : 'Carte Gardien'}</div>
-                    <div class="flex space-x-2">
-                        <button class="flex-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs ${isActive ? 'opacity-50 cursor-not-allowed' : ''}"
-                                onclick="window.settingsManager.setActiveMap('${map.filename}', '${map.type}')"
+                    <div class="flex-grow">
+                        <div class="text-sm font-medium text-white mb-1">${map.name}</div>
+                        ${isActive ? '<div class="text-xs text-blue-400"><i class="fas fa-check-circle mr-1"></i>Active</div>' : '<div class="text-xs text-gray-400">Non active</div>'}
+                    </div>
+                    <div class="flex space-x-2 flex-shrink-0">
+                        <button class="px-3 py-1 ${isActive ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} rounded text-xs"
+                                onclick="window.settingsManager.setActiveMap(${index})"
                                 ${isActive ? 'disabled' : ''}>
                             ${isActive ? 'Active' : 'Activer'}
                         </button>
-                        <button class="px-2 py-1 bg-yellow-600 hover:bg-yellow-700 rounded text-xs" 
-                                onclick="window.settingsManager.editMap(${index})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        ${!map.isDefault ? `<button class="px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-xs" onclick="window.settingsManager.deleteMap(${index})"><i class="fas fa-trash"></i></button>` : ''}
+                        ${!map.isDefault ? `<button class="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-xs" onclick="window.settingsManager.deleteMap(${index})"><i class="fas fa-trash"></i></button>` : ''}
                     </div>
                 </div>
             `;
         }).join('');
+
+        // Mettre à jour l'affichage de la carte active
+        this.updateActiveMapDisplay();
     }
 
-    updateActiveMapPreviews() {
-        const playerPreview = document.getElementById('active-player-map-preview');
-        const loremasterPreview = document.getElementById('active-loremaster-map-preview');
+    updateActiveMapDisplay() {
+        const activePreview = document.getElementById('active-map-preview');
+        const activeName = document.getElementById('active-map-name');
 
-        if (playerPreview) {
-            playerPreview.src = this.currentMapConfig.playerMap;
+        if (activePreview) {
+            activePreview.src = this.activeMapUrl;
         }
-        if (loremasterPreview) {
-            loremasterPreview.src = this.currentMapConfig.loremasterMap;
+        if (activeName) {
+            activeName.textContent = this.activeMapName;
         }
     }
 
-    setActiveMap(filename, type) {
-        if (type === 'player') {
-            this.currentMapConfig.playerMap = filename;
-            const mapImage = document.getElementById('map-image');
-            if (mapImage) mapImage.src = filename;
-        } else if (type === 'loremaster') {
-            this.currentMapConfig.loremasterMap = filename;
-            const loremasterMapImage = document.getElementById('loremaster-map-image');
-            if (loremasterMapImage) loremasterMapImage.src = filename;
+    setActiveMap(index) {
+        const map = this.availableMaps[index];
+        if (!map) return;
+
+        this.activeMapUrl = map.url;
+        this.activeMapName = map.name;
+
+        // Mettre à jour l'image de la carte principale
+        const mapImage = document.getElementById('map-image');
+        if (mapImage) {
+            mapImage.src = this.activeMapUrl;
         }
 
         this.saveMapsData();
         this.renderMapsGrid();
-        this.updateActiveMapPreviews();
-    }
-
-    openMapModal(editIndex = -1) {
-        this.editingMapIndex = editIndex;
-        const modal = document.getElementById('map-modal');
-        const title = document.getElementById('map-modal-title');
-        const nameInput = document.getElementById('map-name-input');
-        const fileInput = document.getElementById('map-file-input');
-        const previewContainer = document.getElementById('map-preview-container');
-        const previewImage = document.getElementById('map-preview-image');
-        const saveText = document.getElementById('save-map-text');
-
-        if (editIndex >= 0) {
-            const map = this.availableMaps[editIndex];
-            title.innerHTML = '<i class="fas fa-map-marked-alt mr-2"></i>Modifier la carte';
-            nameInput.value = map.name;
-            previewContainer.classList.remove('hidden');
-            previewImage.src = map.filename;
-            document.querySelector(`input[name="map-type"][value="${map.type}"]`).checked = true;
-            saveText.textContent = 'Modifier';
-        } else {
-            title.innerHTML = '<i class="fas fa-map-marked-alt mr-2"></i>Ajouter une carte';
-            nameInput.value = '';
-            fileInput.value = '';
-            previewContainer.classList.add('hidden');
-            document.querySelector('input[name="map-type"][value="player"]').checked = true;
-            saveText.textContent = 'Ajouter';
-        }
-
-        modal.classList.remove('hidden');
-    }
-
-    closeMapModal() {
-        document.getElementById('map-modal').classList.add('hidden');
-        this.editingMapIndex = -1;
-    }
-
-    editMap(index) {
-        this.openMapModal(index);
     }
 
     deleteMap(index) {
@@ -312,90 +289,17 @@ class SettingsManager {
         }
 
         if (confirm('Êtes-vous sûr de vouloir supprimer cette carte ?')) {
+            // Si on supprime la carte active, revenir à la première carte
+            if (this.availableMaps[index].url === this.activeMapUrl && this.availableMaps.length > 1) {
+                const newActiveIndex = index === 0 ? 1 : 0;
+                this.activeMapUrl = this.availableMaps[newActiveIndex].url;
+                this.activeMapName = this.availableMaps[newActiveIndex].name;
+            }
+
             this.availableMaps.splice(index, 1);
             this.saveMapsData();
             this.renderMapsGrid();
         }
-    }
-
-    handleMapFileSelect(event) {
-        const file = event.target.files[0];
-        const previewContainer = document.getElementById('map-preview-container');
-        const previewImage = document.getElementById('map-preview-image');
-
-        if (file && file.type.match('image.*')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImage.src = e.target.result;
-                previewContainer.classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    saveMap() {
-        const nameInput = document.getElementById('map-name-input');
-        const fileInput = document.getElementById('map-file-input');
-        const mapType = document.querySelector('input[name="map-type"]:checked').value;
-
-        if (!nameInput.value.trim()) {
-            alert('Veuillez entrer un nom pour la carte.');
-            return;
-        }
-
-        if (this.editingMapIndex >= 0) {
-            // Modification d'une carte existante
-            this.availableMaps[this.editingMapIndex].name = nameInput.value.trim();
-            this.availableMaps[this.editingMapIndex].type = mapType;
-
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const filename = `map_${Date.now()}_${file.name}`;
-                this.availableMaps[this.editingMapIndex].filename = filename;
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.availableMaps[this.editingMapIndex].dataUrl = e.target.result;
-                    this.saveMapsData();
-                    this.renderMapsGrid();
-                    this.closeMapModal();
-                };
-                reader.readAsDataURL(file);
-                return;
-            }
-        } else {
-            // Nouvelle carte
-            if (fileInput.files.length === 0) {
-                alert('Veuillez sélectionner un fichier image.');
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const filename = `map_${Date.now()}_${file.name}`;
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const newMap = {
-                    id: Date.now(),
-                    name: nameInput.value.trim(),
-                    filename: filename,
-                    type: mapType,
-                    isDefault: false,
-                    dataUrl: e.target.result
-                };
-
-                this.availableMaps.push(newMap);
-                this.saveMapsData();
-                this.renderMapsGrid();
-                this.closeMapModal();
-            };
-            reader.readAsDataURL(file);
-            return;
-        }
-
-        this.saveMapsData();
-        this.renderMapsGrid();
-        this.closeMapModal();
     }
 
     // === GESTION DES AVENTURIERS ===
@@ -756,7 +660,10 @@ class SettingsManager {
     }
 
     getCurrentMapConfig() {
-        return this.currentMapConfig;
+        return {
+            activeMap: this.activeMapUrl,
+            activeMapName: this.activeMapName
+        };
     }
 
     getAvailableMaps() {
