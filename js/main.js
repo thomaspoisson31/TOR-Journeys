@@ -25,6 +25,7 @@ import SettingsManager from './managers/settings-manager.js';
 import AuthManager from './managers/auth-manager.js';
 import InfoBoxManager from './managers/infobox-manager.js';
 import ImportExportManager from './managers/import-export-manager.js';
+import ZoomManager from './managers/zoom-manager.js';
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -48,6 +49,7 @@ let settingsManager;
 let authManager;
 let infoBoxManager;
 let importExportManager;
+let zoomManager;
 
 console.log("✅ Global variables initialized");
 
@@ -424,6 +426,21 @@ function initializeMap() {
         console.error("❌ PathManager not initialized");
     }
 
+    // Initialiser ZoomManager
+    zoomManager = new ZoomManager(
+        { getElementById: (id) => document.getElementById(id) },
+        { minScale, maxScale }
+    );
+    zoomManager.onZoomChange = (newScale) => {
+        // Zoomer en centrant sur le centre du viewport
+        const viewportWidth = viewport.clientWidth;
+        const viewportHeight = viewport.clientHeight;
+        zoomToPoint(newScale / scale, viewportWidth / 2, viewportHeight / 2);
+    };
+    zoomManager.init();
+    window.zoomManager = zoomManager; // Exposer globalement
+    console.log("✅ ZoomManager initialized");
+
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
 
@@ -526,8 +543,16 @@ function resetView() {
         panY = (viewportHeight - MAP_HEIGHT * scale) / 2;
 
         updateMapTransform();
+        
+        // Synchroniser le ZoomManager
+        if (zoomManager) {
+            zoomManager.updateDisplay();
+        }
     }
 }
+
+// Exposer resetView globalement pour le ZoomManager
+window.resetView = resetView;
 
 function handlePanStart(e) {
     // Ne pas permettre le pan si on est en mode tracé, dessin ou déplacement de lieu
@@ -551,6 +576,11 @@ function setupMapNavigation() {
         e.preventDefault();
         const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
         zoomToPoint(zoomFactor, e.clientX, e.clientY);
+        
+        // Synchroniser le ZoomManager
+        if (zoomManager) {
+            zoomManager.updateDisplay();
+        }
     });
 
     // Déplacement par glisser-déposer
