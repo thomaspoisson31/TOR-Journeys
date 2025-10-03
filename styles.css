@@ -684,11 +684,11 @@ body {
 }
 
 .voyage-modal-white .bg-gray-800 {
-    background-color: #f5f5f5 !important;
+    background-color: white !important;
 }
 
 .voyage-modal-white .bg-gray-700:hover {
-    background-color: #e5e5e5 !important;
+    background-color: white !important;
 }
 
 .voyage-modal-white .border-gray-700 {
