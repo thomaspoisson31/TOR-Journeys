@@ -228,21 +228,21 @@ function renderLocations() {
             // Afficher la vignette
             marker.style.backgroundColor = 'transparent';
             marker.style.border = 'none';
-            marker.style.width = '32px';
-            marker.style.height = '32px';
+            marker.style.width = '64px';
+            marker.style.height = '64px';
             marker.style.backgroundImage = `url('${thumbnailUrl}')`;
             marker.style.backgroundSize = 'cover';
             marker.style.backgroundPosition = 'center';
-            marker.style.borderRadius = '4px';
+            marker.style.borderRadius = '8px';
             marker.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
         } else {
             // Afficher le cercle coloré
             const color = colorMap[location.color] || colorMap.blue;
             marker.style.backgroundColor = color;
             marker.style.backgroundImage = 'none';
-            marker.style.width = '32px';
-            marker.style.height = '32px';
-            marker.style.border = '4px solid rgba(255, 255, 255, 0.8)';
+            marker.style.width = '64px';
+            marker.style.height = '64px';
+            marker.style.border = '8px solid rgba(255, 255, 255, 0.8)';
             marker.style.borderRadius = '50%';
             marker.style.boxShadow = 'none';
         }
