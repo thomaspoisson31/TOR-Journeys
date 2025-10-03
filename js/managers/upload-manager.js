@@ -4,7 +4,7 @@
  */
 class UploadManager {
     constructor() {
-        this.maxFileSize = 10 * 1024 * 1024; // 10MB
+        this.maxFileSize = 20 * 1024 * 1024; // 20MB
         this.allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
         this.uploadEndpoint = '/api/upload/image';
         
@@ -157,7 +157,7 @@ class UploadManager {
                     Sélectionner un fichier
                 </button>
                 <input type="file" class="hidden" accept="image/*">
-                <p class="text-xs text-gray-500 mt-2">PNG, JPG, WEBP jusqu'à 10MB</p>
+                <p class="text-xs text-gray-500 mt-2">PNG, JPG, WEBP jusqu'à 20MB</p>
             </div>
             <div class="upload-progress hidden">
                 <div class="bg-gray-200 rounded-full h-2 mb-2">

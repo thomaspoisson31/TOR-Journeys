@@ -38,7 +38,7 @@ GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 
 # Configuration pour l'upload d'images
 ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
 
 # Configuration OAuth pour Replit
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Permet OAuth en développement
