@@ -67,11 +67,14 @@ body {
     cursor: pointer;
     transform: translate(-50%, -50%);
     pointer-events: auto;
-    transition: background-color 0.3s, border-color 0.3s, opacity 0.3s;
+    transition: background-color 0.3s, border-color 0.3s, opacity 0.3s, box-shadow 0.3s, transform 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .location-marker:hover {
     border-color: white !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%) scale(1.05);
 }
 
 /* Override cursor when in drawing mode */

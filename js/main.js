@@ -225,16 +225,16 @@ function renderLocations() {
         }
 
         if (thumbnailUrl) {
-            // Afficher la vignette
+            // Afficher la vignette avec effets visuels améliorés
             marker.style.backgroundColor = 'transparent';
-            marker.style.border = 'none';
+            marker.style.border = '3px solid rgba(255, 255, 255, 0.9)';
             marker.style.width = '64px';
             marker.style.height = '64px';
             marker.style.backgroundImage = `url('${thumbnailUrl}')`;
             marker.style.backgroundSize = 'cover';
             marker.style.backgroundPosition = 'center';
             marker.style.borderRadius = '8px';
-            marker.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+            marker.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1)';
         } else {
             // Afficher le cercle coloré
             const color = colorMap[location.color] || colorMap.blue;
@@ -244,7 +244,7 @@ function renderLocations() {
             marker.style.height = '64px';
             marker.style.border = '8px solid rgba(255, 255, 255, 0.8)';
             marker.style.borderRadius = '50%';
-            marker.style.boxShadow = 'none';
+            marker.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3)';
         }
 
         // Ajouter les événements de clic et de glisser-déplacer
