@@ -1,21 +1,20 @@
-
 // Gestionnaire des filtres avancés pour les lieux et régions
 
 export default class FilterManager {
     constructor() {
         this.activeFilters = {
             colors: [], // Unifié pour lieux et régions
-            visited: null, // null = tous, true = visités, false = non visités
+            visited: null, // null = tous, true = visités, false = inconnus
             known: null,   // null = tous, true = connus, false = inconnus
             types: [],
             showLocations: true, // Afficher les lieux
-            showRegions: true    // Afficher les régions
+            showRegions: false   // Afficher les régions (désactivé par défaut)
         };
-        
+
         this.isFilterPanelOpen = false;
         this.filteredLocations = [];
         this.filteredRegions = [];
-        
+
         console.log("🔍 FilterManager initialized");
     }
 
@@ -68,7 +67,7 @@ export default class FilterManager {
         colors.forEach(color => {
             const filterItem = document.createElement('div');
             filterItem.className = 'filter-color-item';
-            
+
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.id = `filter-color-${color}`;
@@ -78,7 +77,7 @@ export default class FilterManager {
             const label = document.createElement('label');
             label.htmlFor = checkbox.id;
             label.className = 'filter-color-label';
-            
+
             const colorSwatch = document.createElement('div');
             colorSwatch.className = 'filter-color-swatch';
             colorSwatch.style.backgroundColor = this.getLocationColor(color);
@@ -153,7 +152,7 @@ export default class FilterManager {
         } else {
             this.activeFilters.colors = this.activeFilters.colors.filter(c => c !== color);
         }
-        
+
         this.applyFilters();
     }
 
@@ -170,7 +169,7 @@ export default class FilterManager {
     toggleFilterPanel() {
         const filterPanel = document.getElementById('filter-panel');
         const filterBtn = document.getElementById('filter-btn');
-        
+
         if (!filterPanel) return;
 
         this.isFilterPanelOpen = !this.isFilterPanelOpen;
@@ -187,12 +186,12 @@ export default class FilterManager {
     closeFilterPanel() {
         const filterPanel = document.getElementById('filter-panel');
         const filterBtn = document.getElementById('filter-btn');
-        
+
         if (filterPanel) {
             filterPanel.classList.add('hidden');
             this.isFilterPanelOpen = false;
         }
-        
+
         if (filterBtn) {
             filterBtn.classList.remove('btn-active');
         }
@@ -200,7 +199,7 @@ export default class FilterManager {
 
     resetFilters() {
         console.log("🔄 Resetting all filters...");
-        
+
         // Réinitialiser les filtres actifs
         this.activeFilters = {
             colors: [],
@@ -208,7 +207,7 @@ export default class FilterManager {
             known: null,
             types: [],
             showLocations: true,
-            showRegions: true
+            showRegions: false
         };
 
         // Réinitialiser l'interface
@@ -232,7 +231,7 @@ export default class FilterManager {
         const showLocationsFilter = document.getElementById('show-locations');
         const showRegionsFilter = document.getElementById('show-regions');
         if (showLocationsFilter) showLocationsFilter.checked = true;
-        if (showRegionsFilter) showRegionsFilter.checked = true;
+        if (showRegionsFilter) showRegionsFilter.checked = false; // Reset to default unchecked
 
         // Appliquer les filtres vides (montrer tout)
         this.applyFilters();
@@ -252,7 +251,7 @@ export default class FilterManager {
 
         // Filtrer les lieux
         this.filteredLocations = this.filterLocations(locationsData.locations || []);
-        
+
         // Filtrer les régions
         this.filteredRegions = this.filterRegions(regionsData.regions || []);
 
