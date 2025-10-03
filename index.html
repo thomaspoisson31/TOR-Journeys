@@ -528,8 +528,8 @@
                 <!-- Tab Content -->
                 <div class="flex-grow overflow-hidden">
                     <!-- Cartes Tab -->
-                    <div id="maps-tab" class="settings-tab-content active h-full flex flex-col">
-                        <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                    <div id="maps-tab" class="settings-tab-content active h-full overflow-y-auto">
+                        <div class="flex justify-between items-center mb-4">
                             <h4 class="text-lg font-semibold">Gestion des cartes</h4>
                             <div class="text-sm text-gray-400">
                                 Dimensions recommandées : 5103 × 3296 pixels
@@ -537,19 +537,19 @@
                         </div>
 
                         <!-- Cartes actives -->
-                        <div class="mb-6 flex-shrink-0">
+                        <div class="mb-6">
                             <h5 class="text-blue-400 font-semibold mb-3">🎯 Cartes actives</h5>
                             <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
-                                    <h6 class="text-white font-medium mb-2">Carte Joueur</h6>
-                                    <div class="aspect-video bg-gray-800 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                                <div class="bg-gray-900 rounded-lg p-3 border border-gray-600">
+                                    <h6 class="text-white font-medium mb-2 text-sm">Carte Joueur</h6>
+                                    <div class="bg-gray-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden" style="height: 100px;">
                                         <img id="active-player-map-preview" src="fr_tor_2nd_eriadors_map_page-0001.webp" alt="Carte Joueur" class="w-full h-full object-cover">
                                     </div>
                                     <div class="text-xs text-gray-400">Visible par les joueurs</div>
                                 </div>
-                                <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
-                                    <h6 class="text-white font-medium mb-2">Carte Gardien</h6>
-                                    <div class="aspect-video bg-gray-800 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                                <div class="bg-gray-900 rounded-lg p-3 border border-gray-600">
+                                    <h6 class="text-white font-medium mb-2 text-sm">Carte Gardien</h6>
+                                    <div class="bg-gray-800 rounded-lg mb-2 flex items-center justify-center overflow-hidden" style="height: 100px;">
                                         <img id="active-loremaster-map-preview" src="fr_tor_2nd_eriadors_map_page_loremaster.webp" alt="Carte Gardien" class="w-full h-full object-cover">
                                     </div>
                                     <div class="text-xs text-gray-400">Réservée au Gardien</div>
@@ -558,14 +558,14 @@
                         </div>
 
                         <!-- Liste des cartes disponibles -->
-                        <div class="flex-grow overflow-hidden flex flex-col">
-                            <div class="flex justify-between items-center mb-3 flex-shrink-0">
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-3">
                                 <h5 class="text-blue-400 font-semibold">📋 Toutes les cartes</h5>
                                 <button id="add-map-btn" class="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm">
                                     <i class="fas fa-plus mr-1"></i>Ajouter une carte
                                 </button>
                             </div>
-                            <div id="maps-list" class="flex-grow overflow-y-auto bg-gray-900 rounded-lg p-4 border border-gray-600" style="max-height: calc(90vh - 400px); overflow-y: auto;">
+                            <div id="maps-list" class="bg-gray-900 rounded-lg p-4 border border-gray-600">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="maps-grid">
                                     <!-- Les cartes seront ajoutées ici dynamiquement -->
                                 </div>
