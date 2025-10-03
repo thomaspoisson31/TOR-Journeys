@@ -564,16 +564,7 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
 
         constrainPan();
         updateMapTransform();
-        
-        // Rafraîchir les marqueurs si on passe le seuil de 100%
-        const shouldShowThumbnails = newScale > 1.0;
-        const wasShowingThumbnails = oldScale > 1.0;
-        if (shouldShowThumbnails !== wasShowingThumbnails) {
-            renderLocations();
-        }
-        
-        console.log(`🔍 [main.js] zoomToPoint: scale mis à jour à ${scale.toFixed(3)}`);
-        
+
         // Rafraîchir les marqueurs si on passe le seuil de 50%
         const shouldShowThumbnails = newScale > 0.5;
         const wasShowingThumbnails = oldScale > 0.5;
@@ -589,7 +580,7 @@ function resetView() {
 
     if (viewportWidth > 0 && viewportHeight > 0 && MAP_WIDTH > 0 && MAP_HEIGHT > 0) {
         const oldScale = scale;
-        
+
         // Calculer le zoom pour faire rentrer la carte dans le viewport
         const scaleX = viewportWidth / MAP_WIDTH;
         const scaleY = viewportHeight / MAP_HEIGHT;
@@ -601,14 +592,14 @@ function resetView() {
         panY = (viewportHeight - MAP_HEIGHT * scale) / 2;
 
         updateMapTransform();
-        
+
         // Rafraîchir les marqueurs si on passe le seuil de 50%
         const shouldShowThumbnails = scale > 0.5;
         const wasShowingThumbnails = oldScale > 0.5;
         if (shouldShowThumbnails !== wasShowingThumbnails) {
             renderLocations();
         }
-        
+
         // Synchroniser le ZoomManager
         if (zoomManager) {
             zoomManager.updateDisplay();
@@ -642,7 +633,7 @@ function setupMapNavigation() {
         const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
         console.log(`🔍 [main.js] wheel event: deltaY=${e.deltaY}, zoomFactor=${zoomFactor}`);
         zoomToPoint(zoomFactor, e.clientX, e.clientY);
-        
+
         // Synchroniser le ZoomManager avec un petit délai pour attendre la fin de l'animation
         if (zoomManager) {
             setTimeout(() => {
