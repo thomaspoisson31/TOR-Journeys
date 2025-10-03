@@ -1343,9 +1343,18 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 if (location) {
                     // Support du nouveau format avec array d'images
                     if (location.images && Array.isArray(location.images) && location.images.length > 0) {
-                        // Prendre la première image ou l'image par défaut
+                        // Prioriser l'image de type "vignette"
+                        const thumbnailImg = location.images.find(img => img.type === 'vignette');
+                        if (thumbnailImg) {
+                            return thumbnailImg.url;
+                        }
+                        // Sinon, prendre l'image par défaut
                         const defaultImg = location.images.find(img => img.isDefault);
-                        return defaultImg ? defaultImg.url : location.images[0].url;
+                        if (defaultImg) {
+                            return defaultImg.url;
+                        }
+                        // En dernier recours, la première image
+                        return location.images[0].url;
                     }
                     // Support de l'ancien format avec imageUrl
                     else if (location.imageUrl) {
@@ -1360,9 +1369,18 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 if (region) {
                     // Support du nouveau format avec array d'images
                     if (region.images && Array.isArray(region.images) && region.images.length > 0) {
-                        // Prendre la première image ou l'image par défaut
+                        // Prioriser l'image de type "vignette"
+                        const thumbnailImg = region.images.find(img => img.type === 'vignette');
+                        if (thumbnailImg) {
+                            return thumbnailImg.url;
+                        }
+                        // Sinon, prendre l'image par défaut
                         const defaultImg = region.images.find(img => img.isDefault);
-                        return defaultImg ? defaultImg.url : region.images[0].url;
+                        if (defaultImg) {
+                            return defaultImg.url;
+                        }
+                        // En dernier recours, la première image
+                        return region.images[0].url;
                     }
                     // Support de l'ancien format avec imageUrl (si applicable)
                     else if (region.imageUrl) {
