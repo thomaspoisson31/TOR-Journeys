@@ -174,7 +174,7 @@ export default class ZoomManager {
         
         // Mettre à jour l'affichage après le changement
         setTimeout(() => {
-            console.log(`🔍 [ZoomManager] updateDisplay after adjustZoom: scale=${window.scale.toFixed(3)}`);
+            console.log(`🔍 [ZoomManager] updateDisplay after adjustZoom: scale=${window.scale ? window.scale.toFixed(3) : 'undefined'}`);
             this.updateDisplay();
         }, 50);
     }
@@ -184,7 +184,7 @@ export default class ZoomManager {
         const ratio = (currentScale - this.mapConstants.minScale) / (this.mapConstants.maxScale - this.mapConstants.minScale);
         const x = ratio * this.sliderWidth;
         
-        console.log(`🔍 [ZoomManager] updateSliderPosition: scale=${currentScale.toFixed(3)}, ratio=${ratio.toFixed(3)}, x=${x.toFixed(1)}px, sliderWidth=${this.sliderWidth}px`);
+        console.log(`🔍 [ZoomManager] updateSliderPosition: scale=${window.scale ? window.scale.toFixed(3) : 'undefined'}, ratio=${ratio.toFixed(3)}, x=${x.toFixed(1)}px, sliderWidth=${this.sliderWidth}px`);
         this.zoomMarker.style.left = `${x}px`;
     }
     

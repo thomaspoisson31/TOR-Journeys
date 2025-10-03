@@ -39,6 +39,9 @@ let regionsData = getDefaultRegions();
 let MAP_WIDTH = 0, MAP_HEIGHT = 0;
 let scale = 1, panX = 0, panY = 0;
 
+// Exposer scale globalement pour le ZoomManager
+window.scale = scale;
+
 // --- Managers ---
 let dataManager;
 let filterManager;
@@ -382,6 +385,7 @@ function initializeMap() {
     const viewportWidth = viewport.clientWidth;
     if (viewportWidth > 0 && MAP_WIDTH > 0) {
         scale = viewportWidth / MAP_WIDTH;
+        window.scale = scale; // Synchroniser avec window.scale
         panX = 0;
         panY = 0;
         mapContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
@@ -435,7 +439,8 @@ function initializeMap() {
         // Zoomer en centrant sur le centre du viewport
         const viewportWidth = viewport.clientWidth;
         const viewportHeight = viewport.clientHeight;
-        zoomToPoint(newScale / scale, viewportWidth / 2, viewportHeight / 2);
+        const currentScale = window.scale || scale;
+        zoomToPoint(newScale / currentScale, viewportWidth / 2, viewportHeight / 2);
     };
     zoomManager.init();
     window.zoomManager = zoomManager; // Exposer globalement
@@ -525,6 +530,7 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
         panX = viewportX - mapX * newScale;
         panY = viewportY - mapY * newScale;
         scale = newScale;
+        window.scale = scale; // Synchroniser avec window.scale
 
         constrainPan();
         updateMapTransform();
@@ -542,6 +548,7 @@ function resetView() {
         const scaleX = viewportWidth / MAP_WIDTH;
         const scaleY = viewportHeight / MAP_HEIGHT;
         scale = Math.min(scaleX, scaleY) * 0.9; // 90% pour laisser un peu de marge
+        window.scale = scale; // Synchroniser avec window.scale
 
         // Centrer la carte
         panX = (viewportWidth - MAP_WIDTH * scale) / 2;
