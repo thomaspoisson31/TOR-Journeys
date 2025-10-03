@@ -185,18 +185,73 @@ class SettingsManager {
         const UploadManager = UploadManagerModule.default;
         this.uploadManager = new UploadManager();
 
-        // Setup du composant d'upload
-        const uploadContainer = document.getElementById('map-upload-container');
-        if (uploadContainer) {
-            this.uploadManager.createUploadComponent(uploadContainer, 'maps', (result) => {
-                this.handleMapUploaded(result);
-            });
+        // Setup du bouton d'ajout de carte
+        const addNewMapBtn = document.getElementById('add-new-map-btn');
+        if (addNewMapBtn) {
+            addNewMapBtn.addEventListener('click', () => this.showAddMapModal());
         }
     }
 
+    showAddMapModal() {
+        // Créer une modale pour ajouter une carte
+        const modal = document.createElement('div');
+        modal.id = 'add-map-modal-temp';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]';
+        
+        modal.innerHTML = `
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-md mx-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-white">Ajouter une carte</h3>
+                    <button id="close-add-map-modal" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nom de la carte</label>
+                        <input type="text" id="temp-map-name-input" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Ex: Eriador - Ma carte personnalisée">
+                    </div>
+                    
+                    <div id="temp-map-upload-container">
+                        <!-- Le composant d'upload sera inséré ici -->
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="cancel-add-map" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg">Annuler</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Setup du composant d'upload dans la modale
+        const uploadContainer = document.getElementById('temp-map-upload-container');
+        if (uploadContainer && this.uploadManager) {
+            this.uploadManager.createUploadComponent(uploadContainer, 'maps', (result) => {
+                const nameInput = document.getElementById('temp-map-name-input');
+                const mapName = nameInput.value.trim() || `Carte ${Date.now()}`;
+                
+                this.handleMapUploaded({ ...result, name: mapName });
+                
+                // Fermer la modale
+                modal.remove();
+            });
+        }
+        
+        // Gestionnaires d'événements
+        document.getElementById('close-add-map-modal').addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        document.getElementById('cancel-add-map').addEventListener('click', () => {
+            modal.remove();
+        });
+    }
+
     handleMapUploaded(uploadResult) {
-        const nameInput = document.getElementById('new-map-name-input');
-        const mapName = nameInput.value.trim() || `Carte ${Date.now()}`;
+        const mapName = uploadResult.name || `Carte ${Date.now()}`;
 
         const newMap = {
             id: Date.now(),
@@ -208,16 +263,6 @@ class SettingsManager {
         this.availableMaps.push(newMap);
         this.saveMapsData();
         this.renderMapsGrid();
-
-        // Réinitialiser le formulaire
-        nameInput.value = '';
-        
-        // Réinitialiser le composant d'upload
-        const uploadContainer = document.getElementById('map-upload-container');
-        uploadContainer.innerHTML = '';
-        this.uploadManager.createUploadComponent(uploadContainer, 'maps', (result) => {
-            this.handleMapUploaded(result);
-        });
     }
 
     renderMapsGrid() {
@@ -228,22 +273,24 @@ class SettingsManager {
             const isActive = this.activeMapUrl === map.url;
 
             return `
-                <div class="bg-gray-800 rounded-lg p-3 border ${isActive ? 'border-blue-500' : 'border-gray-600'} flex items-center space-x-3">
-                    <div class="w-20 h-20 bg-gray-700 rounded overflow-hidden flex-shrink-0">
-                        <img src="${map.url}" alt="${map.name}" class="w-full h-full object-cover" 
-                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjc3NDhDIi8+Cjwvc3ZnPg=='">
-                    </div>
-                    <div class="flex-grow">
-                        <div class="text-sm font-medium text-white mb-1">${map.name}</div>
-                        ${isActive ? '<div class="text-xs text-blue-400"><i class="fas fa-check-circle mr-1"></i>Active</div>' : '<div class="text-xs text-gray-400">Non active</div>'}
-                    </div>
-                    <div class="flex space-x-2 flex-shrink-0">
-                        <button class="px-3 py-1 ${isActive ? 'bg-gray-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} rounded text-xs"
-                                onclick="window.settingsManager.setActiveMap(${index})"
-                                ${isActive ? 'disabled' : ''}>
-                            ${isActive ? 'Active' : 'Activer'}
+                <div class="bg-gray-800 rounded-lg p-2 border ${isActive ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 hover:border-gray-600'} transition-all cursor-pointer"
+                     onclick="window.settingsManager.setActiveMap(${index})">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-16 h-16 bg-gray-700 rounded overflow-hidden flex-shrink-0">
+                            <img src="${map.url}" alt="${map.name}" class="w-full h-full object-cover" 
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjc3NDhDIi8+Cjwvc3ZnPg=='">
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="text-sm font-medium text-white truncate">${map.name}</div>
+                            ${isActive ? '<div class="text-xs text-blue-400 mt-1"><i class="fas fa-check-circle mr-1"></i>Carte active</div>' : '<div class="text-xs text-gray-500 mt-1">Cliquer pour activer</div>'}
+                        </div>
+                        ${!map.isDefault ? `
+                        <button class="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors flex-shrink-0" 
+                                onclick="event.stopPropagation(); window.settingsManager.deleteMap(${index})"
+                                title="Supprimer">
+                            <i class="fas fa-trash"></i>
                         </button>
-                        ${!map.isDefault ? `<button class="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-xs" onclick="window.settingsManager.deleteMap(${index})"><i class="fas fa-trash"></i></button>` : ''}
+                        ` : ''}
                     </div>
                 </div>
             `;

@@ -529,46 +529,32 @@
                 <div class="flex-grow overflow-hidden">
                     <!-- Cartes Tab -->
                     <div id="maps-tab" class="settings-tab-content active h-full overflow-y-auto">
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="text-lg font-semibold">Gestion des cartes</h4>
-                            <div class="text-sm text-gray-400">
-                                Dimensions recommandées : 5103 × 3296 pixels
-                            </div>
-                        </div>
-
                         <!-- Carte active -->
                         <div class="mb-6">
-                            <h5 class="text-blue-400 font-semibold mb-3">🎯 Carte active</h5>
-                            <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
-                                <div id="active-map-display" class="aspect-video bg-gray-800 rounded-lg mb-3 overflow-hidden flex items-center justify-center">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-lg font-semibold text-white">Carte active</h4>
+                                <span class="text-xs text-gray-400">5103 × 3296 px recommandé</span>
+                            </div>
+                            <div class="bg-gray-900 rounded-lg p-4 border border-blue-500/50">
+                                <div id="active-map-display" class="aspect-video bg-gray-800 rounded-lg mb-2 overflow-hidden flex items-center justify-center">
                                     <img id="active-map-preview" src="" alt="Carte active" class="w-full h-full object-cover">
                                 </div>
-                                <div id="active-map-name" class="text-sm text-gray-400 text-center">Aucune carte active</div>
+                                <div id="active-map-name" class="text-sm font-medium text-white text-center">Aucune carte active</div>
                             </div>
                         </div>
 
-                        <!-- Upload de nouvelle carte -->
-                        <div class="mb-6">
-                            <h5 class="text-blue-400 font-semibold mb-3">➕ Ajouter une nouvelle carte</h5>
-                            <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
-                                <div class="mb-3">
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Nom de la carte</label>
-                                    <input type="text" id="new-map-name-input" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Ex: Eriador - Carte personnalisée">
-                                </div>
-                                <div id="map-upload-container" class="mb-3">
-                                    <!-- Le composant d'upload sera inséré ici -->
-                                </div>
+                        <!-- Liste des cartes avec bouton d'ajout intégré -->
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-3">Toutes les cartes</h4>
+                            <div id="maps-grid" class="space-y-2">
+                                <!-- Les cartes seront ajoutées ici dynamiquement -->
                             </div>
-                        </div>
-
-                        <!-- Liste des cartes disponibles -->
-                        <div class="mb-6">
-                            <h5 class="text-blue-400 font-semibold mb-3">📋 Toutes les cartes disponibles</h5>
-                            <div id="maps-list" class="bg-gray-900 rounded-lg p-4 border border-gray-600">
-                                <div id="maps-grid" class="space-y-3">
-                                    <!-- Les cartes seront ajoutées ici dynamiquement -->
-                                </div>
-                            </div>
+                            
+                            <!-- Bouton d'ajout de carte -->
+                            <button id="add-new-map-btn" class="w-full mt-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Ajouter une nouvelle carte</span>
+                            </button>
                         </div>
                     </div>
 
