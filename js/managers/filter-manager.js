@@ -4,11 +4,12 @@ export default class FilterManager {
     constructor() {
         this.activeFilters = {
             colors: [], // Unifié pour lieux et régions
-            visited: null, // null = tous, true = visités, false = inconnus
-            known: null,   // null = tous, true = connus, false = inconnus
+            visited: [], // Array: peut contenir 'visited' et/ou 'not_visited'
+            known: [],   // Array: peut contenir 'known' et/ou 'unknown'
             types: [],
             showLocations: true, // Afficher les lieux
-            showRegions: false   // Afficher les régions (désactivé par défaut)
+            showRegions: false,   // Afficher les régions (désactivé par défaut)
+            regionsOpacity: 0.5  // Opacité des régions (0-1)
         };
 
         this.isFilterPanelOpen = false;
@@ -52,7 +53,24 @@ export default class FilterManager {
         // Filtres d'affichage
         this.setupDisplayFilters();
 
+        // Fermer la modale en cliquant en dehors
+        this.setupOutsideClickListener();
+
         console.log("✅ Filter listeners setup complete");
+    }
+
+    setupOutsideClickListener() {
+        document.addEventListener('click', (e) => {
+            const filterPanel = document.getElementById('filter-panel');
+            const filterBtn = document.getElementById('filter-btn');
+            
+            if (this.isFilterPanelOpen && filterPanel && filterBtn) {
+                // Vérifier si le clic est en dehors du panel et du bouton
+                if (!filterPanel.contains(e.target) && !filterBtn.contains(e.target)) {
+                    this.closeFilterPanel();
+                }
+            }
+        });
     }
 
     setupUnifiedColorFilters() {
@@ -90,23 +108,27 @@ export default class FilterManager {
     }
 
     setupStatusFilters() {
-        // Filtres "Visité"
-        const visitedAll = document.getElementById('visited-all');
-        const visitedYes = document.getElementById('visited-yes');
-        const visitedNo = document.getElementById('visited-no');
+        // Filtres "Visité" - checkboxes
+        const visitedCheckbox = document.getElementById('visited-checkbox');
+        const notVisitedCheckbox = document.getElementById('not-visited-checkbox');
 
-        if (visitedAll) visitedAll.addEventListener('change', () => this.updateVisitedFilter(null));
-        if (visitedYes) visitedYes.addEventListener('change', () => this.updateVisitedFilter(true));
-        if (visitedNo) visitedNo.addEventListener('change', () => this.updateVisitedFilter(false));
+        if (visitedCheckbox) {
+            visitedCheckbox.addEventListener('change', () => this.updateVisitedFilter());
+        }
+        if (notVisitedCheckbox) {
+            notVisitedCheckbox.addEventListener('change', () => this.updateVisitedFilter());
+        }
 
-        // Filtres "Connu"
-        const knownAll = document.getElementById('known-all');
-        const knownYes = document.getElementById('known-yes');
-        const knownNo = document.getElementById('known-no');
+        // Filtres "Connu" - checkboxes
+        const knownCheckbox = document.getElementById('known-checkbox');
+        const unknownCheckbox = document.getElementById('unknown-checkbox');
 
-        if (knownAll) knownAll.addEventListener('change', () => this.updateKnownFilter(null));
-        if (knownYes) knownYes.addEventListener('change', () => this.updateKnownFilter(true));
-        if (knownNo) knownNo.addEventListener('change', () => this.updateKnownFilter(false));
+        if (knownCheckbox) {
+            knownCheckbox.addEventListener('change', () => this.updateKnownFilter());
+        }
+        if (unknownCheckbox) {
+            unknownCheckbox.addEventListener('change', () => this.updateKnownFilter());
+        }
     }
 
     setupTypeFilters() {
@@ -142,6 +164,28 @@ export default class FilterManager {
                 this.applyFilters();
             });
         }
+
+        // Slider d'opacité des régions
+        this.setupOpacitySlider();
+    }
+
+    setupOpacitySlider() {
+        const opacitySlider = document.getElementById('regions-opacity-slider');
+        const opacityValue = document.getElementById('regions-opacity-value');
+
+        if (opacitySlider && opacityValue) {
+            // Définir la valeur initiale
+            opacitySlider.value = this.activeFilters.regionsOpacity * 100;
+            opacityValue.textContent = `${Math.round(this.activeFilters.regionsOpacity * 100)}%`;
+
+            // Mettre à jour en temps réel
+            opacitySlider.addEventListener('input', (e) => {
+                const value = parseInt(e.target.value) / 100;
+                this.activeFilters.regionsOpacity = value;
+                opacityValue.textContent = `${e.target.value}%`;
+                this.updateRegionsOpacity();
+            });
+        }
     }
 
     updateUnifiedColorFilter(color, isChecked) {
@@ -156,13 +200,33 @@ export default class FilterManager {
         this.applyFilters();
     }
 
-    updateVisitedFilter(value) {
-        this.activeFilters.visited = value;
+    updateVisitedFilter() {
+        const visitedCheckbox = document.getElementById('visited-checkbox');
+        const notVisitedCheckbox = document.getElementById('not-visited-checkbox');
+        
+        this.activeFilters.visited = [];
+        if (visitedCheckbox && visitedCheckbox.checked) {
+            this.activeFilters.visited.push('visited');
+        }
+        if (notVisitedCheckbox && notVisitedCheckbox.checked) {
+            this.activeFilters.visited.push('not_visited');
+        }
+        
         this.applyFilters();
     }
 
-    updateKnownFilter(value) {
-        this.activeFilters.known = value;
+    updateKnownFilter() {
+        const knownCheckbox = document.getElementById('known-checkbox');
+        const unknownCheckbox = document.getElementById('unknown-checkbox');
+        
+        this.activeFilters.known = [];
+        if (knownCheckbox && knownCheckbox.checked) {
+            this.activeFilters.known.push('known');
+        }
+        if (unknownCheckbox && unknownCheckbox.checked) {
+            this.activeFilters.known.push('unknown');
+        }
+        
         this.applyFilters();
     }
 
@@ -203,11 +267,12 @@ export default class FilterManager {
         // Réinitialiser les filtres actifs
         this.activeFilters = {
             colors: [],
-            visited: null,
-            known: null,
+            visited: [],
+            known: [],
             types: [],
             showLocations: true,
-            showRegions: false
+            showRegions: false,
+            regionsOpacity: 0.5
         };
 
         // Réinitialiser l'interface
@@ -216,11 +281,16 @@ export default class FilterManager {
             cb.checked = false;
         });
 
-        // Radios status
-        const visitedAll = document.getElementById('visited-all');
-        const knownAll = document.getElementById('known-all');
-        if (visitedAll) visitedAll.checked = true;
-        if (knownAll) knownAll.checked = true;
+        // Checkboxes status
+        const visitedCheckbox = document.getElementById('visited-checkbox');
+        const notVisitedCheckbox = document.getElementById('not-visited-checkbox');
+        const knownCheckbox = document.getElementById('known-checkbox');
+        const unknownCheckbox = document.getElementById('unknown-checkbox');
+        
+        if (visitedCheckbox) visitedCheckbox.checked = false;
+        if (notVisitedCheckbox) notVisitedCheckbox.checked = false;
+        if (knownCheckbox) knownCheckbox.checked = false;
+        if (unknownCheckbox) unknownCheckbox.checked = false;
 
         // Types
         document.querySelectorAll('input[name="type-filter"]').forEach(cb => {
@@ -231,7 +301,13 @@ export default class FilterManager {
         const showLocationsFilter = document.getElementById('show-locations');
         const showRegionsFilter = document.getElementById('show-regions');
         if (showLocationsFilter) showLocationsFilter.checked = true;
-        if (showRegionsFilter) showRegionsFilter.checked = false; // Reset to default unchecked
+        if (showRegionsFilter) showRegionsFilter.checked = false;
+
+        // Slider d'opacité
+        const opacitySlider = document.getElementById('regions-opacity-slider');
+        const opacityValue = document.getElementById('regions-opacity-value');
+        if (opacitySlider) opacitySlider.value = 50;
+        if (opacityValue) opacityValue.textContent = '50%';
 
         // Appliquer les filtres vides (montrer tout)
         this.applyFilters();
@@ -281,15 +357,23 @@ export default class FilterManager {
             }
 
             // Filtre par statut visité
-            if (this.activeFilters.visited !== null && 
-                location.visited !== this.activeFilters.visited) {
-                return false;
+            if (this.activeFilters.visited.length > 0) {
+                const isVisited = location.visited === true;
+                const showVisited = this.activeFilters.visited.includes('visited');
+                const showNotVisited = this.activeFilters.visited.includes('not_visited');
+                
+                if (isVisited && !showVisited) return false;
+                if (!isVisited && !showNotVisited) return false;
             }
 
             // Filtre par statut connu
-            if (this.activeFilters.known !== null && 
-                location.known !== this.activeFilters.known) {
-                return false;
+            if (this.activeFilters.known.length > 0) {
+                const isKnown = location.known === true;
+                const showKnown = this.activeFilters.known.includes('known');
+                const showUnknown = this.activeFilters.known.includes('unknown');
+                
+                if (isKnown && !showKnown) return false;
+                if (!isKnown && !showUnknown) return false;
             }
 
             // Filtre par type
@@ -311,15 +395,23 @@ export default class FilterManager {
             }
 
             // Filtre par statut visité
-            if (this.activeFilters.visited !== null && 
-                region.visited !== this.activeFilters.visited) {
-                return false;
+            if (this.activeFilters.visited.length > 0) {
+                const isVisited = region.visited === true;
+                const showVisited = this.activeFilters.visited.includes('visited');
+                const showNotVisited = this.activeFilters.visited.includes('not_visited');
+                
+                if (isVisited && !showVisited) return false;
+                if (!isVisited && !showNotVisited) return false;
             }
 
             // Filtre par statut connu
-            if (this.activeFilters.known !== null && 
-                region.known !== this.activeFilters.known) {
-                return false;
+            if (this.activeFilters.known.length > 0) {
+                const isKnown = region.known === true;
+                const showKnown = this.activeFilters.known.includes('known');
+                const showUnknown = this.activeFilters.known.includes('unknown');
+                
+                if (isKnown && !showKnown) return false;
+                if (!isKnown && !showUnknown) return false;
             }
 
             return true;
@@ -341,12 +433,23 @@ export default class FilterManager {
         if (regionsLayer) {
             if (this.activeFilters.showRegions) {
                 regionsLayer.style.display = 'block';
+                this.updateRegionsOpacity();
             } else {
                 regionsLayer.style.display = 'none';
             }
         }
 
         console.log(`✅ Display updated - ${this.filteredLocations.length} locations, ${this.filteredRegions.length} regions visible`);
+    }
+
+    updateRegionsOpacity() {
+        const regionsLayer = document.getElementById('regions-layer');
+        if (regionsLayer) {
+            const polygons = regionsLayer.querySelectorAll('polygon');
+            polygons.forEach(polygon => {
+                polygon.setAttribute('fill-opacity', this.activeFilters.regionsOpacity);
+            });
+        }
     }
 
     updateFilterButton() {
@@ -365,11 +468,12 @@ export default class FilterManager {
 
     hasActiveFilters() {
         return (this.activeFilters.colors && this.activeFilters.colors.length > 0) ||
-               this.activeFilters.visited !== null ||
-               this.activeFilters.known !== null ||
+               (this.activeFilters.visited && this.activeFilters.visited.length > 0) ||
+               (this.activeFilters.known && this.activeFilters.known.length > 0) ||
                (this.activeFilters.types && this.activeFilters.types.length > 0) ||
                !this.activeFilters.showLocations ||
-               !this.activeFilters.showRegions;
+               !this.activeFilters.showRegions ||
+               this.activeFilters.regionsOpacity !== 0.5;
     }
 
     // Méthodes utilitaires pour les couleurs

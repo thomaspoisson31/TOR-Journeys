@@ -64,18 +64,14 @@
             <!-- Filtres de statut visité -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-300 mb-2">Statut Visité</label>
-                <div class="space-y-2">
-                    <label class="filter-radio-label">
-                        <input type="radio" name="visited-filter" id="visited-all" value="all" checked>
-                        <span>Tous</span>
+                <div class="flex space-x-4">
+                    <label class="filter-checkbox-label">
+                        <input type="checkbox" id="visited-checkbox">
+                        <span>Visités</span>
                     </label>
-                    <label class="filter-radio-label">
-                        <input type="radio" name="visited-filter" id="visited-yes" value="true">
-                        <span>Visités seulement</span>
-                    </label>
-                    <label class="filter-radio-label">
-                        <input type="radio" name="visited-filter" id="visited-no" value="false">
-                        <span>Non visités seulement</span>
+                    <label class="filter-checkbox-label">
+                        <input type="checkbox" id="not-visited-checkbox">
+                        <span>Non visités</span>
                     </label>
                 </div>
             </div>
@@ -83,18 +79,14 @@
             <!-- Filtres de statut connu -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-300 mb-2">Statut Connu</label>
-                <div class="space-y-2">
-                    <label class="filter-radio-label">
-                        <input type="radio" name="known-filter" id="known-all" value="all" checked>
-                        <span>Tous</span>
+                <div class="flex space-x-4">
+                    <label class="filter-checkbox-label">
+                        <input type="checkbox" id="known-checkbox">
+                        <span>Connus</span>
                     </label>
-                    <label class="filter-radio-label">
-                        <input type="radio" name="known-filter" id="known-yes" value="true">
-                        <span>Connus seulement</span>
-                    </label>
-                    <label class="filter-radio-label">
-                        <input type="radio" name="known-filter" id="known-no" value="false">
-                        <span>Inconnus seulement</span>
+                    <label class="filter-checkbox-label">
+                        <input type="checkbox" id="unknown-checkbox">
+                        <span>Inconnus</span>
                     </label>
                 </div>
             </div>
@@ -111,6 +103,14 @@
                         <input type="checkbox" id="show-regions" checked>
                         <span>Afficher les régions</span>
                     </label>
+                    <!-- Slider d'opacité des régions -->
+                    <div class="mt-2 ml-6">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-xs text-gray-400">Opacité:</label>
+                            <input type="range" id="regions-opacity-slider" min="0" max="100" value="50" class="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+                            <span id="regions-opacity-value" class="text-xs text-gray-400 w-10 text-right">50%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
