@@ -162,8 +162,7 @@
             <div id="info-box-tabs">
                 <button class="tab-button active" data-tab="image">Image</button>
                 <button class="tab-button" data-tab="text">Texte</button>
-                <button class="tab-button" data-tab="rumeurs">Rumeurs</button>
-                <button class="tab-button" data-tab="tradition">Tradition Ancienne</button>
+                <button class="tab-button" data-tab="rumeurs-traditions">Rumeurs et Traditions</button>
             </div>
             <div id="info-box-scroll-wrapper">
                 <div id="info-box-content">
@@ -178,16 +177,20 @@
                             <p></p>
                         </div>
                     </div>
-                    <div id="rumeurs-tab" class="tab-content">
+                    <div id="rumeurs-traditions-tab" class="tab-content">
                         <div class="text-view">
-                            <h3>Rumeurs</h3>
-                            <p></p>
-                        </div>
-                    </div>
-                    <div id="tradition-tab" class="tab-content">
-                        <div class="text-view">
-                            <h3>Tradition Ancienne</h3>
-                            <p></p>
+                            <div id="rumeurs-section" class="mb-6">
+                                <h3 class="text-yellow-400 font-semibold mb-3">
+                                    <i class="fas fa-ear-listen mr-2"></i>Rumeurs
+                                </h3>
+                                <div id="rumeurs-content"></div>
+                            </div>
+                            <div id="tradition-section">
+                                <h3 class="text-purple-400 font-semibold mb-3">
+                                    <i class="fas fa-book-open mr-2"></i>Tradition Ancienne
+                                </h3>
+                                <div id="tradition-content"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

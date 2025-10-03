@@ -242,44 +242,51 @@ class InfoBoxManager {
             `;
         }
 
-        // Onglet Rumeurs
-        const rumeursTab = document.getElementById('rumeurs-tab');
+        // Onglet Rumeurs et Traditions
+        const rumeursTab = document.getElementById('rumeurs-traditions-tab');
         if (rumeursTab) {
-            // Nettoyer complètement l'onglet et créer la structure
-            rumeursTab.innerHTML = '';
-            const textView = this.createTextView(rumeursTab);
-            let rumeursContent = '';
-            
-            if (type === 'region') {
-                rumeursContent = item.Rumeur || 'Aucune rumeur disponible pour cette région.';
-            } else {
-                if (item.Rumeurs && item.Rumeurs.length > 0) {
-                    const rumeursValides = item.Rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
-                    if (rumeursValides.length > 0) {
-                        rumeursContent = rumeursValides.join('\n\n');
-                    } else {
-                        rumeursContent = 'Aucune rumeur disponible.';
-                    }
+            // Section Rumeurs
+            const rumeursContent = rumeursTab.querySelector('#rumeurs-content');
+            if (rumeursContent) {
+                let rumeursHTML = '';
+                
+                if (type === 'region') {
+                    // Pour les régions, une seule rumeur
+                    const rumeurText = item.Rumeur || 'Aucune rumeur disponible pour cette région.';
+                    rumeursHTML = `<div class="prose prose-invert">${this.renderMarkdown(rumeurText)}</div>`;
                 } else {
-                    rumeursContent = item.Rumeur || 'Aucune rumeur disponible.';
+                    // Pour les lieux, support de multiples rumeurs
+                    if (item.Rumeurs && item.Rumeurs.length > 0) {
+                        const rumeursValides = item.Rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
+                        if (rumeursValides.length > 0) {
+                            rumeursHTML = rumeursValides.map((rumeur, index) => `
+                                <div class="mb-4 ${index > 0 ? 'pt-4 border-t border-yellow-600 border-opacity-30' : ''}">
+                                    <div class="prose prose-invert">${this.renderMarkdown(rumeur)}</div>
+                                </div>
+                            `).join('');
+                        } else {
+                            rumeursHTML = '<div class="prose prose-invert text-gray-400 italic">Aucune rumeur disponible.</div>';
+                        }
+                    } else if (item.Rumeur && item.Rumeur !== "A définir") {
+                        rumeursHTML = `<div class="prose prose-invert">${this.renderMarkdown(item.Rumeur)}</div>`;
+                    } else {
+                        rumeursHTML = '<div class="prose prose-invert text-gray-400 italic">Aucune rumeur disponible.</div>';
+                    }
+                }
+                
+                rumeursContent.innerHTML = rumeursHTML;
+            }
+
+            // Section Tradition Ancienne
+            const traditionContent = rumeursTab.querySelector('#tradition-content');
+            if (traditionContent) {
+                const traditionText = item.Tradition_Ancienne || '';
+                if (traditionText) {
+                    traditionContent.innerHTML = `<div class="prose prose-invert">${this.renderMarkdown(traditionText)}</div>`;
+                } else {
+                    traditionContent.innerHTML = '<div class="prose prose-invert text-gray-400 italic">Aucune tradition ancienne disponible.</div>';
                 }
             }
-            
-            textView.innerHTML = `
-                <div class="prose prose-invert">${this.renderMarkdown(rumeursContent)}</div>
-            `;
-        }
-
-        // Onglet Tradition
-        const traditionTab = document.getElementById('tradition-tab');
-        if (traditionTab) {
-            // Nettoyer complètement l'onglet et créer la structure
-            traditionTab.innerHTML = '';
-            const textView = this.createTextView(traditionTab);
-            const traditionContent = item.Tradition_Ancienne || 'Aucune tradition ancienne disponible.';
-            textView.innerHTML = `
-                <div class="prose prose-invert">${this.renderMarkdown(traditionContent)}</div>
-            `;
         }
     }
 
@@ -361,40 +368,29 @@ class InfoBoxManager {
             `;
         }
 
-        // Onglet Rumeurs (mode édition)
-        const rumeursTab = document.getElementById('rumeurs-tab');
+        // Onglet Rumeurs et Traditions (mode édition)
+        const rumeursTab = document.getElementById('rumeurs-traditions-tab');
         if (rumeursTab) {
             const currentRumeurs = type === 'region' ? 
                 (item.Rumeur || '') : 
-                (item.Rumeurs ? item.Rumeurs.join('\n') : (item.Rumeur || ''));
+                (item.Rumeurs ? item.Rumeurs.join('\n\n---\n\n') : (item.Rumeur || ''));
             
             // Nettoyer complètement l'onglet
             rumeursTab.innerHTML = `
                 <div class="edit-form p-4">
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2 text-white">Rumeurs ${type === 'location' ? '(une par ligne)' : ''} (Markdown supporté) :</label>
-                        <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${currentRumeurs}</textarea>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2 text-white">
+                            <i class="fas fa-ear-listen mr-2 text-yellow-400"></i>
+                            Rumeurs ${type === 'location' ? '(séparez par une ligne "---")' : ''} (Markdown supporté) :
+                        </label>
+                        <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-40 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.${type === 'location' ? '\n\nSéparez les rumeurs par:\n---' : ''}">${currentRumeurs}</textarea>
+                        ${type === 'location' ? '<div class="text-xs text-gray-400 mt-1">Utilisez "---" sur une ligne seule pour séparer plusieurs rumeurs</div>' : ''}
                     </div>
-                    <div class="flex space-x-2">
-                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-save mr-1"></i>Sauvegarder
-                        </button>
-                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-times mr-1"></i>Annuler
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Onglet Tradition (mode édition)
-        const traditionTab = document.getElementById('tradition-tab');
-        if (traditionTab) {
-            // Nettoyer complètement l'onglet
-            traditionTab.innerHTML = `
-                <div class="edit-form p-4">
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium mb-2 text-white">Tradition Ancienne (Markdown supporté) :</label>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2 text-white">
+                            <i class="fas fa-book-open mr-2 text-purple-400"></i>
+                            Tradition Ancienne (Markdown supporté) :
+                        </label>
                         <textarea id="edit-tradition" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.Tradition_Ancienne || ''}</textarea>
                     </div>
                     <div class="flex space-x-2">
@@ -626,10 +622,22 @@ class InfoBoxManager {
                 if (this.currentType === 'region') {
                     this.currentItem.Rumeur = rumeursText;
                 } else {
-                    // Pour les lieux, séparer par ligne
-                    this.currentItem.Rumeurs = rumeursText ? rumeursText.split('\n').filter(r => r.trim() !== '') : [];
-                    if (this.currentItem.Rumeurs.length === 1) {
-                        this.currentItem.Rumeur = this.currentItem.Rumeurs[0];
+                    // Pour les lieux, séparer par "---"
+                    if (rumeursText) {
+                        this.currentItem.Rumeurs = rumeursText
+                            .split(/\n---\n/)
+                            .map(r => r.trim())
+                            .filter(r => r !== '');
+                        
+                        // Compatibilité avec l'ancienne structure
+                        if (this.currentItem.Rumeurs.length === 1) {
+                            this.currentItem.Rumeur = this.currentItem.Rumeurs[0];
+                        } else if (this.currentItem.Rumeurs.length === 0) {
+                            this.currentItem.Rumeur = '';
+                        }
+                    } else {
+                        this.currentItem.Rumeurs = [];
+                        this.currentItem.Rumeur = '';
                     }
                 }
             }
