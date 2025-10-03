@@ -515,7 +515,10 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
     const mapY = (viewportY - panY) / scale;
 
     // Nouveau scale avec contraintes
+    const oldScale = scale;
     const newScale = Math.max(minScale, Math.min(maxScale, scale * zoomFactor));
+
+    console.log(`🔍 [main.js] zoomToPoint: oldScale=${oldScale.toFixed(3)}, zoomFactor=${zoomFactor.toFixed(3)}, newScale=${newScale.toFixed(3)}`);
 
     if (newScale !== scale) {
         // Ajuster le pan pour garder le point sous le curseur
@@ -525,6 +528,8 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
 
         constrainPan();
         updateMapTransform();
+        
+        console.log(`🔍 [main.js] zoomToPoint: scale mis à jour à ${scale.toFixed(3)}`);
     }
 }
 
@@ -575,11 +580,13 @@ function setupMapNavigation() {
     viewport.addEventListener('wheel', (e) => {
         e.preventDefault();
         const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        console.log(`🔍 [main.js] wheel event: deltaY=${e.deltaY}, zoomFactor=${zoomFactor}`);
         zoomToPoint(zoomFactor, e.clientX, e.clientY);
         
         // Synchroniser le ZoomManager avec un petit délai pour attendre la fin de l'animation
         if (zoomManager) {
             setTimeout(() => {
+                console.log(`🔍 [main.js] Appel updateDisplay du ZoomManager après molette`);
                 zoomManager.updateDisplay();
             }, 10);
         }
