@@ -197,7 +197,7 @@ function renderLocations() {
 
     let renderedCount = 0;
     const currentScale = window.scale || 1;
-    const showThumbnails = currentScale > 1.0; // Afficher les vignettes si zoom > 100%
+    const showThumbnails = currentScale > 0.5; // Afficher les vignettes si zoom > 50%
 
     locationsData.locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
@@ -573,6 +573,13 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
         }
         
         console.log(`🔍 [main.js] zoomToPoint: scale mis à jour à ${scale.toFixed(3)}`);
+        
+        // Rafraîchir les marqueurs si on passe le seuil de 50%
+        const shouldShowThumbnails = newScale > 0.5;
+        const wasShowingThumbnails = oldScale > 0.5;
+        if (shouldShowThumbnails !== wasShowingThumbnails) {
+            renderLocations();
+        }
     }
 }
 
@@ -595,9 +602,9 @@ function resetView() {
 
         updateMapTransform();
         
-        // Rafraîchir les marqueurs si on passe le seuil de 100%
-        const shouldShowThumbnails = scale > 1.0;
-        const wasShowingThumbnails = oldScale > 1.0;
+        // Rafraîchir les marqueurs si on passe le seuil de 50%
+        const shouldShowThumbnails = scale > 0.5;
+        const wasShowingThumbnails = oldScale > 0.5;
         if (shouldShowThumbnails !== wasShowingThumbnails) {
             renderLocations();
         }
