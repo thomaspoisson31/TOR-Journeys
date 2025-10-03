@@ -242,9 +242,9 @@ function renderLocations() {
             marker.style.backgroundImage = 'none';
             marker.style.width = '64px';
             marker.style.height = '64px';
-            marker.style.border = '8px solid rgba(255, 255, 255, 0.8)';
+            marker.style.border = 'none';
             marker.style.borderRadius = '50%';
-            marker.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3)';
+            marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
         }
 
         // Ajouter les événements de clic et de glisser-déplacer

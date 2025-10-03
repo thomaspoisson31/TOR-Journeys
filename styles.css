@@ -62,19 +62,18 @@ body {
     position: absolute;
     width: 32px;
     height: 32px;
-    border: 4px solid rgba(255, 255, 255, 0.8); /* Increased border width */
+    border: none;
     border-radius: 50%;
     cursor: pointer;
     transform: translate(-50%, -50%);
     pointer-events: auto;
     transition: background-color 0.3s, border-color 0.3s, opacity 0.3s, box-shadow 0.3s, transform 0.3s;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .location-marker:hover {
-    border-color: white !important;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), 0 6px 15px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%) scale(1.2);
 }
 
 /* Override cursor when in drawing mode */
