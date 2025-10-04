@@ -437,17 +437,26 @@ class ImportExportManager {
             window.locationsData = this.dataManager.locationsData;
             window.regionsData = this.dataManager.regionsData;
 
-            // Re-render avec un léger délai pour s'assurer que les données sont bien synchronisées
-            setTimeout(() => {
-                if (typeof window.renderLocations === 'function') {
-                    console.log(`🎯 Re-rendering ${this.dataManager.locationsData?.locations?.length || 0} locations after import`);
-                    window.renderLocations();
-                }
-                if (typeof window.renderRegions === 'function') {
-                    console.log(`🌍 Re-rendering ${this.dataManager.regionsData?.regions?.length || 0} regions after import`);
-                    window.renderRegions();
-                }
-            }, 100);
+            // Re-render immédiatement les lieux
+            const locationCount = this.dataManager.locationsData?.locations?.length || 0;
+            const regionCount = this.dataManager.regionsData?.regions?.length || 0;
+
+            console.log(`🎯 Re-rendering ${locationCount} locations after import`);
+            console.log(`🌍 Re-rendering ${regionCount} regions after import`);
+
+            if (typeof window.renderLocations === 'function') {
+                window.renderLocations();
+                console.log(`✅ Locations rendered successfully`);
+            } else {
+                console.error("❌ window.renderLocations is not a function");
+            }
+
+            if (typeof window.renderRegions === 'function') {
+                window.renderRegions();
+                console.log(`✅ Regions rendered successfully`);
+            } else {
+                console.error("❌ window.renderRegions is not a function");
+            }
 
             // Auto-sync si disponible
             if (this.scheduleAutoSync && typeof this.scheduleAutoSync === 'function') {
