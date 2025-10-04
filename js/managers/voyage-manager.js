@@ -9,11 +9,11 @@ class VoyageManager {
         this.dayByDayData = [];
         this.journeyDescriptions = {}; // Pour stocker les descriptions générées
         this.currentDescriptionDay = 1; // Pour suivre le jour affiché dans la modal de description
-        
+
         // Stocker les constantes passées en paramètre
         this.MAP_DISTANCE_MILES = constants.MAP_DISTANCE_MILES || MAP_DISTANCE_MILES;
         this.MAP_WIDTH = constants.MAP_WIDTH || window.MAP_WIDTH || 5103;
-        
+
         // Initialiser le gestionnaire Gemini
         this.geminiManager = new GeminiManager();
     }
@@ -257,7 +257,7 @@ class VoyageManager {
         // Accéder aux variables globales via window
         const calendarData = window.calendarData;
         const isCalendarMode = window.isCalendarMode;
-        
+
         console.log(`📅 DEBUG getCalendarDateForDay(${day}):`, {
             hasJourneyStartDate: !!this.journeyStartDate,
             journeyStartDate: this.journeyStartDate,
@@ -265,7 +265,7 @@ class VoyageManager {
             calendarDataLength: calendarData?.length || 0,
             isCalendarMode: isCalendarMode
         });
-        
+
         // Utiliser la date de début fixe du voyage plutôt que la date courante
         if (this.journeyStartDate && calendarData && calendarData.length > 0) {
             let monthIndex = this.journeyStartDate.monthIndex;
@@ -292,7 +292,7 @@ class VoyageManager {
     getWeatherForDay(day) {
         // Accéder aux variables globales via window
         const calendarData = window.calendarData;
-        
+
         if (!this.journeyStartDate || !calendarData || calendarData.length === 0) {
             return null;
         }
@@ -326,18 +326,45 @@ class VoyageManager {
     }
 
     renderCurrentDay() {
-        if (this.dayByDayData.length === 0) {
-            this.renderEmptyDay();
+        const segmentTitle = document.getElementById('segment-title');
+        const dayCounter = document.getElementById('day-counter');
+        const segmentContent = document.getElementById('segment-content');
+        const progressBar = document.getElementById('voyage-progress-bar');
+        const voyageEndMessage = document.getElementById('voyage-end-message');
+        const randomEventBtn = document.getElementById('random-event-btn');
+
+        if (this.currentDayIndex >= this.totalJourneyDays) {
+            voyageEndMessage.classList.remove('hidden');
+            segmentContent.innerHTML = '';
+            progressBar.classList.add('hidden');
+            if (randomEventBtn) randomEventBtn.classList.add('hidden');
             return;
         }
 
-        const currentDay = this.dayByDayData[this.currentDayIndex];
+        voyageEndMessage.classList.add('hidden');
+        progressBar.classList.remove('hidden');
 
-        // Update title with calendar date
-        this.updateDayTitle(currentDay);
+        const dayData = this.dayByDayData[this.currentDayIndex];
+        if (!dayData) return;
+
+        // Update header
+        segmentTitle.textContent = dayData.calendarDate;
+        dayCounter.textContent = `(Jour ${dayData.day} sur ${this.totalJourneyDays})`;
+
+        // Vérifier s'il y a des événements aléatoires disponibles
+        const hasRandomEvents = this.checkForRandomEvents(dayData);
+        if (randomEventBtn) {
+            if (hasRandomEvents) {
+                randomEventBtn.classList.remove('hidden');
+                // Add click listener for random event button
+                randomEventBtn.addEventListener('click', () => this.triggerRandomEvent(dayData));
+            } else {
+                randomEventBtn.classList.add('hidden');
+            }
+        }
 
         // Update content
-        this.updateDayContent(currentDay);
+        this.updateDayContent(dayData);
 
         // Update navigation buttons
         this.updateNavigationButtons();
@@ -353,11 +380,11 @@ class VoyageManager {
         if (segmentTitle) {
             // Récupérer la date calendrier directement (car dayData.calendarDate peut être incorrect)
             const realCalendarDate = this.getCalendarDateForDay(this.currentDayIndex + 1);
-            
+
             // Format: "Jour X : Date Mois Symbole de saison"
             let titleText = `Jour ${this.currentDayIndex + 1} : ${realCalendarDate}`;
             let seasonTooltip = '';
-            
+
             // Ajouter le symbole de la saison pour ce jour spécifique
             if (window.calendarManager && window.calendarData && this.journeyStartDate) {
                 // Calculer la saison pour ce jour de voyage
@@ -375,14 +402,14 @@ class VoyageManager {
                 const monthSeason = window.calendarData[monthIndex].season.toLowerCase();
                 const seasonMainName = monthSeason ? monthSeason.split('-')[0] : 'printemps';
                 const seasonSymbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
-                
+
                 // Ajouter le symbole au titre
                 titleText += ` ${seasonSymbol}`;
-                
+
                 // Tooltip avec le nom de la saison
                 seasonTooltip = window.calendarManager.seasonNames[monthSeason] || '';
             }
-            
+
             segmentTitle.textContent = titleText;
             segmentTitle.title = seasonTooltip;
             segmentTitle.style.color = '#940000';
@@ -540,7 +567,7 @@ class VoyageManager {
 
         this.currentDayIndex = targetDayIndex;
         this.renderCurrentDay();
-        
+
         // Mettre à jour la date principale du calendrier
         this.updateMainCalendarDate();
     }
@@ -549,7 +576,7 @@ class VoyageManager {
         // Accéder aux variables globales via window
         const isCalendarMode = window.isCalendarMode;
         const calendarData = window.calendarData;
-        
+
         if (!isCalendarMode || !this.journeyStartDate || !calendarData || calendarData.length === 0) {
             return;
         }
@@ -579,15 +606,15 @@ class VoyageManager {
             localStorage.setItem('currentSeason', monthSeason);
             window.calendarManager.currentCalendarDate = window.currentCalendarDate;
             window.calendarManager.saveCalendarToLocal();
-            
+
             // FORCER le rafraîchissement de l'affichage via CalendarManager
             window.calendarManager.updateSeasonDisplay();
         }
-        
+
         console.log(`📅 Date principale mise à jour : ${newDay} ${calendarData[monthIndex].name} (${monthSeason})`);
     }
 
-    
+
 
     updateNavigationButtons() {
         const prevBtn = this.dom.getElementById('prev-segment-btn');
@@ -1363,6 +1390,58 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         }
 
         return null;
+    }
+
+    checkForRandomEvents(dayData) {
+        // Check if any discovery has an 'events' property with items
+        return dayData.discoveries.some(discovery => discovery.events && discovery.events.length > 0);
+    }
+
+    triggerRandomEvent(dayData) {
+        // Filter discoveries that have random events
+        const possibleEventLocations = dayData.discoveries.filter(discovery => discovery.events && discovery.events.length > 0);
+
+        if (possibleEventLocations.length === 0) {
+            console.warn("Aucun événement aléatoire disponible pour ce jour.");
+            return;
+        }
+
+        // Choose a random location/region that has events
+        const randomLocation = possibleEventLocations[Math.floor(Math.random() * possibleEventLocations.length)];
+
+        // Choose a random event from the selected location's events
+        const randomEvent = randomLocation.events[Math.floor(Math.random() * randomLocation.events.length)];
+
+        // Format the event display similar to "Événement de voyage" in infobox
+        const eventHtml = `
+            <div class="bg-yellow-800 bg-opacity-30 rounded-lg p-4 mb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="flex-1">
+                        <div class="text-xs text-yellow-300 font-semibold mb-1">🎲 ÉVÉNEMENT ALÉATOIRE</div>
+                        <div class="text-base text-white font-medium">${randomEvent.name}</div>
+                        <div class="text-sm text-yellow-200 italic mt-1">${randomEvent.description}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Insert the event display below the weather info
+        const segmentContent = document.getElementById('segment-content');
+        const weatherDiv = segmentContent.querySelector('.bg-blue-900');
+
+        if (weatherDiv) {
+            // Insert after the weather div
+            weatherDiv.insertAdjacentHTML('afterend', eventHtml);
+        } else {
+            // If no weather div, insert at the beginning of the content (after description if any)
+            const descriptionDiv = segmentContent.querySelector('.bg-gray-800');
+            if (descriptionDiv) {
+                descriptionDiv.insertAdjacentHTML('afterend', eventHtml);
+            } else {
+                // If no description either, insert at the very beginning
+                segmentContent.insertAdjacentHTML('afterbegin', eventHtml);
+            }
+        }
     }
 }
 
