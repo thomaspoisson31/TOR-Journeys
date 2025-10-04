@@ -1393,13 +1393,31 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     }
 
     checkForRandomEvents(dayData) {
-        // Check if any discovery has an 'events' property with items
-        return dayData.discoveries.some(discovery => discovery.events && discovery.events.length > 0);
+        // Check if any discovery has random events in the original data
+        return dayData.discoveries.some(discovery => {
+            if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
+                const location = locationsData.locations.find(loc => loc.name === discovery.name);
+                return location && location.Evenements_Voyage && location.Evenements_Voyage.length > 0;
+            } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
+                const region = regionsData.regions.find(reg => reg.name === discovery.name);
+                return region && region.Evenements_Voyage && region.Evenements_Voyage.length > 0;
+            }
+            return false;
+        });
     }
 
     triggerRandomEvent(dayData) {
-        // Filter discoveries that have random events
-        const possibleEventLocations = dayData.discoveries.filter(discovery => discovery.events && discovery.events.length > 0);
+        // Filter discoveries that have random events in the original data
+        const possibleEventLocations = dayData.discoveries.filter(discovery => {
+            if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
+                const location = locationsData.locations.find(loc => loc.name === discovery.name);
+                return location && location.Evenements_Voyage && location.Evenements_Voyage.length > 0;
+            } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
+                const region = regionsData.regions.find(reg => reg.name === discovery.name);
+                return region && region.Evenements_Voyage && region.Evenements_Voyage.length > 0;
+            }
+            return false;
+        });
 
         if (possibleEventLocations.length === 0) {
             console.warn("Aucun événement aléatoire disponible pour ce jour.");
@@ -1407,20 +1425,38 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         }
 
         // Choose a random location/region that has events
-        const randomLocation = possibleEventLocations[Math.floor(Math.random() * possibleEventLocations.length)];
+        const selectedDiscovery = possibleEventLocations[Math.floor(Math.random() * possibleEventLocations.length)];
+        
+        // Get the actual location/region data with events
+        let eventsList = [];
+        if (selectedDiscovery.type === 'location' && typeof locationsData !== 'undefined') {
+            const location = locationsData.locations.find(loc => loc.name === selectedDiscovery.name);
+            eventsList = location.Evenements_Voyage || [];
+        } else if (selectedDiscovery.type === 'region' && typeof regionsData !== 'undefined') {
+            const region = regionsData.regions.find(reg => reg.name === selectedDiscovery.name);
+            eventsList = region.Evenements_Voyage || [];
+        }
 
         // Choose a random event from the selected location's events
-        const randomEvent = randomLocation.events[Math.floor(Math.random() * randomLocation.events.length)];
+        const randomEvent = eventsList[Math.floor(Math.random() * eventsList.length)];
 
         // Format the event display similar to "Événement de voyage" in infobox
         const eventHtml = `
-            <div class="bg-yellow-800 bg-opacity-30 rounded-lg p-4 mb-4">
-                <div class="flex items-center space-x-3">
-                    <div class="flex-1">
-                        <div class="text-xs text-yellow-300 font-semibold mb-1">🎲 ÉVÉNEMENT ALÉATOIRE</div>
-                        <div class="text-base text-white font-medium">${randomEvent.name}</div>
-                        <div class="text-sm text-yellow-200 italic mt-1">${randomEvent.description}</div>
-                    </div>
+            <div class="bg-yellow-800 bg-opacity-30 rounded-lg p-4 mb-4" style="font-family: 'Merriweather', serif;">
+                <h4 class="text-lg font-bold mb-3 text-yellow-300" style="font-family: 'Merriweather', serif; font-size: 1.25rem;">
+                    <i class="fas fa-dice mr-2"></i>Événement aléatoire
+                </h4>
+                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                    <span class="font-semibold text-yellow-200">Dé du destin :</span>
+                    <span class="ml-2 text-white">${randomEvent['Dé du destin'] || '-'}</span>
+                </div>
+                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                    <span class="font-semibold text-yellow-200">Résultat :</span>
+                    <span class="ml-2 text-white">${randomEvent['Résultat'] || '-'}</span>
+                </div>
+                <div style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                    <span class="font-semibold text-yellow-200">Description :</span>
+                    <p class="mt-1 text-gray-200 leading-relaxed">${randomEvent['Description'] || '-'}</p>
                 </div>
             </div>
         `;
