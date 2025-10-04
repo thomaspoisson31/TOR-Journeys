@@ -88,6 +88,16 @@ class ImportExportManager {
             // Ajouter les régions comme lieux avec type "region"
             if (this.dataManager.regionsData?.regions) {
                 this.dataManager.regionsData.regions.forEach(region => {
+                    // Extraire les points depuis la structure existante
+                    let points = [];
+                    if (region.points) {
+                        points = region.points;
+                    } else if (region.coordinates?.points) {
+                        points = region.coordinates.points;
+                    } else if (Array.isArray(region.coordinates)) {
+                        points = region.coordinates;
+                    }
+
                     const regionAsLocation = {
                         id: region.id,
                         name: region.name,
@@ -98,7 +108,7 @@ class ImportExportManager {
                         visited: region.visited !== undefined ? region.visited : false,
                         type: "region",
                         coordinates: {
-                            points: region.coordinates || region.points || []
+                            points: points
                         }
                     };
 
@@ -238,6 +248,16 @@ class ImportExportManager {
     processItem(item, result) {
         // Vérifier si c'est une région (a des points de coordonnées)
         if (item.type === 'region' || (item.coordinates && item.coordinates.points)) {
+            // Extraire les points depuis la structure coordinates
+            let points = [];
+            if (item.coordinates?.points) {
+                points = item.coordinates.points;
+            } else if (item.points) {
+                points = item.points;
+            } else if (Array.isArray(item.coordinates)) {
+                points = item.coordinates;
+            }
+
             const region = {
                 id: item.id || Date.now(),
                 name: item.name || 'Région sans nom',
@@ -246,9 +266,7 @@ class ImportExportManager {
                 known: item.known !== undefined ? item.known : true,
                 visited: item.visited !== undefined ? item.visited : false,
                 type: 'region',
-                coordinates: {
-                    points: item.coordinates?.points || []
-                }
+                points: points  // Utiliser points directement, pas coordinates.points
             };
 
             // Ajouter l'image si présente

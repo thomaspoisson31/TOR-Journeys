@@ -256,7 +256,7 @@ function renderLocations() {
 
         marker.addEventListener('mouseup', (e) => {
             if (e.button === 0 && !hasDraggedLocation) {
-                // Seulement si aucun drag n'a eu lieu
+                // Seulement si aucun drag n'a lieu
                 e.stopPropagation();
                 infoBoxManager.showInfoBox(e, location, 'location');
             }
@@ -303,23 +303,31 @@ function renderRegions() {
     let renderedCount = 0;
 
     regionsData.regions.forEach(region => {
-        console.log(`🔍 Processing region: ${region.name}`, region);
+        console.log('🔍 Processing region:', region.name, region);
 
-        // Gérer les deux formats de coordonnées : 'coordinates' et 'points'
-        let coords = region.coordinates || region.points;
+        // Extraire les points depuis différentes structures possibles
+        let points = [];
+        if (region.points && Array.isArray(region.points)) {
+            points = region.points;
+        } else if (region.coordinates?.points && Array.isArray(region.coordinates.points)) {
+            points = region.coordinates.points;
+        } else if (Array.isArray(region.coordinates)) {
+            points = region.coordinates;
+        }
 
-        if (!coords || !Array.isArray(coords) || coords.length === 0) {
-            console.warn(`⚠️ Region ${region.name} has invalid coordinates:`, coords);
+        // Vérifier que la région a des coordonnées valides
+        if (!points || points.length < 3) {
+            console.warn(`⚠️ Region ${region.name} has invalid coordinates. Points:`, points, 'Original:', region.coordinates || region.points);
             return;
         }
 
         // Vérifier que chaque coordonnée a x et y
-        const validCoords = coords.every(coord => 
+        const validCoords = points.every(coord =>
             coord && typeof coord.x === 'number' && typeof coord.y === 'number'
         );
 
         if (!validCoords) {
-            console.warn(`⚠️ Region ${region.name} has invalid coordinate format:`, coords);
+            console.warn(`⚠️ Region ${region.name} has invalid coordinate format:`, points);
             return;
         }
 
@@ -337,9 +345,11 @@ function renderRegions() {
         polygon.setAttribute('stroke-opacity', '1');
         polygon.setAttribute('stroke-width', '6');
 
-        // Créer les points du polygone en utilisant les coordonnées appropriées
-        const points = coords.map(coord => `${coord.x},${coord.y}`).join(' ');
-        polygon.setAttribute('points', points);
+        // Créer les points du polygone
+        const pointsStr = points
+            .map(pt => `${pt.x},${pt.y}`)
+            .join(' ');
+        polygon.setAttribute('points', pointsStr);
 
         // Ajouter le titre pour le hover
         const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
@@ -367,7 +377,7 @@ function renderRegions() {
         regionsLayer.appendChild(polygon);
         renderedCount++;
 
-        console.log(`✅ Rendered region: ${region.name} with ${coords.length} points`);
+        console.log(`✅ Rendered region: ${region.name} with ${points.length} points`);
     });
 
     console.log(`✅ Rendered ${renderedCount} region polygons`);
