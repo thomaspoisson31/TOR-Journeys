@@ -718,6 +718,30 @@ body {
     border-color: #dddddd !important;
 }
 
+/* Défilement vertical uniquement pour le contenu de la modale de voyage */
+#segment-content {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#segment-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+#segment-content::-webkit-scrollbar-track {
+    background: rgba(200, 200, 200, 0.3);
+    border-radius: 4px;
+}
+
+#segment-content::-webkit-scrollbar-thumb {
+    background: rgba(148, 0, 0, 0.5);
+    border-radius: 4px;
+}
+
+#segment-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 0, 0, 0.7);
+}
+
 .journey-description-modal-white {
     background-color: white !important;
     color: black !important;

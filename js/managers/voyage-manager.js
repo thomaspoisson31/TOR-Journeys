@@ -1442,7 +1442,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         // Format the event display similar to "Événement de voyage" in infobox
         const eventHtml = `
-            <div class="bg-yellow-800 bg-opacity-30 rounded-lg p-4 mb-4" style="font-family: 'Merriweather', serif;">
+            <div id="random-event-display" class="bg-yellow-800 bg-opacity-30 rounded-lg p-4 mb-4" style="font-family: 'Merriweather', serif;">
                 <h4 class="text-lg font-bold mb-3 text-yellow-300" style="font-family: 'Merriweather', serif; font-size: 1.25rem;">
                     <i class="fas fa-dice mr-2"></i>Événement aléatoire
                 </h4>
@@ -1461,21 +1461,29 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             </div>
         `;
 
-        // Insert the event display below the weather info
+        // Check if there's already a random event displayed
         const segmentContent = document.getElementById('segment-content');
-        const weatherDiv = segmentContent.querySelector('.bg-blue-900');
-
-        if (weatherDiv) {
-            // Insert after the weather div
-            weatherDiv.insertAdjacentHTML('afterend', eventHtml);
+        const existingEvent = segmentContent.querySelector('#random-event-display');
+        
+        if (existingEvent) {
+            // Replace the existing event
+            existingEvent.outerHTML = eventHtml;
         } else {
-            // If no weather div, insert at the beginning of the content (after description if any)
-            const descriptionDiv = segmentContent.querySelector('.bg-gray-800');
-            if (descriptionDiv) {
-                descriptionDiv.insertAdjacentHTML('afterend', eventHtml);
+            // Insert the event display below the weather info
+            const weatherDiv = segmentContent.querySelector('.bg-blue-900');
+
+            if (weatherDiv) {
+                // Insert after the weather div
+                weatherDiv.insertAdjacentHTML('afterend', eventHtml);
             } else {
-                // If no description either, insert at the very beginning
-                segmentContent.insertAdjacentHTML('afterbegin', eventHtml);
+                // If no weather div, insert at the beginning of the content (after description if any)
+                const descriptionDiv = segmentContent.querySelector('.bg-gray-800');
+                if (descriptionDiv) {
+                    descriptionDiv.insertAdjacentHTML('afterend', eventHtml);
+                } else {
+                    // If no description either, insert at the very beginning
+                    segmentContent.insertAdjacentHTML('afterbegin', eventHtml);
+                }
             }
         }
     }
