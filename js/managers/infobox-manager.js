@@ -290,6 +290,45 @@ class InfoBoxManager {
                 }
             }
         }
+
+        // Onglet Événements de voyage
+        const evenementsTab = document.getElementById('evenements-voyage-tab');
+        if (evenementsTab) {
+            const evenementsContent = evenementsTab.querySelector('#evenements-voyage-content');
+            if (evenementsContent) {
+                const evenements = item.Evenements_Voyage || [];
+                
+                if (evenements.length > 0) {
+                    const tableHTML = `
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-800">
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">#</th>
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Dé du destin</th>
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Résultat</th>
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${evenements.map((evt, index) => `
+                                        <tr class="${index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'}">
+                                            <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${index + 1}</td>
+                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Dé du destin'] || ''}</td>
+                                            <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${evt['Résultat'] || ''}</td>
+                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Description'] || ''}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    evenementsContent.innerHTML = tableHTML;
+                } else {
+                    evenementsContent.innerHTML = '<div class="prose prose-invert text-gray-400 italic">Aucun événement de voyage défini.</div>';
+                }
+            }
+        }
     }
 
     renderEditMode() {
@@ -415,6 +454,50 @@ class InfoBoxManager {
                     </button>
                 </div>
             `;
+        }
+
+        // Onglet Événements de voyage (mode édition)
+        const evenementsTab = document.getElementById('evenements-voyage-tab');
+        if (evenementsTab) {
+            // Nettoyer complètement l'onglet
+            evenementsTab.innerHTML = '';
+            const editForm = document.createElement('div');
+            editForm.className = 'edit-form p-4';
+            evenementsTab.appendChild(editForm);
+            
+            const currentEvenements = item.Evenements_Voyage || [];
+            
+            editForm.innerHTML = `
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2 text-white">
+                        Importer un fichier JSON d'événements :
+                    </label>
+                    <input type="file" id="evenements-file-input" accept=".json" class="mb-2 block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                    <div class="text-xs text-gray-400 mb-3">Format attendu : tableau JSON avec clés "Dé du destin", "Résultat", "Description"</div>
+                    ${currentEvenements.length > 0 ? `<div class="text-sm text-green-400 mb-2">✓ ${currentEvenements.length} événement(s) chargé(s)</div>` : ''}
+                </div>
+                <div id="evenements-preview" class="mb-4 max-h-60 overflow-y-auto"></div>
+                <div class="flex space-x-2">
+                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-save mr-1"></i>Sauvegarder
+                    </button>
+                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-times mr-1"></i>Annuler
+                    </button>
+                    ${currentEvenements.length > 0 ? '<button onclick="window.infoBoxManager.clearEvenements()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"><i class="fas fa-trash mr-1"></i>Effacer</button>' : ''}
+                </div>
+            `;
+
+            // Afficher l'aperçu si des événements existent
+            if (currentEvenements.length > 0) {
+                this.updateEvenementsPreview(currentEvenements);
+            }
+
+            // Setup event listener pour l'import de fichier
+            const fileInput = document.getElementById('evenements-file-input');
+            if (fileInput) {
+                fileInput.addEventListener('change', (e) => this.handleEvenementsFileImport(e));
+            }
         }
     }
 
@@ -659,6 +742,12 @@ class InfoBoxManager {
                 this.currentItem.Tradition_Ancienne = traditionField.value.trim();
             }
 
+            // Événements de voyage
+            if (this.tempEvenements) {
+                this.currentItem.Evenements_Voyage = this.tempEvenements;
+                this.tempEvenements = null;
+            }
+
             // Sauvegarder via DataManager
             if (this.currentType === 'region') {
                 this.dataManager.saveRegionsToLocal();
@@ -827,6 +916,98 @@ class InfoBoxManager {
             const generateBtn = event.target;
             generateBtn.disabled = false;
             generateBtn.innerHTML = '<i class="fas fa-magic mr-1"></i>Générer avec IA';
+        }
+    }
+
+    handleEvenementsFileImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const jsonData = JSON.parse(e.target.result);
+                
+                // Valider le format
+                if (!Array.isArray(jsonData)) {
+                    alert('Format invalide : le fichier doit contenir un tableau JSON');
+                    return;
+                }
+
+                // Valider les entrées
+                const isValid = jsonData.every(item => 
+                    item.hasOwnProperty('Dé du destin') || 
+                    item.hasOwnProperty('Résultat') || 
+                    item.hasOwnProperty('Description')
+                );
+
+                if (!isValid) {
+                    alert('Format invalide : chaque entrée doit avoir au moins une des clés attendues');
+                    return;
+                }
+
+                // Stocker temporairement les événements
+                this.tempEvenements = jsonData;
+                
+                // Afficher l'aperçu
+                this.updateEvenementsPreview(jsonData);
+                
+                console.log(`✅ ${jsonData.length} événement(s) importé(s)`);
+
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'import:', error);
+                alert('Erreur lors de la lecture du fichier JSON: ' + error.message);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    updateEvenementsPreview(evenements) {
+        const preview = document.getElementById('evenements-preview');
+        if (!preview) return;
+
+        if (evenements.length === 0) {
+            preview.innerHTML = '';
+            return;
+        }
+
+        preview.innerHTML = `
+            <div class="text-sm font-medium mb-2 text-white">Aperçu (${evenements.length} événement(s)) :</div>
+            <div class="bg-gray-800 rounded p-2 max-h-48 overflow-y-auto">
+                <table class="w-full text-xs">
+                    <thead>
+                        <tr class="text-gray-400">
+                            <th class="text-left p-1">#</th>
+                            <th class="text-left p-1">Dé</th>
+                            <th class="text-left p-1">Résultat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${evenements.slice(0, 5).map((evt, i) => `
+                            <tr class="border-t border-gray-700">
+                                <td class="p-1">${i + 1}</td>
+                                <td class="p-1">${evt['Dé du destin'] || '-'}</td>
+                                <td class="p-1">${evt['Résultat'] || '-'}</td>
+                            </tr>
+                        `).join('')}
+                        ${evenements.length > 5 ? `<tr class="border-t border-gray-700"><td colspan="3" class="p-1 text-gray-500 italic">... et ${evenements.length - 5} autre(s)</td></tr>` : ''}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    clearEvenements() {
+        if (!confirm('Êtes-vous sûr de vouloir effacer tous les événements de voyage ?')) {
+            return;
+        }
+        
+        this.tempEvenements = [];
+        this.updateEvenementsPreview([]);
+        
+        const fileInput = document.getElementById('evenements-file-input');
+        if (fileInput) {
+            fileInput.value = '';
         }
     }
 
