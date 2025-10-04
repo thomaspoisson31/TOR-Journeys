@@ -294,37 +294,37 @@ class InfoBoxManager {
         // Onglet Événements de voyage
         const evenementsTab = document.getElementById('evenements-voyage-tab');
         if (evenementsTab) {
-            const evenementsContent = evenementsTab.querySelector('#evenements-voyage-content');
-            if (evenementsContent) {
-                const evenements = item.Evenements_Voyage || [];
-                
-                if (evenements.length > 0) {
-                    const tableHTML = `
-                        <div class="overflow-x-auto">
-                            <table class="w-full border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-800">
-                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Dé du destin</th>
-                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Résultat</th>
-                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Description</th>
+            // Nettoyer complètement l'onglet
+            evenementsTab.innerHTML = '';
+            
+            const evenements = item.Evenements_Voyage || [];
+            
+            if (evenements.length > 0) {
+                const tableHTML = `
+                    <div class="p-4 h-full overflow-y-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-800">
+                                    <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Dé du destin</th>
+                                    <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Résultat</th>
+                                    <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${evenements.map((evt, index) => `
+                                    <tr class="${index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'}">
+                                        <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Dé du destin'] || ''}</td>
+                                        <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${evt['Résultat'] || ''}</td>
+                                        <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Description'] || ''}</td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    ${evenements.map((evt, index) => `
-                                        <tr class="${index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'}">
-                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Dé du destin'] || ''}</td>
-                                            <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${evt['Résultat'] || ''}</td>
-                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Description'] || ''}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                    evenementsContent.innerHTML = tableHTML;
-                } else {
-                    evenementsContent.innerHTML = '<div class="prose prose-invert text-gray-400 italic">Aucun événement de voyage défini.</div>';
-                }
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                evenementsTab.innerHTML = tableHTML;
+            } else {
+                evenementsTab.innerHTML = '<div class="p-4 prose prose-invert text-gray-400 italic">Aucun événement de voyage défini.</div>';
             }
         }
     }
@@ -971,7 +971,6 @@ class InfoBoxManager {
         }
 
         preview.innerHTML = `
-            <div class="text-sm font-medium mb-2 text-white">Aperçu (${evenements.length} événement(s)) :</div>
             <div class="bg-gray-800 rounded p-2 max-h-64 overflow-y-auto">
                 <table class="w-full text-xs">
                     <thead>
