@@ -357,15 +357,27 @@ class VoyageManager {
             // Format: "Jour X : Date Mois Symbole de saison"
             let titleText = `Jour ${this.currentDayIndex + 1} : ${realCalendarDate}`;
             
-            // Ajouter le symbole de la saison (pas le symbole météo)
-            if (window.calendarManager) {
-                const currentSeason = window.calendarManager.currentSeason;
-                const seasonMainName = currentSeason ? currentSeason.split('-')[0] : 'printemps';
+            // Ajouter le symbole de la saison pour ce jour spécifique
+            if (window.calendarManager && window.calendarData) {
+                // Calculer la saison pour ce jour de voyage
+                const currentDay = this.currentDayIndex + 1;
+                let monthIndex = this.journeyStartDate.monthIndex;
+                let calendarDay = this.journeyStartDate.day + currentDay - 1;
+
+                // Naviguer à travers les mois si nécessaire
+                while (calendarDay > window.calendarData[monthIndex].days.length) {
+                    calendarDay -= window.calendarData[monthIndex].days.length;
+                    monthIndex = (monthIndex + 1) % window.calendarData.length;
+                }
+
+                // Récupérer la saison du mois correspondant
+                const monthSeason = window.calendarData[monthIndex].season.toLowerCase();
+                const seasonMainName = monthSeason ? monthSeason.split('-')[0] : 'printemps';
                 const seasonSymbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
                 titleText += ` ${seasonSymbol}`;
                 
                 // Tooltip avec le nom de la saison
-                const seasonName = window.calendarManager.seasonNames[currentSeason] || '';
+                const seasonName = window.calendarManager.seasonNames[monthSeason] || '';
                 segmentTitle.title = seasonName;
             } else {
                 segmentTitle.title = '';
