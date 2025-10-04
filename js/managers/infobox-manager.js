@@ -304,7 +304,6 @@ class InfoBoxManager {
                             <table class="w-full border-collapse">
                                 <thead>
                                     <tr class="bg-gray-800">
-                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">#</th>
                                         <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Dé du destin</th>
                                         <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Résultat</th>
                                         <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Description</th>
@@ -313,7 +312,6 @@ class InfoBoxManager {
                                 <tbody>
                                     ${evenements.map((evt, index) => `
                                         <tr class="${index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'}">
-                                            <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${index + 1}</td>
                                             <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Dé du destin'] || ''}</td>
                                             <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${evt['Résultat'] || ''}</td>
                                             <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Description'] || ''}</td>
@@ -743,9 +741,9 @@ class InfoBoxManager {
             }
 
             // Événements de voyage
-            if (this.tempEvenements) {
+            if (this.tempEvenements !== undefined) {
                 this.currentItem.Evenements_Voyage = this.tempEvenements;
-                this.tempEvenements = null;
+                this.tempEvenements = undefined;
             }
 
             // Sauvegarder via DataManager
@@ -768,8 +766,9 @@ class InfoBoxManager {
                 scheduleAutoSync();
             }
 
-            // Sortir du mode édition
-            this.exitEditMode();
+            // Passer en mode lecture
+            this.isEditMode = false;
+            this.updateInfoBoxContent();
 
             console.log("✅ Edit saved successfully");
 
@@ -973,24 +972,23 @@ class InfoBoxManager {
 
         preview.innerHTML = `
             <div class="text-sm font-medium mb-2 text-white">Aperçu (${evenements.length} événement(s)) :</div>
-            <div class="bg-gray-800 rounded p-2 max-h-48 overflow-y-auto">
+            <div class="bg-gray-800 rounded p-2 max-h-64 overflow-y-auto">
                 <table class="w-full text-xs">
                     <thead>
                         <tr class="text-gray-400">
-                            <th class="text-left p-1">#</th>
                             <th class="text-left p-1">Dé</th>
                             <th class="text-left p-1">Résultat</th>
+                            <th class="text-left p-1">Description</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${evenements.slice(0, 5).map((evt, i) => `
+                        ${evenements.map((evt, i) => `
                             <tr class="border-t border-gray-700">
-                                <td class="p-1">${i + 1}</td>
                                 <td class="p-1">${evt['Dé du destin'] || '-'}</td>
                                 <td class="p-1">${evt['Résultat'] || '-'}</td>
+                                <td class="p-1 truncate max-w-xs" title="${evt['Description'] || '-'}">${(evt['Description'] || '-').substring(0, 50)}${(evt['Description'] || '').length > 50 ? '...' : ''}</td>
                             </tr>
                         `).join('')}
-                        ${evenements.length > 5 ? `<tr class="border-t border-gray-700"><td colspan="3" class="p-1 text-gray-500 italic">... et ${evenements.length - 5} autre(s)</td></tr>` : ''}
                     </tbody>
                 </table>
             </div>
