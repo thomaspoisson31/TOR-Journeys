@@ -245,6 +245,18 @@ class InfoBoxManager {
         // Onglet Rumeurs et Traditions
         const rumeursTab = document.getElementById('rumeurs-traditions-tab');
         if (rumeursTab) {
+            // Cacher le formulaire d'édition s'il existe
+            const editForm = rumeursTab.querySelector('.edit-form');
+            if (editForm) {
+                editForm.style.display = 'none';
+            }
+            
+            // Afficher la vue lecture
+            const textView = rumeursTab.querySelector('.text-view');
+            if (textView) {
+                textView.style.display = 'block';
+            }
+            
             // Section Rumeurs
             const rumeursContent = rumeursTab.querySelector('#rumeurs-content');
             if (rumeursContent) {
@@ -365,30 +377,42 @@ class InfoBoxManager {
                 (item.Rumeur || '') : 
                 (item.Rumeurs ? item.Rumeurs.join('\n\n---\n\n') : (item.Rumeur || ''));
             
-            // Nettoyer complètement l'onglet
-            rumeursTab.innerHTML = `
-                <div class="edit-form p-4">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2 text-white">
-                            Rumeurs ${type === 'location' ? '(séparez par une ligne "---")' : ''} (Markdown supporté) :
-                        </label>
-                        <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-40 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.${type === 'location' ? '\n\nSéparez les rumeurs par:\n---' : ''}">${currentRumeurs}</textarea>
-                        ${type === 'location' ? '<div class="text-xs text-gray-400 mt-1">Utilisez "---" sur une ligne seule pour séparer plusieurs rumeurs</div>' : ''}
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2 text-white">
-                            Tradition Ancienne (Markdown supporté) :
-                        </label>
-                        <textarea id="edit-tradition" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.Tradition_Ancienne || ''}</textarea>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-save mr-1"></i>Sauvegarder
-                        </button>
-                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-times mr-1"></i>Annuler
-                        </button>
-                    </div>
+            // Cacher la vue lecture et afficher le mode édition
+            const textView = rumeursTab.querySelector('.text-view');
+            if (textView) {
+                textView.style.display = 'none';
+            }
+            
+            // Créer ou afficher le formulaire d'édition
+            let editForm = rumeursTab.querySelector('.edit-form');
+            if (!editForm) {
+                editForm = document.createElement('div');
+                editForm.className = 'edit-form p-4';
+                rumeursTab.appendChild(editForm);
+            }
+            
+            editForm.style.display = 'block';
+            editForm.innerHTML = `
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2 text-white">
+                        Rumeurs ${type === 'location' ? '(séparez par une ligne "---")' : ''} (Markdown supporté) :
+                    </label>
+                    <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-40 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.${type === 'location' ? '\n\nSéparez les rumeurs par:\n---' : ''}">${currentRumeurs}</textarea>
+                    ${type === 'location' ? '<div class="text-xs text-gray-400 mt-1">Utilisez "---" sur une ligne seule pour séparer plusieurs rumeurs</div>' : ''}
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2 text-white">
+                        Tradition Ancienne (Markdown supporté) :
+                    </label>
+                    <textarea id="edit-tradition" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.Tradition_Ancienne || ''}</textarea>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-save mr-1"></i>Sauvegarder
+                    </button>
+                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-times mr-1"></i>Annuler
+                    </button>
                 </div>
             `;
         }
