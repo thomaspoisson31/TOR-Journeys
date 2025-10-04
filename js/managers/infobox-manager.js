@@ -861,15 +861,15 @@ class InfoBoxManager {
                     // Sauvegarder dans localStorage
                     this.dataManager.saveRegionsToLocal();
                     
-                    // Fermer l'info-box AVANT le re-render
-                    this.hideInfoBox();
-                    
-                    // Re-render les régions avec la fonction globale
+                    // Re-render les régions AVANT de fermer l'infobox
                     if (typeof window.renderRegions === 'function') {
                         window.renderRegions();
                     } else if (typeof renderRegions === 'function') {
                         renderRegions();
                     }
+                    
+                    // Fermer l'info-box APRÈS le re-render pour éviter les références fantômes
+                    this.hideInfoBox();
                     
                     console.log("✅ Region deleted successfully");
                 } else {
@@ -896,15 +896,15 @@ class InfoBoxManager {
                     // Sauvegarder dans localStorage
                     this.dataManager.saveLocationsToLocal();
                     
-                    // Fermer l'info-box AVANT le re-render
-                    this.hideInfoBox();
-                    
-                    // Re-render les lieux avec la fonction globale
+                    // Re-render les lieux AVANT de fermer l'infobox
                     if (typeof window.renderLocations === 'function') {
                         window.renderLocations();
                     } else if (typeof renderLocations === 'function') {
                         renderLocations();
                     }
+                    
+                    // Fermer l'info-box APRÈS le re-render pour éviter les références fantômes
+                    this.hideInfoBox();
                     
                     console.log("✅ Location deleted successfully");
                 } else {
