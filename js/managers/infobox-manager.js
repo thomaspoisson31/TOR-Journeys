@@ -323,25 +323,33 @@ class InfoBoxManager {
                             </div>
                         </div>
                         
-                        <h4 class="text-md font-semibold mb-2 text-gray-300">Table complète des événements</h4>
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="bg-gray-800">
-                                    <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Dé du destin</th>
-                                    <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Résultat</th>
-                                    <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${evenements.map((evt, index) => `
-                                    <tr class="${index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'}">
-                                        <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Dé du destin'] || ''}</td>
-                                        <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${evt['Résultat'] || ''}</td>
-                                        <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Description'] || ''}</td>
+                        <div class="mb-2">
+                            <button onclick="window.infoBoxManager.toggleEvenementsTable()" class="flex items-center text-gray-300 hover:text-white transition-colors">
+                                <i id="evenements-toggle-icon" class="fas fa-chevron-right mr-2"></i>
+                                <h4 class="text-md font-semibold">Table complète des événements</h4>
+                            </button>
+                        </div>
+                        
+                        <div id="evenements-table-container" class="hidden">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-800">
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Dé du destin</th>
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Résultat</th>
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Description</th>
                                     </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    ${evenements.map((evt, index) => `
+                                        <tr class="${index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'}">
+                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Dé du destin'] || ''}</td>
+                                            <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${evt['Résultat'] || ''}</td>
+                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Description'] || ''}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 `;
                 evenementsTab.innerHTML = tableHTML;
@@ -1027,6 +1035,21 @@ class InfoBoxManager {
         const fileInput = document.getElementById('evenements-file-input');
         if (fileInput) {
             fileInput.value = '';
+        }
+    }
+
+    toggleEvenementsTable() {
+        const tableContainer = document.getElementById('evenements-table-container');
+        const toggleIcon = document.getElementById('evenements-toggle-icon');
+        
+        if (tableContainer && toggleIcon) {
+            tableContainer.classList.toggle('hidden');
+            
+            if (tableContainer.classList.contains('hidden')) {
+                toggleIcon.className = 'fas fa-chevron-right mr-2';
+            } else {
+                toggleIcon.className = 'fas fa-chevron-down mr-2';
+            }
         }
     }
 
