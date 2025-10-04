@@ -356,9 +356,10 @@ class VoyageManager {
             
             // Format: "Jour X : Date Mois Symbole de saison"
             let titleText = `Jour ${this.currentDayIndex + 1} : ${realCalendarDate}`;
+            let seasonTooltip = '';
             
             // Ajouter le symbole de la saison pour ce jour spécifique
-            if (window.calendarManager && window.calendarData) {
+            if (window.calendarManager && window.calendarData && this.journeyStartDate) {
                 // Calculer la saison pour ce jour de voyage
                 const currentDay = this.currentDayIndex + 1;
                 let monthIndex = this.journeyStartDate.monthIndex;
@@ -374,18 +375,18 @@ class VoyageManager {
                 const monthSeason = window.calendarData[monthIndex].season.toLowerCase();
                 const seasonMainName = monthSeason ? monthSeason.split('-')[0] : 'printemps';
                 const seasonSymbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
+                
+                // Ajouter le symbole au titre
                 titleText += ` ${seasonSymbol}`;
                 
                 // Tooltip avec le nom de la saison
-                const seasonName = window.calendarManager.seasonNames[monthSeason] || '';
-                segmentTitle.title = seasonName;
-            } else {
-                segmentTitle.title = '';
+                seasonTooltip = window.calendarManager.seasonNames[monthSeason] || '';
             }
             
             segmentTitle.textContent = titleText;
+            segmentTitle.title = seasonTooltip;
             segmentTitle.style.color = '#940000';
-            segmentTitle.style.cursor = 'help';
+            segmentTitle.style.cursor = seasonTooltip ? 'help' : 'default';
         }
 
         if (dayCounter) {
