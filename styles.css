@@ -719,9 +719,14 @@ body {
 }
 
 /* Défilement vertical uniquement pour le contenu de la modale de voyage */
+#current-segment-display {
+    max-height: calc(90vh - 180px); /* Hauteur de la modale moins header et progress bar */
+}
+
 #segment-content {
     overflow-y: auto;
     overflow-x: hidden;
+    max-height: 100%;
 }
 
 #segment-content::-webkit-scrollbar {
@@ -740,6 +745,17 @@ body {
 
 #segment-content::-webkit-scrollbar-thumb:hover {
     background: rgba(148, 0, 0, 0.7);
+}
+
+/* S'assurer que le wrapper flex fonctionne correctement */
+.voyage-modal-white #current-segment-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.voyage-modal-white #segment-content {
+    flex: 1;
+    min-height: 0; /* Important pour que le flex fonctionne avec overflow */
 }
 
 .journey-description-modal-white {
