@@ -353,36 +353,27 @@ class VoyageManager {
         if (segmentTitle) {
             // Récupérer la date calendrier directement (car dayData.calendarDate peut être incorrect)
             const realCalendarDate = this.getCalendarDateForDay(this.currentDayIndex + 1);
-            console.log(`📅 DEBUG updateDayTitle - Jour ${this.currentDayIndex + 1}:`, {
-                dayDataCalendarDate: dayData.calendarDate,
-                realCalendarDate: realCalendarDate,
-                journeyStartDate: this.journeyStartDate,
-                isCalendarMode: this.isCalendarMode
-            });
             
-            // Récupérer les données météo du jour
-            const weatherData = this.getWeatherForDay(this.currentDayIndex + 1);
-            console.log(`🌤️ DEBUG météo:`, weatherData);
-            
-            // Format: "Jour X : Date Mois Symbole"
-            // Utiliser realCalendarDate au lieu de dayData.calendarDate
+            // Format: "Jour X : Date Mois Symbole de saison"
             let titleText = `Jour ${this.currentDayIndex + 1} : ${realCalendarDate}`;
             
-            // Ajouter le symbole météo s'il existe
-            if (weatherData && weatherData.symbol) {
-                titleText += ` ${weatherData.symbol}`;
+            // Ajouter le symbole de la saison (pas le symbole météo)
+            if (window.calendarManager) {
+                const currentSeason = window.calendarManager.currentSeason;
+                const seasonMainName = currentSeason ? currentSeason.split('-')[0] : 'printemps';
+                const seasonSymbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
+                titleText += ` ${seasonSymbol}`;
+                
+                // Tooltip avec le nom de la saison
+                const seasonName = window.calendarManager.seasonNames[currentSeason] || '';
+                segmentTitle.title = seasonName;
+            } else {
+                segmentTitle.title = '';
             }
             
             segmentTitle.textContent = titleText;
             segmentTitle.style.color = '#940000';
             segmentTitle.style.cursor = 'help';
-            
-            // Ajouter la météo détaillée en tooltip
-            if (weatherData && weatherData.weather) {
-                segmentTitle.title = `Météo du jour : ${weatherData.weather}`;
-            } else {
-                segmentTitle.title = '';
-            }
         }
 
         if (dayCounter) {
