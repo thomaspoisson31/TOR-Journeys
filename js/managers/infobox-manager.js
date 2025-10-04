@@ -847,13 +847,22 @@ class InfoBoxManager {
                     region => region.id === this.currentItem.id
                 );
                 
+                console.log(`🔍 Region index found: ${regionIndex}, Total regions: ${this.dataManager.regionsData.regions.length}`);
+                
                 if (regionIndex !== -1) {
+                    // Supprimer la région
                     this.dataManager.regionsData.regions.splice(regionIndex, 1);
                     
-                    // Mettre à jour les données globales
+                    console.log(`✅ Region removed from array, remaining: ${this.dataManager.regionsData.regions.length}`);
+                    
+                    // Mettre à jour toutes les références
                     window.regionsData = this.dataManager.regionsData;
                     
+                    // Sauvegarder dans localStorage
                     this.dataManager.saveRegionsToLocal();
+                    
+                    // Fermer l'info-box AVANT le re-render
+                    this.hideInfoBox();
                     
                     // Re-render les régions avec la fonction globale
                     if (typeof window.renderRegions === 'function') {
@@ -863,6 +872,9 @@ class InfoBoxManager {
                     }
                     
                     console.log("✅ Region deleted successfully");
+                } else {
+                    console.error("❌ Region not found in data");
+                    alert("Erreur : région non trouvée dans les données");
                 }
             } else {
                 // Supprimer de la liste des lieux
@@ -870,13 +882,22 @@ class InfoBoxManager {
                     location => location.id === this.currentItem.id
                 );
                 
+                console.log(`🔍 Location index found: ${locationIndex}, Total locations: ${this.dataManager.locationsData.locations.length}`);
+                
                 if (locationIndex !== -1) {
+                    // Supprimer le lieu
                     this.dataManager.locationsData.locations.splice(locationIndex, 1);
                     
-                    // Mettre à jour les données globales
+                    console.log(`✅ Location removed from array, remaining: ${this.dataManager.locationsData.locations.length}`);
+                    
+                    // Mettre à jour toutes les références
                     window.locationsData = this.dataManager.locationsData;
                     
+                    // Sauvegarder dans localStorage
                     this.dataManager.saveLocationsToLocal();
+                    
+                    // Fermer l'info-box AVANT le re-render
+                    this.hideInfoBox();
                     
                     // Re-render les lieux avec la fonction globale
                     if (typeof window.renderLocations === 'function') {
@@ -886,6 +907,9 @@ class InfoBoxManager {
                     }
                     
                     console.log("✅ Location deleted successfully");
+                } else {
+                    console.error("❌ Location not found in data");
+                    alert("Erreur : lieu non trouvé dans les données");
                 }
             }
 
@@ -893,9 +917,6 @@ class InfoBoxManager {
             if (typeof scheduleAutoSync === 'function') {
                 scheduleAutoSync();
             }
-
-            // Fermer l'info-box
-            this.hideInfoBox();
 
         } catch (error) {
             console.error("❌ Error deleting item:", error);
