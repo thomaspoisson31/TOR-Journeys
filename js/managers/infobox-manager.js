@@ -300,8 +300,30 @@ class InfoBoxManager {
             const evenements = item.Evenements_Voyage || [];
             
             if (evenements.length > 0) {
+                // Tirer un événement aléatoire
+                const randomEvent = evenements[Math.floor(Math.random() * evenements.length)];
+                
                 const tableHTML = `
                     <div class="p-4 h-full overflow-y-auto">
+                        <div class="mb-6 p-4 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
+                            <h4 class="text-lg font-bold mb-3 text-blue-300">
+                                <i class="fas fa-dice mr-2"></i>Événement de voyage
+                            </h4>
+                            <div class="mb-2">
+                                <span class="font-semibold text-blue-200">Dé du destin :</span>
+                                <span class="ml-2 text-white">${randomEvent['Dé du destin'] || '-'}</span>
+                            </div>
+                            <div class="mb-2">
+                                <span class="font-semibold text-blue-200">Résultat :</span>
+                                <span class="ml-2 text-white font-medium">${randomEvent['Résultat'] || '-'}</span>
+                            </div>
+                            <div>
+                                <span class="font-semibold text-blue-200">Description :</span>
+                                <p class="mt-1 text-gray-200 text-sm leading-relaxed">${randomEvent['Description'] || '-'}</p>
+                            </div>
+                        </div>
+                        
+                        <h4 class="text-md font-semibold mb-2 text-gray-300">Table complète des événements</h4>
                         <table class="w-full border-collapse">
                             <thead>
                                 <tr class="bg-gray-800">
