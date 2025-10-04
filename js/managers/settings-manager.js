@@ -716,6 +716,18 @@ class SettingsManager {
     getAvailableMaps() {
         return this.availableMaps;
     }
+
+    // Méthode pour récupérer tous les paramètres (pour la synchronisation)
+    getAllSettings() {
+        return {
+            availableMaps: this.availableMaps,
+            activeMapUrl: this.activeMapUrl,
+            activeMapName: this.activeMapName,
+            partyDescription: this.partyDescription,
+            questDescription: this.questDescription,
+            narrationStyle: this.narrationStyle
+        };
+    }
 }
 
 export default SettingsManager;
