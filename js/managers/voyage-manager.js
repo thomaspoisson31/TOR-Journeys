@@ -579,49 +579,12 @@ class VoyageManager {
             localStorage.setItem('currentSeason', monthSeason);
             window.calendarManager.currentCalendarDate = window.currentCalendarDate;
             window.calendarManager.saveCalendarToLocal();
-        }
-        
-        // Récupérer les données météo APRÈS la mise à jour de currentCalendarDate
-        const dayData = this.getWeatherForDay(currentDay);
-        
-        console.log(`📅 DEBUG updateMainCalendarDate - Jour ${currentDay}:`, {
-            monthIndex: monthIndex,
-            monthName: calendarData[monthIndex].name,
-            monthSeason: monthSeason,
-            newDay: newDay,
-            dayData: dayData
-        });
-
-        // Forcer le rafraîchissement immédiat de l'affichage
-        const calendarDateIndicator = document.getElementById('calendar-date-indicator');
-        const seasonIndicator = document.getElementById('season-indicator');
-        
-        if (calendarDateIndicator) {
-            calendarDateIndicator.textContent = `${newDay} ${calendarData[monthIndex].name}`;
-            if (dayData && dayData.weather) {
-                calendarDateIndicator.title = `Météo : ${dayData.weather}`;
-            } else {
-                calendarDateIndicator.title = '';
-            }
-        }
-        
-        if (seasonIndicator && window.calendarManager) {
-            // Récupérer le nom complet de la saison
-            const seasonFullName = window.calendarManager.seasonNames[monthSeason] || monthSeason;
             
-            if (dayData && dayData.symbol) {
-                seasonIndicator.textContent = dayData.symbol;
-                seasonIndicator.title = dayData.weather ? `${seasonFullName} - ${dayData.weather}` : seasonFullName;
-            } else {
-                // Utiliser le symbole de saison par défaut du mois
-                const seasonMainName = monthSeason.split('-')[0];
-                const defaultSymbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
-                seasonIndicator.textContent = defaultSymbol;
-                seasonIndicator.title = seasonFullName;
-            }
+            // FORCER le rafraîchissement de l'affichage via CalendarManager
+            window.calendarManager.updateSeasonDisplay();
         }
-
-        console.log(`📅 Date principale mise à jour : ${newDay} ${calendarData[monthIndex].name} (${monthSeason})`, dayData ? `avec météo: ${dayData.symbol}` : 'sans météo');
+        
+        console.log(`📅 Date principale mise à jour : ${newDay} ${calendarData[monthIndex].name} (${monthSeason})`);
     }
 
     
