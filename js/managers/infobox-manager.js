@@ -304,22 +304,22 @@ class InfoBoxManager {
                 const randomEvent = evenements[Math.floor(Math.random() * evenements.length)];
                 
                 const tableHTML = `
-                    <div class="p-4 h-full overflow-y-auto">
+                    <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
                         <div class="mb-6 p-4 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
-                            <h4 class="text-lg font-bold mb-3 text-blue-300">
+                            <h4 class="text-lg font-bold mb-3 text-blue-300" style="font-family: 'Merriweather', serif; font-size: 1.25rem;">
                                 <i class="fas fa-dice mr-2"></i>Événement de voyage
                             </h4>
-                            <div class="mb-2">
+                            <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
                                 <span class="font-semibold text-blue-200">Dé du destin :</span>
                                 <span class="ml-2 text-white">${randomEvent['Dé du destin'] || '-'}</span>
                             </div>
-                            <div class="mb-2">
+                            <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
                                 <span class="font-semibold text-blue-200">Résultat :</span>
-                                <span class="ml-2 text-white font-medium">${randomEvent['Résultat'] || '-'}</span>
+                                <span class="ml-2 text-white">${randomEvent['Résultat'] || '-'}</span>
                             </div>
-                            <div>
+                            <div style="font-family: 'Merriweather', serif; font-size: 1rem;">
                                 <span class="font-semibold text-blue-200">Description :</span>
-                                <p class="mt-1 text-gray-200 text-sm leading-relaxed">${randomEvent['Description'] || '-'}</p>
+                                <p class="mt-1 text-gray-200 leading-relaxed">${randomEvent['Description'] || '-'}</p>
                             </div>
                         </div>
                         
