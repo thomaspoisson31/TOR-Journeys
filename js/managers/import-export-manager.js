@@ -299,14 +299,9 @@ class ImportExportManager {
                 rumeurs.push(item.Rumeur);
             }
 
-            // Important: Pour les fichiers avec clés dupliquées (comme votre exemple),
-            // on doit parser le texte JSON brut pour extraire toutes les rumeurs
-            // Cela sera géré au moment de la lecture du fichier
-
             if (rumeurs.length > 0) {
                 location.Rumeurs = rumeurs;
-                // Compatibilité: aussi garder la première rumeur dans Rumeur
-                location.Rumeur = rumeurs[0];
+                console.log(`📚 ${rumeurs.length} rumeur(s) importée(s) pour "${location.name}"`);
             }
 
             // Ajouter la tradition ancienne
@@ -322,37 +317,9 @@ class ImportExportManager {
      * Améliore les rumeurs en extrayant toutes les occurrences depuis le texte JSON brut
      */
     enhanceRumeursFromRawText(rawText, locations) {
-        locations.forEach(location => {
-            // Chercher le bloc JSON de cet item dans le texte brut
-            const itemPattern = new RegExp(`"id"\\s*:\\s*${location.id}[^}]*(?:"Rumeur"\\s*:\\s*"[^"]*"[^}]*)+`, 'g');
-            const itemMatch = rawText.match(itemPattern);
-
-            if (itemMatch && itemMatch[0]) {
-                const rumeurPattern = /"Rumeur"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/g;
-                const rumeurs = [];
-                let match;
-
-                while ((match = rumeurPattern.exec(itemMatch[0])) !== null) {
-                    const rumeur = match[1]
-                        .replace(/\\n/g, '\n')
-                        .replace(/\\"/g, '"')
-                        .replace(/\\\\/g, '\\');
-
-                    if (rumeur && rumeur !== "A définir") {
-                        rumeurs.push(rumeur);
-                    }
-                }
-
-                if (rumeurs.length > 1) {
-                    console.log(`📚 Trouvé ${rumeurs.length} rumeurs pour "${location.name}"`);
-                    location.Rumeurs = rumeurs;
-                    location.Rumeur = rumeurs[0]; // Compatibilité
-                } else if (rumeurs.length === 1 && !location.Rumeurs) {
-                    location.Rumeurs = [rumeurs[0]];
-                    location.Rumeur = rumeurs[0];
-                }
-            }
-        });
+        // Cette fonction n'est plus nécessaire car processItem gère déjà correctement
+        // le tableau Rumeurs du JSON. On la garde vide pour compatibilité.
+        console.log("📚 Extraction des rumeurs déjà effectuée lors du parsing JSON");
     }
 
 
