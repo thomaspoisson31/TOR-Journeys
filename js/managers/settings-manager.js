@@ -190,6 +190,12 @@ class SettingsManager {
         if (addNewMapBtn) {
             addNewMapBtn.addEventListener('click', () => this.showAddMapModal());
         }
+
+        // Setup du bouton de suppression de tous les lieux et régions
+        const deleteAllBtn = document.getElementById('delete-all-locations-regions-btn');
+        if (deleteAllBtn) {
+            deleteAllBtn.addEventListener('click', () => this.deleteAllLocationsAndRegions());
+        }
     }
 
     showAddMapModal() {
@@ -727,6 +733,74 @@ class SettingsManager {
             questDescription: this.questDescription,
             narrationStyle: this.narrationStyle
         };
+    }
+
+    deleteAllLocationsAndRegions() {
+        const confirmed = confirm(
+            '⚠️ ATTENTION : Cette action va supprimer TOUS les lieux et TOUTES les régions de la carte.\n\n' +
+            'Cette action est IRRÉVERSIBLE.\n\n' +
+            'Êtes-vous absolument sûr de vouloir continuer ?'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        // Double confirmation pour éviter les erreurs
+        const doubleConfirm = confirm(
+            '🚨 DERNIÈRE CONFIRMATION 🚨\n\n' +
+            'Vous allez supprimer DÉFINITIVEMENT tous les lieux et régions.\n\n' +
+            'Confirmez-vous cette suppression totale ?'
+        );
+
+        if (!doubleConfirm) {
+            return;
+        }
+
+        try {
+            console.log('🗑️ Suppression de tous les lieux et régions...');
+
+            // Supprimer tous les lieux
+            if (window.locationsData && window.locationsData.locations) {
+                window.locationsData.locations = [];
+                console.log('✅ Lieux supprimés');
+            }
+
+            // Supprimer toutes les régions
+            if (window.regionsData && window.regionsData.regions) {
+                window.regionsData.regions = [];
+                console.log('✅ Régions supprimées');
+            }
+
+            // Sauvegarder dans localStorage
+            if (window.dataManager) {
+                window.dataManager.saveLocationsToLocal();
+                window.dataManager.saveRegionsToLocal();
+            } else {
+                localStorage.setItem('middleEarthLocations', JSON.stringify(window.locationsData));
+                localStorage.setItem('middleEarthRegions', JSON.stringify(window.regionsData));
+            }
+
+            // Re-render la carte
+            if (typeof window.renderLocations === 'function') {
+                window.renderLocations();
+            }
+            if (typeof window.renderRegions === 'function') {
+                window.renderRegions();
+            }
+
+            // Synchroniser
+            if (typeof window.scheduleAutoSync === 'function') {
+                window.scheduleAutoSync();
+            }
+
+            alert('✅ Tous les lieux et régions ont été supprimés avec succès.');
+            console.log('✅ Suppression complète terminée');
+
+        } catch (error) {
+            console.error('❌ Erreur lors de la suppression:', error);
+            alert('❌ Erreur lors de la suppression : ' + error.message);
+        }
     }
 }
 
