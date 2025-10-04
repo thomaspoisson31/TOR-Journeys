@@ -69,6 +69,18 @@ class ImportExportManager {
                         };
                     }
 
+                    // Exporter les rumeurs en tant que tableau
+                    const rumeurs = location.Rumeurs || (location.Rumeur ? [location.Rumeur] : []);
+                    const rumeursValides = rumeurs.filter(r => r && r !== "A définir");
+                    if (rumeursValides.length > 0) {
+                        exportLocation.Rumeurs = rumeursValides;
+                    }
+
+                    // Ajouter la tradition ancienne
+                    if (location.Tradition_Ancienne && location.Tradition_Ancienne !== "A définir") {
+                        exportLocation.Tradition_Ancienne = location.Tradition_Ancienne;
+                    }
+
                     allLocations.push(exportLocation);
                 });
             }

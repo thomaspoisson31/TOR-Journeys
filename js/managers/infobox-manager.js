@@ -250,28 +250,18 @@ class InfoBoxManager {
             if (rumeursContent) {
                 let rumeursHTML = '';
                 
-                if (type === 'region') {
-                    // Pour les régions, une seule rumeur
-                    const rumeurText = item.Rumeur || 'Aucune rumeur disponible pour cette région.';
-                    rumeursHTML = `<div class="prose prose-invert">${this.renderMarkdown(rumeurText)}</div>`;
+                // Normaliser les rumeurs en tableau
+                const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
+                const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
+                
+                if (rumeursValides.length > 0) {
+                    rumeursHTML = rumeursValides.map((rumeur, index) => `
+                        <div class="mb-4 ${index > 0 ? 'pt-4 border-t border-yellow-600 border-opacity-30' : ''}">
+                            <div class="prose prose-invert">${this.renderMarkdown(rumeur)}</div>
+                        </div>
+                    `).join('');
                 } else {
-                    // Pour les lieux, support de multiples rumeurs
-                    if (item.Rumeurs && item.Rumeurs.length > 0) {
-                        const rumeursValides = item.Rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
-                        if (rumeursValides.length > 0) {
-                            rumeursHTML = rumeursValides.map((rumeur, index) => `
-                                <div class="mb-4 ${index > 0 ? 'pt-4 border-t border-yellow-600 border-opacity-30' : ''}">
-                                    <div class="prose prose-invert">${this.renderMarkdown(rumeur)}</div>
-                                </div>
-                            `).join('');
-                        } else {
-                            rumeursHTML = '<div class="prose prose-invert text-gray-400 italic">Aucune rumeur disponible.</div>';
-                        }
-                    } else if (item.Rumeur && item.Rumeur !== "A définir") {
-                        rumeursHTML = `<div class="prose prose-invert">${this.renderMarkdown(item.Rumeur)}</div>`;
-                    } else {
-                        rumeursHTML = '<div class="prose prose-invert text-gray-400 italic">Aucune rumeur disponible.</div>';
-                    }
+                    rumeursHTML = '<div class="prose prose-invert text-gray-400 italic">Aucune rumeur disponible.</div>';
                 }
                 
                 rumeursContent.innerHTML = rumeursHTML;
