@@ -1,4 +1,3 @@
-
 /**
  * ImportExportManager - Gestionnaire d'import/export unifié
  * Gère l'export et l'import des lieux et régions en format JSON unifié
@@ -8,13 +7,13 @@ class ImportExportManager {
     constructor(dataManager, scheduleAutoSyncCallback = null) {
         this.dataManager = dataManager;
         this.scheduleAutoSync = scheduleAutoSyncCallback;
-        
+
         // Références aux éléments DOM
         this.exportBtn = null;
         this.importBtn = null;
         this.importFileInput = null;
         this.importModal = null;
-        
+
         console.log("📤 ImportExportManager initialized");
     }
 
@@ -36,7 +35,7 @@ class ImportExportManager {
         }
 
         if (this.importFileInput) {
-            this.importFileInput.addEventListener('change', (event) => this.importUnifiedData(event));
+            this.importFileInput.addEventListener('change', (event) => this.handleImportFile(event));
         }
 
         // Setup de la modal d'import si elle existe
@@ -115,7 +114,7 @@ class ImportExportManager {
             document.body.removeChild(downloadAnchorNode);
 
             console.log(`✅ Export unifié terminé - ${allLocations.length} éléments sauvegardés (lieux et régions)`);
-            
+
             // Notification utilisateur
             this.showNotification("Export réussi", `${allLocations.length} éléments exportés vers MiddleEarthData.json`, "success");
 
@@ -137,18 +136,24 @@ class ImportExportManager {
     /**
      * Importe des données depuis un fichier JSON
      */
-    importUnifiedData(event) {
+    handleImportFile(event) {
         const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
-                const importedData = JSON.parse(e.target.result);
-                
+                const rawText = e.target.result;
+                const importedData = JSON.parse(rawText);
+
                 // Valider et traiter les données
                 const processedData = this.validateAndProcessImportData(importedData);
-                
+
+                // Post-traitement: chercher les rumeurs multiples dans le texte brut
+                if (processedData.locations.length > 0) {
+                    this.enhanceRumeursFromRawText(rawText, processedData.locations);
+                }
+
                 if (processedData.locations.length === 0 && processedData.regions.length === 0) {
                     this.showNotification("Import échoué", "Aucune donnée valide trouvée dans le fichier", "error");
                     return;
@@ -180,91 +185,164 @@ class ImportExportManager {
             regions: []
         };
 
-        let locationsArray = [];
-
-        // Détecter le format des données
-        if (data.locations && Array.isArray(data.locations)) {
-            // Format unifié moderne
-            locationsArray = data.locations;
-        } else if (data.regions && Array.isArray(data.regions)) {
-            // Format ancien avec seulement des régions
-            locationsArray = data.regions.map(region => ({
-                ...region,
-                type: "region",
-                coordinates: { points: region.points || region.coordinates || [] }
-            }));
-        } else if (Array.isArray(data)) {
-            // Format array direct
-            locationsArray = data;
-        } else {
-            throw new Error("Format de fichier non reconnu");
+        // Si c'est un tableau direct (ancien format)
+        if (Array.isArray(data)) {
+            data.forEach(item => this.processItem(item, result));
+        }
+        // Si c'est un objet avec une propriété locations
+        else if (data.locations && Array.isArray(data.locations)) {
+            data.locations.forEach(item => this.processItem(item, result));
+        }
+        // Si c'est un objet avec une propriété regions
+        else if (data.regions && Array.isArray(data.regions)) {
+            data.regions.forEach(item => this.processItem(item, result));
         }
 
-        // Traiter chaque élément
-        locationsArray.forEach(item => {
-            try {
-                const isRegion = item.type === "region" || 
-                               (item.coordinates && item.coordinates.points && Array.isArray(item.coordinates.points)) ||
-                               (item.points && Array.isArray(item.points));
-
-                if (isRegion) {
-                    // Traiter comme région
-                    const region = {
-                        id: item.id || `region_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                        name: item.name || "Région sans nom",
-                        description: item.description || "",
-                        imageUrl: item.imageUrl || "",
-                        color: item.color || "gray",
-                        known: item.known !== undefined ? item.known : true,
-                        visited: item.visited !== undefined ? item.visited : false,
-                        coordinates: item.coordinates?.points || item.points || []
-                    };
-
-                    // Ajouter les champs optionnels
-                    if (item.Rumeur) region.Rumeur = item.Rumeur;
-                    if (item.Tradition_Ancienne) region.Tradition_Ancienne = item.Tradition_Ancienne;
-                    if (item.images) region.images = item.images;
-
-                    result.regions.push(region);
-                } else {
-                    // Traiter comme lieu normal
-                    const location = {
-                        id: item.id || `location_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                        name: item.name || "Lieu sans nom",
-                        description: item.description || "",
-                        imageUrl: item.imageUrl || "",
-                        color: item.color || "blue",
-                        known: item.known !== undefined ? item.known : true,
-                        visited: item.visited !== undefined ? item.visited : false,
-                        type: item.type || "custom"
-                    };
-
-                    // Coordonnées pour les lieux normaux
-                    if (item.coordinates && typeof item.coordinates.x === 'number' && typeof item.coordinates.y === 'number') {
-                        location.coordinates = {
-                            x: item.coordinates.x,
-                            y: item.coordinates.y
-                        };
-                    } else {
-                        console.warn(`⚠️ Lieu ${item.name} sans coordonnées valides, ignoré`);
-                        return;
-                    }
-
-                    // Ajouter les champs optionnels
-                    if (item.Rumeur) location.Rumeur = item.Rumeur;
-                    if (item.Tradition_Ancienne) location.Tradition_Ancienne = item.Tradition_Ancienne;
-                    if (item.images) location.images = item.images;
-
-                    result.locations.push(location);
-                }
-            } catch (itemError) {
-                console.warn(`⚠️ Erreur lors du traitement de l'élément ${item.name}:`, itemError);
-            }
-        });
-
-        console.log(`✅ Validation terminée: ${result.locations.length} lieux, ${result.regions.length} régions`);
+        console.log(`✅ Import validé: ${result.locations.length} lieux, ${result.regions.length} régions`);
         return result;
     }
+
+    /**
+     * Extrait les rumeurs d'un objet, même s'il y a des clés dupliquées
+     * Note: JSON ne supporte pas vraiment les clés dupliquées, donc on utilise une regex
+     */
+    extractRumeursFromRawText(rawText, itemId) {
+        const rumeurs = [];
+
+        // Chercher toutes les occurrences de "Rumeur" dans le texte brut
+        const rumeurPattern = /"Rumeur"\s*:\s*"([^"]+)"/g;
+        let match;
+
+        while ((match = rumeurPattern.exec(rawText)) !== null) {
+            const rumeur = match[1];
+            if (rumeur && rumeur !== "A définir") {
+                rumeurs.push(rumeur);
+            }
+        }
+
+        return rumeurs;
+    }
+
+    processItem(item, result) {
+        // Vérifier si c'est une région (a des points de coordonnées)
+        if (item.type === 'region' || (item.coordinates && item.coordinates.points)) {
+            const region = {
+                id: item.id || Date.now(),
+                name: item.name || 'Région sans nom',
+                description: item.description || '',
+                color: item.color || 'blue',
+                known: item.known !== undefined ? item.known : true,
+                visited: item.visited !== undefined ? item.visited : false,
+                type: 'region',
+                coordinates: {
+                    points: item.coordinates?.points || []
+                }
+            };
+
+            // Ajouter l'image si présente
+            if (item.imageUrl) region.imageUrl = item.imageUrl;
+            if (item.images) region.images = item.images;
+
+            // Pour les régions: une seule rumeur
+            if (item.Rumeur && item.Rumeur !== "A définir") {
+                region.Rumeur = item.Rumeur;
+            }
+
+            // Tradition ancienne
+            if (item.Tradition_Ancienne && item.Tradition_Ancienne !== "A définir") {
+                region.Tradition_Ancienne = item.Tradition_Ancienne;
+            }
+
+            result.regions.push(region);
+        }
+        // Sinon c'est un lieu normal
+        else {
+            const location = {
+                id: item.id || Date.now(),
+                name: item.name || 'Lieu sans nom',
+                description: item.description || '',
+                color: item.color || 'blue',
+                known: item.known !== undefined ? item.known : true,
+                visited: item.visited !== undefined ? item.visited : false,
+                type: item.type || 'custom',
+                coordinates: {
+                    x: item.coordinates?.x || 0,
+                    y: item.coordinates?.y || 0
+                }
+            };
+
+            // Ajouter l'image si présente
+            if (item.imageUrl) location.imageUrl = item.imageUrl;
+            if (item.images) location.images = item.images;
+
+            // Gérer les rumeurs - support des formats anciens et nouveaux
+            const rumeurs = [];
+
+            // Si on a un tableau Rumeurs
+            if (item.Rumeurs && Array.isArray(item.Rumeurs)) {
+                rumeurs.push(...item.Rumeurs.filter(r => r && r !== "A définir"));
+            }
+            // Si on a une seule propriété Rumeur
+            else if (item.Rumeur && item.Rumeur !== "A définir") {
+                rumeurs.push(item.Rumeur);
+            }
+
+            // Important: Pour les fichiers avec clés dupliquées (comme votre exemple),
+            // on doit parser le texte JSON brut pour extraire toutes les rumeurs
+            // Cela sera géré au moment de la lecture du fichier
+
+            if (rumeurs.length > 0) {
+                location.Rumeurs = rumeurs;
+                // Compatibilité: aussi garder la première rumeur dans Rumeur
+                location.Rumeur = rumeurs[0];
+            }
+
+            // Ajouter la tradition ancienne
+            if (item.Tradition_Ancienne && item.Tradition_Ancienne !== "A définir") {
+                location.Tradition_Ancienne = item.Tradition_Ancienne;
+            }
+
+            result.locations.push(location);
+        }
+    }
+
+    /**
+     * Améliore les rumeurs en extrayant toutes les occurrences depuis le texte JSON brut
+     */
+    enhanceRumeursFromRawText(rawText, locations) {
+        locations.forEach(location => {
+            // Chercher le bloc JSON de cet item dans le texte brut
+            const itemPattern = new RegExp(`"id"\\s*:\\s*${location.id}[^}]*(?:"Rumeur"\\s*:\\s*"[^"]*"[^}]*)+`, 'g');
+            const itemMatch = rawText.match(itemPattern);
+
+            if (itemMatch && itemMatch[0]) {
+                const rumeurPattern = /"Rumeur"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/g;
+                const rumeurs = [];
+                let match;
+
+                while ((match = rumeurPattern.exec(itemMatch[0])) !== null) {
+                    const rumeur = match[1]
+                        .replace(/\\n/g, '\n')
+                        .replace(/\\"/g, '"')
+                        .replace(/\\\\/g, '\\');
+
+                    if (rumeur && rumeur !== "A définir") {
+                        rumeurs.push(rumeur);
+                    }
+                }
+
+                if (rumeurs.length > 1) {
+                    console.log(`📚 Trouvé ${rumeurs.length} rumeurs pour "${location.name}"`);
+                    location.Rumeurs = rumeurs;
+                    location.Rumeur = rumeurs[0]; // Compatibilité
+                } else if (rumeurs.length === 1 && !location.Rumeurs) {
+                    location.Rumeurs = [rumeurs[0]];
+                    location.Rumeur = rumeurs[0];
+                }
+            }
+        });
+    }
+
 
     /**
      * Affiche la modal de confirmation d'import
@@ -337,14 +415,14 @@ class ImportExportManager {
                     // Si pas de lieux dans l'import, garder une structure vide
                     this.dataManager.locationsData = { locations: [] };
                 }
-                
+
                 if (processedData.regions.length > 0) {
                     this.dataManager.regionsData = { regions: processedData.regions };
                 } else {
                     // Si pas de régions dans l'import, garder une structure vide  
                     this.dataManager.regionsData = { regions: [] };
                 }
-                
+
                 // Mettre à jour les références globales APRÈS avoir mis à jour le dataManager
                 window.locationsData = this.dataManager.locationsData;
                 window.regionsData = this.dataManager.regionsData;
@@ -381,7 +459,7 @@ class ImportExportManager {
 
             const totalImported = processedData.locations.length + processedData.regions.length;
             this.showNotification("Import réussi", `${totalImported} éléments importés avec succès (mode: ${mode})`, "success");
-            
+
             console.log(`✅ Import terminé: ${processedData.locations.length} lieux, ${processedData.regions.length} régions`);
 
         } catch (error) {
@@ -551,7 +629,7 @@ class ImportExportManager {
             type === 'error' ? 'bg-red-500 text-white' :
             'bg-blue-500 text-white'
         }`;
-        
+
         notification.innerHTML = `
             <div class="font-semibold">${title}</div>
             <div class="text-sm">${message}</div>
