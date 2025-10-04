@@ -120,7 +120,29 @@ body {
 #info-box.expanded #info-box-scroll-wrapper {
     max-height: none;
     height: calc(100% - 3rem);
+    overflow-y: auto;
     padding-right: 1rem;
+}
+
+/* Assurer le défilement pour tous les onglets */
+.tab-content {
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+#info-box.expanded .tab-content {
+    height: 100%;
+}
+
+/* Scroll pour les sections de contenu */
+#rumeurs-content,
+#tradition-content {
+    overflow-y: auto;
+}
+
+#info-box.expanded #rumeurs-content,
+#info-box.expanded #tradition-content {
+    max-height: calc(50vh - 4rem);
 }
 
 #info-box-header {
@@ -1014,6 +1036,29 @@ body {
     z-index: 1000;
     color: white;
     font-size: 14px;
+}
+
+/* Harmonisation des titres dans l'infobox */
+#info-box h3 {
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    color: white;
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+#info-box h4 {
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    color: white;
+    text-align: left;
+    margin-bottom: 0.75rem;
+}
+
+/* Masquer les icônes dans les titres de sections */
+#rumeurs-section h3 i,
+#tradition-section h3 i {
+    display: none;
 }
 
 /* Color Change Modal styles */

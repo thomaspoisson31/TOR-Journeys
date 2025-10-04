@@ -370,7 +370,6 @@ class InfoBoxManager {
                 <div class="edit-form p-4">
                     <div class="mb-4">
                         <label class="block text-sm font-medium mb-2 text-white">
-                            <i class="fas fa-ear-listen mr-2 text-yellow-400"></i>
                             Rumeurs ${type === 'location' ? '(séparez par une ligne "---")' : ''} (Markdown supporté) :
                         </label>
                         <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-40 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.${type === 'location' ? '\n\nSéparez les rumeurs par:\n---' : ''}">${currentRumeurs}</textarea>
@@ -378,7 +377,6 @@ class InfoBoxManager {
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium mb-2 text-white">
-                            <i class="fas fa-book-open mr-2 text-purple-400"></i>
                             Tradition Ancienne (Markdown supporté) :
                         </label>
                         <textarea id="edit-tradition" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.Tradition_Ancienne || ''}</textarea>
