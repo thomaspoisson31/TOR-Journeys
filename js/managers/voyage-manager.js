@@ -1295,8 +1295,15 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             return;
         }
 
+        // Vérifier que journeyPath existe et n'est pas vide
+        if (typeof journeyPath === 'undefined' || !journeyPath || journeyPath.length === 0) {
+            console.log("⚠️ Pas de tracé de voyage disponible");
+            return;
+        }
+
         // Créer une signature unique pour ce tracé
         const pathSignature = this.createPathSignature(journeyPath);
+        console.log("🔑 Signature du tracé:", pathSignature);
 
         // Trouver le lieu/région de départ
         const firstDay = this.dayByDayData[0];
@@ -1352,7 +1359,14 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         }
 
         // Vérifier si ce tracé existe déjà dans le journal
+        console.log("🔍 Recherche de voyage existant avec signature:", pathSignature);
+        console.log("📚 Voyages existants dans le journal:", journal.length);
+        journal.forEach((entry, idx) => {
+            console.log(`  ${idx}: ${entry.title} (signature: ${entry.pathSignature})`);
+        });
+        
         const existingIndex = journal.findIndex(entry => entry.pathSignature === pathSignature);
+        console.log("🔍 Index trouvé:", existingIndex);
         
         if (existingIndex !== -1) {
             // Mettre à jour l'entrée existante (régénération des descriptions)
@@ -1366,6 +1380,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         // Sauvegarder
         localStorage.setItem('travelJournal', JSON.stringify(journal));
+        console.log("💾 Journal sauvegardé avec", journal.length, "voyage(s)");
 
         // Synchroniser avec le cloud si authentifié
         if (typeof window.scheduleAutoSync === 'function') {
