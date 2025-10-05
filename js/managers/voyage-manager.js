@@ -9,6 +9,7 @@ class VoyageManager {
         this.dayByDayData = [];
         this.journeyDescriptions = {}; // Pour stocker les descriptions générées
         this.currentDescriptionDay = 1; // Pour suivre le jour affiché dans la modal de description
+        this.randomEvents = {}; // Pour stocker les événements aléatoires générés par jour
 
         // Stocker les constantes passées en paramètre
         this.MAP_DISTANCE_MILES = constants.MAP_DISTANCE_MILES || MAP_DISTANCE_MILES;
@@ -1322,18 +1323,8 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             const dayNumber = index + 1;
             const weatherData = this.getWeatherForDay(dayNumber);
             
-            // Récupérer l'événement aléatoire s'il existe dans le DOM
-            const randomEventDiv = document.getElementById('random-event-display');
-            let eventResult = null;
-            if (randomEventDiv && this.currentDayIndex === index) {
-                const resultElement = randomEventDiv.querySelector('.text-white');
-                if (resultElement) {
-                    const resultText = resultElement.textContent;
-                    if (resultText && resultText.trim()) {
-                        eventResult = resultText.trim();
-                    }
-                }
-            }
+            // Récupérer l'événement aléatoire depuis le stockage
+            const eventResult = this.randomEvents[dayNumber] || null;
 
             journeyEntry.days.push({
                 dayNumber: dayNumber,
@@ -1640,6 +1631,11 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         // Choose a random event from the selected location's events
         const randomEvent = eventsList[Math.floor(Math.random() * eventsList.length)];
+
+        // Stocker l'événement pour ce jour (index + 1 car les jours commencent à 1)
+        const currentDayNumber = this.currentDayIndex + 1;
+        this.randomEvents[currentDayNumber] = randomEvent['Résultat'] || '';
+        console.log(`📖 Événement aléatoire sauvegardé pour le jour ${currentDayNumber}:`, this.randomEvents[currentDayNumber]);
 
         // Format the event display similar to "Événement de voyage" in infobox
         const eventHtml = `
