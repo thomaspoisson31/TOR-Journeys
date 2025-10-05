@@ -727,15 +727,31 @@ body {
 .voyage-modal-white {
     background-color: white !important;
     color: black !important;
+    font-family: 'Merriweather', serif !important;
 }
 
 .voyage-modal-white * {
     color: black !important;
+    font-family: 'Merriweather', serif !important;
+    font-weight: 400 !important;
 }
 
-/* Exception pour le titre du jour qui doit rester rouge */
+/* Exception pour le titre du jour qui doit rester rouge et en gras */
 .voyage-modal-white #segment-title {
     color: #940000 !important;
+    font-weight: 700 !important;
+}
+
+/* Titres et sous-titres en gras */
+.voyage-modal-white h1,
+.voyage-modal-white h2,
+.voyage-modal-white h3,
+.voyage-modal-white h4,
+.voyage-modal-white h5,
+.voyage-modal-white h6,
+.voyage-modal-white .font-bold,
+.voyage-modal-white .font-semibold {
+    font-weight: 700 !important;
 }
 
 .voyage-modal-white .text-white {
