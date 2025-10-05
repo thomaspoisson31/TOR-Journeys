@@ -1435,6 +1435,22 @@ async function generateTravelDescription(voyageData) {
 
 // --- Fonctions de gestion des événements de viewport ---
 function handleViewportClick(event) {
+    // DEBUG: Afficher les coordonnées du clic
+    const rect = viewport.getBoundingClientRect();
+    const viewportX = event.clientX - rect.left;
+    const viewportY = event.clientY - rect.top;
+    const mapX = (viewportX - panX) / scale;
+    const mapY = (viewportY - panY) / scale;
+    
+    console.log("🖱️ CLICK DEBUG:");
+    console.log(`  - Coordonnées clic: x=${Math.round(mapX)}, y=${Math.round(mapY)}`);
+    
+    if (positionManager) {
+        const currentPos = positionManager.getPosition();
+        console.log(`  - Position marqueur: x=${Math.round(currentPos.x)}, y=${Math.round(currentPos.y)}`);
+        console.log(`  - Distance au marqueur: ${Math.round(Math.sqrt(Math.pow(mapX - currentPos.x, 2) + Math.pow(mapY - currentPos.y, 2)))} pixels`);
+    }
+    
     // Gérer les différents modes de clic
     if (isRegionDrawingMode) {
         handleRegionClick(event);

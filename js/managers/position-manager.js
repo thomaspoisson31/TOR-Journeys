@@ -94,7 +94,14 @@ class PositionManager {
             top: this.positionMarker.style.top,
             zIndex: window.getComputedStyle(this.positionMarker).zIndex,
             opacity: window.getComputedStyle(this.positionMarker).opacity,
-            visibility: window.getComputedStyle(this.positionMarker).visibility
+            visibility: window.getComputedStyle(this.positionMarker).visibility,
+            display: window.getComputedStyle(this.positionMarker).display,
+            pointerEvents: window.getComputedStyle(this.positionMarker).pointerEvents
+        });
+        console.log("📍 Parent layer (locations-layer):", {
+            zIndex: window.getComputedStyle(locationsLayer).zIndex,
+            display: window.getComputedStyle(locationsLayer).display,
+            pointerEvents: window.getComputedStyle(locationsLayer).pointerEvents
         });
     }
 
