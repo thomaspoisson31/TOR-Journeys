@@ -35,9 +35,9 @@ class PositionManager {
     }
 
     createPositionMarker() {
-        const locationsLayer = this.dom.getElementById('locations-layer');
-        if (!locationsLayer) {
-            console.error("❌ Locations layer not found");
+        const positionLayer = this.dom.getElementById('position-layer');
+        if (!positionLayer) {
+            console.error("❌ Position layer not found");
             return;
         }
 
@@ -81,8 +81,8 @@ class PositionManager {
         // Positionner le marqueur
         this.updateMarkerPosition();
 
-        // Ajouter à la couche
-        locationsLayer.appendChild(this.positionMarker);
+        // Ajouter à la couche dédiée
+        positionLayer.appendChild(this.positionMarker);
 
         console.log("✅ Position marker created at:", this.currentPosition);
         console.log("📍 Marker element:", this.positionMarker);
@@ -98,10 +98,10 @@ class PositionManager {
             display: window.getComputedStyle(this.positionMarker).display,
             pointerEvents: window.getComputedStyle(this.positionMarker).pointerEvents
         });
-        console.log("📍 Parent layer (locations-layer):", {
-            zIndex: window.getComputedStyle(locationsLayer).zIndex,
-            display: window.getComputedStyle(locationsLayer).display,
-            pointerEvents: window.getComputedStyle(locationsLayer).pointerEvents
+        console.log("📍 Parent layer (position-layer):", {
+            zIndex: window.getComputedStyle(positionLayer).zIndex,
+            display: window.getComputedStyle(positionLayer).display,
+            pointerEvents: window.getComputedStyle(positionLayer).pointerEvents
         });
     }
 
