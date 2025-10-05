@@ -22,6 +22,10 @@
                 <i id="auth-icon" class="fas fa-user"></i>
                 <img id="user-profile-pic" class="absolute inset-0 w-full h-full object-cover rounded hidden" alt="Photo de profil">
             </button>
+            <!-- Journal de Voyage Button -->
+            <button id="journal-btn" title="Journal de Voyage" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors">
+                <i class="fas fa-book"></i>
+            </button>
             <hr class="border-gray-600">
             <button id="draw-mode" title="Mode Dessin" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors"><i class="fas fa-pencil-alt"></i></button>
             <button id="erase" title="Effacer le tracé" class="w-10 h-10 bg-gray-700 hover:bg-red-600 rounded transition-colors"><i class="fas fa-eraser"></i></button>
@@ -269,6 +273,30 @@
                     <button id="close-journey-log" class="text-gray-400 hover:text-white"><i class="fas fa-times fa-lg"></i></button>
                 </div>
                 <div id="journey-log-content" class="prose prose-invert overflow-y-auto text-gray-300"></div>
+            </div>
+        </div>
+
+        <!-- Journal de Voyage Modal -->
+        <div id="travel-journal-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
+            <div class="bg-white rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <i class="fas fa-book mr-2"></i>Journal de Voyage
+                    </h2>
+                    <button id="close-journal-btn" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+                
+                <div id="journal-content" class="space-y-6">
+                    <!-- Le contenu sera généré dynamiquement -->
+                </div>
+                
+                <div id="journal-empty" class="hidden text-center py-12 text-gray-500">
+                    <i class="fas fa-book-open fa-3x mb-4"></i>
+                    <p class="text-lg">Aucun voyage enregistré pour le moment</p>
+                    <p class="text-sm mt-2">Générez des descriptions de voyage pour commencer votre journal</p>
+                </div>
             </div>
         </div>
 

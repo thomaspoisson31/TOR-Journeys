@@ -1273,6 +1273,9 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 this.journeyDescriptions[dayDesc.day] = dayDesc.description;
             });
 
+            // Sauvegarder le voyage dans le journal
+            this.saveJourneyToJournal();
+
             // Rafraîchir l'affichage du jour courant pour montrer la description
             this.renderCurrentDay();
 
@@ -1282,6 +1285,87 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
             // Fallback : afficher la réponse brute
             this.displayJourneyDescription(response, false);
+        }
+    }
+
+    saveJourneyToJournal() {
+        if (!this.dayByDayData || this.dayByDayData.length === 0) {
+            console.log("⚠️ Pas de données de voyage à sauvegarder");
+            return;
+        }
+
+        // Trouver le lieu/région de départ
+        const firstDay = this.dayByDayData[0];
+        let startLocation = "Point de départ";
+        if (firstDay.discoveries && firstDay.discoveries.length > 0) {
+            startLocation = firstDay.discoveries[0].name;
+        }
+
+        // Trouver le lieu/région d'arrivée
+        const lastDay = this.dayByDayData[this.dayByDayData.length - 1];
+        let endLocation = "Point d'arrivée";
+        if (lastDay.discoveries && lastDay.discoveries.length > 0) {
+            const lastDiscoveries = lastDay.discoveries;
+            endLocation = lastDiscoveries[lastDiscoveries.length - 1].name;
+        }
+
+        // Construire le voyage pour le journal
+        const journeyEntry = {
+            title: `Voyage de ${startLocation} à ${endLocation}`,
+            generatedAt: new Date().toISOString(),
+            totalDays: this.totalJourneyDays,
+            days: []
+        };
+
+        // Ajouter chaque jour
+        this.dayByDayData.forEach((dayData, index) => {
+            const dayNumber = index + 1;
+            const weatherData = this.getWeatherForDay(dayNumber);
+            
+            // Récupérer l'événement aléatoire s'il existe dans le DOM
+            const randomEventDiv = document.getElementById('random-event-display');
+            let eventResult = null;
+            if (randomEventDiv && this.currentDayIndex === index) {
+                const resultElement = randomEventDiv.querySelector('.text-white');
+                if (resultElement) {
+                    const resultText = resultElement.textContent;
+                    if (resultText && resultText.trim()) {
+                        eventResult = resultText.trim();
+                    }
+                }
+            }
+
+            journeyEntry.days.push({
+                dayNumber: dayNumber,
+                calendarDate: dayData.calendarDate,
+                weatherSymbol: weatherData ? weatherData.symbol : null,
+                weatherText: weatherData ? weatherData.weather : null,
+                eventResult: eventResult,
+                description: this.journeyDescriptions[dayNumber] || null
+            });
+        });
+
+        // Récupérer le journal existant
+        let journal = [];
+        const savedJournal = localStorage.getItem('travelJournal');
+        if (savedJournal) {
+            try {
+                journal = JSON.parse(savedJournal);
+            } catch (e) {
+                console.error("Erreur lors du parsing du journal:", e);
+            }
+        }
+
+        // Ajouter le nouveau voyage
+        journal.unshift(journeyEntry); // Ajouter au début (plus récent)
+
+        // Sauvegarder
+        localStorage.setItem('travelJournal', JSON.stringify(journal));
+        console.log("📖 Voyage sauvegardé dans le journal:", journeyEntry.title);
+
+        // Synchroniser avec le cloud si authentifié
+        if (typeof scheduleAutoSync === 'function') {
+            scheduleAutoSync();
         }
     }
 

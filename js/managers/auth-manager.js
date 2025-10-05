@@ -310,6 +310,16 @@ class AuthManager {
             data.settings = window.settingsManager.getAllSettings();
         }
 
+        // Collecter le journal de voyage
+        const savedJournal = localStorage.getItem('travelJournal');
+        if (savedJournal) {
+            try {
+                data.journal = JSON.parse(savedJournal);
+            } catch (e) {
+                console.error("Erreur lors de la collecte du journal:", e);
+            }
+        }
+
         this.logAuth("📦 Données collectées pour le contexte", Object.keys(data));
         return data;
     }
@@ -435,6 +445,14 @@ class AuthManager {
         // Appliquer les paramètres
         if (data.settings && window.settingsManager) {
             window.settingsManager.loadSettings(data.settings);
+        }
+
+        // Appliquer le journal de voyage
+        if (data.journal) {
+            localStorage.setItem('travelJournal', JSON.stringify(data.journal));
+            if (window.journalManager) {
+                window.journalManager.loadJournal();
+            }
         }
 
         // Programmer une auto-sync
