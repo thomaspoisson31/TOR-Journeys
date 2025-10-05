@@ -1,0 +1,290 @@
+Spécifications Techniques - Application de Cartographie Interactive Terre du Milieu
+
+ARCHITECTURE GLOBALE
+====================
+Backend : Flask (Python) avec SQLite
+Frontend : JavaScript vanilla avec modules ES6
+Structure : Architecture modulaire basée sur des managers spécialisés
+
+MANAGERS JAVASCRIPT (js/managers/)
+==================================
+DataManager - Gestion des données (lieux/régions)
+FilterManager - Système de filtrage unifié
+VoyageManager - Gestion des voyages jour par jour avec calendrier
+PathManager - Tracé de voyage sur la carte
+CalendarManager - Calendrier CSV avec saisons et météo
+SettingsManager - Paramètres (cartes, aventuriers, quête, narration)
+AuthManager - Authentification Google OAuth
+InfoBoxManager - Info-boxes pour lieux/régions avec système multi-images
+ImportExportManager - Import/export JSON unifié
+ZoomManager - Contrôle du zoom visuel
+PositionManager - Gestion du marqueur de position des aventuriers
+GeminiManager - Génération de contenu IA (Google Gemini)
+UploadManager - Upload d'images avec création de vignettes
+
+FONCTIONNALITÉS PRINCIPALES
+============================
+
+Cartographie
+------------
+- Zoom dynamique avec affichage vignettes ≥50%
+- Marqueurs déplaçables par glisser-déposer
+- Régions polygonales cliquables avec opacité réglable
+- Tracé de voyage interactif avec détection automatique
+- Marqueur de position synchronisé avec navigation du voyage
+
+Voyage
+------
+- Calcul automatique : 20 miles/jour
+- Calendrier synchronisé avec saisons/météo
+- Modal dédiée avec navigation jour par jour
+- Événements aléatoires par région/lieu
+- Génération de descriptions IA (styles : détaillée/brève/points clés)
+- Sauvegarde de la date de début du voyage (signature unique)
+- Animation du marqueur de position lors de navigation
+
+Données
+-------
+- Multi-images par lieu/région (principale/vignette/plan/table)
+- Vignettes auto-générées 100x100px
+- Rumeurs, Traditions et Événements de voyage
+- Export/Import JSON unifié
+- Sauvegarde cloud via Google OAuth
+
+Interface
+---------
+- Filtres avancés (couleurs, statut, type)
+- Modales fond blanc pour voyage/description
+- Onglets pour contenus (Image/Texte/Rumeurs/Événements)
+- Édition Markdown supportée
+
+BACKEND (FLASK)
+===============
+
+Routes API
+----------
+/api/auth/* - Authentification Google
+/api/contexts/* - CRUD contextes de voyage
+/api/gemini/* - Génération contenu IA
+/api/upload/* - Upload images
+/api/user/data - Données utilisateur
+/api/image/create-thumbnail - Création vignettes
+
+Base de données SQLite
+----------------------
+Tables : users, travel_contexts, api_usage
+
+VARIABLES GLOBALES EXPOSÉES
+============================
+window.locationsData, window.regionsData
+window.calendarData, window.currentCalendarDate, window.currentSeason, window.isCalendarMode
+window.journeyPath, window.journeyDiscoveries, window.regionSegments
+window.scale, window.isDrawingMode
+window.calendarManager, window.settingsManager, window.positionManager, window.zoomManager
+window.dataManager, window.authManager, window.infoBoxManager
+
+PRINCIPES DE DÉVELOPPEMENT
+===========================
+
+Architecture
+------------
+1. Un manager = une responsabilité unique
+2. Communication par injection de dépendances ou variables globales
+3. Constantes centralisées (js/utils/constants.js)
+4. main.js minimal (coordination uniquement)
+
+PRINCIPES DE SYNCHRONISATION ET PASSAGE DE CONTEXTE
+=====================================================
+
+1. SYNCHRONISATION DU CALENDRIER
+---------------------------------
+PROBLÈME IDENTIFIÉ : La date principale (header) ne se met pas à jour automatiquement lors de la navigation dans le voyage.
+
+SOLUTION IMPLÉMENTÉE :
+- Le VoyageManager appelle directement updateHeaderDisplay() pour mettre à jour le DOM
+- Mise à jour synchrone de :
+  * window.currentCalendarDate (objet {month, day})
+  * window.currentSeason (chaîne de saison)
+  * localStorage ('currentCalendarDate', 'currentSeason')
+  * calendarManager.currentCalendarDate
+  * calendarManager.currentSeason
+
+RÈGLES À RESPECTER :
+a) Lors de changement de date depuis VoyageManager :
+   - Calculer la nouvelle date basée sur journeyStartDate (date fixe du voyage)
+   - Mettre à jour TOUTES les instances (window, calendarManager, localStorage)
+   - Appeler updateHeaderDisplay() directement (pas via updateSeasonDisplay())
+   
+b) Lors de changement de date depuis CalendarManager :
+   - Mettre à jour window.currentCalendarDate et window.currentSeason
+   - Sauvegarder dans localStorage
+   - Appeler updateSeasonDisplay() pour rafraîchir l'UI
+   - Déclencher scheduleAutoSync() si disponible
+
+2. PASSAGE DE DONNÉES ENTRE MANAGERS
+-------------------------------------
+PRINCIPE : Utiliser window.* comme source de vérité unique
+
+DONNÉES PARTAGÉES :
+- window.calendarData : structure complète du calendrier (mois, jours, météo)
+- window.currentCalendarDate : {month: string, day: number}
+- window.currentSeason : 'printemps-debut' | 'printemps-milieu' | etc.
+- window.isCalendarMode : boolean (mode calendrier vs saison manuelle)
+
+MÉTHODES D'EXPOSITION :
+- CalendarManager.exposeGlobalData() : synchronise toutes les variables globales
+- Appeler après chaque modification de CalendarManager
+- Garantit cohérence entre CalendarManager et window.*
+
+3. GESTION DE LA POSITION DES AVENTURIERS
+------------------------------------------
+SYNCHRONISATION POSITION-VOYAGE :
+
+a) Au changement de jour dans VoyageManager :
+   - Récupérer dayData.startCoordinates
+   - Appeler positionManager.animateToPosition(x, y, duration)
+   - Sauvegarder automatiquement via positionManager
+
+b) PositionManager autonome :
+   - Sauvegarde dans localStorage à chaque modification
+   - updateMarkerSize() appelé après zoom
+   - centerMapOnPosition() pour centrer la vue
+
+RÈGLES :
+- VoyageManager gère la logique métier (calcul coordonnées)
+- PositionManager gère l'affichage et l'animation
+- Pas de référence circulaire entre managers
+
+4. SYNCHRONISATION ZOOM ET AFFICHAGE
+-------------------------------------
+PRINCIPE : window.scale comme source de vérité
+
+WORKFLOW :
+1. Zoom modifié (molette, boutons) → mise à jour window.scale
+2. ZoomManager.updateDisplay() pour synchroniser l'UI du contrôle
+3. Si seuil 50% franchi → renderLocations() pour vignettes/cercles
+4. PositionManager.updateMarkerSize() pour adapter le marqueur
+
+RÈGLES :
+- Toujours synchroniser window.scale lors d'un zoom
+- Appeler updateDisplay() du ZoomManager avec délai (~10ms)
+- Vérifier seuil avant re-render (éviter renders inutiles)
+
+5. SAUVEGARDE ET PERSISTANCE
+-----------------------------
+HIÉRARCHIE DE SAUVEGARDE :
+1. localStorage : immédiat, local
+2. AuthManager.scheduleAutoSync() : différé (2s), cloud si authentifié
+
+DONNÉES À SYNCHRONISER :
+- Lieux/régions (DataManager)
+- Calendrier (CalendarManager)
+- Position (PositionManager)
+- Paramètres (SettingsManager)
+- Tracé de voyage (PathManager via variables globales)
+
+RÈGLES :
+- Toujours sauvegarder dans localStorage en premier
+- scheduleAutoSync() avec debounce (2s)
+- Ne pas bloquer l'UI pendant sync cloud
+
+6. DATE DE DÉBUT DU VOYAGE
+---------------------------
+PROBLÈME : La date de début doit être fixe pour cohérence du calendrier
+
+SOLUTION :
+- Signature unique du voyage : createPathSignature(journeyPath)
+- Sauvegarde : localStorage['journey_{signature}'] = {startDate, pathSignature}
+- Récupération : getJourneyStartDate() → utilise signature du tracé actuel
+
+RÈGLES :
+- Définir startDate au premier calcul du voyage
+- Utiliser startDate pour TOUS les calculs de dates suivants
+- Ne JAMAIS utiliser window.currentCalendarDate comme base de calcul dans VoyageManager
+
+7. MISE À JOUR DU DOM
+----------------------
+PRINCIPE : Mise à jour directe du DOM quand updateSeasonDisplay() échoue
+
+CAS D'USAGE : Navigation dans voyage
+- updateMainCalendarDate() calcule la nouvelle date
+- Appelle updateHeaderDisplay(monthName, day, season) directement
+- Met à jour :
+  * #calendar-date-indicator.textContent
+  * #season-indicator.innerHTML (symbole)
+  * #season-indicator.title (nom complet)
+
+RÈGLES :
+- Utiliser updateHeaderDisplay() pour updates depuis VoyageManager
+- Utiliser updateSeasonDisplay() pour updates depuis CalendarManager
+- Toujours logger les mises à jour pour debug
+
+8. GESTION DES ÉVÉNEMENTS
+--------------------------
+ORDRE D'INITIALISATION (main.js) :
+1. Managers créés (new Manager())
+2. Calendrier init (exposeGlobalData())
+3. Carte chargée (onload)
+4. Managers.init() dans cet ordre :
+   - CalendarManager
+   - SettingsManager
+   - AuthManager
+   - VoyageManager
+   - PathManager
+   - ZoomManager
+   - PositionManager
+
+RÈGLES :
+- Respecter ordre d'init pour dépendances
+- Exposer window.* avant que managers en dépendent
+- Vérifier disponibilité avec if(window.manager) avant appel
+
+9. DEBUGGING ET LOGS
+---------------------
+CONVENTION DE LOGS :
+- 📅 : Calendrier/dates
+- 📍 : Position/coordonnées
+- 🔍 : Zoom
+- 💾 : Sauvegarde
+- 🔄 : Synchronisation
+- ✅ : Succès
+- ❌ : Erreur
+- ⚠️ : Avertissement
+
+DONNÉES À LOGGER :
+- Changements de date (avant/après)
+- Coordonnées de position
+- Niveaux de zoom (oldScale/newScale)
+- Synchronisations cloud
+
+10. ANTI-PATTERNS À ÉVITER
+---------------------------
+❌ Utiliser window.currentCalendarDate dans VoyageManager pour calculs
+✅ Utiliser journeyStartDate (fixe) pour tous les calculs
+
+❌ Appeler updateSeasonDisplay() depuis VoyageManager
+✅ Appeler updateHeaderDisplay() directement
+
+❌ Modifier le DOM sans mettre à jour window.*
+✅ Toujours synchroniser window.* puis DOM
+
+❌ Oublier scheduleAutoSync() après modification
+✅ Appeler systématiquement après sauvegarde localStorage
+
+❌ Créer références circulaires entre managers
+✅ Passer par window.* ou callbacks
+
+RÉSUMÉ DES BONNES PRATIQUES
+============================
+1. window.* = source de vérité unique
+2. Toujours synchroniser : window.* → localStorage → cloud
+3. CalendarManager.exposeGlobalData() après modifications calendrier
+4. VoyageManager utilise journeyStartDate (jamais window.currentCalendarDate)
+5. Mise à jour DOM : updateHeaderDisplay() depuis VoyageManager, updateSeasonDisplay() depuis CalendarManager
+6. Logger toutes les opérations critiques (dates, position, zoom)
+7. Respecter l'ordre d'initialisation des managers
+8. scheduleAutoSync() avec debounce systématique
+9. Vérifier disponibilité managers avec if(window.manager)
+10. Un manager = une responsabilité = pas de références circulaires
+
+
