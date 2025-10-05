@@ -1,0 +1,63 @@
+Spécifications Techniques - Application de Cartographie Interactive Terre du Milieu
+Architecture Globale
+Backend : Flask (Python) avec SQLite
+Frontend : JavaScript vanilla avec modules ES6
+Structure : Architecture modulaire basée sur des managers spécialisés
+Managers JavaScript (js/managers/)
+DataManager - Gestion des données (lieux/régions)
+FilterManager - Système de filtrage unifié
+VoyageManager - Gestion des voyages jour par jour avec calendrier
+PathManager - Tracé de voyage sur la carte
+CalendarManager - Calendrier CSV avec saisons et météo
+SettingsManager - Paramètres (cartes, aventuriers, quête, narration)
+AuthManager - Authentification Google OAuth
+InfoBoxManager - Info-boxes pour lieux/régions avec système multi-images
+ImportExportManager - Import/export JSON unifié
+ZoomManager - Contrôle du zoom visuel
+GeminiManager - Génération de contenu IA (Google Gemini)
+UploadManager - Upload d'images avec création de vignettes
+Fonctionnalités Principales
+Cartographie
+Zoom dynamique avec affichage vignettes ≥50%
+Marqueurs déplaçables par glisser-déposer
+Régions polygonales cliquables avec opacité réglable
+Tracé de voyage interactif avec détection automatique
+Voyage
+Calcul automatique : 20 miles/jour
+Calendrier synchronisé avec saisons/météo
+Modal dédiée avec navigation jour par jour
+Événements aléatoires par région/lieu
+Génération de descriptions IA (styles : détaillée/brève/points clés)
+Données
+Multi-images par lieu/région (principale/vignette/plan/table)
+Vignettes auto-générées 100x100px
+Rumeurs, Traditions et Événements de voyage
+Export/Import JSON unifié
+Sauvegarde cloud via Google OAuth
+Interface
+Filtres avancés (couleurs, statut, type)
+Modales fond blanc pour voyage/description
+Onglets pour contenus (Image/Texte/Rumeurs/Événements)
+Édition Markdown supportée
+Backend (Flask)
+Routes API
+/api/auth/* - Authentification Google
+/api/contexts/* - CRUD contextes de voyage
+/api/gemini/* - Génération contenu IA
+/api/upload/* - Upload images
+/api/user/data - Données utilisateur
+/api/image/create-thumbnail - Création vignettes
+Base de données SQLite
+Tables : users, travel_contexts, api_usage
+Variables Globales Exposées
+window.locationsData, window.regionsData
+window.calendarData, window.currentCalendarDate, window.currentSeason
+window.journeyPath, window.journeyDiscoveries, window.regionSegments
+window.scale, window.isDrawingMode
+Principes de Développement
+Un manager = une responsabilité
+Communication par injection de dépendances ou variables globales
+Constantes centralisées (js/utils/constants.js)
+main.js minimal (coordination uniquement)
+
+
