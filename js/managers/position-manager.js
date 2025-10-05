@@ -100,8 +100,8 @@ class PositionManager {
             }
         });
 
-        // Clic simple pour ouvrir la modal
-        this.positionMarker.addEventListener('click', (e) => {
+        // Double-clic pour ouvrir la modal
+        this.positionMarker.addEventListener('dblclick', (e) => {
             if (!this.isDragging) {
                 e.stopPropagation();
                 this.showPositionModal();
