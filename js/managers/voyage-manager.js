@@ -102,10 +102,10 @@ class VoyageManager {
         for (let day = 1; day <= this.totalJourneyDays; day++) {
             const calendarDate = this.getCalendarDateForDay(day);
             console.log(`📅 Jour ${day}: date calendrier = "${calendarDate}"`);
-            
+
             // Calculer les coordonnées de début et fin de journée
             const dayCoordinates = this.calculateDayCoordinates(day);
-            
+
             const dayData = {
                 day: day,
                 discoveries: [],
@@ -421,7 +421,7 @@ class VoyageManager {
         if (segmentTitle) {
             // Utiliser le numéro de jour depuis dayData pour garantir la cohérence
             const dayNumber = dayData.day;
-            
+
             // Récupérer la date calendrier pour ce jour spécifique
             const realCalendarDate = this.getCalendarDateForDay(dayNumber);
 
@@ -610,13 +610,13 @@ class VoyageManager {
         }
 
         this.currentDayIndex = targetDayIndex;
-        
+
         // Afficher les coordonnées de la journée dans la console
         const dayData = this.dayByDayData[this.currentDayIndex];
         if (dayData && dayData.startCoordinates && dayData.endCoordinates) {
             console.log(`📍 Jour ${dayData.day} - Coordonnées de début:`, dayData.startCoordinates);
             console.log(`📍 Jour ${dayData.day} - Coordonnées de fin:`, dayData.endCoordinates);
-            
+
             // Déplacer le marqueur de position au début de la nouvelle journée
             if (window.positionManager) {
                 window.positionManager.animateToPosition(
@@ -626,7 +626,7 @@ class VoyageManager {
                 );
             }
         }
-        
+
         this.renderCurrentDay();
 
         // Mettre à jour la date principale du calendrier
@@ -669,7 +669,7 @@ class VoyageManager {
         // Mettre à jour la saison basée sur le mois du calendrier
         const monthSeason = calendarData[monthIndex].season.toLowerCase();
         window.currentSeason = monthSeason;
-        
+
         // Sauvegarder dans localStorage
         localStorage.setItem('currentSeason', monthSeason);
         localStorage.setItem('currentCalendarDate', JSON.stringify(window.currentCalendarDate));
@@ -705,7 +705,7 @@ class VoyageManager {
             const seasonMainName = season.split('-')[0];
             const symbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
             const fullName = window.calendarManager.seasonNames[season] || season;
-            
+
             seasonIndicator.innerHTML = symbol;
             seasonIndicator.title = fullName;
             console.log(`📅 Header saison mise à jour: ${symbol} (${fullName})`);
@@ -1127,7 +1127,7 @@ class VoyageManager {
         const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
         console.log('📖 Style de narration pour le voyage complet:', narrationStyle);
 
-        let prompt = `Rédige des descriptions évocatrices pour toutes les journées d'un voyage en Terre du Milieu dont le détail est présenté ci-après. 
+        let prompt = `Rédige des descriptions évocatrices pour toutes les journées d'un voyage en Terre du Milieu dont le détail est présenté ci-après.
 
 Ces descriptions sont destinées à un meneur de jeu qui va les lire à ses joueurs pour les immerger dans l'ambiance du voyage.
 
@@ -1144,7 +1144,7 @@ ${journeyData.adventurersQuest || 'Quête non définie'}
 
         journeyData.allDays.forEach(dayData => {
             prompt += `\n**Jour ${dayData.dayNumber} (${dayData.calendarDate}) :**`;
-            
+
             // Ajouter la saison spécifique du jour
             if (dayData.season) {
                 prompt += `\n- Saison : ${dayData.season}`;
@@ -1330,22 +1330,29 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         };
 
         // Ajouter chaque jour
-        this.dayByDayData.forEach((dayData, index) => {
-            const dayNumber = index + 1;
-            const weatherData = this.getWeatherForDay(dayNumber);
-            
-            // Récupérer l'événement aléatoire depuis le stockage
-            const eventResult = this.randomEvents[dayNumber] || null;
+            this.dayByDayData.forEach((dayData, index) => {
+                const dayNumber = index + 1;
+                const weatherData = this.getWeatherForDay(dayNumber);
 
-            journeyEntry.days.push({
-                dayNumber: dayNumber,
-                calendarDate: dayData.calendarDate,
-                weatherSymbol: weatherData ? weatherData.symbol : null,
-                weatherText: weatherData ? weatherData.weather : null,
-                eventResult: eventResult,
-                description: this.journeyDescriptions[dayNumber] || null
+                // Récupérer l'événement aléatoire depuis le stockage
+                const eventResult = this.randomEvents[dayNumber] || null;
+
+                // Extraire les découvertes avec leur nom et type
+                const discoveries = dayData.discoveries ? dayData.discoveries.map(d => ({
+                    name: d.name,
+                    type: d.type
+                })) : [];
+
+                journeyEntry.days.push({
+                    dayNumber: dayNumber,
+                    calendarDate: dayData.calendarDate,
+                    weatherSymbol: weatherData ? weatherData.symbol : null,
+                    weatherText: weatherData ? weatherData.weather : null,
+                    eventResult: eventResult,
+                    description: this.journeyDescriptions[dayNumber] || null,
+                    discoveries: discoveries
+                });
             });
-        });
 
         // Récupérer le journal existant
         let journal = [];
@@ -1364,10 +1371,10 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         journal.forEach((entry, idx) => {
             console.log(`  ${idx}: ${entry.title} (signature: ${entry.pathSignature})`);
         });
-        
+
         const existingIndex = journal.findIndex(entry => entry.pathSignature === pathSignature);
         console.log("🔍 Index trouvé:", existingIndex);
-        
+
         if (existingIndex !== -1) {
             // Mettre à jour l'entrée existante (régénération des descriptions)
             journal[existingIndex] = journeyEntry;
@@ -1646,7 +1653,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         // Choose a random location/region that has events
         const selectedDiscovery = possibleEventLocations[Math.floor(Math.random() * possibleEventLocations.length)];
-        
+
         // Get the actual location/region data with events
         let eventsList = [];
         if (selectedDiscovery.type === 'location' && typeof locationsData !== 'undefined') {
@@ -1689,7 +1696,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         // Check if there's already a random event displayed
         const segmentContent = document.getElementById('segment-content');
         const existingEvent = segmentContent.querySelector('#random-event-display');
-        
+
         if (existingEvent) {
             // Replace the existing event
             existingEvent.outerHTML = eventHtml;

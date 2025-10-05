@@ -91,11 +91,21 @@ class JournalManager {
             const daysHTML = journey.days.map(day => {
                 let dayContent = '';
 
-                // Sous-titre avec jour, date et météo
+                // Trouver le premier lieu ou région de la journée
+                let firstDiscovery = null;
+                if (day.discoveries && day.discoveries.length > 0) {
+                    // Prioriser les lieux, sinon prendre la première région
+                    firstDiscovery = day.discoveries.find(d => d.type === 'location') || day.discoveries[0];
+                }
+
+                // Sous-titre avec jour, date, météo et première découverte
                 dayContent += `<h3 class="text-lg font-semibold text-gray-900 mt-4 mb-2">`;
                 dayContent += `Jour ${day.dayNumber} / ${journey.totalDays} - ${day.calendarDate}`;
                 if (day.weatherSymbol) {
                     dayContent += ` ${day.weatherSymbol}`;
+                }
+                if (firstDiscovery) {
+                    dayContent += ` (${firstDiscovery.name})`;
                 }
                 dayContent += `</h3>`;
 
