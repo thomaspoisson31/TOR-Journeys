@@ -102,7 +102,8 @@ class PositionManager {
 
         // Événements de glisser-déposer
         this.positionMarker.addEventListener('mousedown', (e) => {
-            if (e.button === 0) { // Clic gauche seulement
+            // Ne pas permettre le drag si le mode dessin est actif
+            if (e.button === 0 && !window.isDrawingMode) { // Clic gauche seulement et pas en mode dessin
                 this.handleDragStart(e);
             }
         });
@@ -119,12 +120,11 @@ class PositionManager {
             }
         });
 
-        // Double-clic pour ouvrir la modal
-        this.positionMarker.addEventListener('dblclick', (e) => {
-            if (!this.isDragging) {
-                e.stopPropagation();
-                this.showPositionModal();
-            }
+        // Clic droit pour ouvrir la modal compacte
+        this.positionMarker.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.showPositionModal(e);
         });
     }
 
@@ -183,7 +183,7 @@ class PositionManager {
         }
     }
 
-    showPositionModal() {
+    showPositionModal(event) {
         // Créer la modal si elle n'existe pas
         let modal = document.getElementById('position-modal');
         if (!modal) {
@@ -194,6 +194,29 @@ class PositionManager {
         // Mettre à jour le contenu
         this.updateModalContent(modal);
 
+        // Positionner la modal près du curseur
+        if (event) {
+            const modalWidth = 180;
+            const modalHeight = 100;
+            
+            let left = event.clientX + 10;
+            let top = event.clientY - modalHeight / 2;
+
+            // Vérifier les limites de l'écran
+            if (left + modalWidth > window.innerWidth) {
+                left = event.clientX - modalWidth - 10;
+            }
+            if (top < 10) {
+                top = 10;
+            }
+            if (top + modalHeight > window.innerHeight - 10) {
+                top = window.innerHeight - modalHeight - 10;
+            }
+
+            modal.style.left = `${left}px`;
+            modal.style.top = `${top}px`;
+        }
+
         // Afficher la modal
         modal.classList.remove('hidden');
     }
@@ -201,61 +224,36 @@ class PositionManager {
     createPositionModal() {
         const modal = document.createElement('div');
         modal.id = 'position-modal';
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden';
+        modal.className = 'hidden absolute z-50 bg-gray-900 bg-opacity-95 border border-gray-700 rounded-lg p-3 shadow-xl';
+        modal.style.minWidth = '180px';
 
         modal.innerHTML = `
-            <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold flex items-center">
-                        <i class="fas fa-map-marker-alt mr-2"></i>
-                        Position des aventuriers
-                    </h3>
-                    <button id="close-position-modal" class="text-gray-400 hover:text-white">
-                        <i class="fas fa-times"></i>
-                    </button>
+            <div class="space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-gray-400">X:</span>
+                    <span id="position-x" class="font-bold text-blue-400"></span>
                 </div>
-
-                <div class="space-y-4">
-                    <div class="bg-gray-900 rounded-lg p-4">
-                        <h4 class="text-sm font-semibold text-gray-400 mb-3">Coordonnées</h4>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs text-gray-500 mb-1">Position X</label>
-                                <div id="position-x" class="text-2xl font-bold text-blue-400"></div>
-                                <div class="text-xs text-gray-500">pixels</div>
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-500 mb-1">Position Y</label>
-                                <div id="position-y" class="text-2xl font-bold text-blue-400"></div>
-                                <div class="text-xs text-gray-500">pixels</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-900 rounded-lg p-4">
-                        <h4 class="text-sm font-semibold text-gray-400 mb-2">Actions</h4>
-                        <button id="center-position-btn" class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
-                            <i class="fas fa-crosshairs mr-2"></i>
-                            Centrer la carte sur cette position
-                        </button>
-                    </div>
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-gray-400">Y:</span>
+                    <span id="position-y" class="font-bold text-blue-400"></span>
                 </div>
+                <button id="center-position-btn" class="w-full mt-2 px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs transition-colors flex items-center justify-center">
+                    <i class="fas fa-crosshairs mr-1"></i>
+                    <span>Centrer</span>
+                </button>
             </div>
         `;
 
         // Event listeners
-        modal.querySelector('#close-position-modal').addEventListener('click', () => {
-            modal.classList.add('hidden');
-        });
-
         modal.querySelector('#center-position-btn').addEventListener('click', () => {
             this.centerMapOnPosition();
             modal.classList.add('hidden');
         });
 
-        // Fermer en cliquant à l'extérieur
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
+        // Fermer en cliquant ailleurs
+        document.addEventListener('click', (e) => {
+            if (modal.classList.contains('hidden')) return;
+            if (!modal.contains(e.target) && !this.positionMarker.contains(e.target)) {
                 modal.classList.add('hidden');
             }
         });
