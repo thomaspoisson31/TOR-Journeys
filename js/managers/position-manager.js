@@ -76,6 +76,33 @@ class PositionManager {
 
         this.positionMarker.style.left = `${this.currentPosition.x}px`;
         this.positionMarker.style.top = `${this.currentPosition.y}px`;
+        
+        // Adapter la taille selon le zoom
+        this.updateMarkerSize();
+    }
+    
+    updateMarkerSize() {
+        if (!this.positionMarker) return;
+        
+        const currentScale = window.scale || 1;
+        const zoomPercentage = currentScale * 100;
+        
+        let sizeMultiplier = 1;
+        if (zoomPercentage < 25) {
+            sizeMultiplier = 4;
+        } else if (zoomPercentage <= 50) {
+            sizeMultiplier = 3;
+        } else if (zoomPercentage <= 75) {
+            sizeMultiplier = 2;
+        } else {
+            sizeMultiplier = 1;
+        }
+        
+        const baseSize = 64;
+        const newSize = baseSize * sizeMultiplier;
+        
+        this.positionMarker.style.width = `${newSize}px`;
+        this.positionMarker.style.height = `${newSize}px`;
     }
 
     setupEventListeners() {
@@ -117,7 +144,7 @@ class PositionManager {
         this.dragStartX = e.clientX;
         this.dragStartY = e.clientY;
 
-        this.positionMarker.style.cursor = 'grabbing';
+        this.positionMarker.style.cursor = 'move';
     }
 
     handleDrag(e) {
@@ -153,7 +180,7 @@ class PositionManager {
         if (!this.isDragging) return;
 
         this.isDragging = false;
-        this.positionMarker.style.cursor = 'grab';
+        this.positionMarker.style.cursor = 'move';
 
         // Sauvegarder la nouvelle position
         this.savePosition();

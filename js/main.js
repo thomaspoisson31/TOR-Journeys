@@ -592,6 +592,11 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
         if (shouldShowThumbnails !== wasShowingThumbnails) {
             renderLocations();
         }
+        
+        // Mettre à jour la taille du marqueur de position
+        if (positionManager) {
+            positionManager.updateMarkerSize();
+        }
     }
 }
 
