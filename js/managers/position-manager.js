@@ -46,10 +46,6 @@ class PositionManager {
         this.positionMarker.id = 'position-marker';
         this.positionMarker.className = 'position-marker';
         this.positionMarker.title = 'Position des aventuriers';
-
-        // Ajouter un fond de secours visible
-        this.positionMarker.style.backgroundColor = 'rgba(255, 215, 0, 0.3)';
-        this.positionMarker.style.border = '3px solid #FFD700';
         
         // Créer l'image
         const img = document.createElement('img');
@@ -62,18 +58,8 @@ class PositionManager {
         
         // Gestion des erreurs de chargement de l'image
         img.onerror = () => {
-            console.error("❌ Failed to load position marker image");
             // Afficher un emoji de secours
             this.positionMarker.innerHTML = '<div style="font-size: 48px; line-height: 64px; text-align: center;">📍</div>';
-        };
-        
-        img.onload = () => {
-            console.log("✅ Position marker image loaded successfully");
-            // Forcer un rafraîchissement visuel
-            this.positionMarker.style.opacity = '0.99';
-            setTimeout(() => {
-                this.positionMarker.style.opacity = '1';
-            }, 10);
         };
 
         this.positionMarker.appendChild(img);
@@ -83,26 +69,6 @@ class PositionManager {
 
         // Ajouter à la couche dédiée
         positionLayer.appendChild(this.positionMarker);
-
-        console.log("✅ Position marker created at:", this.currentPosition);
-        console.log("📍 Marker element:", this.positionMarker);
-        console.log("📍 Marker visible:", this.positionMarker.offsetWidth > 0 && this.positionMarker.offsetHeight > 0);
-        console.log("📍 Marker dimensions:", {
-            width: this.positionMarker.offsetWidth,
-            height: this.positionMarker.offsetHeight,
-            left: this.positionMarker.style.left,
-            top: this.positionMarker.style.top,
-            zIndex: window.getComputedStyle(this.positionMarker).zIndex,
-            opacity: window.getComputedStyle(this.positionMarker).opacity,
-            visibility: window.getComputedStyle(this.positionMarker).visibility,
-            display: window.getComputedStyle(this.positionMarker).display,
-            pointerEvents: window.getComputedStyle(this.positionMarker).pointerEvents
-        });
-        console.log("📍 Parent layer (position-layer):", {
-            zIndex: window.getComputedStyle(positionLayer).zIndex,
-            display: window.getComputedStyle(positionLayer).display,
-            pointerEvents: window.getComputedStyle(positionLayer).pointerEvents
-        });
     }
 
     updateMarkerPosition() {
@@ -152,7 +118,6 @@ class PositionManager {
         this.dragStartY = e.clientY;
 
         this.positionMarker.style.cursor = 'grabbing';
-        console.log("🎯 Starting position drag");
     }
 
     handleDrag(e) {
@@ -187,8 +152,6 @@ class PositionManager {
     handleDragEnd(e) {
         if (!this.isDragging) return;
 
-        console.log("🎯 Position drag ended at:", this.currentPosition);
-
         this.isDragging = false;
         this.positionMarker.style.cursor = 'grab';
 
@@ -202,8 +165,6 @@ class PositionManager {
     }
 
     showPositionModal() {
-        console.log("📍 Opening position modal");
-
         // Créer la modal si elle n'existe pas
         let modal = document.getElementById('position-modal');
         if (!modal) {
@@ -296,8 +257,6 @@ class PositionManager {
     }
 
     centerMapOnPosition() {
-        console.log("🎯 Centering map on position:", this.currentPosition);
-
         const viewport = this.dom.getElementById('viewport');
         if (!viewport) return;
 
@@ -321,7 +280,6 @@ class PositionManager {
         this.currentPosition = { x, y };
         this.updateMarkerPosition();
         this.savePosition();
-        console.log("📍 Position updated to:", this.currentPosition);
     }
 
     // Méthode pour obtenir la position actuelle
