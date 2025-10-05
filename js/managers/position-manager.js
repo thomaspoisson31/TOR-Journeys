@@ -47,6 +47,10 @@ class PositionManager {
         this.positionMarker.className = 'position-marker';
         this.positionMarker.title = 'Position des aventuriers';
 
+        // Ajouter un fond de secours visible
+        this.positionMarker.style.backgroundColor = 'rgba(255, 215, 0, 0.3)';
+        this.positionMarker.style.border = '3px solid #FFD700';
+        
         // Créer l'image
         const img = document.createElement('img');
         img.src = '/attached_assets/img258-removebg-preview_1759645364055.png';
@@ -54,14 +58,22 @@ class PositionManager {
         img.style.width = '100%';
         img.style.height = '100%';
         img.style.objectFit = 'contain';
+        img.style.display = 'block';
         
         // Gestion des erreurs de chargement de l'image
         img.onerror = () => {
             console.error("❌ Failed to load position marker image");
+            // Afficher un emoji de secours
+            this.positionMarker.innerHTML = '<div style="font-size: 48px; line-height: 64px; text-align: center;">📍</div>';
         };
         
         img.onload = () => {
             console.log("✅ Position marker image loaded successfully");
+            // Forcer un rafraîchissement visuel
+            this.positionMarker.style.opacity = '0.99';
+            setTimeout(() => {
+                this.positionMarker.style.opacity = '1';
+            }, 10);
         };
 
         this.positionMarker.appendChild(img);
@@ -75,6 +87,15 @@ class PositionManager {
         console.log("✅ Position marker created at:", this.currentPosition);
         console.log("📍 Marker element:", this.positionMarker);
         console.log("📍 Marker visible:", this.positionMarker.offsetWidth > 0 && this.positionMarker.offsetHeight > 0);
+        console.log("📍 Marker dimensions:", {
+            width: this.positionMarker.offsetWidth,
+            height: this.positionMarker.offsetHeight,
+            left: this.positionMarker.style.left,
+            top: this.positionMarker.style.top,
+            zIndex: window.getComputedStyle(this.positionMarker).zIndex,
+            opacity: window.getComputedStyle(this.positionMarker).opacity,
+            visibility: window.getComputedStyle(this.positionMarker).visibility
+        });
     }
 
     updateMarkerPosition() {

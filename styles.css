@@ -543,17 +543,20 @@ body {
 
 /* Position Marker styles */
 .position-marker {
-    position: absolute;
-    width: 64px;
-    height: 64px;
-    cursor: grab;
-    transform: translate(-50%, -50%);
-    pointer-events: auto;
-    transition: transform 0.2s ease, filter 0.2s ease;
+    position: absolute !important;
+    width: 64px !important;
+    height: 64px !important;
+    cursor: grab !important;
+    transform: translate(-50%, -50%) !important;
+    pointer-events: auto !important;
+    transition: transform 0.2s ease, filter 0.2s ease !important;
     z-index: 200 !important;
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.8))
             drop-shadow(0 0 20px rgba(0, 0, 0, 0.6))
-            drop-shadow(0 0 30px rgba(255, 215, 0, 0.4));
+            drop-shadow(0 0 30px rgba(255, 215, 0, 0.4)) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
 }
 
 .position-marker:hover {
