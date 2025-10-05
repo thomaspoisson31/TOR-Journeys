@@ -541,6 +541,37 @@ body {
     padding: 0 !important;
 }
 
+/* Position Marker styles */
+.position-marker {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    cursor: grab;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    transition: transform 0.2s ease, filter 0.2s ease;
+    z-index: 100;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.8))
+            drop-shadow(0 0 20px rgba(0, 0, 0, 0.6))
+            drop-shadow(0 0 30px rgba(255, 215, 0, 0.4));
+}
+
+.position-marker:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.9))
+            drop-shadow(0 0 30px rgba(0, 0, 0, 0.7))
+            drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
+}
+
+.position-marker:active {
+    cursor: grabbing;
+}
+
+/* Position Modal styles */
+#position-modal .bg-gray-800 {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
 /* Discovery tooltip styles */
 .discovery-tooltip {
     pointer-events: none;

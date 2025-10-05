@@ -26,6 +26,7 @@ import AuthManager from './managers/auth-manager.js';
 import InfoBoxManager from './managers/infobox-manager.js';
 import ImportExportManager from './managers/import-export-manager.js';
 import ZoomManager from './managers/zoom-manager.js';
+import PositionManager from './managers/position-manager.js';
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -53,6 +54,7 @@ let authManager;
 let infoBoxManager;
 let importExportManager;
 let zoomManager;
+let positionManager;
 
 console.log("✅ Global variables initialized");
 
@@ -486,6 +488,15 @@ function initializeMap() {
     window.zoomManager = zoomManager; // Exposer globalement
     console.log("✅ ZoomManager initialized");
 
+    // Initialiser PositionManager
+    positionManager = new PositionManager(
+        { getElementById: (id) => document.getElementById(id) },
+        { MAP_WIDTH, MAP_HEIGHT }
+    );
+    positionManager.init();
+    window.positionManager = positionManager; // Exposer globalement
+    console.log("✅ PositionManager initialized");
+
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
 
@@ -773,6 +784,16 @@ function setupMapNavigation() {
 // --- Event Listeners simplifiés ---
 function setupInfoBoxListeners() {
     console.log("📋 Setting up info-box listeners...");
+
+    // Bouton pour centrer sur la position
+    const centerOnPositionBtn = document.getElementById('center-on-position-btn');
+    if (centerOnPositionBtn) {
+        centerOnPositionBtn.addEventListener('click', () => {
+            if (positionManager) {
+                positionManager.centerMapOnPosition();
+            }
+        });
+    }
 
     // Gestionnaire principal pour les clics dans le viewport
     viewport.addEventListener('click', handleViewportClick);
