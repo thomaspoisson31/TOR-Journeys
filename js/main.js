@@ -1,6 +1,3 @@
-` tags at the beginning and end, which are causing a JavaScript `SyntaxError: Unexpected token '{`'. The following modification removes these tags to ensure the code is valid JavaScript.
-
-<replit_final_file>
 // Version de débogage simplifiée - chargement progressif des fonctionnalités
 
 // --- Import des constantes ---
