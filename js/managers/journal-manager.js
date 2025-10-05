@@ -144,8 +144,8 @@ class JournalManager {
             localStorage.setItem('travelJournal', JSON.stringify(this.journal));
             
             // Synchroniser avec le cloud si authentifié
-            if (typeof scheduleAutoSync === 'function') {
-                scheduleAutoSync();
+            if (typeof window.scheduleAutoSync === 'function') {
+                window.scheduleAutoSync();
             }
             
             this.renderJournal();

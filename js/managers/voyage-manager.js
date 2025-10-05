@@ -1364,8 +1364,8 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         console.log("📖 Voyage sauvegardé dans le journal:", journeyEntry.title);
 
         // Synchroniser avec le cloud si authentifié
-        if (typeof scheduleAutoSync === 'function') {
-            scheduleAutoSync();
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
         }
     }
 
