@@ -190,7 +190,9 @@ class PositionManager {
         this.positionMarker.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             e.stopPropagation();
+            e.stopImmediatePropagation(); // Empêcher la propagation vers d'autres gestionnaires
             this.showPositionModal(e);
+            return false; // Bloquer complètement l'événement
         });
     }
 
