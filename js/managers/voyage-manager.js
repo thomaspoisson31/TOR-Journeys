@@ -101,10 +101,16 @@ class VoyageManager {
         for (let day = 1; day <= this.totalJourneyDays; day++) {
             const calendarDate = this.getCalendarDateForDay(day);
             console.log(`📅 Jour ${day}: date calendrier = "${calendarDate}"`);
+            
+            // Calculer les coordonnées de début et fin de journée
+            const dayCoordinates = this.calculateDayCoordinates(day);
+            
             const dayData = {
                 day: day,
                 discoveries: [],
-                calendarDate: calendarDate
+                calendarDate: calendarDate,
+                startCoordinates: dayCoordinates.start,
+                endCoordinates: dayCoordinates.end
             };
 
             // Find discoveries for this day
@@ -132,6 +138,41 @@ class VoyageManager {
         if (this.currentDayIndex >= this.totalJourneyDays) {
             this.currentDayIndex = 0;
         }
+    }
+
+    calculateDayCoordinates(day) {
+        // Si pas de tracé, retourner null
+        if (!journeyPath || journeyPath.length === 0) {
+            return { start: null, end: null };
+        }
+
+        const totalPathPoints = journeyPath.length;
+
+        // Calculer les indices dans le tracé pour ce jour
+        const startRatio = (day - 1) / this.totalJourneyDays;
+        const endRatio = day / this.totalJourneyDays;
+
+        const startIndex = Math.floor(startRatio * (totalPathPoints - 1));
+        const endIndex = Math.min(
+            Math.floor(endRatio * (totalPathPoints - 1)),
+            totalPathPoints - 1
+        );
+
+        // Récupérer les coordonnées
+        const startCoordinates = journeyPath[startIndex] ? {
+            x: Math.round(journeyPath[startIndex].x),
+            y: Math.round(journeyPath[startIndex].y)
+        } : null;
+
+        const endCoordinates = journeyPath[endIndex] ? {
+            x: Math.round(journeyPath[endIndex].x),
+            y: Math.round(journeyPath[endIndex].y)
+        } : null;
+
+        return {
+            start: startCoordinates,
+            end: endCoordinates
+        };
     }
 
     buildAbsoluteTimeline() {
@@ -566,6 +607,14 @@ class VoyageManager {
         }
 
         this.currentDayIndex = targetDayIndex;
+        
+        // Afficher les coordonnées de la journée dans la console
+        const dayData = this.dayByDayData[this.currentDayIndex];
+        if (dayData && dayData.startCoordinates && dayData.endCoordinates) {
+            console.log(`📍 Jour ${dayData.day} - Coordonnées de début:`, dayData.startCoordinates);
+            console.log(`📍 Jour ${dayData.day} - Coordonnées de fin:`, dayData.endCoordinates);
+        }
+        
         this.renderCurrentDay();
 
         // Mettre à jour la date principale du calendrier
