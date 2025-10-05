@@ -53,7 +53,7 @@ class PositionManager {
         
         // Créer l'image
         const img = document.createElement('img');
-        img.src = '/attached_assets/img258-removebg-preview_1759645364055.png';
+        img.src = '/images/markers/Position.png';
         img.alt = 'Position';
         img.style.width = '100%';
         img.style.height = '100%';
