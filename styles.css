@@ -736,6 +736,14 @@ body {
     font-weight: 400 !important;
 }
 
+/* Exception pour les icônes FontAwesome */
+.voyage-modal-white i.fas,
+.voyage-modal-white i.far,
+.voyage-modal-white i.fab {
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free' !important;
+    font-weight: 900 !important;
+}
+
 /* Exception pour le titre du jour qui doit rester rouge et en gras */
 .voyage-modal-white #segment-title {
     color: #940000 !important;
