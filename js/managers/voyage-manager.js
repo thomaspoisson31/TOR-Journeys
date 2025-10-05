@@ -388,9 +388,8 @@ class VoyageManager {
         const dayData = this.dayByDayData[this.currentDayIndex];
         if (!dayData) return;
 
-        // Update header
-        segmentTitle.textContent = dayData.calendarDate;
-        dayCounter.textContent = `(Jour ${dayData.day} sur ${this.totalJourneyDays})`;
+        // Update header avec la méthode dédiée qui gère la saison
+        this.updateDayTitle(dayData);
 
         // Vérifier s'il y a des événements aléatoires disponibles
         const hasRandomEvents = this.checkForRandomEvents(dayData);
