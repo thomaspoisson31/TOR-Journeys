@@ -117,25 +117,53 @@ class JournalManager {
             }).join('');
 
             return `
-                <div class="border border-gray-300 rounded-lg p-6 bg-white shadow-sm mb-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900 mb-1">${journey.title}</h2>
-                            <p class="text-sm text-gray-500">Généré le ${formattedDate}</p>
+                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-6">
+                    <div class="p-6 pb-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1 cursor-pointer" onclick="window.journalManager.toggleJourney(${journeyIndex})">
+                                <div class="flex items-center">
+                                    <i id="journey-icon-${journeyIndex}" class="fas fa-chevron-right text-gray-500 mr-3 transition-transform"></i>
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-gray-900 mb-1 hover:text-blue-600 transition-colors">${journey.title}</h2>
+                                        <p class="text-sm text-gray-500">Généré le ${formattedDate} • ${journey.totalDays} jours</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="window.journalManager.deleteJourney(${journeyIndex})" 
+                                    class="text-red-500 hover:text-red-700 p-2 ml-4" 
+                                    title="Supprimer ce voyage">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
-                        <button onclick="window.journalManager.deleteJourney(${journeyIndex})" 
-                                class="text-red-500 hover:text-red-700 p-2" 
-                                title="Supprimer ce voyage">
-                            <i class="fas fa-trash"></i>
-                        </button>
                     </div>
-                    <hr class="border-gray-200 mb-4">
-                    ${daysHTML}
+                    <div id="journey-content-${journeyIndex}" class="hidden px-6 pb-6">
+                        <hr class="border-gray-200 mb-4">
+                        ${daysHTML}
+                    </div>
                 </div>
             `;
         }).join('');
 
         this.journalContent.innerHTML = journalHTML;
+    }
+
+    toggleJourney(journeyIndex) {
+        const content = document.getElementById(`journey-content-${journeyIndex}`);
+        const icon = document.getElementById(`journey-icon-${journeyIndex}`);
+        
+        if (!content || !icon) return;
+        
+        if (content.classList.contains('hidden')) {
+            // Expand
+            content.classList.remove('hidden');
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-down');
+        } else {
+            // Collapse
+            content.classList.add('hidden');
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-right');
+        }
     }
 
     deleteJourney(index) {
