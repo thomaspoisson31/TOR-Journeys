@@ -496,7 +496,7 @@ class VoyageManager {
             descriptionHtml = `
                 <div class="bg-gray-800 rounded-lg p-4 mb-4">
                     <div class="text-sm text-gray-400 mb-2">📖 Description de la journée :</div>
-                    <div class="text-gray-200 leading-relaxed text-sm">${dayDescription.replace(/\n/g, '<br>')}</div>
+                    <div class="text-gray-200 leading-relaxed text-base">${dayDescription.replace(/\n/g, '<br>')}</div>
                 </div>
             `;
         }
