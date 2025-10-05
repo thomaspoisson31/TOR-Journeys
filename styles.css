@@ -38,7 +38,11 @@ body {
 
 #position-layer {
     z-index: 30;
-    pointer-events: none;
+    pointer-events: none; /* Les enfants du marqueur réactivent pointer-events */
+}
+
+#position-layer .position-marker {
+    pointer-events: auto; /* Permet l'interaction avec le marqueur */
 }
 
 #drawing-canvas {
@@ -562,6 +566,10 @@ body {
     opacity: 1 !important;
     visibility: visible !important;
     display: block !important;
+}
+
+.position-marker * {
+    pointer-events: auto !important;
 }
 
 .position-marker:hover {
