@@ -372,6 +372,52 @@ class PositionManager {
     getPosition() {
         return { ...this.currentPosition };
     }
+
+    // Méthode pour animer le déplacement du marqueur vers une nouvelle position
+    animateToPosition(targetX, targetY, duration = 1000) {
+        const startX = this.currentPosition.x;
+        const startY = this.currentPosition.y;
+        const startTime = performance.now();
+
+        const animate = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Fonction d'easing pour un mouvement fluide (ease-in-out)
+            const easeProgress = progress < 0.5
+                ? 2 * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+            // Calculer la position interpolée
+            const currentX = startX + (targetX - startX) * easeProgress;
+            const currentY = startY + (targetY - startY) * easeProgress;
+
+            // Mettre à jour la position
+            this.currentPosition.x = currentX;
+            this.currentPosition.y = currentY;
+            this.updateMarkerPosition();
+
+            // Continuer l'animation si pas terminée
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                // Animation terminée - sauvegarder la position finale
+                this.currentPosition.x = targetX;
+                this.currentPosition.y = targetY;
+                this.updateMarkerPosition();
+                this.savePosition();
+
+                // Programmer la synchronisation
+                if (typeof window.scheduleAutoSync === 'function') {
+                    window.scheduleAutoSync();
+                }
+
+                console.log(`📍 Marqueur de position déplacé au début du tracé: (${Math.round(targetX)}, ${Math.round(targetY)})`);
+            }
+        };
+
+        requestAnimationFrame(animate);
+    }
 }
 
 export default PositionManager;

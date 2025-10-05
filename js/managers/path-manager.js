@@ -1,4 +1,3 @@
-
 class PathManager {
     constructor(domElements, dataManager, mapConstants) {
         this.dom = domElements;
@@ -22,12 +21,12 @@ class PathManager {
             console.error('❌ Drawing canvas not found');
             return;
         }
-        
+
         this.ctx = this.canvas.getContext('2d');
         this.setupCanvas();
         this.setupEventListeners();
         this.setupCanvasStyle();
-        
+
         // Rendre les variables globales disponibles pour compatibilité
         window.journeyPath = this.path;
         window.journeyDiscoveries = this.discoveries;
@@ -35,7 +34,7 @@ class PathManager {
         window.totalPathPixels = 0;
         window.lastPoint = null;
         window.isDrawingMode = false;
-        
+
         console.log('🛤️ PathManager initialized');
     }
 
@@ -54,7 +53,7 @@ class PathManager {
                 setTimeout(setupCanvasSize, 100);
             }
         };
-        
+
         setupCanvasSize();
     }
 
@@ -135,7 +134,7 @@ class PathManager {
         console.log("✏️ Mouse move during drawing");
         const currentPoint = this.getCanvasCoordinates(event);
         const segmentLength = Math.sqrt(
-            Math.pow(currentPoint.x - this.lastPoint.x, 2) + 
+            Math.pow(currentPoint.x - this.lastPoint.x, 2) +
             Math.pow(currentPoint.y - this.lastPoint.y, 2)
         );
         this.totalDistance += segmentLength;
@@ -158,13 +157,24 @@ class PathManager {
             this.isDrawing = false;
             // Auto-sync sera géré par le main.js
             console.log("🔄 Drawing segment completed");
+
+            // Recalculer les informations du voyage
+            this.updatePathData();
+
+            // Déplacer le marqueur de position au début du tracé avec animation
+            if (window.positionManager && window.journeyPath.length > 0) {
+                const startPoint = window.journeyPath[0];
+                window.positionManager.animateToPosition(startPoint.x, startPoint.y);
+            }
+
+            console.log("🏁 Drawing mode ended - journey path created");
         }
     }
 
     getCanvasCoordinates(event) {
         const viewport = document.getElementById('viewport');
         const mapContainer = document.getElementById('map-container');
-        
+
         if (!viewport || !mapContainer) return { x: 0, y: 0 };
 
         const viewportRect = viewport.getBoundingClientRect();
@@ -178,7 +188,7 @@ class PathManager {
         if (transform) {
             const scaleMatch = transform.match(/scale\(([^)]+)\)/);
             const translateMatch = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
-            
+
             if (scaleMatch) scale = parseFloat(scaleMatch[1]);
             if (translateMatch) {
                 panX = parseFloat(translateMatch[1].replace('px', ''));
@@ -219,22 +229,22 @@ class PathManager {
             if (viewport) {
                 viewport.classList.add('drawing');
             }
-            
+
             // Ensure canvas has proper pointer events when in drawing mode
             if (this.canvas) {
                 this.canvas.style.pointerEvents = 'auto';
                 console.log("✅ Canvas pointer events enabled");
             }
-            
+
             // Désactiver les gestionnaires de pan
             this.disablePanHandlers();
-            
+
             console.log('✏️ Mode dessin activé - pan désactivé');
         } else {
             // Arrêter tout tracé en cours
             this.isDrawing = false;
             this.lastPoint = null;
-            
+
             if (drawModeBtn) {
                 drawModeBtn.classList.remove('btn-active');
                 drawModeBtn.title = 'Tracer un voyage';
@@ -242,21 +252,21 @@ class PathManager {
             if (viewport) {
                 viewport.classList.remove('drawing');
             }
-            
+
             if (this.canvas) {
                 this.canvas.style.pointerEvents = 'none';
                 console.log("❌ Canvas pointer events disabled");
             }
-            
+
             // Réactiver les gestionnaires de pan
             this.enablePanHandlers();
-            
+
             console.log('✏️ Mode dessin désactivé - pan réactivé');
         }
 
         // Mettre à jour les variables globales pour compatibilité
         window.isDrawingMode = this.isDrawingMode;
-        
+
         // Re-render locations to update pointer events (comme dans l'ancienne version)
         if (window.renderLocations) {
             window.renderLocations();
@@ -283,7 +293,7 @@ class PathManager {
 
         // Supprimer temporairement le curseur grab
         viewport.style.cursor = 'crosshair';
-        
+
         console.log("🚫 Gestionnaires de pan désactivés");
     }
 
@@ -293,13 +303,13 @@ class PathManager {
 
         // Restaurer le curseur normal
         viewport.style.cursor = 'grab';
-        
+
         // Réactiver la navigation de la carte en appelant setupMapNavigation depuis main.js
         if (window.setupMapNavigation) {
             // Ne pas rappeler setupMapNavigation car cela doublerait les listeners
             // À la place, simplement restaurer le curseur
         }
-        
+
         console.log("✅ Gestionnaires de pan réactivés");
     }
 
@@ -331,18 +341,18 @@ class PathManager {
     updatePathData() {
         // Calculer la distance totale
         this.calculateTotalDistance();
-        
+
         // Détecter les découvertes
         this.detectDiscoveries();
-        
+
         // Mettre à jour les variables globales
         window.journeyPath = this.path;
         window.journeyDiscoveries = this.discoveries;
         window.totalPathPixels = this.totalDistance;
-        
+
         // Mettre à jour l'affichage
         this.updateDistanceDisplay();
-        
+
         // Afficher le bouton de voyage si le chemin est suffisant
         if (this.path.length > 10) {
             this.showVoyageButton();
@@ -369,7 +379,7 @@ class PathManager {
 
         // Détecter les lieux proches du tracé
         this.detectNearbyLocations();
-        
+
         // Détecter les régions traversées
         this.detectTraversedRegions();
     }
@@ -419,11 +429,11 @@ class PathManager {
             if (!regionCoords || regionCoords.length < 3) return;
 
             const intersections = [];
-            
+
             // Vérifier les intersections du tracé avec la région
             for (let i = 1; i < this.path.length; i++) {
                 const point = this.path[i];
-                
+
                 if (this.isPointInPolygon(point, regionCoords)) {
                     intersections.push(i);
                 }
