@@ -87,16 +87,8 @@ class PositionManager {
         const currentScale = window.scale || 1;
         const zoomPercentage = currentScale * 100;
         
-        let sizeMultiplier = 1;
-        if (zoomPercentage < 25) {
-            sizeMultiplier = 4;
-        } else if (zoomPercentage <= 50) {
-            sizeMultiplier = 3;
-        } else if (zoomPercentage <= 75) {
-            sizeMultiplier = 2;
-        } else {
-            sizeMultiplier = 1;
-        }
+        // Taille x2 en dessous de 50%, taille normale au-dessus
+        const sizeMultiplier = zoomPercentage < 50 ? 2 : 1;
         
         const baseSize = 64;
         const newSize = baseSize * sizeMultiplier;
