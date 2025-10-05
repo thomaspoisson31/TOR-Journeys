@@ -54,6 +54,15 @@ class PositionManager {
         img.style.width = '100%';
         img.style.height = '100%';
         img.style.objectFit = 'contain';
+        
+        // Gestion des erreurs de chargement de l'image
+        img.onerror = () => {
+            console.error("❌ Failed to load position marker image");
+        };
+        
+        img.onload = () => {
+            console.log("✅ Position marker image loaded successfully");
+        };
 
         this.positionMarker.appendChild(img);
 
@@ -64,6 +73,8 @@ class PositionManager {
         locationsLayer.appendChild(this.positionMarker);
 
         console.log("✅ Position marker created at:", this.currentPosition);
+        console.log("📍 Marker element:", this.positionMarker);
+        console.log("📍 Marker visible:", this.positionMarker.offsetWidth > 0 && this.positionMarker.offsetHeight > 0);
     }
 
     updateMarkerPosition() {
