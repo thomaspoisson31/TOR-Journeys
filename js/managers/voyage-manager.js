@@ -667,27 +667,48 @@ class VoyageManager {
 
         // Mettre à jour la saison basée sur le mois du calendrier
         const monthSeason = calendarData[monthIndex].season.toLowerCase();
+        window.currentSeason = monthSeason;
+        
+        // Sauvegarder dans localStorage
+        localStorage.setItem('currentSeason', monthSeason);
+        localStorage.setItem('currentCalendarDate', JSON.stringify(window.currentCalendarDate));
+
+        // Mettre à jour le CalendarManager si disponible
         if (window.calendarManager) {
-            // IMPORTANT : Mettre à jour toutes les propriétés du CalendarManager AVANT updateSeasonDisplay
             window.calendarManager.currentSeason = monthSeason;
-            window.calendarManager.currentCalendarDate = {
-                month: calendarData[monthIndex].name,
-                day: newDay
-            };
+            window.calendarManager.currentCalendarDate = window.currentCalendarDate;
             window.calendarManager.isCalendarMode = true;
-            
-            // Synchroniser avec les variables globales
-            window.currentSeason = monthSeason;
-            
-            // Sauvegarder dans localStorage
-            localStorage.setItem('currentSeason', monthSeason);
-            localStorage.setItem('currentCalendarDate', JSON.stringify(window.currentCalendarDate));
-            
-            // MAINTENANT on peut appeler updateSeasonDisplay avec les bonnes données
-            window.calendarManager.updateSeasonDisplay();
+            window.calendarManager.saveCalendarToLocal();
         }
 
+        // Mise à jour DIRECTE du DOM du header
+        this.updateHeaderDisplay(calendarData[monthIndex].name, newDay, monthSeason);
+
         console.log(`📅 Date principale mise à jour : ${newDay} ${calendarData[monthIndex].name} (${monthSeason})`);
+    }
+
+    updateHeaderDisplay(monthName, day, season) {
+        // Mettre à jour directement les éléments du DOM du header
+        const calendarDateIndicator = document.getElementById('calendar-date-indicator');
+        const seasonIndicator = document.getElementById('season-indicator');
+
+        // Mettre à jour la date
+        if (calendarDateIndicator) {
+            calendarDateIndicator.textContent = `${day} ${monthName}`;
+            calendarDateIndicator.classList.remove('hidden');
+            console.log(`📅 Header date mise à jour: ${day} ${monthName}`);
+        }
+
+        // Mettre à jour le symbole de saison
+        if (seasonIndicator && window.calendarManager) {
+            const seasonMainName = season.split('-')[0];
+            const symbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
+            const fullName = window.calendarManager.seasonNames[season] || season;
+            
+            seasonIndicator.innerHTML = symbol;
+            seasonIndicator.title = fullName;
+            console.log(`📅 Header saison mise à jour: ${symbol} (${fullName})`);
+        }
     }
 
 
