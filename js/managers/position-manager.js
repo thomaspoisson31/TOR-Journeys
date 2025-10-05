@@ -95,6 +95,72 @@ class PositionManager {
         
         this.positionMarker.style.width = `${newSize}px`;
         this.positionMarker.style.height = `${newSize}px`;
+        
+        // Vérifier la proximité avec les lieux ayant des rumeurs
+        this.checkRumoursProximity();
+    }
+
+    checkRumoursProximity() {
+        if (!this.positionMarker || !window.locationsData || !window.locationsData.locations) return;
+
+        const PROXIMITY_THRESHOLD = 100; // 100 pixels
+        let nearRumours = false;
+
+        // Vérifier chaque lieu
+        for (const location of window.locationsData.locations) {
+            // Vérifier si le lieu a des rumeurs
+            const hasRumours = (location.Rumeurs && location.Rumeurs.length > 0 && 
+                               location.Rumeurs.some(r => r && r !== "A définir")) ||
+                              (location.Rumeur && location.Rumeur !== "A définir");
+
+            if (hasRumours && location.coordinates) {
+                // Calculer la distance
+                const dx = location.coordinates.x - this.currentPosition.x;
+                const dy = location.coordinates.y - this.currentPosition.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance <= PROXIMITY_THRESHOLD) {
+                    nearRumours = true;
+                    break;
+                }
+            }
+        }
+
+        // Vérifier les régions ayant des rumeurs
+        if (!nearRumours && window.regionsData && window.regionsData.regions) {
+            for (const region of window.regionsData.regions) {
+                // Vérifier si la région a des rumeurs
+                const hasRumours = (region.Rumeurs && region.Rumeurs.length > 0 && 
+                                   region.Rumeurs.some(r => r && r !== "A définir")) ||
+                                  (region.Rumeur && region.Rumeur !== "A définir");
+
+                if (hasRumours && region.points && region.points.length > 0) {
+                    // Calculer la distance au centre de la région
+                    const centerX = region.points.reduce((sum, p) => sum + p.x, 0) / region.points.length;
+                    const centerY = region.points.reduce((sum, p) => sum + p.y, 0) / region.points.length;
+                    
+                    const dx = centerX - this.currentPosition.x;
+                    const dy = centerY - this.currentPosition.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance <= PROXIMITY_THRESHOLD) {
+                        nearRumours = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Appliquer ou retirer le cadre jaune
+        if (nearRumours) {
+            this.positionMarker.style.border = '4px solid #FCD34D';
+            this.positionMarker.style.borderRadius = '8px';
+            this.positionMarker.style.boxShadow = '0 0 20px rgba(252, 211, 77, 0.6)';
+        } else {
+            this.positionMarker.style.border = 'none';
+            this.positionMarker.style.borderRadius = '0';
+            this.positionMarker.style.boxShadow = 'none';
+        }
     }
 
     setupEventListeners() {
@@ -162,6 +228,9 @@ class PositionManager {
 
         // Mettre à jour l'affichage
         this.updateMarkerPosition();
+
+        // Vérifier la proximité avec les rumeurs
+        this.checkRumoursProximity();
 
         // Mettre à jour les coordonnées de départ pour le prochain mouvement
         this.dragStartX = e.clientX;
