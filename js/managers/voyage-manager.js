@@ -418,19 +418,22 @@ class VoyageManager {
         const dayCounter = document.getElementById('day-counter');
 
         if (segmentTitle) {
-            // Récupérer la date calendrier directement (car dayData.calendarDate peut être incorrect)
-            const realCalendarDate = this.getCalendarDateForDay(this.currentDayIndex + 1);
+            // Utiliser le numéro de jour depuis dayData pour garantir la cohérence
+            const dayNumber = dayData.day;
+            
+            // Récupérer la date calendrier pour ce jour spécifique
+            const realCalendarDate = this.getCalendarDateForDay(dayNumber);
+
+            console.log(`📅 updateDayTitle pour le jour ${dayNumber}: date="${realCalendarDate}"`);
 
             // Format: "Jour X : Date Mois Symbole de saison"
-            let titleText = `Jour ${this.currentDayIndex + 1} : ${realCalendarDate}`;
+            let titleText = `Jour ${dayNumber} : ${realCalendarDate}`;
             let seasonTooltip = '';
 
             // Ajouter le symbole de la saison pour ce jour spécifique
             if (window.calendarManager && window.calendarData && this.journeyStartDate) {
-                // Calculer la saison pour ce jour de voyage
-                const currentDay = this.currentDayIndex + 1;
                 let monthIndex = this.journeyStartDate.monthIndex;
-                let calendarDay = this.journeyStartDate.day + currentDay - 1;
+                let calendarDay = this.journeyStartDate.day + dayNumber - 1;
 
                 // Naviguer à travers les mois si nécessaire
                 while (calendarDay > window.calendarData[monthIndex].days.length) {
@@ -634,7 +637,10 @@ class VoyageManager {
         const isCalendarMode = window.isCalendarMode;
         const calendarData = window.calendarData;
 
+        console.log(`📅 updateMainCalendarDate appelée - index: ${this.currentDayIndex}, isCalendarMode: ${isCalendarMode}`);
+
         if (!isCalendarMode || !this.journeyStartDate || !calendarData || calendarData.length === 0) {
+            console.log(`📅 updateMainCalendarDate ignorée - conditions non remplies`);
             return;
         }
 
@@ -643,11 +649,15 @@ class VoyageManager {
         let monthIndex = this.journeyStartDate.monthIndex;
         let newDay = this.journeyStartDate.day + currentDay - 1;
 
+        console.log(`📅 Calcul: jour ${currentDay}, monthIndex initial: ${monthIndex}, newDay initial: ${newDay}`);
+
         // Naviguer à travers les mois si nécessaire
         while (newDay > calendarData[monthIndex].days.length) {
             newDay -= calendarData[monthIndex].days.length;
             monthIndex = (monthIndex + 1) % calendarData.length;
         }
+
+        console.log(`📅 Après navigation: monthIndex: ${monthIndex}, newDay: ${newDay}, mois: ${calendarData[monthIndex].name}`);
 
         // Mettre à jour la date courante globale
         window.currentCalendarDate = {
