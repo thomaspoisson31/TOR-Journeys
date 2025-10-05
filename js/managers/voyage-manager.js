@@ -613,6 +613,15 @@ class VoyageManager {
         if (dayData && dayData.startCoordinates && dayData.endCoordinates) {
             console.log(`📍 Jour ${dayData.day} - Coordonnées de début:`, dayData.startCoordinates);
             console.log(`📍 Jour ${dayData.day} - Coordonnées de fin:`, dayData.endCoordinates);
+            
+            // Déplacer le marqueur de position au début de la nouvelle journée
+            if (window.positionManager) {
+                window.positionManager.animateToPosition(
+                    dayData.startCoordinates.x,
+                    dayData.startCoordinates.y,
+                    800 // Durée de l'animation en ms
+                );
+            }
         }
         
         this.renderCurrentDay();
