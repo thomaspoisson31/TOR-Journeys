@@ -1036,26 +1036,38 @@ class VoyageManager {
         const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
         const adventurersQuest = localStorage.getItem('adventurersQuest') || '';
 
-        // Récupérer la saison actuelle
-        const currentSeason = typeof window.currentSeason !== 'undefined' ? window.currentSeason : 'printemps-debut';
-        const seasonNames = {
-            'printemps-debut': 'Printemps-début',
-            'printemps-milieu': 'Printemps-milieu',
-            'printemps-fin': 'Printemps-fin',
-            'ete-debut': 'Été-début',
-            'ete-milieu': 'Été-milieu',
-            'ete-fin': 'Été-fin',
-            'automne-debut': 'Automne-début',
-            'automne-milieu': 'Automne-milieu',
-            'automne-fin': 'Automne-fin',
-            'hiver-debut': 'Hiver-début',
-            'hiver-milieu': 'Hiver-milieu',
-            'hiver-fin': 'Hiver-fin'
-        };
-        const seasonName = seasonNames[currentSeason] || currentSeason;
-
-        // Collecter les données pour toutes les journées
+        // Collecter les données pour toutes les journées avec saison dynamique
         const allDaysData = this.dayByDayData.map((dayData, index) => {
+            // Calculer la saison spécifique de ce jour
+            let daySeason = 'printemps-debut';
+            if (window.calendarData && this.journeyStartDate) {
+                let monthIndex = this.journeyStartDate.monthIndex;
+                let calendarDay = this.journeyStartDate.day + (index + 1) - 1;
+
+                // Naviguer à travers les mois si nécessaire
+                while (calendarDay > window.calendarData[monthIndex].days.length) {
+                    calendarDay -= window.calendarData[monthIndex].days.length;
+                    monthIndex = (monthIndex + 1) % window.calendarData.length;
+                }
+
+                daySeason = window.calendarData[monthIndex].season.toLowerCase();
+            }
+
+            const seasonNames = {
+                'printemps-debut': 'Printemps-début',
+                'printemps-milieu': 'Printemps-milieu',
+                'printemps-fin': 'Printemps-fin',
+                'ete-debut': 'Été-début',
+                'ete-milieu': 'Été-milieu',
+                'ete-fin': 'Été-fin',
+                'automne-debut': 'Automne-début',
+                'automne-milieu': 'Automne-milieu',
+                'automne-fin': 'Automne-fin',
+                'hiver-debut': 'Hiver-début',
+                'hiver-milieu': 'Hiver-milieu',
+                'hiver-fin': 'Hiver-fin'
+            };
+
             const discoveriesWithDescriptions = dayData.discoveries.map(discovery => {
                 let description = '';
 
@@ -1094,6 +1106,7 @@ class VoyageManager {
             return {
                 dayNumber: index + 1,
                 calendarDate: dayData.calendarDate,
+                season: seasonNames[daySeason] || daySeason,
                 weather: weatherData ? weatherData.weather : null,
                 weatherSymbol: weatherData ? weatherData.symbol : null,
                 discoveries: discoveriesWithDescriptions
@@ -1103,7 +1116,6 @@ class VoyageManager {
         return {
             adventurersGroup,
             adventurersQuest,
-            season: seasonName,
             totalDays: this.totalJourneyDays,
             allDays: allDaysData
         };
@@ -1124,7 +1136,6 @@ ${journeyData.adventurersGroup || 'Groupe d\'aventuriers non défini'}
 **Nature de la quête :**
 ${journeyData.adventurersQuest || 'Quête non définie'}
 
-**Saison actuelle :** ${journeyData.season}
 **Durée totale du voyage :** ${journeyData.totalDays} jours
 
 **Détail des journées :**
@@ -1132,6 +1143,11 @@ ${journeyData.adventurersQuest || 'Quête non définie'}
 
         journeyData.allDays.forEach(dayData => {
             prompt += `\n**Jour ${dayData.dayNumber} (${dayData.calendarDate}) :**`;
+            
+            // Ajouter la saison spécifique du jour
+            if (dayData.season) {
+                prompt += `\n- Saison : ${dayData.season}`;
+            }
 
             // Ajouter la météo si disponible
             if (dayData.weather) {
@@ -1219,7 +1235,11 @@ ${styleInstructions}
 - Rédigez au présent de la 2ème personne du pluriel ("Vous traversez...")
 - Faites appel à plusieurs sens (vue, ouïe, odorat, toucher) pour une immersion totale
 - Évoquez l'état physique et mental des personnages en tenant compte du nombre de jours de voyage accumulés
-- Adaptez l'ambiance à la saison
+- **INTÉGREZ SUBTILEMENT la météo et la saison dans vos descriptions** :
+  • Ne répétez pas littéralement le texte météo fourni
+  • Traduisez la météo en sensations et détails atmosphériques (vent sur le visage, boue sous les pieds, etc.)
+  • Adaptez la description des paysages selon la saison (couleurs, végétation, ambiance)
+  • Montrez l'impact de la météo sur le voyage sans la mentionner explicitement
 - Le ton doit être immersif et narratif, adapté à une lecture en jeu de rôle
 - Évitez les redondances entre les descriptions des différentes journées
 - Assurez-vous que chaque description soit unique et apporte sa propre atmosphère
