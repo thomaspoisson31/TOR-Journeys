@@ -668,16 +668,22 @@ class VoyageManager {
         // Mettre à jour la saison basée sur le mois du calendrier
         const monthSeason = calendarData[monthIndex].season.toLowerCase();
         if (window.calendarManager) {
+            // IMPORTANT : Mettre à jour toutes les propriétés du CalendarManager AVANT updateSeasonDisplay
             window.calendarManager.currentSeason = monthSeason;
+            window.calendarManager.currentCalendarDate = {
+                month: calendarData[monthIndex].name,
+                day: newDay
+            };
+            window.calendarManager.isCalendarMode = true;
+            
+            // Synchroniser avec les variables globales
             window.currentSeason = monthSeason;
+            
+            // Sauvegarder dans localStorage
             localStorage.setItem('currentSeason', monthSeason);
-            window.calendarManager.currentCalendarDate = window.currentCalendarDate;
+            localStorage.setItem('currentCalendarDate', JSON.stringify(window.currentCalendarDate));
             
-            // Exposer les données globalement pour forcer la synchronisation
-            window.calendarManager.exposeGlobalData();
-            
-            // Sauvegarder et rafraîchir l'affichage
-            window.calendarManager.saveCalendarToLocal();
+            // MAINTENANT on peut appeler updateSeasonDisplay avec les bonnes données
             window.calendarManager.updateSeasonDisplay();
         }
 
