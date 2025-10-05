@@ -672,9 +672,12 @@ class VoyageManager {
             window.currentSeason = monthSeason;
             localStorage.setItem('currentSeason', monthSeason);
             window.calendarManager.currentCalendarDate = window.currentCalendarDate;
+            
+            // Exposer les données globalement pour forcer la synchronisation
+            window.calendarManager.exposeGlobalData();
+            
+            // Sauvegarder et rafraîchir l'affichage
             window.calendarManager.saveCalendarToLocal();
-
-            // FORCER le rafraîchissement de l'affichage via CalendarManager
             window.calendarManager.updateSeasonDisplay();
         }
 
