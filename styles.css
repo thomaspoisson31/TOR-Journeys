@@ -553,8 +553,6 @@ body {
 /* Position Marker styles */
 .position-marker {
     position: absolute !important;
-    width: 64px !important;
-    height: 64px !important;
     cursor: move !important;
     transform: translate(-50%, -50%) !important;
     pointer-events: auto !important;

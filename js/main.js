@@ -1,3 +1,4 @@
+replit_final_file>
 // Version de débogage simplifiée - chargement progressif des fonctionnalités
 
 // --- Import des constantes ---
@@ -483,6 +484,13 @@ function initializeMap() {
         const viewportHeight = viewport.clientHeight;
         const currentScale = window.scale || scale;
         zoomToPoint(newScale / currentScale, viewportWidth / 2, viewportHeight / 2);
+
+        // Mettre à jour la taille du marqueur de position après un court délai
+        setTimeout(() => {
+            if (positionManager) {
+                positionManager.updateMarkerSize();
+            }
+        }, 10);
     };
     zoomManager.init();
     window.zoomManager = zoomManager; // Exposer globalement
@@ -592,7 +600,7 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
         if (shouldShowThumbnails !== wasShowingThumbnails) {
             renderLocations();
         }
-        
+
         // Mettre à jour la taille du marqueur de position
         if (positionManager) {
             positionManager.updateMarkerSize();
@@ -1446,16 +1454,16 @@ function handleViewportClick(event) {
     const viewportY = event.clientY - rect.top;
     const mapX = (viewportX - panX) / scale;
     const mapY = (viewportY - panY) / scale;
-    
+
     console.log("🖱️ CLICK DEBUG:");
     console.log(`  - Coordonnées clic: x=${Math.round(mapX)}, y=${Math.round(mapY)}`);
-    
+
     if (positionManager) {
         const currentPos = positionManager.getPosition();
         console.log(`  - Position marqueur: x=${Math.round(currentPos.x)}, y=${Math.round(currentPos.y)}`);
         console.log(`  - Distance au marqueur: ${Math.round(Math.sqrt(Math.pow(mapX - currentPos.x, 2) + Math.pow(mapY - currentPos.y, 2)))} pixels`);
     }
-    
+
     // Gérer les différents modes de clic
     if (isRegionDrawingMode) {
         handleRegionClick(event);
@@ -1888,3 +1896,4 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("📋 Simplified main.js loaded - waiting for DOM ready");
     initializeApp();
 });
+</replit_final_file>
