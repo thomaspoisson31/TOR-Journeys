@@ -804,16 +804,6 @@ function setupMapNavigation() {
 function setupInfoBoxListeners() {
     console.log("📋 Setting up info-box listeners...");
 
-    // Bouton pour centrer sur la position
-    const centerOnPositionBtn = document.getElementById('center-on-position-btn');
-    if (centerOnPositionBtn) {
-        centerOnPositionBtn.addEventListener('click', () => {
-            if (positionManager) {
-                positionManager.centerMapOnPosition();
-            }
-        });
-    }
-
     // Gestionnaire principal pour les clics dans le viewport
     viewport.addEventListener('click', handleViewportClick);
 
