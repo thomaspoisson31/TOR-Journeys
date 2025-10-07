@@ -1613,6 +1613,9 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         const newPanX = (viewportWidth / 2) - (centerX * targetScale);
         const newPanY = (viewportHeight / 2) - (centerY * targetScale);
 
+        // Activer la transition CSS pour un effet fluide
+        mapContainer.style.transition = 'transform 0.8s ease-in-out';
+
         // Appliquer la transformation
         mapContainer.style.transform = `translate(${newPanX}px, ${newPanY}px) scale(${targetScale})`;
 
@@ -1624,10 +1627,17 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             window.panY = newPanY;
         }
 
-        // Synchroniser le ZoomManager
+        // Synchroniser le ZoomManager après la transition
         if (window.zoomManager) {
-            window.zoomManager.updateDisplay();
+            setTimeout(() => {
+                window.zoomManager.updateDisplay();
+            }, 100);
         }
+
+        // Réinitialiser la transition après l'animation pour ne pas affecter les autres interactions
+        setTimeout(() => {
+            mapContainer.style.transition = 'transform 0.1s ease-out';
+        }, 800);
 
         console.log(`✅ Carte centrée sur le voyage avec zoom ${(targetScale * 100).toFixed(0)}%`);
     }
