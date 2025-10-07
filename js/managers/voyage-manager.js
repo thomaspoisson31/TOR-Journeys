@@ -1595,7 +1595,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         // Accéder aux variables globales de pan et scale
         const viewport = document.getElementById('viewport');
         const mapContainer = document.getElementById('map-container');
-        
+
         if (!viewport || !mapContainer) {
             console.error("❌ Viewport ou map-container introuvable");
             return;
@@ -1628,9 +1628,6 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         if (window.zoomManager) {
             window.zoomManager.updateDisplay();
         }
-
-        // Appliquer l'opacité réduite à la carte
-        viewport.style.opacity = '0.85';
 
         console.log(`✅ Carte centrée sur le voyage avec zoom ${(targetScale * 100).toFixed(0)}%`);
     }
