@@ -35,6 +35,8 @@ class VoyageManager {
                 if (modalContent) {
                     modalContent.classList.add('voyage-modal-white');
                 }
+                // Centrer la carte sur le tracé du voyage
+                this.centerMapOnJourney();
                 this.updateDisplay();
             });
         }
@@ -1559,6 +1561,64 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         } else {
             this.updateDescriptionModal(`Aucune description disponible pour le jour ${dayNumber}.`, true);
         }
+    }
+
+    centerMapOnJourney() {
+        // Vérifier qu'il y a un tracé de voyage
+        if (typeof journeyPath === 'undefined' || journeyPath.length === 0) {
+            console.log("⚠️ Pas de tracé de voyage à centrer");
+            return;
+        }
+
+        // Calculer le centre du tracé (bounding box)
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+
+        journeyPath.forEach(point => {
+            minX = Math.min(minX, point.x);
+            maxX = Math.max(maxX, point.x);
+            minY = Math.min(minY, point.y);
+            maxY = Math.max(maxY, point.y);
+        });
+
+        // Centre du tracé
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
+
+        console.log(`🎯 Centrage de la carte sur le voyage - Centre: (${centerX.toFixed(0)}, ${centerY.toFixed(0)})`);
+
+        // Accéder aux variables globales de pan et scale
+        const viewport = document.getElementById('viewport');
+        const mapContainer = document.getElementById('map-container');
+        
+        if (!viewport || !mapContainer) {
+            console.error("❌ Viewport ou map-container introuvable");
+            return;
+        }
+
+        // Récupérer le scale actuel depuis window.scale
+        const currentScale = window.scale || 1;
+
+        // Calculer la largeur effective du viewport (50% de l'écran avec la modale ouverte)
+        const viewportWidth = viewport.clientWidth * 0.5; // Moitié gauche pour la carte
+        const viewportHeight = viewport.clientHeight;
+
+        // Calculer le nouveau pan pour centrer le tracé dans la moitié gauche
+        const newPanX = (viewportWidth / 2) - (centerX * currentScale);
+        const newPanY = (viewportHeight / 2) - (centerY * currentScale);
+
+        // Appliquer la transformation
+        mapContainer.style.transform = `translate(${newPanX}px, ${newPanY}px) scale(${currentScale})`;
+
+        // Mettre à jour les variables globales si elles existent
+        if (typeof window.panX !== 'undefined') {
+            window.panX = newPanX;
+        }
+        if (typeof window.panY !== 'undefined') {
+            window.panY = newPanY;
+        }
+
+        console.log(`✅ Carte centrée sur le voyage avec zoom ${(currentScale * 100).toFixed(0)}%`);
     }
 
     getDiscoveryImage(discovery) {
