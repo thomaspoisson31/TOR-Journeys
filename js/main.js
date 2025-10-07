@@ -347,7 +347,7 @@ function renderRegions() {
         polygon.setAttribute('stroke', strokeColor);
         polygon.setAttribute('fill-opacity', '1');
         polygon.setAttribute('stroke-opacity', '1');
-        polygon.setAttribute('stroke-width', '6');
+        polygon.setAttribute('stroke-width', '3');
 
         // Créer les points du polygone
         const pointsStr = points
