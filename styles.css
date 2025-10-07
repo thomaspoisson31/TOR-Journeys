@@ -787,6 +787,16 @@ body {
     border-color: #dddddd !important;
 }
 
+/* Ancrage de la modale de voyage sur la droite */
+#voyage-segments-modal {
+    justify-content: flex-end !important;
+}
+
+#voyage-segments-modal > div {
+    margin-right: 1.25rem; /* 5 unités Tailwind = 1.25rem = 20px */
+    margin-left: 0 !important;
+}
+
 /* Défilement vertical uniquement pour le contenu de la modale de voyage */
 #current-segment-display {
     max-height: calc(90vh - 180px); /* Hauteur de la modale moins header et progress bar */
