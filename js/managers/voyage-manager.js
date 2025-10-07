@@ -1630,7 +1630,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         }
 
         // Appliquer l'opacité réduite à la carte
-        viewport.style.opacity = '0.5';
+        viewport.style.opacity = '0.85';
 
         console.log(`✅ Carte centrée sur le voyage avec zoom ${(targetScale * 100).toFixed(0)}%`);
     }
