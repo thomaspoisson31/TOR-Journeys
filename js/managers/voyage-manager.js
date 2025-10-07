@@ -44,6 +44,11 @@ class VoyageManager {
         if (closeBtn) {
             closeBtn.addEventListener('click', () => {
                 this.dom.hideModal(this.dom.voyageSegmentsModal);
+                // Restaurer l'opacité normale de la carte
+                const viewport = document.getElementById('viewport');
+                if (viewport) {
+                    viewport.style.opacity = '1';
+                }
             });
         }
 
@@ -1596,21 +1601,22 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             return;
         }
 
-        // Récupérer le scale actuel depuis window.scale
-        const currentScale = window.scale || 1;
+        // Forcer le zoom à 50%
+        const targetScale = 0.5;
+        window.scale = targetScale;
 
         // Calculer la largeur effective du viewport (50% de l'écran avec la modale ouverte)
         const viewportWidth = viewport.clientWidth * 0.5; // Moitié gauche pour la carte
         const viewportHeight = viewport.clientHeight;
 
         // Calculer le nouveau pan pour centrer le tracé dans la moitié gauche
-        const newPanX = (viewportWidth / 2) - (centerX * currentScale);
-        const newPanY = (viewportHeight / 2) - (centerY * currentScale);
+        const newPanX = (viewportWidth / 2) - (centerX * targetScale);
+        const newPanY = (viewportHeight / 2) - (centerY * targetScale);
 
         // Appliquer la transformation
-        mapContainer.style.transform = `translate(${newPanX}px, ${newPanY}px) scale(${currentScale})`;
+        mapContainer.style.transform = `translate(${newPanX}px, ${newPanY}px) scale(${targetScale})`;
 
-        // Mettre à jour les variables globales si elles existent
+        // Mettre à jour les variables globales
         if (typeof window.panX !== 'undefined') {
             window.panX = newPanX;
         }
@@ -1618,7 +1624,15 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             window.panY = newPanY;
         }
 
-        console.log(`✅ Carte centrée sur le voyage avec zoom ${(currentScale * 100).toFixed(0)}%`);
+        // Synchroniser le ZoomManager
+        if (window.zoomManager) {
+            window.zoomManager.updateDisplay();
+        }
+
+        // Appliquer l'opacité réduite à la carte
+        viewport.style.opacity = '0.5';
+
+        console.log(`✅ Carte centrée sur le voyage avec zoom ${(targetScale * 100).toFixed(0)}%`);
     }
 
     getDiscoveryImage(discovery) {
