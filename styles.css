@@ -595,6 +595,81 @@ body {
     color: #60a5fa;
 }
 
+/* Adventure Modal styles */
+#adventure-modal {
+    font-family: 'Merriweather', serif;
+}
+
+.adventure-tab-button {
+    transition: all 0.2s ease;
+    border-bottom-width: 2px;
+}
+
+.adventure-tab-button.active {
+    color: white;
+    border-color: #3b82f6;
+}
+
+.adventure-tab-button:not(.active):hover {
+    color: #d1d5db;
+    border-color: #6b7280;
+}
+
+.adventure-tab-content {
+    display: none;
+}
+
+.adventure-tab-content.active {
+    display: block;
+}
+
+.rumor-item, .threat-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(55, 65, 81, 0.5);
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+.rumor-item:hover, .threat-item:hover {
+    background: rgba(55, 65, 81, 0.7);
+}
+
+.rumor-item input[type="checkbox"], .threat-item input[type="checkbox"] {
+    margin-right: 0.75rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+}
+
+.rumor-item.completed, .threat-item.completed {
+    opacity: 0.6;
+}
+
+.rumor-item.completed .rumor-text, .threat-item.completed .threat-text {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.rumor-text, .threat-text {
+    flex: 1;
+    color: #e5e7eb;
+}
+
+.rumor-delete, .threat-delete {
+    color: #ef4444;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    transition: background 0.2s ease;
+}
+
+.rumor-delete:hover, .threat-delete:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
 /* Clickable discovery styles */
 .clickable-discovery {
     cursor: pointer;

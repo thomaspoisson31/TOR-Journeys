@@ -28,6 +28,7 @@ import ImportExportManager from './managers/import-export-manager.js';
 import ZoomManager from './managers/zoom-manager.js';
 import PositionManager from './managers/position-manager.js';
 import JournalManager from './managers/journal-manager.js';
+import AdventureManager from './managers/adventure-manager.js';
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -57,6 +58,7 @@ let importExportManager;
 let zoomManager;
 let positionManager;
 let journalManager;
+let adventureManager;
 
 console.log("✅ Global variables initialized");
 
@@ -510,6 +512,12 @@ function initializeMap() {
     journalManager.init();
     window.journalManager = journalManager; // Exposer globalement
     console.log("✅ JournalManager initialized");
+
+    // Initialiser AdventureManager
+    adventureManager = new AdventureManager();
+    adventureManager.init();
+    window.adventureManager = adventureManager; // Exposer globalement
+    console.log("✅ AdventureManager initialized");
 
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
