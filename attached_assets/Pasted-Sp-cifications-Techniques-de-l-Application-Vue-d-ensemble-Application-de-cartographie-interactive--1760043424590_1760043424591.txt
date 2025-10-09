@@ -1,0 +1,92 @@
+Spécifications Techniques de l'Application
+Vue d'ensemble
+Application de cartographie interactive pour la Terre du Milieu (jeu de rôle), permettant la gestion de voyages, lieux, régions et événements avec authentification Google et synchronisation cloud.
+
+Architecture
+Stack Technique
+Frontend: Vanilla JavaScript (ES6 modules), HTML5, Tailwind CSS
+Backend: Flask (Python), SQLite
+Authentification: Google OAuth 2.0
+API externe: Google Gemini AI (génération de contenu)
+Stockage: localStorage (local) + base de données SQLite (cloud sync)
+Structure Modulaire
+Managers (js/managers/)
+Chaque manager gère un aspect spécifique de l'application :
+
+data-manager.js : Gestion des données (lieux, régions), chargement/sauvegarde localStorage
+filter-manager.js : Filtrage des lieux/régions (couleurs, statuts, affichage)
+voyage-manager.js : Gestion des voyages (tracé, segments journaliers, descriptions)
+path-manager.js : Calcul de distances, découvertes de lieux/régions sur trajet
+infobox-manager.js : Affichage/édition des détails de lieux/régions
+auth-manager.js : Authentification Google, synchronisation contextes
+settings-manager.js : Paramètres (cartes, groupe d'aventuriers, quête, saison)
+calendar-manager.js : Gestion du calendrier (import CSV, synchronisation saisons)
+import-export-manager.js : Import/export unifié lieux + régions (JSON)
+zoom-manager.js : Contrôle du zoom (slider, boutons)
+position-manager.js : Marqueur de position déplaçable
+journal-manager.js : Journal de voyage (historique des descriptions)
+gemini-manager.js : Interface avec API Gemini
+upload-manager.js : Upload d'images (lieux/régions)
+Utilitaires (js/utils/)
+constants.js : Constantes globales (couleurs, URLs, distances)
+helpers.js : Fonctions utilitaires (conversions, calculs)
+Main (js/main.js)
+Point d'entrée minimal
+Initialisation des managers
+Gestion de la navigation carte (zoom, pan)
+Rendu des lieux et régions
+Gestion des modes (dessin, ajout lieu/région)
+Fonctionnalités Principales
+Cartographie
+Zoom/pan interactif
+Affichage lieux (marqueurs colorés ou vignettes selon zoom)
+Affichage régions (polygones SVG avec opacité réglable)
+Glisser-déposer des lieux
+Changement couleur/statut (clic droit)
+Voyages
+Tracé de chemin par clics successifs
+Calcul distance/durée (20 miles/jour par défaut)
+Segmentation par jour avec découvertes (lieux/régions traversés)
+Génération descriptions IA (styles: détaillé, bref, mots-clés)
+Événements aléatoires (dé 🎲)
+Journal historique des voyages
+Gestion de Données
+Import/export JSON unifié (lieux + régions)
+Sauvegarde locale (localStorage)
+Synchronisation cloud (Google auth + SQLite)
+Upload images avec vignettes 100x100
+Calendrier CSV (synchronisation dates/saisons)
+Filtres Avancés
+Par couleur (unifié lieux/régions)
+Par statut (visité/non visité, connu/inconnu)
+Affichage sélectif (lieux, régions)
+Opacité réglable des régions
+Principes d'Organisation
+Séparation des Responsabilités
+Chaque manager a une responsabilité unique et bien définie, évitant les dépendances croisées.
+
+État Global Minimal
+window.locationsData et window.regionsData pour accès inter-managers
+window.scale pour le zoom actuel
+Managers exposés globalement uniquement si nécessaires (ex: window.authManager)
+Communication
+Événements personnalisés (filtersApplied, etc.)
+Callbacks passés au constructeur
+Références globales quand nécessaire
+Persistance
+Local : localStorage pour usage hors ligne
+Cloud : SQLite + API Flask pour sauvegarde authentifiée
+Auto-sync : 2s de debounce après modifications
+Rendu
+Lieux : DOM (<div> positionnés absolument)
+Régions : SVG (<polygon> dans layer dédié)
+Canvas pour tracés temporaires (voyages)
+Gestion d'Images
+Upload vers /uploads/{category}/{filename}
+Génération vignettes 100x100 côté serveur (Pillow)
+Types supportés : vignette, principale, annexe
+Flux de Données Typique
+Initialisation : main.js charge managers → DataManager charge données → Rendu initial
+Modification : User action → Manager spécifique → Mise à jour data → Re-render → Auto-sync (si auth)
+Voyage : VoyageManager trace → PathManager calcule → GeminiManager génère → JournalManager archive
+Sync : AuthManager detecte changement → Debounce 2s → POST /api/user/data → Confirmation
