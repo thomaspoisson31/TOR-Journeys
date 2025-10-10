@@ -256,6 +256,7 @@ function renderLocations() {
         // Ajouter les événements de clic et de glisser-déplacer (souris)
         marker.addEventListener('mousedown', (e) => {
             if (e.button === 0) { // Clic gauche seulement
+                e.stopPropagation(); // Empêcher la propagation vers le viewport
                 handleLocationDragStart(e, marker, location);
             }
         });
@@ -264,8 +265,14 @@ function renderLocations() {
             if (e.button === 0 && !hasDraggedLocation) {
                 // Seulement si aucun drag n'a lieu
                 e.stopPropagation();
+                e.preventDefault();
                 infoBoxManager.showInfoBox(e, location, 'location');
             }
+        });
+        
+        marker.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
         });
 
         // Événements tactiles pour mobile
@@ -717,6 +724,11 @@ function resetView() {
 window.resetView = resetView;
 
 function handlePanStart(e) {
+    // Vérifier si le clic est sur un marqueur ou une région
+    if (e.target.classList.contains('location-marker') || e.target.tagName.toLowerCase() === 'polygon') {
+        return; // Laisser l'événement se propager au marqueur/région
+    }
+    
     // Ne pas permettre le pan si on est en mode tracé, dessin ou déplacement de lieu
     if (isRegionDrawingMode || window.isDrawingMode || isDraggingLocation) return;
 
@@ -1554,21 +1566,10 @@ async function generateTravelDescription(voyageData) {
 
 // --- Fonctions de gestion des événements de viewport ---
 function handleViewportClick(event) {
-    // DEBUG: Afficher les coordonnées du clic
-    // const rect = viewport.getBoundingClientRect();
-    // const viewportX = event.clientX - rect.left;
-    // const viewportY = event.clientY - rect.top;
-    // const mapX = (viewportX - panX) / scale;
-    // const mapY = (viewportY - panY) / scale;
-
-    // console.log("🖱️ CLICK DEBUG:");
-    // console.log(`  - Coordonnées clic: x=${Math.round(mapX)}, y=${Math.round(mapY)}`);
-
-    // if (positionManager) {
-    //     const currentPos = positionManager.getPosition();
-    //     console.log(`  - Position marqueur: x=${Math.round(currentPos.x)}, y=${Math.round(currentPos.y)}`);
-    //     console.log(`  - Distance au marqueur: ${Math.round(Math.sqrt(Math.pow(mapX - currentPos.x, 2) + Math.pow(mapY - currentPos.y, 2)))} pixels`);
-    // }
+    // Ne pas intercepter les clics sur les marqueurs ou régions
+    if (event.target.classList.contains('location-marker') || event.target.tagName.toLowerCase() === 'polygon') {
+        return;
+    }
 
     // Gérer les différents modes de clic
     if (isRegionDrawingMode) {
