@@ -675,7 +675,51 @@ function handlePanStart(e) {
 function setupMapNavigation() {
     console.log("🎮 Setting up map navigation...");
 
-    // Zoom avec la molette
+    // Détection tactile sans perturber desktop
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    // Touch events ADDITIONNELS (ne remplacent pas la souris)
+    if (isTouchDevice) {
+        let touchStartX = 0, touchStartY = 0;
+        let touchDist = 0;
+        
+        viewport.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                // Pan tactile
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            } else if (e.touches.length === 2) {
+                // Pinch zoom
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                touchDist = Math.sqrt(dx * dx + dy * dy);
+            }
+        }, { passive: true });
+        
+        viewport.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1 && !window.isDrawingMode) {
+                const deltaX = e.touches[0].clientX - touchStartX;
+                const deltaY = e.touches[0].clientY - touchStartY;
+                panX += deltaX;
+                panY += deltaY;
+                constrainPan();
+                updateMapTransform();
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            } else if (e.touches.length === 2) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const newDist = Math.sqrt(dx * dx + dy * dy);
+                const zoomFactor = newDist / touchDist;
+                const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                zoomToPoint(zoomFactor, centerX, centerY);
+                touchDist = newDist;
+            }
+        }, { passive: true });
+    }
+
+    // Zoom avec la molette (PRÉSERVÉ pour desktop)
     viewport.addEventListener('wheel', (e) => {
         e.preventDefault();
         const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
