@@ -128,80 +128,81 @@ class AdventureManager {
     }
 
     renderReadMode() {
-        // Onglet Quête
-        const questDesc = document.getElementById('quest-description');
-        if (questDesc) {
+        // Onglet Quête - nettoyer et recréer (comme InfoBoxManager)
+        const questTab = document.getElementById('quest-tab');
+        if (questTab) {
+            questTab.innerHTML = '';
             if (this.adventureData.quest) {
-                questDesc.innerHTML = `<div class="prose prose-invert">${this.renderMarkdown(this.adventureData.quest)}</div>`;
+                questTab.innerHTML = `<div class="prose prose-invert p-4">${this.renderMarkdown(this.adventureData.quest)}</div>`;
             } else {
-                questDesc.innerHTML = '<p class="text-gray-400 italic">Aucune description de quête disponible.</p>';
+                questTab.innerHTML = '<p class="text-gray-400 italic p-4">Aucune description de quête disponible.</p>';
             }
         }
 
-        // Onglet Rumeurs - recréer la structure si nécessaire
+        // Onglet Rumeurs - nettoyer complètement et recréer (comme InfoBoxManager)
         const rumorsTab = document.getElementById('rumors-tab');
-        if (rumorsTab && !rumorsTab.querySelector('.rumors-view')) {
-            rumorsTab.innerHTML = `
-                <div class="rumors-view">
-                    <div id="rumors-list" class="space-y-2"></div>
-                </div>
-            `;
-        }
-        
-        const rumorsList = document.getElementById('rumors-list');
-        if (rumorsList) {
+        if (rumorsTab) {
+            rumorsTab.innerHTML = '';
+            let rumorsContent = '';
+            
             if (this.adventureData.rumors.length > 0) {
-                rumorsList.innerHTML = this.adventureData.rumors.map((rumor, index) => `
+                rumorsContent = this.adventureData.rumors.map((rumor, index) => `
                     <div class="rumor-item ${rumor.completed ? 'completed' : ''}" data-index="${index}">
                         <input type="checkbox" ${rumor.completed ? 'checked' : ''} onchange="window.adventureManager.toggleRumorComplete(${index})">
                         <div class="rumor-text">${rumor.text}</div>
                     </div>
                 `).join('');
             } else {
-                rumorsList.innerHTML = '<p class="text-gray-400 italic">Aucune rumeur enregistrée.</p>';
+                rumorsContent = '<p class="text-gray-400 italic">Aucune rumeur enregistrée.</p>';
             }
-        }
-
-        // Onglet Menaces - recréer la structure si nécessaire
-        const threatsTab = document.getElementById('threats-tab');
-        if (threatsTab && !threatsTab.querySelector('.threats-view')) {
-            threatsTab.innerHTML = `
-                <div class="threats-view">
-                    <div id="threats-list" class="space-y-2"></div>
+            
+            rumorsTab.innerHTML = `
+                <div class="rumors-view p-4">
+                    <div class="space-y-2">${rumorsContent}</div>
                 </div>
             `;
         }
-        
-        const threatsList = document.getElementById('threats-list');
-        if (threatsList) {
+
+        // Onglet Menaces - nettoyer complètement et recréer (comme InfoBoxManager)
+        const threatsTab = document.getElementById('threats-tab');
+        if (threatsTab) {
+            threatsTab.innerHTML = '';
+            let threatsContent = '';
+            
             if (this.adventureData.threats.length > 0) {
-                threatsList.innerHTML = this.adventureData.threats.map((threat, index) => `
+                threatsContent = this.adventureData.threats.map((threat, index) => `
                     <div class="threat-item ${threat.completed ? 'completed' : ''}" data-index="${index}">
                         <input type="checkbox" ${threat.completed ? 'checked' : ''} onchange="window.adventureManager.toggleThreatComplete(${index})">
                         <div class="threat-text">${threat.text}</div>
                     </div>
                 `).join('');
             } else {
-                threatsList.innerHTML = '<p class="text-gray-400 italic">Aucune menace enregistrée.</p>';
+                threatsContent = '<p class="text-gray-400 italic">Aucune menace enregistrée.</p>';
             }
+            
+            threatsTab.innerHTML = `
+                <div class="threats-view p-4">
+                    <div class="space-y-2">${threatsContent}</div>
+                </div>
+            `;
         }
     }
 
     renderEditMode() {
-        // Onglet Quête
+        // Onglet Quête - nettoyer complètement puis créer (comme InfoBoxManager)
         const questTab = document.getElementById('quest-tab');
         if (questTab) {
             questTab.innerHTML = `
-                <div class="edit-form">
+                <div class="edit-form p-4">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-white mb-2">Description de la quête (Markdown supporté) :</label>
                         <textarea id="edit-quest" class="w-full p-3 border rounded h-64 bg-gray-800 text-white font-mono text-sm border-gray-600 focus:border-blue-500 focus:outline-none" placeholder="Décrivez la quête principale de l'aventure...">${this.adventureData.quest || ''}</textarea>
                     </div>
                     <div class="flex space-x-2">
-                        <button onclick="window.adventureManager.saveQuest()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                        <button onclick="window.adventureManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
                             <i class="fas fa-save mr-1"></i>Sauvegarder
                         </button>
-                        <button onclick="window.adventureManager.toggleEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+                        <button onclick="window.adventureManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
                             <i class="fas fa-times mr-1"></i>Annuler
                         </button>
                     </div>
@@ -209,11 +210,11 @@ class AdventureManager {
             `;
         }
 
-        // Onglet Rumeurs
+        // Onglet Rumeurs - nettoyer complètement puis créer (comme InfoBoxManager)
         const rumorsTab = document.getElementById('rumors-tab');
         if (rumorsTab) {
             rumorsTab.innerHTML = `
-                <div class="edit-form">
+                <div class="edit-form p-4">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-white mb-2">Rumeurs :</label>
                         <div id="edit-rumors-list" class="space-y-2 mb-3">
@@ -231,10 +232,10 @@ class AdventureManager {
                         </button>
                     </div>
                     <div class="flex space-x-2">
-                        <button onclick="window.adventureManager.saveRumors()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                        <button onclick="window.adventureManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
                             <i class="fas fa-save mr-1"></i>Sauvegarder
                         </button>
-                        <button onclick="window.adventureManager.toggleEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+                        <button onclick="window.adventureManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
                             <i class="fas fa-times mr-1"></i>Annuler
                         </button>
                     </div>
@@ -242,11 +243,11 @@ class AdventureManager {
             `;
         }
 
-        // Onglet Menaces
+        // Onglet Menaces - nettoyer complètement puis créer (comme InfoBoxManager)
         const threatsTab = document.getElementById('threats-tab');
         if (threatsTab) {
             threatsTab.innerHTML = `
-                <div class="edit-form">
+                <div class="edit-form p-4">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-white mb-2">Menaces :</label>
                         <div id="edit-threats-list" class="space-y-2 mb-3">
@@ -264,10 +265,10 @@ class AdventureManager {
                         </button>
                     </div>
                     <div class="flex space-x-2">
-                        <button onclick="window.adventureManager.saveThreats()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                        <button onclick="window.adventureManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
                             <i class="fas fa-save mr-1"></i>Sauvegarder
                         </button>
-                        <button onclick="window.adventureManager.toggleEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
+                        <button onclick="window.adventureManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">
                             <i class="fas fa-times mr-1"></i>Annuler
                         </button>
                     </div>
@@ -276,15 +277,39 @@ class AdventureManager {
         }
     }
 
-    saveQuest() {
+    exitEditMode() {
+        this.isEditMode = false;
+        this.updateEditButtonStyle();
+        this.renderContent();
+    }
+
+    saveEdit() {
+        // Sauvegarder tous les onglets (comme saveEdit dans InfoBoxManager)
         const questInput = document.getElementById('edit-quest');
         if (questInput) {
             this.adventureData.quest = questInput.value.trim();
-            this.saveToLocalStorage();
-            this.isEditMode = false;
-            this.updateEditButtonStyle();
-            this.renderContent();
         }
+
+        // Rumeurs
+        const rumorInputs = document.querySelectorAll('.edit-rumor-input');
+        rumorInputs.forEach((input, index) => {
+            if (this.adventureData.rumors[index]) {
+                this.adventureData.rumors[index].text = input.value.trim();
+            }
+        });
+        this.adventureData.rumors = this.adventureData.rumors.filter(r => r.text !== '');
+
+        // Menaces
+        const threatInputs = document.querySelectorAll('.edit-threat-input');
+        threatInputs.forEach((input, index) => {
+            if (this.adventureData.threats[index]) {
+                this.adventureData.threats[index].text = input.value.trim();
+            }
+        });
+        this.adventureData.threats = this.adventureData.threats.filter(t => t.text !== '');
+
+        this.saveToLocalStorage();
+        this.exitEditMode();
     }
 
     addRumor() {
@@ -307,26 +332,6 @@ class AdventureManager {
     deleteRumor(index) {
         this.adventureData.rumors.splice(index, 1);
         this.renderEditMode();
-    }
-
-    saveRumors() {
-        const inputs = document.querySelectorAll('.edit-rumor-input');
-        
-        inputs.forEach((input, index) => {
-            if (this.adventureData.rumors[index]) {
-                this.adventureData.rumors[index].text = input.value.trim();
-            }
-        });
-        
-        // Filtrer les rumeurs vides
-        this.adventureData.rumors = this.adventureData.rumors.filter(r => r.text !== '');
-        
-        this.saveToLocalStorage();
-        
-        // Désactiver le mode édition et re-rendre (comme dans InfoBoxManager)
-        this.isEditMode = false;
-        this.updateEditButtonStyle();
-        this.renderContent();
     }
 
     toggleRumorComplete(index) {
@@ -357,26 +362,6 @@ class AdventureManager {
     deleteThreat(index) {
         this.adventureData.threats.splice(index, 1);
         this.renderEditMode();
-    }
-
-    saveThreats() {
-        const inputs = document.querySelectorAll('.edit-threat-input');
-        
-        inputs.forEach((input, index) => {
-            if (this.adventureData.threats[index]) {
-                this.adventureData.threats[index].text = input.value.trim();
-            }
-        });
-        
-        // Filtrer les menaces vides
-        this.adventureData.threats = this.adventureData.threats.filter(t => t.text !== '');
-        
-        this.saveToLocalStorage();
-        
-        // Désactiver le mode édition et re-rendre (comme dans InfoBoxManager)
-        this.isEditMode = false;
-        this.updateEditButtonStyle();
-        this.renderContent();
     }
 
     toggleThreatComplete(index) {
