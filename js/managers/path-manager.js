@@ -73,14 +73,19 @@ class PathManager {
             });
         }
 
-        // Événements de tracé sur le viewport (comme dans l'ancienne version)
+        // Événements de tracé sur le viewport
         const viewport = document.getElementById('viewport');
         if (viewport) {
-            // Gestionnaire mousedown principal - inspiré de l'ancienne version
+            // Gestionnaires souris (desktop)
             viewport.addEventListener('mousedown', (e) => this.handleViewportMouseDown(e));
             viewport.addEventListener('mousemove', (e) => this.handleViewportMouseMove(e));
             viewport.addEventListener('mouseup', (e) => this.handleViewportMouseUp(e));
             viewport.addEventListener('mouseleave', (e) => this.handleViewportMouseUp(e));
+
+            // Gestionnaires tactiles (mobile)
+            viewport.addEventListener('touchstart', (e) => this.handleViewportTouchStart(e), { passive: false });
+            viewport.addEventListener('touchmove', (e) => this.handleViewportTouchMove(e), { passive: false });
+            viewport.addEventListener('touchend', (e) => this.handleViewportTouchEnd(e), { passive: false });
         }
     }
 
@@ -171,6 +176,93 @@ class PathManager {
         }
     }
 
+    // Gestionnaires d'événements tactiles
+    handleViewportTouchStart(event) {
+        console.log("👆 Viewport touchstart event fired, isDrawingMode:", this.isDrawingMode);
+
+        if (this.isDrawingMode) {
+            // Empêcher le comportement par défaut (scroll, zoom)
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Vérifier qu'on ne touche pas un marqueur ou autre élément
+            if (event.target.closest('.location-marker, #info-box')) {
+                console.log("❌ Touched on marker or info box, ignoring");
+                return;
+            }
+
+            console.log("🎨 Starting drawing (touch)...");
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.isDrawing = true;
+            this.totalDistance = 0;
+
+            // Reset journey tracking
+            this.path = [];
+            this.regionSegments.clear();
+            this.discoveries = [];
+
+            this.startPoint = this.getCanvasCoordinates(event);
+            this.lastPoint = this.startPoint;
+
+            // Add start point to journey path
+            this.path.push({x: this.startPoint.x, y: this.startPoint.y});
+
+            console.log("📍 Start point (touch):", this.startPoint);
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
+            this.updatePathData();
+            this.showDistanceContainer();
+            console.log("✅ Drawing initialized (touch)");
+            return;
+        }
+    }
+
+    handleViewportTouchMove(event) {
+        if (!this.isDrawing || !this.isDrawingMode || !this.lastPoint) return;
+
+        console.log("✏️ Touch move during drawing");
+        event.preventDefault(); // Empêcher le scroll pendant le dessin
+        event.stopPropagation();
+
+        const currentPoint = this.getCanvasCoordinates(event);
+        const segmentLength = Math.sqrt(
+            Math.pow(currentPoint.x - this.lastPoint.x, 2) +
+            Math.pow(currentPoint.y - this.lastPoint.y, 2)
+        );
+        this.totalDistance += segmentLength;
+
+        // Add current point to journey path for region/location detection
+        this.path.push({x: currentPoint.x, y: currentPoint.y});
+
+        this.lastPoint = currentPoint;
+        this.ctx.lineTo(currentPoint.x, currentPoint.y);
+        this.ctx.stroke();
+        this.updatePathData();
+        console.log("✏️ Drawing segment (touch), total pixels:", this.totalDistance.toFixed(1));
+    }
+
+    handleViewportTouchEnd(event) {
+        if (!this.isDrawingMode) return;
+
+        if (this.isDrawing) {
+            console.log("🛑 Drawing stopped (touch)");
+            this.isDrawing = false;
+            // Auto-sync sera géré par le main.js
+            console.log("🔄 Drawing segment completed (touch)");
+
+            // Recalculer les informations du voyage
+            this.updatePathData();
+
+            // Déplacer le marqueur de position au début du tracé avec animation
+            if (window.positionManager && window.journeyPath.length > 0) {
+                const startPoint = window.journeyPath[0];
+                window.positionManager.animateToPosition(startPoint.x, startPoint.y);
+            }
+
+            console.log("🏁 Drawing mode ended (touch) - journey path created");
+        }
+    }
+
     getCanvasCoordinates(event) {
         const viewport = document.getElementById('viewport');
         const mapContainer = document.getElementById('map-container');
@@ -178,8 +270,8 @@ class PathManager {
         if (!viewport || !mapContainer) return { x: 0, y: 0 };
 
         const viewportRect = viewport.getBoundingClientRect();
-        const viewportX = event.clientX - viewportRect.left;
-        const viewportY = event.clientY - viewportRect.top;
+        const viewportX = event.clientX !== undefined ? event.clientX : event.touches?.[0]?.clientX;
+        const viewportY = event.clientY !== undefined ? event.clientY : event.touches?.[0]?.clientY;
 
         // Récupérer les transformations actuelles de la carte
         const transform = mapContainer.style.transform;
@@ -197,8 +289,8 @@ class PathManager {
         }
 
         // Convertir les coordonnées du viewport vers les coordonnées de la carte
-        const mapX = (viewportX - panX) / scale;
-        const mapY = (viewportY - panY) / scale;
+        const mapX = (viewportX - viewportRect.left - panX) / scale;
+        const mapY = (viewportY - viewportRect.top - panY) / scale;
 
         return {
             x: Math.round(mapX),

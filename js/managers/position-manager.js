@@ -166,7 +166,7 @@ class PositionManager {
     setupEventListeners() {
         if (!this.positionMarker) return;
 
-        // Événements de glisser-déposer
+        // Événements de glisser-déposer (souris)
         this.positionMarker.addEventListener('mousedown', (e) => {
             // Ne pas permettre le drag si le mode dessin est actif
             if (e.button === 0 && !window.isDrawingMode) { // Clic gauche seulement et pas en mode dessin
@@ -186,13 +186,90 @@ class PositionManager {
             }
         });
 
-        // Clic droit pour ouvrir la modal compacte
+        // Événements tactiles pour mobile
+        let touchStartTime = 0;
+        let touchHasMoved = false;
+
+        this.positionMarker.addEventListener('touchstart', (e) => {
+            if (window.isDrawingMode) return;
+            
+            touchStartTime = Date.now();
+            touchHasMoved = false;
+            
+            // Démarrer le drag immédiatement
+            const touch = e.touches[0];
+            this.isDragging = true;
+            this.dragStartX = touch.clientX;
+            this.dragStartY = touch.clientY;
+            
+            e.stopPropagation();
+        }, { passive: false });
+
+        this.positionMarker.addEventListener('touchmove', (e) => {
+            if (!this.isDragging) return;
+            
+            touchHasMoved = true;
+            e.preventDefault();
+            
+            const touch = e.touches[0];
+            const scale = window.scale || 1;
+            const deltaX = touch.clientX - this.dragStartX;
+            const deltaY = touch.clientY - this.dragStartY;
+
+            // Convertir le delta en coordonnées de la carte
+            const mapDeltaX = deltaX / scale;
+            const mapDeltaY = deltaY / scale;
+
+            // Calculer les nouvelles coordonnées
+            const newX = this.currentPosition.x + mapDeltaX;
+            const newY = this.currentPosition.y + mapDeltaY;
+
+            // Contraindre dans les limites de la carte
+            this.currentPosition.x = Math.max(0, Math.min(this.mapConstants.MAP_WIDTH, newX));
+            this.currentPosition.y = Math.max(0, Math.min(this.mapConstants.MAP_HEIGHT, newY));
+
+            // Mettre à jour l'affichage
+            this.updateMarkerPosition();
+
+            // Vérifier la proximité avec les rumeurs
+            this.checkRumoursProximity();
+
+            // Mettre à jour les coordonnées de départ pour le prochain mouvement
+            this.dragStartX = touch.clientX;
+            this.dragStartY = touch.clientY;
+        }, { passive: false });
+
+        this.positionMarker.addEventListener('touchend', (e) => {
+            const touchDuration = Date.now() - touchStartTime;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (this.isDragging) {
+                this.isDragging = false;
+                
+                // Sauvegarder la nouvelle position
+                this.savePosition();
+
+                // Programmer la synchronisation
+                if (typeof window.scheduleAutoSync === 'function') {
+                    window.scheduleAutoSync();
+                }
+            }
+            
+            // Si c'est un long press sans mouvement, ouvrir la modal
+            if (!touchHasMoved && touchDuration >= 500) {
+                this.showPositionModal(e);
+            }
+        }, { passive: false });
+
+        // Clic droit pour ouvrir la modal compacte (desktop)
         this.positionMarker.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            e.stopImmediatePropagation(); // Empêcher la propagation vers d'autres gestionnaires
+            e.stopImmediatePropagation();
             this.showPositionModal(e);
-            return false; // Bloquer complètement l'événement
+            return false;
         });
     }
 
