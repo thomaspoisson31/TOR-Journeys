@@ -117,9 +117,12 @@ class AdventureManager {
     }
 
     renderContent() {
+        console.log("🔧 renderContent() appelé, isEditMode:", this.isEditMode);
         if (this.isEditMode) {
+            console.log("🔧 Rendu en mode ÉDITION");
             this.renderEditMode();
         } else {
+            console.log("🔧 Rendu en mode LECTURE");
             this.renderReadMode();
         }
     }
@@ -289,20 +292,35 @@ class AdventureManager {
     }
 
     saveRumors() {
+        console.log("🔧 saveRumors() appelé");
+        console.log("🔧 Mode édition avant:", this.isEditMode);
+        
         const inputs = document.querySelectorAll('.edit-rumor-input');
+        console.log("🔧 Nombre d'inputs trouvés:", inputs.length);
+        
         inputs.forEach((input, index) => {
             if (this.adventureData.rumors[index]) {
                 this.adventureData.rumors[index].text = input.value.trim();
+                console.log(`🔧 Rumeur ${index}:`, this.adventureData.rumors[index].text);
             }
         });
+        
         // Filtrer les rumeurs vides
         this.adventureData.rumors = this.adventureData.rumors.filter(r => r.text !== '');
+        console.log("🔧 Rumeurs après filtrage:", this.adventureData.rumors);
+        
         this.saveToLocalStorage();
-        // Désactiver le mode édition AVANT de changer d'onglet
+        
+        // Désactiver le mode édition AVANT de re-render
         this.isEditMode = false;
+        console.log("🔧 Mode édition après désactivation:", this.isEditMode);
+        
         this.updateEditButtonStyle();
+        
         // Maintenant on peut afficher le contenu en mode lecture
+        console.log("🔧 Appel de renderContent()");
         this.renderContent();
+        console.log("🔧 saveRumors() terminé");
     }
 
     toggleRumorComplete(index) {
@@ -336,20 +354,35 @@ class AdventureManager {
     }
 
     saveThreats() {
+        console.log("🔧 saveThreats() appelé");
+        console.log("🔧 Mode édition avant:", this.isEditMode);
+        
         const inputs = document.querySelectorAll('.edit-threat-input');
+        console.log("🔧 Nombre d'inputs trouvés:", inputs.length);
+        
         inputs.forEach((input, index) => {
             if (this.adventureData.threats[index]) {
                 this.adventureData.threats[index].text = input.value.trim();
+                console.log(`🔧 Menace ${index}:`, this.adventureData.threats[index].text);
             }
         });
+        
         // Filtrer les menaces vides
         this.adventureData.threats = this.adventureData.threats.filter(t => t.text !== '');
+        console.log("🔧 Menaces après filtrage:", this.adventureData.threats);
+        
         this.saveToLocalStorage();
-        // Désactiver le mode édition AVANT de changer d'onglet
+        
+        // Désactiver le mode édition AVANT de re-render
         this.isEditMode = false;
+        console.log("🔧 Mode édition après désactivation:", this.isEditMode);
+        
         this.updateEditButtonStyle();
+        
         // Maintenant on peut afficher le contenu en mode lecture
+        console.log("🔧 Appel de renderContent()");
         this.renderContent();
+        console.log("🔧 saveThreats() terminé");
     }
 
     toggleThreatComplete(index) {
