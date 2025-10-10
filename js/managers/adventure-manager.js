@@ -298,10 +298,11 @@ class AdventureManager {
         // Filtrer les rumeurs vides
         this.adventureData.rumors = this.adventureData.rumors.filter(r => r.text !== '');
         this.saveToLocalStorage();
+        // Désactiver le mode édition AVANT de changer d'onglet
         this.isEditMode = false;
         this.updateEditButtonStyle();
-        // Revenir à l'onglet Rumeurs en mode lecture
-        this.switchTab('rumors');
+        // Maintenant on peut afficher le contenu en mode lecture
+        this.renderContent();
     }
 
     toggleRumorComplete(index) {
@@ -344,10 +345,11 @@ class AdventureManager {
         // Filtrer les menaces vides
         this.adventureData.threats = this.adventureData.threats.filter(t => t.text !== '');
         this.saveToLocalStorage();
+        // Désactiver le mode édition AVANT de changer d'onglet
         this.isEditMode = false;
         this.updateEditButtonStyle();
-        // Revenir à l'onglet Menaces en mode lecture
-        this.switchTab('threats');
+        // Maintenant on peut afficher le contenu en mode lecture
+        this.renderContent();
     }
 
     toggleThreatComplete(index) {
