@@ -52,6 +52,9 @@ export default class ZoomManager {
                 <button id="zoom-reset-btn" class="zoom-btn ml-1" title="Réinitialiser le zoom">
                     <i class="fas fa-home"></i>
                 </button>
+                <button id="zoom-fullscreen-btn" class="zoom-btn ml-1" title="Plein écran">
+                    <i class="fas fa-expand"></i>
+                </button>
             </div>
         `;
         
@@ -66,6 +69,10 @@ export default class ZoomManager {
         this.zoomOutBtn = document.getElementById('zoom-out-btn');
         this.zoomInBtn = document.getElementById('zoom-in-btn');
         this.zoomResetBtn = document.getElementById('zoom-reset-btn');
+        this.zoomFullscreenBtn = document.getElementById('zoom-fullscreen-btn');
+        
+        // État du plein écran
+        this.isFullscreen = false;
         
         // Calculer la largeur du slider
         this.sliderWidth = this.zoomTrack.offsetWidth;
@@ -87,6 +94,25 @@ export default class ZoomManager {
             if (typeof window.resetView === 'function') {
                 window.resetView();
             }
+        });
+        
+        // Bouton plein écran
+        this.zoomFullscreenBtn.addEventListener('click', () => {
+            this.toggleFullscreen();
+        });
+        
+        // Écouter les changements de plein écran
+        document.addEventListener('fullscreenchange', () => {
+            this.updateFullscreenButton();
+        });
+        document.addEventListener('webkitfullscreenchange', () => {
+            this.updateFullscreenButton();
+        });
+        document.addEventListener('mozfullscreenchange', () => {
+            this.updateFullscreenButton();
+        });
+        document.addEventListener('MSFullscreenChange', () => {
+            this.updateFullscreenButton();
         });
         
         // Clic sur la barre pour sauter à un niveau de zoom
@@ -197,5 +223,47 @@ export default class ZoomManager {
         console.log(`🔍 [ZoomManager] updateDisplay called: scale=${window.scale ? window.scale.toFixed(3) : 'undefined'}`);
         this.updateSliderPosition();
         this.zoomPercentageDisplay.textContent = `${this.getZoomPercentage()}%`;
+    }
+    
+    toggleFullscreen() {
+        const elem = document.documentElement;
+        
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && 
+            !document.mozFullScreenElement && !document.msFullscreenElement) {
+            // Entrer en plein écran
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        } else {
+            // Sortir du plein écran
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
+    
+    updateFullscreenButton() {
+        const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || 
+                               document.mozFullScreenElement || document.msFullscreenElement);
+        
+        if (isFullscreen) {
+            this.zoomFullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            this.zoomFullscreenBtn.title = 'Quitter le plein écran';
+        } else {
+            this.zoomFullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            this.zoomFullscreenBtn.title = 'Plein écran';
+        }
     }
 }

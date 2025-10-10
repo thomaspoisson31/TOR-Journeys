@@ -269,7 +269,7 @@ function renderLocations() {
                 infoBoxManager.showInfoBox(e, location, 'location');
             }
         });
-        
+
         marker.addEventListener('click', (e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -278,7 +278,7 @@ function renderLocations() {
         // Événements tactiles pour mobile
         let touchStartTime = 0;
         let touchHasMoved = false;
-        
+
         marker.addEventListener('touchstart', (e) => {
             touchStartTime = Date.now();
             touchHasMoved = false;
@@ -309,10 +309,10 @@ function renderLocations() {
                 willOpenInfoBox: !touchHasMoved && touchDuration < 500,
                 willOpenColorModal: !touchHasMoved && touchDuration >= 500
             });
-            
+
             e.preventDefault();
             e.stopPropagation();
-            
+
             if (!touchHasMoved && touchDuration < 500) {
                 // Tap simple : ouvrir l'infobox
                 console.log(`📱 [TOUCH] Opening infobox for ${location.name}`);
@@ -334,14 +334,14 @@ function renderLocations() {
         // Forcer pointer-events pour s'assurer que les marqueurs sont cliquables
         marker.style.pointerEvents = 'auto';
         marker.style.touchAction = 'none'; // Empêcher le comportement par défaut du navigateur
-        
+
         // Ajouter à la couche des lieux
         locationsLayer.appendChild(marker);
         renderedCount++;
     });
 
     console.log(`✅ Rendered ${renderedCount} location markers (thumbnails: ${showThumbnails})`);
-    
+
     // Vérifier que la couche des lieux est bien au-dessus
     console.log(`📍 Locations layer z-index:`, window.getComputedStyle(locationsLayer).zIndex);
 }
@@ -438,7 +438,7 @@ function renderRegions() {
         // Événements tactiles pour mobile
         let regionTouchStartTime = 0;
         let regionTouchHasMoved = false;
-        
+
         polygon.addEventListener('touchstart', (e) => {
             regionTouchStartTime = Date.now();
             regionTouchHasMoved = false;
@@ -452,9 +452,9 @@ function renderRegions() {
         polygon.addEventListener('touchend', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
+
             const touchDuration = Date.now() - regionTouchStartTime;
-            
+
             if (!regionTouchHasMoved && touchDuration < 500) {
                 // Tap simple : ouvrir l'infobox
                 infoBoxManager.showInfoBox(e, region, 'region');
@@ -755,7 +755,7 @@ function handlePanStart(e) {
     if (e.target.classList.contains('location-marker') || e.target.tagName.toLowerCase() === 'polygon') {
         return; // Laisser l'événement se propager au marqueur/région
     }
-    
+
     // Ne pas permettre le pan si on est en mode tracé, dessin ou déplacement de lieu
     if (isRegionDrawingMode || window.isDrawingMode || isDraggingLocation) return;
 
@@ -792,7 +792,7 @@ function setupMapNavigation() {
                 isLocationAddingMode: isLocationAddingMode,
                 path: e.composedPath().map(el => el.tagName || el.nodeName).slice(0, 5)
             });
-            
+
             if (e.touches.length === 1) {
                 // Pan tactile
                 touchStartX = e.touches[0].clientX;
@@ -826,7 +826,7 @@ function setupMapNavigation() {
                 touchDist = newDist;
             }
         }, { passive: true });
-        
+
         viewport.addEventListener('touchend', (e) => {
             console.log(`📱 [VIEWPORT] touchend:`, {
                 touches: e.touches.length,

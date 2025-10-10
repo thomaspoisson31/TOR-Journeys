@@ -187,7 +187,7 @@ class InfoBoxManager {
             infoBoxTitle.classList.remove('hidden');
         }
 
-        // Toujours afficher les boutons crayon et poubelle
+        // Toujours afficher le bouton crayon
         if (editBtn) {
             editBtn.classList.remove('hidden');
             // Changer la couleur selon le mode
@@ -198,8 +198,13 @@ class InfoBoxManager {
             }
         }
 
+        // Afficher la poubelle uniquement en mode édition
         if (deleteBtn) {
-            deleteBtn.classList.remove('hidden');
+            if (this.isEditMode) {
+                deleteBtn.classList.remove('hidden');
+            } else {
+                deleteBtn.classList.add('hidden');
+            }
         }
 
         if (this.isEditMode) {
