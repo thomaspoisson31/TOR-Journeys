@@ -317,7 +317,19 @@ class AdventureManager {
         
         this.updateEditButtonStyle();
         
-        // Re-rendre le mode lecture en forçant l'affichage
+        // Re-créer la structure HTML de base pour l'onglet Rumeurs
+        const rumorsTab = document.getElementById('rumors-tab');
+        if (rumorsTab) {
+            rumorsTab.innerHTML = `
+                <div class="rumors-view">
+                    <div id="rumors-list" class="space-y-2">
+                        <p class="text-gray-400 italic">Aucune rumeur enregistrée.</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Maintenant rendre le contenu en mode lecture
         console.log("🔧 Appel de renderReadMode()");
         this.renderReadMode();
         console.log("🔧 saveRumors() terminé");
@@ -379,7 +391,19 @@ class AdventureManager {
         
         this.updateEditButtonStyle();
         
-        // Re-rendre le mode lecture en forçant l'affichage
+        // Re-créer la structure HTML de base pour l'onglet Menaces
+        const threatsTab = document.getElementById('threats-tab');
+        if (threatsTab) {
+            threatsTab.innerHTML = `
+                <div class="threats-view">
+                    <div id="threats-list" class="space-y-2">
+                        <p class="text-gray-400 italic">Aucune menace enregistrée.</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Maintenant rendre le contenu en mode lecture
         console.log("🔧 Appel de renderReadMode()");
         this.renderReadMode();
         console.log("🔧 saveThreats() terminé");
