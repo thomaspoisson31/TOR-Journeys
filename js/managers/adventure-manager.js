@@ -293,28 +293,22 @@ class AdventureManager {
 
     saveRumors() {
         console.log("🔧 saveRumors() appelé");
-        console.log("🔧 Mode édition avant:", this.isEditMode);
         
         const inputs = document.querySelectorAll('.edit-rumor-input');
-        console.log("🔧 Nombre d'inputs trouvés:", inputs.length);
         
         inputs.forEach((input, index) => {
             if (this.adventureData.rumors[index]) {
                 this.adventureData.rumors[index].text = input.value.trim();
-                console.log(`🔧 Rumeur ${index}:`, this.adventureData.rumors[index].text);
             }
         });
         
         // Filtrer les rumeurs vides
         this.adventureData.rumors = this.adventureData.rumors.filter(r => r.text !== '');
-        console.log("🔧 Rumeurs après filtrage:", this.adventureData.rumors);
         
         this.saveToLocalStorage();
         
         // Désactiver le mode édition
         this.isEditMode = false;
-        console.log("🔧 Mode édition après désactivation:", this.isEditMode);
-        
         this.updateEditButtonStyle();
         
         // Re-créer la structure HTML de base pour l'onglet Rumeurs
@@ -322,17 +316,13 @@ class AdventureManager {
         if (rumorsTab) {
             rumorsTab.innerHTML = `
                 <div class="rumors-view">
-                    <div id="rumors-list" class="space-y-2">
-                        <p class="text-gray-400 italic">Aucune rumeur enregistrée.</p>
-                    </div>
+                    <div id="rumors-list" class="space-y-2"></div>
                 </div>
             `;
         }
         
-        // Maintenant rendre le contenu en mode lecture
-        console.log("🔧 Appel de renderReadMode()");
-        this.renderReadMode();
-        console.log("🔧 saveRumors() terminé");
+        // Forcer le re-rendu complet
+        this.renderContent();
     }
 
     toggleRumorComplete(index) {
@@ -367,28 +357,22 @@ class AdventureManager {
 
     saveThreats() {
         console.log("🔧 saveThreats() appelé");
-        console.log("🔧 Mode édition avant:", this.isEditMode);
         
         const inputs = document.querySelectorAll('.edit-threat-input');
-        console.log("🔧 Nombre d'inputs trouvés:", inputs.length);
         
         inputs.forEach((input, index) => {
             if (this.adventureData.threats[index]) {
                 this.adventureData.threats[index].text = input.value.trim();
-                console.log(`🔧 Menace ${index}:`, this.adventureData.threats[index].text);
             }
         });
         
         // Filtrer les menaces vides
         this.adventureData.threats = this.adventureData.threats.filter(t => t.text !== '');
-        console.log("🔧 Menaces après filtrage:", this.adventureData.threats);
         
         this.saveToLocalStorage();
         
         // Désactiver le mode édition
         this.isEditMode = false;
-        console.log("🔧 Mode édition après désactivation:", this.isEditMode);
-        
         this.updateEditButtonStyle();
         
         // Re-créer la structure HTML de base pour l'onglet Menaces
@@ -396,17 +380,13 @@ class AdventureManager {
         if (threatsTab) {
             threatsTab.innerHTML = `
                 <div class="threats-view">
-                    <div id="threats-list" class="space-y-2">
-                        <p class="text-gray-400 italic">Aucune menace enregistrée.</p>
-                    </div>
+                    <div id="threats-list" class="space-y-2"></div>
                 </div>
             `;
         }
         
-        // Maintenant rendre le contenu en mode lecture
-        console.log("🔧 Appel de renderReadMode()");
-        this.renderReadMode();
-        console.log("🔧 saveThreats() terminé");
+        // Forcer le re-rendu complet
+        this.renderContent();
     }
 
     toggleThreatComplete(index) {
