@@ -138,7 +138,16 @@ class AdventureManager {
             }
         }
 
-        // Onglet Rumeurs
+        // Onglet Rumeurs - recréer la structure si nécessaire
+        const rumorsTab = document.getElementById('rumors-tab');
+        if (rumorsTab && !rumorsTab.querySelector('.rumors-view')) {
+            rumorsTab.innerHTML = `
+                <div class="rumors-view">
+                    <div id="rumors-list" class="space-y-2"></div>
+                </div>
+            `;
+        }
+        
         const rumorsList = document.getElementById('rumors-list');
         if (rumorsList) {
             if (this.adventureData.rumors.length > 0) {
@@ -153,7 +162,16 @@ class AdventureManager {
             }
         }
 
-        // Onglet Menaces
+        // Onglet Menaces - recréer la structure si nécessaire
+        const threatsTab = document.getElementById('threats-tab');
+        if (threatsTab && !threatsTab.querySelector('.threats-view')) {
+            threatsTab.innerHTML = `
+                <div class="threats-view">
+                    <div id="threats-list" class="space-y-2"></div>
+                </div>
+            `;
+        }
+        
         const threatsList = document.getElementById('threats-list');
         if (threatsList) {
             if (this.adventureData.threats.length > 0) {
@@ -292,8 +310,6 @@ class AdventureManager {
     }
 
     saveRumors() {
-        console.log("🔧 saveRumors() appelé");
-        
         const inputs = document.querySelectorAll('.edit-rumor-input');
         
         inputs.forEach((input, index) => {
@@ -307,21 +323,9 @@ class AdventureManager {
         
         this.saveToLocalStorage();
         
-        // Désactiver le mode édition
+        // Désactiver le mode édition et re-rendre (comme dans InfoBoxManager)
         this.isEditMode = false;
         this.updateEditButtonStyle();
-        
-        // Re-créer la structure HTML de base pour l'onglet Rumeurs
-        const rumorsTab = document.getElementById('rumors-tab');
-        if (rumorsTab) {
-            rumorsTab.innerHTML = `
-                <div class="rumors-view">
-                    <div id="rumors-list" class="space-y-2"></div>
-                </div>
-            `;
-        }
-        
-        // Forcer le re-rendu complet
         this.renderContent();
     }
 
@@ -356,8 +360,6 @@ class AdventureManager {
     }
 
     saveThreats() {
-        console.log("🔧 saveThreats() appelé");
-        
         const inputs = document.querySelectorAll('.edit-threat-input');
         
         inputs.forEach((input, index) => {
@@ -371,21 +373,9 @@ class AdventureManager {
         
         this.saveToLocalStorage();
         
-        // Désactiver le mode édition
+        // Désactiver le mode édition et re-rendre (comme dans InfoBoxManager)
         this.isEditMode = false;
         this.updateEditButtonStyle();
-        
-        // Re-créer la structure HTML de base pour l'onglet Menaces
-        const threatsTab = document.getElementById('threats-tab');
-        if (threatsTab) {
-            threatsTab.innerHTML = `
-                <div class="threats-view">
-                    <div id="threats-list" class="space-y-2"></div>
-                </div>
-            `;
-        }
-        
-        // Forcer le re-rendu complet
         this.renderContent();
     }
 
