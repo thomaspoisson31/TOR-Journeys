@@ -331,12 +331,19 @@ function renderLocations() {
             showColorChangeModal(e, location, 'location');
         });
 
+        // Forcer pointer-events pour s'assurer que les marqueurs sont cliquables
+        marker.style.pointerEvents = 'auto';
+        marker.style.touchAction = 'none'; // Empêcher le comportement par défaut du navigateur
+        
         // Ajouter à la couche des lieux
         locationsLayer.appendChild(marker);
         renderedCount++;
     });
 
     console.log(`✅ Rendered ${renderedCount} location markers (thumbnails: ${showThumbnails})`);
+    
+    // Vérifier que la couche des lieux est bien au-dessus
+    console.log(`📍 Locations layer z-index:`, window.getComputedStyle(locationsLayer).zIndex);
 }
 
 // --- Fonction d'affichage des régions ---
@@ -778,9 +785,12 @@ function setupMapNavigation() {
                 touches: e.touches.length,
                 target: e.target.tagName,
                 targetClass: e.target.className,
+                targetId: e.target.id,
+                dataset: e.target.dataset,
                 isDrawingMode: window.isDrawingMode,
                 isRegionDrawingMode: isRegionDrawingMode,
-                isLocationAddingMode: isLocationAddingMode
+                isLocationAddingMode: isLocationAddingMode,
+                path: e.composedPath().map(el => el.tagName || el.nodeName).slice(0, 5)
             });
             
             if (e.touches.length === 1) {
