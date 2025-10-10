@@ -174,17 +174,20 @@ class PositionManager {
             }
         });
 
-        document.addEventListener('mousemove', (e) => {
+        this.dragMoveHandler = (e) => {
             if (this.isDragging) {
                 this.handleDrag(e);
             }
-        });
+        };
 
-        document.addEventListener('mouseup', (e) => {
+        this.dragEndHandler = (e) => {
             if (this.isDragging && e.button === 0) {
                 this.handleDragEnd(e);
             }
-        });
+        };
+
+        document.addEventListener('mousemove', this.dragMoveHandler);
+        document.addEventListener('mouseup', this.dragEndHandler);
 
         // Événements tactiles pour mobile
         let touchStartTime = 0;
@@ -201,6 +204,12 @@ class PositionManager {
             this.isDragging = true;
             this.dragStartX = touch.clientX;
             this.dragStartY = touch.clientY;
+            
+            // Désactiver temporairement le pan de la carte
+            const viewport = this.dom.getElementById('viewport');
+            if (viewport) {
+                viewport.style.pointerEvents = 'none';
+            }
             
             e.stopPropagation();
         }, { passive: false });
@@ -248,6 +257,12 @@ class PositionManager {
             if (this.isDragging) {
                 this.isDragging = false;
                 
+                // Réactiver le pan de la carte
+                const viewport = this.dom.getElementById('viewport');
+                if (viewport) {
+                    viewport.style.pointerEvents = 'auto';
+                }
+                
                 // Sauvegarder la nouvelle position
                 this.savePosition();
 
@@ -282,6 +297,12 @@ class PositionManager {
         this.dragStartY = e.clientY;
 
         this.positionMarker.style.cursor = 'move';
+        
+        // Désactiver temporairement le pan de la carte
+        const viewport = this.dom.getElementById('viewport');
+        if (viewport) {
+            viewport.style.pointerEvents = 'none';
+        }
     }
 
     handleDrag(e) {
@@ -321,6 +342,12 @@ class PositionManager {
 
         this.isDragging = false;
         this.positionMarker.style.cursor = 'move';
+
+        // Réactiver le pan de la carte
+        const viewport = this.dom.getElementById('viewport');
+        if (viewport) {
+            viewport.style.pointerEvents = 'auto';
+        }
 
         // Sauvegarder la nouvelle position
         this.savePosition();
