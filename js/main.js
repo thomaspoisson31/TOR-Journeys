@@ -824,6 +824,11 @@ function setupMapNavigation() {
                 const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
                 zoomToPoint(zoomFactor, centerX, centerY);
                 touchDist = newDist;
+                
+                // Mettre à jour le ZoomManager après pinch to zoom
+                if (zoomManager) {
+                    zoomManager.updateDisplay();
+                }
             }
         }, { passive: true });
 

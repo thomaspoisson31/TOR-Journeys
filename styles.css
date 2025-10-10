@@ -164,6 +164,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-right: 20px;
 }
 
 #info-box-close {
@@ -211,6 +212,25 @@ body {
     font-size: 18px;
     width: 32px;
     height: 32px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    order: -1;
+}
+
+#info-box-delete:hover {
+    color: white;
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+#info-box-edit {
+    cursor: pointer;
+    color: #9ca3af;
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -218,9 +238,9 @@ body {
     transition: all 0.2s ease;
 }
 
-#info-box-delete:hover {
+#info-box-edit:hover {
     color: white;
-    background-color: rgba(239, 68, 68, 0.2);
+    background-color: rgba(59, 130, 246, 0.2);
 }
 
 /* Enhanced content display for expanded mode */
