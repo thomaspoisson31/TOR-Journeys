@@ -253,7 +253,7 @@ function renderLocations() {
             marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
         }
 
-        // Ajouter les événements de clic et de glisser-déplacer
+        // Ajouter les événements de clic et de glisser-déplacer (souris)
         marker.addEventListener('mousedown', (e) => {
             if (e.button === 0) { // Clic gauche seulement
                 handleLocationDragStart(e, marker, location);
@@ -268,7 +268,36 @@ function renderLocations() {
             }
         });
 
-        // Ajouter l'événement de clic droit pour changer la couleur
+        // Événements tactiles pour mobile
+        let touchStartTime = 0;
+        let touchHasMoved = false;
+        
+        marker.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
+            touchHasMoved = false;
+            e.stopPropagation();
+        }, { passive: false });
+
+        marker.addEventListener('touchmove', (e) => {
+            touchHasMoved = true;
+        }, { passive: true });
+
+        marker.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const touchDuration = Date.now() - touchStartTime;
+            
+            if (!touchHasMoved && touchDuration < 500) {
+                // Tap simple : ouvrir l'infobox
+                infoBoxManager.showInfoBox(e, location, 'location');
+            } else if (!touchHasMoved && touchDuration >= 500) {
+                // Long press : ouvrir le menu de couleur
+                showColorChangeModal(e, location, 'location');
+            }
+        }, { passive: false });
+
+        // Ajouter l'événement de clic droit pour changer la couleur (desktop)
         marker.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -372,7 +401,36 @@ function renderRegions() {
             infoBoxManager.showInfoBox(e, region, 'region');
         });
 
-        // Ajouter l'événement de clic droit pour changer la couleur
+        // Événements tactiles pour mobile
+        let regionTouchStartTime = 0;
+        let regionTouchHasMoved = false;
+        
+        polygon.addEventListener('touchstart', (e) => {
+            regionTouchStartTime = Date.now();
+            regionTouchHasMoved = false;
+            e.stopPropagation();
+        }, { passive: false });
+
+        polygon.addEventListener('touchmove', (e) => {
+            regionTouchHasMoved = true;
+        }, { passive: true });
+
+        polygon.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const touchDuration = Date.now() - regionTouchStartTime;
+            
+            if (!regionTouchHasMoved && touchDuration < 500) {
+                // Tap simple : ouvrir l'infobox
+                infoBoxManager.showInfoBox(e, region, 'region');
+            } else if (!regionTouchHasMoved && touchDuration >= 500) {
+                // Long press : ouvrir le menu de couleur
+                showColorChangeModal(e, region, 'region');
+            }
+        }, { passive: false });
+
+        // Ajouter l'événement de clic droit pour changer la couleur (desktop)
         polygon.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             e.stopPropagation();
