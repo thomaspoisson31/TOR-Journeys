@@ -311,15 +311,15 @@ class AdventureManager {
         
         this.saveToLocalStorage();
         
-        // Désactiver le mode édition AVANT de re-render
+        // Désactiver le mode édition
         this.isEditMode = false;
         console.log("🔧 Mode édition après désactivation:", this.isEditMode);
         
         this.updateEditButtonStyle();
         
-        // Maintenant on peut afficher le contenu en mode lecture
-        console.log("🔧 Appel de renderContent()");
-        this.renderContent();
+        // Re-rendre le mode lecture en forçant l'affichage
+        console.log("🔧 Appel de renderReadMode()");
+        this.renderReadMode();
         console.log("🔧 saveRumors() terminé");
     }
 
@@ -373,15 +373,15 @@ class AdventureManager {
         
         this.saveToLocalStorage();
         
-        // Désactiver le mode édition AVANT de re-render
+        // Désactiver le mode édition
         this.isEditMode = false;
         console.log("🔧 Mode édition après désactivation:", this.isEditMode);
         
         this.updateEditButtonStyle();
         
-        // Maintenant on peut afficher le contenu en mode lecture
-        console.log("🔧 Appel de renderContent()");
-        this.renderContent();
+        // Re-rendre le mode lecture en forçant l'affichage
+        console.log("🔧 Appel de renderReadMode()");
+        this.renderReadMode();
         console.log("🔧 saveThreats() terminé");
     }
 
