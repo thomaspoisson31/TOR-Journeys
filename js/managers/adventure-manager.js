@@ -300,7 +300,8 @@ class AdventureManager {
         this.saveToLocalStorage();
         this.isEditMode = false;
         this.updateEditButtonStyle();
-        this.renderContent();
+        // Revenir à l'onglet Rumeurs en mode lecture
+        this.switchTab('rumors');
     }
 
     toggleRumorComplete(index) {
@@ -345,7 +346,8 @@ class AdventureManager {
         this.saveToLocalStorage();
         this.isEditMode = false;
         this.updateEditButtonStyle();
-        this.renderContent();
+        // Revenir à l'onglet Menaces en mode lecture
+        this.switchTab('threats');
     }
 
     toggleThreatComplete(index) {
