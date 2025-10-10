@@ -282,24 +282,44 @@ function renderLocations() {
         marker.addEventListener('touchstart', (e) => {
             touchStartTime = Date.now();
             touchHasMoved = false;
+            console.log(`📱 [TOUCH] touchstart on marker ${location.name}:`, {
+                timeStamp: e.timeStamp,
+                touches: e.touches.length,
+                targetClass: e.target.className,
+                targetId: e.target.dataset?.id,
+                isDrawingMode: window.isDrawingMode,
+                isRegionDrawingMode: isRegionDrawingMode,
+                isLocationAddingMode: isLocationAddingMode
+            });
             e.stopPropagation();
         }, { passive: false });
 
         marker.addEventListener('touchmove', (e) => {
+            if (!touchHasMoved) {
+                console.log(`📱 [TOUCH] First touchmove on marker ${location.name}`);
+            }
             touchHasMoved = true;
         }, { passive: true });
 
         marker.addEventListener('touchend', (e) => {
+            const touchDuration = Date.now() - touchStartTime;
+            console.log(`📱 [TOUCH] touchend on marker ${location.name}:`, {
+                duration: touchDuration,
+                hasMoved: touchHasMoved,
+                willOpenInfoBox: !touchHasMoved && touchDuration < 500,
+                willOpenColorModal: !touchHasMoved && touchDuration >= 500
+            });
+            
             e.preventDefault();
             e.stopPropagation();
             
-            const touchDuration = Date.now() - touchStartTime;
-            
             if (!touchHasMoved && touchDuration < 500) {
                 // Tap simple : ouvrir l'infobox
+                console.log(`📱 [TOUCH] Opening infobox for ${location.name}`);
                 infoBoxManager.showInfoBox(e, location, 'location');
             } else if (!touchHasMoved && touchDuration >= 500) {
                 // Long press : ouvrir le menu de couleur
+                console.log(`📱 [TOUCH] Opening color modal for ${location.name}`);
                 showColorChangeModal(e, location, 'location');
             }
         }, { passive: false });
@@ -754,6 +774,15 @@ function setupMapNavigation() {
         let touchDist = 0;
 
         viewport.addEventListener('touchstart', (e) => {
+            console.log(`📱 [VIEWPORT] touchstart:`, {
+                touches: e.touches.length,
+                target: e.target.tagName,
+                targetClass: e.target.className,
+                isDrawingMode: window.isDrawingMode,
+                isRegionDrawingMode: isRegionDrawingMode,
+                isLocationAddingMode: isLocationAddingMode
+            });
+            
             if (e.touches.length === 1) {
                 // Pan tactile
                 touchStartX = e.touches[0].clientX;
@@ -786,6 +815,15 @@ function setupMapNavigation() {
                 zoomToPoint(zoomFactor, centerX, centerY);
                 touchDist = newDist;
             }
+        }, { passive: true });
+        
+        viewport.addEventListener('touchend', (e) => {
+            console.log(`📱 [VIEWPORT] touchend:`, {
+                touches: e.touches.length,
+                changedTouches: e.changedTouches.length,
+                target: e.target.tagName,
+                targetClass: e.target.className
+            });
         }, { passive: true });
     }
 

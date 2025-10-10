@@ -68,7 +68,13 @@ class InfoBoxManager {
     }
 
     showInfoBox(event, item, type = 'location') {
-        console.log("📋 Showing info box for:", item.name, "Type:", type);
+        console.log("📋 [InfoBoxManager] Showing info box for:", item.name, "Type:", type, {
+            eventType: event?.type,
+            timeStamp: event?.timeStamp,
+            target: event?.target?.className,
+            currentItem: this.currentItem?.name,
+            isEditMode: this.isEditMode
+        });
 
         const infoBox = document.getElementById('info-box');
         if (!infoBox) {
