@@ -677,12 +677,12 @@ function setupMapNavigation() {
 
     // Détection tactile sans perturber desktop
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    
+
     // Touch events ADDITIONNELS (ne remplacent pas la souris)
     if (isTouchDevice) {
         let touchStartX = 0, touchStartY = 0;
         let touchDist = 0;
-        
+
         viewport.addEventListener('touchstart', (e) => {
             if (e.touches.length === 1) {
                 // Pan tactile
@@ -695,7 +695,7 @@ function setupMapNavigation() {
                 touchDist = Math.sqrt(dx * dx + dy * dy);
             }
         }, { passive: true });
-        
+
         viewport.addEventListener('touchmove', (e) => {
             if (e.touches.length === 1 && !window.isDrawingMode) {
                 const deltaX = e.touches[0].clientX - touchStartX;
