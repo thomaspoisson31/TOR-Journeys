@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Voyages en Terre du Milieu v1.1.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -291,11 +292,11 @@
                         <i class="fas fa-times fa-lg"></i>
                     </button>
                 </div>
-                
+
                 <div id="journal-content" class="space-y-6">
                     <!-- Le contenu sera généré dynamiquement -->
                 </div>
-                
+
                 <div id="journal-empty" class="hidden text-center py-12 text-gray-500">
                     <i class="fas fa-book-open fa-3x mb-4"></i>
                     <p class="text-lg">Aucun voyage enregistré pour le moment</p>
@@ -636,13 +637,13 @@
                             <div id="maps-grid" class="space-y-2">
                                 <!-- Les cartes seront ajoutées ici dynamiquement -->
                             </div>
-                            
+
                             <!-- Bouton d'ajout de carte -->
                             <button id="add-new-map-btn" class="w-full mt-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center justify-center space-x-2">
                                 <i class="fas fa-plus"></i>
                                 <span>Ajouter une nouvelle carte</span>
                             </button>
-                            
+
                             <!-- Bouton de suppression de tous les lieux et régions -->
                             <button id="delete-all-locations-regions-btn" class="w-full mt-3 px-4 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center justify-center space-x-2">
                                 <i class="fas fa-trash-alt"></i>
