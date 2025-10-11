@@ -301,7 +301,8 @@ class AuthManager {
             data.calendar = {
                 currentSeason: window.calendarManager.currentSeason,
                 currentDate: window.calendarManager.currentDate,
-                calendarData: window.calendarManager.calendarData
+                calendarData: window.calendarManager.calendarData,
+                isCalendarMode: window.calendarManager.isCalendarMode
             };
         }
 
@@ -318,6 +319,18 @@ class AuthManager {
             } catch (e) {
                 console.error("Erreur lors de la collecte du journal:", e);
             }
+        }
+
+        // Collecter la position du marqueur
+        if (window.positionManager) {
+            data.position = window.positionManager.getPosition();
+            this.logAuth("📍 Position du marqueur collectée:", data.position);
+        }
+
+        // Collecter l'état des filtres
+        if (window.filterManager) {
+            data.filters = window.filterManager.getActiveFilters();
+            this.logAuth("🔍 Filtres collectés:", data.filters);
         }
 
         this.logAuth("📦 Données collectées pour le contexte", Object.keys(data));
@@ -470,6 +483,20 @@ class AuthManager {
                 window.journalManager.loadJournal();
                 this.logAuth("✅ Journal chargé");
             }
+        }
+
+        // Restaurer la position du marqueur
+        if (data.position && window.positionManager) {
+            this.logAuth("📍 Restauration de la position du marqueur");
+            window.positionManager.setPosition(data.position.x, data.position.y);
+            this.logAuth("✅ Position restaurée:", data.position);
+        }
+
+        // Restaurer l'état des filtres
+        if (data.filters && window.filterManager) {
+            this.logAuth("🔍 Restauration des filtres");
+            window.filterManager.activeFilters = { ...data.filters };
+            this.logAuth("✅ Filtres restaurés:", data.filters);
         }
 
         // 5. RE-RENDER avec double appel pour forcer la mise à jour
@@ -754,6 +781,10 @@ class AuthManager {
         if (data.journal) {
             localStorage.setItem('travelJournal', JSON.stringify(data.journal));
         }
+        if (data.position) {
+            localStorage.setItem('adventurers_position', JSON.stringify(data.position));
+        }
+        // Les filtres ne sont pas sauvegardés en localStorage car ils sont restaurés depuis le contexte
     }
 
     scheduleAutoSync() {
