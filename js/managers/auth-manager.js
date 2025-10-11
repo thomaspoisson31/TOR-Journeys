@@ -323,7 +323,7 @@ class AuthManager {
         if (window.calendarManager) {
             data.calendar = {
                 currentSeason: window.calendarManager.currentSeason,
-                currentDate: window.calendarManager.currentDate,
+                currentCalendarDate: window.calendarManager.currentCalendarDate,
                 calendarData: window.calendarManager.calendarData,
                 isCalendarMode: window.calendarManager.isCalendarMode
             };
@@ -409,11 +409,25 @@ class AuthManager {
         // 4. Autres données (calendrier, paramètres, journal)
         if (data.calendar && window.calendarManager) {
             this.logAuth("📅 Application des données de calendrier");
-            if (data.calendar.currentSeason) window.calendarManager.currentSeason = data.calendar.currentSeason;
-            if (data.calendar.currentDate) window.calendarManager.currentDate = data.calendar.currentDate;
-            if (data.calendar.calendarData) window.calendarManager.calendarData = data.calendar.calendarData;
+            if (data.calendar.currentSeason) {
+                window.calendarManager.currentSeason = data.calendar.currentSeason;
+                localStorage.setItem('currentSeason', data.calendar.currentSeason);
+            }
+            if (data.calendar.currentCalendarDate) {
+                window.calendarManager.currentCalendarDate = data.calendar.currentCalendarDate;
+                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
+            }
+            if (data.calendar.calendarData) {
+                window.calendarManager.calendarData = data.calendar.calendarData;
+                localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
+            }
+            if (data.calendar.isCalendarMode !== undefined) {
+                window.calendarManager.isCalendarMode = data.calendar.isCalendarMode;
+                localStorage.setItem('isCalendarMode', data.calendar.isCalendarMode.toString());
+            }
             window.calendarManager.updateSeasonDisplay();
-            window.calendarManager.saveToLocalStorage();
+            window.calendarManager.updateCalendarUI();
+            window.calendarManager.exposeGlobalData();
             this.logAuth("✅ Calendrier mis à jour et sauvegardé localement");
         }
 
@@ -799,9 +813,14 @@ class AuthManager {
             if (data.calendar.currentSeason) {
                 localStorage.setItem('currentSeason', data.calendar.currentSeason);
             }
-            if (data.calendar.currentDate) {
-                // Assurer que currentDate est sérialisable (ex: objet Date)
-                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentDate));
+            if (data.calendar.currentCalendarDate) {
+                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
+            }
+            if (data.calendar.calendarData) {
+                localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
+            }
+            if (data.calendar.isCalendarMode !== undefined) {
+                localStorage.setItem('isCalendarMode', data.calendar.isCalendarMode.toString());
             }
         }
         if (data.journal) {
