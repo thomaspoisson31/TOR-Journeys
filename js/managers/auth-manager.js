@@ -404,35 +404,25 @@ class AuthManager {
         this.logAuth("🔄 Application des données du contexte", Object.keys(data));
 
         // Appliquer les données des lieux
-        if (data.locations && window.dataManager) {
+        if (data.locations) {
             const locCount = data.locations.locations ? data.locations.locations.length : 0;
             this.logAuth(`📍 Application de ${locCount} lieux`);
             
-            // Forcer la mise à jour complète des données
-            window.dataManager.locationsData = data.locations;
-            window.locationsData = data.locations;
-            
-            // Sauvegarder dans localStorage
+            // Sauvegarder DIRECTEMENT dans localStorage AVANT toute mise à jour
             localStorage.setItem('middleEarthLocations', JSON.stringify(data.locations));
-            
-            this.logAuth(`✅ Lieux sauvegardés : ${JSON.stringify(data.locations).substring(0, 100)}...`);
+            this.logAuth(`💾 Lieux sauvegardés dans localStorage`);
         } else {
             this.logAuth("⚠️ Pas de données de lieux à charger");
         }
 
         // Appliquer les données des régions
-        if (data.regions && window.dataManager) {
+        if (data.regions) {
             const regCount = data.regions.regions ? data.regions.regions.length : 0;
             this.logAuth(`🌍 Application de ${regCount} régions`);
             
-            // Forcer la mise à jour complète des données
-            window.dataManager.regionsData = data.regions;
-            window.regionsData = data.regions;
-            
-            // Sauvegarder dans localStorage
+            // Sauvegarder DIRECTEMENT dans localStorage AVANT toute mise à jour
             localStorage.setItem('middleEarthRegions', JSON.stringify(data.regions));
-            
-            this.logAuth(`✅ Régions sauvegardées : ${JSON.stringify(data.regions).substring(0, 100)}...`);
+            this.logAuth(`💾 Régions sauvegardées dans localStorage`);
         } else {
             this.logAuth("⚠️ Pas de données de régions à charger");
         }
@@ -453,8 +443,6 @@ class AuthManager {
             window.calendarManager.updateSeasonDisplay();
             window.calendarManager.saveToLocalStorage();
             this.logAuth("✅ Calendrier mis à jour");
-        } else {
-            this.logAuth("⚠️ Pas de données de calendrier à charger");
         }
 
         // Appliquer les paramètres
@@ -462,8 +450,6 @@ class AuthManager {
             this.logAuth("⚙️ Application des paramètres");
             window.settingsManager.loadSettings(data.settings);
             this.logAuth("✅ Paramètres appliqués");
-        } else {
-            this.logAuth("⚠️ Pas de paramètres à charger");
         }
 
         // Appliquer le journal de voyage
@@ -474,51 +460,52 @@ class AuthManager {
                 window.journalManager.loadJournal();
                 this.logAuth("✅ Journal chargé");
             }
-        } else {
-            this.logAuth("⚠️ Pas de journal à charger");
         }
 
-        this.logAuth("✅ Contexte appliqué avec succès");
+        this.logAuth("✅ Données sauvegardées dans localStorage");
 
-        // Forcer un rechargement complet des données depuis localStorage puis re-render
-        this.logAuth("🔄 Rechargement complet et re-render final");
-        setTimeout(() => {
-            // Recharger les données depuis localStorage pour s'assurer qu'elles sont à jour
-            if (window.dataManager) {
-                const savedLocations = localStorage.getItem('middleEarthLocations');
-                const savedRegions = localStorage.getItem('middleEarthRegions');
-                
-                if (savedLocations) {
-                    try {
-                        window.dataManager.locationsData = JSON.parse(savedLocations);
-                        window.locationsData = window.dataManager.locationsData;
-                        this.logAuth(`📍 Rechargé ${window.locationsData?.locations?.length || 0} lieux depuis localStorage`);
-                    } catch (e) {
-                        this.logAuth(`❌ Erreur rechargement lieux: ${e.message}`);
-                    }
-                }
-                
-                if (savedRegions) {
-                    try {
-                        window.dataManager.regionsData = JSON.parse(savedRegions);
-                        window.regionsData = window.dataManager.regionsData;
-                        this.logAuth(`🌍 Rechargé ${window.regionsData?.regions?.length || 0} régions depuis localStorage`);
-                    } catch (e) {
-                        this.logAuth(`❌ Erreur rechargement régions: ${e.message}`);
-                    }
+        // Maintenant, recharger et mettre à jour les références globales
+        if (window.dataManager) {
+            const savedLocations = localStorage.getItem('middleEarthLocations');
+            const savedRegions = localStorage.getItem('middleEarthRegions');
+            
+            if (savedLocations) {
+                try {
+                    const parsedLocations = JSON.parse(savedLocations);
+                    window.dataManager.locationsData = parsedLocations;
+                    window.locationsData = parsedLocations;
+                    this.logAuth(`📍 ${parsedLocations?.locations?.length || 0} lieux rechargés et exposés globalement`);
+                } catch (e) {
+                    this.logAuth(`❌ Erreur parsing lieux: ${e.message}`);
                 }
             }
             
-            // Re-render après rechargement
-            if (typeof window.renderLocations === 'function') {
-                window.renderLocations();
-                this.logAuth("✅ Re-render final des lieux terminé");
+            if (savedRegions) {
+                try {
+                    const parsedRegions = JSON.parse(savedRegions);
+                    window.dataManager.regionsData = parsedRegions;
+                    window.regionsData = parsedRegions;
+                    this.logAuth(`🌍 ${parsedRegions?.regions?.length || 0} régions rechargées et exposées globalement`);
+                } catch (e) {
+                    this.logAuth(`❌ Erreur parsing régions: ${e.message}`);
+                }
             }
-            if (typeof window.renderRegions === 'function') {
-                window.renderRegions();
-                this.logAuth("✅ Re-render final des régions terminé");
-            }
-        }, 200);
+        }
+
+        // Re-render immédiatement avec les données rechargées
+        this.logAuth("🎨 Re-render des lieux et régions");
+        
+        if (typeof window.renderLocations === 'function') {
+            window.renderLocations();
+            this.logAuth("✅ Lieux rendus");
+        }
+        
+        if (typeof window.renderRegions === 'function') {
+            window.renderRegions();
+            this.logAuth("✅ Régions rendues");
+        }
+
+        this.logAuth("✅ Contexte appliqué avec succès");
 
         // Programmer une auto-sync
         this.scheduleAutoSync();
