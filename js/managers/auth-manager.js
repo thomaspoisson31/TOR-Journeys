@@ -320,13 +320,25 @@ class AuthManager {
         }
 
         // Collecter les données de saison/calendrier
+        this.logAuth("📅 [collectCurrentContextData] CalendarManager existe:", !!window.calendarManager);
         if (window.calendarManager) {
+            this.logAuth("📅 [collectCurrentContextData] Données calendar AVANT collecte:", {
+                currentSeason: window.calendarManager.currentSeason,
+                currentCalendarDate: window.calendarManager.currentCalendarDate,
+                calendarData: window.calendarManager.calendarData ? `${window.calendarManager.calendarData.length} mois` : null,
+                isCalendarMode: window.calendarManager.isCalendarMode
+            });
+            
             data.calendar = {
                 currentSeason: window.calendarManager.currentSeason,
                 currentCalendarDate: window.calendarManager.currentCalendarDate,
                 calendarData: window.calendarManager.calendarData,
                 isCalendarMode: window.calendarManager.isCalendarMode
             };
+            
+            this.logAuth("📅 [collectCurrentContextData] Données calendar APRÈS collecte:", data.calendar);
+        } else {
+            this.logAuth("⚠️ [collectCurrentContextData] CalendarManager n'existe PAS encore !");
         }
 
         // Collecter les paramètres de l'application
@@ -357,6 +369,12 @@ class AuthManager {
         }
 
         this.logAuth("📦 Données collectées pour le contexte", Object.keys(data));
+        this.logAuth("📅 [collectCurrentContextData] Calendar dans les données collectées:", data.calendar ? {
+            currentSeason: data.calendar.currentSeason,
+            currentCalendarDate: data.calendar.currentCalendarDate,
+            calendarDataLength: data.calendar.calendarData?.length,
+            isCalendarMode: data.calendar.isCalendarMode
+        } : "NON PRÉSENT");
         return data;
     }
 
