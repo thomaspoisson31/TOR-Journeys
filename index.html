@@ -16,6 +16,12 @@
 
     <!-- Header supprimé - carte occupe 100% de l'espace -->
 
+    <!-- Avertissement utilisateur non authentifié -->
+    <div id="auth-warning" class="hidden absolute top-0 left-0 right-0 z-[100] bg-red-600 text-white px-4 py-2 text-center text-sm font-medium">
+        <i class="fas fa-exclamation-triangle mr-2"></i>
+        Utilisateur non authentifié - Modifications non sauvegardées
+    </div>
+
     <!-- Main container -->
     <div class="h-full relative">
         <!-- Toolbar -->
@@ -471,7 +477,7 @@
 
                 <div id="auth-content-panel" class="hidden">
                     <div id="logged-in-panel" class="hidden">
-                        <div class="bg-green-900/20 border border-green-500 rounded p-4 mb-6">
+                        <div class="bg-green-900/20 border border-green-500 rounded p-4 mb-4">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <i class="fas fa-check-circle text-green-500 text-xl mb-2"></i>
@@ -484,21 +490,12 @@
                             </div>
                         </div>
 
-                        <div class="space-y-4">
-                            <div>
-                                <h4 class="font-bold mb-2"><i class="fas fa-save mr-2"></i>Sauvegarder le contexte actuel</h4>
-                                <div class="flex space-x-2">
-                                    <input type="text" id="context-name-input" placeholder="Nom du contexte" class="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg">
-                                    <button id="save-context-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg">
-                                        <i class="fas fa-save"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div>
-                                <h4 class="font-bold mb-2"><i class="fas fa-folder-open mr-2"></i>Contextes sauvegardés</h4>
-                                <div id="saved-contexts" class="space-y-2 max-h-40 overflow-y-auto">
-                                    <!-- Contexts will be loaded here -->
+                        <div class="bg-blue-900/20 border border-blue-500 rounded p-4">
+                            <div class="flex items-start space-x-3">
+                                <i class="fas fa-cloud-upload-alt text-blue-400 text-xl"></i>
+                                <div>
+                                    <p class="text-blue-400 font-semibold mb-1">Synchronisation automatique active</p>
+                                    <p class="text-sm text-gray-300">Vos modifications sont automatiquement sauvegardées dans le cloud.</p>
                                 </div>
                             </div>
                         </div>
