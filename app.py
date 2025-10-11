@@ -890,7 +890,7 @@ def test_gemini_api():
 
 @app.route('/api/upload/image', methods=['POST'])
 def upload_image():
-    """Upload d'une image vers Replit Object Storage"""
+    """Upload d'une image vers Replit Object Storage avec association au user"""
     if 'user_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
@@ -926,28 +926,29 @@ def upload_image():
         if category not in ['locations', 'regions', 'general']:
             category = 'general'
 
-        # Générer un nom de fichier unique
+        # Générer un nom de fichier unique avec user_id
+        user_id = session['user_id']
         filename = generate_unique_filename(file.filename, category)
         
-        # Pour Replit Object Storage, nous utiliserons d'abord le stockage local
-        # puis nous pourrons migrer vers Object Storage
-        upload_dir = f'uploads/{category}'
+        # Structure de dossiers par utilisateur
+        upload_dir = f'uploads/user_{user_id}/{category}'
         os.makedirs(upload_dir, exist_ok=True)
         
         file_path = os.path.join(upload_dir, os.path.basename(filename))
         file.save(file_path)
 
-        # Générer l'URL publique
-        public_url = f'/uploads/{category}/{os.path.basename(filename)}'
+        # Générer l'URL publique avec user_id
+        public_url = f'/uploads/user_{user_id}/{category}/{os.path.basename(filename)}'
 
         # Log de l'upload
-        print(f"📸 Image uploadée: {filename} par user {session['user_id']}")
+        print(f"📸 Image uploadée: {filename} par user {user_id}")
 
         return jsonify({
             'success': True,
             'url': public_url,
             'filename': os.path.basename(filename),
             'size': file_size,
+            'user_id': user_id,
             'message': 'Image uploadée avec succès'
         })
 
@@ -957,11 +958,12 @@ def upload_image():
             'error': f'Erreur serveur: {str(e)}'
         }), 500
 
-@app.route('/uploads/<category>/<filename>')
-def serve_uploaded_file(category, filename):
-    """Servir les fichiers uploadés"""
-    upload_dir = f'uploads/{category}'
-    return send_from_directory(upload_dir, filename)
+@app.route('/uploads/<path:filepath>')
+def serve_uploaded_file(filepath):
+    """Servir les fichiers uploadés (avec ou sans user_id)"""
+    # Gérer à la fois l'ancien format et le nouveau format avec user_id
+    upload_dir = 'uploads'
+    return send_from_directory(upload_dir, filepath)
 
 @app.route('/api/image/create-thumbnail', methods=['POST'])
 def create_thumbnail():
@@ -978,17 +980,15 @@ def create_thumbnail():
         category = data['category']
         
         # Extraire le chemin du fichier depuis l'URL
-        # Format attendu: /uploads/category/filename
+        # Formats supportés: 
+        # - /uploads/category/filename (ancien)
+        # - /uploads/user_X/category/filename (nouveau)
         if not image_url.startswith('/uploads/'):
             return jsonify({'error': 'URL d\'image invalide'}), 400
         
-        parts = image_url.split('/')
-        if len(parts) < 4:
-            return jsonify({'error': 'Format d\'URL invalide'}), 400
-        
-        original_category = parts[2]
-        original_filename = parts[3]
-        original_path = f'uploads/{original_category}/{original_filename}'
+        # Enlever le préfixe /uploads/
+        relative_path = image_url[9:]  # len('/uploads/') = 9
+        original_path = f'uploads/{relative_path}'
         
         if not os.path.exists(original_path):
             return jsonify({'error': 'Fichier source introuvable'}), 404
@@ -1014,15 +1014,21 @@ def create_thumbnail():
             thumbnail.paste(img, offset)
             
             # Générer un nom de fichier unique pour la vignette
-            thumbnail_filename = f'thumb_{original_filename.rsplit(".", 1)[0]}.png'
-            thumbnail_dir = f'uploads/{category}'
+            # Extraire le nom de fichier depuis le path
+            filename_only = os.path.basename(relative_path)
+            thumbnail_filename = f'thumb_{filename_only.rsplit(".", 1)[0]}.png'
+            
+            # Déterminer le dossier de destination (même que l'original)
+            thumbnail_dir = os.path.dirname(original_path)
             os.makedirs(thumbnail_dir, exist_ok=True)
             thumbnail_path = os.path.join(thumbnail_dir, thumbnail_filename)
             
             # Sauvegarder en PNG
             thumbnail.save(thumbnail_path, 'PNG', optimize=True)
             
-            thumbnail_url = f'/uploads/{category}/{thumbnail_filename}'
+            # Générer l'URL avec le même path que l'original
+            thumbnail_relative = os.path.join(os.path.dirname(relative_path), thumbnail_filename)
+            thumbnail_url = f'/uploads/{thumbnail_relative}'
             
             print(f"📸 Vignette créée: {thumbnail_url}")
             

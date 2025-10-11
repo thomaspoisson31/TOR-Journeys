@@ -489,7 +489,7 @@ class AuthManager {
     async loadUserData() {
         if (!this.isAuthenticated) return;
 
-        this.logAuth("📥 Chargement des données utilisateur");
+        this.logAuth("📥 Chargement des données utilisateur depuis le cloud");
 
         try {
             const response = await fetch('/api/user/data', {
@@ -498,10 +498,32 @@ class AuthManager {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                await this.applyContextData(data);
-                this.logAuth("✅ Données utilisateur chargées automatiquement");
-            } else if (response.status !== 404) {
+                const cloudData = await response.json();
+                
+                // Vérifier s'il y a des données locales
+                const hasLocalData = this.hasLocalData();
+                
+                if (hasLocalData) {
+                    // Gérer le conflit entre local et cloud
+                    const localData = this.collectCurrentContextData();
+                    const mergedData = await this.resolveConflict(localData, cloudData);
+                    await this.applyContextData(mergedData);
+                    
+                    // Sauvegarder les données mergées dans le cloud
+                    await this.syncUserData();
+                } else {
+                    // Pas de conflit, charger simplement les données cloud
+                    await this.applyContextData(cloudData);
+                }
+                
+                this.logAuth("✅ Données utilisateur chargées et synchronisées");
+            } else if (response.status === 404) {
+                // Pas de données cloud, sauvegarder les données locales si elles existent
+                if (this.hasLocalData()) {
+                    this.logAuth("📤 Première sync : envoi des données locales vers le cloud");
+                    await this.syncUserData();
+                }
+            } else {
                 this.logAuth("⚠️ Erreur lors du chargement des données utilisateur");
             }
         } catch (error) {
@@ -509,10 +531,112 @@ class AuthManager {
         }
     }
 
+    hasLocalData() {
+        // Vérifier si des données locales existent
+        const hasLocations = localStorage.getItem('middleEarthLocations') !== null;
+        const hasRegions = localStorage.getItem('middleEarthRegions') !== null;
+        const hasSettings = localStorage.getItem('availableMaps') !== null;
+        
+        return hasLocations || hasRegions || hasSettings;
+    }
+
+    async resolveConflict(localData, cloudData) {
+        this.logAuth("⚙️ Résolution de conflit local ↔ cloud");
+
+        // Stratégie : merger en priorisant les modifications les plus récentes
+        const mergedData = { ...cloudData };
+
+        // Merger les lieux (garder les IDs uniques)
+        if (localData.locations && cloudData.locations) {
+            const localLocations = localData.locations.locations || [];
+            const cloudLocations = cloudData.locations.locations || [];
+            
+            // Créer une map par ID
+            const locationMap = new Map();
+            
+            // Ajouter d'abord les lieux cloud
+            cloudLocations.forEach(loc => locationMap.set(loc.id, loc));
+            
+            // Ajouter/merger les lieux locaux
+            localLocations.forEach(loc => {
+                if (!locationMap.has(loc.id)) {
+                    locationMap.set(loc.id, loc);
+                } else {
+                    // Garder celui qui a le timestamp le plus récent
+                    const cloudLoc = locationMap.get(loc.id);
+                    if (loc.updated_at && cloudLoc.updated_at) {
+                        if (new Date(loc.updated_at) > new Date(cloudLoc.updated_at)) {
+                            locationMap.set(loc.id, loc);
+                        }
+                    }
+                }
+            });
+            
+            mergedData.locations = {
+                locations: Array.from(locationMap.values())
+            };
+        } else if (localData.locations) {
+            mergedData.locations = localData.locations;
+        }
+
+        // Même logique pour les régions
+        if (localData.regions && cloudData.regions) {
+            const localRegions = localData.regions.regions || [];
+            const cloudRegions = cloudData.regions.regions || [];
+            
+            const regionMap = new Map();
+            cloudRegions.forEach(reg => regionMap.set(reg.id, reg));
+            localRegions.forEach(reg => {
+                if (!regionMap.has(reg.id)) {
+                    regionMap.set(reg.id, reg);
+                }
+            });
+            
+            mergedData.regions = {
+                regions: Array.from(regionMap.values())
+            };
+        } else if (localData.regions) {
+            mergedData.regions = localData.regions;
+        }
+
+        // Pour les paramètres, prioriser le local (plus récent)
+        if (localData.settings) {
+            mergedData.settings = localData.settings;
+        }
+
+        // Pour le calendrier et saison, prioriser le local
+        if (localData.calendar) {
+            mergedData.calendar = localData.calendar;
+        }
+
+        // Pour le journal, merger les entrées
+        if (localData.journal && cloudData.journal) {
+            const journalMap = new Map();
+            
+            cloudData.journal.forEach(entry => {
+                journalMap.set(entry.pathSignature || entry.generatedAt, entry);
+            });
+            
+            localData.journal.forEach(entry => {
+                const key = entry.pathSignature || entry.generatedAt;
+                if (!journalMap.has(key)) {
+                    journalMap.set(key, entry);
+                }
+            });
+            
+            mergedData.journal = Array.from(journalMap.values());
+        } else if (localData.journal) {
+            mergedData.journal = localData.journal;
+        }
+
+        this.logAuth("✅ Conflit résolu - données mergées");
+        return mergedData;
+    }
+
     async syncUserData() {
         if (!this.isAuthenticated) return;
 
-        this.logAuth("🔄 Synchronisation des données utilisateur");
+        this.logAuth("🔄 Synchronisation des données utilisateur vers le cloud");
 
         try {
             const contextData = this.collectCurrentContextData();
@@ -527,25 +651,74 @@ class AuthManager {
             });
 
             if (response.ok) {
-                this.logAuth("✅ Données utilisateur synchronisées");
+                this.logAuth("✅ Données utilisateur synchronisées dans le cloud");
+                
+                // Sauvegarder aussi en local pour cohérence
+                this.saveToLocalStorage(contextData);
             } else {
-                this.logAuth("⚠️ Erreur lors de la synchronisation");
+                this.logAuth("⚠️ Erreur lors de la synchronisation cloud");
             }
         } catch (error) {
             this.logAuth(`❌ Erreur lors de la synchronisation: ${error.message}`);
         }
     }
 
+    saveToLocalStorage(data) {
+        // Sauvegarder les données en local aussi
+        if (data.locations) {
+            localStorage.setItem('middleEarthLocations', JSON.stringify(data.locations));
+        }
+        if (data.regions) {
+            localStorage.setItem('middleEarthRegions', JSON.stringify(data.regions));
+        }
+        if (data.settings) {
+            if (data.settings.availableMaps) {
+                localStorage.setItem('availableMaps', JSON.stringify(data.settings.availableMaps));
+            }
+            if (data.settings.activeMapUrl) {
+                localStorage.setItem('activeMapUrl', data.settings.activeMapUrl);
+            }
+            if (data.settings.activeMapName) {
+                localStorage.setItem('activeMapName', data.settings.activeMapName);
+            }
+            if (data.settings.partyDescription) {
+                localStorage.setItem('partyDescription', data.settings.partyDescription);
+            }
+            if (data.settings.questDescription) {
+                localStorage.setItem('questDescription', data.settings.questDescription);
+            }
+            if (data.settings.narrationStyle) {
+                localStorage.setItem('narrationStyle', data.settings.narrationStyle);
+            }
+        }
+        if (data.calendar) {
+            if (data.calendar.currentSeason) {
+                localStorage.setItem('currentSeason', data.calendar.currentSeason);
+            }
+            if (data.calendar.currentDate) {
+                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentDate));
+            }
+        }
+        if (data.journal) {
+            localStorage.setItem('travelJournal', JSON.stringify(data.journal));
+        }
+    }
+
     scheduleAutoSync() {
+        // Ne synchroniser que si l'utilisateur est authentifié
+        if (!this.isAuthenticated) return;
+
         // Annuler le timeout précédent s'il existe
         if (this.autoSyncTimeoutId) {
             clearTimeout(this.autoSyncTimeoutId);
         }
 
         // Programmer la synchronisation automatique
-        this.autoSyncTimeoutId = setTimeout(() => {
-            this.syncUserData();
+        this.autoSyncTimeoutId = setTimeout(async () => {
+            await this.syncUserData();
         }, this.autoSyncDelay);
+        
+        this.logAuth(`⏱️ Auto-sync programmée dans ${this.autoSyncDelay}ms`);
     }
 
     logAuth(message, data = null) {

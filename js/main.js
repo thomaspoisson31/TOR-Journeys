@@ -118,6 +118,14 @@ async function initializeApp() {
         authManager = new AuthManager();
         authManager.init();
         window.authManager = authManager; // Exposer globalement pour les onclick
+        
+        // Exposer scheduleAutoSync globalement pour les autres managers
+        window.scheduleAutoSync = () => {
+            if (authManager && authManager.isAuthenticated) {
+                authManager.scheduleAutoSync();
+            }
+        };
+        
         console.log("✅ AuthManager initialized");
 
         // Initialiser InfoBoxManager
