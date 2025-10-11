@@ -486,14 +486,17 @@ class AuthManager {
         }
 
         // Restaurer la position du marqueur - PRIORITÉ CLOUD
-        if (data.position && window.positionManager) {
+        if (data.position) {
             this.logAuth("📍 Restauration de la position du marqueur depuis le cloud");
-            // Sauvegarder d'abord dans localStorage pour éviter les conflits
+            // FORCER la sauvegarde dans localStorage AVANT le reload
             localStorage.setItem('adventurers_position', JSON.stringify(data.position));
-            // Puis mettre à jour le marqueur visuellement
-            window.positionManager.currentPosition = { ...data.position };
-            window.positionManager.updateMarkerPosition();
-            this.logAuth("✅ Position restaurée depuis le cloud:", data.position);
+            this.logAuth("✅ Position cloud forcée dans localStorage:", data.position);
+            
+            // Si PositionManager existe déjà (avant reload), mettre à jour visuellement
+            if (window.positionManager) {
+                window.positionManager.currentPosition = { ...data.position };
+                window.positionManager.updateMarkerPosition();
+            }
         }
 
         // Restaurer l'état des filtres APRÈS le rendu initial
@@ -721,10 +724,13 @@ class AuthManager {
             mergedData.journal = localData.journal;
         }
 
-        // Pour la position, prioriser le cloud s'il existe, sinon local
+        // Pour la position : toujours prioriser le cloud lors d'une restauration
+        // (le local sera écrasé de toute façon au reload)
         if (cloudData.position) {
             mergedData.position = cloudData.position;
-            this.logAuth("📍 Position cloud retenue:", cloudData.position);
+            // Forcer dans localStorage immédiatement
+            localStorage.setItem('adventurers_position', JSON.stringify(cloudData.position));
+            this.logAuth("📍 Position cloud retenue et forcée:", cloudData.position);
         } else if (localData.position) {
             mergedData.position = localData.position;
             this.logAuth("📍 Position locale retenue:", localData.position);
