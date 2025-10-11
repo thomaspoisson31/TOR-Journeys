@@ -488,9 +488,10 @@ class AuthManager {
         // Restaurer la position du marqueur - PRIORITÉ CLOUD
         if (data.position) {
             this.logAuth("📍 Restauration de la position du marqueur depuis le cloud");
-            // FORCER la sauvegarde dans localStorage AVANT le reload
+            // FORCER la sauvegarde dans localStorage AVANT le reload avec un flag
             localStorage.setItem('adventurers_position', JSON.stringify(data.position));
-            this.logAuth("✅ Position cloud forcée dans localStorage:", data.position);
+            localStorage.setItem('adventurers_position_from_cloud', 'true');
+            this.logAuth("✅ Position cloud forcée dans localStorage avec flag:", data.position);
             
             // Si PositionManager existe déjà (avant reload), mettre à jour visuellement
             if (window.positionManager) {
@@ -728,9 +729,10 @@ class AuthManager {
         // (le local sera écrasé de toute façon au reload)
         if (cloudData.position) {
             mergedData.position = cloudData.position;
-            // Forcer dans localStorage immédiatement
+            // Forcer dans localStorage immédiatement avec flag
             localStorage.setItem('adventurers_position', JSON.stringify(cloudData.position));
-            this.logAuth("📍 Position cloud retenue et forcée:", cloudData.position);
+            localStorage.setItem('adventurers_position_from_cloud', 'true');
+            this.logAuth("📍 Position cloud retenue et forcée avec flag:", cloudData.position);
         } else if (localData.position) {
             mergedData.position = localData.position;
             this.logAuth("📍 Position locale retenue:", localData.position);

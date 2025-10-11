@@ -18,17 +18,30 @@ class PositionManager {
     }
 
     loadPosition() {
+        // Vérifier si la position vient du cloud (flag temporaire)
+        const fromCloud = localStorage.getItem('adventurers_position_from_cloud');
+        
         const saved = localStorage.getItem('adventurers_position');
         if (saved) {
             try {
                 const position = JSON.parse(saved);
-                console.log("📍 [PositionManager] Position chargée depuis localStorage:", position);
-                console.log("📍 [PositionManager] Source: localStorage à l'initialisation");
+                
+                if (fromCloud === 'true') {
+                    console.log("📍 [PositionManager] Position chargée depuis CLOUD via localStorage:", position);
+                    // Nettoyer le flag après utilisation
+                    localStorage.removeItem('adventurers_position_from_cloud');
+                } else {
+                    console.log("📍 [PositionManager] Position chargée depuis localStorage local:", position);
+                }
+                
                 return position;
             } catch (e) {
                 console.error("❌ [PositionManager] Erreur parsing position:", e);
+                // Nettoyer le flag en cas d'erreur
+                localStorage.removeItem('adventurers_position_from_cloud');
             }
         }
+        
         // Position par défaut au centre de la carte
         const defaultPosition = {
             x: this.mapConstants.MAP_WIDTH / 2,
