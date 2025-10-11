@@ -1,0 +1,96 @@
+Spécifications Techniques - Application de Cartographie Interactive Terre du Milieu
+Architecture Globale
+Stack Technique:
+
+Frontend: HTML5, CSS3, JavaScript ES6+ (modules)
+Backend: Flask (Python), SQLite
+Authentification: Google OAuth 2.0
+API IA: Google Gemini
+Stockage: localStorage (client) + BDD serveur
+Structure Modulaire:
+
+/js/managers/: Modules fonctionnels indépendants
+/js/utils/: Utilitaires et constantes
+/js/main.js: Point d'entrée minimal, orchestration
+Fonctionnalités Principales
+Cartographie Interactive
+Navigation: Pan (souris/2 doigts mobile), zoom (molette/pinch), réinitialisation
+Lieux: Marqueurs cliquables, drag-and-drop, vignettes au zoom >50%, modal d'édition
+Régions: Polygones SVG, traçage manuel, click-through intelligent
+Position: Marqueur déplaçable, animation, indicateur rumeurs proximité
+Tracés de voyage: Canvas HTML5, calcul distances/durées, segments journaliers
+Mobile-First (Responsive)
+Gestures: Pinch zoom, pan 2 doigts, long-press contextuel, tap simple
+UI: Bottom toolbar, modales plein écran, zones touch 44px minimum
+Conflits: Priorisation gestures (drag marqueur > pan carte)
+Gestion de Données
+Lieux/Régions: CRUD complet, propriétés (couleur, statut visité/connu, rumeurs, traditions)
+Images: Upload, vignettes auto (100x100), multi-images par lieu
+Filtres: Couleur, statut, type, opacité régions
+Sync: Auto-save localStorage, sync cloud (authentifié)
+IA & Génération
+Gemini API: Descriptions lieux, narrations voyage, groupe aventuriers
+Calendrier: Import CSV, saisons automatiques, calcul dates
+Journal: Historique voyages, événements aléatoires, export/import
+Règles de Développement
+Organisation du Code
+Un manager = une responsabilité (SRP)
+Export/Import ES6 modules systématique
+Exposition globale via window uniquement si nécessaire
+Managers autonomes: pas de dépendances circulaires
+Init séquentielle: constants → managers → DOM listeners
+Conventions de Code
+// Naming
+class MyManager { }           // PascalCase classes
+const myVariable = ...        // camelCase variables
+function doSomething() { }    // camelCase fonctions
+// Structure manager type
+class MyManager {
+  constructor(domUtils, dependencies) { }
+  init() { }                  // Setup unique
+  setupEventListeners() { }   // Listeners DOM
+  saveToLocal() { }          // Persistance
+}
+// Logs standardisés
+console.log("✅ Success message")
+console.log("❌ Error message")
+console.log("⚠️ Warning message")
+Gestion des Événements
+Stop propagation systématique pour éviter conflits
+Passive listeners quand pas de preventDefault()
+Touch events: touchstart/move/end avec flags hasMoved, duration
+Desktop: mousedown/move/up, contextmenu, wheel
+Persistance
+localStorage: Données utilisateur non-authentifié
+API /api/user/data: Sync cloud (authentifié)
+Auto-sync: Debounce 2s après modifications
+Format: JSON sérialisé, timestamps, IDs uniques
+Mobile Spécifique
+Media query: @media (max-width: 768px) pour styles mobiles
+Touch targets: 44px minimum, zones agrandies invisibles
+Gestures priorisés:
+Drag marqueurs (désactive pan temporaire)
+Pinch zoom (2 doigts)
+Pan carte (2 doigts)
+Long-press: 500ms threshold, stop event propagation
+Performance
+Lazy rendering: Vignettes uniquement si zoom >50%
+Debounce: Filtres (300ms), sync (2s)
+Canvas: Clear + redraw au lieu de multiples layers
+DOM: Minimize reflows, batch updates
+Architecture des Managers
+Core: data-manager, filter-manager, zoom-manager
+Cartographie: path-manager, position-manager, voyage-manager
+UI: infobox-manager, settings-manager, adventure-manager
+Services: auth-manager, import-export-manager, gemini-manager, upload-manager, calendar-manager, journal-manager
+
+Dépendances: Injection via constructeur, pas de couplage fort
+
+API Backend
+Auth: /auth/google, /auth/google/callback, /auth/logout
+Données: /api/user/data (GET/PUT), /api/contexts (CRUD)
+Services: /api/gemini/generate, /api/upload/image, /api/image/create-thumbnail
+
+Sécurité: Session Flask, HTTPS forcé, cookies sécurisés, validation serveur
+
+Principe directeur: Modularité maximale, mobile-first, progressive enhancement
