@@ -120,10 +120,6 @@ class CalendarManager {
     saveCalendarToLocal(skipAutoSync = false) {
         console.log("📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync:", skipAutoSync);
         
-        // Vérifier si on vient de charger depuis le cloud
-        const fromCloud = localStorage.getItem('calendar_from_cloud');
-        console.log("📅 [saveCalendarToLocal] Flag cloud:", fromCloud);
-        
         console.log("📅 [saveCalendarToLocal] Données à sauvegarder:", {
             calendarData: this.calendarData ? `${this.calendarData.length} mois` : "null",
             currentCalendarDate: this.currentCalendarDate,
@@ -133,32 +129,28 @@ class CalendarManager {
         
         if (this.calendarData) {
             localStorage.setItem('calendarData', JSON.stringify(this.calendarData));
-            console.log("📅 [saveCalendarToLocal] calendarData sauvegardé dans localStorage");
         }
         if (this.currentCalendarDate) {
             localStorage.setItem('currentCalendarDate', JSON.stringify(this.currentCalendarDate));
-            console.log("📅 [saveCalendarToLocal] currentCalendarDate sauvegardé:", this.currentCalendarDate);
         }
         localStorage.setItem('isCalendarMode', this.isCalendarMode.toString());
         localStorage.setItem('currentSeason', this.currentSeason);
-        console.log("📅 [saveCalendarToLocal] isCalendarMode et currentSeason sauvegardés");
         
         // Synchroniser les variables globales
         this.exposeGlobalData();
         
-        // Nettoyer le flag cloud après la première sauvegarde
+        // Vérifier et nettoyer le flag cloud
+        const fromCloud = localStorage.getItem('calendar_from_cloud');
         if (fromCloud === 'true') {
             localStorage.removeItem('calendar_from_cloud');
-            console.log("📅 [saveCalendarToLocal] Flag cloud nettoyé, auto-sync bloquée pour cette sauvegarde");
+            console.log("📅 [saveCalendarToLocal] Flag cloud nettoyé, sauvegarde sans auto-sync");
             return; // Ne pas déclencher d'auto-sync si les données viennent du cloud
         }
         
-        // Déclencher la synchronisation cloud si authentifié (sauf si skipAutoSync)
+        // Déclencher la synchronisation cloud si authentifié
         if (!skipAutoSync && typeof scheduleAutoSync === 'function') {
             console.log("📅 [saveCalendarToLocal] Déclenchement auto-sync");
             scheduleAutoSync();
-        } else {
-            console.log("📅 [saveCalendarToLocal] Auto-sync NOT déclenchée (skipAutoSync ou scheduleAutoSync non disponible)");
         }
     }
 

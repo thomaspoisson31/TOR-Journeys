@@ -412,51 +412,41 @@ class AuthManager {
             
             this.logAuth("📅 [applyContextData] Données calendar reçues:", data.calendar);
             
-            // Sauvegarder directement dans localStorage avec le flag cloud
+            // Appliquer directement au CalendarManager d'abord
             if (data.calendar.currentSeason) {
+                window.calendarManager.currentSeason = data.calendar.currentSeason;
                 localStorage.setItem('currentSeason', data.calendar.currentSeason);
-                this.logAuth(`📅 [applyContextData] Saison sauvegardée: ${data.calendar.currentSeason}`);
+                this.logAuth(`📅 [applyContextData] Saison appliquée: ${data.calendar.currentSeason}`);
             }
             
             if (data.calendar.currentCalendarDate) {
-                const dateStr = JSON.stringify(data.calendar.currentCalendarDate);
-                localStorage.setItem('currentCalendarDate', dateStr);
-                this.logAuth(`📅 [applyContextData] Date sauvegardée: ${dateStr}`);
-                
-                // Vérification immédiate
-                const verif = localStorage.getItem('currentCalendarDate');
-                this.logAuth(`📅 [applyContextData] Vérification localStorage après setItem: ${verif}`);
+                window.calendarManager.currentCalendarDate = data.calendar.currentCalendarDate;
+                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
+                this.logAuth(`📅 [applyContextData] Date appliquée:`, data.calendar.currentCalendarDate);
             }
             
             if (data.calendar.calendarData) {
+                window.calendarManager.calendarData = data.calendar.calendarData;
                 localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
-                this.logAuth(`📅 [applyContextData] Données calendrier sauvegardées: ${data.calendar.calendarData.length} mois`);
+                this.logAuth(`📅 [applyContextData] Données calendrier appliquées: ${data.calendar.calendarData.length} mois`);
             }
             
             if (data.calendar.isCalendarMode !== undefined) {
+                window.calendarManager.isCalendarMode = data.calendar.isCalendarMode;
                 localStorage.setItem('isCalendarMode', data.calendar.isCalendarMode.toString());
-                this.logAuth(`📅 [applyContextData] Mode calendrier sauvegardé: ${data.calendar.isCalendarMode}`);
+                this.logAuth(`📅 [applyContextData] Mode calendrier appliqué: ${data.calendar.isCalendarMode}`);
             }
             
-            // Marquer que ces données viennent du cloud
+            // Marquer que ces données viennent du cloud pour bloquer l'auto-sync
             localStorage.setItem('calendar_from_cloud', 'true');
-            this.logAuth("📅 [applyContextData] Flag calendar_from_cloud défini à 'true'");
             
-            // Recharger les données du CalendarManager depuis localStorage
-            this.logAuth("📅 [applyContextData] Appel loadCalendarFromLocal()");
-            window.calendarManager.loadCalendarFromLocal();
-            
-            // Forcer la mise à jour complète de l'interface
-            this.logAuth("📅 [applyContextData] Appel updateCalendarUI()");
+            // Forcer la mise à jour complète de l'interface avec les nouvelles données
+            this.logAuth("📅 [applyContextData] Mise à jour UI du calendrier");
             window.calendarManager.updateCalendarUI();
-            
-            this.logAuth("📅 [applyContextData] Appel updateSeasonDisplay()");
             window.calendarManager.updateSeasonDisplay();
-            
-            this.logAuth("📅 [applyContextData] Appel exposeGlobalData()");
             window.calendarManager.exposeGlobalData();
             
-            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud et sauvegardé localement (avec flag)");
+            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud");
         }
 
         if (data.settings && window.settingsManager) {
