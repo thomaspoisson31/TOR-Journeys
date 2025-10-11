@@ -118,17 +118,30 @@ class CalendarManager {
     }
 
     saveCalendarToLocal(skipAutoSync = false) {
+        console.log("📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync:", skipAutoSync);
+        
         // Vérifier si on vient de charger depuis le cloud
         const fromCloud = localStorage.getItem('calendar_from_cloud');
+        console.log("📅 [saveCalendarToLocal] Flag cloud:", fromCloud);
+        
+        console.log("📅 [saveCalendarToLocal] Données à sauvegarder:", {
+            calendarData: this.calendarData ? `${this.calendarData.length} mois` : "null",
+            currentCalendarDate: this.currentCalendarDate,
+            isCalendarMode: this.isCalendarMode,
+            currentSeason: this.currentSeason
+        });
         
         if (this.calendarData) {
             localStorage.setItem('calendarData', JSON.stringify(this.calendarData));
+            console.log("📅 [saveCalendarToLocal] calendarData sauvegardé dans localStorage");
         }
         if (this.currentCalendarDate) {
             localStorage.setItem('currentCalendarDate', JSON.stringify(this.currentCalendarDate));
+            console.log("📅 [saveCalendarToLocal] currentCalendarDate sauvegardé:", this.currentCalendarDate);
         }
         localStorage.setItem('isCalendarMode', this.isCalendarMode.toString());
         localStorage.setItem('currentSeason', this.currentSeason);
+        console.log("📅 [saveCalendarToLocal] isCalendarMode et currentSeason sauvegardés");
         
         // Synchroniser les variables globales
         this.exposeGlobalData();
@@ -136,24 +149,38 @@ class CalendarManager {
         // Nettoyer le flag cloud après la première sauvegarde
         if (fromCloud === 'true') {
             localStorage.removeItem('calendar_from_cloud');
-            console.log("📅 Flag cloud nettoyé, auto-sync bloquée pour cette sauvegarde");
+            console.log("📅 [saveCalendarToLocal] Flag cloud nettoyé, auto-sync bloquée pour cette sauvegarde");
             return; // Ne pas déclencher d'auto-sync si les données viennent du cloud
         }
         
         // Déclencher la synchronisation cloud si authentifié (sauf si skipAutoSync)
         if (!skipAutoSync && typeof scheduleAutoSync === 'function') {
+            console.log("📅 [saveCalendarToLocal] Déclenchement auto-sync");
             scheduleAutoSync();
+        } else {
+            console.log("📅 [saveCalendarToLocal] Auto-sync NOT déclenchée (skipAutoSync ou scheduleAutoSync non disponible)");
         }
     }
 
     loadCalendarFromLocal() {
+        console.log("📅 [loadCalendarFromLocal] Début du chargement depuis localStorage");
+        
         const savedCalendarData = localStorage.getItem('calendarData');
         const savedCurrentCalendarDate = localStorage.getItem('currentCalendarDate');
         const savedIsCalendarMode = localStorage.getItem('isCalendarMode');
+        const fromCloud = localStorage.getItem('calendar_from_cloud');
+
+        console.log("📅 [loadCalendarFromLocal] Valeurs brutes localStorage:", {
+            savedCalendarData: savedCalendarData ? "présent" : "absent",
+            savedCurrentCalendarDate: savedCurrentCalendarDate,
+            savedIsCalendarMode: savedIsCalendarMode,
+            fromCloud: fromCloud
+        });
 
         if (savedCalendarData) {
             try {
                 this.calendarData = JSON.parse(savedCalendarData);
+                console.log("📅 [loadCalendarFromLocal] calendarData chargé:", this.calendarData ? `${this.calendarData.length} mois` : "null");
             } catch (e) {
                 console.error('Error loading calendar data:', e);
             }
@@ -162,6 +189,7 @@ class CalendarManager {
         if (savedCurrentCalendarDate) {
             try {
                 this.currentCalendarDate = JSON.parse(savedCurrentCalendarDate);
+                console.log("📅 [loadCalendarFromLocal] currentCalendarDate chargé:", this.currentCalendarDate);
             } catch (e) {
                 console.error('Error loading calendar date:', e);
             }
@@ -169,7 +197,15 @@ class CalendarManager {
 
         if (savedIsCalendarMode) {
             this.isCalendarMode = savedIsCalendarMode === 'true';
+            console.log("📅 [loadCalendarFromLocal] isCalendarMode chargé:", this.isCalendarMode);
         }
+
+        console.log("📅 [loadCalendarFromLocal] État final CalendarManager:", {
+            calendarData: this.calendarData ? `${this.calendarData.length} mois` : "null",
+            currentCalendarDate: this.currentCalendarDate,
+            isCalendarMode: this.isCalendarMode,
+            currentSeason: this.currentSeason
+        });
     }
 
     loadSavedSeason() {
@@ -392,13 +428,26 @@ class CalendarManager {
     }
 
     updateCalendarDate() {
+        console.log("📅 [updateCalendarDate] Début mise à jour date");
+        
         const monthSelect = document.getElementById('calendar-month-select');
         const daySelect = document.getElementById('calendar-day-select');
         const monthIndex = parseInt(monthSelect.value);
         const day = parseInt(daySelect.value);
 
+        console.log("📅 [updateCalendarDate] Valeurs sélectionnées:", {
+            monthIndex: monthIndex,
+            day: day
+        });
+
         if (monthIndex >= 0 && !isNaN(day) && this.calendarData[monthIndex]) {
             const month = this.calendarData[monthIndex];
+            
+            console.log("📅 [updateCalendarDate] AVANT modification:", {
+                currentCalendarDate: this.currentCalendarDate,
+                currentSeason: this.currentSeason
+            });
+            
             this.currentCalendarDate = {
                 month: month.name,
                 day: day
@@ -406,10 +455,15 @@ class CalendarManager {
 
             // Update season based on exact calendar season - use the season directly from CSV
             const calendarSeason = month.season.toLowerCase();
-            console.log("📅 Saison du calendrier CSV:", calendarSeason, "pour le mois:", month.name);
+            console.log("📅 [updateCalendarDate] Saison du calendrier CSV:", calendarSeason, "pour le mois:", month.name);
 
             // Use the exact season from the CSV as-is
             this.currentSeason = calendarSeason;
+
+            console.log("📅 [updateCalendarDate] APRÈS modification:", {
+                currentCalendarDate: this.currentCalendarDate,
+                currentSeason: this.currentSeason
+            });
 
             // Save the season for consistency
             localStorage.setItem('currentSeason', this.currentSeason);
@@ -419,8 +473,11 @@ class CalendarManager {
             
             // Synchroniser avec la fonction globale si elle existe
             if (typeof scheduleAutoSync === 'function') {
+                console.log("📅 [updateCalendarDate] Appel scheduleAutoSync");
                 scheduleAutoSync();
             }
+        } else {
+            console.log("📅 [updateCalendarDate] Conditions non remplies pour mise à jour");
         }
     }
 

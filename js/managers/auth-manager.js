@@ -408,41 +408,55 @@ class AuthManager {
 
         // 4. Autres données (calendrier, paramètres, journal)
         if (data.calendar && window.calendarManager) {
-            this.logAuth("📅 Application des données de calendrier depuis le cloud");
+            this.logAuth("📅 [applyContextData] Application des données de calendrier depuis le cloud");
+            
+            this.logAuth("📅 [applyContextData] Données calendar reçues:", data.calendar);
             
             // Sauvegarder directement dans localStorage avec le flag cloud
             if (data.calendar.currentSeason) {
                 localStorage.setItem('currentSeason', data.calendar.currentSeason);
-                this.logAuth(`  - Saison: ${data.calendar.currentSeason}`);
+                this.logAuth(`📅 [applyContextData] Saison sauvegardée: ${data.calendar.currentSeason}`);
             }
             
             if (data.calendar.currentCalendarDate) {
-                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
-                this.logAuth(`  - Date: ${JSON.stringify(data.calendar.currentCalendarDate)}`);
+                const dateStr = JSON.stringify(data.calendar.currentCalendarDate);
+                localStorage.setItem('currentCalendarDate', dateStr);
+                this.logAuth(`📅 [applyContextData] Date sauvegardée: ${dateStr}`);
+                
+                // Vérification immédiate
+                const verif = localStorage.getItem('currentCalendarDate');
+                this.logAuth(`📅 [applyContextData] Vérification localStorage après setItem: ${verif}`);
             }
             
             if (data.calendar.calendarData) {
                 localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
-                this.logAuth(`  - Données calendrier: ${data.calendar.calendarData.length} mois`);
+                this.logAuth(`📅 [applyContextData] Données calendrier sauvegardées: ${data.calendar.calendarData.length} mois`);
             }
             
             if (data.calendar.isCalendarMode !== undefined) {
                 localStorage.setItem('isCalendarMode', data.calendar.isCalendarMode.toString());
-                this.logAuth(`  - Mode calendrier: ${data.calendar.isCalendarMode}`);
+                this.logAuth(`📅 [applyContextData] Mode calendrier sauvegardé: ${data.calendar.isCalendarMode}`);
             }
             
             // Marquer que ces données viennent du cloud
             localStorage.setItem('calendar_from_cloud', 'true');
+            this.logAuth("📅 [applyContextData] Flag calendar_from_cloud défini à 'true'");
             
             // Recharger les données du CalendarManager depuis localStorage
+            this.logAuth("📅 [applyContextData] Appel loadCalendarFromLocal()");
             window.calendarManager.loadCalendarFromLocal();
             
             // Forcer la mise à jour complète de l'interface
+            this.logAuth("📅 [applyContextData] Appel updateCalendarUI()");
             window.calendarManager.updateCalendarUI();
+            
+            this.logAuth("📅 [applyContextData] Appel updateSeasonDisplay()");
             window.calendarManager.updateSeasonDisplay();
+            
+            this.logAuth("📅 [applyContextData] Appel exposeGlobalData()");
             window.calendarManager.exposeGlobalData();
             
-            this.logAuth("✅ Calendrier restauré depuis le cloud et sauvegardé localement (avec flag)");
+            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud et sauvegardé localement (avec flag)");
         }
 
         if (data.settings && window.settingsManager) {
