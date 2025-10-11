@@ -780,18 +780,34 @@ class SettingsManager {
         const mapImage = document.getElementById('map-image');
         if (mapImage && this.activeMapUrl) {
             console.log('🗺️ Mise à jour de l\'image de la carte:', this.activeMapUrl);
-            mapImage.src = this.activeMapUrl;
-            // Attendre le chargement de l'image
-            mapImage.onload = () => {
-                console.log('✅ Image de carte chargée');
+            
+            // Force le rechargement même si l'URL est la même
+            const currentSrc = mapImage.src;
+            const newSrc = this.activeMapUrl;
+            
+            // Callback pour re-render après chargement
+            const onImageLoaded = () => {
+                console.log('✅ Image de carte chargée, re-render des lieux et régions');
                 // Re-render les lieux et régions après changement de carte
                 if (typeof window.renderLocations === 'function') {
                     window.renderLocations();
+                    console.log('✅ Lieux rendus après loadSettings');
                 }
                 if (typeof window.renderRegions === 'function') {
                     window.renderRegions();
+                    console.log('✅ Régions rendues après loadSettings');
                 }
             };
+            
+            // Si l'image est déjà la même et déjà chargée, appeler directement le callback
+            if (currentSrc === newSrc && mapImage.complete) {
+                console.log('⚡ Image déjà chargée, re-render immédiat');
+                onImageLoaded();
+            } else {
+                // Sinon attendre le chargement
+                mapImage.onload = onImageLoaded;
+                mapImage.src = newSrc;
+            }
         }
 
         // Mettre à jour l'affichage si la modale des paramètres est ouverte

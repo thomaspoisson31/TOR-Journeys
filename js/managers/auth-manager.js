@@ -463,6 +463,7 @@ class AuthManager {
         if (data.settings && window.settingsManager) {
             this.logAuth("⚙️ Application des paramètres");
             window.settingsManager.loadSettings(data.settings);
+            this.logAuth("✅ Paramètres appliqués");
         } else {
             this.logAuth("⚠️ Pas de paramètres à charger");
         }
@@ -480,6 +481,19 @@ class AuthManager {
         }
 
         this.logAuth("✅ Contexte appliqué avec succès");
+
+        // Forcer un re-render final pour être sûr que tout est à jour
+        this.logAuth("🔄 Re-render final des lieux et régions");
+        setTimeout(() => {
+            if (typeof window.renderLocations === 'function') {
+                window.renderLocations();
+                this.logAuth("✅ Re-render final des lieux terminé");
+            }
+            if (typeof window.renderRegions === 'function') {
+                window.renderRegions();
+                this.logAuth("✅ Re-render final des régions terminé");
+            }
+        }, 100);
 
         // Programmer une auto-sync
         this.scheduleAutoSync();
