@@ -442,11 +442,10 @@ class AuthManager {
             
             // Forcer la mise à jour complète de l'interface avec les nouvelles données
             this.logAuth("📅 [applyContextData] Mise à jour UI du calendrier");
-            window.calendarManager.updateCalendarUI();
             window.calendarManager.updateSeasonDisplay();
             window.calendarManager.exposeGlobalData();
             
-            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud");
+            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé)");
         }
 
         if (data.settings && window.settingsManager) {
@@ -537,6 +536,13 @@ class AuthManager {
             if (window.filterManager && typeof window.filterManager.applyFilters === 'function') {
                 window.filterManager.applyFilters();
                 this.logAuth("✅ Filtres réappliqués après re-render");
+            }
+
+            // MAINTENANT mettre à jour l'UI du calendrier après que tout soit synchronisé
+            if (window.calendarManager && window.calendarManager.calendarData) {
+                this.logAuth("📅 Mise à jour UI du calendrier APRÈS re-render");
+                window.calendarManager.updateCalendarUI();
+                this.logAuth("✅ UI du calendrier mise à jour");
             }
         }, 100); // Petit délai pour le second rendu
 
