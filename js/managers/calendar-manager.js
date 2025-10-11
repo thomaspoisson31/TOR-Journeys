@@ -436,6 +436,9 @@ class CalendarManager {
     updateCalendarDate() {
         console.log("📅 [updateCalendarDate] Début mise à jour date");
         
+        const fromCloud = localStorage.getItem('calendar_from_cloud');
+        console.log("📅 [updateCalendarDate] Flag calendar_from_cloud:", fromCloud);
+        
         const monthSelect = document.getElementById('calendar-month-select');
         const daySelect = document.getElementById('calendar-day-select');
         const monthIndex = parseInt(monthSelect.value);

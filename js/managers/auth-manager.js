@@ -446,10 +446,7 @@ class AuthManager {
             window.calendarManager.updateSeasonDisplay();
             window.calendarManager.exposeGlobalData();
             
-            // Nettoyer le flag APRÈS toutes les opérations
-            localStorage.removeItem('calendar_from_cloud');
-            
-            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (flag nettoyé)");
+            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud");
         }
 
         if (data.settings && window.settingsManager) {
@@ -542,6 +539,13 @@ class AuthManager {
                 this.logAuth("✅ Filtres réappliqués après re-render");
             }
         }, 100); // Petit délai pour le second rendu
+
+        // Nettoyer le flag calendar MAINTENANT, après toutes les opérations UI
+        const calendarFlag = localStorage.getItem('calendar_from_cloud');
+        if (calendarFlag === 'true') {
+            localStorage.removeItem('calendar_from_cloud');
+            this.logAuth("🧹 Flag calendar_from_cloud nettoyé");
+        }
 
         // RÉACTIVER l'auto-sync après l'application complète du contexte
         this.isAuthenticated = wasAuthenticated;
