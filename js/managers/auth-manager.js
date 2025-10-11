@@ -745,10 +745,13 @@ class AuthManager {
             this.logAuth(`  - Paramètres locaux appliqués.`);
         }
 
-        // Pour le calendrier, prioriser le local
-        if (localData.calendar) {
+        // Pour le calendrier, prioriser le CLOUD (comme pour la position)
+        if (cloudData.calendar) {
+            mergedData.calendar = cloudData.calendar;
+            this.logAuth(`  - Calendrier cloud prioritaire.`);
+        } else if (localData.calendar) {
             mergedData.calendar = localData.calendar;
-            this.logAuth(`  - Calendrier local appliqué.`);
+            this.logAuth(`  - Calendrier local utilisé (pas de données cloud).`);
         }
 
         // Pour le journal, merger les entrées
