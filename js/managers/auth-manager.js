@@ -492,14 +492,24 @@ class AuthManager {
 
         // Restaurer la position du marqueur - PRIORITÉ CLOUD
         if (data.position) {
-            this.logAuth("📍 Restauration de la position du marqueur depuis le cloud");
+            this.logAuth("📍 [applyContextData] Restauration de la position du marqueur depuis le cloud:", data.position);
+            
             // FORCER la sauvegarde dans localStorage AVANT le reload avec un flag
+            console.log("📍 [applyContextData] AVANT setItem - position à sauver:", data.position);
             localStorage.setItem('adventurers_position', JSON.stringify(data.position));
             localStorage.setItem('adventurers_position_from_cloud', 'true');
+            
+            // Vérifier immédiatement
+            const verif = localStorage.getItem('adventurers_position');
+            const verifFlag = localStorage.getItem('adventurers_position_from_cloud');
+            console.log("📍 [applyContextData] APRÈS setItem - position vérif:", verif);
+            console.log("📍 [applyContextData] APRÈS setItem - flag vérif:", verifFlag);
+            
             this.logAuth("✅ Position cloud forcée dans localStorage avec flag:", data.position);
             
             // Si PositionManager existe déjà (avant reload), mettre à jour visuellement
             if (window.positionManager) {
+                console.log("📍 [applyContextData] Mise à jour visuelle du PositionManager");
                 window.positionManager.currentPosition = { ...data.position };
                 window.positionManager.updateMarkerPosition();
             }
@@ -736,8 +746,16 @@ class AuthManager {
         if (cloudData.position) {
             mergedData.position = cloudData.position;
             // Forcer dans localStorage immédiatement avec flag
+            console.log("📍 [resolveConflict] AVANT setItem - position cloud:", cloudData.position);
             localStorage.setItem('adventurers_position', JSON.stringify(cloudData.position));
             localStorage.setItem('adventurers_position_from_cloud', 'true');
+            
+            // Vérifier immédiatement après
+            const verif = localStorage.getItem('adventurers_position');
+            const verifFlag = localStorage.getItem('adventurers_position_from_cloud');
+            console.log("📍 [resolveConflict] APRÈS setItem - position vérif:", verif);
+            console.log("📍 [resolveConflict] APRÈS setItem - flag vérif:", verifFlag);
+            
             this.logAuth("📍 Position cloud retenue et forcée avec flag:", cloudData.position);
         } else if (localData.position) {
             mergedData.position = localData.position;

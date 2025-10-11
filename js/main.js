@@ -603,13 +603,20 @@ function initializeMap() {
     window.zoomManager = zoomManager; // Exposer globalement
 
     // Initialiser PositionManager
+    console.log("📍 [main.js] Création du PositionManager avec MAP_WIDTH:", MAP_WIDTH, "MAP_HEIGHT:", MAP_HEIGHT);
+    
+    // Log de l'état du localStorage avant init
+    const savedPos = localStorage.getItem('adventurers_position');
+    const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
+    console.log("📍 [main.js] État localStorage AVANT init PositionManager - position:", savedPos, "flag:", cloudFlag);
+    
     positionManager = new PositionManager(
         { getElementById: (id) => document.getElementById(id) },
         { MAP_WIDTH, MAP_HEIGHT }
     );
     positionManager.init();
     window.positionManager = positionManager; // Exposer globalement
-    console.log("✅ PositionManager initialized");
+    console.log("✅ PositionManager initialized with position:", positionManager.currentPosition);
 
     // Initialiser JournalManager
     journalManager = new JournalManager();

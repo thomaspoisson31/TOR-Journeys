@@ -21,7 +21,11 @@ class PositionManager {
         // Vérifier si la position vient du cloud (flag temporaire)
         const fromCloud = localStorage.getItem('adventurers_position_from_cloud');
         
+        console.log("📍 [PositionManager.loadPosition] État du flag cloud:", fromCloud);
+        
         const saved = localStorage.getItem('adventurers_position');
+        console.log("📍 [PositionManager.loadPosition] Position dans localStorage:", saved);
+        
         if (saved) {
             try {
                 const position = JSON.parse(saved);
@@ -52,8 +56,12 @@ class PositionManager {
     }
 
     savePosition() {
+        console.log("💾 [PositionManager.savePosition] Sauvegarde position:", this.currentPosition);
         localStorage.setItem('adventurers_position', JSON.stringify(this.currentPosition));
-        console.log("💾 Position saved:", this.currentPosition);
+        
+        // Log pour vérifier que le flag cloud n'est pas présent
+        const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
+        console.log("💾 [PositionManager.savePosition] Flag cloud après save:", cloudFlag);
     }
 
     createPositionMarker() {
