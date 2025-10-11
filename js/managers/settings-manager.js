@@ -735,6 +735,55 @@ class SettingsManager {
         };
     }
 
+    // Méthode pour charger les paramètres depuis les données de contexte
+    loadSettings(settings) {
+        if (!settings) return;
+
+        console.log('⚙️ Chargement des paramètres depuis le contexte:', settings);
+
+        // Charger les cartes
+        if (settings.availableMaps) {
+            this.availableMaps = settings.availableMaps;
+        }
+        if (settings.activeMapUrl) {
+            this.activeMapUrl = settings.activeMapUrl;
+        }
+        if (settings.activeMapName) {
+            this.activeMapName = settings.activeMapName;
+        }
+
+        // Charger les descriptions
+        if (settings.partyDescription !== undefined) {
+            this.partyDescription = settings.partyDescription;
+        }
+        if (settings.questDescription !== undefined) {
+            this.questDescription = settings.questDescription;
+        }
+        if (settings.narrationStyle) {
+            this.narrationStyle = settings.narrationStyle;
+        }
+
+        // Sauvegarder dans localStorage
+        this.saveMapsData();
+        this.saveDescriptions();
+
+        // Mettre à jour l'image de la carte principale si nécessaire
+        const mapImage = document.getElementById('map-image');
+        if (mapImage && this.activeMapUrl) {
+            mapImage.src = this.activeMapUrl;
+        }
+
+        // Mettre à jour l'affichage si la modale des paramètres est ouverte
+        if (this.isSettingsOpen) {
+            this.renderMapsGrid();
+            this.updatePartyContent();
+            this.updateQuestContent();
+            this.updateNarrationStyleDisplay();
+        }
+
+        console.log('✅ Paramètres chargés avec succès');
+    }
+
     deleteAllLocationsAndRegions() {
         const confirmed = confirm(
             '⚠️ ATTENTION : Cette action va supprimer TOUS les lieux et TOUTES les régions de la carte.\n\n' +
