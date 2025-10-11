@@ -467,18 +467,40 @@ class AuthManager {
             }
         }
 
-        // 5. RE-RENDER IMMEDIATEMENT (pas de setTimeout)
+        // 5. RE-RENDER avec double appel pour forcer la mise à jour
         this.logAuth("🎨 Re-render des lieux et régions");
         
+        // Premier rendu immédiat
         if (typeof window.renderLocations === 'function') {
             window.renderLocations();
-            this.logAuth(`✅ ${window.locationsData?.locations?.length || 0} lieux rendus`);
+            this.logAuth(`✅ ${window.locationsData?.locations?.length || 0} lieux rendus (1er appel)`);
         }
         
         if (typeof window.renderRegions === 'function') {
             window.renderRegions();
-            this.logAuth(`✅ ${window.regionsData?.regions?.length || 0} régions rendues`);
+            this.logAuth(`✅ ${window.regionsData?.regions?.length || 0} régions rendues (1er appel)`);
         }
+
+        // Second rendu avec délai pour s'assurer de la synchronisation complète
+        setTimeout(() => {
+            this.logAuth("🔄 Re-render forcé après synchronisation");
+            
+            if (typeof window.renderLocations === 'function') {
+                window.renderLocations();
+                this.logAuth(`✅ ${window.locationsData?.locations?.length || 0} lieux rendus (2ème appel)`);
+            }
+            
+            if (typeof window.renderRegions === 'function') {
+                window.renderRegions();
+                this.logAuth(`✅ ${window.regionsData?.regions?.length || 0} régions rendues (2ème appel)`);
+            }
+
+            // Réappliquer les filtres pour s'assurer de la cohérence
+            if (window.filterManager) {
+                window.filterManager.applyFilters();
+                this.logAuth("✅ Filtres réappliqués");
+            }
+        }, 100);
 
         this.logAuth("✅ Contexte appliqué avec succès");
         this.scheduleAutoSync();
