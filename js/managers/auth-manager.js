@@ -388,8 +388,13 @@ class AuthManager {
                 const context = await response.json();
                 await this.applyContextData(context.data);
                 this.logAuth(`✅ Contexte "${context.name}" chargé avec succès`);
-                alert(`Contexte "${context.name}" chargé avec succès !`);
+                
+                // Fermer la modal avant le reload
                 this.hideAuthModal();
+                
+                // Recharger la page complètement pour garantir l'affichage correct
+                this.logAuth("🔄 Rechargement de la page pour afficher le contexte");
+                window.location.reload();
             } else {
                 const error = await response.json();
                 throw new Error(error.error || 'Erreur lors du chargement');
