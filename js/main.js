@@ -793,12 +793,11 @@ function setupMapNavigation() {
                 path: e.composedPath().map(el => el.tagName || el.nodeName).slice(0, 5)
             });
 
-            if (e.touches.length === 1) {
-                // Pan tactile
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            } else if (e.touches.length === 2) {
-                // Pinch zoom
+            if (e.touches.length === 2) {
+                // Pan avec deux doigts OU Pinch zoom
+                touchStartX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                touchStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                
                 const dx = e.touches[0].clientX - e.touches[1].clientX;
                 const dy = e.touches[0].clientY - e.touches[1].clientY;
                 touchDist = Math.sqrt(dx * dx + dy * dy);
@@ -806,26 +805,43 @@ function setupMapNavigation() {
         }, { passive: true });
 
         viewport.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 1 && !window.isDrawingMode) {
-                const deltaX = e.touches[0].clientX - touchStartX;
-                const deltaY = e.touches[0].clientY - touchStartY;
-                panX += deltaX;
-                panY += deltaY;
-                constrainPan();
-                updateMapTransform();
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            } else if (e.touches.length === 2) {
+            if (e.touches.length === 2 && !window.isDrawingMode) {
+                // Calculer le centre actuel des deux doigts
+                const currentCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const currentCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                
+                // Calculer la nouvelle distance pour le zoom
                 const dx = e.touches[0].clientX - e.touches[1].clientX;
                 const dy = e.touches[0].clientY - e.touches[1].clientY;
                 const newDist = Math.sqrt(dx * dx + dy * dy);
-                const zoomFactor = newDist / touchDist;
-                const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                zoomToPoint(zoomFactor, centerX, centerY);
-                touchDist = newDist;
                 
-                // Mettre à jour le ZoomManager après pinch to zoom
+                // Détecter si c'est un pinch (changement de distance) ou un pan (déplacement du centre)
+                const distChange = Math.abs(newDist - touchDist);
+                const centerDeltaX = currentCenterX - touchStartX;
+                const centerDeltaY = currentCenterY - touchStartY;
+                const centerMovement = Math.sqrt(centerDeltaX * centerDeltaX + centerDeltaY * centerDeltaY);
+                
+                // Si le mouvement du centre est plus important que le changement de distance, c'est un pan
+                if (centerMovement > distChange) {
+                    // Pan à deux doigts
+                    panX += centerDeltaX;
+                    panY += centerDeltaY;
+                    constrainPan();
+                    updateMapTransform();
+                    
+                    touchStartX = currentCenterX;
+                    touchStartY = currentCenterY;
+                } else {
+                    // Pinch zoom
+                    const zoomFactor = newDist / touchDist;
+                    zoomToPoint(zoomFactor, currentCenterX, currentCenterY);
+                    touchDist = newDist;
+                    
+                    touchStartX = currentCenterX;
+                    touchStartY = currentCenterY;
+                }
+                
+                // Mettre à jour le ZoomManager
                 if (zoomManager) {
                     zoomManager.updateDisplay();
                 }
