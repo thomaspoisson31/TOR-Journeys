@@ -106,6 +106,7 @@ async function initializeApp() {
         // Initialiser CalendarManager
         calendarManager = new window.CalendarManager();
         calendarManager.init();
+        window.calendarManager = calendarManager; // Exposer globalement pour AuthManager
         console.log("✅ CalendarManager initialized");
 
         // Initialiser SettingsManager
