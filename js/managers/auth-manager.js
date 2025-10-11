@@ -410,35 +410,39 @@ class AuthManager {
         if (data.calendar && window.calendarManager) {
             this.logAuth("📅 Application des données de calendrier depuis le cloud");
             
-            // Appliquer toutes les données du calendrier directement
+            // Sauvegarder directement dans localStorage avec le flag cloud
             if (data.calendar.currentSeason) {
-                window.calendarManager.currentSeason = data.calendar.currentSeason;
+                localStorage.setItem('currentSeason', data.calendar.currentSeason);
                 this.logAuth(`  - Saison: ${data.calendar.currentSeason}`);
             }
             
             if (data.calendar.currentCalendarDate) {
-                window.calendarManager.currentCalendarDate = data.calendar.currentCalendarDate;
+                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
                 this.logAuth(`  - Date: ${JSON.stringify(data.calendar.currentCalendarDate)}`);
             }
             
             if (data.calendar.calendarData) {
-                window.calendarManager.calendarData = data.calendar.calendarData;
+                localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
                 this.logAuth(`  - Données calendrier: ${data.calendar.calendarData.length} mois`);
             }
             
             if (data.calendar.isCalendarMode !== undefined) {
-                window.calendarManager.isCalendarMode = data.calendar.isCalendarMode;
+                localStorage.setItem('isCalendarMode', data.calendar.isCalendarMode.toString());
                 this.logAuth(`  - Mode calendrier: ${data.calendar.isCalendarMode}`);
             }
             
-            // Sauvegarder dans localStorage SANS déclencher d'auto-sync
-            window.calendarManager.saveCalendarToLocal(true); // skipAutoSync = true
+            // Marquer que ces données viennent du cloud
+            localStorage.setItem('calendar_from_cloud', 'true');
+            
+            // Recharger les données du CalendarManager depuis localStorage
+            window.calendarManager.loadCalendarFromLocal();
             
             // Forcer la mise à jour complète de l'interface
             window.calendarManager.updateCalendarUI();
             window.calendarManager.updateSeasonDisplay();
+            window.calendarManager.exposeGlobalData();
             
-            this.logAuth("✅ Calendrier restauré depuis le cloud et sauvegardé localement (sans auto-sync)");
+            this.logAuth("✅ Calendrier restauré depuis le cloud et sauvegardé localement (avec flag)");
         }
 
         if (data.settings && window.settingsManager) {

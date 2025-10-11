@@ -118,6 +118,9 @@ class CalendarManager {
     }
 
     saveCalendarToLocal(skipAutoSync = false) {
+        // Vérifier si on vient de charger depuis le cloud
+        const fromCloud = localStorage.getItem('calendar_from_cloud');
+        
         if (this.calendarData) {
             localStorage.setItem('calendarData', JSON.stringify(this.calendarData));
         }
@@ -129,6 +132,13 @@ class CalendarManager {
         
         // Synchroniser les variables globales
         this.exposeGlobalData();
+        
+        // Nettoyer le flag cloud après la première sauvegarde
+        if (fromCloud === 'true') {
+            localStorage.removeItem('calendar_from_cloud');
+            console.log("📅 Flag cloud nettoyé, auto-sync bloquée pour cette sauvegarde");
+            return; // Ne pas déclencher d'auto-sync si les données viennent du cloud
+        }
         
         // Déclencher la synchronisation cloud si authentifié (sauf si skipAutoSync)
         if (!skipAutoSync && typeof scheduleAutoSync === 'function') {
