@@ -122,18 +122,24 @@ class AuthManager {
                     await this.loadUserData();
                 } else {
                     this.logAuth("ℹ️ Aucun utilisateur authentifié");
+                    this.currentUser = null;
+                    this.isAuthenticated = false;
                     this.updateUIForUnauthenticatedUser();
                     // Charger les données locales si non authentifié
                     await this.loadUserDataFromLocalStorage();
                 }
             } else {
                 this.logAuth("⚠️ Erreur lors de la vérification d'authentification");
+                this.currentUser = null;
+                this.isAuthenticated = false;
                 this.updateUIForUnauthenticatedUser();
                 // Charger les données locales si erreur d'authentification
                 await this.loadUserDataFromLocalStorage();
             }
         } catch (error) {
             this.logAuth(`❌ Erreur lors de la vérification d'authentification: ${error.message}`);
+            this.currentUser = null;
+            this.isAuthenticated = false;
             this.updateUIForUnauthenticatedUser();
             // Charger les données locales en cas d'erreur réseau
             await this.loadUserDataFromLocalStorage();
@@ -588,71 +594,10 @@ class AuthManager {
     // Nouvelle méthode pour charger les données depuis localStorage
     async loadUserDataFromLocalStorage() {
         this.logAuth("📥 Chargement des données depuis localStorage");
-        const localData = {};
-        let hasData = false;
-
-        const itemsToLoad = [
-            'middleEarthLocations', 'middleEarthRegions', 'travelJournal',
-            'currentSeason', 'currentCalendarDate', 'adventurers_position',
-            'activeMapUrl', 'activeMapName', 'partyDescription', 'questDescription', 'narrationStyle',
-            'availableMaps' // Note: 'availableMaps' est aussi dans settingsManager.getAllSettings()
-        ];
-
-        itemsToLoad.forEach(key => {
-            const item = localStorage.getItem(key);
-            if (item !== null) {
-                try {
-                    localData[key.replace(/^middleEarth/, '').replace(/^adventurers_/, '')] = JSON.parse(item); // Simplifier les clés si possible
-                    hasData = true;
-                    this.logAuth(`  - ${key} chargé.`);
-                } catch (e) {
-                    console.error(`Erreur lors du parsing de ${key} depuis localStorage:`, e);
-                    // Gérer les cas où le JSON est invalide
-                    if (key === 'adventurers_position') { // Exemple pour position
-                         localData['position'] = JSON.parse(item); // Assurer que la structure est correcte
-                    }
-                }
-            }
-        });
-
-        // Gérer spécifiquement les paramètres qui pourraient être dans settingsManager aussi
-        if (localStorage.getItem('availableMaps')) {
-            if (!localData.settings) localData.settings = {};
-            try {
-                localData.settings.availableMaps = JSON.parse(localStorage.getItem('availableMaps'));
-            } catch (e) { console.error("Erreur parsing availableMaps:", e); }
-        }
-        if (localStorage.getItem('activeMapUrl')) {
-            if (!localData.settings) localData.settings = {};
-            localData.settings.activeMapUrl = localStorage.getItem('activeMapUrl');
-        }
-        // ... ajouter d'autres paramètres si nécessaire ...
-
-        if (hasData) {
-            this.logAuth("✅ Données locales trouvées et préparées.");
-            await this.applyContextData(localData);
-            // Pour les données locales, on ne force pas la sauvegarde cloud ici,
-            // car l'utilisateur pourrait être non authentifié. La synchro se fera
-            // lors de la prochaine connexion ou via scheduleAutoSync() si authentifié.
-        } else {
-            this.logAuth("ℹ️ Aucune donnée significative trouvée dans localStorage.");
-        }
-
-        // Mise à jour de l'UI des filtres si des filtres sont présents dans localStorage
-        const filtersFromStorage = localStorage.getItem('activeFilters');
-        if (filtersFromStorage) {
-            try {
-                const activeFilters = JSON.parse(filtersFromStorage);
-                if (window.filterManager) {
-                    this.logAuth("🔍 Restauration des filtres depuis localStorage.");
-                    window.filterManager.loadFiltersFromContext(activeFilters); // Utiliser la méthode dédiée si disponible
-                    this.updateFilterUI(activeFilters);
-                    window.filterManager.applyFilters();
-                }
-            } catch (e) {
-                console.error("Erreur lors de la restauration des filtres depuis localStorage:", e);
-            }
-        }
+        
+        // Ne rien faire - les données locales sont déjà chargées par le DataManager et les autres managers
+        // Cette méthode sert juste à indiquer que le chargement est terminé sans bloquer
+        this.logAuth("ℹ️ Mode non authentifié - utilisation des données déjà chargées localement");
     }
 
 
