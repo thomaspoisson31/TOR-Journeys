@@ -412,6 +412,9 @@ class AuthManager {
             
             this.logAuth("📅 [applyContextData] Données calendar reçues:", data.calendar);
             
+            // IMPORTANT: Poser le flag AVANT toute opération
+            localStorage.setItem('calendar_from_cloud', 'true');
+            
             // Appliquer directement au CalendarManager d'abord
             if (data.calendar.currentSeason) {
                 window.calendarManager.currentSeason = data.calendar.currentSeason;
@@ -437,16 +440,16 @@ class AuthManager {
                 this.logAuth(`📅 [applyContextData] Mode calendrier appliqué: ${data.calendar.isCalendarMode}`);
             }
             
-            // Marquer que ces données viennent du cloud pour bloquer l'auto-sync
-            localStorage.setItem('calendar_from_cloud', 'true');
-            
             // Forcer la mise à jour complète de l'interface avec les nouvelles données
             this.logAuth("📅 [applyContextData] Mise à jour UI du calendrier");
             window.calendarManager.updateCalendarUI();
             window.calendarManager.updateSeasonDisplay();
             window.calendarManager.exposeGlobalData();
             
-            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud");
+            // Nettoyer le flag APRÈS toutes les opérations
+            localStorage.removeItem('calendar_from_cloud');
+            
+            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (flag nettoyé)");
         }
 
         if (data.settings && window.settingsManager) {

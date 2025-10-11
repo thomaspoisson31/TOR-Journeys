@@ -120,6 +120,28 @@ class CalendarManager {
     saveCalendarToLocal(skipAutoSync = false) {
         console.log("📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync:", skipAutoSync);
         
+        // VÉRIFIER LE FLAG IMMÉDIATEMENT
+        const fromCloud = localStorage.getItem('calendar_from_cloud');
+        if (fromCloud === 'true') {
+            console.log("📅 [saveCalendarToLocal] FLAG CLOUD DÉTECTÉ - Sauvegarde SANS auto-sync");
+            
+            // Sauvegarder quand même les données localement
+            if (this.calendarData) {
+                localStorage.setItem('calendarData', JSON.stringify(this.calendarData));
+            }
+            if (this.currentCalendarDate) {
+                localStorage.setItem('currentCalendarDate', JSON.stringify(this.currentCalendarDate));
+            }
+            localStorage.setItem('isCalendarMode', this.isCalendarMode.toString());
+            localStorage.setItem('currentSeason', this.currentSeason);
+            
+            // Synchroniser les variables globales
+            this.exposeGlobalData();
+            
+            // NE PAS NETTOYER LE FLAG ICI - il sera nettoyé par AuthManager
+            return; // SORTIR IMMÉDIATEMENT sans auto-sync
+        }
+        
         console.log("📅 [saveCalendarToLocal] Données à sauvegarder:", {
             calendarData: this.calendarData ? `${this.calendarData.length} mois` : "null",
             currentCalendarDate: this.currentCalendarDate,
@@ -138,14 +160,6 @@ class CalendarManager {
         
         // Synchroniser les variables globales
         this.exposeGlobalData();
-        
-        // Vérifier et nettoyer le flag cloud
-        const fromCloud = localStorage.getItem('calendar_from_cloud');
-        if (fromCloud === 'true') {
-            localStorage.removeItem('calendar_from_cloud');
-            console.log("📅 [saveCalendarToLocal] Flag cloud nettoyé, sauvegarde sans auto-sync");
-            return; // Ne pas déclencher d'auto-sync si les données viennent du cloud
-        }
         
         // Déclencher la synchronisation cloud si authentifié
         if (!skipAutoSync && typeof scheduleAutoSync === 'function') {
