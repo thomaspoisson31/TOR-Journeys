@@ -402,6 +402,10 @@ class AuthManager {
                 await this.applyContextData(context.data);
                 this.logAuth(`✅ Contexte "${context.name}" chargé avec succès`);
                 
+                // Vérifier une dernière fois le flag avant reload
+                const flagVerif = localStorage.getItem('adventurers_position_from_cloud');
+                this.logAuth(`📍 Flag cloud avant reload: ${flagVerif}`);
+                
                 // Fermer la modal avant le reload
                 this.hideAuthModal();
                 

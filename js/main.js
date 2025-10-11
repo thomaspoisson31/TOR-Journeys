@@ -617,6 +617,12 @@ function initializeMap() {
     positionManager.init();
     window.positionManager = positionManager; // Exposer globalement
     console.log("✅ PositionManager initialized with position:", positionManager.currentPosition);
+    
+    // Nettoyer le flag cloud après l'initialisation si présent
+    if (cloudFlag === 'true') {
+        console.log("📍 [main.js] Nettoyage du flag cloud après initialisation");
+        localStorage.removeItem('adventurers_position_from_cloud');
+    }
 
     // Initialiser JournalManager
     journalManager = new JournalManager();

@@ -32,8 +32,7 @@ class PositionManager {
                 
                 if (fromCloud === 'true') {
                     console.log("📍 [PositionManager] Position chargée depuis CLOUD via localStorage:", position);
-                    // Nettoyer le flag après utilisation
-                    localStorage.removeItem('adventurers_position_from_cloud');
+                    // NE PAS nettoyer le flag ici - il sera nettoyé après le reload
                 } else {
                     console.log("📍 [PositionManager] Position chargée depuis localStorage local:", position);
                 }
