@@ -117,7 +117,7 @@ class CalendarManager {
         return parts;
     }
 
-    saveCalendarToLocal() {
+    saveCalendarToLocal(skipAutoSync = false) {
         if (this.calendarData) {
             localStorage.setItem('calendarData', JSON.stringify(this.calendarData));
         }
@@ -130,8 +130,8 @@ class CalendarManager {
         // Synchroniser les variables globales
         this.exposeGlobalData();
         
-        // Déclencher la synchronisation cloud si authentifié
-        if (typeof scheduleAutoSync === 'function') {
+        // Déclencher la synchronisation cloud si authentifié (sauf si skipAutoSync)
+        if (!skipAutoSync && typeof scheduleAutoSync === 'function') {
             scheduleAutoSync();
         }
     }
