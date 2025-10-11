@@ -553,8 +553,12 @@ function initializeMap() {
     if (filterManager) {
         console.log("🔍 Setting up FilterManager...");
         filterManager.setupFilterListeners();
-        // Appliquer les filtres initiaux (montrer tout)
-        filterManager.applyFilters();
+        // N'appliquer les filtres initiaux que si aucun filtre sauvegardé n'existe
+        // (les filtres sauvegardés seront restaurés par AuthManager si nécessaire)
+        const hasSavedFilters = localStorage.getItem('middleEarthLocations') !== null;
+        if (!hasSavedFilters) {
+            filterManager.applyFilters();
+        }
         console.log("✅ FilterManager setup complete");
     } else {
         console.error("❌ FilterManager not initialized");

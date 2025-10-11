@@ -492,11 +492,20 @@ class AuthManager {
             this.logAuth("✅ Position restaurée:", data.position);
         }
 
-        // Restaurer l'état des filtres
+        // Restaurer l'état des filtres APRÈS le rendu initial
         if (data.filters && window.filterManager) {
             this.logAuth("🔍 Restauration des filtres");
-            window.filterManager.activeFilters = { ...data.filters };
-            this.logAuth("✅ Filtres restaurés:", data.filters);
+            // Utiliser un délai pour s'assurer que le FilterManager a terminé son initialisation
+            setTimeout(() => {
+                window.filterManager.activeFilters = { ...data.filters };
+                
+                // Mettre à jour l'interface des filtres pour refléter l'état restauré
+                this.updateFilterUI(data.filters);
+                
+                // Appliquer les filtres restaurés
+                window.filterManager.applyFilters();
+                this.logAuth("✅ Filtres restaurés et appliqués:", data.filters);
+            }, 150);
         }
 
         // 5. RE-RENDER avec double appel pour forcer la mise à jour
@@ -802,6 +811,48 @@ class AuthManager {
         }, this.autoSyncDelay);
         
         this.logAuth(`⏱️ Auto-sync programmée dans ${this.autoSyncDelay}ms`);
+    }
+
+    updateFilterUI(filters) {
+        // Mettre à jour les checkboxes de couleurs
+        if (filters.colors && Array.isArray(filters.colors)) {
+            filters.colors.forEach(color => {
+                const checkbox = document.getElementById(`filter-color-${color}`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+
+        // Mettre à jour les checkboxes de statut visité
+        if (filters.visited && Array.isArray(filters.visited)) {
+            const visitedCheckbox = document.getElementById('visited-checkbox');
+            const notVisitedCheckbox = document.getElementById('not-visited-checkbox');
+            if (visitedCheckbox) visitedCheckbox.checked = filters.visited.includes('visited');
+            if (notVisitedCheckbox) notVisitedCheckbox.checked = filters.visited.includes('not_visited');
+        }
+
+        // Mettre à jour les checkboxes de statut connu
+        if (filters.known && Array.isArray(filters.known)) {
+            const knownCheckbox = document.getElementById('known-checkbox');
+            const unknownCheckbox = document.getElementById('unknown-checkbox');
+            if (knownCheckbox) knownCheckbox.checked = filters.known.includes('known');
+            if (unknownCheckbox) unknownCheckbox.checked = filters.known.includes('unknown');
+        }
+
+        // Mettre à jour les checkboxes d'affichage
+        const showLocationsFilter = document.getElementById('show-locations');
+        const showRegionsFilter = document.getElementById('show-regions');
+        if (showLocationsFilter) showLocationsFilter.checked = filters.showLocations !== false;
+        if (showRegionsFilter) showRegionsFilter.checked = filters.showRegions === true;
+
+        // Mettre à jour le slider d'opacité
+        if (filters.regionsOpacity !== undefined) {
+            const opacitySlider = document.getElementById('regions-opacity-slider');
+            const opacityValue = document.getElementById('regions-opacity-value');
+            if (opacitySlider) opacitySlider.value = filters.regionsOpacity * 100;
+            if (opacityValue) opacityValue.textContent = `${Math.round(filters.regionsOpacity * 100)}%`;
+        }
+
+        this.logAuth("🔍 UI des filtres mise à jour");
     }
 
     logAuth(message, data = null) {
