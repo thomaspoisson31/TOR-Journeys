@@ -401,10 +401,13 @@ class AuthManager {
     }
 
     async applyContextData(data) {
-        this.logAuth("🔄 Application des données du contexte");
+        this.logAuth("🔄 Application des données du contexte", Object.keys(data));
 
         // Appliquer les données des lieux
         if (data.locations && window.dataManager) {
+            const locCount = data.locations.locations ? data.locations.locations.length : 0;
+            this.logAuth(`📍 Application de ${locCount} lieux`);
+            
             window.dataManager.locationsData = data.locations;
             window.locationsData = data.locations;
             window.dataManager.saveLocationsToLocal();
@@ -412,11 +415,17 @@ class AuthManager {
             // Re-render les lieux
             if (typeof window.renderLocations === 'function') {
                 window.renderLocations();
+                this.logAuth("✅ Lieux rendus");
             }
+        } else {
+            this.logAuth("⚠️ Pas de données de lieux à charger");
         }
 
         // Appliquer les données des régions
         if (data.regions && window.dataManager) {
+            const regCount = data.regions.regions ? data.regions.regions.length : 0;
+            this.logAuth(`🌍 Application de ${regCount} régions`);
+            
             window.dataManager.regionsData = data.regions;
             window.regionsData = data.regions;
             window.dataManager.saveRegionsToLocal();
@@ -424,11 +433,16 @@ class AuthManager {
             // Re-render les régions
             if (typeof window.renderRegions === 'function') {
                 window.renderRegions();
+                this.logAuth("✅ Régions rendues");
             }
+        } else {
+            this.logAuth("⚠️ Pas de données de régions à charger");
         }
 
         // Appliquer les données de saison/calendrier
         if (data.calendar && window.calendarManager) {
+            this.logAuth("📅 Application des données de calendrier");
+            
             if (data.calendar.currentSeason) {
                 window.calendarManager.currentSeason = data.calendar.currentSeason;
             }
@@ -440,20 +454,32 @@ class AuthManager {
             }
             window.calendarManager.updateSeasonDisplay();
             window.calendarManager.saveToLocalStorage();
+            this.logAuth("✅ Calendrier mis à jour");
+        } else {
+            this.logAuth("⚠️ Pas de données de calendrier à charger");
         }
 
         // Appliquer les paramètres
         if (data.settings && window.settingsManager) {
+            this.logAuth("⚙️ Application des paramètres");
             window.settingsManager.loadSettings(data.settings);
+        } else {
+            this.logAuth("⚠️ Pas de paramètres à charger");
         }
 
         // Appliquer le journal de voyage
         if (data.journal) {
+            this.logAuth(`📖 Application de ${data.journal.length} entrées de journal`);
             localStorage.setItem('travelJournal', JSON.stringify(data.journal));
             if (window.journalManager) {
                 window.journalManager.loadJournal();
+                this.logAuth("✅ Journal chargé");
             }
+        } else {
+            this.logAuth("⚠️ Pas de journal à charger");
         }
+
+        this.logAuth("✅ Contexte appliqué avec succès");
 
         // Programmer une auto-sync
         this.scheduleAutoSync();

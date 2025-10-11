@@ -737,40 +737,61 @@ class SettingsManager {
 
     // Méthode pour charger les paramètres depuis les données de contexte
     loadSettings(settings) {
-        if (!settings) return;
+        if (!settings) {
+            console.log('⚠️ Aucun paramètre à charger');
+            return;
+        }
 
         console.log('⚙️ Chargement des paramètres depuis le contexte:', settings);
 
         // Charger les cartes
-        if (settings.availableMaps) {
+        if (settings.availableMaps && Array.isArray(settings.availableMaps)) {
             this.availableMaps = settings.availableMaps;
+            console.log('✅ Cartes chargées:', this.availableMaps.length);
         }
         if (settings.activeMapUrl) {
             this.activeMapUrl = settings.activeMapUrl;
+            console.log('✅ Carte active URL:', this.activeMapUrl);
         }
         if (settings.activeMapName) {
             this.activeMapName = settings.activeMapName;
+            console.log('✅ Carte active nom:', this.activeMapName);
         }
 
         // Charger les descriptions
         if (settings.partyDescription !== undefined) {
             this.partyDescription = settings.partyDescription;
+            console.log('✅ Description aventuriers chargée');
         }
         if (settings.questDescription !== undefined) {
             this.questDescription = settings.questDescription;
+            console.log('✅ Description quête chargée');
         }
         if (settings.narrationStyle) {
             this.narrationStyle = settings.narrationStyle;
+            console.log('✅ Style de narration chargé:', this.narrationStyle);
         }
 
         // Sauvegarder dans localStorage
         this.saveMapsData();
         this.saveDescriptions();
 
-        // Mettre à jour l'image de la carte principale si nécessaire
+        // Mettre à jour l'image de la carte principale
         const mapImage = document.getElementById('map-image');
         if (mapImage && this.activeMapUrl) {
+            console.log('🗺️ Mise à jour de l\'image de la carte:', this.activeMapUrl);
             mapImage.src = this.activeMapUrl;
+            // Attendre le chargement de l'image
+            mapImage.onload = () => {
+                console.log('✅ Image de carte chargée');
+                // Re-render les lieux et régions après changement de carte
+                if (typeof window.renderLocations === 'function') {
+                    window.renderLocations();
+                }
+                if (typeof window.renderRegions === 'function') {
+                    window.renderRegions();
+                }
+            };
         }
 
         // Mettre à jour l'affichage si la modale des paramètres est ouverte
