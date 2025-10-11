@@ -408,15 +408,14 @@ class AuthManager {
             const locCount = data.locations.locations ? data.locations.locations.length : 0;
             this.logAuth(`📍 Application de ${locCount} lieux`);
             
+            // Forcer la mise à jour complète des données
             window.dataManager.locationsData = data.locations;
             window.locationsData = data.locations;
-            window.dataManager.saveLocationsToLocal();
-
-            // Re-render les lieux
-            if (typeof window.renderLocations === 'function') {
-                window.renderLocations();
-                this.logAuth("✅ Lieux rendus");
-            }
+            
+            // Sauvegarder dans localStorage
+            localStorage.setItem('middleEarthLocations', JSON.stringify(data.locations));
+            
+            this.logAuth(`✅ Lieux sauvegardés : ${JSON.stringify(data.locations).substring(0, 100)}...`);
         } else {
             this.logAuth("⚠️ Pas de données de lieux à charger");
         }
@@ -426,15 +425,14 @@ class AuthManager {
             const regCount = data.regions.regions ? data.regions.regions.length : 0;
             this.logAuth(`🌍 Application de ${regCount} régions`);
             
+            // Forcer la mise à jour complète des données
             window.dataManager.regionsData = data.regions;
             window.regionsData = data.regions;
-            window.dataManager.saveRegionsToLocal();
-
-            // Re-render les régions
-            if (typeof window.renderRegions === 'function') {
-                window.renderRegions();
-                this.logAuth("✅ Régions rendues");
-            }
+            
+            // Sauvegarder dans localStorage
+            localStorage.setItem('middleEarthRegions', JSON.stringify(data.regions));
+            
+            this.logAuth(`✅ Régions sauvegardées : ${JSON.stringify(data.regions).substring(0, 100)}...`);
         } else {
             this.logAuth("⚠️ Pas de données de régions à charger");
         }
@@ -482,9 +480,36 @@ class AuthManager {
 
         this.logAuth("✅ Contexte appliqué avec succès");
 
-        // Forcer un re-render final pour être sûr que tout est à jour
-        this.logAuth("🔄 Re-render final des lieux et régions");
+        // Forcer un rechargement complet des données depuis localStorage puis re-render
+        this.logAuth("🔄 Rechargement complet et re-render final");
         setTimeout(() => {
+            // Recharger les données depuis localStorage pour s'assurer qu'elles sont à jour
+            if (window.dataManager) {
+                const savedLocations = localStorage.getItem('middleEarthLocations');
+                const savedRegions = localStorage.getItem('middleEarthRegions');
+                
+                if (savedLocations) {
+                    try {
+                        window.dataManager.locationsData = JSON.parse(savedLocations);
+                        window.locationsData = window.dataManager.locationsData;
+                        this.logAuth(`📍 Rechargé ${window.locationsData?.locations?.length || 0} lieux depuis localStorage`);
+                    } catch (e) {
+                        this.logAuth(`❌ Erreur rechargement lieux: ${e.message}`);
+                    }
+                }
+                
+                if (savedRegions) {
+                    try {
+                        window.dataManager.regionsData = JSON.parse(savedRegions);
+                        window.regionsData = window.dataManager.regionsData;
+                        this.logAuth(`🌍 Rechargé ${window.regionsData?.regions?.length || 0} régions depuis localStorage`);
+                    } catch (e) {
+                        this.logAuth(`❌ Erreur rechargement régions: ${e.message}`);
+                    }
+                }
+            }
+            
+            // Re-render après rechargement
             if (typeof window.renderLocations === 'function') {
                 window.renderLocations();
                 this.logAuth("✅ Re-render final des lieux terminé");
@@ -493,7 +518,7 @@ class AuthManager {
                 window.renderRegions();
                 this.logAuth("✅ Re-render final des régions terminé");
             }
-        }, 100);
+        }, 200);
 
         // Programmer une auto-sync
         this.scheduleAutoSync();
