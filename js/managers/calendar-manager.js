@@ -129,6 +129,11 @@ class CalendarManager {
         
         // Synchroniser les variables globales
         this.exposeGlobalData();
+        
+        // Déclencher la synchronisation cloud si authentifié
+        if (typeof scheduleAutoSync === 'function') {
+            scheduleAutoSync();
+        }
     }
 
     loadCalendarFromLocal() {
