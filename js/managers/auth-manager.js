@@ -485,11 +485,15 @@ class AuthManager {
             }
         }
 
-        // Restaurer la position du marqueur
+        // Restaurer la position du marqueur - PRIORITÉ CLOUD
         if (data.position && window.positionManager) {
-            this.logAuth("📍 Restauration de la position du marqueur");
-            window.positionManager.setPosition(data.position.x, data.position.y);
-            this.logAuth("✅ Position restaurée:", data.position);
+            this.logAuth("📍 Restauration de la position du marqueur depuis le cloud");
+            // Sauvegarder d'abord dans localStorage pour éviter les conflits
+            localStorage.setItem('adventurers_position', JSON.stringify(data.position));
+            // Puis mettre à jour le marqueur visuellement
+            window.positionManager.currentPosition = { ...data.position };
+            window.positionManager.updateMarkerPosition();
+            this.logAuth("✅ Position restaurée depuis le cloud:", data.position);
         }
 
         // Restaurer l'état des filtres APRÈS le rendu initial
@@ -715,6 +719,15 @@ class AuthManager {
             mergedData.journal = Array.from(journalMap.values());
         } else if (localData.journal) {
             mergedData.journal = localData.journal;
+        }
+
+        // Pour la position, prioriser le cloud s'il existe, sinon local
+        if (cloudData.position) {
+            mergedData.position = cloudData.position;
+            this.logAuth("📍 Position cloud retenue:", cloudData.position);
+        } else if (localData.position) {
+            mergedData.position = localData.position;
+            this.logAuth("📍 Position locale retenue:", localData.position);
         }
 
         this.logAuth("✅ Conflit résolu - données mergées");

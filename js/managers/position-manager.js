@@ -14,19 +14,23 @@ class PositionManager {
         console.log("📍 Initializing PositionManager...");
         this.createPositionMarker();
         this.setupEventListeners();
-        console.log("✅ PositionManager initialized");
+        console.log("✅ PositionManager initialized with position:", this.currentPosition);
     }
 
     loadPosition() {
         const saved = localStorage.getItem('adventurers_position');
         if (saved) {
-            return JSON.parse(saved);
+            const position = JSON.parse(saved);
+            console.log("📍 Position chargée depuis localStorage:", position);
+            return position;
         }
         // Position par défaut au centre de la carte
-        return {
+        const defaultPosition = {
             x: this.mapConstants.MAP_WIDTH / 2,
             y: this.mapConstants.MAP_HEIGHT / 2
         };
+        console.log("📍 Utilisation de la position par défaut:", defaultPosition);
+        return defaultPosition;
     }
 
     savePosition() {
