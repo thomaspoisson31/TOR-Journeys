@@ -421,6 +421,11 @@ class AuthManager {
     async applyContextData(data) {
         this.logAuth("🔄 Application des données du contexte", Object.keys(data));
 
+        // DÉSACTIVER temporairement l'auto-sync pendant l'application du contexte
+        const wasAutoSyncEnabled = this.isAuthenticated;
+        this.isAuthenticated = false; // Désactiver temporairement pour bloquer scheduleAutoSync
+        this.logAuth("🚫 Auto-sync temporairement désactivée pendant l'application du contexte");
+
         // 1. SAUVEGARDER D'ABORD dans localStorage
         if (data.locations) {
             localStorage.setItem('middleEarthLocations', JSON.stringify(data.locations));
@@ -551,8 +556,9 @@ class AuthManager {
             }
         }, 100);
 
-        this.logAuth("✅ Contexte appliqué avec succès");
-        this.scheduleAutoSync();
+        // RÉACTIVER l'auto-sync après l'application complète du contexte
+        this.isAuthenticated = wasAutoSyncEnabled;
+        this.logAuth("✅ Contexte appliqué avec succès - auto-sync réactivée");
     }
 
     async deleteContext(contextId) {
@@ -605,14 +611,14 @@ class AuthManager {
                     const mergedData = await this.resolveConflict(localData, cloudData);
                     await this.applyContextData(mergedData);
                     
-                    // Sauvegarder les données mergées dans le cloud
-                    await this.syncUserData();
+                    // NE PAS synchroniser immédiatement - le reload va le faire
+                    this.logAuth("⏳ Synchronisation cloud différée après reload");
                 } else {
                     // Pas de conflit, charger simplement les données cloud
                     await this.applyContextData(cloudData);
                 }
                 
-                this.logAuth("✅ Données utilisateur chargées et synchronisées");
+                this.logAuth("✅ Données utilisateur chargées");
             } else if (response.status === 404) {
                 // Pas de données cloud, sauvegarder les données locales si elles existent
                 if (this.hasLocalData()) {
