@@ -1,4 +1,3 @@
-
 import GeminiManager from './gemini-manager.js';
 
 class SettingsManager {
@@ -14,7 +13,7 @@ class SettingsManager {
         this.partyDescription = '';
         this.questDescription = '';
         this.narrationStyle = 'brief';
-        
+
         console.log('⚙️ SettingsManager initialized');
     }
 
@@ -42,7 +41,7 @@ class SettingsManager {
         if (savedActiveMap) {
             this.activeMapUrl = savedActiveMap;
         }
-        
+
         if (savedActiveMapName) {
             this.activeMapName = savedActiveMapName;
         }
@@ -122,6 +121,9 @@ class SettingsManager {
 
         // Onglet Saison - réutiliser CalendarManager
         this.setupSeasonListeners();
+
+        // Onglet Import/Export
+        this.setupImportExportListeners();
     }
 
     setupTabListeners() {
@@ -175,6 +177,9 @@ class SettingsManager {
             case 'season':
                 this.updateSeasonContent();
                 break;
+            case 'importExport':
+                // Aucune action spécifique requise ici, juste l'affichage
+                break;
         }
     }
 
@@ -203,7 +208,7 @@ class SettingsManager {
         const modal = document.createElement('div');
         modal.id = 'add-map-modal-temp';
         modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]';
-        
+
         modal.innerHTML = `
             <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-md mx-4">
                 <div class="flex justify-between items-center mb-4">
@@ -212,45 +217,45 @@ class SettingsManager {
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Nom de la carte</label>
                         <input type="text" id="temp-map-name-input" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Ex: Eriador - Ma carte personnalisée">
                     </div>
-                    
+
                     <div id="temp-map-upload-container">
                         <!-- Le composant d'upload sera inséré ici -->
                     </div>
                 </div>
-                
+
                 <div class="flex justify-end space-x-3 mt-6">
                     <button id="cancel-add-map" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg">Annuler</button>
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         // Setup du composant d'upload dans la modale
         const uploadContainer = document.getElementById('temp-map-upload-container');
         if (uploadContainer && this.uploadManager) {
             this.uploadManager.createUploadComponent(uploadContainer, 'maps', (result) => {
                 const nameInput = document.getElementById('temp-map-name-input');
                 const mapName = nameInput.value.trim() || `Carte ${Date.now()}`;
-                
+
                 this.handleMapUploaded({ ...result, name: mapName });
-                
+
                 // Fermer la modale
                 modal.remove();
             });
         }
-        
+
         // Gestionnaires d'événements
         document.getElementById('close-add-map-modal').addEventListener('click', () => {
             modal.remove();
         });
-        
+
         document.getElementById('cancel-add-map').addEventListener('click', () => {
             modal.remove();
         });
@@ -426,7 +431,7 @@ class SettingsManager {
         if (textarea) {
             this.partyDescription = textarea.value;
             this.saveDescriptions();
-            
+
             // Feedback visuel
             const saveBtn = document.getElementById('save-party-description-btn');
             if (saveBtn) {
@@ -469,15 +474,20 @@ class SettingsManager {
 
     // === GESTION DE LA QUÊTE ===
     setupQuestListeners() {
-        const saveQuestBtn = document.getElementById('save-quest-description-btn');
-        const generateQuestBtn = document.getElementById('generate-quest-description-btn');
+        const editBtn = document.getElementById('edit-quest-btn');
+        const cancelEditBtn = document.getElementById('cancel-quest-edit');
+        const saveEditBtn = document.getElementById('save-quest-edit');
 
-        if (saveQuestBtn) {
-            saveQuestBtn.addEventListener('click', () => this.saveQuestDescription());
+        if (editBtn) {
+            editBtn.addEventListener('click', () => this.enterQuestEditMode());
         }
 
-        if (generateQuestBtn) {
-            generateQuestBtn.addEventListener('click', () => this.generateQuestDescription());
+        if (cancelEditBtn) {
+            cancelEditBtn.addEventListener('click', () => this.exitQuestEditMode());
+        }
+
+        if (saveEditBtn) {
+            saveEditBtn.addEventListener('click', () => this.saveQuestDescription());
         }
     }
 
@@ -493,7 +503,7 @@ class SettingsManager {
         if (textarea) {
             this.questDescription = textarea.value;
             this.saveDescriptions();
-            
+
             // Feedback visuel
             const saveBtn = document.getElementById('save-quest-description-btn');
             if (saveBtn) {
@@ -517,7 +527,7 @@ class SettingsManager {
         }
 
         const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu). 
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
         Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
 
         try {
@@ -656,7 +666,7 @@ class SettingsManager {
                 case 'keywords': styleText = ' (Points clés)'; break;
                 default: styleText = ' (Brève)';
             }
-            
+
             const span = describeBtn.querySelector('span:last-child');
             if (span) {
                 span.textContent = `Décrire le voyage${styleText}`;
@@ -679,13 +689,37 @@ class SettingsManager {
         }
     }
 
+    // === GESTION IMPORT/EXPORT ===
+    setupImportExportListeners() {
+        const exportBtn = document.getElementById('export-data-btn');
+        const importBtn = document.getElementById('import-data-btn');
+        const importFileInput = document.getElementById('import-file-input');
+
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                if (window.importExportManager) {
+                    window.importExportManager.exportUnifiedData();
+                }
+            });
+        }
+
+        if (importBtn) {
+            importBtn.addEventListener('click', () => {
+                if (importFileInput) {
+                    importFileInput.click();
+                }
+            });
+        }
+    }
+
+
     // === GESTION PRINCIPALE ===
     openSettings() {
         const modal = document.getElementById('settings-modal');
         if (modal) {
             modal.classList.remove('hidden');
             this.isSettingsOpen = true;
-            
+
             // Ouvrir l'onglet cartes par défaut
             this.switchTab('maps');
         }
@@ -780,11 +814,11 @@ class SettingsManager {
         const mapImage = document.getElementById('map-image');
         if (mapImage && this.activeMapUrl) {
             console.log('🗺️ Mise à jour de l\'image de la carte:', this.activeMapUrl);
-            
+
             // Force le rechargement même si l'URL est la même
             const currentSrc = mapImage.src;
             const newSrc = this.activeMapUrl;
-            
+
             // Callback pour re-render après chargement
             const onImageLoaded = () => {
                 console.log('✅ Image de carte chargée, re-render des lieux et régions');
@@ -798,7 +832,7 @@ class SettingsManager {
                     console.log('✅ Régions rendues après loadSettings');
                 }
             };
-            
+
             // Si l'image est déjà la même et déjà chargée, appeler directement le callback
             if (currentSrc === newSrc && mapImage.complete) {
                 console.log('⚡ Image déjà chargée, re-render immédiat');
