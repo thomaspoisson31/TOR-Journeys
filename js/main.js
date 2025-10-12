@@ -639,11 +639,7 @@ function initializeMap() {
     window.adventureManager = adventureManager; // Exposer globalement
     console.log("✅ AdventureManager initialized");
 
-    // Initialiser LibraryManager
-    libraryManager = new LibraryManager();
-    libraryManager.init();
-    window.libraryManager = libraryManager; // Exposer globalement
-    console.log("✅ LibraryManager initialized");
+    // LibraryManager supprimé - fonctionnalité intégrée dans les modales
 
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
@@ -1369,6 +1365,15 @@ function setupLocationAdding() {
         console.log("✅ Generate edit description button configured");
     }
 
+    // Setup du bouton de bibliothèque
+    const chooseFromLibraryBtn = document.getElementById('choose-from-library-btn');
+    if (chooseFromLibraryBtn) {
+        chooseFromLibraryBtn.addEventListener('click', openLibrarySelection);
+    }
+
+    // Setup de la modale de sélection de bibliothèque
+    setupLibrarySelectionModal();
+
     // Setup des sélecteurs de couleur pour les lieux
     setupLocationColorPicker();
 
@@ -1482,7 +1487,14 @@ function cancelLocationCreation() {
     // Sortir du mode ajout
     exitLocationAddingMode();
     window.pendingLocationCoordinates = null;
-    window.pendingLocationImage = null; // Nettoyer l'image temporaire
+    window.pendingLocationImages = null; // Nettoyer les images temporaires
+    selectedLibraryImages = [];
+    
+    // Cacher le conteneur d'images sélectionnées
+    const container = document.getElementById('selected-library-images');
+    if (container) {
+        container.classList.add('hidden');
+    }
 }
 
 function confirmLocationCreation() {
@@ -1505,7 +1517,6 @@ function confirmLocationCreation() {
 
     const locationName = nameInput.value.trim();
     const locationDesc = descInput ? descInput.value.trim() : '';
-    const locationImage = imageInput ? imageInput.value.trim() : '';
     const locationKnown = knownInput ? knownInput.checked : true;
     const locationVisited = visitedInput ? visitedInput.checked : false;
     const locationColor = selectedColorSwatch ? selectedColorSwatch.dataset.color : 'blue';
@@ -1522,12 +1533,13 @@ function confirmLocationCreation() {
         type: "custom"
     };
 
-    // Ajouter l'image si fournie
-    if (locationImage) {
-        newLocation.images = [{
-            url: locationImage,
-            isDefault: true
-        }];
+    // Ajouter les images de la bibliothèque si sélectionnées
+    if (window.pendingLocationImages && window.pendingLocationImages.length > 0) {
+        newLocation.images = [...window.pendingLocationImages];
+        // Marquer la première comme défaut si aucune n'est définie
+        if (!newLocation.images.some(img => img.isDefault)) {
+            newLocation.images[0].isDefault = true;
+        }
     }
 
     console.log("💾 Creating new location:", newLocation);
@@ -1715,6 +1727,215 @@ function setupLocationColorPicker() {
         }
     });
 }
+
+// --- Fonctions de gestion de la bibliothèque d'images ---
+let selectedLibraryImages = [];
+
+function setupLibrarySelectionModal() {
+    const modal = document.getElementById('library-selection-modal');
+    const closeBtn = document.getElementById('close-library-selection-btn');
+    const cancelBtn = document.getElementById('cancel-library-selection-btn');
+    const confirmBtn = document.getElementById('confirm-library-selection-btn');
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeLibrarySelection);
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeLibrarySelection);
+    }
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', confirmLibrarySelection);
+    }
+
+    // Fermer en cliquant à l'extérieur
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeLibrarySelection();
+            }
+        });
+    }
+}
+
+async function openLibrarySelection() {
+    const modal = document.getElementById('library-selection-modal');
+    const content = document.getElementById('library-selection-content');
+    const empty = document.getElementById('library-selection-empty');
+    const loading = document.getElementById('library-selection-loading');
+    const authRequired = document.getElementById('library-selection-auth-required');
+
+    if (!modal) return;
+
+    // Réinitialiser la sélection
+    selectedLibraryImages = [];
+
+    // Vérifier l'authentification
+    if (!authManager || !authManager.isAuthenticated) {
+        content.classList.add('hidden');
+        empty.classList.add('hidden');
+        loading.classList.add('hidden');
+        authRequired.classList.remove('hidden');
+        modal.classList.remove('hidden');
+        return;
+    }
+
+    // Afficher le loading
+    content.classList.add('hidden');
+    empty.classList.add('hidden');
+    authRequired.classList.add('hidden');
+    loading.classList.remove('hidden');
+    modal.classList.remove('hidden');
+
+    try {
+        const response = await fetch('/api/images/library', {
+            method: 'GET',
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        loading.classList.add('hidden');
+
+        if (data.success && data.images && data.images.length > 0) {
+            renderLibraryImages(data.images);
+            content.classList.remove('hidden');
+        } else {
+            empty.classList.remove('hidden');
+        }
+
+    } catch (error) {
+        console.error("❌ Erreur lors du chargement de la bibliothèque:", error);
+        loading.classList.add('hidden');
+        empty.classList.remove('hidden');
+    }
+}
+
+function renderLibraryImages(images) {
+    const content = document.getElementById('library-selection-content');
+    if (!content) return;
+
+    content.innerHTML = '';
+
+    images.forEach(image => {
+        const imageCard = document.createElement('div');
+        imageCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card';
+        imageCard.dataset.url = image.url;
+        imageCard.dataset.filename = image.filename;
+        
+        imageCard.innerHTML = `
+            <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
+            <div class="absolute top-2 right-2 hidden selected-indicator">
+                <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                    <i class="fas fa-check text-xs"></i>
+                </div>
+            </div>
+            <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
+                <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
+                    <p class="text-xs truncate">${image.filename}</p>
+                </div>
+            </div>
+        `;
+
+        imageCard.addEventListener('click', () => toggleImageSelection(imageCard));
+        content.appendChild(imageCard);
+    });
+}
+
+function toggleImageSelection(card) {
+    const url = card.dataset.url;
+    const filename = card.dataset.filename;
+    const indicator = card.querySelector('.selected-indicator');
+
+    const index = selectedLibraryImages.findIndex(img => img.url === url);
+
+    if (index > -1) {
+        // Désélectionner
+        selectedLibraryImages.splice(index, 1);
+        indicator.classList.add('hidden');
+        card.classList.remove('ring-2', 'ring-blue-500');
+    } else {
+        // Sélectionner
+        selectedLibraryImages.push({ url, filename });
+        indicator.classList.remove('hidden');
+        card.classList.add('ring-2', 'ring-blue-500');
+    }
+}
+
+function confirmLibrarySelection() {
+    if (selectedLibraryImages.length === 0) {
+        alert("Veuillez sélectionner au moins une image");
+        return;
+    }
+
+    // Ajouter les images sélectionnées au lieu
+    const selectedImagesContainer = document.getElementById('selected-library-images');
+    const selectedImagesList = document.getElementById('selected-images-list');
+
+    if (selectedImagesContainer && selectedImagesList) {
+        selectedImagesList.innerHTML = '';
+        selectedLibraryImages.forEach((image, index) => {
+            const imageItem = document.createElement('div');
+            imageItem.className = 'flex items-center space-x-2 bg-gray-700 p-2 rounded';
+            imageItem.innerHTML = `
+                <img src="${image.url}" class="w-12 h-12 object-cover rounded">
+                <span class="text-sm text-gray-300 flex-grow truncate">${image.filename}</span>
+                <button type="button" class="text-red-400 hover:text-red-300" onclick="removeSelectedLibraryImage(${index})">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            selectedImagesList.appendChild(imageItem);
+        });
+        selectedImagesContainer.classList.remove('hidden');
+    }
+
+    // Stocker temporairement pour la création du lieu
+    window.pendingLocationImages = selectedLibraryImages.map(img => ({
+        url: img.url,
+        isDefault: false
+    }));
+
+    closeLibrarySelection();
+}
+
+function removeSelectedLibraryImage(index) {
+    const selectedImagesList = document.getElementById('selected-images-list');
+    if (selectedLibraryImages[index]) {
+        selectedLibraryImages.splice(index, 1);
+        window.pendingLocationImages.splice(index, 1);
+        
+        // Re-render la liste
+        if (selectedImagesList) {
+            const items = selectedImagesList.children;
+            if (items[index]) {
+                items[index].remove();
+            }
+        }
+
+        // Cacher le conteneur si vide
+        if (selectedLibraryImages.length === 0) {
+            const container = document.getElementById('selected-library-images');
+            if (container) {
+                container.classList.add('hidden');
+            }
+        }
+    }
+}
+
+function closeLibrarySelection() {
+    const modal = document.getElementById('library-selection-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+// Exposer globalement
+window.removeSelectedLibraryImage = removeSelectedLibraryImage;
 
 // --- Fonctions de la modale de changement de couleur ---
 function setupColorChangeModal() {
