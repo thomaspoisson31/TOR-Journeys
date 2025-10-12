@@ -1183,10 +1183,7 @@ class InfoBoxManager {
     }
 
     confirmLibrarySelectionForEdit() {
-        // Vérifier s'il y a des images sélectionnées dans le DOM
-        const selectedCards = document.querySelectorAll('.library-image-card.ring-2.ring-blue-500');
-        
-        if (!this.selectedLibraryImagesForEdit || this.selectedLibraryImagesForEdit.length === 0 || selectedCards.length === 0) {
+        if (!this.selectedLibraryImagesForEdit || this.selectedLibraryImagesForEdit.length === 0) {
             alert("Veuillez sélectionner au moins une image");
             return;
         }
