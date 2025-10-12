@@ -190,7 +190,7 @@ class InfoBoxManager {
         // Toujours afficher le bouton crayon
         if (editBtn) {
             editBtn.classList.remove('hidden');
-            editBtn.style.display = 'flex';
+            editBtn.style.display = 'inline-block';
             // Changer la couleur selon le mode
             if (this.isEditMode) {
                 editBtn.style.color = '#60a5fa'; // bleu clair
