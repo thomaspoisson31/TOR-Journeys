@@ -1059,6 +1059,9 @@ class InfoBoxManager {
 
         if (!modal) return;
 
+        // Initialiser la sélection
+        this.selectedLibraryImagesForEdit = [];
+
         // Vérifier l'authentification
         if (!window.authManager || !window.authManager.isAuthenticated) {
             content.classList.add('hidden');
