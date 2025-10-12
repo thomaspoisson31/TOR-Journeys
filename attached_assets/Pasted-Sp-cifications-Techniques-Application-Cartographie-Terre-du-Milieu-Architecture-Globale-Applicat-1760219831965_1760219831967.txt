@@ -1,0 +1,100 @@
+Spécifications Techniques - Application Cartographie Terre du Milieu
+Architecture Globale
+Application web Flask de cartographie interactive pour jeu de rôle "L'Anneau Unique" avec authentification Google OAuth et API Gemini pour génération de contenu.
+
+Stack Technique
+Backend: Python Flask
+Frontend: Vanilla JavaScript (ES6 modules)
+Base de données: SQLite
+Authentification: Google OAuth 2.0
+IA: Google Gemini API
+Styles: Tailwind CSS (CDN)
+Stockage: LocalStorage + Cloud sync
+Structure du Code
+Backend (app.py)
+Authentification Google OAuth
+API REST pour données utilisateur
+Upload d'images avec miniatures
+Génération Gemini
+Routes: /api/auth/*, /api/user/*, /api/gemini/*, /api/upload/*
+Frontend Modulaire (js/managers/)
+Managers principaux (architecture modulaire obligatoire):
+
+DataManager - Gestion lieux/régions
+AuthManager - Auth + sync cloud/local avec résolution conflits
+CalendarManager - Calendrier CSV + météo
+FilterManager - Filtres visuels (couleurs, statuts)
+VoyageManager - Calcul voyages + itinéraires
+PathManager - Tracé chemins interactifs
+PositionManager - Marqueur aventuriers draggable
+InfoBoxManager - Modales informations
+SettingsManager - Configuration app
+JournalManager - Journal de bord
+GeminiManager - Intégration IA
+UploadManager - Upload images
+Point d'entrée (js/main.js)
+Initialisation séquentielle managers
+Configuration viewport/zoom
+Event listeners globaux (pan, zoom, click)
+Rendu lieux/régions
+Règles d'Organisation
+1. Isolation Managers
+Chaque manager = classe autonome
+Exports/imports ES6 modules
+Pas de variables globales (sauf window.* pour interop)
+2. Synchronisation Données
+// Priorité: Cloud > Local lors résolution conflits
+// Flags temporaires: *_from_cloud pour tracking source
+// Auto-sync via scheduleAutoSync() après modifications
+3. Gestion Position
+// localStorage.adventurers_position + flag cloud
+// PositionManager.init() charge avec vérification flag
+// Nettoyage flag après application contexte
+4. Calendrier
+// CSV import → calendarData structure
+// currentCalendarDate = {month, day}
+// Saison auto depuis CSV ou manuelle
+// saveCalendarToLocal() vérifie flag cloud
+5. Auth & Sync
+// resolveConflict(): merge intelligent
+// applyContextData(): désactive auto-sync temporairement
+// collectCurrentContextData(): capture état complet
+6. Rendu Carte
+// renderLocations(): vignettes si zoom > 50%
+// renderRegions(): SVG polygons
+// updateMapTransform(): pan/zoom contraints
+7. Events
+// Mobile: touch events séparés
+// Desktop: mouse events standard
+// Modes exclusifs: drawing, region, location adding
+Flux de Données
+Chargement initial: localStorage → Managers
+Auth Google: Session → User ID → Cloud data
+Résolution conflits: Local ↔ Cloud merge
+Modifications: UI → Manager → localStorage → scheduleAutoSync() → Cloud
+Position: Flag cloud → load → render → cleanup flag
+APIs Principales
+Backend
+GET /api/auth/user - Statut auth
+GET/PUT /api/user/data - Données utilisateur
+POST /api/gemini/generate - Génération IA
+POST /api/upload/image - Upload avec miniatures
+Frontend Global
+window.renderLocations() - Rendu lieux
+window.renderRegions() - Rendu régions
+window.scheduleAutoSync() - Sync cloud
+window.scale - Zoom actuel
+Points Critiques
+Ne jamais modifier directement localStorage sans vérifier flags cloud
+Toujours exposer via window.* pour compatibilité cross-managers
+Synchroniser window.scale avec transformations carte
+Nettoyer flags temporaires après utilisation
+Désactiver auto-sync pendant applyContextData()
+Structure Fichiers
+/js/managers/          # Tous les managers
+/js/utils/            # Constants, helpers
+/js/main.js           # Point d'entrée
+/uploads/user_X/      # Images par utilisateur
+/images/markers/      # Assets système
+app.py                # Backend Flask
+index.html            # SPA principale
