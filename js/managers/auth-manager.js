@@ -76,6 +76,18 @@ class AuthManager {
             });
         }
 
+        // Boutons de synchronisation forcée
+        const forceCloudToLocalBtn = document.getElementById('force-cloud-to-local-btn');
+        const forceLocalToCloudBtn = document.getElementById('force-local-to-cloud-btn');
+
+        if (forceCloudToLocalBtn) {
+            forceCloudToLocalBtn.addEventListener('click', () => this.forceCloudToLocal());
+        }
+
+        if (forceLocalToCloudBtn) {
+            forceLocalToCloudBtn.addEventListener('click', () => this.forceLocalToCloud());
+        }
+
         // Fermer modal en cliquant à l'extérieur
         if (this.authModal) {
             this.authModal.addEventListener('click', (e) => {
@@ -963,6 +975,104 @@ class AuthManager {
             const opacityPercentage = Math.round(filters.regionsOpacity * 100);
             if (opacitySlider) opacitySlider.value = opacityPercentage;
             if (opacityValue) opacityValue.textContent = `${opacityPercentage}%`;
+        }
+    }
+
+    async forceCloudToLocal() {
+        if (!this.isAuthenticated) {
+            alert("Vous devez être authentifié pour cette action.");
+            return;
+        }
+
+        const confirmed = confirm(
+            "⚠️ ATTENTION ⚠️\n\n" +
+            "Cette action va ÉCRASER toutes vos données locales avec celles du cloud.\n\n" +
+            "Toutes les modifications non synchronisées seront PERDUES.\n\n" +
+            "Voulez-vous continuer ?"
+        );
+
+        if (!confirmed) return;
+
+        this.logAuth("🔄 Forçage Cloud → Local");
+
+        try {
+            // Récupérer les données cloud
+            const response = await fetch('/api/user/data', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
+            const cloudData = await response.json();
+            this.logAuth("✅ Données cloud récupérées", cloudData);
+
+            // Appliquer directement sans merge
+            await this.applyContextData(cloudData);
+
+            // Sauvegarder dans localStorage
+            this.saveToLocalStorage(cloudData);
+
+            alert("✅ Synchronisation forcée Cloud → Local réussie !\n\nLa page va se recharger.");
+            
+            // Recharger la page pour appliquer tous les changements
+            setTimeout(() => window.location.reload(), 1000);
+
+        } catch (error) {
+            this.logAuth(`❌ Erreur lors du forçage Cloud → Local: ${error.message}`);
+            alert(`Erreur lors de la synchronisation : ${error.message}`);
+        }
+    }
+
+    async forceLocalToCloud() {
+        if (!this.isAuthenticated) {
+            alert("Vous devez être authentifié pour cette action.");
+            return;
+        }
+
+        const confirmed = confirm(
+            "⚠️ ATTENTION ⚠️\n\n" +
+            "Cette action va ÉCRASER toutes vos données cloud avec celles en local.\n\n" +
+            "La version cloud actuelle sera REMPLACÉE par votre version locale.\n\n" +
+            "Voulez-vous continuer ?"
+        );
+
+        if (!confirmed) return;
+
+        this.logAuth("🔄 Forçage Local → Cloud");
+
+        try {
+            // Collecter les données locales actuelles
+            const localData = this.collectCurrentContextData();
+            this.logAuth("📦 Données locales collectées", localData);
+
+            // Envoyer au cloud sans vérification
+            const response = await fetch('/api/user/data', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(localData)
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || response.statusText);
+            }
+
+            this.logAuth("✅ Données locales poussées vers le cloud");
+
+            // Sauvegarder également en local pour cohérence
+            this.saveToLocalStorage(localData);
+
+            alert("✅ Synchronisation forcée Local → Cloud réussie !\n\nVos données locales sont maintenant la version maîtresse.");
+
+        } catch (error) {
+            this.logAuth(`❌ Erreur lors du forçage Local → Cloud: ${error.message}`);
+            alert(`Erreur lors de la synchronisation : ${error.message}`);
         }
     }
 
