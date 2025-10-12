@@ -1047,6 +1047,67 @@ def create_thumbnail():
             'error': f'Erreur serveur: {str(e)}'
         }), 500
 
+@app.route('/api/images/library', methods=['GET'])
+def get_image_library():
+    """Récupérer toutes les images de l'utilisateur authentifié"""
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    try:
+        user_id = session['user_id']
+        google_id = session['google_id']
+        
+        # Chercher le répertoire basé sur le google_id
+        user_dir = f'uploads/{google_id}'
+        
+        if not os.path.exists(user_dir):
+            return jsonify({
+                'success': True,
+                'images': [],
+                'message': 'Aucune image trouvée'
+            })
+
+        images = []
+        
+        # Parcourir tous les sous-dossiers (locations, regions, general, etc.)
+        for category in os.listdir(user_dir):
+            category_path = os.path.join(user_dir, category)
+            
+            if os.path.isdir(category_path):
+                for filename in os.listdir(category_path):
+                    file_path = os.path.join(category_path, filename)
+                    
+                    # Vérifier que c'est bien un fichier image
+                    if os.path.isfile(file_path) and any(filename.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.webp', '.gif']):
+                        # Construire l'URL publique
+                        public_url = f'/uploads/{google_id}/{category}/{filename}'
+                        
+                        # Récupérer la taille du fichier
+                        file_size = os.path.getsize(file_path)
+                        
+                        images.append({
+                            'filename': filename,
+                            'url': public_url,
+                            'category': category,
+                            'size': file_size
+                        })
+        
+        print(f"📚 {len(images)} image(s) trouvée(s) pour l'utilisateur {google_id}")
+        
+        return jsonify({
+            'success': True,
+            'images': images,
+            'total': len(images)
+        })
+
+    except Exception as e:
+        print(f"❌ Erreur lors de la récupération de la bibliothèque: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'error': f'Erreur serveur: {str(e)}'
+        }), 500
+
 @app.route('/auth/verify-config')
 def verify_oauth_config():
     """Vérifier la configuration OAuth avec Google"""
