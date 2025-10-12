@@ -389,18 +389,10 @@ class InfoBoxManager {
                     </div>
                     <div class="mb-3">
                         <label class="block text-sm font-medium mb-2 text-white">Ajouter une image :</label>
-                        <div id="image-upload-container" class="mb-3"></div>
                         <button type="button" onclick="window.infoBoxManager.openLibraryForEdit()" class="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center space-x-2 mb-3">
                             <i class="fas fa-images"></i>
                             <span>Choisir dans la bibliothèque</span>
                         </button>
-                        <div class="text-xs text-gray-400 mb-2">Ou utilisez une URL :</div>
-                        <div class="flex space-x-2">
-                            <input type="url" id="new-image-url" class="flex-1 p-2 border rounded bg-white text-black text-sm" placeholder="https://example.com/image.jpg">
-                            <button onclick="window.infoBoxManager.addImageFromUrl()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
-                                <i class="fas fa-plus mr-1"></i>Ajouter URL
-                            </button>
-                        </div>
                     </div>
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
@@ -1191,7 +1183,10 @@ class InfoBoxManager {
     }
 
     confirmLibrarySelectionForEdit() {
-        if (!this.selectedLibraryImagesForEdit || this.selectedLibraryImagesForEdit.length === 0) {
+        // Vérifier s'il y a des images sélectionnées dans le DOM
+        const selectedCards = document.querySelectorAll('.library-image-card.ring-2.ring-blue-500');
+        
+        if (!this.selectedLibraryImagesForEdit || this.selectedLibraryImagesForEdit.length === 0 || selectedCards.length === 0) {
             alert("Veuillez sélectionner au moins une image");
             return;
         }
