@@ -1765,6 +1765,8 @@ async function openLibrarySelection() {
     const empty = document.getElementById('library-selection-empty');
     const loading = document.getElementById('library-selection-loading');
     const authRequired = document.getElementById('library-selection-auth-required');
+    const pathInfo = document.getElementById('library-path-info');
+    const pathDisplay = document.getElementById('library-path-display');
 
     if (!modal) return;
 
@@ -1777,8 +1779,16 @@ async function openLibrarySelection() {
         empty.classList.add('hidden');
         loading.classList.add('hidden');
         authRequired.classList.remove('hidden');
+        if (pathInfo) pathInfo.classList.add('hidden');
         modal.classList.remove('hidden');
         return;
+    }
+
+    // Afficher le chemin de stockage
+    if (pathInfo && pathDisplay && authManager.currentUser) {
+        const googleId = authManager.currentUser.google_id;
+        pathDisplay.textContent = `uploads/${googleId}/locations/`;
+        pathInfo.classList.remove('hidden');
     }
 
     // Afficher le loading
