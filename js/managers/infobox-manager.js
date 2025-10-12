@@ -390,6 +390,10 @@ class InfoBoxManager {
                     <div class="mb-3">
                         <label class="block text-sm font-medium mb-2 text-white">Ajouter une image :</label>
                         <div id="image-upload-container" class="mb-3"></div>
+                        <button type="button" onclick="window.infoBoxManager.openLibraryForEdit()" class="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center space-x-2 mb-3">
+                            <i class="fas fa-images"></i>
+                            <span>Choisir dans la bibliothèque</span>
+                        </button>
                         <div class="text-xs text-gray-400 mb-2">Ou utilisez une URL :</div>
                         <div class="flex space-x-2">
                             <input type="url" id="new-image-url" class="flex-1 p-2 border rounded bg-white text-black text-sm" placeholder="https://example.com/image.jpg">
@@ -1050,6 +1054,174 @@ class InfoBoxManager {
         if (fileInput) {
             fileInput.value = '';
         }
+    }
+
+    async openLibraryForEdit() {
+        const modal = document.getElementById('library-selection-modal');
+        const content = document.getElementById('library-selection-content');
+        const empty = document.getElementById('library-selection-empty');
+        const loading = document.getElementById('library-selection-loading');
+        const authRequired = document.getElementById('library-selection-auth-required');
+
+        if (!modal) return;
+
+        // Vérifier l'authentification
+        if (!window.authManager || !window.authManager.isAuthenticated) {
+            content.classList.add('hidden');
+            empty.classList.add('hidden');
+            loading.classList.add('hidden');
+            authRequired.classList.remove('hidden');
+            modal.classList.remove('hidden');
+            return;
+        }
+
+        // Afficher le loading
+        content.classList.add('hidden');
+        empty.classList.add('hidden');
+        authRequired.classList.add('hidden');
+        loading.classList.remove('hidden');
+        modal.classList.remove('hidden');
+
+        try {
+            const response = await fetch('/api/images/library', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            loading.classList.add('hidden');
+
+            if (data.success && data.images && data.images.length > 0) {
+                this.renderLibraryImagesForEdit(data.images);
+                content.classList.remove('hidden');
+            } else {
+                empty.classList.remove('hidden');
+            }
+
+        } catch (error) {
+            console.error("❌ Erreur lors du chargement de la bibliothèque:", error);
+            loading.classList.add('hidden');
+            empty.classList.remove('hidden');
+        }
+    }
+
+    renderLibraryImagesForEdit(images) {
+        const content = document.getElementById('library-selection-content');
+        if (!content) return;
+
+        content.innerHTML = '';
+
+        images.forEach(image => {
+            const imageCard = document.createElement('div');
+            imageCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card';
+            imageCard.dataset.url = image.url;
+            imageCard.dataset.filename = image.filename;
+            
+            imageCard.innerHTML = `
+                <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
+                <div class="absolute top-2 right-2 hidden selected-indicator">
+                    <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                        <i class="fas fa-check text-xs"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
+                    <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
+                        <p class="text-xs truncate">${image.filename}</p>
+                    </div>
+                </div>
+            `;
+
+            imageCard.addEventListener('click', () => this.toggleImageSelectionForEdit(imageCard));
+            content.appendChild(imageCard);
+        });
+
+        // Setup des boutons de la modale
+        const confirmBtn = document.getElementById('confirm-library-selection-btn');
+        const cancelBtn = document.getElementById('cancel-library-selection-btn');
+        const closeBtn = document.getElementById('close-library-selection-btn');
+
+        if (confirmBtn) {
+            confirmBtn.onclick = () => this.confirmLibrarySelectionForEdit();
+        }
+        if (cancelBtn) {
+            cancelBtn.onclick = () => this.closeLibrarySelection();
+        }
+        if (closeBtn) {
+            closeBtn.onclick = () => this.closeLibrarySelection();
+        }
+    }
+
+    toggleImageSelectionForEdit(card) {
+        const url = card.dataset.url;
+        const filename = card.dataset.filename;
+        const indicator = card.querySelector('.selected-indicator');
+
+        if (!this.selectedLibraryImagesForEdit) {
+            this.selectedLibraryImagesForEdit = [];
+        }
+
+        const index = this.selectedLibraryImagesForEdit.findIndex(img => img.url === url);
+
+        if (index > -1) {
+            // Désélectionner
+            this.selectedLibraryImagesForEdit.splice(index, 1);
+            indicator.classList.add('hidden');
+            card.classList.remove('ring-2', 'ring-blue-500');
+        } else {
+            // Sélectionner
+            this.selectedLibraryImagesForEdit.push({ url, filename });
+            indicator.classList.remove('hidden');
+            card.classList.add('ring-2', 'ring-blue-500');
+        }
+    }
+
+    confirmLibrarySelectionForEdit() {
+        if (!this.selectedLibraryImagesForEdit || this.selectedLibraryImagesForEdit.length === 0) {
+            alert("Veuillez sélectionner au moins une image");
+            return;
+        }
+
+        // Initialiser le tableau d'images si nécessaire
+        if (!this.currentItem.images) {
+            this.currentItem.images = [];
+        }
+
+        // Ajouter les images sélectionnées
+        this.selectedLibraryImagesForEdit.forEach(image => {
+            const newImage = {
+                url: image.url,
+                type: this.currentItem.images.length === 0 ? 'principale' : null,
+                thumbnailUrl: null
+            };
+            this.currentItem.images.push(newImage);
+        });
+
+        // Re-render la liste des images
+        const imagesList = document.getElementById('edit-images-list');
+        if (imagesList) {
+            imagesList.innerHTML = this.renderEditImagesList();
+        }
+
+        // Réinitialiser la sélection
+        this.selectedLibraryImagesForEdit = [];
+
+        // Fermer la modale
+        this.closeLibrarySelection();
+
+        console.log("🖼️ Images ajoutées depuis la bibliothèque");
+    }
+
+    closeLibrarySelection() {
+        const modal = document.getElementById('library-selection-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+        this.selectedLibraryImagesForEdit = [];
     }
 
     toggleEvenementsTable() {
