@@ -562,7 +562,7 @@ class ImportExportManager {
      */
     createImportModal() {
         const modalHTML = `
-            <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-[70]">
                 <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
                     <h3 class="text-lg font-semibold mb-4">Importer des données</h3>
                     <div id="import-summary" class="mb-6"></div>

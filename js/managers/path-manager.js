@@ -316,7 +316,7 @@ class PathManager {
         if (this.isDrawingMode) {
             if (drawModeBtn) {
                 drawModeBtn.classList.add('btn-active');
-                drawModeBtn.title = 'Arrêter le tracé';
+                drawModeBtn.title = 'Arrêter le voyage';
             }
             if (viewport) {
                 viewport.classList.add('drawing');

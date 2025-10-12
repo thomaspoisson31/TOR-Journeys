@@ -119,14 +119,14 @@ async function initializeApp() {
         authManager = new AuthManager();
         authManager.init();
         window.authManager = authManager; // Exposer globalement pour les onclick
-        
+
         // Exposer scheduleAutoSync globalement pour les autres managers
         window.scheduleAutoSync = () => {
             if (authManager && authManager.isAuthenticated) {
                 authManager.scheduleAutoSync();
             }
         };
-        
+
         console.log("✅ AuthManager initialized");
 
         // Initialiser InfoBoxManager
@@ -605,12 +605,12 @@ function initializeMap() {
 
     // Initialiser PositionManager
     console.log("📍 [main.js] Création du PositionManager avec MAP_WIDTH:", MAP_WIDTH, "MAP_HEIGHT:", MAP_HEIGHT);
-    
+
     // Log de l'état du localStorage avant init
     const savedPos = localStorage.getItem('adventurers_position');
     const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
     console.log("📍 [main.js] État localStorage AVANT init PositionManager - position:", savedPos, "flag:", cloudFlag);
-    
+
     positionManager = new PositionManager(
         { getElementById: (id) => document.getElementById(id) },
         { MAP_WIDTH, MAP_HEIGHT }
@@ -618,7 +618,7 @@ function initializeMap() {
     positionManager.init();
     window.positionManager = positionManager; // Exposer globalement
     console.log("✅ PositionManager initialized with position:", positionManager.currentPosition);
-    
+
     // Nettoyer le flag cloud après l'initialisation si présent
     if (cloudFlag === 'true') {
         console.log("📍 [main.js] Nettoyage du flag cloud après initialisation");
@@ -823,7 +823,7 @@ function setupMapNavigation() {
                 // Pan avec deux doigts OU Pinch zoom
                 touchStartX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
                 touchStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                
+
                 const dx = e.touches[0].clientX - e.touches[1].clientX;
                 const dy = e.touches[0].clientY - e.touches[1].clientY;
                 touchDist = Math.sqrt(dx * dx + dy * dy);
@@ -835,18 +835,18 @@ function setupMapNavigation() {
                 // Calculer le centre actuel des deux doigts
                 const currentCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
                 const currentCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                
+
                 // Calculer la nouvelle distance pour le zoom
                 const dx = e.touches[0].clientX - e.touches[1].clientX;
                 const dy = e.touches[0].clientY - e.touches[1].clientY;
                 const newDist = Math.sqrt(dx * dx + dy * dy);
-                
+
                 // Détecter si c'est un pinch (changement de distance) ou un pan (déplacement du centre)
                 const distChange = Math.abs(newDist - touchDist);
                 const centerDeltaX = currentCenterX - touchStartX;
                 const centerDeltaY = currentCenterY - touchStartY;
                 const centerMovement = Math.sqrt(centerDeltaX * centerDeltaX + centerDeltaY * centerDeltaY);
-                
+
                 // Si le mouvement du centre est plus important que le changement de distance, c'est un pan
                 if (centerMovement > distChange) {
                     // Pan à deux doigts
@@ -854,7 +854,7 @@ function setupMapNavigation() {
                     panY += centerDeltaY;
                     constrainPan();
                     updateMapTransform();
-                    
+
                     touchStartX = currentCenterX;
                     touchStartY = currentCenterY;
                 } else {
@@ -862,11 +862,11 @@ function setupMapNavigation() {
                     const zoomFactor = newDist / touchDist;
                     zoomToPoint(zoomFactor, currentCenterX, currentCenterY);
                     touchDist = newDist;
-                    
+
                     touchStartX = currentCenterX;
                     touchStartY = currentCenterY;
                 }
-                
+
                 // Mettre à jour le ZoomManager
                 if (zoomManager) {
                     zoomManager.updateDisplay();
