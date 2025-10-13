@@ -149,28 +149,24 @@ async function initializeApp() {
         window.importExportManager = importExportManager; // Exposer globalement pour les onclick
         console.log("✅ ImportExportManager initialized");
 
-        // Charger les données
-        console.log("📍 Loading initial locations...");
+        // Initialiser les structures vides (seront remplies par AuthManager)
+        console.log("📍 Initializing data structures...");
         await dataManager.loadInitialLocations();
         locationsData = dataManager.locationsData;
-        window.locationsData = locationsData; // Exposer globalement pour les filtres
-        console.log("✅ Locations loaded successfully");
-
-        // Charger les régions
+        window.locationsData = locationsData;
+        
         dataManager.loadRegionsFromLocal();
         regionsData = dataManager.regionsData;
-        window.regionsData = regionsData; // Exposer globalement pour les filtres
-        console.log("✅ Regions loaded successfully");
+        window.regionsData = regionsData;
+        console.log("✅ Data structures initialized (will be populated from cloud)");
 
         // Test d'initialisation de la carte
         if (mapImage) {
             mapImage.onload = () => {
                 console.log("🗺️ Map image loaded successfully");
                 initializeMap();
-                // Afficher les lieux après l'initialisation de la carte
-                renderLocations();
-                // Afficher les régions après l'initialisation de la carte
-                renderRegions();
+                // NE PAS faire de rendu initial - les données seront chargées par AuthManager
+                console.log("⏳ Waiting for cloud data before rendering...");
             };
             mapImage.onerror = () => {
                 console.error("❌ Map image failed to load");

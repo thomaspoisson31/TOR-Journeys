@@ -502,44 +502,8 @@ class AuthManager {
             }, 150); // Délai suffisant pour les initialisations
         }
 
-        // 5. RE-RENDER pour appliquer les changements de données
-        this.logAuth("🎨 Re-render des lieux et régions pour refléter les données du contexte");
-
-        // Premier rendu immédiat
-        if (typeof window.renderLocations === 'function') {
-            window.renderLocations();
-            this.logAuth(`✅ ${window.locationsData?.locations?.length || 0} lieux rendus (1er appel)`);
-        }
-        if (typeof window.renderRegions === 'function') {
-            window.renderRegions();
-            this.logAuth(`✅ ${window.regionsData?.regions?.length || 0} régions rendues (1er appel)`);
-        }
-
-        // Second rendu avec délai pour assurer la synchronisation complète
-        setTimeout(() => {
-            this.logAuth("🔄 Re-render forcé après synchronisation des données du contexte");
-            if (typeof window.renderLocations === 'function') {
-                window.renderLocations();
-                this.logAuth(`✅ ${window.locationsData?.locations?.length || 0} lieux rendus (2ème appel)`);
-            }
-            if (typeof window.renderRegions === 'function') {
-                window.renderRegions();
-                this.logAuth(`✅ ${window.regionsData?.regions?.length || 0} régions rendues (2ème appel)`);
-            }
-
-            // Réappliquer les filtres pour s'assurer de la cohérence visuelle
-            if (window.filterManager && typeof window.filterManager.applyFilters === 'function') {
-                window.filterManager.applyFilters();
-                this.logAuth("✅ Filtres réappliqués après re-render");
-            }
-
-            // MAINTENANT mettre à jour l'UI du calendrier après que tout soit synchronisé
-            if (window.calendarManager && window.calendarManager.calendarData) {
-                this.logAuth("📅 Mise à jour UI du calendrier APRÈS re-render");
-                window.calendarManager.updateCalendarUI();
-                this.logAuth("✅ UI du calendrier mise à jour");
-            }
-        }, 100); // Petit délai pour le second rendu
+        // 5. Le rendu sera fait dans loadUserData() après l'application complète
+        this.logAuth("✅ Données du contexte synchronisées (rendu différé)");
 
         // Nettoyer le flag calendar MAINTENANT, après toutes les opérations UI
         const calendarFlag = localStorage.getItem('calendar_from_cloud');
@@ -597,6 +561,17 @@ class AuthManager {
 
             // Sauvegarder dans localStorage (comme cache uniquement)
             this.saveToLocalStorage(cloudData);
+
+            // FORCER un rendu immédiat après chargement cloud
+            this.logAuth("🎨 Rendu forcé après chargement cloud");
+            if (typeof window.renderLocations === 'function') {
+                window.renderLocations();
+                this.logAuth(`✅ ${window.locationsData?.locations?.length || 0} lieux rendus depuis le cloud`);
+            }
+            if (typeof window.renderRegions === 'function') {
+                window.renderRegions();
+                this.logAuth(`✅ ${window.regionsData?.regions?.length || 0} régions rendues depuis le cloud`);
+            }
 
             this.logAuth("✅ Données cloud chargées et appliquées avec succès");
 
