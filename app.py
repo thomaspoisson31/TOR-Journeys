@@ -511,7 +511,7 @@ def update_user_data():
 
     # Gérer les conflits de synchronisation
     force_overwrite = data.get('_force_overwrite', False)
-    client_timestamp_str = data.get('_sync_timestamp') # Expecting ISO format string
+    client_timestamp = data.get('_sync_timestamp')  # Peut être int (Unix) ou string (ISO)
 
     conflict_detected = False
     cloud_data_json = None
@@ -520,31 +520,41 @@ def update_user_data():
         cloud_data_json = existing['data_json']
         cloud_timestamp_str = existing['updated_at']
 
-        if client_timestamp_str and cloud_timestamp_str:
+        if client_timestamp and cloud_timestamp_str:
             try:
-                client_dt = datetime.fromisoformat(client_timestamp_str.replace('Z', '+00:00'))
+                # Convertir le timestamp client en datetime
+                if isinstance(client_timestamp, (int, float)):
+                    # Timestamp Unix en millisecondes
+                    client_dt = datetime.fromtimestamp(client_timestamp / 1000)
+                elif isinstance(client_timestamp, str):
+                    # Format ISO string
+                    client_dt = datetime.fromisoformat(client_timestamp.replace('Z', '+00:00'))
+                else:
+                    raise ValueError(f"Format de timestamp non supporté: {type(client_timestamp)}")
+
+                # Convertir le timestamp cloud en datetime
                 cloud_dt = datetime.fromisoformat(cloud_timestamp_str.replace('Z', '+00:00'))
 
                 if cloud_dt > client_dt:
                     conflict_detected = True
-                    print(f"⚠️ Conflit détecté pour user {session['user_id']}: cloud={cloud_timestamp_str}, client={client_timestamp_str}")
+                    print(f"⚠️ Conflit détecté pour user {session['user_id']}: cloud={cloud_timestamp_str}, client={client_timestamp}")
                     return jsonify({
                         'conflict_detected': True,
                         'cloud_data': json.loads(cloud_data_json),
                         'cloud_timestamp': cloud_timestamp_str
                     }), 200
-            except ValueError as e:
+            except (ValueError, TypeError) as e:
                 print(f"❌ Erreur de parsing de timestamp: {e}")
-                # Continuer sans conflit si le timestamp est invalide, ou retourner une erreur
-                return jsonify({'error': 'Invalid timestamp format'}), 400
+                # Continuer sans détection de conflit si le timestamp est invalide
+                pass
 
     # Pas de conflit ou force_overwrite: sauvegarder
     # Préparer les données pour la sauvegarde
     data_to_save = data.copy()
     # Assurer que le timestamp du client est bien présent dans les données sauvegardées,
     # même s'il n'était pas utilisé pour la détection (cas où il n'y avait pas de conflit)
-    if client_timestamp_str:
-        data_to_save['_sync_timestamp'] = client_timestamp_str
+    if client_timestamp:
+        data_to_save['_sync_timestamp'] = client_timestamp
 
     data_json_to_save = json.dumps(data_to_save)
 
