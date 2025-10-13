@@ -1,0 +1,262 @@
+(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+(anonymous) @ (index):64
+upload-manager.js:349 📤 UploadManager module loaded
+infobox-manager.js:1350 📋 InfoBoxManager module loaded
+library-manager.js:163 📚 LibraryManager module loaded
+main.js:35 ✅ Constants loaded successfully
+main.js:65 ✅ Global variables initialized
+main.js:73 ✅ Essential DOM elements: {viewport: true, mapContainer: true, mapImage: true, loaderOverlay: true}
+main.js:2349 📋 Simplified main.js loaded - waiting for DOM ready
+main.js:82 🚀 Starting simplified application...
+main.js:87 ✅ DataManager initialized
+filter-manager.js:19 🔍 FilterManager initialized
+main.js:89 ✅ FilterManager initialized
+main.js:99 ✅ VoyageManager initialized
+main.js:106 ✅ PathManager initialized
+calendar-manager.js:172 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:179 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"day":31,"month":"Lothron"}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:189 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:198 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {day: 31, month: 'Lothron'}
+calendar-manager.js:206 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:209 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:172 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:179 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"day":31,"month":"Lothron"}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:189 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:198 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {day: 31, month: 'Lothron'}
+calendar-manager.js:206 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:209 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:240 🌤️ Données météo du jour récupérées: {day: 31, symbol: '☀️', weather: "La chaleur s'installe de manière stable, les varia… L'été a pris ses quartiers et impose son rythme."}
+calendar-manager.js:249 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '☀️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:240 🌤️ Données météo du jour récupérées: {day: 31, symbol: '☀️', weather: "La chaleur s'installe de manière stable, les varia… L'été a pris ses quartiers et impose son rythme."}
+calendar-manager.js:249 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '☀️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+main.js:112 ✅ CalendarManager initialized
+settings-manager.js:17 ⚙️ SettingsManager initialized
+main.js:118 ✅ SettingsManager initialized
+auth-manager.js:893 [AuthManager] 🔑 Initialisation AuthManager null
+auth-manager.js:893 [AuthManager] 🔍 Vérification du statut d'authentification null
+auth-manager.js:893 [AuthManager] 👂 Écoute des changements de localStorage activée. null
+main.js:132 ✅ AuthManager initialized
+upload-manager.js:11 📤 UploadManager initialized
+infobox-manager.js:23 📋 InfoBoxManager initialized with UploadManager
+main.js:141 ✅ InfoBoxManager initialized
+import-export-manager.js:17 📤 ImportExportManager initialized
+import-export-manager.js:44 📤 ImportExportManager event listeners configured
+main.js:150 ✅ ImportExportManager initialized
+main.js:153 📍 Initializing data structures...
+data-manager.js:11 📍 loadInitialLocations: Initialisation avec structure vide
+data-manager.js:16 ✅ Structure de données initialisée (vide, en attente du cloud)
+data-manager.js:40 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+data-manager.js:45 ✅ Structure de régions initialisée (vide, en attente du cloud)
+main.js:161 ✅ Data structures initialized (will be populated from cloud)
+upload-manager.js:11 📤 UploadManager initialized
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:893 [AuthManager] ✅ Utilisateur authentifié trouvé null
+auth-manager.js:893 [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+auth-manager.js:893 [AuthManager] 📥 Chargement des données depuis le cloud null
+main.js:166 🗺️ Map image loaded successfully
+main.js:513 🗺️ Initializing map...
+main.js:519 📐 Map dimensions: 5103 x 3296
+main.js:542 ✅ Regions layer configured
+main.js:815 🎮 Setting up map navigation...
+main.js:1033 ✅ Map navigation setup complete
+main.js:1038 📋 Setting up info-box listeners...
+main.js:1079 ✅ Info-box listeners setup complete
+main.js:1084 🎨 Setting up region drawing...
+main.js:1106 ✅ Region drawing setup complete
+main.js:1348 📍 Setting up location adding...
+main.js:1371 ✅ Generate description button configured
+main.js:1964 🎨 Setting up color change modal...
+main.js:1987 ✅ Color change modal setup complete
+main.js:1395 ✅ Location adding setup complete
+main.js:569 🔍 Setting up FilterManager...
+filter-manager.js:24 🔍 Setting up filter listeners...
+filter-manager.js:59 ✅ Filter listeners setup complete
+main.js:577 ✅ FilterManager setup complete
+main.js:584 🚀 Setting up VoyageManager...
+main.js:586 ✅ VoyageManager setup complete
+main.js:591 🗺️ Setting up PathManager...
+path-manager.js:50 🎨 Canvas configuré : 5103x3296
+path-manager.js:38 🛤️ PathManager initialized
+main.js:593 ✅ PathManager setup complete
+zoom-manager.js:26 🔍 Initializing ZoomManager...
+zoom-manager.js:223 🔍 [ZoomManager] updateDisplay called: scale=0.198
+zoom-manager.js:213 🔍 [ZoomManager] updateSliderPosition: scale=0.198, ratio=0.025, x=3.8px, sliderWidth=150px
+zoom-manager.js:30 ✅ ZoomManager initialized
+main.js:621 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 5103 MAP_HEIGHT: 3296
+main.js:626 📍 [main.js] État localStorage AVANT init PositionManager - position: {"x":2123.750873993011,"y":1377.8715610275115} flag: true
+position-manager.js:24 📍 [PositionManager.loadPosition] État du flag cloud: true
+position-manager.js:27 📍 [PositionManager.loadPosition] Position dans localStorage: {"x":2123.750873993011,"y":1377.8715610275115}
+position-manager.js:34 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: {x: 2123.750873993011, y: 1377.8715610275115}
+position-manager.js:14 📍 Initializing PositionManager...
+position-manager.js:17 ✅ PositionManager initialized with position: {x: 2123.750873993011, y: 1377.8715610275115}
+main.js:634 ✅ PositionManager initialized with position: {x: 2123.750873993011, y: 1377.8715610275115}
+main.js:638 📍 [main.js] Nettoyage du flag cloud après initialisation
+journal-manager.js:11 📖 Initialisation du JournalManager
+journal-manager.js:48 📖 3 voyage(s) chargé(s) depuis le localStorage
+main.js:646 ✅ JournalManager initialized
+adventure-manager.js:15 🎲 Initializing AdventureManager...
+adventure-manager.js:17 ✅ AdventureManager initialized
+main.js:652 ✅ AdventureManager initialized
+main.js:2170 🖌️ Setting up drawing events...
+main.js:2174 👂 Adding VoyageManager drawing listeners...
+voyage-manager.js:76 🎨 VoyageManager drawing listeners configured
+main.js:2176 ✅ VoyageManager drawing listeners added
+main.js:2179 ✅ Drawing events setup complete
+zoom-manager.js:223 🔍 [ZoomManager] updateDisplay called: scale=0.178
+zoom-manager.js:213 🔍 [ZoomManager] updateSliderPosition: scale=0.178, ratio=0.020, x=3.0px, sliderWidth=150px
+main.js:661 ✅ Map initialized successfully
+main.js:169 ⏳ Waiting for cloud data before rendering...
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:893 [AuthManager] ✅ Données cloud récupérées {calendar: {…}, journal: Array(3), locations: {…}, position: {…}, regions: {…}, …}
+auth-manager.js:893 [AuthManager] 📦 Données locales détectées - fusion avec le cloud null
+auth-manager.js:893 [AuthManager] 🧹 localStorage nettoyé null
+auth-manager.js:893 [AuthManager] 🔄 Application des données du contexte (6) ['calendar', 'journal', 'locations', 'position', 'regions', 'settings']
+auth-manager.js:893 [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+auth-manager.js:893 [AuthManager] 💾 39 lieux sauvegardés dans localStorage null
+auth-manager.js:893 [AuthManager] 💾 2 régions sauvegardées dans localStorage null
+auth-manager.js:893 [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 39 lieux null
+auth-manager.js:893 [AuthManager] 📊 Structure locationsData: {locations: Array(39)}
+auth-manager.js:893 [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 2 régions null
+auth-manager.js:893 [AuthManager] 📊 Structure regionsData: {regions: Array(2)}
+auth-manager.js:893 [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+auth-manager.js:893 [AuthManager] 📅 [applyContextData] Données calendar reçues: {calendarData: Array(12), currentCalendarDate: {…}, currentSeason: 'printemps-fin', isCalendarMode: true}
+auth-manager.js:893 [AuthManager] 📅 [applyContextData] Saison appliquée: printemps-fin null
+auth-manager.js:893 [AuthManager] 📅 [applyContextData] Date appliquée: {day: 31, month: 'Lothron'}
+auth-manager.js:893 [AuthManager] 📅 [applyContextData] Données calendrier appliquées: 12 mois null
+auth-manager.js:893 [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+auth-manager.js:893 [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+calendar-manager.js:240 🌤️ Données météo du jour récupérées: {day: 31, symbol: '☀️', weather: "La chaleur s'installe de manière stable, les varia… L'été a pris ses quartiers et impose son rythme."}
+calendar-manager.js:249 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '☀️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+auth-manager.js:893 [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+auth-manager.js:893 [AuthManager] ⚙️ Application des paramètres null
+settings-manager.js:779 ⚙️ Chargement des paramètres depuis le contexte: {activeMapName: 'Carte Eriador par défaut', activeMapUrl: 'fr_tor_2nd_eriadors_map_page-0001.webp', availableMaps: Array(2), narrationStyle: 'brief', partyDescription: '*   **Aelrindel**, une Elfe Sylvestre des lisières…bonne humeur est un baume pour les cœurs sombres.', …}
+settings-manager.js:784 ✅ Cartes chargées: 2
+settings-manager.js:788 ✅ Carte active URL: fr_tor_2nd_eriadors_map_page-0001.webp
+settings-manager.js:792 ✅ Carte active nom: Carte Eriador par défaut
+settings-manager.js:798 ✅ Description aventuriers chargée
+settings-manager.js:802 ✅ Description quête chargée
+settings-manager.js:806 ✅ Style de narration chargé: brief
+settings-manager.js:816 🗺️ Mise à jour de l'image de la carte: fr_tor_2nd_eriadors_map_page-0001.webp
+settings-manager.js:855 ✅ Paramètres chargés avec succès
+auth-manager.js:893 [AuthManager] ✅ Paramètres appliqués null
+auth-manager.js:893 [AuthManager] 📖 Application de 3 entrées de journal depuis le contexte null
+journal-manager.js:48 📖 3 voyage(s) chargé(s) depuis le localStorage
+auth-manager.js:893 [AuthManager] ✅ Journal chargé depuis le contexte null
+auth-manager.js:893 [AuthManager] 📍 [applyContextData] Restauration de la position du marqueur depuis le contexte: {x: 2123.750873993011, y: 1377.8715610275115}
+auth-manager.js:489 📍 [applyContextData] AVANT setItem - position à sauver: {x: 2123.750873993011, y: 1377.8715610275115}
+auth-manager.js:495 📍 [applyContextData] APRÈS setItem - position vérif: {"x":2123.750873993011,"y":1377.8715610275115}
+auth-manager.js:496 📍 [applyContextData] APRÈS setItem - flag vérif: true
+auth-manager.js:893 [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: {x: 2123.750873993011, y: 1377.8715610275115}
+auth-manager.js:502 📍 [applyContextData] Mise à jour visuelle du PositionManager
+auth-manager.js:893 [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+auth-manager.js:893 [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+auth-manager.js:893 [AuthManager] ✅ Contexte appliqué avec succès - auto-sync réactivée null
+auth-manager.js:893 [AuthManager] 🔄 Déclenchement d'une synchronisation cloud suite à l'application du contexte null
+auth-manager.js:893 [AuthManager] ⏱️ Auto-sync programmée dans 2000ms. null
+auth-manager.js:893 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:893 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:893 [AuthManager] 🔄 Synchronisation immédiate des données fusionnées null
+auth-manager.js:893 [AuthManager] 🔄 Synchronisation systématique vers cloud null
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] CalendarManager existe: true
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] Données calendar AVANT collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: '12 mois', isCalendarMode: true}
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] Données calendar APRÈS collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: Array(12), isCalendarMode: true}
+auth-manager.js:893 [AuthManager] 📍 Position du marqueur collectée: {x: 2123.750873993011, y: 1377.8715610275115}
+auth-manager.js:893 [AuthManager] 📦 Données collectées pour le contexte (6) ['locations', 'regions', 'calendar', 'settings', 'journal', 'position']
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] Calendar dans les données collectées: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarDataLength: 12, isCalendarMode: true}
+settings-manager.js:824 ✅ Image de carte chargée, re-render des lieux et régions
+main.js:195 🎯 Rendering locations...
+main.js:200 🔄 Synchronisation avec window.locationsData
+main.js:203 📊 locationsData: {locations: Array(39)}
+main.js:204 📊 locationsData.locations: (39) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+main.js:226 ⚠️ Location Nouvelle Région has invalid coordinates
+(anonymous) @ main.js:226
+renderLocations @ main.js:224
+onImageLoaded @ settings-manager.js:827
+main.js:359 ✅ Rendered 38 location markers (thumbnails: false)
+main.js:362 📍 Locations layer z-index: auto
+settings-manager.js:828 ✅ Lieux rendus après loadSettings
+main.js:367 🌍 Rendering regions...
+main.js:372 🔄 Synchronisation avec window.regionsData
+main.js:375 🌍 RegionsData: {regions: Array(2)}
+main.js:398 🔍 Processing region: Nouvelle Région {color: 'blue', description: '', id: 1756020509028, known: true, name: 'Nouvelle Région', …}
+main.js:501 ✅ Rendered region: Nouvelle Région with 8 points
+main.js:398 🔍 Processing region: fgfgfgfg {color: 'violet', coordinates: Array(6), description: 'fgfgfgfg', id: 'region_1760160765291', known: true, …}
+main.js:501 ✅ Rendered region: fgfgfgfg with 6 points
+main.js:504 ✅ Rendered 2 region polygons
+settings-manager.js:832 ✅ Régions rendues après loadSettings
+auth-manager.js:893 [AuthManager] 🔄 Synchronisation systématique vers cloud null
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] CalendarManager existe: true
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] Données calendar AVANT collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: '12 mois', isCalendarMode: true}
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] Données calendar APRÈS collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: Array(12), isCalendarMode: true}
+auth-manager.js:893 [AuthManager] 📍 Position du marqueur collectée: {x: 2123.750873993011, y: 1377.8715610275115}
+auth-manager.js:893 [AuthManager] 📦 Données collectées pour le contexte (6) ['locations', 'regions', 'calendar', 'settings', 'journal', 'position']
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] Calendar dans les données collectées: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarDataLength: 12, isCalendarMode: true}
+auth-manager.js:893 [AuthManager] ✅ Données synchronisées dans le cloud null
+auth-manager.js:893 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:893 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:893 [AuthManager] 🎨 Rendu forcé après chargement cloud null
+main.js:195 🎯 Rendering locations...
+main.js:203 📊 locationsData: {locations: Array(39)}
+main.js:204 📊 locationsData.locations: (39) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+main.js:226 ⚠️ Location Nouvelle Région has invalid coordinates
+(anonymous) @ main.js:226
+renderLocations @ main.js:224
+loadUserData @ auth-manager.js:651
+await in loadUserData
+checkAuthenticationStatus @ auth-manager.js:133
+await in checkAuthenticationStatus
+init @ auth-manager.js:31
+initializeApp @ main.js:122
+(anonymous) @ main.js:2350
+main.js:359 ✅ Rendered 38 location markers (thumbnails: false)
+main.js:362 📍 Locations layer z-index: auto
+auth-manager.js:893 [AuthManager] ✅ 39 lieux rendus depuis le cloud null
+main.js:367 🌍 Rendering regions...
+main.js:375 🌍 RegionsData: {regions: Array(2)}
+main.js:398 🔍 Processing region: Nouvelle Région {color: 'blue', description: '', id: 1756020509028, known: true, name: 'Nouvelle Région', …}
+main.js:501 ✅ Rendered region: Nouvelle Région with 8 points
+main.js:398 🔍 Processing region: fgfgfgfg {color: 'violet', coordinates: Array(6), description: 'fgfgfgfg', id: 'region_1760160765291', known: true, …}
+main.js:501 ✅ Rendered region: fgfgfgfg with 6 points
+main.js:504 ✅ Rendered 2 region polygons
+auth-manager.js:893 [AuthManager] ✅ 2 régions rendues depuis le cloud null
+auth-manager.js:893 [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+undefined:1  GET https://30b15cff-93eb-41b4-b3be-a7ad74809d09-00-1wy45ryemz0b1.kirk.replit.dev/undefined 404 (Not Found)
+Image
+renderMapsGrid @ settings-manager.js:283
+switchTab @ settings-manager.js:169
+openSettings @ settings-manager.js:724
+(anonymous) @ settings-manager.js:98
+auth-manager.js:893 [AuthManager] ✅ Données synchronisées dans le cloud null
+auth-manager.js:893 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:893 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:893 [AuthManager] ⏱️ Auto-sync exécutée. null
+settings-manager.js:881 🗑️ Suppression de tous les lieux et régions...
+settings-manager.js:886 ✅ Lieux supprimés
+settings-manager.js:892 ✅ Régions supprimées
+main.js:195 🎯 Rendering locations...
+main.js:200 🔄 Synchronisation avec window.locationsData
+main.js:203 📊 locationsData: {locations: Array(0)}
+main.js:204 📊 locationsData.locations: []
+main.js:359 ✅ Rendered 0 location markers (thumbnails: false)
+main.js:362 📍 Locations layer z-index: auto
+main.js:367 🌍 Rendering regions...
+main.js:372 🔄 Synchronisation avec window.regionsData
+main.js:375 🌍 RegionsData: {regions: Array(0)}
+main.js:504 ✅ Rendered 0 region polygons
+auth-manager.js:893 [AuthManager] ⏱️ Timeout d'auto-sync précédent annulé. null
+auth-manager.js:893 [AuthManager] ⏱️ Auto-sync programmée dans 2000ms. null
+settings-manager.js:918 ✅ Suppression complète terminée
+auth-manager.js:893 [AuthManager] 🔄 Synchronisation systématique vers cloud null
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] CalendarManager existe: true
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] Données calendar AVANT collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: '12 mois', isCalendarMode: true}
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] Données calendar APRÈS collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: Array(12), isCalendarMode: true}
+auth-manager.js:893 [AuthManager] 📍 Position du marqueur collectée: {x: 2123.750873993011, y: 1377.8715610275115}
+auth-manager.js:893 [AuthManager] 📦 Données collectées pour le contexte (6) ['locations', 'regions', 'calendar', 'settings', 'journal', 'position']
+auth-manager.js:893 [AuthManager] 📅 [collectCurrentContextData] Calendar dans les données collectées: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarDataLength: 12, isCalendarMode: true}
+auth-manager.js:893 [AuthManager] ✅ Données synchronisées dans le cloud null
+auth-manager.js:893 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:893 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:893 [AuthManager] ⏱️ Auto-sync exécutée. null
