@@ -92,10 +92,15 @@ class AuthManager {
         }
 
         // Écouter les changements dans le localStorage pour la synchronisation
+        // Note : L'événement 'storage' n'est déclenché que dans les AUTRES onglets
+        // Pour le même onglet, la synchronisation est gérée par saveToLocalStorage
         window.addEventListener('storage', (event) => {
             if (event.key === 'middleEarthData') {
-                this.logAuth("🔄 Changement détecté dans localStorage, synchronisation locale");
-                this.loadUserDataFromLocalStorage();
+                this.logAuth("🔄 Changement détecté depuis un autre onglet");
+                // Recharger les données si l'utilisateur est authentifié
+                if (this.isAuthenticated) {
+                    this.loadUserData();
+                }
             }
         });
     }
@@ -695,9 +700,19 @@ class AuthManager {
 
         if (data.locations) {
             localStorage.setItem('middleEarthLocations', JSON.stringify(data.locations));
+            // Synchroniser immédiatement avec les variables globales
+            window.locationsData = data.locations;
+            if (window.dataManager) {
+                window.dataManager.locationsData = data.locations;
+            }
         }
         if (data.regions) {
             localStorage.setItem('middleEarthRegions', JSON.stringify(data.regions));
+            // Synchroniser immédiatement avec les variables globales
+            window.regionsData = data.regions;
+            if (window.dataManager) {
+                window.dataManager.regionsData = data.regions;
+            }
         }
         if (data.settings) {
             if (data.settings.availableMaps) {
@@ -747,17 +762,10 @@ class AuthManager {
             this.logAuth("  - Filtres sauvegardés dans localStorage.");
         }
 
-        // IMPORTANT : Déclencher un événement 'storage' pour que les autres onglets/fenêtres soient notifiés
-        // Cela permet la synchronisation entre onglets ouverts
-        const event = new StorageEvent('storage', {
-            key: 'middleEarthData', // Clé générique pour indiquer un changement global
-            newValue: JSON.stringify(data),
-            oldValue: null, // Non pertinent ici
-            url: window.location.href,
-            storageArea: localStorage
-        });
-        window.dispatchEvent(event);
-        this.logAuth("  - Événement 'storage' déclenché pour notification.");
+        // Note : L'événement 'storage' n'est pas nécessaire dans le même onglet
+        // et pourrait causer des boucles infinies. Il est automatiquement déclenché
+        // par le navigateur pour les AUTRES onglets lors de modifications du localStorage.
+        this.logAuth("  - Données sauvegardées dans localStorage.");
     }
 
     scheduleAutoSync() {
