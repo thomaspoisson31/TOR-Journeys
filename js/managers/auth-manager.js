@@ -390,14 +390,22 @@ class AuthManager {
             this.logAuth(`💾 ${data.regions.regions?.length || 0} régions sauvegardées dans localStorage`);
         }
 
-        // 2. FORCER la synchronisation IMMÉDIATE des données globales
+        // 2. FORCER la synchronisation IMMÉDIATE des données globales ET locales
         if (data.locations) {
             window.locationsData = data.locations;
+            // IMPORTANT: Synchroniser aussi la variable locale dans main.js
+            if (typeof locationsData !== 'undefined') {
+                locationsData = data.locations;
+            }
             this.logAuth(`✅ Référence globale 'locationsData' mise à jour avec ${data.locations.locations?.length || 0} lieux`);
             this.logAuth(`📊 Structure locationsData:`, data.locations);
         }
         if (data.regions) {
             window.regionsData = data.regions;
+            // IMPORTANT: Synchroniser aussi la variable locale dans main.js
+            if (typeof regionsData !== 'undefined') {
+                regionsData = data.regions;
+            }
             this.logAuth(`✅ Référence globale 'regionsData' mise à jour avec ${data.regions.regions?.length || 0} régions`);
             this.logAuth(`📊 Structure regionsData:`, data.regions);
         }
