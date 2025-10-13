@@ -197,9 +197,16 @@ def get_or_create_user(google_id, name=None, email=None):
     conn.close()
     return dict(user)
 
+@app.route('/login')
+def login_page():
+    """Page de connexion"""
+    return send_from_directory('.', 'login.html')
+
 @app.route('/')
 def index():
-    """Page principale - servir l'interface existante"""
+    """Page principale - nécessite authentification"""
+    if 'user_id' not in session or 'google_id' not in session:
+        return redirect('/login')
     return send_from_directory('.', 'index.html')
 
 @app.route('/api/auth/user')
@@ -685,7 +692,7 @@ def google_auth_callback():
         print(f"✅ Session configurée pour user_id: {session['user_id']}")
         print(f"✅ Session complète: {dict(session)}")
 
-        return redirect('/?auth_success=1')
+        return redirect('/')
 
     except Exception as e:
         print(f"❌ Erreur OAuth Google: {e}")
@@ -698,7 +705,7 @@ def google_auth_callback():
 def logout():
     """Déconnexion"""
     session.clear()
-    return redirect('/')
+    return redirect('/login')
 
 @app.route('/auth/debug')
 def auth_debug():

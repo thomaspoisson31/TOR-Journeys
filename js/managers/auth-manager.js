@@ -76,18 +76,6 @@ class AuthManager {
             });
         }
 
-        // Boutons de synchronisation forcée
-        const forceCloudToLocalBtn = document.getElementById('force-cloud-to-local-btn');
-        const forceLocalToCloudBtn = document.getElementById('force-local-to-cloud-btn');
-
-        if (forceCloudToLocalBtn) {
-            forceCloudToLocalBtn.addEventListener('click', () => this.forceCloudToLocal());
-        }
-
-        if (forceLocalToCloudBtn) {
-            forceLocalToCloudBtn.addEventListener('click', () => this.forceLocalToCloud());
-        }
-
         // Fermer modal en cliquant à l'extérieur
         if (this.authModal) {
             this.authModal.addEventListener('click', (e) => {
@@ -133,28 +121,19 @@ class AuthManager {
                     // Charger les données utilisateur (qui utilisera localStorage)
                     await this.loadUserData();
                 } else {
-                    this.logAuth("ℹ️ Aucun utilisateur authentifié");
-                    this.currentUser = null;
-                    this.isAuthenticated = false;
-                    this.updateUIForUnauthenticatedUser();
-                    // Charger les données locales si non authentifié
-                    await this.loadUserDataFromLocalStorage();
+                    this.logAuth("❌ Non authentifié - redirection login");
+                    window.location.href = '/login';
+                    return;
                 }
             } else {
-                this.logAuth("⚠️ Erreur lors de la vérification d'authentification");
-                this.currentUser = null;
-                this.isAuthenticated = false;
-                this.updateUIForUnauthenticatedUser();
-                // Charger les données locales si erreur d'authentification
-                await this.loadUserDataFromLocalStorage();
+                this.logAuth("❌ Erreur vérification auth - redirection login");
+                window.location.href = '/login';
+                return;
             }
         } catch (error) {
-            this.logAuth(`❌ Erreur lors de la vérification d'authentification: ${error.message}`);
-            this.currentUser = null;
-            this.isAuthenticated = false;
-            this.updateUIForUnauthenticatedUser();
-            // Charger les données locales en cas d'erreur réseau
-            await this.loadUserDataFromLocalStorage();
+            this.logAuth(`❌ Erreur vérification auth: ${error.message} - redirection login`);
+            window.location.href = '/login';
+            return;
         }
 
         this.hideAuthStatusPanel();
@@ -164,24 +143,10 @@ class AuthManager {
     handleAuthCallback() {
         const urlParams = new URLSearchParams(window.location.search);
 
-        if (urlParams.has('auth_success')) {
-            this.logAuth("✅ Authentification réussie détectée dans l'URL");
-            // Nettoyer l'URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            // Recharger le statut d'authentification
-            setTimeout(() => this.checkAuthenticationStatus(), 500);
-        } else if (urlParams.has('auth_error')) {
-            const errorType = urlParams.get('auth_error');
+        if (urlParams.has('auth_error')) {
             const errorDesc = urlParams.get('desc') || 'Erreur inconnue';
-            this.logAuth(`❌ Erreur d'authentification détectée: ${errorType} - ${errorDesc}`);
-            this.showAuthError(errorDesc);
-            // Nettoyer l'URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-            // Mettre à jour l'état non authentifié
-            this.isAuthenticated = false;
-            this.currentUser = null;
-            this.updateUIForUnauthenticatedUser();
-            this.updateUnauthenticatedWarning();
+            this.logAuth(`❌ Erreur auth: ${errorDesc} - redirection login`);
+            window.location.href = `/login?auth_error=1&desc=${encodeURIComponent(errorDesc)}`;
         }
     }
 
@@ -602,8 +567,8 @@ class AuthManager {
 
     async loadUserData() {
         if (!this.isAuthenticated) {
-            this.logAuth("ℹ️ Utilisateur non authentifié, chargement des données depuis localStorage.");
-            await this.loadUserDataFromLocalStorage();
+            this.logAuth("❌ Utilisateur non authentifié - redirection vers login");
+            window.location.href = '/login';
             return;
         }
 
@@ -617,203 +582,44 @@ class AuthManager {
 
             if (response.ok) {
                 const cloudData = await response.json();
-                this.logAuth("✅ Données cloud récupérées.");
-
-                // Vérifier s'il y a des données locales
-                const hasLocalData = this.hasLocalData();
-
-                if (hasLocalData) {
-                    // Gérer le conflit entre local et cloud
-                    this.logAuth("⚠️ Conflit détecté : données locales et cloud disponibles.");
-                    const localData = this.collectCurrentContextData(); // Collecte depuis les références globales et localStorage
-                    const mergedData = await this.resolveConflict(localData, cloudData);
-
-                    // Appliquer les données mergées
-                    await this.applyContextData(mergedData);
-
-                    // Sauvegarder les données mergées dans le localStorage pour référence future
-                    this.saveToLocalStorage(mergedData);
-
-                    // Laisser le flag 'adventurers_position_from_cloud' être mis à jour par applyContextData
-                    // La synchronisation cloud se fera via scheduleAutoSync() après applyContextData
-
-                } else {
-                    // Pas de données locales, charger simplement les données cloud
-                    this.logAuth("ℹ️ Aucune donnée locale trouvée, application des données cloud.");
-                    await this.applyContextData(cloudData);
-                    // Sauvegarder les données cloud dans le localStorage
-                    this.saveToLocalStorage(cloudData);
-                }
-                // Le flag 'adventurers_position_from_cloud' est géré dans applyContextData et resolveConflict
+                this.logAuth("✅ Données cloud récupérées - application directe");
+                
+                // Appliquer directement les données cloud (source unique de vérité)
+                await this.applyContextData(cloudData);
+                this.saveToLocalStorage(cloudData);
 
             } else if (response.status === 404) {
-                // Pas de données cloud pour cet utilisateur, sauvegarder les données locales si elles existent
-                if (this.hasLocalData()) {
-                    this.logAuth("📤 Première synchronisation : envoi des données locales vers le cloud.");
-                    await this.syncUserData(); // Envoie les données locales au backend
-                } else {
-                    this.logAuth("ℹ️ Aucune donnée cloud ni locale trouvée.");
-                }
+                // Première connexion - initialiser avec données vides
+                this.logAuth("ℹ️ Première connexion - initialisation données vides");
+                const emptyData = {
+                    locations: { locations: [] },
+                    regions: { regions: [] },
+                    settings: {},
+                    calendar: null,
+                    journal: [],
+                    position: null,
+                    filters: {}
+                };
+                await this.syncUserData(); // Créer l'enregistrement cloud
             } else {
-                this.logAuth(`⚠️ Erreur lors du chargement des données utilisateur (statut: ${response.status})`);
-                // En cas d'erreur, essayer de charger depuis le localStorage
-                await this.loadUserDataFromLocalStorage();
+                this.logAuth(`⚠️ Erreur chargement données (statut: ${response.status})`);
+                alert('Erreur de chargement des données. Veuillez vous reconnecter.');
+                window.location.href = '/login';
             }
         } catch (error) {
-            this.logAuth(`❌ Erreur réseau lors du chargement des données utilisateur: ${error.message}`);
-            // En cas d'erreur réseau, essayer de charger depuis le localStorage
-            await this.loadUserDataFromLocalStorage();
+            this.logAuth(`❌ Erreur réseau: ${error.message}`);
+            alert('Erreur réseau. Veuillez vérifier votre connexion.');
         }
-    }
-
-    // Nouvelle méthode pour charger les données depuis localStorage
-    async loadUserDataFromLocalStorage() {
-        this.logAuth("📥 Chargement des données depuis localStorage");
-        
-        // Ne rien faire - les données locales sont déjà chargées par le DataManager et les autres managers
-        // Cette méthode sert juste à indiquer que le chargement est terminé sans bloquer
-        this.logAuth("ℹ️ Mode non authentifié - utilisation des données déjà chargées localement");
-    }
-
-
-    hasLocalData() {
-        // Vérifier si des données locales significatives existent
-        const hasLocations = localStorage.getItem('middleEarthLocations') !== null;
-        const hasRegions = localStorage.getItem('middleEarthRegions') !== null;
-        const hasJournal = localStorage.getItem('travelJournal') !== null;
-        const hasPosition = localStorage.getItem('adventurers_position') !== null;
-        // Ajouter d'autres vérifications si nécessaire
-        const hasSettings = localStorage.getItem('activeMapUrl') !== null || localStorage.getItem('availableMaps') !== null;
-
-        // On considère qu'il y a des données locales si au moins un élément clé est présent.
-        const hasAnyData = hasLocations || hasRegions || hasJournal || hasPosition || hasSettings;
-
-        if (hasAnyData) {
-            this.logAuth("✅ Des données locales existent.");
-        } else {
-            this.logAuth("ℹ️ Aucune donnée locale significative trouvée.");
-        }
-        return hasAnyData;
-    }
-
-    async resolveConflict(localData, cloudData) {
-        this.logAuth("⚙️ Résolution de conflit local ↔ cloud");
-
-        // Stratégie : merger en priorisant les modifications les plus récentes
-        // Utiliser une copie profonde pour éviter les effets de bord
-        const mergedData = JSON.parse(JSON.stringify(cloudData));
-
-        // Merger les lieux (garder les IDs uniques, prioriser le plus récent)
-        if (localData.locations && cloudData.locations) {
-            const localLocations = localData.locations.locations || [];
-            const cloudLocations = cloudData.locations.locations || [];
-            const locationMap = new Map();
-
-            cloudLocations.forEach(loc => {
-                if (loc && loc.id) locationMap.set(loc.id, loc);
-            });
-            localLocations.forEach(loc => {
-                if (loc && loc.id) {
-                    if (!locationMap.has(loc.id) || (loc.updated_at && locationMap.get(loc.id).updated_at && new Date(loc.updated_at) > new Date(locationMap.get(loc.id).updated_at))) {
-                        locationMap.set(loc.id, loc);
-                    }
-                }
-            });
-            mergedData.locations = { locations: Array.from(locationMap.values()) };
-            this.logAuth(`  - Lieux mergés: ${mergedData.locations.locations.length} entrées.`);
-        } else if (localData.locations) {
-            mergedData.locations = localData.locations;
-            this.logAuth(`  - Lieux locaux utilisés car pas de lieux cloud.`);
-        }
-
-        // Même logique pour les régions
-        if (localData.regions && cloudData.regions) {
-            const localRegions = localData.regions.regions || [];
-            const cloudRegions = cloudData.regions.regions || [];
-            const regionMap = new Map();
-
-            cloudRegions.forEach(reg => {
-                if (reg && reg.id) regionMap.set(reg.id, reg);
-            });
-            localRegions.forEach(reg => {
-                if (reg && reg.id) {
-                    if (!regionMap.has(reg.id)) { // Pour les régions, on peut juste ajouter les nouvelles
-                        regionMap.set(reg.id, reg);
-                    }
-                    // Si besoin de prioriser par date, ajouter la logique ici
-                }
-            });
-            mergedData.regions = { regions: Array.from(regionMap.values()) };
-            this.logAuth(`  - Régions mergées: ${mergedData.regions.regions.length} entrées.`);
-        } else if (localData.regions) {
-            mergedData.regions = localData.regions;
-            this.logAuth(`  - Régions locales utilisées.`);
-        }
-
-        // Pour les paramètres, prioriser le local (plus récent)
-        if (localData.settings) {
-            // Fusion simple, les paramètres locaux écrasent les cloud si présents
-            mergedData.settings = { ...(cloudData.settings || {}), ...localData.settings };
-            this.logAuth(`  - Paramètres locaux appliqués.`);
-        }
-
-        // Pour le calendrier, prioriser le CLOUD (comme pour la position)
-        if (cloudData.calendar) {
-            mergedData.calendar = cloudData.calendar;
-            this.logAuth(`  - Calendrier cloud prioritaire.`);
-        } else if (localData.calendar) {
-            mergedData.calendar = localData.calendar;
-            this.logAuth(`  - Calendrier local utilisé (pas de données cloud).`);
-        }
-
-        // Pour le journal, merger les entrées
-        if (localData.journal && cloudData.journal) {
-            const journalMap = new Map();
-            cloudData.journal.forEach(entry => {
-                const key = entry.pathSignature || entry.generatedAt || JSON.stringify(entry); // Clé unique
-                if (key) journalMap.set(key, entry);
-            });
-            localData.journal.forEach(entry => {
-                const key = entry.pathSignature || entry.generatedAt || JSON.stringify(entry);
-                if (key && !journalMap.has(key)) {
-                    journalMap.set(key, entry);
-                }
-            });
-            mergedData.journal = Array.from(journalMap.values());
-            this.logAuth(`  - Journal mergé: ${mergedData.journal.length} entrées.`);
-        } else if (localData.journal) {
-            mergedData.journal = localData.journal;
-            this.logAuth(`  - Journal local utilisé.`);
-        }
-
-        // Pour la position : prioriser le cloud lors d'une restauration, MAIS forcer le flag local
-        // C'est applyContextData qui gérera la mise à jour de localStorage avec le flag.
-        if (cloudData.position) {
-            mergedData.position = cloudData.position;
-            this.logAuth("📍 Position cloud prioritaire.");
-        } else if (localData.position) {
-            mergedData.position = localData.position;
-            this.logAuth("📍 Position locale utilisée.");
-        }
-
-        // Pour les filtres : prioriser le local
-        if (localData.filters) {
-            mergedData.filters = localData.filters;
-            this.logAuth(`  - Filtres locaux appliqués.`);
-        }
-
-
-        this.logAuth("✅ Résolution de conflit terminée.");
-        return mergedData;
     }
 
     async syncUserData() {
         if (!this.isAuthenticated) {
-            this.logAuth("🚫 Impossible de synchroniser : utilisateur non authentifié.");
+            this.logAuth("❌ Non authentifié - redirection login");
+            window.location.href = '/login';
             return;
         }
 
-        this.logAuth("🔄 Synchronisation des données utilisateur vers le cloud");
+        this.logAuth("🔄 Synchronisation systématique vers cloud");
 
         try {
             const contextData = this.collectCurrentContextData();
@@ -828,17 +634,23 @@ class AuthManager {
             });
 
             if (response.ok) {
-                this.logAuth("✅ Données utilisateur synchronisées dans le cloud.");
-                // Sauvegarder aussi en local pour cohérence immédiate
+                this.logAuth("✅ Données synchronisées dans le cloud");
+                // Mise à jour locale pour cohérence UI
                 this.saveToLocalStorage(contextData);
             } else {
                 const error = await response.json();
-                this.logAuth(`⚠️ Erreur lors de la synchronisation cloud: ${error.error || response.statusText}`);
-                alert(`Erreur lors de la synchronisation: ${error.error || response.statusText}`);
+                this.logAuth(`⚠️ Erreur sync: ${error.error || response.statusText}`);
+                
+                if (response.status === 401) {
+                    alert('Session expirée. Reconnexion requise.');
+                    window.location.href = '/login';
+                } else {
+                    alert(`Erreur synchronisation: ${error.error || response.statusText}`);
+                }
             }
         } catch (error) {
-            this.logAuth(`❌ Erreur réseau lors de la synchronisation: ${error.message}`);
-            alert(`Erreur réseau lors de la synchronisation: ${error.message}`);
+            this.logAuth(`❌ Erreur réseau sync: ${error.message}`);
+            alert(`Erreur réseau. Vos modifications seront sauvegardées à la prochaine connexion.`);
         }
     }
 
@@ -978,103 +790,7 @@ class AuthManager {
         }
     }
 
-    async forceCloudToLocal() {
-        if (!this.isAuthenticated) {
-            alert("Vous devez être authentifié pour cette action.");
-            return;
-        }
-
-        const confirmed = confirm(
-            "⚠️ ATTENTION ⚠️\n\n" +
-            "Cette action va ÉCRASER toutes vos données locales avec celles du cloud.\n\n" +
-            "Toutes les modifications non synchronisées seront PERDUES.\n\n" +
-            "Voulez-vous continuer ?"
-        );
-
-        if (!confirmed) return;
-
-        this.logAuth("🔄 Forçage Cloud → Local");
-
-        try {
-            // Récupérer les données cloud
-            const response = await fetch('/api/user/data', {
-                method: 'GET',
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP: ${response.status}`);
-            }
-
-            const cloudData = await response.json();
-            this.logAuth("✅ Données cloud récupérées", cloudData);
-
-            // Appliquer directement sans merge
-            await this.applyContextData(cloudData);
-
-            // Sauvegarder dans localStorage
-            this.saveToLocalStorage(cloudData);
-
-            alert("✅ Synchronisation forcée Cloud → Local réussie !\n\nLa page va se recharger.");
-            
-            // Recharger la page pour appliquer tous les changements
-            setTimeout(() => window.location.reload(), 1000);
-
-        } catch (error) {
-            this.logAuth(`❌ Erreur lors du forçage Cloud → Local: ${error.message}`);
-            alert(`Erreur lors de la synchronisation : ${error.message}`);
-        }
-    }
-
-    async forceLocalToCloud() {
-        if (!this.isAuthenticated) {
-            alert("Vous devez être authentifié pour cette action.");
-            return;
-        }
-
-        const confirmed = confirm(
-            "⚠️ ATTENTION ⚠️\n\n" +
-            "Cette action va ÉCRASER toutes vos données cloud avec celles en local.\n\n" +
-            "La version cloud actuelle sera REMPLACÉE par votre version locale.\n\n" +
-            "Voulez-vous continuer ?"
-        );
-
-        if (!confirmed) return;
-
-        this.logAuth("🔄 Forçage Local → Cloud");
-
-        try {
-            // Collecter les données locales actuelles
-            const localData = this.collectCurrentContextData();
-            this.logAuth("📦 Données locales collectées", localData);
-
-            // Envoyer au cloud sans vérification
-            const response = await fetch('/api/user/data', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify(localData)
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || response.statusText);
-            }
-
-            this.logAuth("✅ Données locales poussées vers le cloud");
-
-            // Sauvegarder également en local pour cohérence
-            this.saveToLocalStorage(localData);
-
-            alert("✅ Synchronisation forcée Local → Cloud réussie !\n\nVos données locales sont maintenant la version maîtresse.");
-
-        } catch (error) {
-            this.logAuth(`❌ Erreur lors du forçage Local → Cloud: ${error.message}`);
-            alert(`Erreur lors de la synchronisation : ${error.message}`);
-        }
-    }
+    
 
     logAuth(message, data = null) {
         // Afficher les logs dans la console, potentiellement avec des conditions pour débugger
