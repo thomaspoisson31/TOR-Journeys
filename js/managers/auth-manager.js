@@ -305,14 +305,14 @@ class AuthManager {
                 calendarData: window.calendarManager.calendarData ? `${window.calendarManager.calendarData.length} mois` : null,
                 isCalendarMode: window.calendarManager.isCalendarMode
             });
-            
+
             data.calendar = {
                 currentSeason: window.calendarManager.currentSeason,
                 currentCalendarDate: window.calendarManager.currentCalendarDate,
                 calendarData: window.calendarManager.calendarData,
                 isCalendarMode: window.calendarManager.isCalendarMode
             };
-            
+
             this.logAuth("📅 [collectCurrentContextData] Données calendar APRÈS collecte:", data.calendar);
         } else {
             this.logAuth("⚠️ [collectCurrentContextData] CalendarManager n'existe PAS encore !");
@@ -357,7 +357,7 @@ class AuthManager {
 
 
     // Supprimé : loadUserContexts, renderContextsList, loadContext, deleteContext
-    // Ces fonctions géraient la liste des contextes sauvegardés, ce qui n'est plus nécessaire.
+
 
     async applyContextData(data) {
         this.logAuth("🔄 Application des données du contexte", Object.keys(data));
@@ -404,42 +404,42 @@ class AuthManager {
         // 4. Autres données (calendrier, paramètres, journal)
         if (data.calendar && window.calendarManager) {
             this.logAuth("📅 [applyContextData] Application des données de calendrier depuis le cloud");
-            
+
             this.logAuth("📅 [applyContextData] Données calendar reçues:", data.calendar);
-            
+
             // IMPORTANT: Poser le flag AVANT toute opération
             localStorage.setItem('calendar_from_cloud', 'true');
-            
+
             // Appliquer directement au CalendarManager d'abord
             if (data.calendar.currentSeason) {
                 window.calendarManager.currentSeason = data.calendar.currentSeason;
                 localStorage.setItem('currentSeason', data.calendar.currentSeason);
                 this.logAuth(`📅 [applyContextData] Saison appliquée: ${data.calendar.currentSeason}`);
             }
-            
+
             if (data.calendar.currentCalendarDate) {
                 window.calendarManager.currentCalendarDate = data.calendar.currentCalendarDate;
                 localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
                 this.logAuth(`📅 [applyContextData] Date appliquée:`, data.calendar.currentCalendarDate);
             }
-            
+
             if (data.calendar.calendarData) {
                 window.calendarManager.calendarData = data.calendar.calendarData;
                 localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
                 this.logAuth(`📅 [applyContextData] Données calendrier appliquées: ${data.calendar.calendarData.length} mois`);
             }
-            
+
             if (data.calendar.isCalendarMode !== undefined) {
                 window.calendarManager.isCalendarMode = data.calendar.isCalendarMode;
                 localStorage.setItem('isCalendarMode', data.calendar.isCalendarMode.toString());
                 this.logAuth(`📅 [applyContextData] Mode calendrier appliqué: ${data.calendar.isCalendarMode}`);
             }
-            
+
             // Forcer la mise à jour complète de l'interface avec les nouvelles données
             this.logAuth("📅 [applyContextData] Mise à jour UI du calendrier");
             window.calendarManager.updateSeasonDisplay();
             window.calendarManager.exposeGlobalData();
-            
+
             this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé)");
         }
 
@@ -567,12 +567,11 @@ class AuthManager {
 
     async loadUserData() {
         if (!this.isAuthenticated) {
-            this.logAuth("❌ Utilisateur non authentifié - redirection vers login");
-            window.location.href = '/login';
+            this.logAuth("❌ Tentative de chargement sans authentification");
             return;
         }
 
-        this.logAuth("📥 Chargement des données utilisateur depuis le cloud");
+        this.logAuth("📥 Chargement des données depuis le cloud (PRIORITÉ ABSOLUE)");
 
         try {
             const response = await fetch('/api/user/data', {
@@ -580,35 +579,30 @@ class AuthManager {
                 credentials: 'include'
             });
 
-            if (response.ok) {
-                const cloudData = await response.json();
-                this.logAuth("✅ Données cloud récupérées - application directe");
-                
-                // Appliquer directement les données cloud (source unique de vérité)
-                await this.applyContextData(cloudData);
-                this.saveToLocalStorage(cloudData);
-
-            } else if (response.status === 404) {
-                // Première connexion - initialiser avec données vides
-                this.logAuth("ℹ️ Première connexion - initialisation données vides");
-                const emptyData = {
-                    locations: { locations: [] },
-                    regions: { regions: [] },
-                    settings: {},
-                    calendar: null,
-                    journal: [],
-                    position: null,
-                    filters: {}
-                };
-                await this.syncUserData(); // Créer l'enregistrement cloud
-            } else {
-                this.logAuth(`⚠️ Erreur chargement données (statut: ${response.status})`);
-                alert('Erreur de chargement des données. Veuillez vous reconnecter.');
-                window.location.href = '/login';
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
             }
+
+            const cloudData = await response.json();
+            this.logAuth("✅ Données cloud récupérées", cloudData);
+
+            // NETTOYER d'abord le localStorage pour éviter les conflits
+            localStorage.removeItem('middleEarthLocations');
+            localStorage.removeItem('middleEarthRegions');
+            localStorage.removeItem('middleEarthData');
+            this.logAuth("🧹 localStorage nettoyé avant application des données cloud");
+
+            // Appliquer les données cloud
+            await this.applyContextData(cloudData);
+
+            // Sauvegarder dans localStorage (comme cache uniquement)
+            this.saveToLocalStorage(cloudData);
+
+            this.logAuth("✅ Données cloud chargées et appliquées avec succès");
+
         } catch (error) {
-            this.logAuth(`❌ Erreur réseau: ${error.message}`);
-            alert('Erreur réseau. Veuillez vérifier votre connexion.');
+            this.logAuth(`❌ Erreur lors du chargement des données cloud: ${error.message}`);
+            alert(`Impossible de charger les données du cloud: ${error.message}\n\nVeuillez rafraîchir la page.`);
         }
     }
 
@@ -640,7 +634,7 @@ class AuthManager {
             } else {
                 const error = await response.json();
                 this.logAuth(`⚠️ Erreur sync: ${error.error || response.statusText}`);
-                
+
                 if (response.status === 401) {
                     alert('Session expirée. Reconnexion requise.');
                     window.location.href = '/login';
@@ -790,7 +784,7 @@ class AuthManager {
         }
     }
 
-    
+
 
     logAuth(message, data = null) {
         // Afficher les logs dans la console, potentiellement avec des conditions pour débugger
