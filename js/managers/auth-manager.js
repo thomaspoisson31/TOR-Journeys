@@ -535,7 +535,7 @@ class AuthManager {
             return;
         }
 
-        this.logAuth("📥 Chargement des données depuis le cloud (PRIORITÉ ABSOLUE)");
+        this.logAuth("📥 Chargement des données depuis le cloud");
 
         try {
             const response = await fetch('/api/user/data', {
@@ -550,17 +550,77 @@ class AuthManager {
             const cloudData = await response.json();
             this.logAuth("✅ Données cloud récupérées", cloudData);
 
-            // NETTOYER d'abord le localStorage pour éviter les conflits
+            // RÉCUPÉRER les données locales AVANT de les nettoyer
+            const localLocations = localStorage.getItem('middleEarthLocations');
+            const localRegions = localStorage.getItem('middleEarthRegions');
+            
+            let hasLocalData = false;
+            if (localLocations || localRegions) {
+                this.logAuth("📦 Données locales détectées - fusion avec le cloud");
+                hasLocalData = true;
+                
+                // Fusionner les lieux locaux
+                if (localLocations) {
+                    try {
+                        const parsedLocal = JSON.parse(localLocations);
+                        if (parsedLocal?.locations?.length > 0) {
+                            if (!cloudData.locations) cloudData.locations = { locations: [] };
+                            if (!cloudData.locations.locations) cloudData.locations.locations = [];
+                            
+                            // Ajouter uniquement les lieux locaux qui n'existent pas dans le cloud
+                            parsedLocal.locations.forEach(localLoc => {
+                                const exists = cloudData.locations.locations.some(cloudLoc => cloudLoc.id === localLoc.id);
+                                if (!exists) {
+                                    cloudData.locations.locations.push(localLoc);
+                                    this.logAuth(`➕ Lieu local ajouté: ${localLoc.name}`);
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        this.logAuth(`⚠️ Erreur fusion lieux locaux: ${e.message}`);
+                    }
+                }
+                
+                // Fusionner les régions locales
+                if (localRegions) {
+                    try {
+                        const parsedLocal = JSON.parse(localRegions);
+                        if (parsedLocal?.regions?.length > 0) {
+                            if (!cloudData.regions) cloudData.regions = { regions: [] };
+                            if (!cloudData.regions.regions) cloudData.regions.regions = [];
+                            
+                            // Ajouter uniquement les régions locales qui n'existent pas dans le cloud
+                            parsedLocal.regions.forEach(localReg => {
+                                const exists = cloudData.regions.regions.some(cloudReg => cloudReg.id === localReg.id);
+                                if (!exists) {
+                                    cloudData.regions.regions.push(localReg);
+                                    this.logAuth(`➕ Région locale ajoutée: ${localReg.name}`);
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        this.logAuth(`⚠️ Erreur fusion régions locales: ${e.message}`);
+                    }
+                }
+            }
+
+            // Nettoyer le localStorage
             localStorage.removeItem('middleEarthLocations');
             localStorage.removeItem('middleEarthRegions');
             localStorage.removeItem('middleEarthData');
-            this.logAuth("🧹 localStorage nettoyé avant application des données cloud");
+            this.logAuth("🧹 localStorage nettoyé");
 
-            // Appliquer les données cloud
+            // Appliquer les données fusionnées
             await this.applyContextData(cloudData);
 
             // Sauvegarder dans localStorage (comme cache uniquement)
             this.saveToLocalStorage(cloudData);
+
+            // Si on a fusionné des données locales, synchroniser immédiatement avec le cloud
+            if (hasLocalData) {
+                this.logAuth("🔄 Synchronisation immédiate des données fusionnées");
+                await this.syncUserData();
+            }
 
             // FORCER un rendu immédiat après chargement cloud
             this.logAuth("🎨 Rendu forcé après chargement cloud");
