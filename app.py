@@ -77,17 +77,17 @@ def init_db():
         # Vérifier si la colonne google_id existe
         cursor.execute("PRAGMA table_info(users)")
         columns = [row[1] for row in cursor.fetchall()]
-        
+
         if 'google_id' not in columns:
             print("🔧 Migration nécessaire : recréation de la table users avec google_id")
-            
+
             # Sauvegarder les données existantes
             cursor.execute("SELECT * FROM users")
             existing_users = cursor.fetchall()
-            
+
             # Supprimer l'ancienne table
             cursor.execute("DROP TABLE IF EXISTS users")
-            
+
             # Recréer la table avec le bon schéma
             cursor.execute('''
                 CREATE TABLE users (
@@ -98,7 +98,7 @@ def init_db():
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
-            
+
             # Restaurer les données existantes (sans google_id pour l'instant)
             for user in existing_users:
                 if len(user) >= 5:  # Ancien format avec replit_user_id
@@ -111,7 +111,7 @@ def init_db():
                         'INSERT INTO users (id, email, name, created_at) VALUES (?, ?, ?, ?)',
                         (user[0], user[2] if len(user) > 2 else None, user[3] if len(user) > 3 else None, user[4] if len(user) > 4 else datetime.now())
                     )
-            
+
             print("✅ Table users recréée avec succès avec la colonne google_id")
         else:
             print("ℹ️  Colonne google_id existe déjà")
@@ -431,13 +431,13 @@ def get_user_data():
         return jsonify({'error': 'Non authentifié'}), 401
 
     conn = get_db_connection()
-    
+
     # Chercher les données utilisateur dans un contexte spécial "user_data"
     user_data = conn.execute(
         'SELECT data_json FROM travel_contexts WHERE user_id = ? AND name = "_user_data_"',
         (session['user_id'],)
     ).fetchone()
-    
+
     conn.close()
 
     if user_data is None:
@@ -452,13 +452,13 @@ def debug_user_data():
         return jsonify({'error': 'Non authentifié'}), 401
 
     conn = get_db_connection()
-    
+
     # Récupérer TOUTES les infos du contexte utilisateur
     user_data = conn.execute(
         'SELECT * FROM travel_contexts WHERE user_id = ? AND name = "_user_data_"',
         (session['user_id'],)
     ).fetchone()
-    
+
     conn.close()
 
     if user_data is None:
@@ -470,7 +470,7 @@ def debug_user_data():
 
     # Parser le JSON pour afficher de manière structurée
     parsed_data = json.loads(user_data['data_json'])
-    
+
     return jsonify({
         'status': 'ok',
         'user_id': session['user_id'],
@@ -505,27 +505,67 @@ def update_user_data():
 
     # Vérifier si un enregistrement de données utilisateur existe déjà
     existing = conn.execute(
-        'SELECT id FROM travel_contexts WHERE user_id = ? AND name = "_user_data_"',
+        'SELECT data_json, updated_at FROM travel_contexts WHERE user_id = ? AND name = "_user_data_"',
         (session['user_id'],)
     ).fetchone()
+
+    # Gérer les conflits de synchronisation
+    force_overwrite = data.get('_force_overwrite', False)
+    client_timestamp_str = data.get('_sync_timestamp') # Expecting ISO format string
+
+    conflict_detected = False
+    cloud_data_json = None
+
+    if existing and not force_overwrite:
+        cloud_data_json = existing['data_json']
+        cloud_timestamp_str = existing['updated_at']
+
+        if client_timestamp_str and cloud_timestamp_str:
+            try:
+                client_dt = datetime.fromisoformat(client_timestamp_str.replace('Z', '+00:00'))
+                cloud_dt = datetime.fromisoformat(cloud_timestamp_str.replace('Z', '+00:00'))
+
+                if cloud_dt > client_dt:
+                    conflict_detected = True
+                    print(f"⚠️ Conflit détecté pour user {session['user_id']}: cloud={cloud_timestamp_str}, client={client_timestamp_str}")
+                    return jsonify({
+                        'conflict_detected': True,
+                        'cloud_data': json.loads(cloud_data_json),
+                        'cloud_timestamp': cloud_timestamp_str
+                    }), 200
+            except ValueError as e:
+                print(f"❌ Erreur de parsing de timestamp: {e}")
+                # Continuer sans conflit si le timestamp est invalide, ou retourner une erreur
+                return jsonify({'error': 'Invalid timestamp format'}), 400
+
+    # Pas de conflit ou force_overwrite: sauvegarder
+    # Préparer les données pour la sauvegarde
+    data_to_save = data.copy()
+    # Assurer que le timestamp du client est bien présent dans les données sauvegardées,
+    # même s'il n'était pas utilisé pour la détection (cas où il n'y avait pas de conflit)
+    if client_timestamp_str:
+        data_to_save['_sync_timestamp'] = client_timestamp_str
+
+    data_json_to_save = json.dumps(data_to_save)
 
     if existing:
         # Mettre à jour l'enregistrement existant
         cursor.execute(
             'UPDATE travel_contexts SET data_json = ?, updated_at = ? WHERE user_id = ? AND name = "_user_data_"',
-            (json.dumps(data), datetime.now(), session['user_id'])
+            (data_json_to_save, datetime.now(), session['user_id'])
         )
     else:
         # Créer un nouvel enregistrement
         cursor.execute(
             'INSERT INTO travel_contexts (user_id, name, data_json, updated_at) VALUES (?, ?, ?, ?)',
-            (session['user_id'], '_user_data_', json.dumps(data), datetime.now())
+            (session['user_id'], '_user_data_', data_json_to_save, datetime.now())
         )
 
     conn.commit()
     conn.close()
 
-    return jsonify({'message': 'Données utilisateur sauvegardées avec succès'})
+    print(f"✅ Données utilisateur {session['user_id']} sauvegardées (force={force_overwrite}, conflict={conflict_detected})")
+    return jsonify({'success': True, 'conflict_detected': conflict_detected}), 200
 
 # Routes pour servir les fichiers statiques existants
 @app.route('/<path:filename>')
@@ -848,7 +888,7 @@ def generate_with_gemini():
 
         # Appel à l'API Gemini
         import requests as http_requests
-        
+
         response = http_requests.post(
             api_url,
             headers={'Content-Type': 'application/json'},
@@ -872,9 +912,9 @@ def generate_with_gemini():
             result['candidates'][0].get('content') and
             result['candidates'][0]['content'].get('parts') and
             len(result['candidates'][0]['content']['parts']) > 0):
-            
+
             generated_content = result['candidates'][0]['content']['parts'][0]['text']
-            
+
             # Enregistrer l'usage API si l'utilisateur est connecté
             if 'user_id' in session:
                 conn = get_db_connection()
@@ -885,7 +925,7 @@ def generate_with_gemini():
                 )
                 conn.commit()
                 conn.close()
-            
+
             return jsonify({
                 'success': True,
                 'content': generated_content,
@@ -908,11 +948,11 @@ def test_gemini_api():
     """Test direct de l'API Gemini avec informations de debug"""
     if not GOOGLE_API_KEY:
         return jsonify({'error': 'GOOGLE_API_KEY not configured'}), 500
-    
+
     try:
         api_model = 'gemini-2.0-flash-exp'
         api_url = f'https://generativelanguage.googleapis.com/v1beta/models/{api_model}:generateContent?key={GOOGLE_API_KEY}'
-        
+
         payload = {
             "contents": [
                 {
@@ -921,14 +961,14 @@ def test_gemini_api():
                 }
             ]
         }
-        
+
         response = requests.post(
             api_url,
             headers={'Content-Type': 'application/json'},
             json=payload,
             timeout=10
         )
-        
+
         return jsonify({
             'status_code': response.status_code,
             'response_text': response.text[:500],
@@ -936,7 +976,7 @@ def test_gemini_api():
             'request_url': api_url.replace(GOOGLE_API_KEY, '[API_KEY]'),
             'success': response.ok
         })
-        
+
     except Exception as e:
         return jsonify({'error': str(e), 'error_type': type(e).__name__}), 500
 
@@ -952,7 +992,7 @@ def upload_image():
             return jsonify({'error': 'Aucun fichier fourni'}), 400
 
         file = request.files['file']
-        
+
         # Vérifier qu'un fichier a été sélectionné
         if file.filename == '':
             return jsonify({'error': 'Aucun fichier sélectionné'}), 400
@@ -967,7 +1007,7 @@ def upload_image():
         file.seek(0, os.SEEK_END)
         file_size = file.tell()
         file.seek(0)
-        
+
         if file_size > MAX_FILE_SIZE:
             return jsonify({
                 'error': f'Fichier trop volumineux. Taille maximale: {MAX_FILE_SIZE // (1024*1024)}MB'
@@ -981,11 +1021,11 @@ def upload_image():
         # Générer un nom de fichier unique avec user_id
         user_id = session['user_id']
         filename = generate_unique_filename(file.filename, category)
-        
+
         # Structure de dossiers par utilisateur
         upload_dir = f'uploads/user_{user_id}/{category}'
         os.makedirs(upload_dir, exist_ok=True)
-        
+
         file_path = os.path.join(upload_dir, os.path.basename(filename))
         file.save(file_path)
 
@@ -1030,18 +1070,18 @@ def create_thumbnail():
 
         image_url = data['image_url']
         category = data['category']
-        
+
         # Extraire le chemin du fichier depuis l'URL
         # Formats supportés: 
         # - /uploads/category/filename (ancien)
         # - /uploads/user_X/category/filename (nouveau)
         if not image_url.startswith('/uploads/'):
             return jsonify({'error': 'URL d\'image invalide'}), 400
-        
+
         # Enlever le préfixe /uploads/
         relative_path = image_url[9:]  # len('/uploads/') = 9
         original_path = f'uploads/{relative_path}'
-        
+
         if not os.path.exists(original_path):
             return jsonify({'error': 'Fichier source introuvable'}), 404
 
@@ -1056,34 +1096,34 @@ def create_thumbnail():
                 img = background
             elif img.mode != 'RGB':
                 img = img.convert('RGB')
-            
+
             # Redimensionner en conservant les proportions puis cropper au centre
             img.thumbnail((100, 100), Image.Resampling.LANCZOS)
-            
+
             # Créer une image carrée de 100x100
             thumbnail = Image.new('RGB', (100, 100), (255, 255, 255))
             offset = ((100 - img.size[0]) // 2, (100 - img.size[1]) // 2)
             thumbnail.paste(img, offset)
-            
+
             # Générer un nom de fichier unique pour la vignette
             # Extraire le nom de fichier depuis le path
             filename_only = os.path.basename(relative_path)
             thumbnail_filename = f'thumb_{filename_only.rsplit(".", 1)[0]}.png'
-            
+
             # Déterminer le dossier de destination (même que l'original)
             thumbnail_dir = os.path.dirname(original_path)
             os.makedirs(thumbnail_dir, exist_ok=True)
             thumbnail_path = os.path.join(thumbnail_dir, thumbnail_filename)
-            
+
             # Sauvegarder en PNG
             thumbnail.save(thumbnail_path, 'PNG', optimize=True)
-            
+
             # Générer l'URL avec le même path que l'original
             thumbnail_relative = os.path.join(os.path.dirname(relative_path), thumbnail_filename)
             thumbnail_url = f'/uploads/{thumbnail_relative}'
-            
+
             print(f"📸 Vignette créée: {thumbnail_url}")
-            
+
             return jsonify({
                 'success': True,
                 'thumbnail_url': thumbnail_url,
@@ -1108,10 +1148,10 @@ def get_image_library():
     try:
         user_id = session['user_id']
         google_id = session['google_id']
-        
+
         # Chercher le répertoire basé sur le google_id
         user_dir = f'uploads/{google_id}'
-        
+
         if not os.path.exists(user_dir):
             return jsonify({
                 'success': True,
@@ -1120,32 +1160,32 @@ def get_image_library():
             })
 
         images = []
-        
+
         # Parcourir tous les sous-dossiers (locations, regions, general, etc.)
         for category in os.listdir(user_dir):
             category_path = os.path.join(user_dir, category)
-            
+
             if os.path.isdir(category_path):
                 for filename in os.listdir(category_path):
                     file_path = os.path.join(category_path, filename)
-                    
+
                     # Vérifier que c'est bien un fichier image
                     if os.path.isfile(file_path) and any(filename.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.webp', '.gif']):
                         # Construire l'URL publique
                         public_url = f'/uploads/{google_id}/{category}/{filename}'
-                        
+
                         # Récupérer la taille du fichier
                         file_size = os.path.getsize(file_path)
-                        
+
                         images.append({
                             'filename': filename,
                             'url': public_url,
                             'category': category,
                             'size': file_size
                         })
-        
+
         print(f"📚 {len(images)} image(s) trouvée(s) pour l'utilisateur {google_id}")
-        
+
         return jsonify({
             'success': True,
             'images': images,
@@ -1242,5 +1282,5 @@ if __name__ == '__main__':
 
     print(f"🌐 Démarrage sur le port {port} (debug: {debug})")
     print(f"🔧 Variables d'environnement: PORT={os.environ.get('PORT')}, REPLIT_DEV_DOMAIN={os.environ.get('REPLIT_DEV_DOMAIN')}")
-    print(f"🔧 Configuration OAuth: CLIENT_ID={GOOGLE_CLIENT_ID[:20]}..., SECRET_SET={bool(GOOGLE_CLIENT_SECRET)}")
+    print(f"🔧 Configuration OAuth: CLIENT_ID={GOOGLE_CLIENT_ID[:20] if GOOGLE_CLIENT_ID else 'Not Set'}..., SECRET_SET={bool(GOOGLE_CLIENT_SECRET)}")
     app.run(host='0.0.0.0', port=port, debug=debug)

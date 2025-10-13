@@ -82,6 +82,12 @@ class AuthManager {
             this.manualSyncBtn.addEventListener('click', () => this.manualSync());
         }
 
+        // Gestion de la déconnexion avec invitation à sauvegarder
+        const logoutLink = document.getElementById('logout-link');
+        if (logoutLink) {
+            logoutLink.addEventListener('click', (e) => this.handleLogout(e));
+        }
+
         if (this.saveContextBtn) {
             this.saveContextBtn.addEventListener('click', () => this.saveCurrentContext());
         }
@@ -758,6 +764,15 @@ class AuthManager {
             });
 
             if (response.ok) {
+                const result = await response.json();
+                
+                // Vérifier s'il y a un conflit détecté par le serveur
+                if (result.conflict_detected) {
+                    this.logAuth("⚠️ Conflit de synchronisation détecté");
+                    await this.handleSyncConflict(contextData, result.cloud_data);
+                    return;
+                }
+                
                 this.lastSyncTimestamp = Date.now();
                 this.logAuth("✅ Données synchronisées dans le cloud");
                 // Mise à jour locale pour cohérence UI
@@ -778,6 +793,62 @@ class AuthManager {
             this.logAuth(`❌ Erreur réseau sync: ${error.message}`);
             alert(`Erreur réseau. Vos modifications seront sauvegardées à la prochaine synchronisation.`);
             throw error;
+        }
+    }
+
+    async handleSyncConflict(localData, cloudData) {
+        this.logAuth("🔄 Gestion du conflit de synchronisation");
+        
+        const userChoice = confirm(
+            "⚠️ CONFLIT DE SYNCHRONISATION DÉTECTÉ\n\n" +
+            "Des modifications ont été effectuées sur un autre appareil.\n\n" +
+            "Que souhaitez-vous faire ?\n\n" +
+            "✅ OK = Garder mes modifications locales (écraser le cloud)\n" +
+            "❌ ANNULER = Charger les données du cloud (perdre mes modifications locales)"
+        );
+
+        if (userChoice) {
+            // L'utilisateur veut garder ses modifications locales
+            this.logAuth("👤 Utilisateur choisit: garder local, écraser cloud");
+            
+            // Forcer la synchronisation avec un flag
+            localData._force_overwrite = true;
+            
+            const response = await fetch('/api/user/data', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(localData)
+            });
+
+            if (response.ok) {
+                this.lastSyncTimestamp = Date.now();
+                this.logAuth("✅ Données locales forcées dans le cloud");
+                this.saveToLocalStorage(localData);
+                this.updateSyncStatus('success');
+                setTimeout(() => this.updateSyncStatus('idle'), 2000);
+            }
+        } else {
+            // L'utilisateur veut charger les données du cloud
+            this.logAuth("☁️ Utilisateur choisit: charger cloud, abandonner local");
+            
+            await this.applyContextData(cloudData);
+            this.saveToLocalStorage(cloudData);
+            
+            // Forcer le rendu
+            if (typeof window.renderLocations === 'function') {
+                window.renderLocations();
+            }
+            if (typeof window.renderRegions === 'function') {
+                window.renderRegions();
+            }
+            
+            this.updateSyncStatus('success');
+            setTimeout(() => this.updateSyncStatus('idle'), 2000);
+            
+            alert("✅ Données du cloud chargées avec succès");
         }
     }
 
@@ -965,6 +1036,64 @@ class AuthManager {
         } catch (error) {
             console.error('Erreur debug:', error);
             alert(`Erreur réseau: ${error.message}`);
+        }
+    }
+
+    async handleLogout(event) {
+        event.preventDefault();
+        
+        this.logAuth("🚪 Tentative de déconnexion");
+        
+        const shouldSync = confirm(
+            "💾 SAUVEGARDE AVANT DÉCONNEXION\n\n" +
+            "Souhaitez-vous synchroniser vos modifications avec le cloud avant de vous déconnecter ?\n\n" +
+            "✅ OK = Sauvegarder puis déconnecter\n" +
+            "❌ ANNULER = Déconnecter sans sauvegarder"
+        );
+
+        if (shouldSync) {
+            this.logAuth("💾 Synchronisation avant déconnexion");
+            this.updateSyncStatus('syncing');
+            
+            try {
+                await this.syncUserData();
+                this.logAuth("✅ Synchronisation réussie avant déconnexion");
+                
+                // Rediriger vers la déconnexion après succès
+                setTimeout(() => {
+                    window.location.href = '/auth/logout';
+                }, 500);
+            } catch (error) {
+                this.logAuth(`❌ Erreur sync avant déconnexion: ${error.message}`);
+                
+                const forceLogout = confirm(
+                    "❌ Erreur de synchronisation\n\n" +
+                    "La synchronisation a échoué. Vos modifications locales risquent d'être perdues.\n\n" +
+                    "Voulez-vous quand même vous déconnecter ?\n\n" +
+                    "✅ OK = Se déconnecter quand même\n" +
+                    "❌ ANNULER = Rester connecté"
+                );
+                
+                if (forceLogout) {
+                    window.location.href = '/auth/logout';
+                } else {
+                    this.updateSyncStatus('error');
+                    setTimeout(() => this.updateSyncStatus('idle'), 3000);
+                }
+            }
+        } else {
+            this.logAuth("⚠️ Déconnexion sans synchronisation");
+            
+            const confirmNoSync = confirm(
+                "⚠️ ATTENTION\n\n" +
+                "Vous allez vous déconnecter sans sauvegarder.\n" +
+                "Toutes vos modifications non synchronisées seront perdues.\n\n" +
+                "Confirmer la déconnexion ?"
+            );
+            
+            if (confirmNoSync) {
+                window.location.href = '/auth/logout';
+            }
         }
     }
 
