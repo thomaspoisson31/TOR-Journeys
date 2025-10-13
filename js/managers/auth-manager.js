@@ -3,8 +3,11 @@ class AuthManager {
         this.isAuthenticated = false;
         this.currentUser = null;
         this.contexts = []; // Cette ligne sera supprimée
+        this.autoSyncEnabled = false; // DÉSACTIVÉE par défaut
         this.autoSyncTimeoutId = null;
         this.autoSyncDelay = 2000; // 2 secondes de debounce
+        this.lastSyncTimestamp = null; // Timestamp de dernière sync
+        this.isSyncing = false; // Flag pour éviter les syncs multiples
 
         // Références DOM
         this.authBtn = null;
@@ -22,6 +25,8 @@ class AuthManager {
         this.savedContextsContainer = null;
         this.closeAuthModalBtn = null;
         this.unauthenticatedWarning = null; // Nouveau pour l'avertissement
+        this.manualSyncBtn = null; // Bouton de sync manuelle
+        this.syncStatusIndicator = null; // Indicateur de statut
     }
 
     init() {
@@ -48,7 +53,9 @@ class AuthManager {
         this.saveContextBtn = document.getElementById('save-context-btn');
         this.savedContextsContainer = document.getElementById('saved-contexts');
         this.closeAuthModalBtn = document.getElementById('close-auth-modal');
-        this.unauthenticatedWarning = document.getElementById('unauthenticated-warning'); // Récupérer le nouvel élément
+        this.unauthenticatedWarning = document.getElementById('unauthenticated-warning');
+        this.manualSyncBtn = document.getElementById('manual-sync-btn');
+        this.syncStatusIndicator = document.getElementById('sync-status-indicator');
     }
 
     setupEventListeners() {
@@ -68,6 +75,11 @@ class AuthManager {
         const debugBtn = document.getElementById('debug-cloud-data');
         if (debugBtn) {
             debugBtn.addEventListener('click', () => this.debugCloudData());
+        }
+
+        // Bouton de synchronisation manuelle
+        if (this.manualSyncBtn) {
+            this.manualSyncBtn.addEventListener('click', () => this.manualSync());
         }
 
         if (this.saveContextBtn) {
@@ -231,8 +243,17 @@ class AuthManager {
             this.loggedOutPanel.classList.add('hidden');
         }
 
+        // Afficher le bouton de sync rapide
+        const quickSyncBtn = document.getElementById('quick-sync-btn');
+        if (quickSyncBtn) {
+            quickSyncBtn.classList.remove('hidden');
+        }
+
         // Cacher l'avertissement si on est authentifié
         this.updateUnauthenticatedWarning(false);
+        
+        // Initialiser le statut de sync
+        this.updateSyncStatus('idle');
     }
 
     updateUIForUnauthenticatedUser() {
@@ -535,16 +556,10 @@ class AuthManager {
             this.logAuth("🧹 Flag calendar_from_cloud nettoyé");
         }
 
-        // RÉACTIVER l'auto-sync après l'application complète du contexte
+        // RÉACTIVER l'authentification après l'application complète du contexte
         this.isAuthenticated = wasAuthenticated;
-        this.logAuth("✅ Contexte appliqué avec succès - auto-sync réactivée");
-
-        // Si l'utilisateur était authentifié AVANT l'application du contexte,
-        // on peut déclencher une synchronisation cloud maintenant.
-        if (wasAuthenticated) {
-            this.logAuth("🔄 Déclenchement d'une synchronisation cloud suite à l'application du contexte");
-            this.scheduleAutoSync(); // Déclenche la synchro après un délai
-        }
+        this.logAuth("✅ Contexte appliqué avec succès");
+        this.updateSyncStatus('idle');
     }
 
 
@@ -639,10 +654,10 @@ class AuthManager {
             // Sauvegarder dans localStorage (comme cache uniquement)
             this.saveToLocalStorage(cloudData);
 
-            // Si on a fusionné des données locales, synchroniser immédiatement avec le cloud
+            // Afficher un message si des données locales ont été fusionnées
             if (hasLocalData) {
-                this.logAuth("🔄 Synchronisation immédiate des données fusionnées");
-                await this.syncUserData();
+                this.logAuth("⚠️ Données locales fusionnées - cliquez sur 'Synchroniser' pour sauvegarder dans le cloud");
+                this.updateSyncStatus('idle');
             }
 
             // FORCER un rendu immédiat après chargement cloud
@@ -664,6 +679,60 @@ class AuthManager {
         }
     }
 
+    async manualSync() {
+        if (this.isSyncing) {
+            this.logAuth("⏱️ Synchronisation déjà en cours, veuillez patienter");
+            return;
+        }
+
+        this.updateSyncStatus('syncing');
+        this.isSyncing = true;
+
+        try {
+            await this.syncUserData();
+            this.updateSyncStatus('success');
+            setTimeout(() => this.updateSyncStatus('idle'), 2000);
+        } catch (error) {
+            this.updateSyncStatus('error');
+            setTimeout(() => this.updateSyncStatus('idle'), 3000);
+        } finally {
+            this.isSyncing = false;
+        }
+    }
+
+    updateSyncStatus(status) {
+        if (!this.syncStatusIndicator) return;
+
+        const statusConfig = {
+            idle: { icon: 'fa-cloud', text: 'Synchroniser', class: 'text-gray-400' },
+            syncing: { icon: 'fa-spinner fa-spin', text: 'Synchronisation...', class: 'text-blue-400' },
+            success: { icon: 'fa-check-circle', text: 'Synchronisé !', class: 'text-green-400' },
+            error: { icon: 'fa-exclamation-triangle', text: 'Erreur sync', class: 'text-red-400' }
+        };
+
+        const config = statusConfig[status] || statusConfig.idle;
+        
+        if (this.manualSyncBtn) {
+            const icon = this.manualSyncBtn.querySelector('i');
+            const text = this.manualSyncBtn.querySelector('span');
+            if (icon) {
+                icon.className = `fas ${config.icon}`;
+            }
+            if (text) {
+                text.textContent = config.text;
+            }
+            this.manualSyncBtn.disabled = status === 'syncing';
+        }
+
+        if (this.syncStatusIndicator) {
+            this.syncStatusIndicator.className = `text-sm ${config.class}`;
+            this.syncStatusIndicator.innerHTML = `
+                <i class="fas ${config.icon} mr-1"></i>
+                ${this.lastSyncTimestamp ? `Dernière sync: ${new Date(this.lastSyncTimestamp).toLocaleTimeString()}` : ''}
+            `;
+        }
+    }
+
     async syncUserData() {
         if (!this.isAuthenticated) {
             this.logAuth("❌ Non authentifié - redirection login");
@@ -671,10 +740,13 @@ class AuthManager {
             return;
         }
 
-        this.logAuth("🔄 Synchronisation systématique vers cloud");
+        this.logAuth("🔄 Synchronisation manuelle vers cloud");
 
         try {
             const contextData = this.collectCurrentContextData();
+            
+            // Ajouter un timestamp pour détecter les conflits
+            contextData._sync_timestamp = Date.now();
 
             const response = await fetch('/api/user/data', {
                 method: 'PUT',
@@ -686,6 +758,7 @@ class AuthManager {
             });
 
             if (response.ok) {
+                this.lastSyncTimestamp = Date.now();
                 this.logAuth("✅ Données synchronisées dans le cloud");
                 // Mise à jour locale pour cohérence UI
                 this.saveToLocalStorage(contextData);
@@ -699,10 +772,12 @@ class AuthManager {
                 } else {
                     alert(`Erreur synchronisation: ${error.error || response.statusText}`);
                 }
+                throw new Error(error.error || response.statusText);
             }
         } catch (error) {
             this.logAuth(`❌ Erreur réseau sync: ${error.message}`);
-            alert(`Erreur réseau. Vos modifications seront sauvegardées à la prochaine connexion.`);
+            alert(`Erreur réseau. Vos modifications seront sauvegardées à la prochaine synchronisation.`);
+            throw error;
         }
     }
 
@@ -781,7 +856,12 @@ class AuthManager {
     }
 
     scheduleAutoSync() {
-        // Ne synchroniser que si l'utilisateur est authentifié
+        // Ne synchroniser que si l'auto-sync est activée ET l'utilisateur authentifié
+        if (!this.autoSyncEnabled) {
+            this.logAuth("⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle.");
+            return;
+        }
+
         if (!this.isAuthenticated) {
             this.logAuth("⏱️ Auto-sync annulée : utilisateur non authentifié.");
             return;

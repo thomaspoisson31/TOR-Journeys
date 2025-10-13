@@ -26,7 +26,12 @@
     <div class="h-full relative">
         <!-- Toolbar -->
         <div id="toolbar" class="absolute top-4 left-4 z-10 bg-gray-900 bg-opacity-80 p-2 rounded-lg shadow-xl flex flex-col space-y-2 border border-gray-700">
-            <!-- Authentication Button en premier -->
+            <!-- Bouton de synchronisation rapide -->
+            <button id="quick-sync-btn" class="toolbar-btn hidden" title="Synchroniser avec le cloud" onclick="authManager?.manualSync()">
+                <i class="fas fa-cloud text-gray-300"></i>
+            </button>
+
+            <!-- Bouton d'authentification (remplace le Profil) -->
             <button id="auth-btn" title="Authentification et sauvegarde" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors relative overflow-hidden">
                 <i id="auth-icon" class="fas fa-user"></i>
                 <img id="user-profile-pic" class="absolute inset-0 w-full h-full object-cover rounded hidden" alt="Photo de profil">
