@@ -64,6 +64,12 @@ class AuthManager {
             this.googleSigninBtn.addEventListener('click', () => this.startGoogleAuth());
         }
 
+        // Bouton de debug des données cloud
+        const debugBtn = document.getElementById('debug-cloud-data');
+        if (debugBtn) {
+            debugBtn.addEventListener('click', () => this.debugCloudData());
+        }
+
         if (this.saveContextBtn) {
             this.saveContextBtn.addEventListener('click', () => this.saveCurrentContext());
         }
@@ -820,6 +826,47 @@ class AuthManager {
     }
 
 
+
+    async debugCloudData() {
+        if (!this.isAuthenticated) {
+            alert('Vous devez être authentifié pour voir les données cloud');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/user/data/debug', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const debugData = await response.json();
+                
+                console.log('🔍 === DONNÉES CLOUD DEBUG ===', debugData);
+                
+                // Afficher dans une alerte formatée
+                let message = `📊 DONNÉES CLOUD STOCKÉES\n\n`;
+                message += `User ID: ${debugData.user_id}\n`;
+                message += `Dernière mise à jour: ${debugData.updated_at}\n\n`;
+                message += `📍 Lieux: ${debugData.data_summary.locations_count}\n`;
+                message += `🗺️ Régions: ${debugData.data_summary.regions_count}\n`;
+                message += `📅 Calendrier: ${debugData.data_summary.has_calendar ? 'Oui' : 'Non'}\n`;
+                message += `📖 Journal: ${debugData.data_summary.has_journal ? 'Oui' : 'Non'}\n`;
+                message += `📍 Position: ${debugData.data_summary.has_position ? 'Oui' : 'Non'}\n`;
+                message += `🔍 Filtres: ${debugData.data_summary.has_filters ? 'Oui' : 'Non'}\n`;
+                message += `\n💾 Taille JSON: ${(debugData.raw_json_size / 1024).toFixed(2)} KB\n`;
+                message += `\nDétails complets dans la console (F12)`;
+                
+                alert(message);
+            } else {
+                const error = await response.json();
+                alert(`Erreur: ${error.message || error.error}`);
+            }
+        } catch (error) {
+            console.error('Erreur debug:', error);
+            alert(`Erreur réseau: ${error.message}`);
+        }
+    }
 
     logAuth(message, data = null) {
         // Afficher les logs dans la console, potentiellement avec des conditions pour débugger

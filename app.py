@@ -445,6 +445,51 @@ def get_user_data():
 
     return jsonify(json.loads(user_data['data_json']))
 
+@app.route('/api/user/data/debug', methods=['GET'])
+def debug_user_data():
+    """Endpoint de debug pour visualiser les données cloud brutes"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    conn = get_db_connection()
+    
+    # Récupérer TOUTES les infos du contexte utilisateur
+    user_data = conn.execute(
+        'SELECT * FROM travel_contexts WHERE user_id = ? AND name = "_user_data_"',
+        (session['user_id'],)
+    ).fetchone()
+    
+    conn.close()
+
+    if user_data is None:
+        return jsonify({
+            'status': 'empty',
+            'message': 'Aucune donnée cloud trouvée pour cet utilisateur',
+            'user_id': session['user_id']
+        })
+
+    # Parser le JSON pour afficher de manière structurée
+    parsed_data = json.loads(user_data['data_json'])
+    
+    return jsonify({
+        'status': 'ok',
+        'user_id': session['user_id'],
+        'record_id': user_data['id'],
+        'created_at': user_data['created_at'],
+        'updated_at': user_data['updated_at'],
+        'data_summary': {
+            'locations_count': len(parsed_data.get('locations', {}).get('locations', [])),
+            'regions_count': len(parsed_data.get('regions', {}).get('regions', [])),
+            'has_calendar': 'calendar' in parsed_data,
+            'has_settings': 'settings' in parsed_data,
+            'has_journal': 'journal' in parsed_data,
+            'has_position': 'position' in parsed_data,
+            'has_filters': 'filters' in parsed_data
+        },
+        'full_data': parsed_data,
+        'raw_json_size': len(user_data['data_json'])
+    })
+
 @app.route('/api/user/data', methods=['PUT'])
 def update_user_data():
     """Mettre à jour les données personnelles de l'utilisateur"""
