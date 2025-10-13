@@ -393,20 +393,24 @@ class AuthManager {
         // 2. FORCER la synchronisation IMMÉDIATE des données globales
         if (data.locations) {
             window.locationsData = data.locations;
-            this.logAuth("✅ Référence globale 'locationsData' mise à jour");
+            this.logAuth(`✅ Référence globale 'locationsData' mise à jour avec ${data.locations.locations?.length || 0} lieux`);
+            this.logAuth(`📊 Structure locationsData:`, data.locations);
         }
         if (data.regions) {
             window.regionsData = data.regions;
-            this.logAuth("✅ Référence globale 'regionsData' mise à jour");
+            this.logAuth(`✅ Référence globale 'regionsData' mise à jour avec ${data.regions.regions?.length || 0} régions`);
+            this.logAuth(`📊 Structure regionsData:`, data.regions);
         }
 
         // 3. Synchroniser DataManager si présent
         if (window.dataManager) {
             if (data.locations) {
                 window.dataManager.locationsData = data.locations;
+                this.logAuth(`✅ DataManager.locationsData synchronisé: ${data.locations.locations?.length || 0} lieux`);
             }
             if (data.regions) {
                 window.dataManager.regionsData = data.regions;
+                this.logAuth(`✅ DataManager.regionsData synchronisé: ${data.regions.regions?.length || 0} régions`);
             }
             this.logAuth("✅ DataManager synchronisé avec les nouvelles données");
         }

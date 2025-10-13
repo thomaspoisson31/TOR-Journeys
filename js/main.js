@@ -193,6 +193,9 @@ async function initializeApp() {
 // --- Fonction d'affichage des lieux ---
 function renderLocations() {
     console.log("🎯 Rendering locations...");
+    console.log("📊 locationsData:", locationsData);
+    console.log("📊 locationsData.locations:", locationsData?.locations);
+    console.log("📊 window.locationsData:", window.locationsData);
 
     const locationsLayer = document.getElementById('locations-layer');
     if (!locationsLayer) {
@@ -205,6 +208,9 @@ function renderLocations() {
 
     if (!locationsData || !locationsData.locations) {
         console.log("⚠️ No locations data to render");
+        console.log("⚠️ locationsData:", locationsData);
+        console.log("⚠️ locationsData type:", typeof locationsData);
+        console.log("⚠️ locationsData.locations:", locationsData?.locations);
         return;
     }
 
@@ -357,6 +363,8 @@ function renderLocations() {
 function renderRegions() {
     console.log("🌍 Rendering regions...");
     console.log("🌍 RegionsData:", regionsData);
+    console.log("🌍 regionsData.regions:", regionsData?.regions);
+    console.log("🌍 window.regionsData:", window.regionsData);
 
     const regionsLayer = document.getElementById('regions-layer');
     if (!regionsLayer) {
