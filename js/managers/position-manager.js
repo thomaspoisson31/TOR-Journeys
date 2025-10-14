@@ -295,7 +295,10 @@ class PositionManager {
                 // Sauvegarder la nouvelle position
                 this.savePosition();
 
-                // Programmer la synchronisation
+                // Marquer comme non sauvegardé et programmer la synchronisation
+                if (typeof window.markAsUnsaved === 'function') {
+                    window.markAsUnsaved();
+                }
                 if (typeof window.scheduleAutoSync === 'function') {
                     window.scheduleAutoSync();
                 }
@@ -381,7 +384,10 @@ class PositionManager {
         // Sauvegarder la nouvelle position
         this.savePosition();
 
-        // Programmer la synchronisation
+        // Marquer comme non sauvegardé et programmer la synchronisation
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
         if (typeof window.scheduleAutoSync === 'function') {
             window.scheduleAutoSync();
         }
@@ -542,7 +548,10 @@ class PositionManager {
                 this.updateMarkerPosition();
                 this.savePosition();
 
-                // Programmer la synchronisation
+                // Marquer comme non sauvegardé et programmer la synchronisation
+                if (typeof window.markAsUnsaved === 'function') {
+                    window.markAsUnsaved();
+                }
                 if (typeof window.scheduleAutoSync === 'function') {
                     window.scheduleAutoSync();
                 }

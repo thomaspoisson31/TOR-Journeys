@@ -378,9 +378,9 @@ class VoyageManager {
         const segmentTitle = document.getElementById('segment-title');
         const dayCounter = document.getElementById('day-counter');
         const segmentContent = document.getElementById('segment-content');
-        const progressBar = document.getElementById('voyage-progress-bar');
-        const voyageEndMessage = document.getElementById('voyage-end-message');
-        const randomEventBtn = document.getElementById('random-event-btn');
+        const progressBar = this.dom.getElementById('voyage-progress-bar');
+        const voyageEndMessage = this.dom.getElementById('voyage-end-message');
+        const randomEventBtn = this.dom.getElementById('random-event-btn');
 
         if (this.currentDayIndex >= this.totalJourneyDays) {
             voyageEndMessage.classList.remove('hidden');
@@ -422,8 +422,8 @@ class VoyageManager {
     }
 
     updateDayTitle(dayData) {
-        const segmentTitle = document.getElementById('segment-title');
-        const dayCounter = document.getElementById('day-counter');
+        const segmentTitle = this.dom.getElementById('segment-title');
+        const dayCounter = this.dom.getElementById('day-counter');
 
         if (segmentTitle) {
             // Utiliser le numéro de jour depuis dayData pour garantir la cohérence
@@ -631,6 +631,10 @@ class VoyageManager {
                     dayData.startCoordinates.y,
                     800 // Durée de l'animation en ms
                 );
+                // Marquer comme non sauvegardé lors du déplacement manuel du marqueur
+                if (typeof window.markAsUnsaved === 'function') {
+                    window.markAsUnsaved();
+                }
             }
         }
 
@@ -687,6 +691,10 @@ class VoyageManager {
             window.calendarManager.currentCalendarDate = window.currentCalendarDate;
             window.calendarManager.isCalendarMode = true;
             window.calendarManager.saveCalendarToLocal();
+            // Marquer comme non sauvegardé lors du changement manuel de date
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
         }
 
         // Mise à jour DIRECTE du DOM du header
@@ -1396,9 +1404,9 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         localStorage.setItem('travelJournal', JSON.stringify(journal));
         console.log("💾 Journal sauvegardé avec", journal.length, "voyage(s)");
 
-        // Synchroniser avec le cloud si authentifié
-        if (typeof window.scheduleAutoSync === 'function') {
-            window.scheduleAutoSync();
+        // Marquer comme non sauvegardé lors de la génération d'une nouvelle entrée dans le journal
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
         }
     }
 
@@ -1474,7 +1482,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     updateDescriptionModal(description, showNavigation = false) {
         const title = document.getElementById('journey-description-title');
         const content = document.getElementById('journey-description-content');
-        const navigationControls = document.getElementById('day-navigation-controls');
+        const navigationControls = document.getElementById('day-navigation-controls'); // Ce div n'existe pas dans le HTML généré, à corriger si besoin
         const copyButton = document.getElementById('copy-journey-description');
 
         // Mettre à jour le titre
@@ -1488,10 +1496,16 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         // Gérer la navigation si on a plusieurs descriptions
         if (showNavigation && this.journeyDescriptions) {
-            navigationControls.classList.remove('hidden');
+            // Assurez-vous que navigationControls existe et est visible si besoin
+            // Pour l'instant, on le suppose caché par défaut et on le rend visible
+            const navContainer = document.querySelector('.mb-4'); // Cible le conteneur de navigation
+            if (navContainer) navContainer.style.display = 'block'; // Ou une autre méthode pour le rendre visible
+
             this.setupDescriptionNavigation();
         } else {
-            navigationControls.classList.add('hidden');
+            // Cacher le conteneur de navigation si non requis
+            const navContainer = document.querySelector('.mb-4');
+            if (navContainer) navContainer.style.display = 'none';
         }
 
         // Mettre à jour le bouton copier

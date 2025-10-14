@@ -485,7 +485,10 @@ class CalendarManager {
             this.updateSeasonDisplay();
             this.saveCalendarToLocal();
             
-            // Synchroniser avec la fonction globale si elle existe
+            // Marquer comme non sauvegardé et synchroniser avec la fonction globale si elle existe
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
             if (typeof scheduleAutoSync === 'function') {
                 console.log("📅 [updateCalendarDate] Appel scheduleAutoSync");
                 scheduleAutoSync();
