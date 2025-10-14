@@ -1333,6 +1333,11 @@ function confirmRegionCreation() {
         console.log("💾 Region saved to localStorage");
     }
 
+    // Marquer comme non sauvegardé pour afficher l'icône cloud
+    if (typeof window.markAsUnsaved === 'function') {
+        window.markAsUnsaved();
+    }
+
     // Re-render les régions
     console.log("🌍 Re-rendering regions after creation...");
     renderRegions();
@@ -1577,6 +1582,11 @@ function confirmLocationCreation() {
     // Sauvegarder via DataManager
     if (dataManager) {
         dataManager.saveLocationsToLocal();
+    }
+
+    // Marquer comme non sauvegardé pour afficher l'icône cloud
+    if (typeof window.markAsUnsaved === 'function') {
+        window.markAsUnsaved();
     }
 
     // Re-render les lieux
