@@ -122,6 +122,14 @@ async function initializeApp() {
         authManager.init();
         window.authManager = authManager; // Exposer globalement pour les onclick
 
+        // Ajouter cette ligne après l'initialisation de l'AuthManager (vers la ligne 150)
+        // Exposer la fonction markAsUnsaved pour que les autres managers puissent signaler des modifications
+        window.markAsUnsaved = () => {
+            if (window.authManager && window.authManager.isAuthenticated) {
+                window.authManager.markAsUnsaved();
+            }
+        };
+
         // Exposer scheduleAutoSync globalement pour les autres managers
         window.scheduleAutoSync = () => {
             if (authManager && authManager.isAuthenticated) {
@@ -154,7 +162,7 @@ async function initializeApp() {
         await dataManager.loadInitialLocations();
         locationsData = dataManager.locationsData;
         window.locationsData = locationsData;
-        
+
         dataManager.loadRegionsFromLocal();
         regionsData = dataManager.regionsData;
         window.regionsData = regionsData;
@@ -193,13 +201,13 @@ async function initializeApp() {
 // --- Fonction d'affichage des lieux ---
 function renderLocations() {
     console.log("🎯 Rendering locations...");
-    
+
     // IMPORTANT: Synchroniser avec window.locationsData si elle existe
     if (window.locationsData && (!locationsData || locationsData.locations?.length === 0)) {
         locationsData = window.locationsData;
         console.log("🔄 Synchronisation avec window.locationsData");
     }
-    
+
     console.log("📊 locationsData:", locationsData);
     console.log("📊 locationsData.locations:", locationsData?.locations);
 
@@ -365,13 +373,13 @@ function renderLocations() {
 // --- Fonction d'affichage des régions ---
 function renderRegions() {
     console.log("🌍 Rendering regions...");
-    
+
     // IMPORTANT: Synchroniser avec window.regionsData si elle existe
     if (window.regionsData && (!regionsData || regionsData.regions?.length === 0)) {
         regionsData = window.regionsData;
         console.log("🔄 Synchronisation avec window.regionsData");
     }
-    
+
     console.log("🌍 RegionsData:", regionsData);
 
     const regionsLayer = document.getElementById('regions-layer');
@@ -961,7 +969,7 @@ function setupMapNavigation() {
     // Double-clic pour centrer et zoomer
     viewport.addEventListener('dblclick', (e) => {
         e.preventDefault();
-        zoomToPoint(1.5, e.clientX, e.clientY);
+        zoomToPoint(1.5, viewport.clientWidth / 2, viewport.clientHeight / 2);
     });
 
     // Touches clavier pour la navigation
@@ -1501,7 +1509,7 @@ function cancelLocationCreation() {
     window.pendingLocationCoordinates = null;
     window.pendingLocationImages = null; // Nettoyer les images temporaires
     selectedLibraryImages = [];
-    
+
     // Cacher le conteneur d'images sélectionnées
     const container = document.getElementById('selected-library-images');
     if (container) {
@@ -1834,7 +1842,13 @@ async function openLibrarySelection() {
     } catch (error) {
         console.error("❌ Erreur lors du chargement de la bibliothèque:", error);
         loading.classList.add('hidden');
-        empty.classList.remove('hidden');
+        empty.classList.add('hidden'); // Ensure empty is hidden if loading fails
+        // Optionally show an error message to the user
+        const errorElement = document.getElementById('library-selection-error');
+        if (errorElement) {
+            errorElement.textContent = `Impossible de charger la bibliothèque : ${error.message}`;
+            errorElement.classList.remove('hidden');
+        }
     }
 }
 
@@ -1849,7 +1863,7 @@ function renderLibraryImages(images) {
         imageCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card';
         imageCard.dataset.url = image.url;
         imageCard.dataset.filename = image.filename;
-        
+
         imageCard.innerHTML = `
             <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
             <div class="absolute top-2 right-2 hidden selected-indicator">
@@ -1930,7 +1944,7 @@ function removeSelectedLibraryImage(index) {
     if (selectedLibraryImages[index]) {
         selectedLibraryImages.splice(index, 1);
         window.pendingLocationImages.splice(index, 1);
-        
+
         // Re-render la liste
         if (selectedImagesList) {
             const items = selectedImagesList.children;

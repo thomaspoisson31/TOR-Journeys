@@ -8,6 +8,7 @@ class AuthManager {
         this.autoSyncDelay = 2000; // 2 secondes de debounce
         this.lastSyncTimestamp = null; // Timestamp de dernière sync
         this.isSyncing = false; // Flag pour éviter les syncs multiples
+        this.hasUnsavedChanges = false; // Flag pour détecter les modifications non sauvegardées
 
         // Références DOM
         this.authBtn = null;
@@ -27,6 +28,7 @@ class AuthManager {
         this.unauthenticatedWarning = null; // Nouveau pour l'avertissement
         this.manualSyncBtn = null; // Bouton de sync manuelle
         this.syncStatusIndicator = null; // Indicateur de statut
+        this.quickSyncBtn = null; // Bouton de sync rapide
     }
 
     init() {
@@ -56,6 +58,7 @@ class AuthManager {
         this.unauthenticatedWarning = document.getElementById('unauthenticated-warning');
         this.manualSyncBtn = document.getElementById('manual-sync-btn');
         this.syncStatusIndicator = document.getElementById('sync-status-indicator');
+        this.quickSyncBtn = document.getElementById('quick-sync-btn');
     }
 
     setupEventListeners() {
@@ -249,10 +252,9 @@ class AuthManager {
             this.loggedOutPanel.classList.add('hidden');
         }
 
-        // Afficher le bouton de sync rapide
-        const quickSyncBtn = document.getElementById('quick-sync-btn');
-        if (quickSyncBtn) {
-            quickSyncBtn.classList.remove('hidden');
+        // Masquer le bouton de sync rapide au départ (il apparaîtra si modifications)
+        if (this.quickSyncBtn) {
+            this.quickSyncBtn.classList.add('hidden');
         }
 
         // Cacher l'avertissement si on est authentifié
@@ -605,7 +607,7 @@ class AuthManager {
             await this.applyContextData(cloudData);
 
             // Sauvegarder dans localStorage (comme cache uniquement)
-            this.saveToLocalStorage(cloudData);
+            this.saveToLocalStorage(cloudData, true); // true = depuis le cloud
 
             // FORCER un rendu immédiat après chargement cloud
             this.logAuth("🎨 Rendu forcé après chargement cloud");
@@ -618,11 +620,39 @@ class AuthManager {
                 this.logAuth(`✅ ${window.regionsData?.regions?.length || 0} régions rendues depuis le cloud`);
             }
 
+            // Marquer comme sauvegardé après chargement cloud
+            this.markAsSaved();
+
             this.logAuth("✅ Données cloud chargées et appliquées avec succès");
 
         } catch (error) {
             this.logAuth(`❌ Erreur lors du chargement des données cloud: ${error.message}`);
             alert(`Impossible de charger les données du cloud: ${error.message}\n\nVeuillez rafraîchir la page.`);
+        }
+    }
+
+    markAsUnsaved() {
+        if (!this.hasUnsavedChanges) {
+            this.hasUnsavedChanges = true;
+            this.updateCloudIconVisibility();
+            this.logAuth("🔔 Modifications non sauvegardées détectées");
+        }
+    }
+
+    markAsSaved() {
+        this.hasUnsavedChanges = false;
+        this.updateCloudIconVisibility();
+        this.logAuth("✅ Toutes les modifications sont sauvegardées");
+    }
+
+    updateCloudIconVisibility() {
+        if (!this.quickSyncBtn) return;
+
+        if (this.hasUnsavedChanges && this.isAuthenticated) {
+            this.quickSyncBtn.classList.remove('hidden');
+            this.quickSyncBtn.title = 'Modifications non sauvegardées - Cliquer pour synchroniser';
+        } else {
+            this.quickSyncBtn.classList.add('hidden');
         }
     }
 
@@ -638,6 +668,13 @@ class AuthManager {
         try {
             await this.syncUserData();
             this.updateSyncStatus('success');
+            
+            // Marquer comme sauvegardé et masquer l'icône
+            this.markAsSaved();
+            
+            // Afficher message de confirmation
+            this.showSyncSuccessMessage();
+            
             setTimeout(() => this.updateSyncStatus('idle'), 2000);
         } catch (error) {
             this.updateSyncStatus('error');
@@ -645,6 +682,20 @@ class AuthManager {
         } finally {
             this.isSyncing = false;
         }
+    }
+
+    showSyncSuccessMessage() {
+        // Créer un message de confirmation temporaire
+        const message = document.createElement('div');
+        message.className = 'fixed top-20 left-4 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg transition-opacity duration-300';
+        message.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Synchronisation effectuée';
+        document.body.appendChild(message);
+
+        // Faire disparaître après 2 secondes
+        setTimeout(() => {
+            message.style.opacity = '0';
+            setTimeout(() => message.remove(), 300);
+        }, 2000);
     }
 
     updateSyncStatus(status) {
@@ -716,8 +767,8 @@ class AuthManager {
 
                 this.lastSyncTimestamp = Date.now();
                 this.logAuth("✅ Données synchronisées dans le cloud");
-                // Mise à jour locale pour cohérence UI
-                this.saveToLocalStorage(contextData);
+                // Mise à jour locale pour cohérence UI (depuis cloud = true pour ne pas re-marquer comme non sauvegardé)
+                this.saveToLocalStorage(contextData, true);
             } else {
                 const error = await response.json();
                 this.logAuth(`⚠️ Erreur sync: ${error.error || response.statusText}`);
@@ -793,7 +844,7 @@ class AuthManager {
         }
     }
 
-    saveToLocalStorage(data) {
+    saveToLocalStorage(data, fromCloud = false) {
         // Sauvegarder les données en local pour la persistance
         this.logAuth("💾 Sauvegarde des données actuelles dans localStorage.");
 
@@ -859,6 +910,11 @@ class AuthManager {
             // Sauvegarder les filtres actuels dans localStorage
             localStorage.setItem('activeFilters', JSON.stringify(data.filters));
             this.logAuth("  - Filtres sauvegardés dans localStorage.");
+        }
+
+        // Si ce n'est pas depuis le cloud, marquer comme modifications non sauvegardées
+        if (!fromCloud && this.isAuthenticated) {
+            this.markAsUnsaved();
         }
 
         // Note : L'événement 'storage' n'est pas nécessaire dans le même onglet

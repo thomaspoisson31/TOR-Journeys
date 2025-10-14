@@ -1,4 +1,3 @@
-
 import { LOCATIONS_URL, getDefaultLocations, getDefaultRegions } from '../utils/constants.js';
 
 class DataManager {
@@ -28,7 +27,7 @@ class DataManager {
 
     saveRegionsToLocal() {
         if (this.regionsData) {
-            localStorage.setItem('middleEarthRegions', JSON.stringify(this.regionsData));
+            localStorage.setItem('middleEarthRegions', JSON.JSON.stringify(this.regionsData));
             window.regionsData = this.regionsData;
         }
         if (typeof scheduleAutoSync === 'function') {
