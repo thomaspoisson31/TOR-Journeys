@@ -257,7 +257,7 @@ class AuthManager {
 
         // Cacher l'avertissement si on est authentifié
         this.updateUnauthenticatedWarning(false);
-        
+
         // Initialiser le statut de sync
         this.updateSyncStatus('idle');
     }
@@ -394,7 +394,8 @@ class AuthManager {
     }
 
 
-    // Supprimé : loadUserContexts, renderContextsList, loadContext, deleteContext
+    // Suppression des fonctions liées à la gestion multiple de contextes:
+    // loadUserContexts, renderContextsList, loadContext, deleteContext
 
 
     async applyContextData(data) {
@@ -594,14 +595,13 @@ class AuthManager {
             const cloudData = await response.json();
             this.logAuth("✅ Données cloud récupérées", cloudData);
 
-            // NETTOYER IMMÉDIATEMENT le localStorage - c'est la source unique de vérité
-            // Le cloud est la seule source de données, pas de fusion
+            // NETTOYER IMMÉDIATEMENT le localStorage - le cloud est la source unique
             localStorage.removeItem('middleEarthLocations');
             localStorage.removeItem('middleEarthRegions');
             localStorage.removeItem('middleEarthData');
-            this.logAuth("🧹 localStorage nettoyé - cloud est la source unique");
+            this.logAuth("🧹 localStorage nettoyé - cloud est la source unique de vérité");
 
-            // Appliquer les données du cloud UNIQUEMENT
+            // Appliquer les données du cloud UNIQUEMENT (pas de fusion)
             await this.applyContextData(cloudData);
 
             // Sauvegarder dans localStorage (comme cache uniquement)
@@ -658,7 +658,7 @@ class AuthManager {
         };
 
         const config = statusConfig[status] || statusConfig.idle;
-        
+
         if (this.manualSyncBtn) {
             const icon = this.manualSyncBtn.querySelector('i');
             const text = this.manualSyncBtn.querySelector('span');
@@ -691,7 +691,7 @@ class AuthManager {
 
         try {
             const contextData = this.collectCurrentContextData();
-            
+
             // Ajouter un timestamp pour détecter les conflits
             contextData._sync_timestamp = Date.now();
 
@@ -706,14 +706,14 @@ class AuthManager {
 
             if (response.ok) {
                 const result = await response.json();
-                
+
                 // Vérifier s'il y a un conflit détecté par le serveur
                 if (result.conflict_detected) {
                     this.logAuth("⚠️ Conflit de synchronisation détecté");
                     await this.handleSyncConflict(contextData, result.cloud_data);
                     return;
                 }
-                
+
                 this.lastSyncTimestamp = Date.now();
                 this.logAuth("✅ Données synchronisées dans le cloud");
                 // Mise à jour locale pour cohérence UI
@@ -739,7 +739,7 @@ class AuthManager {
 
     async handleSyncConflict(localData, cloudData) {
         this.logAuth("🔄 Gestion du conflit de synchronisation");
-        
+
         const userChoice = confirm(
             "⚠️ CONFLIT DE SYNCHRONISATION DÉTECTÉ\n\n" +
             "Des modifications ont été effectuées sur un autre appareil.\n\n" +
@@ -751,10 +751,10 @@ class AuthManager {
         if (userChoice) {
             // L'utilisateur veut garder ses modifications locales
             this.logAuth("👤 Utilisateur choisit: garder local, écraser cloud");
-            
+
             // Forcer la synchronisation avec un flag
             localData._force_overwrite = true;
-            
+
             const response = await fetch('/api/user/data', {
                 method: 'PUT',
                 headers: {
@@ -774,10 +774,10 @@ class AuthManager {
         } else {
             // L'utilisateur veut charger les données du cloud
             this.logAuth("☁️ Utilisateur choisit: charger cloud, abandonner local");
-            
+
             await this.applyContextData(cloudData);
             this.saveToLocalStorage(cloudData);
-            
+
             // Forcer le rendu
             if (typeof window.renderLocations === 'function') {
                 window.renderLocations();
@@ -785,10 +785,10 @@ class AuthManager {
             if (typeof window.renderRegions === 'function') {
                 window.renderRegions();
             }
-            
+
             this.updateSyncStatus('success');
             setTimeout(() => this.updateSyncStatus('idle'), 2000);
-            
+
             alert("✅ Données du cloud chargées avec succès");
         }
     }
@@ -953,9 +953,9 @@ class AuthManager {
 
             if (response.ok) {
                 const debugData = await response.json();
-                
+
                 console.log('🔍 === DONNÉES CLOUD DEBUG ===', debugData);
-                
+
                 // Afficher dans une alerte formatée
                 let message = `📊 DONNÉES CLOUD STOCKÉES\n\n`;
                 message += `User ID: ${debugData.user_id}\n`;
@@ -968,7 +968,7 @@ class AuthManager {
                 message += `🔍 Filtres: ${debugData.data_summary.has_filters ? 'Oui' : 'Non'}\n`;
                 message += `\n💾 Taille JSON: ${(debugData.raw_json_size / 1024).toFixed(2)} KB\n`;
                 message += `\nDétails complets dans la console (F12)`;
-                
+
                 alert(message);
             } else {
                 const error = await response.json();
@@ -982,9 +982,9 @@ class AuthManager {
 
     async handleLogout(event) {
         event.preventDefault();
-        
+
         this.logAuth("🚪 Tentative de déconnexion");
-        
+
         const shouldSync = confirm(
             "💾 SAUVEGARDE AVANT DÉCONNEXION\n\n" +
             "Souhaitez-vous synchroniser vos modifications avec le cloud avant de vous déconnecter ?\n\n" +
@@ -995,18 +995,18 @@ class AuthManager {
         if (shouldSync) {
             this.logAuth("💾 Synchronisation avant déconnexion");
             this.updateSyncStatus('syncing');
-            
+
             try {
                 await this.syncUserData();
                 this.logAuth("✅ Synchronisation réussie avant déconnexion");
-                
+
                 // Rediriger vers la déconnexion après succès
                 setTimeout(() => {
                     window.location.href = '/auth/logout';
                 }, 500);
             } catch (error) {
                 this.logAuth(`❌ Erreur sync avant déconnexion: ${error.message}`);
-                
+
                 const forceLogout = confirm(
                     "❌ Erreur de synchronisation\n\n" +
                     "La synchronisation a échoué. Vos modifications locales risquent d'être perdues.\n\n" +
@@ -1014,7 +1014,7 @@ class AuthManager {
                     "✅ OK = Se déconnecter quand même\n" +
                     "❌ ANNULER = Rester connecté"
                 );
-                
+
                 if (forceLogout) {
                     window.location.href = '/auth/logout';
                 } else {
@@ -1024,14 +1024,14 @@ class AuthManager {
             }
         } else {
             this.logAuth("⚠️ Déconnexion sans synchronisation");
-            
+
             const confirmNoSync = confirm(
                 "⚠️ ATTENTION\n\n" +
                 "Vous allez vous déconnecter sans sauvegarder.\n" +
                 "Toutes vos modifications non synchronisées seront perdues.\n\n" +
                 "Confirmer la déconnexion ?"
             );
-            
+
             if (confirmNoSync) {
                 window.location.href = '/auth/logout';
             }
