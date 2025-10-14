@@ -400,6 +400,11 @@ class AdventureManager {
     saveToLocalStorage() {
         localStorage.setItem('adventureData', JSON.stringify(this.adventureData));
         console.log("💾 Adventure data saved to localStorage");
+        
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
     }
 
     loadFromLocalStorage() {

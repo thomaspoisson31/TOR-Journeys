@@ -75,6 +75,12 @@ class SettingsManager {
         localStorage.setItem('availableMaps', JSON.stringify(this.availableMaps));
         localStorage.setItem('activeMapUrl', this.activeMapUrl);
         localStorage.setItem('activeMapName', this.activeMapName);
+        
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+        
         this.scheduleAutoSync();
     }
 
@@ -82,6 +88,12 @@ class SettingsManager {
         localStorage.setItem('partyDescription', this.partyDescription);
         localStorage.setItem('questDescription', this.questDescription);
         localStorage.setItem('narrationStyle', this.narrationStyle);
+        
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+        
         this.scheduleAutoSync();
     }
 

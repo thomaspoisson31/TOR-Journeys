@@ -161,10 +161,15 @@ class CalendarManager {
         // Synchroniser les variables globales
         this.exposeGlobalData();
         
-        // Déclencher la synchronisation cloud si authentifié
-        if (!skipAutoSync && typeof scheduleAutoSync === 'function') {
-            console.log("📅 [saveCalendarToLocal] Déclenchement auto-sync");
-            scheduleAutoSync();
+        // Marquer comme non sauvegardé et déclencher la synchronisation cloud si authentifié
+        if (!skipAutoSync) {
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+            if (typeof scheduleAutoSync === 'function') {
+                console.log("📅 [saveCalendarToLocal] Déclenchement auto-sync");
+                scheduleAutoSync();
+            }
         }
     }
 

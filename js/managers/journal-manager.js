@@ -181,6 +181,11 @@ class JournalManager {
             this.journal.splice(index, 1);
             localStorage.setItem('travelJournal', JSON.stringify(this.journal));
             
+            // Marquer comme non sauvegardé
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+            
             // Synchroniser avec le cloud si authentifié
             if (typeof window.scheduleAutoSync === 'function') {
                 window.scheduleAutoSync();
