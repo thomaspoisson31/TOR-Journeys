@@ -228,6 +228,8 @@ function renderLocations() {
     let renderedCount = 0;
     const currentScale = window.scale || 1;
     const showThumbnails = currentScale > 0.5; // Afficher les vignettes si zoom > 50%
+    
+    console.log(`📱 [renderLocations] currentScale=${currentScale.toFixed(3)}, showThumbnails=${showThumbnails}`);
 
     locationsData.locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
@@ -883,12 +885,21 @@ function setupMapNavigation() {
                     touchStartY = currentCenterY;
                 } else {
                     // Pinch zoom
+                    const oldScale = scale;
                     const zoomFactor = newDist / touchDist;
                     zoomToPoint(zoomFactor, currentCenterX, currentCenterY);
                     touchDist = newDist;
 
                     touchStartX = currentCenterX;
                     touchStartY = currentCenterY;
+
+                    // Rafraîchir les marqueurs si on passe le seuil de 50%
+                    const shouldShowThumbnails = scale > 0.5;
+                    const wasShowingThumbnails = oldScale > 0.5;
+                    if (shouldShowThumbnails !== wasShowingThumbnails) {
+                        console.log(`📱 [MOBILE] Basculement vignettes: ${shouldShowThumbnails ? 'OUI' : 'NON'} (scale=${scale.toFixed(3)})`);
+                        renderLocations();
+                    }
                 }
 
                 // Mettre à jour le ZoomManager
