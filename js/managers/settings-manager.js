@@ -431,8 +431,6 @@ class SettingsManager {
         }, 2000);
     }
 
-    }
-
     renderMapsGrid() {
         const mapsGrid = document.getElementById('maps-grid');
         if (!mapsGrid) return;
