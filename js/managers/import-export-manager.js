@@ -246,6 +246,9 @@ class ImportExportManager {
     }
 
     processItem(item, result) {
+        // Obtenir la carte active pour assigner automatiquement le mapId
+        const activeMapId = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
+
         // Vérifier si c'est une région (a des points de coordonnées)
         if (item.type === 'region' || (item.coordinates && item.coordinates.points)) {
             // Extraire les points depuis la structure coordinates
@@ -266,7 +269,8 @@ class ImportExportManager {
                 known: item.known !== undefined ? item.known : true,
                 visited: item.visited !== undefined ? item.visited : false,
                 type: 'region',
-                points: points  // Utiliser points directement, pas coordinates.points
+                points: points,  // Utiliser points directement, pas coordinates.points
+                mapId: item.mapId || activeMapId  // Assigner mapId automatiquement si absent
             };
 
             // Ajouter l'image si présente
@@ -298,7 +302,8 @@ class ImportExportManager {
                 coordinates: {
                     x: item.coordinates?.x || 0,
                     y: item.coordinates?.y || 0
-                }
+                },
+                mapId: item.mapId || activeMapId  // Assigner mapId automatiquement si absent
             };
 
             // Ajouter l'image si présente
