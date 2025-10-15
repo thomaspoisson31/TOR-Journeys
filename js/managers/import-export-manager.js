@@ -588,16 +588,32 @@ class ImportExportManager {
                 window.markAsUnsaved();
             }
 
-            // Auto-sync si disponible
-            if (this.scheduleAutoSync && typeof this.scheduleAutoSync === 'function') {
-                console.log(`📥 [processImport] Planification de l'auto-sync...`);
-                this.scheduleAutoSync();
-            }
-
             const totalImported = processedData.locations.length + processedData.regions.length;
             this.showNotification("Import réussi", `${totalImported} éléments importés avec succès (mode: ${mode})`, "success");
 
             console.log(`✅ [processImport] Import terminé avec succès: ${processedData.locations.length} lieux, ${processedData.regions.length} régions`);
+
+            // Forcer une sauvegarde cloud immédiate après import
+            if (window.authManager && window.authManager.isAuthenticated) {
+                console.log(`📥 [processImport] Déclenchement sauvegarde cloud automatique...`);
+                window.authManager.manualSync().then(() => {
+                    console.log(`✅ [processImport] Sauvegarde cloud terminée, rechargement de la page...`);
+                    // Recharger la page pour afficher les données depuis le cloud
+                    window.location.reload();
+                }).catch(error => {
+                    console.error(`❌ [processImport] Erreur lors de la sauvegarde cloud:`, error);
+                    // Même en cas d'erreur, proposer le rechargement
+                    if (confirm("Les données ont été importées mais la sauvegarde cloud a échoué. Recharger la page pour afficher les données ?")) {
+                        window.location.reload();
+                    }
+                });
+            } else {
+                // Si pas authentifié, juste recharger pour afficher depuis localStorage
+                console.log(`📥 [processImport] Rechargement de la page pour afficher les données...`);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500); // Petit délai pour laisser le temps à la notification de s'afficher
+            }
 
         } catch (error) {
             console.error("❌ [processImport] ERREUR COMPLÈTE:", error);
