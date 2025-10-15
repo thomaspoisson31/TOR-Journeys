@@ -258,15 +258,21 @@ class ImportExportManager {
                 points = item.coordinates;
             }
 
+            // Vérifier que les points sont valides
+            if (!points || points.length < 3) {
+                console.warn(`⚠️ Région "${item.name}" ignorée : moins de 3 points valides`);
+                return;
+            }
+
             const region = {
-                id: item.id || Date.now(),
+                id: item.id || `region_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 name: item.name || 'Région sans nom',
                 description: item.description || '',
-                color: item.color || 'blue',
+                color: item.color || 'gray',
                 known: item.known !== undefined ? item.known : true,
                 visited: item.visited !== undefined ? item.visited : false,
                 type: 'region',
-                points: points  // Utiliser points directement, pas coordinates.points
+                points: points  // Utiliser points directement
             };
 
             // Ajouter mapId SEULEMENT s'il existe dans le fichier importé
@@ -289,11 +295,21 @@ class ImportExportManager {
             }
 
             result.regions.push(region);
+            console.log(`✅ Région importée: ${region.name} (${points.length} points, mapId: ${region.mapId || 'aucun'})`);
         }
         // Sinon c'est un lieu normal
         else {
+            // Vérifier que les coordonnées sont valides
+            const x = item.coordinates?.x;
+            const y = item.coordinates?.y;
+            
+            if (typeof x !== 'number' || typeof y !== 'number') {
+                console.warn(`⚠️ Lieu "${item.name}" ignoré : coordonnées invalides`, item.coordinates);
+                return;
+            }
+
             const location = {
-                id: item.id || Date.now(),
+                id: item.id || `location_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 name: item.name || 'Lieu sans nom',
                 description: item.description || '',
                 color: item.color || 'blue',
@@ -301,8 +317,8 @@ class ImportExportManager {
                 visited: item.visited !== undefined ? item.visited : false,
                 type: item.type || 'custom',
                 coordinates: {
-                    x: item.coordinates?.x || 0,
-                    y: item.coordinates?.y || 0
+                    x: x,
+                    y: y
                 }
             };
 
@@ -329,7 +345,6 @@ class ImportExportManager {
 
             if (rumeurs.length > 0) {
                 location.Rumeurs = rumeurs;
-                console.log(`📚 ${rumeurs.length} rumeur(s) importée(s) pour "${location.name}"`);
             }
 
             // Ajouter la tradition ancienne
@@ -338,6 +353,7 @@ class ImportExportManager {
             }
 
             result.locations.push(location);
+            console.log(`✅ Lieu importé: ${location.name} (x:${x}, y:${y}, mapId: ${location.mapId || 'aucun'})`);
         }
     }
 
