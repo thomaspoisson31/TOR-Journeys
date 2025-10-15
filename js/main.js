@@ -236,11 +236,11 @@ function renderLocations() {
             return;
         }
 
-        // Filtrer les lieux qui ne correspondent pas à la carte active
+        // Filtrer les lieux : afficher ceux sans mapId OU ceux correspondant à la carte active
         const activeMapId = window.settingsManager?.activeMapUrl;
-        if (activeMapId && location.mapId && location.mapId !== activeMapId) {
-            // console.log(`Skipping location ${location.name} from map ${location.mapId} (active: ${activeMapId})`);
-            return; // Ne pas rendre ce lieu s'il n'est pas sur la carte active
+        if (location.mapId && activeMapId && location.mapId !== activeMapId) {
+            // Ne pas afficher uniquement si un mapId existe ET qu'il ne correspond pas à la carte active
+            return;
         }
 
         // Créer le marqueur
@@ -414,10 +414,10 @@ function renderRegions() {
     regionsData.regions.forEach(region => {
         console.log('🔍 Processing region:', region.name, region);
 
-        // Filtrer les régions qui ne correspondent pas à la carte active
-        if (activeMapId && region.mapId && region.mapId !== activeMapId) {
-            // console.log(`Skipping region ${region.name} from map ${region.mapId} (active: ${activeMapId})`);
-            return; // Ne pas rendre cette région si elle n'est pas sur la carte active
+        // Filtrer les régions : afficher celles sans mapId OU celles correspondant à la carte active
+        if (region.mapId && activeMapId && region.mapId !== activeMapId) {
+            // Ne pas afficher uniquement si un mapId existe ET qu'il ne correspond pas à la carte active
+            return;
         }
 
         // Extraire les points depuis différentes structures possibles
