@@ -46,22 +46,19 @@ class SettingsManager {
             this.activeMapName = savedActiveMapName;
         }
 
-        // Ajouter les cartes par défaut si la liste est vide
+        // Ajouter carte par défaut si la liste est vide (UNE SEULE carte)
         if (this.availableMaps.length === 0) {
             this.availableMaps = [
                 {
-                    id: 1,
+                    id: Date.now(),
                     name: 'Carte Eriador par défaut',
                     url: 'fr_tor_2nd_eriadors_map_page-0001.webp',
-                    isDefault: true
-                },
-                {
-                    id: 2,
-                    name: 'Carte Eriador - Gardien',
-                    url: 'fr_tor_2nd_eriadors_map_page_loremaster.webp',
-                    isDefault: true
+                    isDefault: true,
+                    isActive: true
                 }
             ];
+            this.activeMapUrl = this.availableMaps[0].url;
+            this.activeMapName = this.availableMaps[0].name;
             this.saveMapsData();
         }
 
@@ -339,6 +336,11 @@ class SettingsManager {
         const map = this.availableMaps[index];
         if (!map) return;
 
+        // Désactiver toutes les cartes
+        this.availableMaps.forEach(m => m.isActive = false);
+        
+        // Activer la carte sélectionnée
+        map.isActive = true;
         this.activeMapUrl = map.url;
         this.activeMapName = map.name;
 
@@ -348,8 +350,21 @@ class SettingsManager {
             mapImage.src = this.activeMapUrl;
         }
 
+        // Marquer comme non sauvegardé pour afficher l'icône cloud
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
         this.saveMapsData();
         this.renderMapsGrid();
+        
+        // Re-render les lieux et régions avec le nouveau filtre de carte
+        if (typeof window.renderLocations === 'function') {
+            window.renderLocations();
+        }
+        if (typeof window.renderRegions === 'function') {
+            window.renderRegions();
+        }
     }
 
     deleteMap(index) {

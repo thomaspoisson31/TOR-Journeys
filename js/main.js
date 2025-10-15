@@ -228,13 +228,20 @@ function renderLocations() {
     let renderedCount = 0;
     const currentScale = window.scale || 1;
     const showThumbnails = currentScale > 0.5; // Afficher les vignettes si zoom > 50%
-    
+
     console.log(`📱 [renderLocations] currentScale=${currentScale.toFixed(3)}, showThumbnails=${showThumbnails}`);
 
     locationsData.locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
             console.warn(`⚠️ Location ${location.name} has invalid coordinates`);
             return;
+        }
+
+        // Filtrer les lieux qui ne correspondent pas à la carte active
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        if (activeMapId && location.mapId && location.mapId !== activeMapId) {
+            // console.log(`Skipping location ${location.name} from map ${location.mapId} (active: ${activeMapId})`);
+            return; // Ne pas rendre ce lieu s'il n'est pas sur la carte active
         }
 
         // Créer le marqueur
@@ -403,9 +410,16 @@ function renderRegions() {
     }
 
     let renderedCount = 0;
+    const activeMapId = window.settingsManager?.activeMapUrl;
 
     regionsData.regions.forEach(region => {
         console.log('🔍 Processing region:', region.name, region);
+
+        // Filtrer les régions qui ne correspondent pas à la carte active
+        if (activeMapId && region.mapId && region.mapId !== activeMapId) {
+            // console.log(`Skipping region ${region.name} from map ${region.mapId} (active: ${activeMapId})`);
+            return; // Ne pas rendre cette région si elle n'est pas sur la carte active
+        }
 
         // Extraire les points depuis différentes structures possibles
         let points = [];
@@ -1311,16 +1325,22 @@ function confirmRegionCreation() {
     }
 
     const regionName = nameInput.value.trim();
-    const regionDesc = descInput ? descInput.value.trim() : '';
-    const regionColor = selectedColorSwatch ? selectedColorSwatch.dataset.color : 'gray';
+    const regionDescription = descInput ? descInput.value.trim() : '';
+    const selectedRegionColor = selectedColorSwatch ? selectedColorSwatch.dataset.color : 'gray';
 
-    // Créer la nouvelle région avec le bon format de coordonnées
+    // Ajout du mapId
+    const activeMapId = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
+
     const newRegion = {
         id: `region_${Date.now()}`,
         name: regionName,
-        description: regionDesc,
-        color: regionColor,
-        coordinates: [...regionPoints], // Format: array de {x, y}
+        description: regionDescription,
+        color: selectedRegionColor,
+        mapId: activeMapId,
+        coordinates: regionPoints.map(point => ({
+            x: point.x,
+            y: point.y
+        })),
         known: true,
         visited: false
     };
@@ -1397,7 +1417,7 @@ function setupLocationAdding() {
 
     // Ajout de l'écouteur pour le bouton de génération de description dans la modale d'édition
     if (generateEditDescBtn) {
-        generateEditDescBtn.addEventListener('click', handleGenerateDescription); // Utilise la même fonction
+        generateEditDescBtn.addEventListener('click', handleGenerateLocationDescription); // Utilise la même fonction
         console.log("✅ Generate edit description button configured");
     }
 
@@ -1555,28 +1575,26 @@ function confirmLocationCreation() {
     const locationDesc = descInput ? descInput.value.trim() : '';
     const locationKnown = knownInput ? knownInput.checked : true;
     const locationVisited = visitedInput ? visitedInput.checked : false;
-    const locationColor = selectedColorSwatch ? selectedColorSwatch.dataset.color : 'blue';
+    const selectedColor = selectedColorSwatch ? selectedColorSwatch.dataset.color : 'blue';
 
-    // Créer le nouveau lieu
+    // Récupérer les données d'images potentiellement sélectionnées dans la bibliothèque
+    const imageData = window.pendingLocationImages || [];
+
+    // Ajout du mapId
+    const activeMapId = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
+
     const newLocation = {
         id: `location_${Date.now()}`,
         name: locationName,
+        coordinates: { x: window.pendingLocationCoordinates.x, y: window.pendingLocationCoordinates.y },
         description: locationDesc,
-        color: locationColor,
-        coordinates: { ...window.pendingLocationCoordinates },
+        color: selectedColor,
         known: locationKnown,
         visited: locationVisited,
-        type: "custom"
+        type: 'custom',
+        images: imageData,
+        mapId: activeMapId
     };
-
-    // Ajouter les images de la bibliothèque si sélectionnées
-    if (window.pendingLocationImages && window.pendingLocationImages.length > 0) {
-        newLocation.images = [...window.pendingLocationImages];
-        // Marquer la première comme défaut si aucune n'est définie
-        if (!newLocation.images.some(img => img.isDefault)) {
-            newLocation.images[0].isDefault = true;
-        }
-    }
 
     console.log("💾 Creating new location:", newLocation);
 
@@ -1612,6 +1630,14 @@ function confirmLocationCreation() {
     // Sortir du mode ajout
     exitLocationAddingMode();
     window.pendingLocationCoordinates = null;
+    window.pendingLocationImages = null; // Nettoyer les images temporaires
+    selectedLibraryImages = [];
+
+    // Cacher le conteneur d'images sélectionnées
+    const container = document.getElementById('selected-library-images');
+    if (container) {
+        container.classList.add('hidden');
+    }
 
     console.log("✅ Location created successfully:", locationName);
 }

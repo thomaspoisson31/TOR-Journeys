@@ -28,7 +28,6 @@ export const getDefaultRegions = () => ({ "regions": [] });
 // === CONSTANTES DE CARTE ===
 export const MAP_DISTANCE_MILES = 1150;
 export const PLAYER_MAP_URL = "fr_tor_2nd_eriadors_map_page-0001.webp";
-export const LOREMASTER_MAP_URL = "fr_tor_2nd_eriadors_map_page_loremaster.webp";
 export const LOCATIONS_URL = "Landmarks1.json";
 
 // === CONSTANTES D'INTERACTION ===
