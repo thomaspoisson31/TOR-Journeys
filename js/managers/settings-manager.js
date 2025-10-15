@@ -236,6 +236,13 @@ class SettingsManager {
                     <div id="temp-map-upload-container">
                         <!-- Le composant d'upload sera inséré ici -->
                     </div>
+
+                    <div class="text-center text-gray-400">ou</div>
+
+                    <button type="button" id="choose-map-from-library-btn" class="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center space-x-2">
+                        <i class="fas fa-images"></i>
+                        <span>Choisir dans la bibliothèque</span>
+                    </button>
                 </div>
 
                 <div class="flex justify-end space-x-3 mt-6">
@@ -268,6 +275,11 @@ class SettingsManager {
         document.getElementById('cancel-add-map').addEventListener('click', () => {
             modal.remove();
         });
+
+        // Bouton pour choisir depuis la bibliothèque
+        document.getElementById('choose-map-from-library-btn').addEventListener('click', () => {
+            this.openLibraryForMapSelection(modal);
+        });
     }
 
     handleMapUploaded(uploadResult) {
@@ -283,6 +295,142 @@ class SettingsManager {
         this.availableMaps.push(newMap);
         this.saveMapsData();
         this.renderMapsGrid();
+
+
+    async openLibraryForMapSelection(mapModal) {
+        // Vérifier que l'utilisateur est authentifié
+        if (!window.authManager || !window.authManager.isAuthenticated) {
+            alert('Vous devez être connecté avec Google pour accéder à la bibliothèque d\'images.');
+            return;
+        }
+
+        // Créer la modale de sélection de bibliothèque
+        const libraryModal = document.createElement('div');
+        libraryModal.id = 'library-map-selection-modal';
+        libraryModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[80]';
+
+        libraryModal.innerHTML = `
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[80vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-white">
+                        <i class="fas fa-images mr-2"></i>Bibliothèque d'images
+                    </h2>
+                    <button id="close-library-map-selection" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+
+                <div id="library-map-selection-content" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <!-- Les images seront générées ici -->
+                </div>
+
+                <div id="library-map-selection-loading" class="text-center py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p class="text-gray-400">Chargement des images...</p>
+                </div>
+
+                <div id="library-map-selection-empty" class="hidden text-center py-12 text-gray-500">
+                    <i class="fas fa-images fa-3x mb-4"></i>
+                    <p class="text-lg">Aucune image disponible</p>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(libraryModal);
+
+        // Charger les images
+        try {
+            const response = await fetch('/api/images/library', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            const loadingDiv = document.getElementById('library-map-selection-loading');
+            const contentDiv = document.getElementById('library-map-selection-content');
+            const emptyDiv = document.getElementById('library-map-selection-empty');
+
+            loadingDiv.classList.add('hidden');
+
+            if (data.success && data.images && data.images.length > 0) {
+                contentDiv.innerHTML = data.images.map(image => `
+                    <div class="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all"
+                         onclick="window.settingsManager.selectLibraryImageForMap('${image.url}', '${encodeURIComponent(image.filename)}')">
+                        <img src="${image.url}" alt="${image.filename}" class="w-full h-24 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity flex items-center justify-center">
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity text-white text-center p-2">
+                                <p class="text-xs truncate">${image.filename}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                emptyDiv.classList.remove('hidden');
+            }
+
+        } catch (error) {
+            console.error('❌ Erreur lors du chargement de la bibliothèque:', error);
+            alert('Erreur lors du chargement de la bibliothèque: ' + error.message);
+            libraryModal.remove();
+            return;
+        }
+
+        // Gestionnaire de fermeture
+        document.getElementById('close-library-map-selection').addEventListener('click', () => {
+            libraryModal.remove();
+        });
+
+        // Stocker la référence à la modale de carte pour la fermer après sélection
+        this.currentMapModal = mapModal;
+        this.currentLibraryModal = libraryModal;
+    }
+
+    selectLibraryImageForMap(imageUrl, encodedFilename) {
+        const filename = decodeURIComponent(encodedFilename);
+        
+        // Récupérer le nom de la carte ou utiliser le nom de fichier
+        const nameInput = document.getElementById('temp-map-name-input');
+        const mapName = nameInput.value.trim() || filename.replace(/\.[^/.]+$/, ''); // Enlever l'extension
+
+        // Créer la nouvelle carte
+        const newMap = {
+            id: Date.now(),
+            name: mapName,
+            url: imageUrl,
+            isDefault: false
+        };
+
+        this.availableMaps.push(newMap);
+        this.saveMapsData();
+        this.renderMapsGrid();
+
+        // Fermer les deux modales
+        if (this.currentLibraryModal) {
+            this.currentLibraryModal.remove();
+        }
+        if (this.currentMapModal) {
+            this.currentMapModal.remove();
+        }
+
+        // Afficher une notification de succès
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
+        notification.innerHTML = `
+            <i class="fas fa-check mr-2"></i>
+            Carte ajoutée avec succès
+        `;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 2000);
+    }
+
     }
 
     renderMapsGrid() {
@@ -304,13 +452,11 @@ class SettingsManager {
                             <div class="text-sm font-medium text-white truncate">${map.name}</div>
                             ${isActive ? '<div class="text-xs text-blue-400 mt-1"><i class="fas fa-check-circle mr-1"></i>Carte active</div>' : '<div class="text-xs text-gray-500 mt-1">Cliquer pour activer</div>'}
                         </div>
-                        ${!map.isDefault ? `
                         <button class="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors flex-shrink-0" 
                                 onclick="event.stopPropagation(); window.settingsManager.deleteMap(${index})"
                                 title="Supprimer">
                             <i class="fas fa-trash"></i>
                         </button>
-                        ` : ''}
                     </div>
                 </div>
             `;
@@ -368,22 +514,43 @@ class SettingsManager {
     }
 
     deleteMap(index) {
-        if (this.availableMaps[index].isDefault) {
-            alert('Impossible de supprimer une carte par défaut.');
+        const map = this.availableMaps[index];
+        
+        // Vérifier qu'il reste au moins une carte après suppression
+        if (this.availableMaps.length <= 1) {
+            alert('Impossible de supprimer la dernière carte. Au moins une carte doit être disponible.');
             return;
         }
 
-        if (confirm('Êtes-vous sûr de vouloir supprimer cette carte ?')) {
-            // Si on supprime la carte active, revenir à la première carte
-            if (this.availableMaps[index].url === this.activeMapUrl && this.availableMaps.length > 1) {
+        const confirmMessage = map.isDefault 
+            ? 'Êtes-vous sûr de vouloir supprimer cette carte par défaut ?' 
+            : 'Êtes-vous sûr de vouloir supprimer cette carte ?';
+
+        if (confirm(confirmMessage)) {
+            // Si on supprime la carte active, basculer sur la première carte restante
+            if (map.url === this.activeMapUrl) {
                 const newActiveIndex = index === 0 ? 1 : 0;
                 this.activeMapUrl = this.availableMaps[newActiveIndex].url;
                 this.activeMapName = this.availableMaps[newActiveIndex].name;
+                
+                // Mettre à jour l'image de la carte principale
+                const mapImage = document.getElementById('map-image');
+                if (mapImage) {
+                    mapImage.src = this.activeMapUrl;
+                }
             }
 
             this.availableMaps.splice(index, 1);
             this.saveMapsData();
             this.renderMapsGrid();
+            
+            // Re-render les lieux et régions avec la nouvelle carte active
+            if (typeof window.renderLocations === 'function') {
+                window.renderLocations();
+            }
+            if (typeof window.renderRegions === 'function') {
+                window.renderRegions();
+            }
         }
     }
 
