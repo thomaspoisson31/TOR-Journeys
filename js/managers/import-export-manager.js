@@ -487,38 +487,67 @@ class ImportExportManager {
      */
     processImport(processedData, mode) {
         try {
-            console.log(`📥 Traitement import en mode: ${mode}`);
+            console.log(`📥 [processImport] Début traitement en mode: ${mode}`);
+            console.log(`📥 [processImport] Données à importer:`, {
+                locations: processedData.locations.length,
+                regions: processedData.regions.length
+            });
 
             if (mode === 'replace') {
+                console.log(`📥 [processImport] Mode REPLACE - Remplacement de toutes les données`);
+                
                 // Remplacer toutes les données
                 if (processedData.locations.length > 0) {
+                    console.log(`📥 [processImport] Attribution de ${processedData.locations.length} lieux au dataManager`);
                     this.dataManager.locationsData = { locations: processedData.locations };
                 } else {
-                    // Si pas de lieux dans l'import, garder une structure vide
+                    console.log(`📥 [processImport] Aucun lieu à importer - structure vide`);
                     this.dataManager.locationsData = { locations: [] };
                 }
 
                 if (processedData.regions.length > 0) {
+                    console.log(`📥 [processImport] Attribution de ${processedData.regions.length} régions au dataManager`);
                     this.dataManager.regionsData = { regions: processedData.regions };
                 } else {
-                    // Si pas de régions dans l'import, garder une structure vide  
+                    console.log(`📥 [processImport] Aucune région à importer - structure vide`);
                     this.dataManager.regionsData = { regions: [] };
                 }
 
+                console.log(`📥 [processImport] Mise à jour des références globales window`);
                 // Mettre à jour les références globales APRÈS avoir mis à jour le dataManager
                 window.locationsData = this.dataManager.locationsData;
                 window.regionsData = this.dataManager.regionsData;
+                console.log(`📥 [processImport] Références globales mises à jour:`, {
+                    windowLocations: window.locationsData?.locations?.length || 0,
+                    windowRegions: window.regionsData?.regions?.length || 0
+                });
             } else if (mode === 'merge') {
+                console.log(`📥 [processImport] Mode MERGE - Fusion des données`);
                 // Fusionner les données
                 this.mergeLocations(processedData.locations);
                 this.mergeRegions(processedData.regions);
             }
 
             // Sauvegarder
-            this.dataManager.saveLocationsToLocal();
-            this.dataManager.saveRegionsToLocal();
+            console.log(`📥 [processImport] Sauvegarde dans localStorage...`);
+            try {
+                this.dataManager.saveLocationsToLocal();
+                console.log(`✅ [processImport] Lieux sauvegardés dans localStorage`);
+            } catch (saveError) {
+                console.error(`❌ [processImport] Erreur lors de la sauvegarde des lieux:`, saveError);
+                throw saveError;
+            }
+            
+            try {
+                this.dataManager.saveRegionsToLocal();
+                console.log(`✅ [processImport] Régions sauvegardées dans localStorage`);
+            } catch (saveError) {
+                console.error(`❌ [processImport] Erreur lors de la sauvegarde des régions:`, saveError);
+                throw saveError;
+            }
 
             // Forcer la mise à jour des références globales avant le re-render
+            console.log(`📥 [processImport] Mise à jour finale des références globales...`);
             window.locationsData = this.dataManager.locationsData;
             window.regionsData = this.dataManager.regionsData;
 
@@ -526,36 +555,51 @@ class ImportExportManager {
             const locationCount = this.dataManager.locationsData?.locations?.length || 0;
             const regionCount = this.dataManager.regionsData?.regions?.length || 0;
 
-            console.log(`🎯 Re-rendering ${locationCount} locations after import`);
-            console.log(`🌍 Re-rendering ${regionCount} regions after import`);
+            console.log(`🎯 [processImport] Re-rendering ${locationCount} locations after import`);
+            console.log(`🌍 [processImport] Re-rendering ${regionCount} regions after import`);
 
             if (typeof window.renderLocations === 'function') {
-                window.renderLocations();
-                console.log(`✅ Locations rendered successfully`);
+                try {
+                    window.renderLocations();
+                    console.log(`✅ [processImport] Locations rendered successfully`);
+                } catch (renderError) {
+                    console.error(`❌ [processImport] Erreur lors du rendu des lieux:`, renderError);
+                    throw renderError;
+                }
             } else {
-                console.error("❌ window.renderLocations is not a function");
+                console.error("❌ [processImport] window.renderLocations is not a function");
             }
 
             if (typeof window.renderRegions === 'function') {
-                window.renderRegions();
-                console.log(`✅ Regions rendered successfully`);
+                try {
+                    window.renderRegions();
+                    console.log(`✅ [processImport] Regions rendered successfully`);
+                } catch (renderError) {
+                    console.error(`❌ [processImport] Erreur lors du rendu des régions:`, renderError);
+                    throw renderError;
+                }
             } else {
-                console.error("❌ window.renderRegions is not a function");
+                console.error("❌ [processImport] window.renderRegions is not a function");
             }
 
             // Auto-sync si disponible
             if (this.scheduleAutoSync && typeof this.scheduleAutoSync === 'function') {
+                console.log(`📥 [processImport] Planification de l'auto-sync...`);
                 this.scheduleAutoSync();
             }
 
             const totalImported = processedData.locations.length + processedData.regions.length;
             this.showNotification("Import réussi", `${totalImported} éléments importés avec succès (mode: ${mode})`, "success");
 
-            console.log(`✅ Import terminé: ${processedData.locations.length} lieux, ${processedData.regions.length} régions`);
+            console.log(`✅ [processImport] Import terminé avec succès: ${processedData.locations.length} lieux, ${processedData.regions.length} régions`);
 
         } catch (error) {
-            console.error("❌ Erreur lors du traitement de l'import:", error);
-            this.showNotification("Erreur d'import", error.message, "error");
+            console.error("❌ [processImport] ERREUR COMPLÈTE:", error);
+            console.error("❌ [processImport] Stack trace:", error.stack);
+            console.error("❌ [processImport] Message:", error.message);
+            console.error("❌ [processImport] Type:", typeof error);
+            console.error("❌ [processImport] Détails:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
+            this.showNotification("Erreur d'import", error.message || "Erreur inconnue lors de l'import", "error");
         }
     }
 
