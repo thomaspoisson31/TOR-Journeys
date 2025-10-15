@@ -1,0 +1,206 @@
+2025-10-15 21:47:55.74
+✅ Lieu importé: Les Landes d'Etten (x:4400, y:900, mapId: aucun)
+2025-10-15 21:47:55.74
+✅ Lieu importé: La Trouée des Trolls (x:4400, y:1500, mapId: aucun)
+2025-10-15 21:47:55.74
+✅ Lieu importé: Le Dernier Pont (x:4196, y:1351, mapId: aucun)
+2025-10-15 21:47:55.74
+✅ Lieu importé: Le Lindon (x:1500, y:1400, mapId: aucun)
+2025-10-15 21:47:55.74
+✅ Lieu importé: Les Montagnes Bleues (x:1900, y:1800, mapId: aucun)
+2025-10-15 21:47:55.74
+✅ Import validé: 17 lieux, 0 régions
+2025-10-15 21:47:55.74
+📚 Extraction des rumeurs déjà effectuée lors du parsing JSON
+2025-10-15 21:47:56.72
+📥 Traitement import en mode: replace
+2025-10-15 21:47:56.72
+[AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle.
+null
+2025-10-15 21:47:56.72
+❌ Erreur lors du traitement de l'import:
+{}
+2025-10-15 21:48:28.07
+cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+2025-10-15 21:48:29.49
+📤 UploadManager module loaded
+2025-10-15 21:48:29.49
+📋 InfoBoxManager module loaded
+2025-10-15 21:48:29.49
+📚 LibraryManager module loaded
+2025-10-15 21:48:29.49
+✅ Constants loaded successfully
+2025-10-15 21:48:29.49
+✅ Global variables initialized
+2025-10-15 21:48:29.49
+✅ Essential DOM elements:
+{viewport: true, mapContainer: true, mapImage: true, loaderOverlay: true}
+2025-10-15 21:48:29.49
+📋 Simplified main.js loaded - waiting for DOM ready
+2025-10-15 21:48:29.49
+🚀 Starting simplified application...
+2025-10-15 21:48:29.49
+✅ DataManager initialized
+2025-10-15 21:48:29.49
+🔍 FilterManager initialized
+2025-10-15 21:48:29.49
+✅ FilterManager initialized
+2025-10-15 21:48:29.49
+✅ VoyageManager initialized
+2025-10-15 21:48:29.49
+✅ PathManager initialized
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] Valeurs brutes localStorage:
+{savedCalendarData: "présent", savedCurrentCalendarDate: "{"day":19,"month":"Lothron"}", savedIsCalendarMode: "true", fromCloud: null}
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] calendarData chargé:
+12 mois
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] currentCalendarDate chargé:
+{day: 19, month: "Lothron"}
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] isCalendarMode chargé:
+true
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] État final CalendarManager:
+{calendarData: "12 mois", currentCalendarDate: Object, isCalendarMode: true, currentSeason: "printemps-debut"}
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] Valeurs brutes localStorage:
+{savedCalendarData: "présent", savedCurrentCalendarDate: "{"day":19,"month":"Lothron"}", savedIsCalendarMode: "true", fromCloud: null}
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] calendarData chargé:
+12 mois
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] currentCalendarDate chargé:
+{day: 19, month: "Lothron"}
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] isCalendarMode chargé:
+true
+2025-10-15 21:48:29.49
+📅 [loadCalendarFromLocal] État final CalendarManager:
+{calendarData: "12 mois", currentCalendarDate: Object, isCalendarMode: true, currentSeason: "printemps-debut"}
+2025-10-15 21:48:29.49
+🌤️ Données météo du jour récupérées:
+{day: 19, symbol: "🌧️", weather: "Des flaques d'eau miroitent sur le sol, reflétant le ciel qui s'éclaircit. L'eau est partout, la nature a bu à sa soif."}
+2025-10-15 21:48:29.49
+🌱 Affichage saison:
+{currentSeason: "printemps-fin", seasonMainName: "printemps", symbol: "🌧️", fullName: "Printemps-fin", isCalendarMode: true…}
+2025-10-15 21:48:29.49
+🌤️ Données météo du jour récupérées:
+{day: 19, symbol: "🌧️", weather: "Des flaques d'eau miroitent sur le sol, reflétant le ciel qui s'éclaircit. L'eau est partout, la nature a bu à sa soif."}
+2025-10-15 21:48:29.49
+🌱 Affichage saison:
+{currentSeason: "printemps-fin", seasonMainName: "printemps", symbol: "🌧️", fullName: "Printemps-fin", isCalendarMode: true…}
+2025-10-15 21:48:29.49
+📅 Données calendrier exposées globalement:
+{calendarData: true, currentCalendarDate: Object, isCalendarMode: true, currentSeason: "printemps-fin"}
+2025-10-15 21:48:29.49
+✅ CalendarManager initialized
+2025-10-15 21:48:29.49
+⚙️ SettingsManager initialized
+2025-10-15 21:48:29.49
+✅ SettingsManager initialized
+2025-10-15 21:48:29.49
+[AuthManager] 🔑 Initialisation AuthManager
+null
+2025-10-15 21:48:29.49
+[AuthManager] 🔍 Vérification du statut d'authentification
+null
+2025-10-15 21:48:29.49
+[AuthManager] 👂 Écoute des changements de localStorage activée.
+null
+2025-10-15 21:48:29.49
+✅ AuthManager initialized
+2025-10-15 21:48:29.49
+📤 UploadManager initialized
+2025-10-15 21:48:29.49
+📋 InfoBoxManager initialized with UploadManager
+2025-10-15 21:48:29.49
+✅ InfoBoxManager initialized
+2025-10-15 21:48:29.49
+📤 ImportExportManager initialized
+2025-10-15 21:48:29.49
+📤 ImportExportManager event listeners configured
+2025-10-15 21:48:29.49
+✅ ImportExportManager initialized
+2025-10-15 21:48:29.49
+📍 Initializing data structures...
+2025-10-15 21:48:29.49
+📍 loadInitialLocations: Initialisation avec structure vide
+2025-10-15 21:48:29.49
+✅ Structure de données initialisée (vide, en attente du cloud)
+2025-10-15 21:48:29.49
+🌍 loadRegionsFromLocal: Initialisation avec structure vide
+2025-10-15 21:48:29.49
+✅ Structure de régions initialisée (vide, en attente du cloud)
+2025-10-15 21:48:29.49
+✅ Data structures initialized (will be populated from cloud)
+2025-10-15 21:48:29.49
+📤 UploadManager initialized
+2025-10-15 21:48:29.82
+✅ ZoomManager initialized
+2025-10-15 21:48:29.82
+📍 [main.js] Création du PositionManager avec MAP_WIDTH:
+5103
+MAP_HEIGHT:
+3296
+2025-10-15 21:48:29.82
+📍 [main.js] État localStorage AVANT init PositionManager - position:
+{"x":639.017672411982,"y":1814.8873713041933}
+flag:
+true
+2025-10-15 21:48:29.82
+📍 [PositionManager.loadPosition] État du flag cloud:
+true
+2025-10-15 21:48:29.82
+📍 [PositionManager.loadPosition] Position dans localStorage:
+{"x":639.017672411982,"y":1814.8873713041933}
+2025-10-15 21:48:29.82
+📍 [PositionManager] Position chargée depuis CLOUD via localStorage:
+{x: 639.017672411982, y: 1814.8873713041933}
+2025-10-15 21:48:29.82
+📍 Initializing PositionManager...
+2025-10-15 21:48:29.82
+✅ PositionManager initialized with position:
+{x: 639.017672411982, y: 1814.8873713041933}
+2025-10-15 21:48:29.82
+✅ PositionManager initialized with position:
+{x: 639.017672411982, y: 1814.8873713041933}
+2025-10-15 21:48:29.82
+📍 [main.js] Nettoyage du flag cloud après initialisation
+2025-10-15 21:48:29.82
+📖 Initialisation du JournalManager
+2025-10-15 21:48:29.82
+📖 1 voyage(s) chargé(s) depuis le localStorage
+2025-10-15 21:48:29.82
+✅ JournalManager initialized
+2025-10-15 21:48:29.82
+✅ Adventure data loaded from localStorage
+2025-10-15 21:48:29.82
+🎲 Initializing AdventureManager...
+2025-10-15 21:48:29.82
+✅ AdventureManager initialized
+2025-10-15 21:48:29.82
+✅ AdventureManager initialized
+2025-10-15 21:48:29.82
+🖌️ Setting up drawing events...
+2025-10-15 21:48:29.82
+👂 Adding VoyageManager drawing listeners...
+2025-10-15 21:48:29.82
+🎨 VoyageManager drawing listeners configured
+2025-10-15 21:48:29.82
+✅ VoyageManager drawing listeners added
+2025-10-15 21:48:29.82
+✅ Drawing events setup complete
+2025-10-15 21:48:29.82
+🔍 [ZoomManager] updateDisplay called: scale=0.145
+2025-10-15 21:48:29.82
+🔍 [ZoomManager] updateSliderPosition: scale=0.145, ratio=0.011, x=1.7px, sliderWidth=150px
+2025-10-15 21:48:29.82
+✅ Map initialized successfully
+2025-10-15 21:48:29.82
+⏳ Waiting for cloud data before rendering...
