@@ -1009,22 +1009,24 @@ class SettingsManager {
 
             // Callback pour re-render après chargement
             const onImageLoaded = () => {
-                console.log('✅ Image de carte chargée, re-render des lieux et régions');
+                console.log('✅ Image de carte chargée, re-initialisation de la carte');
                 
-                // Initialiser la carte si pas encore fait
-                if (typeof window.initializeMap === 'function' && window.MAP_WIDTH === 0) {
-                    console.log('🗺️ Initialisation de la carte depuis loadSettings');
+                // Toujours réinitialiser la carte lors du changement d'image
+                if (typeof window.initializeMap === 'function') {
+                    // Reset MAP_WIDTH pour forcer la réinitialisation complète
+                    window.MAP_WIDTH = 0;
+                    console.log('🗺️ Réinitialisation de la carte depuis loadSettings');
                     window.initializeMap();
-                }
-                
-                // Re-render les lieux et régions après changement de carte
-                if (typeof window.renderLocations === 'function') {
-                    window.renderLocations();
-                    console.log('✅ Lieux rendus après loadSettings');
-                }
-                if (typeof window.renderRegions === 'function') {
-                    window.renderRegions();
-                    console.log('✅ Régions rendues après loadSettings');
+                } else {
+                    // Si initializeMap n'existe pas encore, juste re-render
+                    if (typeof window.renderLocations === 'function') {
+                        window.renderLocations();
+                        console.log('✅ Lieux rendus après loadSettings');
+                    }
+                    if (typeof window.renderRegions === 'function') {
+                        window.renderRegions();
+                        console.log('✅ Régions rendues après loadSettings');
+                    }
                 }
             };
 
