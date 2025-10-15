@@ -921,6 +921,11 @@ class SettingsManager {
                 window.renderRegions();
             }
 
+            // Marquer comme non sauvegardé pour afficher l'icône cloud
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+
             // Synchroniser
             if (typeof window.scheduleAutoSync === 'function') {
                 window.scheduleAutoSync();
