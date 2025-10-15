@@ -8,7 +8,6 @@ import {
     getDefaultRegions,
     MAP_DISTANCE_MILES,
     PLAYER_MAP_URL,
-    LOREMASTER_MAP_URL,
     LOCATIONS_URL,
     PROXIMITY_DISTANCE,
     SYNC_DELAY,
