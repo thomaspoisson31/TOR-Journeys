@@ -582,6 +582,12 @@ class ImportExportManager {
                 console.error("❌ [processImport] window.renderRegions is not a function");
             }
 
+            // Marquer comme non sauvegardé pour afficher le bouton cloud
+            if (typeof window.markAsUnsaved === 'function') {
+                console.log(`📥 [processImport] Marquage comme non sauvegardé...`);
+                window.markAsUnsaved();
+            }
+
             // Auto-sync si disponible
             if (this.scheduleAutoSync && typeof this.scheduleAutoSync === 'function') {
                 console.log(`📥 [processImport] Planification de l'auto-sync...`);
