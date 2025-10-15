@@ -160,16 +160,31 @@ class ImportExportManager {
      */
     handleImportFile(event) {
         const file = event.target.files[0];
+        console.log("📥 [IMPORT DEBUG] Fichier sélectionné:", file ? file.name : "aucun");
+        
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
                 const rawText = e.target.result;
+                console.log("📥 [IMPORT DEBUG] Contenu brut du fichier (premiers 500 caractères):", rawText.substring(0, 500));
+                
                 const importedData = JSON.parse(rawText);
+                console.log("📥 [IMPORT DEBUG] JSON parsé avec succès:", importedData);
+                console.log("📥 [IMPORT DEBUG] Structure du JSON:", {
+                    isArray: Array.isArray(importedData),
+                    hasLocations: !!importedData.locations,
+                    hasRegions: !!importedData.regions,
+                    keys: Object.keys(importedData)
+                });
 
                 // Valider et traiter les données
                 const processedData = this.validateAndProcessImportData(importedData);
+                console.log("📥 [IMPORT DEBUG] Données après validation:", {
+                    locationsCount: processedData.locations.length,
+                    regionsCount: processedData.regions.length
+                });
 
                 // Post-traitement: chercher les rumeurs multiples dans le texte brut
                 if (processedData.locations.length > 0) {
@@ -177,15 +192,18 @@ class ImportExportManager {
                 }
 
                 if (processedData.locations.length === 0 && processedData.regions.length === 0) {
+                    console.error("📥 [IMPORT DEBUG] Aucune donnée valide trouvée");
                     this.showNotification("Import échoué", "Aucune donnée valide trouvée dans le fichier", "error");
                     return;
                 }
 
                 // Afficher la modal de confirmation
+                console.log("📥 [IMPORT DEBUG] Affichage de la modal de confirmation");
                 this.showImportModal(processedData);
 
             } catch (err) {
-                console.error("❌ Erreur lors de l'import:", err);
+                console.error("❌ [IMPORT DEBUG] Erreur complète:", err);
+                console.error("❌ [IMPORT DEBUG] Stack trace:", err.stack);
                 this.showNotification("Erreur d'import", "Fichier JSON invalide: " + err.message, "error");
             }
 
@@ -200,7 +218,10 @@ class ImportExportManager {
      * Valide et traite les données importées pour supporter différents formats
      */
     validateAndProcessImportData(data) {
-        console.log("🔍 Validation des données importées...");
+        console.log("🔍 [VALIDATE DEBUG] Début validation des données importées");
+        console.log("🔍 [VALIDATE DEBUG] Type de data:", typeof data);
+        console.log("🔍 [VALIDATE DEBUG] Est un tableau?", Array.isArray(data));
+        console.log("🔍 [VALIDATE DEBUG] Contenu complet data:", JSON.stringify(data, null, 2).substring(0, 1000));
 
         const result = {
             locations: [],
@@ -209,18 +230,38 @@ class ImportExportManager {
 
         // Si c'est un tableau direct (ancien format)
         if (Array.isArray(data)) {
-            data.forEach(item => this.processItem(item, result));
+            console.log("🔍 [VALIDATE DEBUG] Format: tableau direct avec", data.length, "éléments");
+            data.forEach((item, index) => {
+                console.log(`🔍 [VALIDATE DEBUG] Traitement item ${index}:`, item.name || 'sans nom');
+                this.processItem(item, result);
+            });
         }
         // Si c'est un objet avec une propriété locations
         else if (data.locations && Array.isArray(data.locations)) {
-            data.locations.forEach(item => this.processItem(item, result));
+            console.log("🔍 [VALIDATE DEBUG] Format: objet avec propriété locations, count:", data.locations.length);
+            data.locations.forEach((item, index) => {
+                console.log(`🔍 [VALIDATE DEBUG] Traitement location ${index}:`, item.name || 'sans nom');
+                this.processItem(item, result);
+            });
         }
         // Si c'est un objet avec une propriété regions
         else if (data.regions && Array.isArray(data.regions)) {
-            data.regions.forEach(item => this.processItem(item, result));
+            console.log("🔍 [VALIDATE DEBUG] Format: objet avec propriété regions, count:", data.regions.length);
+            data.regions.forEach((item, index) => {
+                console.log(`🔍 [VALIDATE DEBUG] Traitement region ${index}:`, item.name || 'sans nom');
+                this.processItem(item, result);
+            });
+        } else {
+            console.error("🔍 [VALIDATE DEBUG] Format non reconnu! Structure:", {
+                isObject: typeof data === 'object',
+                keys: Object.keys(data || {}),
+                hasLocations: !!data?.locations,
+                hasRegions: !!data?.regions
+            });
         }
 
-        console.log(`✅ Import validé: ${result.locations.length} lieux, ${result.regions.length} régions`);
+        console.log(`✅ [VALIDATE DEBUG] Import validé: ${result.locations.length} lieux, ${result.regions.length} régions`);
+        console.log("✅ [VALIDATE DEBUG] Résultat complet:", result);
         return result;
     }
 
@@ -246,21 +287,31 @@ class ImportExportManager {
     }
 
     processItem(item, result) {
+        console.log("🔍 [PROCESS DEBUG] Début traitement item:", item.name);
+        console.log("🔍 [PROCESS DEBUG] Item complet:", JSON.stringify(item, null, 2).substring(0, 500));
+        
         // Vérifier si c'est une région (a des points de coordonnées)
         if (item.type === 'region' || (item.coordinates && item.coordinates.points)) {
+            console.log("🔍 [PROCESS DEBUG] Détecté comme RÉGION");
+            
             // Extraire les points depuis la structure coordinates
             let points = [];
             if (item.coordinates?.points) {
+                console.log("🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points");
                 points = item.coordinates.points;
             } else if (item.points) {
+                console.log("🔍 [PROCESS DEBUG] Points trouvés dans item.points");
                 points = item.points;
             } else if (Array.isArray(item.coordinates)) {
+                console.log("🔍 [PROCESS DEBUG] Coordinates est un tableau");
                 points = item.coordinates;
             }
 
+            console.log("🔍 [PROCESS DEBUG] Points extraits:", points?.length || 0);
+
             // Vérifier que les points sont valides
             if (!points || points.length < 3) {
-                console.warn(`⚠️ Région "${item.name}" ignorée : moins de 3 points valides`);
+                console.warn(`⚠️ [PROCESS DEBUG] Région "${item.name}" ignorée : moins de 3 points valides (${points?.length || 0} points)`);
                 return;
             }
 
@@ -299,14 +350,22 @@ class ImportExportManager {
         }
         // Sinon c'est un lieu normal
         else {
+            console.log("🔍 [PROCESS DEBUG] Détecté comme LIEU");
+            console.log("🔍 [PROCESS DEBUG] Coordonnées brutes:", item.coordinates);
+            
             // Vérifier que les coordonnées sont valides
             const x = item.coordinates?.x;
             const y = item.coordinates?.y;
             
+            console.log("🔍 [PROCESS DEBUG] x =", x, "type:", typeof x);
+            console.log("🔍 [PROCESS DEBUG] y =", y, "type:", typeof y);
+            
             if (typeof x !== 'number' || typeof y !== 'number') {
-                console.warn(`⚠️ Lieu "${item.name}" ignoré : coordonnées invalides`, item.coordinates);
+                console.warn(`⚠️ [PROCESS DEBUG] Lieu "${item.name}" ignoré : coordonnées invalides x=${x}(${typeof x}), y=${y}(${typeof y})`, item.coordinates);
                 return;
             }
+
+            console.log("🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu");
 
             const location = {
                 id: item.id || `location_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
