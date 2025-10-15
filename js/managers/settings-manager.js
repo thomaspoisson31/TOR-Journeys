@@ -295,7 +295,7 @@ class SettingsManager {
         this.availableMaps.push(newMap);
         this.saveMapsData();
         this.renderMapsGrid();
-
+    }
 
     async openLibraryForMapSelection(mapModal) {
         // Vérifier que l'utilisateur est authentifié
