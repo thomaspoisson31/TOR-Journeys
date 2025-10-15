@@ -1007,13 +1007,16 @@ class SettingsManager {
         if (mapImage && this.activeMapUrl) {
             console.log('🗺️ Mise à jour de l\'image de la carte:', this.activeMapUrl);
 
-            // Force le rechargement même si l'URL est la même
-            const currentSrc = mapImage.src;
-            const newSrc = this.activeMapUrl;
-
             // Callback pour re-render après chargement
             const onImageLoaded = () => {
                 console.log('✅ Image de carte chargée, re-render des lieux et régions');
+                
+                // Initialiser la carte si pas encore fait
+                if (typeof window.initializeMap === 'function' && window.MAP_WIDTH === 0) {
+                    console.log('🗺️ Initialisation de la carte depuis loadSettings');
+                    window.initializeMap();
+                }
+                
                 // Re-render les lieux et régions après changement de carte
                 if (typeof window.renderLocations === 'function') {
                     window.renderLocations();
@@ -1025,14 +1028,16 @@ class SettingsManager {
                 }
             };
 
-            // Si l'image est déjà la même et déjà chargée, appeler directement le callback
-            if (currentSrc === newSrc && mapImage.complete) {
-                console.log('⚡ Image déjà chargée, re-render immédiat');
+            // Toujours définir le callback avant de changer src
+            mapImage.onload = onImageLoaded;
+            
+            // Si l'image est déjà complètement chargée avec cette URL, déclencher manuellement
+            if (mapImage.complete && mapImage.naturalWidth > 0 && mapImage.src.endsWith(this.activeMapUrl)) {
+                console.log('⚡ Image déjà chargée, callback immédiat');
                 onImageLoaded();
             } else {
-                // Sinon attendre le chargement
-                mapImage.onload = onImageLoaded;
-                mapImage.src = newSrc;
+                // Forcer le rechargement
+                mapImage.src = this.activeMapUrl;
             }
         }
 

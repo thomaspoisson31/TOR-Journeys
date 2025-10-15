@@ -540,12 +540,19 @@ function renderRegions() {
 // Exposer les fonctions de rendu globalement
 window.renderLocations = renderLocations;
 window.renderRegions = renderRegions;
+window.initializeMap = initializeMap;
 
 // --- Initialisation carte simplifiée ---
 function initializeMap() {
     console.log("🗺️ Initializing map...");
     if (mapImage.naturalWidth === 0) {
         console.warn("⚠️ Map image not loaded yet, retrying...");
+        return;
+    }
+    
+    // Éviter la double initialisation
+    if (MAP_WIDTH > 0) {
+        console.log("⚠️ Map already initialized, skipping");
         return;
     }
 
