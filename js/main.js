@@ -7,7 +7,6 @@ import {
     getDefaultLocations,
     getDefaultRegions,
     MAP_DISTANCE_MILES,
-    PLAYER_MAP_URL,
     LOCATIONS_URL,
     PROXIMITY_DISTANCE,
     SYNC_DELAY,
@@ -167,18 +166,29 @@ async function initializeApp() {
         window.regionsData = regionsData;
         console.log("✅ Data structures initialized (will be populated from cloud)");
 
-        // Test d'initialisation de la carte
+        // Attendre que SettingsManager charge la carte active
         if (mapImage) {
+            // La carte sera chargée par SettingsManager.loadSettings() appelé par AuthManager
             mapImage.onload = () => {
                 console.log("🗺️ Map image loaded successfully");
                 initializeMap();
-                // NE PAS faire de rendu initial - les données seront chargées par AuthManager
                 console.log("⏳ Waiting for cloud data before rendering...");
             };
             mapImage.onerror = () => {
                 console.error("❌ Map image failed to load");
+                if (loaderOverlay) {
+                    loaderOverlay.innerHTML = `
+                        <div class="text-2xl text-red-500 text-center p-4">
+                            <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>
+                            Erreur de chargement de la carte<br>
+                            <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg">
+                                Recharger
+                            </button>
+                        </div>
+                    `;
+                }
             };
-            mapImage.src = PLAYER_MAP_URL;
+            console.log("⏳ Waiting for SettingsManager to load active map...");
         }
 
     } catch (error) {

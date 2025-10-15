@@ -26,11 +26,8 @@ export const getDefaultLocations = () => ({ "locations": [] }); // Fallback to e
 export const getDefaultRegions = () => ({ "regions": [] });
 
 // === CONSTANTES DE CARTE ===
-export const MAP_DISTANCE_MILES = 1150;
-export const PLAYER_MAP_URL = "fr_tor_2nd_eriadors_map_page-0001.webp";
-export const LOCATIONS_URL = "Landmarks1.json";
-
-// === CONSTANTES D'INTERACTION ===
+export const MAP_DISTANCE_MILES = 600; // Distance en miles représentée par la carte
+export const LOCATIONS_URL = 'Landmarks1.json';
 export const PROXIMITY_DISTANCE = 50;
 
 // === CONSTANTES DE SYNCHRONISATION ===
