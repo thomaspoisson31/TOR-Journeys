@@ -1,4 +1,3 @@
-
 import UploadManager from './upload-manager.js';
 
 /**
@@ -9,17 +8,17 @@ class InfoBoxManager {
         this.domUtils = domUtils;
         this.dataManager = dataManager;
         this.geminiManager = geminiManager;
-        
+
         this.currentItem = null;
         this.currentType = null;
         this.isEditMode = false;
         this.isExpanded = false;
-        
+
         // Initialiser l'UploadManager
         this.uploadManager = new UploadManager();
-        
+
         this.setupEventListeners();
-        
+
         console.log("📋 InfoBoxManager initialized with UploadManager");
     }
 
@@ -89,18 +88,18 @@ class InfoBoxManager {
         // Toujours forcer le mode étendu
         this.isExpanded = true;
         infoBox.classList.add('expanded');
-        
+
         // Mettre à jour l'icône d'expansion
         const expandBtn = document.getElementById('info-box-expand');
         if (expandBtn) {
             expandBtn.className = 'fas fa-compress';
             expandBtn.title = 'Vue compacte';
         }
-        
+
         this.positionInfoBoxExpanded();
-        
+
         infoBox.style.display = 'block';
-        
+
         // S'assurer que l'onglet Image est actif par défaut
         this.switchTab('image');
 
@@ -151,7 +150,7 @@ class InfoBoxManager {
     positionInfoBoxExpanded() {
         const infoBox = document.getElementById('info-box');
         const viewport = document.getElementById('viewport');
-        
+
         if (!infoBox || !viewport) return;
 
         const viewportWidth = viewport.clientWidth;
@@ -227,7 +226,7 @@ class InfoBoxManager {
             // Nettoyer complètement l'onglet et créer la structure
             imageTab.innerHTML = '';
             const imageView = this.createImageView(imageTab);
-            
+
             if (item.images && item.images.length > 0) {
                 // Chercher l'image principale, sinon prendre la première
                 const principaleImage = item.images.find(img => img.type === 'principale') || item.images[0];
@@ -264,22 +263,22 @@ class InfoBoxManager {
             if (editForm) {
                 editForm.style.display = 'none';
             }
-            
+
             // Afficher la vue lecture
             const textView = rumeursTab.querySelector('.text-view');
             if (textView) {
                 textView.style.display = 'block';
             }
-            
+
             // Section Rumeurs
             const rumeursContent = rumeursTab.querySelector('#rumeurs-content');
             if (rumeursContent) {
                 let rumeursHTML = '';
-                
+
                 // Normaliser les rumeurs en tableau
                 const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
                 const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
-                
+
                 if (rumeursValides.length > 0) {
                     rumeursHTML = rumeursValides.map((rumeur, index) => `
                         <div class="mb-4 ${index > 0 ? 'pt-4 border-t border-yellow-600 border-opacity-30' : ''}">
@@ -289,7 +288,7 @@ class InfoBoxManager {
                 } else {
                     rumeursHTML = '<div class="prose prose-invert text-gray-400 italic">Aucune rumeur disponible.</div>';
                 }
-                
+
                 rumeursContent.innerHTML = rumeursHTML;
             }
 
@@ -310,13 +309,13 @@ class InfoBoxManager {
         if (evenementsTab) {
             // Nettoyer complètement l'onglet
             evenementsTab.innerHTML = '';
-            
+
             const evenements = item.Evenements_Voyage || [];
-            
+
             if (evenements.length > 0) {
                 // Tirer un événement aléatoire
                 const randomEvent = evenements[Math.floor(Math.random() * evenements.length)];
-                
+
                 const tableHTML = `
                     <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
                         <div class="mb-6 p-4 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
@@ -336,14 +335,14 @@ class InfoBoxManager {
                                 <p class="mt-1 text-gray-200 leading-relaxed">${randomEvent['Description'] || '-'}</p>
                             </div>
                         </div>
-                        
+
                         <div class="mb-2">
                             <button onclick="window.infoBoxManager.toggleEvenementsTable()" class="flex items-center text-gray-300 hover:text-white transition-colors">
                                 <i id="evenements-toggle-icon" class="fas fa-chevron-right mr-2"></i>
                                 <h4 class="text-md font-semibold">Table complète des événements</h4>
                             </button>
                         </div>
-                        
+
                         <div id="evenements-table-container" class="hidden">
                             <table class="w-full border-collapse">
                                 <thead>
@@ -434,7 +433,7 @@ class InfoBoxManager {
                             <i class="fas fa-magic mr-1"></i>Générer avec IA
                         </button>
                     </div>
-                    
+
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
                             <i class="fas fa-save mr-1"></i>Sauvegarder
@@ -453,13 +452,13 @@ class InfoBoxManager {
             const currentRumeurs = type === 'region' ? 
                 (item.Rumeur || '') : 
                 (item.Rumeurs ? item.Rumeurs.join('\n\n---\n\n') : (item.Rumeur || ''));
-            
+
             // Cacher la vue lecture et afficher le mode édition
             const textView = rumeursTab.querySelector('.text-view');
             if (textView) {
                 textView.style.display = 'none';
             }
-            
+
             // Créer ou afficher le formulaire d'édition
             let editForm = rumeursTab.querySelector('.edit-form');
             if (!editForm) {
@@ -467,7 +466,7 @@ class InfoBoxManager {
                 editForm.className = 'edit-form p-4';
                 rumeursTab.appendChild(editForm);
             }
-            
+
             editForm.style.display = 'block';
             editForm.innerHTML = `
                 <div class="mb-4">
@@ -502,9 +501,9 @@ class InfoBoxManager {
             const editForm = document.createElement('div');
             editForm.className = 'edit-form p-4';
             evenementsTab.appendChild(editForm);
-            
+
             const currentEvenements = item.Evenements_Voyage || [];
-            
+
             editForm.innerHTML = `
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-2 text-white">
@@ -548,7 +547,7 @@ class InfoBoxManager {
         return item.images.map((image, index) => {
             const isPrincipale = image.type === 'principale';
             const isVignette = image.type === 'vignette';
-            
+
             return `
             <div class="flex items-center justify-between bg-gray-100 p-2 rounded mb-2">
                 <div class="flex items-center flex-grow">
@@ -661,12 +660,12 @@ class InfoBoxManager {
         console.log(`🏷️ Type d'image changé (index ${index}): ${oldType} → ${type}`);
     }
 
-    
+
 
     // Fonction utilitaire pour le rendu Markdown basique
     renderMarkdown(text) {
         if (!text) return '';
-        
+
         // Conversion Markdown basique
         return text
             // Titres
@@ -709,15 +708,15 @@ class InfoBoxManager {
         return textView;
     }
 
-    
+
 
     enterEditMode() {
         if (!this.currentItem) return;
-        
+
         console.log("✏️ Entering edit mode for:", this.currentItem.name);
         this.isEditMode = true;
         this.updateInfoBoxContent();
-        
+
         // Déjà en mode étendu par défaut
     }
 
@@ -761,7 +760,7 @@ class InfoBoxManager {
                             .split(/\n---\n/)
                             .map(r => r.trim())
                             .filter(r => r !== '');
-                        
+
                         // Compatibilité avec l'ancienne structure
                         if (this.currentItem.Rumeurs.length === 1) {
                             this.currentItem.Rumeur = this.currentItem.Rumeurs[0];
@@ -806,6 +805,11 @@ class InfoBoxManager {
                 scheduleAutoSync();
             }
 
+            // Marquer comme non sauvegardé pour afficher l'icône cloud
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+
             // Passer en mode lecture
             this.isEditMode = false;
             this.updateInfoBoxContent();
@@ -826,7 +830,7 @@ class InfoBoxManager {
         }
 
         const url = urlField.value.trim();
-        
+
         // Initialiser le tableau d'images si nécessaire
         if (!this.currentItem.images) {
             this.currentItem.images = [];
@@ -840,10 +844,10 @@ class InfoBoxManager {
         };
 
         this.currentItem.images.push(newImage);
-        
+
         // Vider le champ
         urlField.value = '';
-        
+
         // Re-render la liste des images
         const imagesList = document.getElementById('edit-images-list');
         if (imagesList) {
@@ -867,7 +871,7 @@ class InfoBoxManager {
         };
 
         this.currentItem.images.push(newImage);
-        
+
         // Re-render la liste des images
         const imagesList = document.getElementById('edit-images-list');
         if (imagesList) {
@@ -936,7 +940,7 @@ class InfoBoxManager {
             }
 
             const generatedDescription = await this.geminiManager.generateText(prompt);
-            
+
             if (descField) {
                 descField.value = generatedDescription;
             }
@@ -950,7 +954,7 @@ class InfoBoxManager {
         } catch (error) {
             console.error("❌ Error generating description:", error);
             alert(`Erreur lors de la génération : ${error.message}`);
-            
+
             // Restaurer le bouton en cas d'erreur
             const generateBtn = event.target;
             generateBtn.disabled = false;
@@ -966,7 +970,7 @@ class InfoBoxManager {
         reader.onload = (e) => {
             try {
                 const jsonData = JSON.parse(e.target.result);
-                
+
                 // Valider le format
                 if (!Array.isArray(jsonData)) {
                     alert('Format invalide : le fichier doit contenir un tableau JSON');
@@ -987,10 +991,10 @@ class InfoBoxManager {
 
                 // Stocker temporairement les événements
                 this.tempEvenements = jsonData;
-                
+
                 // Afficher l'aperçu
                 this.updateEvenementsPreview(jsonData);
-                
+
                 console.log(`✅ ${jsonData.length} événement(s) importé(s)`);
 
             } catch (error) {
@@ -1038,10 +1042,10 @@ class InfoBoxManager {
         if (!confirm('Êtes-vous sûr de vouloir effacer tous les événements de voyage ?')) {
             return;
         }
-        
+
         this.tempEvenements = [];
         this.updateEvenementsPreview([]);
-        
+
         const fileInput = document.getElementById('evenements-file-input');
         if (fileInput) {
             fileInput.value = '';
@@ -1126,7 +1130,7 @@ class InfoBoxManager {
             imageCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card';
             imageCard.dataset.url = image.url;
             imageCard.dataset.filename = image.filename;
-            
+
             imageCard.innerHTML = `
                 <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
                 <div class="absolute top-2 right-2 hidden selected-indicator">
@@ -1232,10 +1236,10 @@ class InfoBoxManager {
     toggleEvenementsTable() {
         const tableContainer = document.getElementById('evenements-table-container');
         const toggleIcon = document.getElementById('evenements-toggle-icon');
-        
+
         if (tableContainer && toggleIcon) {
             tableContainer.classList.toggle('hidden');
-            
+
             if (tableContainer.classList.contains('hidden')) {
                 toggleIcon.className = 'fas fa-chevron-right mr-2';
             } else {
@@ -1249,7 +1253,7 @@ class InfoBoxManager {
 
         const itemType = this.currentType === 'region' ? 'région' : 'lieu';
         const confirmed = confirm(`Êtes-vous sûr de vouloir supprimer ${this.currentType === 'region' ? 'cette' : 'ce'} ${itemType} "${this.currentItem.name}" ?\n\nCette action est irréversible.`);
-        
+
         if (!confirmed) return;
 
         console.log(`🗑️ Deleting ${itemType}:`, this.currentItem.name);
@@ -1260,31 +1264,40 @@ class InfoBoxManager {
                 const regionIndex = this.dataManager.regionsData.regions.findIndex(
                     region => region.id === this.currentItem.id
                 );
-                
+
                 console.log(`🔍 Region index found: ${regionIndex}, Total regions: ${this.dataManager.regionsData.regions.length}`);
-                
+
                 if (regionIndex !== -1) {
                     // Supprimer la région
                     this.dataManager.regionsData.regions.splice(regionIndex, 1);
-                    
+
                     console.log(`✅ Region removed from array, remaining: ${this.dataManager.regionsData.regions.length}`);
-                    
+
                     // Mettre à jour toutes les références
                     window.regionsData = this.dataManager.regionsData;
-                    
+
                     // Sauvegarder dans localStorage
                     this.dataManager.saveRegionsToLocal();
-                    
+
                     // Re-render les régions AVANT de fermer l'infobox
                     if (typeof window.renderRegions === 'function') {
                         window.renderRegions();
                     } else if (typeof renderRegions === 'function') {
                         renderRegions();
                     }
-                    
+
+                    // Programmer la synchronisation
+                    if (typeof scheduleAutoSync === 'function') {
+                        scheduleAutoSync();
+                    }
+                    // Marquer comme non sauvegardé pour afficher l'icône cloud
+                    if (typeof window.markAsUnsaved === 'function') {
+                        window.markAsUnsaved();
+                    }
+
                     // Fermer l'info-box APRÈS le re-render pour éviter les références fantômes
                     this.hideInfoBox();
-                    
+
                     console.log("✅ Region deleted successfully");
                 } else {
                     console.error("❌ Region not found in data");
@@ -1295,31 +1308,40 @@ class InfoBoxManager {
                 const locationIndex = this.dataManager.locationsData.locations.findIndex(
                     location => location.id === this.currentItem.id
                 );
-                
+
                 console.log(`🔍 Location index found: ${locationIndex}, Total locations: ${this.dataManager.locationsData.locations.length}`);
-                
+
                 if (locationIndex !== -1) {
                     // Supprimer le lieu
                     this.dataManager.locationsData.locations.splice(locationIndex, 1);
-                    
+
                     console.log(`✅ Location removed from array, remaining: ${this.dataManager.locationsData.locations.length}`);
-                    
+
                     // Mettre à jour toutes les références
                     window.locationsData = this.dataManager.locationsData;
-                    
+
                     // Sauvegarder dans localStorage
                     this.dataManager.saveLocationsToLocal();
-                    
+
                     // Re-render les lieux AVANT de fermer l'infobox
                     if (typeof window.renderLocations === 'function') {
                         window.renderLocations();
                     } else if (typeof renderLocations === 'function') {
                         renderLocations();
                     }
-                    
+
+                    // Programmer la synchronisation
+                    if (typeof scheduleAutoSync === 'function') {
+                        scheduleAutoSync();
+                    }
+                    // Marquer comme non sauvegardé pour afficher l'icône cloud
+                    if (typeof window.markAsUnsaved === 'function') {
+                        window.markAsUnsaved();
+                    }
+
                     // Fermer l'info-box APRÈS le re-render pour éviter les références fantômes
                     this.hideInfoBox();
-                    
+
                     console.log("✅ Location deleted successfully");
                 } else {
                     console.error("❌ Location not found in data");
@@ -1327,10 +1349,6 @@ class InfoBoxManager {
                 }
             }
 
-            // Programmer la synchronisation
-            if (typeof scheduleAutoSync === 'function') {
-                scheduleAutoSync();
-            }
 
         } catch (error) {
             console.error("❌ Error deleting item:", error);

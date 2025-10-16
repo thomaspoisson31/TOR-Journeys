@@ -29,6 +29,8 @@ class AuthManager {
         this.manualSyncBtn = null; // Bouton de sync manuelle
         this.syncStatusIndicator = null; // Indicateur de statut
         this.quickSyncBtn = null; // Bouton de sync rapide
+        this.modalSyncBtn = null; // Bouton de sync dans la modale
+        this.lastSyncDateDiv = null; // Div pour la date de dernière sync
     }
 
     init() {
@@ -38,6 +40,7 @@ class AuthManager {
         this.checkAuthenticationStatus();
         this.handleAuthCallback();
         this.setupLocalStorageListener(); // Écouter les changements de localStorage
+        this.updateLastSyncDateDisplay(); // Afficher la date de dernière sync au chargement
     }
 
     setupDOMReferences() {
@@ -59,6 +62,8 @@ class AuthManager {
         this.manualSyncBtn = document.getElementById('manual-sync-btn');
         this.syncStatusIndicator = document.getElementById('sync-status-indicator');
         this.quickSyncBtn = document.getElementById('quick-sync-btn');
+        this.modalSyncBtn = document.getElementById('modal-sync-btn'); // Récupérer le nouveau bouton
+        this.lastSyncDateDiv = document.getElementById('last-sync-date'); // Récupérer la div pour la date
     }
 
     setupEventListeners() {
@@ -80,9 +85,14 @@ class AuthManager {
             debugBtn.addEventListener('click', () => this.debugCloudData());
         }
 
-        // Bouton de synchronisation manuelle
+        // Bouton de synchronisation manuelle (celui dans la barre principale)
         if (this.manualSyncBtn) {
             this.manualSyncBtn.addEventListener('click', () => this.manualSync());
+        }
+
+        // Bouton de synchronisation dans la modale d'authentification
+        if (this.modalSyncBtn) {
+            this.modalSyncBtn.addEventListener('click', () => this.manualSync());
         }
 
         // Gestion de la déconnexion avec invitation à sauvegarder
@@ -121,6 +131,13 @@ class AuthManager {
                 // Recharger les données si l'utilisateur est authentifié
                 if (this.isAuthenticated) {
                     this.loadUserData();
+                }
+            } else if (event.key === 'lastCloudSyncTimestamp') {
+                // Mettre à jour l'affichage de la date de dernière synchronisation
+                const newTimestamp = parseInt(localStorage.getItem('lastCloudSyncTimestamp'), 10);
+                if (!isNaN(newTimestamp)) {
+                    this.lastSyncTimestamp = newTimestamp;
+                    this.updateLastSyncDateDisplay();
                 }
             }
         });
@@ -193,6 +210,7 @@ class AuthManager {
             } else {
                 // Si authentifié, masquer le panneau de statut et afficher le contenu
                 this.hideAuthStatusPanel();
+                this.updateLastSyncDateDisplay(); // Assurer l'affichage de la date au cas où
             }
         }
     }
@@ -262,6 +280,9 @@ class AuthManager {
 
         // Initialiser le statut de sync
         this.updateSyncStatus('idle');
+
+        // Mettre à jour l'affichage de la date de dernière synchronisation
+        this.updateLastSyncDateDisplay();
     }
 
     updateUIForUnauthenticatedUser() {
@@ -410,7 +431,7 @@ class AuthManager {
 
         // MIGRATION AUTOMATIQUE : Ajouter mapId si absent
         const activeMapId = data.activeMapId || data.settings?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
-        
+
         if (data.locations?.locations) {
             let migrated = 0;
             data.locations.locations.forEach(loc => {
@@ -674,8 +695,12 @@ class AuthManager {
     }
 
     updateCloudIconVisibility() {
+        // Met à jour la visibilité de l'icône de synchronisation rapide (bouton quickSyncBtn)
+        // Cette icône indique s'il y a des modifications non synchronisées.
         if (!this.quickSyncBtn) return;
 
+        // Si des modifications non sauvegardées existent ET que l'utilisateur est authentifié,
+        // afficher l'icône de synchronisation rapide. Sinon, la cacher.
         if (this.hasUnsavedChanges && this.isAuthenticated) {
             this.quickSyncBtn.classList.remove('hidden');
             this.quickSyncBtn.title = 'Modifications non sauvegardées - Cliquer pour synchroniser';
@@ -696,13 +721,13 @@ class AuthManager {
         try {
             await this.syncUserData();
             this.updateSyncStatus('success');
-            
+
             // Marquer comme sauvegardé et masquer l'icône
             this.markAsSaved();
-            
+
             // Afficher message de confirmation
             this.showSyncSuccessMessage();
-            
+
             setTimeout(() => this.updateSyncStatus('idle'), 2000);
         } catch (error) {
             this.updateSyncStatus('error');
@@ -750,6 +775,20 @@ class AuthManager {
             this.manualSyncBtn.disabled = status === 'syncing';
         }
 
+        // Mise à jour du bouton de synchronisation dans la modale
+        if (this.modalSyncBtn) {
+            const icon = this.modalSyncBtn.querySelector('i');
+            const text = this.modalSyncBtn.querySelector('span');
+            if (icon) {
+                icon.className = `fas ${config.icon}`;
+            }
+            if (text) {
+                text.textContent = config.text;
+            }
+            this.modalSyncBtn.disabled = status === 'syncing';
+        }
+
+
         if (this.syncStatusIndicator) {
             this.syncStatusIndicator.className = `text-sm ${config.class}`;
             this.syncStatusIndicator.innerHTML = `
@@ -794,6 +833,9 @@ class AuthManager {
                 }
 
                 this.lastSyncTimestamp = Date.now();
+                localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp); // Sauvegarder le timestamp
+                this.updateLastSyncDateDisplay(); // Mettre à jour l'affichage immédiatement
+
                 this.logAuth("✅ Données synchronisées dans le cloud");
                 // Mise à jour locale pour cohérence UI (depuis cloud = true pour ne pas re-marquer comme non sauvegardé)
                 this.saveToLocalStorage(contextData, true);
@@ -845,6 +887,9 @@ class AuthManager {
 
             if (response.ok) {
                 this.lastSyncTimestamp = Date.now();
+                localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp); // Sauvegarder le timestamp
+                this.updateLastSyncDateDisplay(); // Mettre à jour l'affichage immédiatement
+
                 this.logAuth("✅ Données locales forcées dans le cloud");
                 this.saveToLocalStorage(localData);
                 this.updateSyncStatus('success');
@@ -865,10 +910,28 @@ class AuthManager {
                 window.renderRegions();
             }
 
+            this.lastSyncTimestamp = Date.now(); // Mettre à jour le timestamp après chargement cloud
+            localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp);
+            this.updateLastSyncDateDisplay();
+
             this.updateSyncStatus('success');
             setTimeout(() => this.updateSyncStatus('idle'), 2000);
 
             alert("✅ Données du cloud chargées avec succès");
+        }
+    }
+
+    updateLastSyncDateDisplay() {
+        // Récupérer le timestamp depuis localStorage ou depuis la propriété de classe
+        const timestamp = this.lastSyncTimestamp || parseInt(localStorage.getItem('lastCloudSyncTimestamp'), 10);
+
+        if (this.lastSyncDateDiv) {
+            if (timestamp && !isNaN(timestamp)) {
+                const date = new Date(timestamp);
+                this.lastSyncDateDiv.querySelector('span').textContent = date.toLocaleString(); // Utiliser toLocaleString pour une date complète
+            } else {
+                this.lastSyncDateDiv.querySelector('span').textContent = 'jamais';
+            }
         }
     }
 
