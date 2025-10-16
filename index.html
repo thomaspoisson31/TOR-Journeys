@@ -499,12 +499,20 @@
                         </div>
 
                         <div class="bg-blue-900/20 border border-blue-500 rounded p-4">
-                            <div class="flex items-start space-x-3">
-                                <i class="fas fa-cloud-upload-alt text-blue-400 text-xl"></i>
-                                <div>
-                                    <p class="text-blue-400 font-semibold mb-1">Synchronisation cloud automatique</p>
-                                    <p class="text-sm text-gray-300">Toutes vos modifications sont sauvegardées automatiquement dans votre compte Google.</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-start space-x-3 flex-1">
+                                    <i class="fas fa-cloud text-blue-400 text-xl"></i>
+                                    <div class="flex-1">
+                                        <p class="text-blue-400 font-semibold mb-1">Sauvegarde cloud</p>
+                                        <p id="last-sync-date" class="text-xs text-gray-400">
+                                            Dernière sync: <span>jamais</span>
+                                        </p>
+                                    </div>
                                 </div>
+                                <button id="modal-sync-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Synchroniser</span>
+                                </button>
                             </div>
                         </div>
 

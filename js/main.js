@@ -2231,6 +2231,11 @@ function confirmColorChange() {
         renderRegions();
     }
 
+    // Marquer comme non sauvegardé pour afficher l'icône cloud
+    if (typeof window.markAsUnsaved === 'function') {
+        window.markAsUnsaved();
+    }
+
     // Programmer la synchronisation
     if (typeof scheduleAutoSync === 'function') {
         scheduleAutoSync();
@@ -2337,6 +2342,11 @@ function handleLocationDragEnd(e) {
             // Sauvegarder les changements
             if (dataManager) {
                 dataManager.saveLocationsToLocal();
+            }
+
+            // Marquer comme non sauvegardé pour afficher l'icône cloud
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
             }
 
             // Programmer la synchronisation
