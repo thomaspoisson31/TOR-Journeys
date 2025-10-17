@@ -281,7 +281,7 @@ function renderLocations() {
             marker.style.backgroundImage = `url('${thumbnailUrl}')`;
             marker.style.backgroundSize = 'cover';
             marker.style.backgroundPosition = 'center';
-            marker.style.borderRadius = '8px';
+            marker.style.borderRadius = '50%';
             marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
         } else {
             // Afficher le cercle coloré
