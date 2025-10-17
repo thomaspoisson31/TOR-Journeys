@@ -808,10 +808,28 @@ class AuthManager {
         this.logAuth("🔄 Synchronisation manuelle vers cloud");
 
         try {
-            const contextData = this.collectCurrentContextData();
+            // 1. D'abord récupérer les données cloud actuelles
+            const cloudResponse = await fetch('/api/user/data', {
+                method: 'GET',
+                credentials: 'include'
+            });
 
-            // Ajouter un timestamp pour détecter les conflits
-            contextData._sync_timestamp = Date.now();
+            let cloudData = null;
+            if (cloudResponse.ok) {
+                cloudData = await cloudResponse.json();
+                this.logAuth("📥 Données cloud récupérées pour fusion");
+            }
+
+            // 2. Collecter les données locales
+            const localData = this.collectCurrentContextData();
+            this.logAuth("📦 Données locales collectées");
+
+            // 3. Fusionner intelligemment les données
+            const mergedData = this.mergeContextData(cloudData, localData);
+            this.logAuth("🔀 Données fusionnées pour sauvegarde");
+
+            // 4. Ajouter un timestamp pour détecter les conflits
+            mergedData._sync_timestamp = Date.now();
 
             const response = await fetch('/api/user/data', {
                 method: 'PUT',
@@ -819,7 +837,7 @@ class AuthManager {
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
-                body: JSON.stringify(contextData)
+                body: JSON.stringify(mergedData)
             });
 
             if (response.ok) {
@@ -828,17 +846,17 @@ class AuthManager {
                 // Vérifier s'il y a un conflit détecté par le serveur
                 if (result.conflict_detected) {
                     this.logAuth("⚠️ Conflit de synchronisation détecté");
-                    await this.handleSyncConflict(contextData, result.cloud_data);
+                    await this.handleSyncConflict(mergedData, result.cloud_data);
                     return;
                 }
 
                 this.lastSyncTimestamp = Date.now();
-                localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp); // Sauvegarder le timestamp
-                this.updateLastSyncDateDisplay(); // Mettre à jour l'affichage immédiatement
+                localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp);
+                this.updateLastSyncDateDisplay();
 
-                this.logAuth("✅ Données synchronisées dans le cloud");
-                // Mise à jour locale pour cohérence UI (depuis cloud = true pour ne pas re-marquer comme non sauvegardé)
-                this.saveToLocalStorage(contextData, true);
+                this.logAuth("✅ Données fusionnées synchronisées dans le cloud");
+                // Mise à jour locale pour cohérence UI
+                this.saveToLocalStorage(mergedData, true);
             } else {
                 const error = await response.json();
                 this.logAuth(`⚠️ Erreur sync: ${error.error || response.statusText}`);
@@ -856,6 +874,50 @@ class AuthManager {
             alert(`Erreur réseau. Vos modifications seront sauvegardées à la prochaine synchronisation.`);
             throw error;
         }
+    }
+
+    mergeContextData(cloudData, localData) {
+        // Si pas de données cloud, utiliser les locales
+        if (!cloudData) {
+            this.logAuth("🆕 Pas de données cloud - utilisation des données locales");
+            return localData;
+        }
+
+        const merged = { ...localData };
+
+        // Fusionner les lieux
+        const cloudLocations = cloudData.locations?.locations || [];
+        const localLocations = localData.locations?.locations || [];
+        
+        const mergedLocations = [...cloudLocations];
+        localLocations.forEach(localLoc => {
+            const exists = mergedLocations.find(cl => cl.id === localLoc.id);
+            if (!exists) {
+                mergedLocations.push(localLoc);
+                this.logAuth(`➕ Ajout lieu local: ${localLoc.name}`);
+            }
+        });
+        
+        merged.locations = { locations: mergedLocations };
+        this.logAuth(`🔀 Fusion lieux: ${cloudLocations.length} cloud + ${localLocations.length} local = ${mergedLocations.length} total`);
+
+        // Fusionner les régions
+        const cloudRegions = cloudData.regions?.regions || [];
+        const localRegions = localData.regions?.regions || [];
+        
+        const mergedRegions = [...cloudRegions];
+        localRegions.forEach(localReg => {
+            const exists = mergedRegions.find(cr => cr.id === localReg.id);
+            if (!exists) {
+                mergedRegions.push(localReg);
+                this.logAuth(`➕ Ajout région locale: ${localReg.name}`);
+            }
+        });
+        
+        merged.regions = { regions: mergedRegions };
+        this.logAuth(`🔀 Fusion régions: ${cloudRegions.length} cloud + ${localRegions.length} local = ${mergedRegions.length} total`);
+
+        return merged;
     }
 
     async handleSyncConflict(localData, cloudData) {
