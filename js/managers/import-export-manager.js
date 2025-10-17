@@ -161,7 +161,7 @@ class ImportExportManager {
     handleImportFile(event) {
         const file = event.target.files[0];
         console.log("📥 [IMPORT DEBUG] Fichier sélectionné:", file ? file.name : "aucun");
-        
+
         if (!file) return;
 
         const reader = new FileReader();
@@ -169,7 +169,7 @@ class ImportExportManager {
             try {
                 const rawText = e.target.result;
                 console.log("📥 [IMPORT DEBUG] Contenu brut du fichier (premiers 500 caractères):", rawText.substring(0, 500));
-                
+
                 const importedData = JSON.parse(rawText);
                 console.log("📥 [IMPORT DEBUG] JSON parsé avec succès:", importedData);
                 console.log("📥 [IMPORT DEBUG] Structure du JSON:", {
@@ -289,11 +289,11 @@ class ImportExportManager {
     processItem(item, result) {
         console.log("🔍 [PROCESS DEBUG] Début traitement item:", item.name);
         console.log("🔍 [PROCESS DEBUG] Item complet:", JSON.stringify(item, null, 2).substring(0, 500));
-        
+
         // Vérifier si c'est une région (a des points de coordonnées)
         if (item.type === 'region' || (item.coordinates && item.coordinates.points)) {
             console.log("🔍 [PROCESS DEBUG] Détecté comme RÉGION");
-            
+
             // Extraire les points depuis la structure coordinates
             let points = [];
             if (item.coordinates?.points) {
@@ -336,12 +336,12 @@ class ImportExportManager {
             if (item.images) region.images = item.images;
 
             // Pour les régions: une seule rumeur
-            if (item.Rumeur && item.Rumeur !== "A définir") {
+            if (item.Rumeur && item.Rumeur !== "A definir") {
                 region.Rumeur = item.Rumeur;
             }
 
             // Tradition ancienne
-            if (item.Tradition_Ancienne && item.Tradition_Ancienne !== "A définir") {
+            if (item.Tradition_Ancienne && item.Tradition_Ancienne !== "A definir") {
                 region.Tradition_Ancienne = item.Tradition_Ancienne;
             }
 
@@ -352,14 +352,14 @@ class ImportExportManager {
         else {
             console.log("🔍 [PROCESS DEBUG] Détecté comme LIEU");
             console.log("🔍 [PROCESS DEBUG] Coordonnées brutes:", item.coordinates);
-            
+
             // Vérifier que les coordonnées sont valides
             const x = item.coordinates?.x;
             const y = item.coordinates?.y;
-            
+
             console.log("🔍 [PROCESS DEBUG] x =", x, "type:", typeof x);
             console.log("🔍 [PROCESS DEBUG] y =", y, "type:", typeof y);
-            
+
             if (typeof x !== 'number' || typeof y !== 'number') {
                 console.warn(`⚠️ [PROCESS DEBUG] Lieu "${item.name}" ignoré : coordonnées invalides x=${x}(${typeof x}), y=${y}(${typeof y})`, item.coordinates);
                 return;
@@ -398,7 +398,7 @@ class ImportExportManager {
                 rumeurs.push(...item.Rumeurs.filter(r => r && r !== "A définir"));
             }
             // Si on a une seule propriété Rumeur
-            else if (item.Rumeur && item.Rumeur !== "A définir") {
+            else if (item.Rumeur && item.Rumeur !== "A definir") {
                 rumeurs.push(item.Rumeur);
             }
 
@@ -407,7 +407,7 @@ class ImportExportManager {
             }
 
             // Ajouter la tradition ancienne
-            if (item.Tradition_Ancienne && item.Tradition_Ancienne !== "A définir") {
+            if (item.Tradition_Ancienne && item.Tradition_Ancienne !== "A definir") {
                 location.Tradition_Ancienne = item.Tradition_Ancienne;
             }
 
@@ -485,17 +485,21 @@ class ImportExportManager {
     /**
      * Traite l'import selon le mode choisi
      */
-    processImport(processedData, mode) {
+    async processImport(processedData, mode) {
         try {
             console.log(`📥 [processImport] Début traitement en mode: ${mode}`);
             console.log(`📥 [processImport] Données à importer:`, {
                 locations: processedData.locations.length,
                 regions: processedData.regions.length
             });
+            console.log(`📥 [processImport] Données ACTUELLES:`, {
+                locations: this.dataManager.locationsData?.locations?.length || 0,
+                regions: this.dataManager.regionsData?.regions?.length || 0
+            });
 
             if (mode === 'replace') {
                 console.log(`📥 [processImport] Mode REPLACE - Remplacement de toutes les données`);
-                
+
                 // Remplacer toutes les données
                 if (processedData.locations.length > 0) {
                     console.log(`📥 [processImport] Attribution de ${processedData.locations.length} lieux au dataManager`);
@@ -526,9 +530,14 @@ class ImportExportManager {
                 // Fusionner les données
                 this.mergeLocations(processedData.locations);
                 this.mergeRegions(processedData.regions);
+
+                console.log(`📥 [processImport] Données APRÈS fusion:`, {
+                    locations: this.dataManager.locationsData?.locations?.length || 0,
+                    regions: this.dataManager.regionsData?.regions?.length || 0
+                });
             }
 
-            // Sauvegarder
+            // Sauvegarder LOCALEMENT d'abord
             console.log(`📥 [processImport] Sauvegarde dans localStorage...`);
             try {
                 this.dataManager.saveLocationsToLocal();
@@ -537,7 +546,7 @@ class ImportExportManager {
                 console.error(`❌ [processImport] Erreur lors de la sauvegarde des lieux:`, saveError);
                 throw saveError;
             }
-            
+
             try {
                 this.dataManager.saveRegionsToLocal();
                 console.log(`✅ [processImport] Régions sauvegardées dans localStorage`);
@@ -582,11 +591,7 @@ class ImportExportManager {
                 console.error("❌ [processImport] window.renderRegions is not a function");
             }
 
-            // Marquer comme non sauvegardé pour afficher le bouton cloud
-            if (typeof window.markAsUnsaved === 'function') {
-                console.log(`📥 [processImport] Marquage comme non sauvegardé...`);
-                window.markAsUnsaved();
-            }
+            // NE PAS marquer comme non sauvegardé - on va sauvegarder immédiatement
 
             const totalImported = processedData.locations.length + processedData.regions.length;
             this.showNotification("Import réussi", `${totalImported} éléments importés avec succès (mode: ${mode})`, "success");
@@ -596,11 +601,11 @@ class ImportExportManager {
             // Forcer une sauvegarde cloud immédiate après import
             if (window.authManager && window.authManager.isAuthenticated) {
                 console.log(`📥 [processImport] Déclenchement sauvegarde cloud automatique...`);
-                
+
                 // IMPORTANT: Attendre que la sauvegarde soit terminée AVANT de recharger
                 window.authManager.manualSync().then(() => {
                     console.log(`✅ [processImport] Sauvegarde cloud terminée avec succès`);
-                    
+
                     // Petit délai pour s'assurer que le serveur a bien enregistré
                     setTimeout(() => {
                         console.log(`📥 [processImport] Rechargement de la page pour afficher les données...`);
