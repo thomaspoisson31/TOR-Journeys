@@ -596,16 +596,20 @@ class ImportExportManager {
             // Forcer une sauvegarde cloud immédiate après import
             if (window.authManager && window.authManager.isAuthenticated) {
                 console.log(`📥 [processImport] Déclenchement sauvegarde cloud automatique...`);
+                
+                // IMPORTANT: Attendre que la sauvegarde soit terminée AVANT de recharger
                 window.authManager.manualSync().then(() => {
-                    console.log(`✅ [processImport] Sauvegarde cloud terminée, rechargement de la page...`);
-                    // Recharger la page pour afficher les données depuis le cloud
-                    window.location.reload();
+                    console.log(`✅ [processImport] Sauvegarde cloud terminée avec succès`);
+                    
+                    // Petit délai pour s'assurer que le serveur a bien enregistré
+                    setTimeout(() => {
+                        console.log(`📥 [processImport] Rechargement de la page pour afficher les données...`);
+                        window.location.reload();
+                    }, 500);
                 }).catch(error => {
                     console.error(`❌ [processImport] Erreur lors de la sauvegarde cloud:`, error);
-                    // Même en cas d'erreur, proposer le rechargement
-                    if (confirm("Les données ont été importées mais la sauvegarde cloud a échoué. Recharger la page pour afficher les données ?")) {
-                        window.location.reload();
-                    }
+                    // En cas d'erreur, ne pas recharger automatiquement
+                    alert(`Erreur lors de la sauvegarde cloud: ${error.message}\nLes données sont en mémoire mais non synchronisées. Veuillez sauvegarder manuellement.`);
                 });
             } else {
                 // Si pas authentifié, juste recharger pour afficher depuis localStorage
