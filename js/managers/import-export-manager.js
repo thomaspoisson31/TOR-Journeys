@@ -598,31 +598,40 @@ class ImportExportManager {
 
             console.log(`✅ [processImport] Import terminé avec succès: ${processedData.locations.length} lieux, ${processedData.regions.length} régions`);
 
+            // RECHARGEMENT DÉSACTIVÉ TEMPORAIREMENT POUR DEBUG
+            console.log(`📥 [processImport] Rechargement automatique désactivé - les données sont en mémoire`);
+            console.log(`📥 [processImport] Vous pouvez maintenant synchroniser manuellement avec le bouton de sync`);
+            
             // Forcer une sauvegarde cloud immédiate après import
             if (window.authManager && window.authManager.isAuthenticated) {
                 console.log(`📥 [processImport] Déclenchement sauvegarde cloud automatique...`);
 
-                // IMPORTANT: Attendre que la sauvegarde soit terminée AVANT de recharger
+                // Sauvegarder mais NE PAS recharger
                 window.authManager.manualSync().then(() => {
                     console.log(`✅ [processImport] Sauvegarde cloud terminée avec succès`);
-
-                    // Petit délai pour s'assurer que le serveur a bien enregistré
+                    alert('✅ Import et sauvegarde réussis ! Les données sont maintenant visibles et synchronisées avec le cloud.');
+                }).catch(error => {
+                    console.error(`❌ [processImport] Erreur lors de la sauvegarde cloud:`, error);
+                    alert(`Erreur lors de la sauvegarde cloud: ${error.message}\nLes données sont en mémoire mais non synchronisées. Veuillez sauvegarder manuellement.`);
+                });
+            }
+            
+            // ANCIEN CODE AVEC RECHARGEMENT (commenté pour debug)
+            /*
+            if (window.authManager && window.authManager.isAuthenticated) {
+                window.authManager.manualSync().then(() => {
                     setTimeout(() => {
-                        console.log(`📥 [processImport] Rechargement de la page pour afficher les données...`);
                         window.location.reload();
                     }, 500);
                 }).catch(error => {
-                    console.error(`❌ [processImport] Erreur lors de la sauvegarde cloud:`, error);
-                    // En cas d'erreur, ne pas recharger automatiquement
-                    alert(`Erreur lors de la sauvegarde cloud: ${error.message}\nLes données sont en mémoire mais non synchronisées. Veuillez sauvegarder manuellement.`);
+                    alert(`Erreur lors de la sauvegarde cloud: ${error.message}`);
                 });
             } else {
-                // Si pas authentifié, juste recharger pour afficher depuis localStorage
-                console.log(`📥 [processImport] Rechargement de la page pour afficher les données...`);
                 setTimeout(() => {
                     window.location.reload();
-                }, 500); // Petit délai pour laisser le temps à la notification de s'afficher
+                }, 500);
             }
+            */
 
         } catch (error) {
             console.error("❌ [processImport] ERREUR COMPLÈTE:", error);
