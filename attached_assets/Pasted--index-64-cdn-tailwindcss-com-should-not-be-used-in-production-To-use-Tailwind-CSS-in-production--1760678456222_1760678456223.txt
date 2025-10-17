@@ -1,0 +1,412 @@
+(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+(anonymous) @ (index):64
+upload-manager.js:349 📤 UploadManager module loaded
+infobox-manager.js:1368 📋 InfoBoxManager module loaded
+library-manager.js:163 📚 LibraryManager module loaded
+main.js:33 ✅ Constants loaded successfully
+main.js:63 ✅ Global variables initialized
+main.js:71 ✅ Essential DOM elements: {viewport: true, mapContainer: true, mapImage: true, loaderOverlay: true}
+main.js:2436 📋 Simplified main.js loaded - waiting for DOM ready
+main.js:80 🚀 Starting simplified application...
+main.js:85 ✅ DataManager initialized
+filter-manager.js:19 🔍 FilterManager initialized
+main.js:87 ✅ FilterManager initialized
+main.js:97 ✅ VoyageManager initialized
+main.js:104 ✅ PathManager initialized
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"day":19,"month":"Lothron"}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {day: 19, month: 'Lothron'}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"day":19,"month":"Lothron"}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {day: 19, month: 'Lothron'}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+main.js:110 ✅ CalendarManager initialized
+settings-manager.js:17 ⚙️ SettingsManager initialized
+main.js:116 ✅ SettingsManager initialized
+auth-manager.js:1190 [AuthManager] 🔑 Initialisation AuthManager null
+auth-manager.js:1190 [AuthManager] 🔍 Vérification du statut d'authentification null
+auth-manager.js:1190 [AuthManager] 👂 Écoute des changements de localStorage activée. null
+main.js:138 ✅ AuthManager initialized
+upload-manager.js:11 📤 UploadManager initialized
+infobox-manager.js:22 📋 InfoBoxManager initialized with UploadManager
+main.js:147 ✅ InfoBoxManager initialized
+import-export-manager.js:17 📤 ImportExportManager initialized
+import-export-manager.js:44 📤 ImportExportManager event listeners configured
+main.js:156 ✅ ImportExportManager initialized
+main.js:159 📍 Initializing data structures...
+data-manager.js:10 📍 loadInitialLocations: Initialisation avec structure vide
+data-manager.js:15 ✅ Structure de données initialisée (vide, en attente du cloud)
+data-manager.js:39 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+data-manager.js:44 ✅ Structure de régions initialisée (vide, en attente du cloud)
+main.js:167 ✅ Data structures initialized (will be populated from cloud)
+main.js:191 ⏳ Waiting for SettingsManager to load active map...
+upload-manager.js:11 📤 UploadManager initialized
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1190 [AuthManager] ✅ Utilisateur authentifié trouvé null
+auth-manager.js:1190 [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+auth-manager.js:1190 [AuthManager] 📥 Chargement des données depuis le cloud null
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1190 [AuthManager] ✅ Données cloud récupérées {_sync_timestamp: 1760678419429, calendar: {…}, journal: Array(1), locations: {…}, position: {…}, …}
+auth-manager.js:1190 [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+auth-manager.js:1190 [AuthManager] 🔄 Application des données du contexte (7) ['_sync_timestamp', 'calendar', 'journal', 'locations', 'position', 'regions', 'settings']
+auth-manager.js:1190 [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+auth-manager.js:1190 [AuthManager] 💾 0 lieux sauvegardés dans localStorage null
+auth-manager.js:1190 [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+auth-manager.js:1190 [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 0 lieux null
+auth-manager.js:1190 [AuthManager] 📊 Structure locationsData: {locations: Array(0)}
+auth-manager.js:1190 [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+auth-manager.js:1190 [AuthManager] 📊 Structure regionsData: {regions: Array(0)}
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Données calendar reçues: {calendarData: Array(12), currentCalendarDate: {…}, currentSeason: 'printemps-fin', isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Saison appliquée: printemps-fin null
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Date appliquée: {day: 19, month: 'Lothron'}
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Données calendrier appliquées: 12 mois null
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+auth-manager.js:1190 [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+auth-manager.js:1190 [AuthManager] ⚙️ Application des paramètres null
+settings-manager.js:971 ⚙️ Chargement des paramètres depuis le contexte: {activeMapName: '20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01', activeMapUrl: '/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', availableMaps: Array(2), narrationStyle: 'brief', partyDescription: '*   **Aelrindel**, une Elfe Sylvestre des lisières…par le massacre de son village par des pillards.\n', …}
+settings-manager.js:976 ✅ Cartes chargées: 2
+settings-manager.js:980 ✅ Carte active URL: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+settings-manager.js:984 ✅ Carte active nom: 20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01
+settings-manager.js:990 ✅ Description aventuriers chargée
+settings-manager.js:994 ✅ Description quête chargée
+settings-manager.js:998 ✅ Style de narration chargé: brief
+settings-manager.js:1008 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+settings-manager.js:1054 ✅ Paramètres chargés avec succès
+auth-manager.js:1190 [AuthManager] ✅ Paramètres appliqués null
+auth-manager.js:1190 [AuthManager] 📖 Application de 1 entrées de journal depuis le contexte null
+auth-manager.js:1190 [AuthManager] 📍 [applyContextData] Restauration de la position du marqueur depuis le contexte: {x: 679.0967117796672, y: 1333.9388988919711}
+auth-manager.js:568 📍 [applyContextData] AVANT setItem - position à sauver: {x: 679.0967117796672, y: 1333.9388988919711}
+auth-manager.js:574 📍 [applyContextData] APRÈS setItem - position vérif: {"x":679.0967117796672,"y":1333.9388988919711}
+auth-manager.js:575 📍 [applyContextData] APRÈS setItem - flag vérif: true
+auth-manager.js:1190 [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: {x: 679.0967117796672, y: 1333.9388988919711}
+auth-manager.js:1190 [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+auth-manager.js:1190 [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+auth-manager.js:1190 [AuthManager] ✅ Contexte appliqué avec succès null
+auth-manager.js:1190 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1190 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1190 [AuthManager] 🎨 Rendu forcé après chargement cloud null
+main.js:212 🎯 Rendering locations...
+main.js:217 🔄 Synchronisation avec window.locationsData
+main.js:220 📊 locationsData: {locations: Array(0)}
+main.js:221 📊 locationsData.locations: []
+main.js:241 📱 [renderLocations] currentScale=1.000, showThumbnails=true
+main.js:385 ✅ Rendered 0 location markers (thumbnails: true)
+main.js:388 📍 Locations layer z-index: auto
+auth-manager.js:1190 [AuthManager] ✅ 0 lieux rendus depuis le cloud null
+main.js:393 🌍 Rendering regions...
+main.js:398 🔄 Synchronisation avec window.regionsData
+main.js:401 🌍 RegionsData: {regions: Array(0)}
+main.js:537 ✅ Rendered 0 region polygons
+auth-manager.js:1190 [AuthManager] ✅ 0 régions rendues depuis le cloud null
+auth-manager.js:1190 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+auth-manager.js:1190 [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+settings-manager.js:1012 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1018 🗺️ Réinitialisation de la carte depuis loadSettings
+main.js:547 🗺️ Initializing map...
+main.js:559 📐 Map dimensions: 4252 x 3296
+main.js:582 ✅ Regions layer configured
+main.js:855 🎮 Setting up map navigation...
+main.js:1082 ✅ Map navigation setup complete
+main.js:1087 📋 Setting up info-box listeners...
+main.js:1128 ✅ Info-box listeners setup complete
+main.js:1133 🎨 Setting up region drawing...
+main.js:1155 ✅ Region drawing setup complete
+main.js:1408 📍 Setting up location adding...
+main.js:1431 ✅ Generate description button configured
+main.js:2041 🎨 Setting up color change modal...
+main.js:2064 ✅ Color change modal setup complete
+main.js:1455 ✅ Location adding setup complete
+main.js:609 🔍 Setting up FilterManager...
+filter-manager.js:24 🔍 Setting up filter listeners...
+filter-manager.js:59 ✅ Filter listeners setup complete
+main.js:617 ✅ FilterManager setup complete
+main.js:624 🚀 Setting up VoyageManager...
+main.js:626 ✅ VoyageManager setup complete
+main.js:631 🗺️ Setting up PathManager...
+path-manager.js:50 🎨 Canvas configuré : 4252x3296
+path-manager.js:38 🛤️ PathManager initialized
+main.js:633 ✅ PathManager setup complete
+zoom-manager.js:26 🔍 Initializing ZoomManager...
+zoom-manager.js:223 🔍 [ZoomManager] updateDisplay called: scale=0.238
+zoom-manager.js:213 🔍 [ZoomManager] updateSliderPosition: scale=0.238, ratio=0.035, x=5.3px, sliderWidth=150px
+zoom-manager.js:30 ✅ ZoomManager initialized
+main.js:661 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 4252 MAP_HEIGHT: 3296
+main.js:666 📍 [main.js] État localStorage AVANT init PositionManager - position: {"x":679.0967117796672,"y":1333.9388988919711} flag: true
+position-manager.js:24 📍 [PositionManager.loadPosition] État du flag cloud: true
+position-manager.js:27 📍 [PositionManager.loadPosition] Position dans localStorage: {"x":679.0967117796672,"y":1333.9388988919711}
+position-manager.js:34 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: {x: 679.0967117796672, y: 1333.9388988919711}
+position-manager.js:14 📍 Initializing PositionManager...
+position-manager.js:17 ✅ PositionManager initialized with position: {x: 679.0967117796672, y: 1333.9388988919711}
+main.js:674 ✅ PositionManager initialized with position: {x: 679.0967117796672, y: 1333.9388988919711}
+main.js:678 📍 [main.js] Nettoyage du flag cloud après initialisation
+journal-manager.js:11 📖 Initialisation du JournalManager
+journal-manager.js:48 📖 1 voyage(s) chargé(s) depuis le localStorage
+main.js:686 ✅ JournalManager initialized
+adventure-manager.js:15 🎲 Initializing AdventureManager...
+adventure-manager.js:17 ✅ AdventureManager initialized
+main.js:692 ✅ AdventureManager initialized
+main.js:2252 🖌️ Setting up drawing events...
+main.js:2256 👂 Adding VoyageManager drawing listeners...
+voyage-manager.js:76 🎨 VoyageManager drawing listeners configured
+main.js:2258 ✅ VoyageManager drawing listeners added
+main.js:2261 ✅ Drawing events setup complete
+zoom-manager.js:223 🔍 [ZoomManager] updateDisplay called: scale=0.200
+zoom-manager.js:213 🔍 [ZoomManager] updateSliderPosition: scale=0.200, ratio=0.026, x=3.8px, sliderWidth=150px
+main.js:701 ✅ Map initialized successfully
+import-export-manager.js:163 📥 [IMPORT DEBUG] Fichier sélectionné: Ruines-Royaume-Perdu.json
+ 📥 [IMPORT DEBUG] Contenu brut du fichier (premiers 500 caractères): {
+  "locations": [
+    {
+      "id": 1757687068535,
+      "name": "Les Anciennes Mines Naines",
+      "description": "À l'extrémité septentrionale des Montagnes Bleues, dans une terre glaciale balayée par les tempêtes, se trouve la Colline-aux-Creux. Ces mines de fer et de charbon, abandonnées depuis le Premier Âge, servirent de refuge au dernier roi de l'Arthedain, Arvedui. Fuyant les armées du Roi-Sorcier, il y cacha une partie des trésors de son royaume avant de périr. Mais les mines abr
+ 📥 [IMPORT DEBUG] JSON parsé avec succès: {locations: Array(12)}
+ 📥 [IMPORT DEBUG] Structure du JSON: {isArray: false, hasLocations: true, hasRegions: false, keys: Array(1)}
+ 🔍 [VALIDATE DEBUG] Début validation des données importées
+ 🔍 [VALIDATE DEBUG] Type de data: object
+ 🔍 [VALIDATE DEBUG] Est un tableau? false
+ 🔍 [VALIDATE DEBUG] Contenu complet data: {
+  "locations": [
+    {
+      "id": 1757687068535,
+      "name": "Les Anciennes Mines Naines",
+      "description": "À l'extrémité septentrionale des Montagnes Bleues, dans une terre glaciale balayée par les tempêtes, se trouve la Colline-aux-Creux. Ces mines de fer et de charbon, abandonnées depuis le Premier Âge, servirent de refuge au dernier roi de l'Arthedain, Arvedui. Fuyant les armées du Roi-Sorcier, il y cacha une partie des trésors de son royaume avant de périr. Mais les mines abritent un péril plus ancien encore, une Bête effroyable venue d'Angmar qui y sommeille depuis des siècles, gardienne involontaire des richesses perdues.",
+      "color": "violet",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 1650,
+        "y": 300
+      },
+      "Rumeurs": [
+        "Il y a cette vieille mine naine dans les Montagnes Bleues - ah ça, il y en a un paquet, de mines naines, par-là: la moindre colline est pire qu'une pomme mangée 
+ 🔍 [VALIDATE DEBUG] Format: objet avec propriété locations, count: 12
+ 🔍 [VALIDATE DEBUG] Traitement location 0: Les Anciennes Mines Naines
+ 🔍 [PROCESS DEBUG] Début traitement item: Les Anciennes Mines Naines
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068535,
+  "name": "Les Anciennes Mines Naines",
+  "description": "À l'extrémité septentrionale des Montagnes Bleues, dans une terre glaciale balayée par les tempêtes, se trouve la Colline-aux-Creux. Ces mines de fer et de charbon, abandonnées depuis le Premier Âge, servirent de refuge au dernier roi de l'Arthedain, Arvedui. Fuyant les armées du Roi-Sorcier, il y cacha une partie des trésors de son royaume avant de périr. Mais les mines abritent un péril plus ancien encore, une B
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 1650, y: 300}
+ 🔍 [PROCESS DEBUG] x = 1650 type: number
+ 🔍 [PROCESS DEBUG] y = 300 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Les Anciennes Mines Naines (x:1650, y:300, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 1: Les Tours Blanches
+ 🔍 [PROCESS DEBUG] Début traitement item: Les Tours Blanches
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068536,
+  "name": "Les Tours Blanches",
+  "description": "Sur les Collines des Tours, à l'ouest de la Comté, se dressent trois antiques tours elfiques. La plus haute, Elostirion, abrite un trésor d'un âge révolu : un palantír, l'une des Pierres de Vision ramenées de Númenor. Unique parmi les pierres restantes, son regard est tourné vers l'Ouest, offrant aux Elfes une vision des Terres Immortelles. Ce privilège suscite la convoitise, car certains Maîtres du savoir espèrent pouvoi
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 2256, y: 1478}
+ 🔍 [PROCESS DEBUG] x = 2256 type: number
+ 🔍 [PROCESS DEBUG] y = 1478 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Les Tours Blanches (x:2256, y:1478, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 2: L'Arbre des Lamentations
+ 🔍 [PROCESS DEBUG] Début traitement item: L'Arbre des Lamentations
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068537,
+  "name": "L'Arbre des Lamentations",
+  "description": "Au plus profond de la ténébreuse forêt d'Eryn Vorn, se dresse l'Arbre des Lamentations. Monstruosité végétale née de la fusion de multiples arbres, il est l'ultime rempart des Hommes Arbres. Cet arbre-forteresse, d'où pendent les corps des sacrifiés, est le cœur de leur culture sauvage et cruelle. Sous ses racines s'étendent des grottes ornées de peintures ancestrales, et dans son tronc vit une horreur née de la hai
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 2315, y: 2746}
+ 🔍 [PROCESS DEBUG] x = 2315 type: number
+ 🔍 [PROCESS DEBUG] y = 2746 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: L'Arbre des Lamentations (x:2315, y:2746, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 3: Les Îles Embrumées
+ 🔍 [PROCESS DEBUG] Début traitement item: Les Îles Embrumées
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068538,
+  "name": "Les Îles Embrumées",
+  "description": "Au milieu du Lac Evendim, une brume persistante dissimule un archipel d'îlots. Autrefois lieu de villégiature pour la noblesse d'Annúminas, les Îles Embrumées sont devenues le territoire d'une créature maléfique invoquée par Sauron il y a des siècles. Cette 'Ruine de Nenuial' anéantit la première colonie et continue de traquer quiconque ose s'aventurer sur ses eaux, comme l'a récemment appris à ses dépens une expédition d
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 2725, y: 948}
+ 🔍 [PROCESS DEBUG] x = 2725 type: number
+ 🔍 [PROCESS DEBUG] y = 948 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Les Îles Embrumées (x:2725, y:948, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 4: Tindailin
+ 🔍 [PROCESS DEBUG] Début traitement item: Tindailin
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068539,
+  "name": "Tindailin",
+  "description": "Près du Gué de Sarn, au cœur d'un bosquet dense, se trouvent les ruines de Tindailin, un ancien refuge elfe. Jadis lieu de paix et de beauté, centré autour d'un lac scintillant, il est aujourd'hui une forêt sombre et hostile. La cause de cette corruption est le chagrin d'Herunen, un esprit des eaux, qui, se croyant trahi, a voué une haine tenace à tous les êtres vivants, et particulièrement aux Elfes, qui osent troubler sa solitud
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3080, y: 1763}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 3080 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1763 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Tindailin (x:3080, y:1763, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 5: Le Palais de la Reine
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Le Palais de la Reine
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068540,
+  "name": "Le Palais de la Reine",
+  "description": "À Lond Daer, sur une butte dominant le port, se dresse le Palais de la Reine. Loin des forteresses de jadis, c'est une longue maison en bois et en torchis, bâtie sur les ruines d'un édifice númenóréen. C'est le cœur du petit royaume renaissant de la Reine Nimue, un lieu d'espoir où des guerriers rudes se rêvent en chevaliers des légendes, inspirés par le courage de leur jeune souveraine. Le crâne du serpent de mer qu'e
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3054, y: 2926}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 3054 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 2926 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Le Palais de la Reine (x:3054, y:2926, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 6: Les Champs du Massacre
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Les Champs du Massacre
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068541,
+  "name": "Les Champs du Massacre",
+  "description": "Il y a près de mille ans, les plaines à l'est du lac Evendim furent le théâtre de la Bataille de Fornost, où une alliance d'Elfes et d'Hommes brisa la puissance d'Angmar. Mais la victoire eut un coût terrible. Le chagrin et la souffrance imprègnent encore cette terre, et l'on dit que les échos du combat hantent les lieux. Récemment, une Elfe tourmentée, Nalien, est revenue sur les lieux, hantée par le fantôme de son a
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3376, y: 999}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 3376 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 999 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Les Champs du Massacre (x:3376, y:999, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 7: Le Mont Venteux
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Le Mont Venteux
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068542,
+  "name": "Le Mont Venteux",
+  "description": "Le Mont Venteux, ou Amon Sûl, est la plus haute des Collines Venteuses. En son sommet se dressait jadis une grande tour de guet bâtie par Elendil, qui abritait la pierre maîtresse des palantíri d'Arnor. Ravagée durant les guerres contre Angmar, la tour n'est plus qu'un cercle de pierres brisées. Le lieu, empreint du souvenir d'un Âge disparu, sert aujourd'hui de point de rendez-vous et de poste d'observation pour les Rôdeurs
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3722, y: 1389}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 3722 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1389 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Le Mont Venteux (x:3722, y:1389, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 8: La Colline de l'Assoupie
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: La Colline de l'Assoupie
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068543,
+  "name": "La Colline de l'Assoupie",
+  "description": "Au cœur des Noues des Cygnes, une colline verdoyante cache un secret millénaire : un palais bâti par les Nains de la Moria pour une Dame elfe d'Eregion. Nethig, son nom, fut mordue par Sauron sous la forme d'un serpent. Pour échapper à une mort certaine, elle forgea un anneau qui la plongea dans un sommeil enchanté. Elle repose depuis lors dans son palais englouti, attendant un remède que son compagnon, mort au comb
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3882, y: 2219}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 3882 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 2219 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: La Colline de l'Assoupie (x:3882, y:2219, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 9: Le Mont Gram
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Le Mont Gram
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068544,
+  "name": "Le Mont Gram",
+  "description": "Le Mont Gram, pic le plus élevé à l'ouest des Monts Brumeux, fut jadis une place-forte naine avant d'être conquis par l'Ennemi. Depuis des millénaires, ses tunnels grouillent d'Orques et de Gobelins, constituant une menace constante pour le nord de l'Eriador. C'est de cette montagne que vint Golfimbul, le chef orque tué par Bandobras Touque lors de la Bataille des Champs Verts, un affront que les créatures du Mont Gram n'ont ja
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 4161, y: 601}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 4161 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 601 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Le Mont Gram (x:4161, y:601, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 10: Le Fort Arlas
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Le Fort Arlas
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068545,
+  "name": "Le Fort Arlas",
+  "description": "Parmi les collines du Rhudaur se dresse le Fort Arlas, une forteresse au passé sanglant. Il fut bâti à l'endroit même où Damrod, un jeune Dúnedain, et Gnarsh, un Grand Orque, s'entretuèrent au temps du Roi. Depuis, le fort a changé de mains à de nombreuses reprises, car on dit qu'une malédiction pèse sur lui : ceux qui l'habitent finissent toujours par sombrer dans l'amertume et la mélancolie, tourmentés par les esprits des de
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3500, y: 1600}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 3500 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1600 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Le Fort Arlas (x:3500, y:1600, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 11: Le Refuge des Rôdeurs
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Le Refuge des Rôdeurs
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068546,
+  "name": "Le Refuge des Rôdeurs",
+  "description": "Dans l'Angle, cette terre isolée entre la Sonoronne et la Fontgrise, se trouve le principal refuge des Dúnedain du Nord. Après la chute de leur royaume, les descendants des rois sont devenus un peuple nomade, mais c'est ici que leurs enfants sont élevés et que leurs anciens trouvent le repos. Protégé par sa situation géographique et la proximité de Fondcombe, ce village caché est le dernier foyer du sang de Númenor en 
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 4197, y: 1738}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 4197 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1738 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Le Refuge des Rôdeurs (x:4197, y:1738, mapId: aucun)
+import-export-manager.js:263 ✅ [VALIDATE DEBUG] Import validé: 12 lieux, 0 régions
+import-export-manager.js:264 ✅ [VALIDATE DEBUG] Résultat complet: {locations: Array(12), regions: Array(0)}
+import-export-manager.js:184 📥 [IMPORT DEBUG] Données après validation: {locationsCount: 12, regionsCount: 0}
+import-export-manager.js:425 📚 Extraction des rumeurs déjà effectuée lors du parsing JSON
+import-export-manager.js:201 📥 [IMPORT DEBUG] Affichage de la modal de confirmation
+import-export-manager.js:490 📥 [processImport] Début traitement en mode: replace
+import-export-manager.js:491 📥 [processImport] Données à importer: {locations: 12, regions: 0}
+import-export-manager.js:495 📥 [processImport] Données ACTUELLES: {locations: 0, regions: 0}
+import-export-manager.js:501 📥 [processImport] Mode REPLACE - Remplacement de toutes les données
+import-export-manager.js:505 📥 [processImport] Attribution de 12 lieux au dataManager
+import-export-manager.js:516 📥 [processImport] Aucune région à importer - structure vide
+import-export-manager.js:520 📥 [processImport] Mise à jour des références globales window
+import-export-manager.js:524 📥 [processImport] Références globales mises à jour: {windowLocations: 12, windowRegions: 0}
+import-export-manager.js:541 📥 [processImport] Sauvegarde dans localStorage...
+auth-manager.js:1190 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+import-export-manager.js:544 ✅ [processImport] Lieux sauvegardés dans localStorage
+auth-manager.js:1190 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+import-export-manager.js:552 ✅ [processImport] Régions sauvegardées dans localStorage
+import-export-manager.js:559 📥 [processImport] Mise à jour finale des références globales...
+import-export-manager.js:567 🎯 [processImport] Re-rendering 12 locations after import
+import-export-manager.js:568 🌍 [processImport] Re-rendering 0 regions after import
+main.js:212 🎯 Rendering locations...
+main.js:217 🔄 Synchronisation avec window.locationsData
+main.js:220 📊 locationsData: {locations: Array(12)}
+main.js:221 📊 locationsData.locations: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+main.js:241 📱 [renderLocations] currentScale=0.200, showThumbnails=false
+main.js:385 ✅ Rendered 12 location markers (thumbnails: false)
+main.js:388 📍 Locations layer z-index: auto
+import-export-manager.js:573 ✅ [processImport] Locations rendered successfully
+main.js:393 🌍 Rendering regions...
+main.js:398 🔄 Synchronisation avec window.regionsData
+main.js:401 🌍 RegionsData: {regions: Array(0)}
+main.js:537 ✅ Rendered 0 region polygons
+import-export-manager.js:585 ✅ [processImport] Regions rendered successfully
+import-export-manager.js:599 ✅ [processImport] Import terminé avec succès: 12 lieux, 0 régions
+import-export-manager.js:602 📥 [processImport] Rechargement automatique désactivé - les données sont en mémoire
+import-export-manager.js:603 📥 [processImport] Vous pouvez maintenant synchroniser manuellement avec le bouton de sync
+import-export-manager.js:607 📥 [processImport] Déclenchement sauvegarde cloud automatique...
+auth-manager.js:1190 [AuthManager] 🔄 Synchronisation manuelle vers cloud null
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] CalendarManager existe: true
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Données calendar AVANT collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: '12 mois', isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Données calendar APRÈS collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: Array(12), isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📍 Position du marqueur collectée: {x: 679.0967117796672, y: 1333.9388988919711}
+auth-manager.js:1190 [AuthManager] 📦 Données collectées pour le contexte (6) ['locations', 'regions', 'calendar', 'settings', 'journal', 'position']
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Calendar dans les données collectées: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarDataLength: 12, isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] ✅ Données synchronisées dans le cloud null
+auth-manager.js:1190 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1190 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1190 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+import-export-manager.js:611 ✅ [processImport] Sauvegarde cloud terminée avec succès
+main.js:2283 🎯 Starting potential drag for location: Tindailin
+main.js:2325 🎯 Ending location interaction - drag detected
+main.js:2340 🎯 Updated location Tindailin coordinates to (3135.1, 1888.3)
+auth-manager.js:1190 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+auth-manager.js:1190 [AuthManager] 🔔 Modifications non sauvegardées détectées null
+main.js:2374 🔄 Auto-sync scheduled
+auth-manager.js:1190 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+auth-manager.js:1190 [AuthManager] 🔄 Synchronisation manuelle vers cloud null
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] CalendarManager existe: true
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Données calendar AVANT collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: '12 mois', isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Données calendar APRÈS collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: Array(12), isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📍 Position du marqueur collectée: {x: 679.0967117796672, y: 1333.9388988919711}
+auth-manager.js:1190 [AuthManager] 📦 Données collectées pour le contexte (6) ['locations', 'regions', 'calendar', 'settings', 'journal', 'position']
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Calendar dans les données collectées: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarDataLength: 12, isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] ✅ Données synchronisées dans le cloud null
+auth-manager.js:1190 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1190 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1190 [AuthManager] ✅ Toutes les modifications sont sauvegardées null

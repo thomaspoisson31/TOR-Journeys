@@ -1,0 +1,4400 @@
+(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+(anonymous) @ (index):64
+upload-manager.js:349 📤 UploadManager module loaded
+infobox-manager.js:1368 📋 InfoBoxManager module loaded
+library-manager.js:163 📚 LibraryManager module loaded
+main.js:33 ✅ Constants loaded successfully
+main.js:63 ✅ Global variables initialized
+main.js:71 ✅ Essential DOM elements: {viewport: true, mapContainer: true, mapImage: true, loaderOverlay: true}
+main.js:2436 📋 Simplified main.js loaded - waiting for DOM ready
+main.js:80 🚀 Starting simplified application...
+main.js:85 ✅ DataManager initialized
+filter-manager.js:19 🔍 FilterManager initialized
+main.js:87 ✅ FilterManager initialized
+main.js:97 ✅ VoyageManager initialized
+main.js:104 ✅ PathManager initialized
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"day":19,"month":"Lothron"}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {day: 19, month: 'Lothron'}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"day":19,"month":"Lothron"}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {day: 19, month: 'Lothron'}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+main.js:110 ✅ CalendarManager initialized
+settings-manager.js:17 ⚙️ SettingsManager initialized
+main.js:116 ✅ SettingsManager initialized
+auth-manager.js:1190 [AuthManager] 🔑 Initialisation AuthManager null
+auth-manager.js:1190 [AuthManager] 🔍 Vérification du statut d'authentification null
+auth-manager.js:1190 [AuthManager] 👂 Écoute des changements de localStorage activée. null
+main.js:138 ✅ AuthManager initialized
+upload-manager.js:11 📤 UploadManager initialized
+infobox-manager.js:22 📋 InfoBoxManager initialized with UploadManager
+main.js:147 ✅ InfoBoxManager initialized
+import-export-manager.js:17 📤 ImportExportManager initialized
+import-export-manager.js:44 📤 ImportExportManager event listeners configured
+main.js:156 ✅ ImportExportManager initialized
+main.js:159 📍 Initializing data structures...
+data-manager.js:10 📍 loadInitialLocations: Initialisation avec structure vide
+data-manager.js:15 ✅ Structure de données initialisée (vide, en attente du cloud)
+data-manager.js:39 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+data-manager.js:44 ✅ Structure de régions initialisée (vide, en attente du cloud)
+main.js:167 ✅ Data structures initialized (will be populated from cloud)
+main.js:191 ⏳ Waiting for SettingsManager to load active map...
+upload-manager.js:11 📤 UploadManager initialized
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1190 [AuthManager] ✅ Utilisateur authentifié trouvé null
+auth-manager.js:1190 [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+auth-manager.js:1190 [AuthManager] 📥 Chargement des données depuis le cloud null
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1190 [AuthManager] ✅ Données cloud récupérées {_sync_timestamp: 1760678230832, calendar: {…}, journal: Array(1), locations: {…}, position: {…}, …}
+auth-manager.js:1190 [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+auth-manager.js:1190 [AuthManager] 🔄 Application des données du contexte (7) ['_sync_timestamp', 'calendar', 'journal', 'locations', 'position', 'regions', 'settings']
+auth-manager.js:1190 [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+auth-manager.js:1190 [AuthManager] 💾 0 lieux sauvegardés dans localStorage null
+auth-manager.js:1190 [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+auth-manager.js:1190 [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 0 lieux null
+auth-manager.js:1190 [AuthManager] 📊 Structure locationsData: {locations: Array(0)}
+auth-manager.js:1190 [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+auth-manager.js:1190 [AuthManager] 📊 Structure regionsData: {regions: Array(0)}
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Données calendar reçues: {calendarData: Array(12), currentCalendarDate: {…}, currentSeason: 'printemps-fin', isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Saison appliquée: printemps-fin null
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Date appliquée: {day: 19, month: 'Lothron'}
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Données calendrier appliquées: 12 mois null
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+auth-manager.js:1190 [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+auth-manager.js:1190 [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+auth-manager.js:1190 [AuthManager] ⚙️ Application des paramètres null
+settings-manager.js:971 ⚙️ Chargement des paramètres depuis le contexte: {activeMapName: '20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01', activeMapUrl: '/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', availableMaps: Array(2), narrationStyle: 'brief', partyDescription: '*   **Aelrindel**, une Elfe Sylvestre des lisières…par le massacre de son village par des pillards.\n', …}
+settings-manager.js:976 ✅ Cartes chargées: 2
+settings-manager.js:980 ✅ Carte active URL: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+settings-manager.js:984 ✅ Carte active nom: 20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01
+settings-manager.js:990 ✅ Description aventuriers chargée
+settings-manager.js:994 ✅ Description quête chargée
+settings-manager.js:998 ✅ Style de narration chargé: brief
+settings-manager.js:1008 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+settings-manager.js:1054 ✅ Paramètres chargés avec succès
+auth-manager.js:1190 [AuthManager] ✅ Paramètres appliqués null
+auth-manager.js:1190 [AuthManager] 📖 Application de 1 entrées de journal depuis le contexte null
+auth-manager.js:1190 [AuthManager] 📍 [applyContextData] Restauration de la position du marqueur depuis le contexte: {x: 639.017672411982, y: 1429.1266173902236}
+auth-manager.js:568 📍 [applyContextData] AVANT setItem - position à sauver: {x: 639.017672411982, y: 1429.1266173902236}
+auth-manager.js:574 📍 [applyContextData] APRÈS setItem - position vérif: {"x":639.017672411982,"y":1429.1266173902236}
+auth-manager.js:575 📍 [applyContextData] APRÈS setItem - flag vérif: true
+auth-manager.js:1190 [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: {x: 639.017672411982, y: 1429.1266173902236}
+auth-manager.js:1190 [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+auth-manager.js:1190 [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+auth-manager.js:1190 [AuthManager] ✅ Contexte appliqué avec succès null
+auth-manager.js:1190 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1190 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1190 [AuthManager] 🎨 Rendu forcé après chargement cloud null
+main.js:212 🎯 Rendering locations...
+main.js:217 🔄 Synchronisation avec window.locationsData
+main.js:220 📊 locationsData: {locations: Array(0)}
+main.js:221 📊 locationsData.locations: []
+main.js:241 📱 [renderLocations] currentScale=1.000, showThumbnails=true
+main.js:385 ✅ Rendered 0 location markers (thumbnails: true)
+main.js:388 📍 Locations layer z-index: auto
+auth-manager.js:1190 [AuthManager] ✅ 0 lieux rendus depuis le cloud null
+main.js:393 🌍 Rendering regions...
+main.js:398 🔄 Synchronisation avec window.regionsData
+main.js:401 🌍 RegionsData: {regions: Array(0)}
+main.js:537 ✅ Rendered 0 region polygons
+auth-manager.js:1190 [AuthManager] ✅ 0 régions rendues depuis le cloud null
+auth-manager.js:1190 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+auth-manager.js:1190 [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+settings-manager.js:1012 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1018 🗺️ Réinitialisation de la carte depuis loadSettings
+main.js:547 🗺️ Initializing map...
+main.js:559 📐 Map dimensions: 4252 x 3296
+main.js:582 ✅ Regions layer configured
+main.js:855 🎮 Setting up map navigation...
+main.js:1082 ✅ Map navigation setup complete
+main.js:1087 📋 Setting up info-box listeners...
+main.js:1128 ✅ Info-box listeners setup complete
+main.js:1133 🎨 Setting up region drawing...
+main.js:1155 ✅ Region drawing setup complete
+main.js:1408 📍 Setting up location adding...
+main.js:1431 ✅ Generate description button configured
+main.js:2041 🎨 Setting up color change modal...
+main.js:2064 ✅ Color change modal setup complete
+main.js:1455 ✅ Location adding setup complete
+main.js:609 🔍 Setting up FilterManager...
+filter-manager.js:24 🔍 Setting up filter listeners...
+filter-manager.js:59 ✅ Filter listeners setup complete
+main.js:617 ✅ FilterManager setup complete
+main.js:624 🚀 Setting up VoyageManager...
+main.js:626 ✅ VoyageManager setup complete
+main.js:631 🗺️ Setting up PathManager...
+path-manager.js:50 🎨 Canvas configuré : 4252x3296
+path-manager.js:38 🛤️ PathManager initialized
+main.js:633 ✅ PathManager setup complete
+zoom-manager.js:26 🔍 Initializing ZoomManager...
+zoom-manager.js:223 🔍 [ZoomManager] updateDisplay called: scale=0.238
+zoom-manager.js:213 🔍 [ZoomManager] updateSliderPosition: scale=0.238, ratio=0.035, x=5.3px, sliderWidth=150px
+zoom-manager.js:30 ✅ ZoomManager initialized
+main.js:661 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 4252 MAP_HEIGHT: 3296
+main.js:666 📍 [main.js] État localStorage AVANT init PositionManager - position: {"x":639.017672411982,"y":1429.1266173902236} flag: true
+position-manager.js:24 📍 [PositionManager.loadPosition] État du flag cloud: true
+position-manager.js:27 📍 [PositionManager.loadPosition] Position dans localStorage: {"x":639.017672411982,"y":1429.1266173902236}
+position-manager.js:34 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: {x: 639.017672411982, y: 1429.1266173902236}
+position-manager.js:14 📍 Initializing PositionManager...
+position-manager.js:17 ✅ PositionManager initialized with position: {x: 639.017672411982, y: 1429.1266173902236}
+main.js:674 ✅ PositionManager initialized with position: {x: 639.017672411982, y: 1429.1266173902236}
+main.js:678 📍 [main.js] Nettoyage du flag cloud après initialisation
+journal-manager.js:11 📖 Initialisation du JournalManager
+journal-manager.js:48 📖 1 voyage(s) chargé(s) depuis le localStorage
+main.js:686 ✅ JournalManager initialized
+adventure-manager.js:15 🎲 Initializing AdventureManager...
+adventure-manager.js:17 ✅ AdventureManager initialized
+main.js:692 ✅ AdventureManager initialized
+main.js:2252 🖌️ Setting up drawing events...
+main.js:2256 👂 Adding VoyageManager drawing listeners...
+voyage-manager.js:76 🎨 VoyageManager drawing listeners configured
+main.js:2258 ✅ VoyageManager drawing listeners added
+main.js:2261 ✅ Drawing events setup complete
+zoom-manager.js:223 🔍 [ZoomManager] updateDisplay called: scale=0.200
+zoom-manager.js:213 🔍 [ZoomManager] updateSliderPosition: scale=0.200, ratio=0.026, x=3.8px, sliderWidth=150px
+main.js:701 ✅ Map initialized successfully
+import-export-manager.js:163 📥 [IMPORT DEBUG] Fichier sélectionné: LAU-Livre-base.json
+ 📥 [IMPORT DEBUG] Contenu brut du fichier (premiers 500 caractères): {
+  "locations": [
+    {
+      "id": 1757687068518,
+      "name": "Le Lac Evendim",
+      "description": "Vaste et paisible, le Lac Evendim, ou Nenuial en langue elfique, est le joyau des collines qui portent son nom. Ses rives sablonneuses ont jadis connu la prospérité des Hommes et des Dúnedain, mais ne sont plus aujourd'hui que le refuge de bêtes sauvages et de créatures venues du nord. Ses eaux, calmes en été et gelées en hiver, sont souvent recouvertes d'une brume épaisse qui étouffe l
+ 📥 [IMPORT DEBUG] JSON parsé avec succès: {locations: Array(17)}
+ 📥 [IMPORT DEBUG] Structure du JSON: {isArray: false, hasLocations: true, hasRegions: false, keys: Array(1)}
+ 🔍 [VALIDATE DEBUG] Début validation des données importées
+ 🔍 [VALIDATE DEBUG] Type de data: object
+ 🔍 [VALIDATE DEBUG] Est un tableau? false
+ 🔍 [VALIDATE DEBUG] Contenu complet data: {
+  "locations": [
+    {
+      "id": 1757687068518,
+      "name": "Le Lac Evendim",
+      "description": "Vaste et paisible, le Lac Evendim, ou Nenuial en langue elfique, est le joyau des collines qui portent son nom. Ses rives sablonneuses ont jadis connu la prospérité des Hommes et des Dúnedain, mais ne sont plus aujourd'hui que le refuge de bêtes sauvages et de créatures venues du nord. Ses eaux, calmes en été et gelées en hiver, sont souvent recouvertes d'une brume épaisse qui étouffe les sons et dissimule d'antiques secrets.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2800,
+        "y": 900
+      },
+      "Rumeurs": [
+        "On dit que les brumes du lac ne sont pas naturelles, mais qu'elles sont le fruit d'une ancienne magie des Hauts Hommes, destinée à protéger les trésors engloutis d'Annúminas des regards cupides.",
+        "Des pêcheurs de la Comté racontent avoir vu des formes étranges se m
+ 🔍 [VALIDATE DEBUG] Format: objet avec propriété locations, count: 17
+ 🔍 [VALIDATE DEBUG] Traitement location 0: Le Lac Evendim
+ 🔍 [PROCESS DEBUG] Début traitement item: Le Lac Evendim
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068518,
+  "name": "Le Lac Evendim",
+  "description": "Vaste et paisible, le Lac Evendim, ou Nenuial en langue elfique, est le joyau des collines qui portent son nom. Ses rives sablonneuses ont jadis connu la prospérité des Hommes et des Dúnedain, mais ne sont plus aujourd'hui que le refuge de bêtes sauvages et de créatures venues du nord. Ses eaux, calmes en été et gelées en hiver, sont souvent recouvertes d'une brume épaisse qui étouffe les sons et dissimule d'antiques secrets.
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 2800, y: 900}
+ 🔍 [PROCESS DEBUG] x = 2800 type: number
+ 🔍 [PROCESS DEBUG] y = 900 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Le Lac Evendim (x:2800, y:900, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 1: Annúminas, la Cité Engloutie
+ 🔍 [PROCESS DEBUG] Début traitement item: Annúminas, la Cité Engloutie
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068519,
+  "name": "Annúminas, la Cité Engloutie",
+  "description": "Jadis capitale du Royaume du Nord, la grande cité d'Annúminas n'est plus qu'un squelette de pierre à demi submergé par les eaux du Lac Evendim. Ses murs déchiquetés et ses tours éventrées témoignent d'une gloire passée. Depuis les inondations du Rude Hiver, la cité est presque entièrement noyée, et rares sont ceux, même parmi les pillards, qui osent s'aventurer dans ce lieu de silence et de désolation.",
+  "colo
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 2750, y: 980}
+ 🔍 [PROCESS DEBUG] x = 2750 type: number
+ 🔍 [PROCESS DEBUG] y = 980 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Annúminas, la Cité Engloutie (x:2750, y:980, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 2: Eskerdale, le Hameau Perdu
+ 🔍 [PROCESS DEBUG] Début traitement item: Eskerdale, le Hameau Perdu
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068520,
+  "name": "Eskerdale, le Hameau Perdu",
+  "description": "Caché au fond d'une vallée des Collines d'Evendim, Eskerdale est un village d'Hommes qui ont choisi l'isolement. Ses habitants, méfiants envers les étrangers, vivent de la chasse et de la pêche, dans de petites maisons de pierre. Sous la direction de leur chef Oswin, ils ont coupé presque tout contact avec le monde extérieur, y compris avec les Rôdeurs, et une atmosphère pesante semble s'être installée sur la comm
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 2950, y: 750}
+ 🔍 [PROCESS DEBUG] x = 2950 type: number
+ 🔍 [PROCESS DEBUG] y = 750 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Eskerdale, le Hameau Perdu (x:2950, y:750, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 3: Le Bois de Chet
+ 🔍 [PROCESS DEBUG] Début traitement item: Le Bois de Chet
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068521,
+  "name": "Le Bois de Chet",
+  "description": "Vaste et ancien, le Bois de Chet s'étend au nord et à l'est du Pays de Bree. Si ses lisières sont familières aux habitants de la région, son cœur est un lieu sauvage et mystérieux. Ses arbres noueux et ses ombres profondes abritent de nombreux dangers. Récemment, des créatures maléfiques descendues des Collines Venteuses ont commencé à infester ses profondeurs, rendant la forêt plus périlleuse que jamais.",
+  "color": "blue"
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3500, y: 1300}
+ 🔍 [PROCESS DEBUG] x = 3500 type: number
+ 🔍 [PROCESS DEBUG] y = 1300 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Le Bois de Chet (x:3500, y:1300, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 4: Le Marais de l'Eau-aux-Cousins
+ 🔍 [PROCESS DEBUG] Début traitement item: Le Marais de l'Eau-aux-Cousins
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068522,
+  "name": "Le Marais de l'Eau-aux-Cousins",
+  "description": "À l'est du Bois de Chet s'étend une terre plate et marécageuse, un dédale de mares stagnantes et de roseaux. Le Marais de l'Eau-aux-Cousins est un lieu inhospitalier, nommé ainsi à cause des nuages de moucherons qui tourmentent les rares voyageurs assez fous pour s'y aventurer. Le son incessant des insectes et le sol détrempé en font un obstacle redoutable.",
+  "color": "blue",
+  "known": true,
+  "visited": fa
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3650, y: 1250}
+ 🔍 [PROCESS DEBUG] x = 3650 type: number
+ 🔍 [PROCESS DEBUG] y = 1250 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Le Marais de l'Eau-aux-Cousins (x:3650, y:1250, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 5: L'Auberge de l'Abandonné
+ 🔍 [PROCESS DEBUG] Début traitement item: L'Auberge de l'Abandonné
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068523,
+  "name": "L'Auberge de l'Abandonné",
+  "description": "À l'extrémité orientale du Pays de Bree, au bord de la Grande Route de l'Est, se dresse une bicoque délabrée qui sert d'auberge aux voyageurs les moins recommandables. L'Auberge de l'Abandonné est un repaire de criminels et de vagabonds, où la bière est mauvaise et les lits infestés de puces. Le propriétaire, un homme taciturne connu sous le nom de 'Jack l'Abandonné', ne se soucie que de l'argent de ses clients, peu
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3550, y: 1400}
+ 🔍 [PROCESS DEBUG] x = 3550 type: number
+ 🔍 [PROCESS DEBUG] y = 1400 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: L'Auberge de l'Abandonné (x:3550, y:1400, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 6: Le Chemin Vert
+ 🔍 [PROCESS DEBUG] Début traitement item: Le Chemin Vert
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068524,
+  "name": "Le Chemin Vert",
+  "description": "Autrefois grande artère reliant les royaumes d'Arnor et de Gondor, le Chemin Vert n'est plus qu'une route délabrée et herbeuse. Très peu emprunté, il a acquis une sombre réputation, hanté par les bandits et les coupe-gorge. Pourtant, de petites communautés de fermiers, descendants des réfugiés de Tharbad, survivent le long de son tracé, vivant dans un isolement méfiant mais conservant un cœur bon et une hospitalité occasionne
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3200, y: 1800}
+ 🔍 [PROCESS DEBUG] x = 3200 type: number
+ 🔍 [PROCESS DEBUG] y = 1800 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Le Chemin Vert (x:3200, y:1800, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 7: Les Hauts des Galgals
+ 🔍 [PROCESS DEBUG] Début traitement item: Les Hauts des Galgals
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068525,
+  "name": "Les Hauts des Galgals",
+  "description": "À l'est de la Vieille Forêt s'élèvent les Hauts des Galgals, une contrée labyrinthique de collines gris-vert couronnées de tertres funéraires et de pierres dressées. De jour, le silence y est pesant ; de nuit, un brouillard froid s'élève, et les redoutables Êtres des Galgals, esprits des anciens seigneurs d'Eriador, sortent de leurs tombes pour tourmenter les vivants. Les voyageurs avisés contournent ces terres maudite
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3250, y: 1600}
+ 🔍 [PROCESS DEBUG] x = 3250 type: number
+ 🔍 [PROCESS DEBUG] y = 1600 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Les Hauts des Galgals (x:3250, y:1600, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 8: Les Hauts du Nord
+ 🔍 [PROCESS DEBUG] Début traitement item: Les Hauts du Nord
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068526,
+  "name": "Les Hauts du Nord",
+  "description": "Vaste étendue de hautes collines et de ravins herbeux, les Hauts du Nord furent jadis le cœur du royaume d'Arnor. Aujourd'hui désertée, la région est parsemée des ruines de tours et de forteresses. Récemment, des bandes de brigands et de voleurs s'y sont installées, utilisant les anciennes constructions comme repaires pour attaquer les voyageurs sur le Chemin Vert et les routes commerciales menant à Bree.",
+  "color": "blu
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+ 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3100, y: 1050}
+ 🔍 [PROCESS DEBUG] x = 3100 type: number
+ 🔍 [PROCESS DEBUG] y = 1050 type: number
+ 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+ ✅ Lieu importé: Les Hauts du Nord (x:3100, y:1050, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 9: Les Hauts du Sud
+ 🔍 [PROCESS DEBUG] Début traitement item: Les Hauts du Sud
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068527,
+  "name": "Les Hauts du Sud",
+  "description": "Paysage monotone de collines mornes et désolées, les Hauts du Sud sont une région sauvage que la plupart des voyageurs évitent. Presque dénuée de végétation, elle est balayée par un vent d'ouest qui charrie parfois les miasmes des Hauts des Galgals. Récemment, une meute de loups venue des Monts Brumeux y a établi sa tanière, ajoutant un nouveau péril à cette terre inhospitalière.",
+  "color": "blue",
+  "known": true,
+  "vis
+ 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3400, y: 1900}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 3400 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1900 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Les Hauts du Sud (x:3400, y:1900, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 10: Les Collines Venteuses
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Les Collines Venteuses
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068528,
+  "name": "Les Collines Venteuses",
+  "description": "Longue crête de collines nues qui s'étend vers le nord depuis le Mont Venteux, cette région est un cimetière de forts et de tours de guet en ruines. Témoins des guerres acharnées contre Angmar, ces pierres écroulées confèrent au paysage un air lugubre et menaçant. Le vent y souffle sans cesse, portant avec lui les échos d'un passé sanglant.",
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "custom",
+
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 3800, y: 1200}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 3800 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1200 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Les Collines Venteuses (x:3800, y:1200, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 11: Angmar
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Angmar
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068529,
+  "name": "Angmar",
+  "description": "Au nord-est de l'Eriador s'étend l'ancien royaume sorcier d'Angmar. Il y a bien longtemps, le Roi-Sorcier lui-même y régnait depuis sa forteresse de Carn Dûm. Bien que son royaume ait été anéanti, les ténèbres s'agitent à nouveau dans cette terre désolée. Un vent glacial souffle des montagnes, et les créatures maléfiques répondent à un nouvel appel, se rassemblant dans l'ombre de l'ancienne citadelle.",
+  "color": "blue",
+  "known": 
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 4400, y: 500}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 4400 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 500 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Angmar (x:4400, y:500, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 12: Les Landes d'Etten
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Les Landes d'Etten
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068530,
+  "name": "Les Landes d'Etten",
+  "description": "Plateau montagneux lugubre et inhospitalier, les Landes d'Etten sont un domaine de brume et de marais glacials. Même les Rôdeurs du Nord hésitent à s'aventurer sur ces terres où la lumière du soleil peine à percer. C'est le repaire de nombreux Trolls, des créatures cruelles qui chassent les voyageurs égarés et se livrent parfois à des raids sanglants dans les tunnels des Gobelins du Mont Gram.",
+  "color": "blue",
+  "know
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 4400, y: 900}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 4400 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 900 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Les Landes d'Etten (x:4400, y:900, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 13: La Trouée des Trolls
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: La Trouée des Trolls
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068531,
+  "name": "La Trouée des Trolls",
+  "description": "À l'est du Dernier Pont, la Grande Route de l'Est s'enfonce dans un paysage sauvage et rocheux, parsemé de bois et de ruines. Cette région, nommée la Trouée des Trolls, est infestée de ces créatures brutales qui utilisent les nombreuses cavernes comme repaires. Les voyageurs qui s'écartent de la route le font à leurs risques et périls, car les prédateurs et les ennemis y sont nombreux et sans pitié.",
+  "color": "blue",
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 4400, y: 1500}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 4400 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1500 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: La Trouée des Trolls (x:4400, y:1500, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 14: Le Dernier Pont
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Le Dernier Pont
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068532,
+  "name": "Le Dernier Pont",
+  "description": "À une centaine de milles à l'est du Mont Venteux, un grand pont de pierre aux trois arches enjambe la Fontgrise. C'est le Dernier Pont. Le franchir, c'est quitter les dernières terres vaguement civilisées pour entrer dans les étendues sauvages de la Trouée des Trolls. Ses pierres érodées et sa rambarde basse en font un passage intimidant, un avertissement des périls à venir.",
+  "color": "blue",
+  "known": true,
+  "visited":
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 4196, y: 1351}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 4196 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1351 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Le Dernier Pont (x:4196, y:1351, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 15: Le Lindon
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Le Lindon
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068533,
+  "name": "Le Lindon",
+  "description": "Vaste région côtière à l'ouest des Montagnes Bleues, le Lindon est le dernier royaume des Elfes en Eriador. Dirigé depuis les Havres Gris par Círdan le Charpentier de Nefs, c'est une terre de beauté mélancolique, où les Elfes se préparent pour leur dernier voyage vers l'Ouest. Divisé par le Golfe de Lune en Forlindon au nord et Harlindon au sud, le royaume est une enclave de paix et de sagesse dans un monde qui s'assombrit.",
+  "c
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 1500, y: 1400}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 1500 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1400 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Le Lindon (x:1500, y:1400, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 16: Les Montagnes Bleues
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Les Montagnes Bleues
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757687068534,
+  "name": "Les Montagnes Bleues",
+  "description": "L'Ered Luin, ou Montagnes Bleues, est une chaîne de montagnes très anciennes qui forme la frontière orientale du Lindon. Autrefois foyer des grandes cités naines de Nogrod et Belegost, elles abritent encore des communautés de Nains, principalement au sud du Golfe de Lune. Leurs mines sont toujours actives, et les Nains des Montagnes Bleues sont une source fiable de nouvelles pour les habitants de l'Eriador, grâce à leur
+import-export-manager.js:353 🔍 [PROCESS DEBUG] Détecté comme LIEU
+import-export-manager.js:354 🔍 [PROCESS DEBUG] Coordonnées brutes: {x: 1900, y: 1800}
+import-export-manager.js:360 🔍 [PROCESS DEBUG] x = 1900 type: number
+import-export-manager.js:361 🔍 [PROCESS DEBUG] y = 1800 type: number
+import-export-manager.js:368 🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu
+import-export-manager.js:415 ✅ Lieu importé: Les Montagnes Bleues (x:1900, y:1800, mapId: aucun)
+import-export-manager.js:263 ✅ [VALIDATE DEBUG] Import validé: 17 lieux, 0 régions
+import-export-manager.js:264 ✅ [VALIDATE DEBUG] Résultat complet: {locations: Array(17), regions: Array(0)}
+import-export-manager.js:184 📥 [IMPORT DEBUG] Données après validation: {locationsCount: 17, regionsCount: 0}
+import-export-manager.js:425 📚 Extraction des rumeurs déjà effectuée lors du parsing JSON
+import-export-manager.js:201 📥 [IMPORT DEBUG] Affichage de la modal de confirmation
+import-export-manager.js:490 📥 [processImport] Début traitement en mode: replace
+import-export-manager.js:491 📥 [processImport] Données à importer: {locations: 17, regions: 0}
+import-export-manager.js:495 📥 [processImport] Données ACTUELLES: {locations: 0, regions: 0}
+import-export-manager.js:501 📥 [processImport] Mode REPLACE - Remplacement de toutes les données
+import-export-manager.js:505 📥 [processImport] Attribution de 17 lieux au dataManager
+import-export-manager.js:516 📥 [processImport] Aucune région à importer - structure vide
+import-export-manager.js:520 📥 [processImport] Mise à jour des références globales window
+import-export-manager.js:524 📥 [processImport] Références globales mises à jour: {windowLocations: 17, windowRegions: 0}
+import-export-manager.js:541 📥 [processImport] Sauvegarde dans localStorage...
+auth-manager.js:1190 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+import-export-manager.js:544 ✅ [processImport] Lieux sauvegardés dans localStorage
+auth-manager.js:1190 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+import-export-manager.js:552 ✅ [processImport] Régions sauvegardées dans localStorage
+import-export-manager.js:559 📥 [processImport] Mise à jour finale des références globales...
+import-export-manager.js:567 🎯 [processImport] Re-rendering 17 locations after import
+import-export-manager.js:568 🌍 [processImport] Re-rendering 0 regions after import
+main.js:212 🎯 Rendering locations...
+main.js:217 🔄 Synchronisation avec window.locationsData
+main.js:220 📊 locationsData: {locations: Array(17)}
+main.js:221 📊 locationsData.locations: (17) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+main.js:241 📱 [renderLocations] currentScale=0.200, showThumbnails=false
+main.js:385 ✅ Rendered 17 location markers (thumbnails: false)
+main.js:388 📍 Locations layer z-index: auto
+import-export-manager.js:573 ✅ [processImport] Locations rendered successfully
+main.js:393 🌍 Rendering regions...
+main.js:398 🔄 Synchronisation avec window.regionsData
+main.js:401 🌍 RegionsData: {regions: Array(0)}
+main.js:537 ✅ Rendered 0 region polygons
+import-export-manager.js:585 ✅ [processImport] Regions rendered successfully
+import-export-manager.js:599 ✅ [processImport] Import terminé avec succès: 17 lieux, 0 régions
+import-export-manager.js:602 📥 [processImport] Rechargement automatique désactivé - les données sont en mémoire
+import-export-manager.js:603 📥 [processImport] Vous pouvez maintenant synchroniser manuellement avec le bouton de sync
+import-export-manager.js:607 📥 [processImport] Déclenchement sauvegarde cloud automatique...
+auth-manager.js:1190 [AuthManager] 🔄 Synchronisation manuelle vers cloud null
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] CalendarManager existe: true
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Données calendar AVANT collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: '12 mois', isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Données calendar APRÈS collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: Array(12), isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📍 Position du marqueur collectée: {x: 639.017672411982, y: 1429.1266173902236}
+auth-manager.js:1190 [AuthManager] 📦 Données collectées pour le contexte (6) ['locations', 'regions', 'calendar', 'settings', 'journal', 'position']
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Calendar dans les données collectées: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarDataLength: 12, isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] ✅ Données synchronisées dans le cloud null
+auth-manager.js:1190 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1190 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1190 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+import-export-manager.js:611 ✅ [processImport] Sauvegarde cloud terminée avec succès
+import-export-manager.js:163 📥 [IMPORT DEBUG] Fichier sélectionné: Regions.json
+ 📥 [IMPORT DEBUG] Contenu brut du fichier (premiers 500 caractères): {
+  "locations": [
+    {
+      "id": 1756499588346,
+      "name": "Harlindon",
+      "description": "",
+      "imageUrl": "",
+      "images": [],
+      "color": "green",
+      "known": true,
+      "visited": false,
+      "type": "region",
+      "coordinates": {
+        "points": [
+          {
+            "x": 2028.1821431939827,
+            "y": 1379.4473561164764
+          },
+          {
+            "x": 1963.4735010214438,
+            "y": 1459.3815611531422
+          },
+          {
+          
+ 📥 [IMPORT DEBUG] JSON parsé avec succès: {locations: Array(117)}
+ 📥 [IMPORT DEBUG] Structure du JSON: {isArray: false, hasLocations: true, hasRegions: false, keys: Array(1)}
+ 🔍 [VALIDATE DEBUG] Début validation des données importées
+ 🔍 [VALIDATE DEBUG] Type de data: object
+ 🔍 [VALIDATE DEBUG] Est un tableau? false
+ 🔍 [VALIDATE DEBUG] Contenu complet data: {
+  "locations": [
+    {
+      "id": 1756499588346,
+      "name": "Harlindon",
+      "description": "",
+      "imageUrl": "",
+      "images": [],
+      "color": "green",
+      "known": true,
+      "visited": false,
+      "type": "region",
+      "coordinates": {
+        "points": [
+          {
+            "x": 2028.1821431939827,
+            "y": 1379.4473561164764
+          },
+          {
+            "x": 1963.4735010214438,
+            "y": 1459.3815611531422
+          },
+          {
+            "x": 1974.8926731695387,
+            "y": 1482.2199054493324
+          },
+          {
+            "x": 1856.894560972556,
+            "y": 1543.1221569058396
+          },
+          {
+            "x": 1811.2178723801755,
+            "y": 1615.443580510442
+          },
+          {
+            "x": 1704.638932331288,
+            "y": 1607.8307990783785
+          },
+          {
+            "x": 1632.3175087266857,
+            "y": 1569.7668919180614
+          },
+          {
+            "x": 1651.3
+ 🔍 [VALIDATE DEBUG] Format: objet avec propriété locations, count: 117
+ 🔍 [VALIDATE DEBUG] Traitement location 0: Harlindon
+ 🔍 [PROCESS DEBUG] Début traitement item: Harlindon
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756499588346,
+  "name": "Harlindon",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2028.1821431939827,
+        "y": 1379.4473561164764
+      },
+      {
+        "x": 1963.4735010214438,
+        "y": 1459.3815611531422
+      },
+      {
+        "x": 1974.8926731695387,
+        "y": 1482.2199054493324
+      },
+      {
+        "x": 1856.894560972556,
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 28
+ ✅ Région importée: Harlindon (28 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 1: Région de Fondcombe
+ 🔍 [PROCESS DEBUG] Début traitement item: Région de Fondcombe
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756499619354,
+  "name": "Région de Fondcombe",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4811.486066567039,
+        "y": 1388.1783661255665
+      },
+      {
+        "x": 4736.730859812236,
+        "y": 1418.587263788537
+      },
+      {
+        "x": 4636.634905004958,
+        "y": 1410.9850393727945
+      },
+      {
+        "x": 4625.2315683
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 9
+ ✅ Région importée: Région de Fondcombe (9 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 2: Collines d'Evendim
+ 🔍 [PROCESS DEBUG] Début traitement item: Collines d'Evendim
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756499875690,
+  "name": "Collines d'Evendim",
+  "description": "Les Collines d'Evendim, s'élevant comme des vagues douces pétrifiées au couchant du Pays de la Comté, sont un lieu de mélancolie douce et de souvenirs enfouis. Leurs flancs, tapissés d'une herbe rase et verdoyante, sont parsemés de blocs de pierre grise, vestiges silencieux d'une grandeur passée. Le vent y murmure des chansons perdues, et souvent la brume, venue du lac Evendim miroitant au loin, cache leurs sommets, voila
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 22
+ ✅ Région importée: Collines d'Evendim (22 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 3: Hauts des Galgals
+ 🔍 [PROCESS DEBUG] Début traitement item: Hauts des Galgals
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756526155758,
+  "name": "Hauts des Galgals",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "black",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3138.197496184817,
+        "y": 1396.4930768020297
+      },
+      {
+        "x": 3165.4259889185123,
+        "y": 1489.6431835225683
+      },
+      {
+        "x": 3185.4890888275518,
+        "y": 1617.1871758014595
+      },
+      {
+        "x": 3153.961360
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 11
+ ✅ Région importée: Hauts des Galgals (11 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 4: Hauts du Sud
+ 🔍 [PROCESS DEBUG] Début traitement item: Hauts du Sud
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756526182064,
+  "name": "Hauts du Sud",
+  "description": "Bordés à l’ouest par le Chemin Vert et au nord par la Route de l’Est, les Hauts du Sud forment un paysage de collines monotones s’étirant d’est en ouest sur une centaine de milles. Mornes et désolées, ces collines sont presque dénuées de végétation, et peu d’animaux y font leur terrier. Les gens de Bree et les Rôdeurs, qui ont peu de raisons de traverser cette région sauvage, l’évitent autant que possible, d’autant qu’un vent v
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 9
+ ✅ Région importée: Hauts du Sud (9 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 5: Montagnes Bleues du Sud
+ 🔍 [PROCESS DEBUG] Début traitement item: Montagnes Bleues du Sud
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756526479404,
+  "name": "Montagnes Bleues du Sud",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "black",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2175.362728778041,
+        "y": 2310.97380780169
+      },
+      {
+        "x": 2117.6454119750724,
+        "y": 2310.97380780169
+      },
+      {
+        "x": 1953.1510590866114,
+        "y": 2172.452247474565
+      },
+      {
+        "x": 1811.74363
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 22
+ ✅ Région importée: Montagnes Bleues du Sud (22 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 6: Montagnes Bleues du Nord
+ 🔍 [PROCESS DEBUG] Début traitement item: Montagnes Bleues du Nord
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756526565003,
+  "name": "Montagnes Bleues du Nord",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "black",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1771.3414891398509,
+        "y": 126.37336680932358
+      },
+      {
+        "x": 1474.097307604562,
+        "y": 250.46559793570634
+      },
+      {
+        "x": 1476.9831734447105,
+        "y": 363.01436570149536
+      },
+      {
+        "x": 1566
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 28
+ ✅ Région importée: Montagnes Bleues du Nord (28 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 7: Monts Brumeux
+ 🔍 [PROCESS DEBUG] Début traitement item: Monts Brumeux
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528183308,
+  "name": "Monts Brumeux",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "black",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4111.964839901276,
+        "y": 216.54737911835576
+      },
+      {
+        "x": 4076.9052371050116,
+        "y": 282.7710732890763
+      },
+      {
+        "x": 4357.382059475122,
+        "y": 415.21846163051737
+      },
+      {
+        "x": 4614.48581331439,
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 46
+ ✅ Région importée: Monts Brumeux (46 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 8: Forêt au nord d'Eryn Vorn
+ 🔍 [PROCESS DEBUG] Début traitement item: Forêt au nord d'Eryn Vorn
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528252685,
+  "name": "Forêt au nord d'Eryn Vorn",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2033.00291152994,
+        "y": 2534.30492418784
+      },
+      {
+        "x": 2169.531468255596,
+        "y": 2578.0640769845245
+      },
+      {
+        "x": 2258.8001399608324,
+        "y": 2494.04650361489
+      },
+      {
+        "x": 2297.308194
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 6
+ ✅ Région importée: Forêt au nord d'Eryn Vorn (6 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 9: Eryn Vorn
+ 🔍 [PROCESS DEBUG] Début traitement item: Eryn Vorn
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528293635,
+  "name": "Eryn Vorn",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2356.820642225406,
+        "y": 2355.7675807773667
+      },
+      {
+        "x": 2318.312587764324,
+        "y": 2473.0421102724813
+      },
+      {
+        "x": 2307.8103910931195,
+        "y": 2585.065541431994
+      },
+      {
+        "x": 2283.3052655269757,
+   
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 26
+ ✅ Région importée: Eryn Vorn (26 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 10: l'Anglet
+ 🔍 [PROCESS DEBUG] Début traitement item: l'Anglet
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528412082,
+  "name": "l'Anglet",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4140.726971528543,
+        "y": 1641.3199215823565
+      },
+      {
+        "x": 4239.421497439994,
+        "y": 1658.9439440665442
+      },
+      {
+        "x": 4299.343173886231,
+        "y": 1761.1632744748322
+      },
+      {
+        "x": 4232.371888446319,
+   
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 9
+ ✅ Région importée: l'Anglet (9 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 11: Marais de l'Eau aux Cousins
+ 🔍 [PROCESS DEBUG] Début traitement item: Marais de l'Eau aux Cousins
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528559721,
+  "name": "Marais de l'Eau aux Cousins",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "black",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3466.99032955936,
+        "y": 1322.452877775163
+      },
+      {
+        "x": 3448.088352658666,
+        "y": 1376.7960613646583
+      },
+      {
+        "x": 3457.5393411090126,
+        "y": 1414.6000151660462
+      },
+      {
+        "x": 3568
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 7
+ ✅ Région importée: Marais de l'Eau aux Cousins (7 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 12: Hauts reculés
+ 🔍 [PROCESS DEBUG] Début traitement item: Hauts reculés
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528768668,
+  "name": "Hauts reculés",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2475.460604924846,
+        "y": 1352.909722979312
+      },
+      {
+        "x": 2399.7346624525017,
+        "y": 1444.303101825245
+      },
+      {
+        "x": 2412.7908594304918,
+        "y": 1540.9189594623742
+      },
+      {
+        "x": 2564.242744375181
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 8
+ ✅ Région importée: Hauts reculés (8 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 13: Collines des Tours
+ 🔍 [PROCESS DEBUG] Début traitement item: Collines des Tours
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528794780,
+  "name": "Collines des Tours",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2346.836272794915,
+        "y": 1375.9525262637344
+      },
+      {
+        "x": 2297.7385734432437,
+        "y": 1432.9692093818044
+      },
+      {
+        "x": 2220.132532532537,
+        "y": 1470.9803314605178
+      },
+      {
+        "x": 2174.202426
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 11
+ ✅ Région importée: Collines des Tours (11 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 14: Embouchure de la Lune
+ 🔍 [PROCESS DEBUG] Début traitement item: Embouchure de la Lune
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756529759660,
+  "name": "Embouchure de la Lune",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1897.7922714732597,
+        "y": 1289.7506433167778
+      },
+      {
+        "x": 1979.0325473526063,
+        "y": 1219.1998774215556
+      },
+      {
+        "x": 2047.4454112510036,
+        "y": 1214.9240734279058
+      },
+      {
+        "x": 2092.3
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 13
+ ✅ Région importée: Embouchure de la Lune (13 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 15: Landes d'Arthedain - Nord
+ 🔍 [PROCESS DEBUG] Début traitement item: Landes d'Arthedain - Nord
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756529794403,
+  "name": "Landes d'Arthedain - Nord",
+  "description": "Les Landes d'Arthedain, étendues grises sous un ciel changeant. Jadis terres fertiles du Royaume du Nord, foulées par les pas des Dúnedain, elles ne sont plus que des plaines venteuses, parsemées de bruyères tenaces et de roches moussues. Le vent y hurle des contes de gloire perdue, et la pluie les lave, impitoyable, effaçant peu à peu les derniers vestiges des villages ruinés. Seuls quelques tumulus solitaires, co
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 15
+ ✅ Région importée: Landes d'Arthedain - Nord (15 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 16: Affluent de la rivière Lune
+ 🔍 [PROCESS DEBUG] Début traitement item: Affluent de la rivière Lune
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582521231,
+  "name": "Affluent de la rivière Lune",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2596.010657058446,
+        "y": 838.1467505779545
+      },
+      {
+        "x": 2463.260828411618,
+        "y": 835.260884737806
+      },
+      {
+        "x": 2396.885914088204,
+        "y": 884.3206040203295
+      },
+      {
+        "x": 2301.652
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 10
+ ✅ Région importée: Affluent de la rivière Lune (10 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 17: Rivière Lune
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Lune
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582576635,
+  "name": "Rivière Lune",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1966.8919039060868,
+        "y": 128.22375390143904
+      },
+      {
+        "x": 1984.2070989469776,
+        "y": 151.31068062262653
+      },
+      {
+        "x": 1943.8049771848994,
+        "y": 249.4301191876734
+      },
+      {
+        "x": 2013.065757348461
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 41
+ ✅ Région importée: Rivière Lune (41 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 18: Rivière Petite Lune
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Petite Lune
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582610165,
+  "name": "Rivière Petite Lune",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1744.6802342146573,
+        "y": 639.0220076077123
+      },
+      {
+        "x": 1819.7127460585166,
+        "y": 676.538263529642
+      },
+      {
+        "x": 1874.544197021337,
+        "y": 662.1089343288999
+      },
+      {
+        "x": 1894.745257902
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 19
+ ✅ Région importée: Rivière Petite Lune (19 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 19: Rivière Brandevin (Nord)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Brandevin (Nord)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582686588,
+  "name": "Rivière Brandevin (Nord)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2769.495396745928,
+        "y": 981.3349245064408
+      },
+      {
+        "x": 2807.0997868934473,
+        "y": 991.7085493747222
+      },
+      {
+        "x": 2821.3635210873344,
+        "y": 1007.2689866771442
+      },
+      {
+        "x": 2847.29
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 55
+ ✅ Région importée: Rivière Brandevin (Nord) (55 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 20: Rivière "L'Eau"
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière "L'Eau"
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582749189,
+  "name": "Rivière \"L'Eau\"",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2548.009578311132,
+        "y": 1137.4844446871302
+      },
+      {
+        "x": 2571.3502342647653,
+        "y": 1160.8251006407634
+      },
+      {
+        "x": 2589.5040777842573,
+        "y": 1193.2426783541425
+      },
+      {
+        "x": 2607.6579213
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 27
+ ✅ Région importée: Rivière "L'Eau" (27 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 21: Rivière Brandevin (portion centrale)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Brandevin (portion centrale)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582826399,
+  "name": "Rivière Brandevin (portion centrale)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2938.2835611859364,
+        "y": 1373.5135255630037
+      },
+      {
+        "x": 2958.3466610949754,
+        "y": 1425.1043539005327
+      },
+      {
+        "x": 2968.378211049495,
+        "y": 1476.6951822380618
+      },
+      {
+      
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 31
+ ✅ Région importée: Rivière Brandevin (portion centrale) (31 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 22: Rivière Brandevin (Sud)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Brandevin (Sud)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582903392,
+  "name": "Rivière Brandevin (Sud)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3098.73902840804,
+        "y": 1817.7546729974324
+      },
+      {
+        "x": 3052.8805143302366,
+        "y": 1872.211658464824
+      },
+      {
+        "x": 3018.4866287718837,
+        "y": 1867.91242277003
+      },
+      {
+        "x": 2994.12429
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 54
+ ✅ Région importée: Rivière Brandevin (Sud) (54 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 23: Rivière Flots Gris (Sud)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Flots Gris (Sud)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756584838260,
+  "name": "Rivière Flots Gris (Sud)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2989.1711458262866,
+        "y": 2952.008265784921
+      },
+      {
+        "x": 3025.5154797723103,
+        "y": 2849.3889699373253
+      },
+      {
+        "x": 3051.170303734209,
+        "y": 2774.562400048453
+      },
+      {
+        "x": 3087.51
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 33
+ ✅ Région importée: Rivière Flots Gris (Sud) (33 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 24: Rivière Sonoronne
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Sonoronne
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756584896473,
+  "name": "Rivière Sonoronne",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4817.077353111589,
+        "y": 1337.8922581821098
+      },
+      {
+        "x": 4710.182253270344,
+        "y": 1333.61645418846
+      },
+      {
+        "x": 4637.493585378296,
+        "y": 1382.788200115433
+      },
+      {
+        "x": 4577.632329467199
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 36
+ ✅ Région importée: Rivière Sonoronne (36 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 25: Le Chemin Vert (Nord)
+ 🔍 [PROCESS DEBUG] Début traitement item: Le Chemin Vert (Nord)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756616200310,
+  "name": "Le Chemin Vert (Nord)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3187.918061058345,
+        "y": 1016.4202620244296
+      },
+      {
+        "x": 3222.9253832956924,
+        "y": 1082.9341742753902
+      },
+      {
+        "x": 3264.9341699805095,
+        "y": 1207.2101682179743
+      },
+      {
+        "x": 3277.18
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 11
+ ✅ Région importée: Le Chemin Vert (Nord) (11 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 26: La Route Nord Sud
+ 🔍 [PROCESS DEBUG] Début traitement item: La Route Nord Sud
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756616319550,
+  "name": "La Route Nord Sud",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3641.137326748309,
+        "y": 2256.8772385523193
+      },
+      {
+        "x": 3704.9742996014015,
+        "y": 2355.5343784161896
+      },
+      {
+        "x": 3722.38438310679,
+        "y": 2469.6671480626273
+      },
+      {
+        "x": 3869.40286604
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 12
+ ✅ Région importée: La Route Nord Sud (12 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 27: Les Noues des Cygnes
+ 🔍 [PROCESS DEBUG] Début traitement item: Les Noues des Cygnes
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756616352302,
+  "name": "Les Noues des Cygnes",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3697.2364847101176,
+        "y": 2171.7612747481967
+      },
+      {
+        "x": 3733.991105443716,
+        "y": 2154.3511912428075
+      },
+      {
+        "x": 3735.925559166537,
+        "y": 2113.727663063567
+      },
+      {
+        "x": 3786.2213559
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 12
+ ✅ Région importée: Les Noues des Cygnes (12 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 28: Moria
+ 🔍 [PROCESS DEBUG] Début traitement item: Moria
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756616381953,
+  "name": "Moria",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4439.076320981277,
+        "y": 2073.2807396925614
+      },
+      {
+        "x": 4448.5273094316235,
+        "y": 2148.8886472953373
+      },
+      {
+        "x": 4583.203894849068,
+        "y": 2174.8788655337917
+      },
+      {
+        "x": 4670.625538014779,
+       
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 9
+ ✅ Région importée: Moria (9 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 29: Rivière Fongrise (Nord)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Fongrise (Nord)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756641460218,
+  "name": "Rivière Fongrise (Nord)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4809.311898409571,
+        "y": 903.7004576871927
+      },
+      {
+        "x": 4747.126707297204,
+        "y": 925.9932620482299
+      },
+      {
+        "x": 4686.114821677524,
+        "y": 934.2064004970331
+      },
+      {
+        "x": 4638.009296
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 38
+ ✅ Région importée: Rivière Fongrise (Nord) (38 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 30: Fongrise (portion centrale)
+ 🔍 [PROCESS DEBUG] Début traitement item: Fongrise (portion centrale)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756641532492,
+  "name": "Fongrise (portion centrale)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4163.405328514948,
+        "y": 1369.7216432482228
+      },
+      {
+        "x": 4164.989125268228,
+        "y": 1501.17677377044
+      },
+      {
+        "x": 4166.572922021507,
+        "y": 1528.1013185761951
+      },
+      {
+        "x": 4128.5
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 46
+ ✅ Région importée: Fongrise (portion centrale) (46 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 31: Rivière Glanduin
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Glanduin
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756641876744,
+  "name": "Rivière Glanduin",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4492.10758101443,
+        "y": 2147.5630108298355
+      },
+      {
+        "x": 4422.467246992875,
+        "y": 2153.3663719982983
+      },
+      {
+        "x": 4403.122709764665,
+        "y": 2157.2352794439403
+      },
+      {
+        "x": 4383.77817253645
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 38
+ ✅ Région importée: Rivière Glanduin (38 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 32: Affluent rivière Glanduin
+ 🔍 [PROCESS DEBUG] Début traitement item: Affluent rivière Glanduin
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756641909425,
+  "name": "Affluent rivière Glanduin",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4496.344257575082,
+        "y": 2265.710878486624
+      },
+      {
+        "x": 4422.028707695213,
+        "y": 2296.4987491511415
+      },
+      {
+        "x": 4392.302487743265,
+        "y": 2289.0671941631545
+      },
+      {
+        "x": 4382.74
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 21
+ ✅ Région importée: Affluent rivière Glanduin (21 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 33: Eregion
+ 🔍 [PROCESS DEBUG] Début traitement item: Eregion
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756645445069,
+  "name": "Eregion",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4592.12371399841,
+        "y": 1445.656794119842
+      },
+      {
+        "x": 4711.8462258206055,
+        "y": 1441.3809901261923
+      },
+      {
+        "x": 4803.776011684076,
+        "y": 1417.8640681611182
+      },
+      {
+        "x": 4808.051815677726,
+    
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 62
+ ✅ Région importée: Eregion (62 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 34: Angle septentrional
+ 🔍 [PROCESS DEBUG] Début traitement item: Angle septentrional
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756645500835,
+  "name": "Angle septentrional",
+  "description": "",
+  "imageUrl": "",
+  "images": [
+    {
+      "url": "images/the_angle.png",
+      "isDefault": true
+    },
+    {
+      "url": "images/the_angle2.jpg",
+      "isDefault": false
+    }
+  ],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4203.178695150074,
+        "y": 1374.0705109445448
+      },
+      {
+        "x": 4238.022223722228,
+ 
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 30
+ ✅ Région importée: Angle septentrional (30 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 35: Miniriath
+ 🔍 [PROCESS DEBUG] Début traitement item: Miniriath
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756645829640,
+  "name": "Miniriath",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2786.5449748387914,
+        "y": 3121.974739500078
+      },
+      {
+        "x": 2677.858607659801,
+        "y": 3072.3570501357563
+      },
+      {
+        "x": 2547.9075164675296,
+        "y": 2937.680464718311
+      },
+      {
+        "x": 2514.829056891315,
+ 
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 52
+ ✅ Région importée: Miniriath (52 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 36: Enedwaith
+ 🔍 [PROCESS DEBUG] Début traitement item: Enedwaith
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756645930408,
+  "name": "Enedwaith",
+  "description": "Les eaux calmes du Flot Gris marquent la frontière sud de la région. Au-delà s’étendent des terres encore plus désolées : landes dénuées d’arbres, mornes plaines et marais suintants composent l’Enedwaith, les Terres de l’entre-deux. Le voyageur l’ignorera, et on le lui pardonne : c’est bien l’Ennemi qui a causé la ruine de cette contrée, mais les pires maux, eux, ont été commis par des Hommes, et la terre n’a pas oublié leur cruau
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 21
+ ✅ Région importée: Enedwaith (21 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 37: Pays de Dun
+ 🔍 [PROCESS DEBUG] Début traitement item: Pays de Dun
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756646011078,
+  "name": "Pays de Dun",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3678.931723082561,
+        "y": 2219.9130978017056
+      },
+      {
+        "x": 3792.9650893187013,
+        "y": 2299.1029354656916
+      },
+      {
+        "x": 3840.478991917093,
+        "y": 2294.3515452058523
+      },
+      {
+        "x": 3952.928561399953
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 41
+ ✅ Région importée: Pays de Dun (41 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 38: Royaume perdu d'Angmar
+ 🔍 [PROCESS DEBUG] Début traitement item: Royaume perdu d'Angmar
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756646079666,
+  "name": "Royaume perdu d'Angmar",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3096.1303766572005,
+        "y": 131.7199906029196
+      },
+      {
+        "x": 3187.775293574976,
+        "y": 272.7121704764203
+      },
+      {
+        "x": 3684.7727276290657,
+        "y": 378.45630538154575
+      },
+      {
+        "x": 4090.12524
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 16
+ ✅ Région importée: Royaume perdu d'Angmar (16 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 39: Baie de Forochel
+ 🔍 [PROCESS DEBUG] Début traitement item: Baie de Forochel
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756646122614,
+  "name": "Baie de Forochel",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3184.2504890781383,
+        "y": 279.7617794700953
+      },
+      {
+        "x": 3099.655181154038,
+        "y": 110.5711636218945
+      },
+      {
+        "x": 1999.9161781407327,
+        "y": 121.14557711240705
+      },
+      {
+        "x": 2024.58980961859
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 13
+ ✅ Région importée: Baie de Forochel (13 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 40: Anciennes terres des Rois d'Arthedain
+ 🔍 [PROCESS DEBUG] Début traitement item: Anciennes terres des Rois d'Arthedain
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756647116650,
+  "name": "Anciennes terres des Rois d'Arthedain",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2964.150098109417,
+        "y": 1356.0993304764193
+      },
+      {
+        "x": 3045.3903739887637,
+        "y": 1349.6856244859446
+      },
+      {
+        "x": 3143.7338658427097,
+        "y": 1360.375134470069
+      },
+      {
+     
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 43
+ ✅ Région importée: Anciennes terres des Rois d'Arthedain (43 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 41: Plaines du Nord
+ 🔍 [PROCESS DEBUG] Début traitement item: Plaines du Nord
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756658283663,
+  "name": "Plaines du Nord",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1750.2100810015156,
+        "y": 119.38411113770658
+      },
+      {
+        "x": 1716.9531248760354,
+        "y": 138.6381383682478
+      },
+      {
+        "x": 1471.9018692146017,
+        "y": 241.90973896842345
+      },
+      {
+        "x": 1470.1515031
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 16
+ ✅ Région importée: Plaines du Nord (16 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 42: Forêt côtières septentrionales
+ 🔍 [PROCESS DEBUG] Début traitement item: Forêt côtières septentrionales
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756658350485,
+  "name": "Forêt côtières septentrionales",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1418.6484714696342,
+        "y": 518.8983145191733
+      },
+      {
+        "x": 1542.6467872854791,
+        "y": 512.4846085286985
+      },
+      {
+        "x": 1568.3016112473783,
+        "y": 775.446554138163
+      },
+      {
+        "x": 1
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 21
+ ✅ Région importée: Forêt côtières septentrionales (21 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 43: Plaine orientale des Montagnes Bleues
+ 🔍 [PROCESS DEBUG] Début traitement item: Plaine orientale des Montagnes Bleues
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756927682660,
+  "name": "Plaine orientale des Montagnes Bleues",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1744.3382617173422,
+        "y": 652.8934582859312
+      },
+      {
+        "x": 1800.7410326622607,
+        "y": 661.249424351845
+      },
+      {
+        "x": 1844.6098545083087,
+        "y": 663.3384158683235
+      },
+      {
+      
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 22
+ ✅ Région importée: Plaine orientale des Montagnes Bleues (22 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 44: Entre deux Lunes
+ 🔍 [PROCESS DEBUG] Début traitement item: Entre deux Lunes
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756927733115,
+  "name": "Entre deux Lunes",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1955.4179977217404,
+        "y": 127.98601905764312
+      },
+      {
+        "x": 1968.0206337271857,
+        "y": 129.38631194713702
+      },
+      {
+        "x": 1975.0220981746552,
+        "y": 160.192755516003
+      },
+      {
+        "x": 1942.8153617
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 26
+ ✅ Région importée: Entre deux Lunes (26 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 45: Vallée de la Lune
+ 🔍 [PROCESS DEBUG] Début traitement item: Vallée de la Lune
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756927799184,
+  "name": "Vallée de la Lune",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2276.2617299018416,
+        "y": 975.1351145521811
+      },
+      {
+        "x": 2297.26612324425,
+        "y": 938.7274994253395
+      },
+      {
+        "x": 2440.0959979726285,
+        "y": 847.7084616082356
+      },
+      {
+        "x": 2413.490433072
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 16
+ ✅ Région importée: Vallée de la Lune (16 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 46: Terres Solitaires du Nord
+ 🔍 [PROCESS DEBUG] Début traitement item: Terres Solitaires du Nord
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929237405,
+  "name": "Terres Solitaires du Nord",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2226.8264019028097,
+        "y": 278.3414911478419
+      },
+      {
+        "x": 3117.903954179434,
+        "y": 295.44470712244123
+      },
+      {
+        "x": 3179.4755316879914,
+        "y": 271.50020475800216
+      },
+      {
+        "x": 368
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 18
+ ✅ Région importée: Terres Solitaires du Nord (18 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 47: Landes d'Arthedain - sud 
+ 🔍 [PROCESS DEBUG] Début traitement item: Landes d'Arthedain - sud 
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929368440,
+  "name": "Landes d'Arthedain - sud ",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2040.7636588679327,
+        "y": 1667.6903528353494
+      },
+      {
+        "x": 2103.4334043622866,
+        "y": 1701.114217099005
+      },
+      {
+        "x": 2354.112386339703,
+        "y": 1548.6178363960769
+      },
+      {
+        "x": 239
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 16
+ ✅ Région importée: Landes d'Arthedain - sud  (16 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 48: Région du Gué de Sarn
+ 🔍 [PROCESS DEBUG] Début traitement item: Région du Gué de Sarn
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929412230,
+  "name": "Région du Gué de Sarn",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3292.069577238535,
+        "y": 1845.2546317360193
+      },
+      {
+        "x": 3250.2897469089658,
+        "y": 1665.6013613188709
+      },
+      {
+        "x": 3170.908069282784,
+        "y": 1719.9151407473112
+      },
+      {
+        "x": 3124.95025
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 16
+ ✅ Région importée: Région du Gué de Sarn (16 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 49: Plaines méridionales des Montagnes Bleures
+ 🔍 [PROCESS DEBUG] Début traitement item: Plaines méridionales des Montagnes Bleures
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929548593,
+  "name": "Plaines méridionales des Montagnes Bleures",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2037.0986664533393,
+        "y": 2002.0832359219387
+      },
+      {
+        "x": 2127.1376806659705,
+        "y": 1997.465850577701
+      },
+      {
+        "x": 2549.6284396637016,
+        "y": 1995.1571579055824
+      },
+      
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 29
+ ✅ Région importée: Plaines méridionales des Montagnes Bleures (29 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 50: Lac Nenuial
+ 🔍 [PROCESS DEBUG] Début traitement item: Lac Nenuial
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929639705,
+  "name": "Lac Nenuial",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2766.502955819813,
+        "y": 867.4553208225691
+      },
+      {
+        "x": 2778.109678156739,
+        "y": 898.4065803877047
+      },
+      {
+        "x": 2766.502955819813,
+        "y": 925.4889325071985
+      },
+      {
+        "x": 2795.5197616621276,
+   
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 23
+ ✅ Région importée: Lac Nenuial (23 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 51: Forlindon
+ 🔍 [PROCESS DEBUG] Début traitement item: Forlindon
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756499547042,
+  "name": "Forlindon",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2020.5693617619193,
+        "y": 1337.5770582401276
+      },
+      {
+        "x": 1723.6708859114465,
+        "y": 1371.834574684413
+      },
+      {
+        "x": 1670.3814158870027,
+        "y": 1318.5451046599692
+      },
+      {
+        "x":
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 18
+ ✅ Région importée: Forlindon (18 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 52: Harlindon
+ 🔍 [PROCESS DEBUG] Début traitement item: Harlindon
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756499588346,
+  "name": "Harlindon",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2028.1821431939827,
+        "y": 1379.4473561164764
+      },
+      {
+        "x": 1963.4735010214438,
+        "y": 1459.3815611531422
+      },
+      {
+        "x": 1974.8926731695387,
+        "y": 1482.2199054493324
+      },
+      {
+        "x"
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 28
+ ✅ Région importée: Harlindon (28 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 53: Région de Fondcombe
+ 🔍 [PROCESS DEBUG] Début traitement item: Région de Fondcombe
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756499619354,
+  "name": "Région de Fondcombe",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4811.486066567039,
+        "y": 1388.1783661255665
+      },
+      {
+        "x": 4736.730859812236,
+        "y": 1418.587263788537
+      },
+      {
+        "x": 4636.634905004958,
+        "y": 1410.9850393727945
+      },
+      {
+     
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 9
+ ✅ Région importée: Région de Fondcombe (9 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 54: Collines d'Evendim
+ 🔍 [PROCESS DEBUG] Début traitement item: Collines d'Evendim
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756499875690,
+  "name": "Collines d'Evendim",
+  "description": "Les Collines d'Evendim, s'élevant comme des vagues douces pétrifiées au couchant du Pays de la Comté, sont un lieu de mélancolie douce et de souvenirs enfouis. Leurs flancs, tapissés d'une herbe rase et verdoyante, sont parsemés de blocs de pierre grise, vestiges silencieux d'une grandeur passée. Le vent y murmure des chansons perdues, et souvent la brume, venue du lac Evendim miroitant au loin, cache leurs sommets, voila
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 22
+ ✅ Région importée: Collines d'Evendim (22 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 55: Hauts des Galgals
+ 🔍 [PROCESS DEBUG] Début traitement item: Hauts des Galgals
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756526155758,
+  "name": "Hauts des Galgals",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "black",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3138.197496184817,
+        "y": 1396.4930768020297
+      },
+      {
+        "x": 3165.4259889185123,
+        "y": 1489.6431835225683
+      },
+      {
+        "x": 3185.4890888275518,
+        "y": 1617.1871758014595
+      },
+      {
+    
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 11
+ ✅ Région importée: Hauts des Galgals (11 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 56: Hauts du Sud
+ 🔍 [PROCESS DEBUG] Début traitement item: Hauts du Sud
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756526182064,
+  "name": "Hauts du Sud",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3321.631552496031,
+        "y": 1544.10016898996
+      },
+      {
+        "x": 3589.6172441381955,
+        "y": 1582.7932902431069
+      },
+      {
+        "x": 3890.5637427737815,
+        "y": 1571.3286617236558
+      },
+      {
+        "x": 
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 9
+ ✅ Région importée: Hauts du Sud (9 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 57: Montagnes Bleues du Sud
+ 🔍 [PROCESS DEBUG] Début traitement item: Montagnes Bleues du Sud
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756526479404,
+  "name": "Montagnes Bleues du Sud",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "black",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2175.362728778041,
+        "y": 2310.97380780169
+      },
+      {
+        "x": 2117.6454119750724,
+        "y": 2310.97380780169
+      },
+      {
+        "x": 1953.1510590866114,
+        "y": 2172.452247474565
+      },
+      {
+   
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 22
+ ✅ Région importée: Montagnes Bleues du Sud (22 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 58: Montagnes Bleues du Nord
+ 🔍 [PROCESS DEBUG] Début traitement item: Montagnes Bleues du Nord
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756526565003,
+  "name": "Montagnes Bleues du Nord",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "black",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1771.3414891398509,
+        "y": 126.37336680932358
+      },
+      {
+        "x": 1474.097307604562,
+        "y": 250.46559793570634
+      },
+      {
+        "x": 1476.9831734447105,
+        "y": 363.01436570149536
+      },
+     
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 28
+ ✅ Région importée: Montagnes Bleues du Nord (28 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 59: Monts Brumeux
+ 🔍 [PROCESS DEBUG] Début traitement item: Monts Brumeux
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528183308,
+  "name": "Monts Brumeux",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "black",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4111.964839901276,
+        "y": 216.54737911835576
+      },
+      {
+        "x": 4076.9052371050116,
+        "y": 282.7710732890763
+      },
+      {
+        "x": 4357.382059475122,
+        "y": 415.21846163051737
+      },
+      {
+        "x
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 46
+ ✅ Région importée: Monts Brumeux (46 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 60: Forêt au nord d'Eryn Vorn
+ 🔍 [PROCESS DEBUG] Début traitement item: Forêt au nord d'Eryn Vorn
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528252685,
+  "name": "Forêt au nord d'Eryn Vorn",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2033.00291152994,
+        "y": 2534.30492418784
+      },
+      {
+        "x": 2169.531468255596,
+        "y": 2578.0640769845245
+      },
+      {
+        "x": 2258.8001399608324,
+        "y": 2494.04650361489
+      },
+      {
+    
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 6
+ ✅ Région importée: Forêt au nord d'Eryn Vorn (6 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 61: Eryn Vorn
+ 🔍 [PROCESS DEBUG] Début traitement item: Eryn Vorn
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528293635,
+  "name": "Eryn Vorn",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2356.820642225406,
+        "y": 2355.7675807773667
+      },
+      {
+        "x": 2318.312587764324,
+        "y": 2473.0421102724813
+      },
+      {
+        "x": 2307.8103910931195,
+        "y": 2585.065541431994
+      },
+      {
+        "x": 228
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 26
+ ✅ Région importée: Eryn Vorn (26 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 62: l'Anglet
+ 🔍 [PROCESS DEBUG] Début traitement item: l'Anglet
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528412082,
+  "name": "l'Anglet",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4140.726971528543,
+        "y": 1641.3199215823565
+      },
+      {
+        "x": 4239.421497439994,
+        "y": 1658.9439440665442
+      },
+      {
+        "x": 4299.343173886231,
+        "y": 1761.1632744748322
+      },
+      {
+        "x": 42
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 9
+ ✅ Région importée: l'Anglet (9 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 63: Hauts du Nord et Collines Venteuses
+ 🔍 [PROCESS DEBUG] Début traitement item: Hauts du Nord et Collines Venteuses
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528500039,
+  "name": "Hauts du Nord et Collines Venteuses",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "violet",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3402.470524971683,
+        "y": 667.9250531058591
+      },
+      {
+        "x": 3644.883255544152,
+        "y": 728.5282357489763
+      },
+      {
+        "x": 3529.4486219382143,
+        "y": 786.2455525519449
+      
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 23
+ ✅ Région importée: Hauts du Nord et Collines Venteuses (23 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 64: Marais de l'Eau aux Cousins
+ 🔍 [PROCESS DEBUG] Début traitement item: Marais de l'Eau aux Cousins
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528559721,
+  "name": "Marais de l'Eau aux Cousins",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3466.99032955936,
+        "y": 1322.452877775163
+      },
+      {
+        "x": 3448.088352658666,
+        "y": 1376.7960613646583
+      },
+      {
+        "x": 3457.5393411090126,
+        "y": 1414.6000151660462
+      },
+      {
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 7
+ ✅ Région importée: Marais de l'Eau aux Cousins (7 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 65: Hauts reculés
+ 🔍 [PROCESS DEBUG] Début traitement item: Hauts reculés
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528768668,
+  "name": "Hauts reculés",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2475.460604924846,
+        "y": 1352.909722979312
+      },
+      {
+        "x": 2399.7346624525017,
+        "y": 1444.303101825245
+      },
+      {
+        "x": 2412.7908594304918,
+        "y": 1540.9189594623742
+      },
+      {
+        "x
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 8
+ ✅ Région importée: Hauts reculés (8 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 66: Collines des Tours
+ 🔍 [PROCESS DEBUG] Début traitement item: Collines des Tours
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756528794780,
+  "name": "Collines des Tours",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2346.836272794915,
+        "y": 1375.9525262637344
+      },
+      {
+        "x": 2297.7385734432437,
+        "y": 1432.9692093818044
+      },
+      {
+        "x": 2220.132532532537,
+        "y": 1470.9803314605178
+      },
+      {
+    
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 11
+ ✅ Région importée: Collines des Tours (11 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 67: Embouchure de la Lune
+ 🔍 [PROCESS DEBUG] Début traitement item: Embouchure de la Lune
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756529759660,
+  "name": "Embouchure de la Lune",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1897.7922714732597,
+        "y": 1289.7506433167778
+      },
+      {
+        "x": 1979.0325473526063,
+        "y": 1219.1998774215556
+      },
+      {
+        "x": 2047.4454112510036,
+        "y": 1214.9240734279058
+      },
+      {
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 13
+ ✅ Région importée: Embouchure de la Lune (13 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 68: Landes d'Arthedain - Nord
+ 🔍 [PROCESS DEBUG] Début traitement item: Landes d'Arthedain - Nord
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756529794403,
+  "name": "Landes d'Arthedain - Nord",
+  "description": "Les Landes d'Arthedain, étendues grises sous un ciel changeant. Jadis terres fertiles du Royaume du Nord, foulées par les pas des Dúnedain, elles ne sont plus que des plaines venteuses, parsemées de bruyères tenaces et de roches moussues. Le vent y hurle des contes de gloire perdue, et la pluie les lave, impitoyable, effaçant peu à peu les derniers vestiges des villages ruinés. Seuls quelques tumulus solitaires, co
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 15
+ ✅ Région importée: Landes d'Arthedain - Nord (15 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 69: Affluent de la rivière Lune
+ 🔍 [PROCESS DEBUG] Début traitement item: Affluent de la rivière Lune
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582521231,
+  "name": "Affluent de la rivière Lune",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2596.010657058446,
+        "y": 838.1467505779545
+      },
+      {
+        "x": 2463.260828411618,
+        "y": 835.260884737806
+      },
+      {
+        "x": 2396.885914088204,
+        "y": 884.3206040203295
+      },
+      {
+ 
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 10
+ ✅ Région importée: Affluent de la rivière Lune (10 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 70: Rivière Lune
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Lune
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582576635,
+  "name": "Rivière Lune",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1966.8919039060868,
+        "y": 128.22375390143904
+      },
+      {
+        "x": 1984.2070989469776,
+        "y": 151.31068062262653
+      },
+      {
+        "x": 1943.8049771848994,
+        "y": 249.4301191876734
+      },
+      {
+        "x
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 41
+ ✅ Région importée: Rivière Lune (41 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 71: Rivière Petite Lune
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Petite Lune
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582610165,
+  "name": "Rivière Petite Lune",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1744.6802342146573,
+        "y": 639.0220076077123
+      },
+      {
+        "x": 1819.7127460585166,
+        "y": 676.538263529642
+      },
+      {
+        "x": 1874.544197021337,
+        "y": 662.1089343288999
+      },
+      {
+       
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 19
+ ✅ Région importée: Rivière Petite Lune (19 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 72: Rivière Brandevin (Nord)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Brandevin (Nord)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582686588,
+  "name": "Rivière Brandevin (Nord)",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2769.495396745928,
+        "y": 981.3349245064408
+      },
+      {
+        "x": 2807.0997868934473,
+        "y": 991.7085493747222
+      },
+      {
+        "x": 2821.3635210873344,
+        "y": 1007.2689866771442
+      },
+      {
+
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 55
+ ✅ Région importée: Rivière Brandevin (Nord) (55 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 73: Rivière "L'Eau"
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière "L'Eau"
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582749189,
+  "name": "Rivière \"L'Eau\"",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2548.009578311132,
+        "y": 1137.4844446871302
+      },
+      {
+        "x": 2571.3502342647653,
+        "y": 1160.8251006407634
+      },
+      {
+        "x": 2589.5040777842573,
+        "y": 1193.2426783541425
+      },
+      {
+     
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 27
+ ✅ Région importée: Rivière "L'Eau" (27 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 74: Rivière Brandevin (portion centrale)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Brandevin (portion centrale)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582826399,
+  "name": "Rivière Brandevin (portion centrale)",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2938.2835611859364,
+        "y": 1373.5135255630037
+      },
+      {
+        "x": 2958.3466610949754,
+        "y": 1425.1043539005327
+      },
+      {
+        "x": 2968.378211049495,
+        "y": 1476.6951822380618
+   
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 31
+ ✅ Région importée: Rivière Brandevin (portion centrale) (31 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 75: Rivière Brandevin (Sud)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Brandevin (Sud)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756582903392,
+  "name": "Rivière Brandevin (Sud)",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3098.73902840804,
+        "y": 1817.7546729974324
+      },
+      {
+        "x": 3052.8805143302366,
+        "y": 1872.211658464824
+      },
+      {
+        "x": 3018.4866287718837,
+        "y": 1867.91242277003
+      },
+      {
+   
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 54
+ ✅ Région importée: Rivière Brandevin (Sud) (54 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 76: Rivière Flots Gris (Sud)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Flots Gris (Sud)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756584838260,
+  "name": "Rivière Flots Gris (Sud)",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2989.1711458262866,
+        "y": 2952.008265784921
+      },
+      {
+        "x": 3025.5154797723103,
+        "y": 2849.3889699373253
+      },
+      {
+        "x": 3051.170303734209,
+        "y": 2774.562400048453
+      },
+      {
+
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 33
+ ✅ Région importée: Rivière Flots Gris (Sud) (33 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 77: Rivière Sonoronne
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Sonoronne
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756584896473,
+  "name": "Rivière Sonoronne",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4817.077353111589,
+        "y": 1337.8922581821098
+      },
+      {
+        "x": 4710.182253270344,
+        "y": 1333.61645418846
+      },
+      {
+        "x": 4637.493585378296,
+        "y": 1382.788200115433
+      },
+      {
+        "x
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 36
+ ✅ Région importée: Rivière Sonoronne (36 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 78: Le Chemin Vert (Nord)
+ 🔍 [PROCESS DEBUG] Début traitement item: Le Chemin Vert (Nord)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756616200310,
+  "name": "Le Chemin Vert (Nord)",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3187.918061058345,
+        "y": 1016.4202620244296
+      },
+      {
+        "x": 3222.9253832956924,
+        "y": 1082.9341742753902
+      },
+      {
+        "x": 3264.9341699805095,
+        "y": 1207.2101682179743
+      },
+      {
+
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 11
+ ✅ Région importée: Le Chemin Vert (Nord) (11 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 79: La Route Nord Sud
+ 🔍 [PROCESS DEBUG] Début traitement item: La Route Nord Sud
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756616319550,
+  "name": "La Route Nord Sud",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3641.137326748309,
+        "y": 2256.8772385523193
+      },
+      {
+        "x": 3704.9742996014015,
+        "y": 2355.5343784161896
+      },
+      {
+        "x": 3722.38438310679,
+        "y": 2469.6671480626273
+      },
+      {
+      
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 12
+ ✅ Région importée: La Route Nord Sud (12 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 80: Les Noues des Cygnes
+ 🔍 [PROCESS DEBUG] Début traitement item: Les Noues des Cygnes
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756616352302,
+  "name": "Les Noues des Cygnes",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3697.2364847101176,
+        "y": 2171.7612747481967
+      },
+      {
+        "x": 3733.991105443716,
+        "y": 2154.3511912428075
+      },
+      {
+        "x": 3735.925559166537,
+        "y": 2113.727663063567
+      },
+      {
+     
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 12
+ ✅ Région importée: Les Noues des Cygnes (12 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 81: Moria
+ 🔍 [PROCESS DEBUG] Début traitement item: Moria
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756616381953,
+  "name": "Moria",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4439.076320981277,
+        "y": 2073.2807396925614
+      },
+      {
+        "x": 4448.5273094316235,
+        "y": 2148.8886472953373
+      },
+      {
+        "x": 4583.203894849068,
+        "y": 2174.8788655337917
+      },
+      {
+        "x": 4670.6
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 9
+ ✅ Région importée: Moria (9 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 82: Rivière Fongrise (Nord)
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Fongrise (Nord)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756641460218,
+  "name": "Rivière Fongrise (Nord)",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4809.311898409571,
+        "y": 903.7004576871927
+      },
+      {
+        "x": 4747.126707297204,
+        "y": 925.9932620482299
+      },
+      {
+        "x": 4686.114821677524,
+        "y": 934.2064004970331
+      },
+      {
+    
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 38
+ ✅ Région importée: Rivière Fongrise (Nord) (38 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 83: Fongrise (portion centrale)
+ 🔍 [PROCESS DEBUG] Début traitement item: Fongrise (portion centrale)
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756641532492,
+  "name": "Fongrise (portion centrale)",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4163.405328514948,
+        "y": 1369.7216432482228
+      },
+      {
+        "x": 4164.989125268228,
+        "y": 1501.17677377044
+      },
+      {
+        "x": 4166.572922021507,
+        "y": 1528.1013185761951
+      },
+      {
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 46
+ ✅ Région importée: Fongrise (portion centrale) (46 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 84: Rivière Glanduin
+ 🔍 [PROCESS DEBUG] Début traitement item: Rivière Glanduin
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756641876744,
+  "name": "Rivière Glanduin",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4492.10758101443,
+        "y": 2147.5630108298355
+      },
+      {
+        "x": 4422.467246992875,
+        "y": 2153.3663719982983
+      },
+      {
+        "x": 4403.122709764665,
+        "y": 2157.2352794439403
+      },
+      {
+        "
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 38
+ ✅ Région importée: Rivière Glanduin (38 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 85: Affluent rivière Glanduin
+ 🔍 [PROCESS DEBUG] Début traitement item: Affluent rivière Glanduin
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756641909425,
+  "name": "Affluent rivière Glanduin",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4496.344257575082,
+        "y": 2265.710878486624
+      },
+      {
+        "x": 4422.028707695213,
+        "y": 2296.4987491511415
+      },
+      {
+        "x": 4392.302487743265,
+        "y": 2289.0671941631545
+      },
+      {
+
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 21
+ ✅ Région importée: Affluent rivière Glanduin (21 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 86: Eregion
+ 🔍 [PROCESS DEBUG] Début traitement item: Eregion
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756645445069,
+  "name": "Eregion",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4592.12371399841,
+        "y": 1445.656794119842
+      },
+      {
+        "x": 4711.8462258206055,
+        "y": 1441.3809901261923
+      },
+      {
+        "x": 4803.776011684076,
+        "y": 1417.8640681611182
+      },
+      {
+        "x": 480
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 62
+ ✅ Région importée: Eregion (62 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 87: Angle septentrional
+ 🔍 [PROCESS DEBUG] Début traitement item: Angle septentrional
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756645500835,
+  "name": "Angle septentrional",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4203.178695150074,
+        "y": 1374.0705109445448
+      },
+      {
+        "x": 4238.022223722228,
+        "y": 1375.6543076978244
+      },
+      {
+        "x": 4269.698158787823,
+        "y": 1388.3246817240622
+      },
+      {
+   
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 30
+ ✅ Région importée: Angle septentrional (30 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 88: Miniriath
+ 🔍 [PROCESS DEBUG] Début traitement item: Miniriath
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756645829640,
+  "name": "Miniriath",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2786.5449748387914,
+        "y": 3121.974739500078
+      },
+      {
+        "x": 2677.858607659801,
+        "y": 3072.3570501357563
+      },
+      {
+        "x": 2547.9075164675296,
+        "y": 2937.680464718311
+      },
+      {
+        "x": 
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 52
+ ✅ Région importée: Miniriath (52 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 89: Enedwaith
+ 🔍 [PROCESS DEBUG] Début traitement item: Enedwaith
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756645930408,
+  "name": "Enedwaith",
+  "description": "Les eaux calmes du Flot Gris marquent la frontière sud de la région. Au-delà s’étendent des terres encore plus désolées : landes dénuées d’arbres, mornes plaines et marais suintants composent l’Enedwaith, les Terres de l’entre-deux. Le voyageur l’ignorera, et on le lui pardonne : c’est bien l’Ennemi qui a causé la ruine de cette contrée, mais les pires maux, eux, ont été commis par des Hommes, et la terre n’a pas oublié leur cruau
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 21
+ ✅ Région importée: Enedwaith (21 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 90: Pays de Dun
+ 🔍 [PROCESS DEBUG] Début traitement item: Pays de Dun
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756646011078,
+  "name": "Pays de Dun",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3678.931723082561,
+        "y": 2219.9130978017056
+      },
+      {
+        "x": 3792.9650893187013,
+        "y": 2299.1029354656916
+      },
+      {
+        "x": 3840.478991917093,
+        "y": 2294.3515452058523
+      },
+      {
+        "x
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 41
+ ✅ Région importée: Pays de Dun (41 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 91: Royaume perdu d'Angmar
+ 🔍 [PROCESS DEBUG] Début traitement item: Royaume perdu d'Angmar
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756646079666,
+  "name": "Royaume perdu d'Angmar",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3096.1303766572005,
+        "y": 131.7199906029196
+      },
+      {
+        "x": 3187.775293574976,
+        "y": 272.7121704764203
+      },
+      {
+        "x": 3684.7727276290657,
+        "y": 378.45630538154575
+      },
+      {
+   
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 16
+import-export-manager.js:349 ✅ Région importée: Royaume perdu d'Angmar (16 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 92: Baie de Forochel
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Baie de Forochel
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756646122614,
+  "name": "Baie de Forochel",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3184.2504890781383,
+        "y": 279.7617794700953
+      },
+      {
+        "x": 3099.655181154038,
+        "y": 110.5711636218945
+      },
+      {
+        "x": 1999.9161781407327,
+        "y": 121.14557711240705
+      },
+      {
+        "
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 13
+import-export-manager.js:349 ✅ Région importée: Baie de Forochel (13 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 93: Anciennes terres des Rois d'Arthedain
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Anciennes terres des Rois d'Arthedain
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756647116650,
+  "name": "Anciennes terres des Rois d'Arthedain",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2964.150098109417,
+        "y": 1356.0993304764193
+      },
+      {
+        "x": 3045.3903739887637,
+        "y": 1349.6856244859446
+      },
+      {
+        "x": 3143.7338658427097,
+        "y": 1360.375134470069
+  
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 43
+import-export-manager.js:349 ✅ Région importée: Anciennes terres des Rois d'Arthedain (43 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 94: Plaines du Nord
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Plaines du Nord
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756658283663,
+  "name": "Plaines du Nord",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1750.2100810015156,
+        "y": 119.38411113770658
+      },
+      {
+        "x": 1716.9531248760354,
+        "y": 138.6381383682478
+      },
+      {
+        "x": 1471.9018692146017,
+        "y": 241.90973896842345
+      },
+      {
+     
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 16
+import-export-manager.js:349 ✅ Région importée: Plaines du Nord (16 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 95: Forêt côtières septentrionales
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Forêt côtières septentrionales
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756658350485,
+  "name": "Forêt côtières septentrionales",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1418.6484714696342,
+        "y": 518.8983145191733
+      },
+      {
+        "x": 1542.6467872854791,
+        "y": 512.4846085286985
+      },
+      {
+        "x": 1568.3016112473783,
+        "y": 775.446554138163
+      },
+  
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 21
+import-export-manager.js:349 ✅ Région importée: Forêt côtières septentrionales (21 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 96: Plaine orientale des Montagnes Bleues
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Plaine orientale des Montagnes Bleues
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756927682660,
+  "name": "Plaine orientale des Montagnes Bleues",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1744.3382617173422,
+        "y": 652.8934582859312
+      },
+      {
+        "x": 1800.7410326622607,
+        "y": 661.249424351845
+      },
+      {
+        "x": 1844.6098545083087,
+        "y": 663.3384158683235
+   
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 22
+import-export-manager.js:349 ✅ Région importée: Plaine orientale des Montagnes Bleues (22 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 97: Entre deux Lunes
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Entre deux Lunes
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756927733115,
+  "name": "Entre deux Lunes",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 1955.4179977217404,
+        "y": 127.98601905764312
+      },
+      {
+        "x": 1968.0206337271857,
+        "y": 129.38631194713702
+      },
+      {
+        "x": 1975.0220981746552,
+        "y": 160.192755516003
+      },
+      {
+     
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 26
+import-export-manager.js:349 ✅ Région importée: Entre deux Lunes (26 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 98: Vallée de la Lune
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Vallée de la Lune
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756927799184,
+  "name": "Vallée de la Lune",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2276.2617299018416,
+        "y": 975.1351145521811
+      },
+      {
+        "x": 2297.26612324425,
+        "y": 938.7274994253395
+      },
+      {
+        "x": 2440.0959979726285,
+        "y": 847.7084616082356
+      },
+      {
+       
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 16
+import-export-manager.js:349 ✅ Région importée: Vallée de la Lune (16 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 99: Terres Solitaires du Nord
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Terres Solitaires du Nord
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929237405,
+  "name": "Terres Solitaires du Nord",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2226.8264019028097,
+        "y": 278.3414911478419
+      },
+      {
+        "x": 3117.903954179434,
+        "y": 295.44470712244123
+      },
+      {
+        "x": 3179.4755316879914,
+        "y": 271.50020475800216
+      },
+    
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 18
+import-export-manager.js:349 ✅ Région importée: Terres Solitaires du Nord (18 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 100: Landes d'Arthedain - sud 
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Landes d'Arthedain - sud 
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929368440,
+  "name": "Landes d'Arthedain - sud ",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2040.7636588679327,
+        "y": 1667.6903528353494
+      },
+      {
+        "x": 2103.4334043622866,
+        "y": 1701.114217099005
+      },
+      {
+        "x": 2354.112386339703,
+        "y": 1548.6178363960769
+      },
+    
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 16
+import-export-manager.js:349 ✅ Région importée: Landes d'Arthedain - sud  (16 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 101: Région du Gué de Sarn
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Région du Gué de Sarn
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929412230,
+  "name": "Région du Gué de Sarn",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "red",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3292.069577238535,
+        "y": 1845.2546317360193
+      },
+      {
+        "x": 3250.2897469089658,
+        "y": 1665.6013613188709
+      },
+      {
+        "x": 3170.908069282784,
+        "y": 1719.9151407473112
+      },
+      {
+   
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 16
+ ✅ Région importée: Région du Gué de Sarn (16 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 102: Plaines méridionales des Montagnes Bleures
+ 🔍 [PROCESS DEBUG] Début traitement item: Plaines méridionales des Montagnes Bleures
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929548593,
+  "name": "Plaines méridionales des Montagnes Bleures",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "orange",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2037.0986664533393,
+        "y": 2002.0832359219387
+      },
+      {
+        "x": 2127.1376806659705,
+        "y": 1997.465850577701
+      },
+      {
+        "x": 2549.6284396637016,
+        "y": 1995.157157905
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 29
+ ✅ Région importée: Plaines méridionales des Montagnes Bleures (29 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 103: Lac Nenuial
+ 🔍 [PROCESS DEBUG] Début traitement item: Lac Nenuial
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1756929639705,
+  "name": "Lac Nenuial",
+  "description": "Description importée",
+  "imageUrl": "",
+  "images": [],
+  "color": "blue",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2766.502955819813,
+        "y": 867.4553208225691
+      },
+      {
+        "x": 2778.109678156739,
+        "y": 898.4065803877047
+      },
+      {
+        "x": 2766.502955819813,
+        "y": 925.4889325071985
+      },
+      {
+        "x": 279
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 23
+ ✅ Région importée: Lac Nenuial (23 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 104: La Comté - quartier ouest
+ 🔍 [PROCESS DEBUG] Début traitement item: La Comté - quartier ouest
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757833873868,
+  "name": "La Comté - quartier ouest",
+  "description": "Considéré par beaucoup, et surtout par ses propres habitants, comme le plus important des Quartiers de la Comté – le Pays de Bouc n'étant pas comptabilisé –, le Quartier Ouest s'étend d'ouest en est, des Hauts-Reculés à la Pierre des Trois Quartiers, et du nord au sud, au-delà de Little Delving, jusqu'au cœur du Pays des Touques. Terre dominée par une campagne douce et vallonnée, elle abrite nombre des familles les
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 10
+ ✅ Région importée: La Comté - quartier ouest (10 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 105: La Comté - Quartier Sud
+ 🔍 [PROCESS DEBUG] Début traitement item: La Comté - Quartier Sud
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757843855004,
+  "name": "La Comté - Quartier Sud",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2786.1204616515734,
+        "y": 1395.9076192723799
+      },
+      {
+        "x": 2837.0333900012997,
+        "y": 1505.4184462887724
+      },
+      {
+        "x": 2850.4820880559446,
+        "y": 1524.630872081122
+      },
+      {
+        "x": 2876.
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 16
+ ✅ Région importée: La Comté - Quartier Sud (16 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 106: La Comté - Quartier Est
+ 🔍 [PROCESS DEBUG] Début traitement item: La Comté - Quartier Est
+ 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757843941872,
+  "name": "La Comté - Quartier Est",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2889.8675609302613,
+        "y": 1249.8931832505232
+      },
+      {
+        "x": 2923.489306066873,
+        "y": 1272.9480942013427
+      },
+      {
+        "x": 2916.7649570395506,
+        "y": 1305.609218048337
+      },
+      {
+        "x": 2934.0
+ 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+ 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+ 🔍 [PROCESS DEBUG] Points extraits: 17
+ ✅ Région importée: La Comté - Quartier Est (17 points, mapId: aucun)
+ 🔍 [VALIDATE DEBUG] Traitement location 107: La Comté - Quartier Nord
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: La Comté - Quartier Nord
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1757843982462,
+  "name": "La Comté - Quartier Nord",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2802.4510235750704,
+        "y": 1327.703507709539
+      },
+      {
+        "x": 2828.3877983947427,
+        "y": 1281.5936858079
+      },
+      {
+        "x": 2881.221969323704,
+        "y": 1250.8538045401408
+      },
+      {
+        "x": 2845.678
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 11
+import-export-manager.js:349 ✅ Région importée: La Comté - Quartier Nord (11 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 108: Le Chemin Vert (portion médiane) 
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Le Chemin Vert (portion médiane) 
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1758173203751,
+  "name": "Le Chemin Vert (portion médiane) ",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "green",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3630.9433748192923,
+        "y": 2208.5348997160063
+      },
+      {
+        "x": 3620.383625385117,
+        "y": 2149.869625081698
+      },
+      {
+        "x": 3561.7183507508084,
+        "y": 2054.8318801741184
+      },
+      {
+        "
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 22
+import-export-manager.js:349 ✅ Région importée: Le Chemin Vert (portion médiane)  (22 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 109: Bois de Chet
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Bois de Chet
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1758173286209,
+  "name": "Bois de Chet",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "violet",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3453.7153012589465,
+        "y": 1413.0862519670625
+      },
+      {
+        "x": 3460.1545383297384,
+        "y": 1330.0200937538452
+      },
+      {
+        "x": 3303.6810775094923,
+        "y": 1291.3846713290932
+      },
+      {
+        "x": 3306.256772337
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 11
+import-export-manager.js:349 ✅ Région importée: Bois de Chet (11 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 110: Grande Route de l'Est (entre Bree et Dernier Pont)
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Grande Route de l'Est (entre Bree et Dernier Pont)
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1758173595793,
+  "name": "Grande Route de l'Est (entre Bree et Dernier Pont)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "violet",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 3319.1757030726067,
+        "y": 1441.8762367243999
+      },
+      {
+        "x": 3427.826463998588,
+        "y": 1424.4921149762429
+      },
+      {
+        "x": 3520.8315153512285,
+        "y": 1415.8000541021643
+      }
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 20
+import-export-manager.js:349 ✅ Région importée: Grande Route de l'Est (entre Bree et Dernier Pont) (20 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 111: Landes du Nord
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Landes du Nord
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1758173786069,
+  "name": "Landes du Nord",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "violet",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2381.5405932122403,
+        "y": 1081.7818777739617
+      },
+      {
+        "x": 2328.7064222832787,
+        "y": 1168.2377938395348
+      },
+      {
+        "x": 2567.901123398031,
+        "y": 1247.9693608777854
+      },
+      {
+        "x": 2592.87727692
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 24
+import-export-manager.js:349 ✅ Région importée: Landes du Nord (24 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 112: Vieille Forêt
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Vieille Forêt
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1758173866494,
+  "name": "Vieille Forêt",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "violet",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2976.0540919819678,
+        "y": 1378.7203715947892
+      },
+      {
+        "x": 3044.7793567343315,
+        "y": 1369.6434498350432
+      },
+      {
+        "x": 3119.9881370293715,
+        "y": 1394.2808088972113
+      },
+      {
+        "x": 3140.73538676
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 14
+import-export-manager.js:349 ✅ Région importée: Vieille Forêt (14 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 113: Grande route de l'est (entre la Comté et Bree)
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Grande route de l'est (entre la Comté et Bree)
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1758258627490,
+  "name": "Grande route de l'est (entre la Comté et Bree)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "violet",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2968.453020369007,
+        "y": 1362.3335346150286
+      },
+      {
+        "x": 3024.720508135194,
+        "y": 1352.7786782019025
+      },
+      {
+        "x": 3102.2210101527717,
+        "y": 1359.14858247732
+      },
+     
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 12
+import-export-manager.js:349 ✅ Région importée: Grande route de l'est (entre la Comté et Bree) (12 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 114: Trouée des Trolls
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Trouée des Trolls
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1758258807085,
+  "name": "Trouée des Trolls",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "violet",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4227.589605873901,
+        "y": 1349.7654438876064
+      },
+      {
+        "x": 4328.732448339645,
+        "y": 1391.259943360732
+      },
+      {
+        "x": 4524.5346177284555,
+        "y": 1413.30389620583
+      },
+      {
+        "x": 4571.215929635
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 10
+import-export-manager.js:349 ✅ Région importée: Trouée des Trolls (10 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 115: Hauts du Rhudaur
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Hauts du Rhudaur
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1758261684764,
+  "name": "Hauts du Rhudaur",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "violet",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 4173.692531096673,
+        "y": 883.7918557149965
+      },
+      {
+        "x": 4355.531181041844,
+        "y": 916.6775690029531
+      },
+      {
+        "x": 4405.82697783519,
+        "y": 988.2523567473294
+      },
+      {
+        "x": 4401.958070389548
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 18
+import-export-manager.js:349 ✅ Région importée: Hauts du Rhudaur (18 points, mapId: aucun)
+import-export-manager.js:243 🔍 [VALIDATE DEBUG] Traitement location 116: Route de l'Est (portion de la Comté)
+import-export-manager.js:290 🔍 [PROCESS DEBUG] Début traitement item: Route de l'Est (portion de la Comté)
+import-export-manager.js:291 🔍 [PROCESS DEBUG] Item complet: {
+  "id": 1758434878268,
+  "name": "Route de l'Est (portion de la Comté)",
+  "description": "",
+  "imageUrl": "",
+  "images": [],
+  "color": "violet",
+  "known": true,
+  "visited": false,
+  "type": "region",
+  "coordinates": {
+    "points": [
+      {
+        "x": 2520.677271726741,
+        "y": 1478.1624711612908
+      },
+      {
+        "x": 2564.089574956129,
+        "y": 1467.6027217271153
+      },
+      {
+        "x": 2663.8205418344533,
+        "y": 1414.8039745562376
+      },
+      {
+     
+import-export-manager.js:295 🔍 [PROCESS DEBUG] Détecté comme RÉGION
+import-export-manager.js:300 🔍 [PROCESS DEBUG] Points trouvés dans coordinates.points
+import-export-manager.js:310 🔍 [PROCESS DEBUG] Points extraits: 12
+import-export-manager.js:349 ✅ Région importée: Route de l'Est (portion de la Comté) (12 points, mapId: aucun)
+import-export-manager.js:263 ✅ [VALIDATE DEBUG] Import validé: 0 lieux, 117 régions
+import-export-manager.js:264 ✅ [VALIDATE DEBUG] Résultat complet: {locations: Array(0), regions: Array(117)}
+import-export-manager.js:184 📥 [IMPORT DEBUG] Données après validation: {locationsCount: 0, regionsCount: 117}
+import-export-manager.js:201 📥 [IMPORT DEBUG] Affichage de la modal de confirmation
+import-export-manager.js:490 📥 [processImport] Début traitement en mode: merge
+import-export-manager.js:491 📥 [processImport] Données à importer: {locations: 0, regions: 117}
+import-export-manager.js:495 📥 [processImport] Données ACTUELLES: {locations: 17, regions: 0}
+import-export-manager.js:529 📥 [processImport] Mode MERGE - Fusion des données
+import-export-manager.js:701 ➕ Nouvelle région ajoutée: Harlindon
+ ➕ Nouvelle région ajoutée: Région de Fondcombe
+ ➕ Nouvelle région ajoutée: Collines d'Evendim
+ ➕ Nouvelle région ajoutée: Hauts des Galgals
+ ➕ Nouvelle région ajoutée: Hauts du Sud
+ ➕ Nouvelle région ajoutée: Montagnes Bleues du Sud
+ ➕ Nouvelle région ajoutée: Montagnes Bleues du Nord
+ ➕ Nouvelle région ajoutée: Monts Brumeux
+ ➕ Nouvelle région ajoutée: Forêt au nord d'Eryn Vorn
+ ➕ Nouvelle région ajoutée: Eryn Vorn
+ ➕ Nouvelle région ajoutée: l'Anglet
+ ➕ Nouvelle région ajoutée: Marais de l'Eau aux Cousins
+ ➕ Nouvelle région ajoutée: Hauts reculés
+ ➕ Nouvelle région ajoutée: Collines des Tours
+ ➕ Nouvelle région ajoutée: Embouchure de la Lune
+ ➕ Nouvelle région ajoutée: Landes d'Arthedain - Nord
+ ➕ Nouvelle région ajoutée: Affluent de la rivière Lune
+ ➕ Nouvelle région ajoutée: Rivière Lune
+ ➕ Nouvelle région ajoutée: Rivière Petite Lune
+ ➕ Nouvelle région ajoutée: Rivière Brandevin (Nord)
+ ➕ Nouvelle région ajoutée: Rivière "L'Eau"
+ ➕ Nouvelle région ajoutée: Rivière Brandevin (portion centrale)
+ ➕ Nouvelle région ajoutée: Rivière Brandevin (Sud)
+ ➕ Nouvelle région ajoutée: Rivière Flots Gris (Sud)
+ ➕ Nouvelle région ajoutée: Rivière Sonoronne
+ ➕ Nouvelle région ajoutée: Le Chemin Vert (Nord)
+ ➕ Nouvelle région ajoutée: La Route Nord Sud
+ ➕ Nouvelle région ajoutée: Les Noues des Cygnes
+ ➕ Nouvelle région ajoutée: Moria
+ ➕ Nouvelle région ajoutée: Rivière Fongrise (Nord)
+ ➕ Nouvelle région ajoutée: Fongrise (portion centrale)
+ ➕ Nouvelle région ajoutée: Rivière Glanduin
+ ➕ Nouvelle région ajoutée: Affluent rivière Glanduin
+ ➕ Nouvelle région ajoutée: Eregion
+ ➕ Nouvelle région ajoutée: Angle septentrional
+ ➕ Nouvelle région ajoutée: Miniriath
+ ➕ Nouvelle région ajoutée: Enedwaith
+ ➕ Nouvelle région ajoutée: Pays de Dun
+ ➕ Nouvelle région ajoutée: Royaume perdu d'Angmar
+ ➕ Nouvelle région ajoutée: Baie de Forochel
+ ➕ Nouvelle région ajoutée: Anciennes terres des Rois d'Arthedain
+ ➕ Nouvelle région ajoutée: Plaines du Nord
+ ➕ Nouvelle région ajoutée: Forêt côtières septentrionales
+ ➕ Nouvelle région ajoutée: Plaine orientale des Montagnes Bleues
+ ➕ Nouvelle région ajoutée: Entre deux Lunes
+ ➕ Nouvelle région ajoutée: Vallée de la Lune
+ ➕ Nouvelle région ajoutée: Terres Solitaires du Nord
+ ➕ Nouvelle région ajoutée: Landes d'Arthedain - sud 
+ ➕ Nouvelle région ajoutée: Région du Gué de Sarn
+ ➕ Nouvelle région ajoutée: Plaines méridionales des Montagnes Bleures
+ ➕ Nouvelle région ajoutée: Lac Nenuial
+ ➕ Nouvelle région ajoutée: Forlindon
+ 🔄 Région mise à jour: Harlindon
+ 🔄 Région mise à jour: Région de Fondcombe
+ 🔄 Région mise à jour: Collines d'Evendim
+ 🔄 Région mise à jour: Hauts des Galgals
+ 🔄 Région mise à jour: Hauts du Sud
+ 🔄 Région mise à jour: Montagnes Bleues du Sud
+ 🔄 Région mise à jour: Montagnes Bleues du Nord
+ 🔄 Région mise à jour: Monts Brumeux
+ 🔄 Région mise à jour: Forêt au nord d'Eryn Vorn
+ 🔄 Région mise à jour: Eryn Vorn
+ 🔄 Région mise à jour: l'Anglet
+ ➕ Nouvelle région ajoutée: Hauts du Nord et Collines Venteuses
+ 🔄 Région mise à jour: Marais de l'Eau aux Cousins
+ 🔄 Région mise à jour: Hauts reculés
+ 🔄 Région mise à jour: Collines des Tours
+ 🔄 Région mise à jour: Embouchure de la Lune
+ 🔄 Région mise à jour: Landes d'Arthedain - Nord
+ 🔄 Région mise à jour: Affluent de la rivière Lune
+ 🔄 Région mise à jour: Rivière Lune
+ 🔄 Région mise à jour: Rivière Petite Lune
+ 🔄 Région mise à jour: Rivière Brandevin (Nord)
+ 🔄 Région mise à jour: Rivière "L'Eau"
+ 🔄 Région mise à jour: Rivière Brandevin (portion centrale)
+ 🔄 Région mise à jour: Rivière Brandevin (Sud)
+ 🔄 Région mise à jour: Rivière Flots Gris (Sud)
+ 🔄 Région mise à jour: Rivière Sonoronne
+ 🔄 Région mise à jour: Le Chemin Vert (Nord)
+ 🔄 Région mise à jour: La Route Nord Sud
+ 🔄 Région mise à jour: Les Noues des Cygnes
+ 🔄 Région mise à jour: Moria
+ 🔄 Région mise à jour: Rivière Fongrise (Nord)
+ 🔄 Région mise à jour: Fongrise (portion centrale)
+ 🔄 Région mise à jour: Rivière Glanduin
+ 🔄 Région mise à jour: Affluent rivière Glanduin
+ 🔄 Région mise à jour: Eregion
+ 🔄 Région mise à jour: Angle septentrional
+ 🔄 Région mise à jour: Miniriath
+ 🔄 Région mise à jour: Enedwaith
+ 🔄 Région mise à jour: Pays de Dun
+ 🔄 Région mise à jour: Royaume perdu d'Angmar
+ 🔄 Région mise à jour: Baie de Forochel
+ 🔄 Région mise à jour: Anciennes terres des Rois d'Arthedain
+ 🔄 Région mise à jour: Plaines du Nord
+ 🔄 Région mise à jour: Forêt côtières septentrionales
+ 🔄 Région mise à jour: Plaine orientale des Montagnes Bleues
+ 🔄 Région mise à jour: Entre deux Lunes
+ 🔄 Région mise à jour: Vallée de la Lune
+ 🔄 Région mise à jour: Terres Solitaires du Nord
+ 🔄 Région mise à jour: Landes d'Arthedain - sud 
+ 🔄 Région mise à jour: Région du Gué de Sarn
+ 🔄 Région mise à jour: Plaines méridionales des Montagnes Bleures
+ 🔄 Région mise à jour: Lac Nenuial
+ ➕ Nouvelle région ajoutée: La Comté - quartier ouest
+ ➕ Nouvelle région ajoutée: La Comté - Quartier Sud
+ ➕ Nouvelle région ajoutée: La Comté - Quartier Est
+ ➕ Nouvelle région ajoutée: La Comté - Quartier Nord
+ ➕ Nouvelle région ajoutée: Le Chemin Vert (portion médiane) 
+ ➕ Nouvelle région ajoutée: Bois de Chet
+ ➕ Nouvelle région ajoutée: Grande Route de l'Est (entre Bree et Dernier Pont)
+ ➕ Nouvelle région ajoutée: Landes du Nord
+ ➕ Nouvelle région ajoutée: Vieille Forêt
+ ➕ Nouvelle région ajoutée: Grande route de l'est (entre la Comté et Bree)
+ ➕ Nouvelle région ajoutée: Trouée des Trolls
+ ➕ Nouvelle région ajoutée: Hauts du Rhudaur
+ ➕ Nouvelle région ajoutée: Route de l'Est (portion de la Comté)
+ 📥 [processImport] Données APRÈS fusion: {locations: 17, regions: 66}
+ 📥 [processImport] Sauvegarde dans localStorage...
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [processImport] Lieux sauvegardés dans localStorage
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [processImport] Régions sauvegardées dans localStorage
+ 📥 [processImport] Mise à jour finale des références globales...
+ 🎯 [processImport] Re-rendering 17 locations after import
+ 🌍 [processImport] Re-rendering 66 regions after import
+ 🎯 Rendering locations...
+ 📊 locationsData: {locations: Array(17)}
+ 📊 locationsData.locations: (17) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+ 📱 [renderLocations] currentScale=0.200, showThumbnails=false
+ ✅ Rendered 17 location markers (thumbnails: false)
+ 📍 Locations layer z-index: auto
+ ✅ [processImport] Locations rendered successfully
+ 🌍 Rendering regions...
+ 🌍 RegionsData: {regions: Array(66)}
+ 🔍 Processing region: Harlindon {id: 1756499588346, name: 'Harlindon', description: 'Description importée', color: 'green', known: true, …}
+ ✅ Rendered region: Harlindon with 28 points
+ 🔍 Processing region: Région de Fondcombe {id: 1756499619354, name: 'Région de Fondcombe', description: 'Description importée', color: 'green', known: true, …}
+ ✅ Rendered region: Région de Fondcombe with 9 points
+ 🔍 Processing region: Collines d'Evendim {id: 1756499875690, name: "Collines d'Evendim", description: "Les Collines d'Evendim, s'élevant comme des vagues… indélébile qui imprègne les Collines d'Evendim.\n", color: 'orange', known: true, …}
+ ✅ Rendered region: Collines d'Evendim with 22 points
+ 🔍 Processing region: Hauts des Galgals {id: 1756526155758, name: 'Hauts des Galgals', description: 'Description importée', color: 'black', known: true, …}
+ ✅ Rendered region: Hauts des Galgals with 11 points
+ 🔍 Processing region: Hauts du Sud {id: 1756526182064, name: 'Hauts du Sud', description: 'Description importée', color: 'red', known: true, …}
+ ✅ Rendered region: Hauts du Sud with 9 points
+ 🔍 Processing region: Montagnes Bleues du Sud {id: 1756526479404, name: 'Montagnes Bleues du Sud', description: 'Description importée', color: 'black', known: true, …}
+ ✅ Rendered region: Montagnes Bleues du Sud with 22 points
+ 🔍 Processing region: Montagnes Bleues du Nord {id: 1756526565003, name: 'Montagnes Bleues du Nord', description: 'Description importée', color: 'black', known: true, …}
+ ✅ Rendered region: Montagnes Bleues du Nord with 28 points
+ 🔍 Processing region: Monts Brumeux {id: 1756528183308, name: 'Monts Brumeux', description: 'Description importée', color: 'black', known: true, …}
+ ✅ Rendered region: Monts Brumeux with 46 points
+ 🔍 Processing region: Forêt au nord d'Eryn Vorn {id: 1756528252685, name: "Forêt au nord d'Eryn Vorn", description: 'Description importée', color: 'red', known: true, …}
+ ✅ Rendered region: Forêt au nord d'Eryn Vorn with 6 points
+ 🔍 Processing region: Eryn Vorn {id: 1756528293635, name: 'Eryn Vorn', description: 'Description importée', color: 'red', known: true, …}
+ ✅ Rendered region: Eryn Vorn with 26 points
+ 🔍 Processing region: l'Anglet {id: 1756528412082, name: "l'Anglet", description: 'Description importée', color: 'green', known: true, …}
+ ✅ Rendered region: l'Anglet with 9 points
+ 🔍 Processing region: Marais de l'Eau aux Cousins {id: 1756528559721, name: "Marais de l'Eau aux Cousins", description: 'Description importée', color: 'red', known: true, …}
+ ✅ Rendered region: Marais de l'Eau aux Cousins with 7 points
+ 🔍 Processing region: Hauts reculés {id: 1756528768668, name: 'Hauts reculés', description: 'Description importée', color: 'green', known: true, …}
+ ✅ Rendered region: Hauts reculés with 8 points
+ 🔍 Processing region: Collines des Tours {id: 1756528794780, name: 'Collines des Tours', description: 'Description importée', color: 'green', known: true, …}
+ ✅ Rendered region: Collines des Tours with 11 points
+ 🔍 Processing region: Embouchure de la Lune {id: 1756529759660, name: 'Embouchure de la Lune', description: 'Description importée', color: 'green', known: true, …}
+ ✅ Rendered region: Embouchure de la Lune with 13 points
+ 🔍 Processing region: Landes d'Arthedain - Nord {id: 1756529794403, name: "Landes d'Arthedain - Nord", description: "Les Landes d'Arthedain, étendues grises sous un ci…r semble, hélas, s'être éteint depuis longtemps.\n", color: 'orange', known: true, …}
+ ✅ Rendered region: Landes d'Arthedain - Nord with 15 points
+ 🔍 Processing region: Affluent de la rivière Lune {id: 1756582521231, name: 'Affluent de la rivière Lune', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Affluent de la rivière Lune with 10 points
+ 🔍 Processing region: Rivière Lune {id: 1756582576635, name: 'Rivière Lune', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière Lune with 41 points
+ 🔍 Processing region: Rivière Petite Lune {id: 1756582610165, name: 'Rivière Petite Lune', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière Petite Lune with 19 points
+ 🔍 Processing region: Rivière Brandevin (Nord) {id: 1756582686588, name: 'Rivière Brandevin (Nord)', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière Brandevin (Nord) with 55 points
+ 🔍 Processing region: Rivière "L'Eau" {id: 1756582749189, name: `Rivière "L'Eau"`, description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière "L'Eau" with 27 points
+ 🔍 Processing region: Rivière Brandevin (portion centrale) {id: 1756582826399, name: 'Rivière Brandevin (portion centrale)', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière Brandevin (portion centrale) with 31 points
+ 🔍 Processing region: Rivière Brandevin (Sud) {id: 1756582903392, name: 'Rivière Brandevin (Sud)', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière Brandevin (Sud) with 54 points
+ 🔍 Processing region: Rivière Flots Gris (Sud) {id: 1756584838260, name: 'Rivière Flots Gris (Sud)', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière Flots Gris (Sud) with 33 points
+ 🔍 Processing region: Rivière Sonoronne {id: 1756584896473, name: 'Rivière Sonoronne', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière Sonoronne with 36 points
+ 🔍 Processing region: Le Chemin Vert (Nord) {id: 1756616200310, name: 'Le Chemin Vert (Nord)', description: 'Description importée', color: 'green', known: true, …}
+ ✅ Rendered region: Le Chemin Vert (Nord) with 11 points
+ 🔍 Processing region: La Route Nord Sud {id: 1756616319550, name: 'La Route Nord Sud', description: 'Description importée', color: 'green', known: true, …}
+ ✅ Rendered region: La Route Nord Sud with 12 points
+ 🔍 Processing region: Les Noues des Cygnes {id: 1756616352302, name: 'Les Noues des Cygnes', description: 'Description importée', color: 'red', known: true, …}
+ ✅ Rendered region: Les Noues des Cygnes with 12 points
+ 🔍 Processing region: Moria {id: 1756616381953, name: 'Moria', description: 'Description importée', color: 'red', known: true, …}
+ ✅ Rendered region: Moria with 9 points
+ 🔍 Processing region: Rivière Fongrise (Nord) {id: 1756641460218, name: 'Rivière Fongrise (Nord)', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière Fongrise (Nord) with 38 points
+ 🔍 Processing region: Fongrise (portion centrale) {id: 1756641532492, name: 'Fongrise (portion centrale)', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Fongrise (portion centrale) with 46 points
+ 🔍 Processing region: Rivière Glanduin {id: 1756641876744, name: 'Rivière Glanduin', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Rivière Glanduin with 38 points
+ 🔍 Processing region: Affluent rivière Glanduin {id: 1756641909425, name: 'Affluent rivière Glanduin', description: 'Description importée', color: 'blue', known: true, …}
+ ✅ Rendered region: Affluent rivière Glanduin with 21 points
+ 🔍 Processing region: Eregion {id: 1756645445069, name: 'Eregion', description: 'Description importée', color: 'orange', known: true, …}
+ ✅ Rendered region: Eregion with 62 points
+ 🔍 Processing region: Angle septentrional {id: 1756645500835, name: 'Angle septentrional', description: 'Description importée', color: 'orange', known: true, …}
+ ✅ Rendered region: Angle septentrional with 30 points
+ 🔍 Processing region: Miniriath {id: 1756645829640, name: 'Miniriath', description: 'Description importée', color: 'orange', known: true, …}
+ ✅ Rendered region: Miniriath with 52 points
+main.js:425 🔍 Processing region: Enedwaith {id: 1756645930408, name: 'Enedwaith', description: 'Les eaux calmes du Flot Gris marquent la frontière…le fleuve qui s’écoule depuis la Trouée du Rohan.', color: 'orange', known: true, …}
+main.js:534 ✅ Rendered region: Enedwaith with 21 points
+main.js:425 🔍 Processing region: Pays de Dun {id: 1756646011078, name: 'Pays de Dun', description: 'Description importée', color: 'orange', known: true, …}
+main.js:534 ✅ Rendered region: Pays de Dun with 41 points
+main.js:425 🔍 Processing region: Royaume perdu d'Angmar {id: 1756646079666, name: "Royaume perdu d'Angmar", description: 'Description importée', color: 'red', known: true, …}
+main.js:534 ✅ Rendered region: Royaume perdu d'Angmar with 16 points
+main.js:425 🔍 Processing region: Baie de Forochel {id: 1756646122614, name: 'Baie de Forochel', description: 'Description importée', color: 'red', known: true, …}
+main.js:534 ✅ Rendered region: Baie de Forochel with 13 points
+main.js:425 🔍 Processing region: Anciennes terres des Rois d'Arthedain {id: 1756647116650, name: "Anciennes terres des Rois d'Arthedain", description: 'Description importée', color: 'green', known: true, …}
+main.js:534 ✅ Rendered region: Anciennes terres des Rois d'Arthedain with 43 points
+main.js:425 🔍 Processing region: Plaines du Nord {id: 1756658283663, name: 'Plaines du Nord', description: 'Description importée', color: 'orange', known: true, …}
+main.js:534 ✅ Rendered region: Plaines du Nord with 16 points
+main.js:425 🔍 Processing region: Forêt côtières septentrionales {id: 1756658350485, name: 'Forêt côtières septentrionales', description: 'Description importée', color: 'green', known: true, …}
+main.js:534 ✅ Rendered region: Forêt côtières septentrionales with 21 points
+main.js:425 🔍 Processing region: Plaine orientale des Montagnes Bleues {id: 1756927682660, name: 'Plaine orientale des Montagnes Bleues', description: 'Description importée', color: 'orange', known: true, …}
+main.js:534 ✅ Rendered region: Plaine orientale des Montagnes Bleues with 22 points
+main.js:425 🔍 Processing region: Entre deux Lunes {id: 1756927733115, name: 'Entre deux Lunes', description: 'Description importée', color: 'orange', known: true, …}
+main.js:534 ✅ Rendered region: Entre deux Lunes with 26 points
+main.js:425 🔍 Processing region: Vallée de la Lune {id: 1756927799184, name: 'Vallée de la Lune', description: 'Description importée', color: 'orange', known: true, …}
+main.js:534 ✅ Rendered region: Vallée de la Lune with 16 points
+main.js:425 🔍 Processing region: Terres Solitaires du Nord {id: 1756929237405, name: 'Terres Solitaires du Nord', description: 'Description importée', color: 'orange', known: true, …}
+main.js:534 ✅ Rendered region: Terres Solitaires du Nord with 18 points
+main.js:425 🔍 Processing region: Landes d'Arthedain - sud  {id: 1756929368440, name: "Landes d'Arthedain - sud ", description: 'Description importée', color: 'orange', known: true, …}
+main.js:534 ✅ Rendered region: Landes d'Arthedain - sud  with 16 points
+main.js:425 🔍 Processing region: Région du Gué de Sarn {id: 1756929412230, name: 'Région du Gué de Sarn', description: 'Description importée', color: 'red', known: true, …}
+main.js:534 ✅ Rendered region: Région du Gué de Sarn with 16 points
+main.js:425 🔍 Processing region: Plaines méridionales des Montagnes Bleures {id: 1756929548593, name: 'Plaines méridionales des Montagnes Bleures', description: 'Description importée', color: 'orange', known: true, …}
+main.js:534 ✅ Rendered region: Plaines méridionales des Montagnes Bleures with 29 points
+main.js:425 🔍 Processing region: Lac Nenuial {id: 1756929639705, name: 'Lac Nenuial', description: 'Description importée', color: 'blue', known: true, …}
+main.js:534 ✅ Rendered region: Lac Nenuial with 23 points
+main.js:425 🔍 Processing region: Forlindon {id: 1756499547042, name: 'Forlindon', description: 'Description importée', color: 'green', known: true, …}
+main.js:534 ✅ Rendered region: Forlindon with 18 points
+main.js:425 🔍 Processing region: Hauts du Nord et Collines Venteuses {id: 1756528500039, name: 'Hauts du Nord et Collines Venteuses', description: 'Description importée', color: 'violet', known: true, …}
+main.js:534 ✅ Rendered region: Hauts du Nord et Collines Venteuses with 23 points
+main.js:425 🔍 Processing region: La Comté - quartier ouest {id: 1757833873868, name: 'La Comté - quartier ouest', description: 'Considéré par beaucoup, et surtout par ses propres…chel Delving, où réside le maire Pott Pied-Blanc.', color: 'green', known: true, …}
+main.js:534 ✅ Rendered region: La Comté - quartier ouest with 10 points
+main.js:425 🔍 Processing region: La Comté - Quartier Sud {id: 1757843855004, name: 'La Comté - Quartier Sud', description: '', color: 'green', known: true, …}
+main.js:534 ✅ Rendered region: La Comté - Quartier Sud with 16 points
+main.js:425 🔍 Processing region: La Comté - Quartier Est {id: 1757843941872, name: 'La Comté - Quartier Est', description: '', color: 'green', known: true, …}
+main.js:534 ✅ Rendered region: La Comté - Quartier Est with 17 points
+main.js:425 🔍 Processing region: La Comté - Quartier Nord {id: 1757843982462, name: 'La Comté - Quartier Nord', description: '', color: 'green', known: true, …}
+main.js:534 ✅ Rendered region: La Comté - Quartier Nord with 11 points
+main.js:425 🔍 Processing region: Le Chemin Vert (portion médiane)  {id: 1758173203751, name: 'Le Chemin Vert (portion médiane) ', description: '', color: 'green', known: true, …}
+main.js:534 ✅ Rendered region: Le Chemin Vert (portion médiane)  with 22 points
+main.js:425 🔍 Processing region: Bois de Chet {id: 1758173286209, name: 'Bois de Chet', description: '', color: 'violet', known: true, …}
+main.js:534 ✅ Rendered region: Bois de Chet with 11 points
+main.js:425 🔍 Processing region: Grande Route de l'Est (entre Bree et Dernier Pont) {id: 1758173595793, name: "Grande Route de l'Est (entre Bree et Dernier Pont)", description: '', color: 'violet', known: true, …}
+main.js:534 ✅ Rendered region: Grande Route de l'Est (entre Bree et Dernier Pont) with 20 points
+main.js:425 🔍 Processing region: Landes du Nord {id: 1758173786069, name: 'Landes du Nord', description: '', color: 'violet', known: true, …}
+main.js:534 ✅ Rendered region: Landes du Nord with 24 points
+main.js:425 🔍 Processing region: Vieille Forêt {id: 1758173866494, name: 'Vieille Forêt', description: '', color: 'violet', known: true, …}
+main.js:534 ✅ Rendered region: Vieille Forêt with 14 points
+main.js:425 🔍 Processing region: Grande route de l'est (entre la Comté et Bree) {id: 1758258627490, name: "Grande route de l'est (entre la Comté et Bree)", description: '', color: 'violet', known: true, …}
+main.js:534 ✅ Rendered region: Grande route de l'est (entre la Comté et Bree) with 12 points
+main.js:425 🔍 Processing region: Trouée des Trolls {id: 1758258807085, name: 'Trouée des Trolls', description: '', color: 'violet', known: true, …}
+main.js:534 ✅ Rendered region: Trouée des Trolls with 10 points
+main.js:425 🔍 Processing region: Hauts du Rhudaur {id: 1758261684764, name: 'Hauts du Rhudaur', description: '', color: 'violet', known: true, …}
+main.js:534 ✅ Rendered region: Hauts du Rhudaur with 18 points
+main.js:425 🔍 Processing region: Route de l'Est (portion de la Comté) {id: 1758434878268, name: "Route de l'Est (portion de la Comté)", description: '', color: 'violet', known: true, …}
+main.js:534 ✅ Rendered region: Route de l'Est (portion de la Comté) with 12 points
+main.js:537 ✅ Rendered 66 region polygons
+import-export-manager.js:585 ✅ [processImport] Regions rendered successfully
+import-export-manager.js:599 ✅ [processImport] Import terminé avec succès: 0 lieux, 117 régions
+import-export-manager.js:602 📥 [processImport] Rechargement automatique désactivé - les données sont en mémoire
+import-export-manager.js:603 📥 [processImport] Vous pouvez maintenant synchroniser manuellement avec le bouton de sync
+import-export-manager.js:607 📥 [processImport] Déclenchement sauvegarde cloud automatique...
+auth-manager.js:1190 [AuthManager] 🔄 Synchronisation manuelle vers cloud null
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] CalendarManager existe: true
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Données calendar AVANT collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: '12 mois', isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Données calendar APRÈS collecte: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarData: Array(12), isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] 📍 Position du marqueur collectée: {x: 639.017672411982, y: 1429.1266173902236}
+auth-manager.js:1190 [AuthManager] 📦 Données collectées pour le contexte (6) ['locations', 'regions', 'calendar', 'settings', 'journal', 'position']
+auth-manager.js:1190 [AuthManager] 📅 [collectCurrentContextData] Calendar dans les données collectées: {currentSeason: 'printemps-fin', currentCalendarDate: {…}, calendarDataLength: 12, isCalendarMode: true}
+auth-manager.js:1190 [AuthManager] ✅ Données synchronisées dans le cloud null
+auth-manager.js:1190 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1190 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1190 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+import-export-manager.js:611 ✅ [processImport] Sauvegarde cloud terminée avec succès
