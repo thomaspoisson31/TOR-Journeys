@@ -1,4 +1,3 @@
-
 /**
  * UploadManager - Gestion des uploads d'images
  */
@@ -7,7 +6,7 @@ class UploadManager {
         this.maxFileSize = 20 * 1024 * 1024; // 20MB
         this.allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
         this.uploadEndpoint = '/api/upload/image';
-        
+
         console.log("📤 UploadManager initialized");
     }
 
@@ -48,7 +47,7 @@ class UploadManager {
     createPreview(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            
+
             reader.onload = (e) => {
                 const preview = document.createElement('div');
                 preview.className = 'upload-preview';
@@ -61,7 +60,7 @@ class UploadManager {
                 `;
                 resolve(preview);
             };
-            
+
             reader.onerror = () => reject(new Error("Erreur lors de la lecture du fichier"));
             reader.readAsDataURL(file);
         });
@@ -87,7 +86,7 @@ class UploadManager {
         try {
             // Créer la requête avec suivi de progression
             const xhr = new XMLHttpRequest();
-            
+
             return new Promise((resolve, reject) => {
                 // Gestion de la progression
                 xhr.upload.addEventListener('progress', (e) => {
@@ -148,7 +147,7 @@ class UploadManager {
     createUploadComponent(container, category = 'general', onUploadComplete = null) {
         const uploadComponent = document.createElement('div');
         uploadComponent.className = 'upload-component border-2 border-dashed border-gray-300 rounded-lg p-6 text-center';
-        
+
         uploadComponent.innerHTML = `
             <div class="upload-area">
                 <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
@@ -201,7 +200,7 @@ class UploadManager {
         uploadComponent.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadComponent.classList.remove('border-blue-400', 'bg-blue-50');
-            
+
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 this.handleFileUpload(files[0], category, uploadArea, progressArea, progressBar, resultArea, onUploadComplete);
@@ -246,7 +245,7 @@ class UploadManager {
 
         } catch (error) {
             console.error("❌ Upload failed:", error);
-            
+
             // Afficher l'erreur
             progressArea.classList.add('hidden');
             resultArea.classList.remove('hidden');
@@ -268,7 +267,7 @@ class UploadManager {
     createImageSelector(container, category = 'general', onImageSelected = null) {
         const selector = document.createElement('div');
         selector.className = 'image-selector';
-        
+
         selector.innerHTML = `
             <div class="flex items-center space-x-3">
                 <button type="button" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm">
@@ -297,13 +296,13 @@ class UploadManager {
         input.addEventListener('change', async (e) => {
             if (e.target.files.length > 0) {
                 const file = e.target.files[0];
-                
+
                 try {
                     button.disabled = true;
                     button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Upload...';
 
                     const result = await this.uploadFile(file, category);
-                    
+
                     // Afficher la prévisualisation
                     previewImg.src = result.url;
                     previewText.textContent = result.filename;
@@ -327,7 +326,7 @@ class UploadManager {
             preview.classList.add('hidden');
             button.classList.remove('hidden');
             input.value = '';
-            
+
             if (onImageSelected) {
                 onImageSelected(null);
             }

@@ -159,6 +159,44 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
 
+def resize_map_image(image_file, target_width=5000):
+    """
+    Redimensionne une image de carte à une largeur cible en conservant les proportions
+    """
+    # Ouvrir l'image
+    img = Image.open(image_file)
+
+    # Obtenir les dimensions originales
+    original_width, original_height = img.size
+
+    # Calculer la nouvelle hauteur en conservant le ratio
+    ratio = target_width / original_width
+    target_height = int(original_height * ratio)
+
+    # Redimensionner l'image
+    resized_img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
+
+    # Sauvegarder dans un buffer
+    buffer = io.BytesIO()
+
+    # Déterminer le format de sortie
+    image_format = img.format if img.format else 'JPEG'
+    if image_format == 'JPEG':
+        resized_img.save(buffer, format='JPEG', quality=95, optimize=True)
+    elif image_format == 'PNG':
+        resized_img.save(buffer, format='PNG', optimize=True)
+    elif image_format in ['WEBP', 'WebP']:
+        resized_img.save(buffer, format='WEBP', quality=95)
+    else:
+        # Par défaut, sauver en JPEG
+        resized_img = resized_img.convert('RGB')
+        resized_img.save(buffer, format='JPEG', quality=95, optimize=True)
+        image_format = 'JPEG'
+
+    buffer.seek(0)
+
+    return buffer, target_width, target_height, image_format
+
 def get_file_extension(filename):
     """Obtenir l'extension du fichier"""
     return filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
@@ -582,6 +620,9 @@ def update_user_data():
 @app.route('/<path:filename>')
 def serve_static(filename):
     """Servir les fichiers statiques (images, JSON, etc.)"""
+    # Pour les uploads, on utilise serve_uploaded_file
+    if filename.startswith('uploads/'):
+        return send_from_directory('.', filename)
     return send_from_directory('.', filename)
 
 @app.route('/auth')
@@ -1031,37 +1072,92 @@ def upload_image():
 
         # Obtenir la catégorie depuis les paramètres
         category = request.form.get('category', 'general')
-        if category not in ['locations', 'regions', 'general']:
+        if category not in ['locations', 'regions', 'general', 'maps']:
             category = 'general'
 
         # Générer un nom de fichier unique avec user_id
         user_id = session['user_id']
-        filename = generate_unique_filename(file.filename, category)
+        google_id = session['google_id'] # Utiliser google_id pour la structure du dossier
+        filename_base = secure_filename(file.filename)
+        
+        # Déterminer le format et l'extension
+        img_format = Image.open(file).format
+        file.seek(0) # Rembobiner le fichier après l'avoir lu pour Image.open
+        
+        ext = get_file_extension(filename_base)
+        if not ext:
+            ext = mimetypes.guess_extension(file.content_type) or 'bin'
+        
+        image_format_to_save = img_format if img_format else ext.upper()
+        if image_format_to_save == 'JPG': image_format_to_save = 'JPEG'
 
-        # Structure de dossiers par utilisateur
-        upload_dir = f'uploads/user_{user_id}/{category}'
+
+        # Structure de dossiers par utilisateur (google_id) et catégorie
+        upload_dir = f'uploads/{google_id}/{category}'
         os.makedirs(upload_dir, exist_ok=True)
 
-        file_path = os.path.join(upload_dir, os.path.basename(filename))
-        file.save(file_path)
+        # Générer le nom de fichier unique
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        unique_id = str(uuid.uuid4())
+        
+        final_filename = f"{timestamp}_{unique_id}.{ext}"
+        file_path = os.path.join(upload_dir, final_filename)
 
-        # Générer l'URL publique avec user_id
-        public_url = f'/uploads/user_{user_id}/{category}/{os.path.basename(filename)}'
+        # Redimensionner si la catégorie est 'maps'
+        width, height = None, None
+        if category == 'maps':
+            print(f"🗺️ Redimensionnement de la carte '{filename_base}' à 5000px de largeur...")
+            try:
+                resized_buffer, target_width, target_height, saved_format = resize_map_image(file, target_width=5000)
+                
+                # Déterminer l'extension basée sur le format de sauvegarde
+                if saved_format == 'JPEG': ext = 'jpg'
+                elif saved_format == 'PNG': ext = 'png'
+                elif saved_format in ['WEBP', 'WebP']: ext = 'webp'
+                
+                final_filename = f"{timestamp}_{unique_id}.{ext}"
+                file_path = os.path.join(upload_dir, final_filename)
+                
+                with open(file_path, 'wb') as f:
+                    f.write(resized_buffer.read())
+                
+                width, height = target_width, target_height
+                print(f"✅ Carte redimensionnée et sauvegardée: {file_path} ({width}x{height}px)")
+
+            except Exception as resize_e:
+                print(f"❌ Erreur lors du redimensionnement de la carte: {resize_e}")
+                return jsonify({
+                    'error': f"Erreur lors du redimensionnement de la carte: {str(resize_e)}"
+                }), 500
+        else:
+            # Pour les autres types d'images, sauvegarder normalement
+            file.save(file_path)
+            # Obtenir les dimensions de l'image sauvegardée
+            with Image.open(file_path) as img:
+                width, height = img.size
+        
+        # Générer l'URL publique
+        public_url = f'/uploads/{google_id}/{category}/{final_filename}'
 
         # Log de l'upload
-        print(f"📸 Image uploadée: {filename} par user {user_id}")
+        print(f"📸 Image uploadée: {category}/{final_filename} par user {user_id} ({width}x{height}px)")
 
         return jsonify({
             'success': True,
             'url': public_url,
-            'filename': os.path.basename(filename),
-            'size': file_size,
+            'filename': final_filename,
+            'size': os.path.getsize(file_path),
             'user_id': user_id,
+            'category': category,
+            'width': width,
+            'height': height,
             'message': 'Image uploadée avec succès'
         })
 
     except Exception as e:
         print(f"❌ Erreur lors de l'upload: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'error': f'Erreur serveur: {str(e)}'
         }), 500
@@ -1069,9 +1165,8 @@ def upload_image():
 @app.route('/uploads/<path:filepath>')
 def serve_uploaded_file(filepath):
     """Servir les fichiers uploadés (avec ou sans user_id)"""
-    # Gérer à la fois l'ancien format et le nouveau format avec user_id
-    upload_dir = 'uploads'
-    return send_from_directory(upload_dir, filepath)
+    # Gérer le format /uploads/google_id/category/filename
+    return send_from_directory('uploads', filepath)
 
 @app.route('/api/image/create-thumbnail', methods=['POST'])
 def create_thumbnail():
@@ -1089,21 +1184,20 @@ def create_thumbnail():
 
         # Extraire le chemin du fichier depuis l'URL
         # Formats supportés: 
-        # - /uploads/category/filename (ancien)
-        # - /uploads/user_X/category/filename (nouveau)
+        # - /uploads/google_id/category/filename (nouveau)
         if not image_url.startswith('/uploads/'):
             return jsonify({'error': 'URL d\'image invalide'}), 400
 
         # Enlever le préfixe /uploads/
         relative_path = image_url[9:]  # len('/uploads/') = 9
-        original_path = f'uploads/{relative_path}'
+        original_path = os.path.join('uploads', relative_path)
 
         if not os.path.exists(original_path):
             return jsonify({'error': 'Fichier source introuvable'}), 404
 
         # Ouvrir l'image et créer une vignette 100x100
         with Image.open(original_path) as img:
-            # Convertir en RGB si nécessaire
+            # Convertir en RGB si nécessaire pour assurer la compatibilité
             if img.mode in ('RGBA', 'LA', 'P'):
                 background = Image.new('RGB', img.size, (255, 255, 255))
                 if img.mode == 'P':
@@ -1113,18 +1207,22 @@ def create_thumbnail():
             elif img.mode != 'RGB':
                 img = img.convert('RGB')
 
-            # Redimensionner en conservant les proportions puis cropper au centre
+            # Redimensionner en conservant les proportions pour que la plus grande dimension soit 100px
             img.thumbnail((100, 100), Image.Resampling.LANCZOS)
 
-            # Créer une image carrée de 100x100
+            # Créer une image carrée de 100x100 et coller l'image redimensionnée au centre
             thumbnail = Image.new('RGB', (100, 100), (255, 255, 255))
-            offset = ((100 - img.size[0]) // 2, (100 - img.size[1]) // 2)
-            thumbnail.paste(img, offset)
+            offset_x = (100 - img.size[0]) // 2
+            offset_y = (100 - img.size[1]) // 2
+            thumbnail.paste(img, (offset_x, offset_y))
 
             # Générer un nom de fichier unique pour la vignette
-            # Extraire le nom de fichier depuis le path
-            filename_only = os.path.basename(relative_path)
-            thumbnail_filename = f'thumb_{filename_only.rsplit(".", 1)[0]}.png'
+            # Extraire le nom de fichier et l'extension de l'URL originale
+            path_parts = relative_path.split('/')
+            original_filename = path_parts[-1]
+            original_filename_no_ext, _ = os.path.splitext(original_filename)
+            
+            thumbnail_filename = f'thumb_{original_filename_no_ext}.png'
 
             # Déterminer le dossier de destination (même que l'original)
             thumbnail_dir = os.path.dirname(original_path)
@@ -1177,7 +1275,7 @@ def get_image_library():
 
         images = []
 
-        # Parcourir tous les sous-dossiers (locations, regions, general, etc.)
+        # Parcourir tous les sous-dossiers (locations, regions, general, maps, etc.)
         for category in os.listdir(user_dir):
             category_path = os.path.join(user_dir, category)
 
@@ -1186,18 +1284,28 @@ def get_image_library():
                     file_path = os.path.join(category_path, filename)
 
                     # Vérifier que c'est bien un fichier image
-                    if os.path.isfile(file_path) and any(filename.lower().endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.webp', '.gif']):
+                    if os.path.isfile(file_path) and any(filename.lower().endswith(ext) for ext in ALLOWED_IMAGE_EXTENSIONS):
                         # Construire l'URL publique
                         public_url = f'/uploads/{google_id}/{category}/{filename}'
 
                         # Récupérer la taille du fichier
                         file_size = os.path.getsize(file_path)
 
+                        # Obtenir les dimensions de l'image
+                        width, height = None, None
+                        try:
+                            with Image.open(file_path) as img:
+                                width, height = img.size
+                        except Exception as img_e:
+                            print(f"⚠️ Impossible de lire les dimensions de {file_path}: {img_e}")
+
                         images.append({
                             'filename': filename,
                             'url': public_url,
                             'category': category,
-                            'size': file_size
+                            'size': file_size,
+                            'width': width,
+                            'height': height
                         })
 
         print(f"📚 {len(images)} image(s) trouvée(s) pour l'utilisateur {google_id}")

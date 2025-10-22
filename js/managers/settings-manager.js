@@ -285,24 +285,22 @@ class SettingsManager {
     handleMapUploaded(uploadResult) {
         const mapName = uploadResult.name || `Carte ${Date.now()}`;
 
-        // Créer une image temporaire pour obtenir les dimensions
-        const img = new Image();
-        img.onload = () => {
-            const newMap = {
-                id: Date.now(),
-                name: mapName,
-                url: uploadResult.url,
-                isDefault: false,
-                width: img.naturalWidth,
-                height: img.naturalHeight,
-                scale: 600 // Distance en miles par défaut (comme MAP_DISTANCE_MILES)
-            };
-
-            this.availableMaps.push(newMap);
-            this.saveMapsData();
-            this.renderMapsGrid();
+        // Utiliser les dimensions retournées par l'API (image déjà redimensionnée à 5000px)
+        const newMap = {
+            id: Date.now(),
+            name: mapName,
+            url: uploadResult.url,
+            isDefault: false,
+            width: uploadResult.width || 5000,
+            height: uploadResult.height || 3230,
+            scale: 600 // Distance en miles par défaut (comme MAP_DISTANCE_MILES)
         };
-        img.src = uploadResult.url;
+
+        this.availableMaps.push(newMap);
+        this.saveMapsData();
+        this.renderMapsGrid();
+        
+        console.log(`✅ Carte ajoutée: ${mapName} (${newMap.width}x${newMap.height}px)`);
     }
 
     async openLibraryForMapSelection(mapModal) {
