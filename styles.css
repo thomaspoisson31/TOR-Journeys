@@ -1263,6 +1263,28 @@ body {
 }
 
 /* Harmonisation des titres dans l'infobox */
+#info-box-title {
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    color: white;
+    text-align: left;
+    margin-bottom: 0.5rem;
+    font-size: 1.35rem;
+}
+
+#info-box-mapid-display {
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 0.75rem;
+}
+
+#info-box-mapid-display i[title]:hover {
+    cursor: help;
+}
+
+#info-box-mapid-display span {
+    user-select: none;
+}
+
 #info-box h3 {
     font-family: 'Merriweather', serif;
     font-weight: 700;
