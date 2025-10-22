@@ -71,25 +71,36 @@ export default class FilterManager {
 
         console.log("✅ Filter listeners setup complete");
 
-        // Charger les filtres de la carte active APRÈS l'initialisation complète
-        setTimeout(() => {
-            const activeMapUrl = window.settingsManager?.activeMapUrl;
-            console.log(`🔍 [setupFilterListeners DELAYED] activeMapUrl:`, activeMapUrl);
-            console.log(`🔍 [setupFilterListeners DELAYED] filtersByMap keys:`, Object.keys(this.filtersByMap));
-            console.log(`🔍 [setupFilterListeners DELAYED] filtersByMap content:`, this.filtersByMap);
-            
-            if (activeMapUrl) {
-                if (this.filtersByMap[activeMapUrl]) {
-                    console.log(`🔍 Chargement DIFFÉRÉ des filtres pour la carte active: ${activeMapUrl}`);
-                    this.loadFiltersForMap(activeMapUrl);
-                } else {
-                    console.warn(`⚠️ Aucun filtre trouvé pour la carte active ${activeMapUrl}`);
-                    console.log(`🔍 Filtres disponibles:`, Object.keys(this.filtersByMap));
-                }
-            } else {
-                console.warn(`⚠️ Pas de carte active définie`);
-            }
-        }, 100);
+        // IMPORTANT: Charger les filtres immédiatement si disponibles
+        this.tryLoadFiltersForActiveMap();
+    }
+
+    // Nouvelle méthode pour essayer de charger les filtres pour la carte active
+    tryLoadFiltersForActiveMap(retryCount = 0) {
+        const maxRetries = 5;
+        const retryDelay = 200;
+
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        console.log(`🔍 [tryLoadFiltersForActiveMap retry=${retryCount}] activeMapUrl:`, activeMapUrl);
+        console.log(`🔍 [tryLoadFiltersForActiveMap] filtersByMap keys:`, Object.keys(this.filtersByMap));
+        
+        if (activeMapUrl && this.filtersByMap[activeMapUrl]) {
+            console.log(`✅ Chargement des filtres pour la carte active: ${activeMapUrl}`);
+            console.log(`📊 Filtres à charger:`, this.filtersByMap[activeMapUrl]);
+            this.loadFiltersForMap(activeMapUrl);
+            return true;
+        } else if (retryCount < maxRetries) {
+            console.log(`⏳ Retry ${retryCount + 1}/${maxRetries} pour charger les filtres...`);
+            setTimeout(() => {
+                this.tryLoadFiltersForActiveMap(retryCount + 1);
+            }, retryDelay);
+            return false;
+        } else {
+            console.warn(`⚠️ Impossible de charger les filtres après ${maxRetries} tentatives`);
+            console.log(`🔍 activeMapUrl final:`, activeMapUrl);
+            console.log(`🔍 Filtres disponibles:`, Object.keys(this.filtersByMap));
+            return false;
+        }
     }
 
     setupOutsideClickListener() {
@@ -348,6 +359,8 @@ export default class FilterManager {
 
     applyFilters() {
         console.log("🔍 Applying filters...", this.activeFilters);
+        console.log("🔍 Current filtersByMap:", this.filtersByMap);
+        console.log("🔍 Active map:", window.settingsManager?.activeMapUrl);
 
         // Obtenir les données depuis le contexte global
         const locationsData = window.locationsData;
@@ -363,6 +376,8 @@ export default class FilterManager {
 
         // Filtrer les régions
         this.filteredRegions = this.filterRegions(regionsData.regions || []);
+
+        console.log(`📊 Filtered: ${this.filteredLocations.length}/${locationsData.locations?.length || 0} locations, ${this.filteredRegions.length}/${regionsData.regions?.length || 0} regions`);
 
         // Mettre à jour l'affichage
         this.updateDisplay();
@@ -663,15 +678,13 @@ export default class FilterManager {
             console.log(`📥 [setAllFiltersByMap] Nombre de cartes: ${Object.keys(this.filtersByMap).length}`);
             console.log(`📥 [setAllFiltersByMap] Cartes disponibles:`, Object.keys(this.filtersByMap));
             
+            // Sauvegarder aussi dans localStorage pour persistance
+            localStorage.setItem('filtersByMap', JSON.stringify(this.filtersByMap));
+            console.log("💾 [setAllFiltersByMap] Filtres sauvegardés dans localStorage");
+            
             // IMPORTANT: Charger et appliquer les filtres de la carte active immédiatement
-            // (même principe que renderLocations/renderRegions après chargement des données)
-            const activeMapUrl = window.settingsManager?.activeMapUrl;
-            if (activeMapUrl && this.filtersByMap[activeMapUrl]) {
-                console.log(`🎯 [setAllFiltersByMap] Application immédiate des filtres pour ${activeMapUrl}`);
-                this.loadFiltersForMap(activeMapUrl);
-            } else {
-                console.log(`ℹ️ [setAllFiltersByMap] Pas de filtres pour la carte active ${activeMapUrl}`);
-            }
+            // avec retry si nécessaire (la carte peut ne pas encore être chargée)
+            this.tryLoadFiltersForActiveMap();
         } else {
             console.warn("⚠️ [setAllFiltersByMap] Données invalides:", filtersByMap);
         }

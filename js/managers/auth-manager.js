@@ -572,6 +572,14 @@ class AuthManager {
             // Sauvegarder dans localStorage pour que FilterManager les charge à son init
             localStorage.setItem('filtersByMap', JSON.stringify(data.filtersByMap));
             this.logAuth("💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager");
+            
+            // Appeler setAllFiltersByMap sur le FilterManager s'il existe
+            if (window.filterManager) {
+                this.logAuth("📤 [applyContextData] Application des filtres via FilterManager.setAllFiltersByMap");
+                window.filterManager.setAllFiltersByMap(data.filtersByMap);
+            } else {
+                this.logAuth("⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init");
+            }
         } else {
             this.logAuth("⚠️ [applyContextData] Aucune donnée filtersByMap dans le contexte");
         }
