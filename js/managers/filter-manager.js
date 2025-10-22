@@ -17,12 +17,31 @@ export default class FilterManager {
         this.filteredRegions = [];
         this.filtersByMap = {}; // Filtres par carte (mapId -> filtres)
 
+        // Charger les filtres depuis localStorage si disponibles
+        const savedFiltersByMap = localStorage.getItem('filtersByMap');
+        if (savedFiltersByMap) {
+            try {
+                this.filtersByMap = JSON.parse(savedFiltersByMap);
+                console.log("🔍 FilterManager: Filtres chargés depuis localStorage:", this.filtersByMap);
+                console.log(`🔍 FilterManager: ${Object.keys(this.filtersByMap).length} carte(s) avec filtres`);
+            } catch (e) {
+                console.error("❌ Erreur lors du chargement des filtres depuis localStorage:", e);
+            }
+        }
+
         console.log("🔍 FilterManager initialized");
     }
 
     // Initialiser les événements du gestionnaire de filtres
     setupFilterListeners() {
         console.log("🔍 Setting up filter listeners...");
+
+        // Charger les filtres de la carte active si disponibles
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        if (activeMapUrl && this.filtersByMap[activeMapUrl]) {
+            console.log(`🔍 Chargement des filtres pour la carte active: ${activeMapUrl}`);
+            this.loadFiltersForMap(activeMapUrl);
+        }
 
         // Bouton principal de filtrage
         const filterBtn = document.getElementById('filter-btn');
