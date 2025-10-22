@@ -246,16 +246,12 @@ function renderLocations() {
             return;
         }
 
-        // Filtrer les lieux : afficher UNIQUEMENT ceux correspondant à la carte active
+        // Filtrer les lieux : afficher ceux sans mapId OU ceux correspondant à la carte active
         const activeMapId = window.settingsManager?.activeMapUrl;
-        
-        // Si le lieu a un mapId, il doit correspondre à la carte active
-        if (location.mapId) {
-            if (location.mapId !== activeMapId) {
-                return; // Ne pas afficher si le mapId ne correspond pas
-            }
+        if (location.mapId && activeMapId && location.mapId !== activeMapId) {
+            // Ne pas afficher uniquement si un mapId existe ET qu'il ne correspond pas à la carte active
+            return;
         }
-        // Les lieux sans mapId (anciennes données) sont affichés sur toutes les cartes
 
         // Créer le marqueur
         const marker = document.createElement('div');
@@ -428,16 +424,11 @@ function renderRegions() {
     regionsData.regions.forEach(region => {
         console.log('🔍 Processing region:', region.name, region);
 
-        // Filtrer les régions : afficher UNIQUEMENT celles correspondant à la carte active
-        const activeMapId = window.settingsManager?.activeMapUrl;
-        
-        // Si la région a un mapId, elle doit correspondre à la carte active
-        if (region.mapId) {
-            if (region.mapId !== activeMapId) {
-                return; // Ne pas afficher si le mapId ne correspond pas
-            }
+        // Filtrer les régions : afficher celles sans mapId OU celles correspondant à la carte active
+        if (region.mapId && activeMapId && region.mapId !== activeMapId) {
+            // Ne pas afficher uniquement si un mapId existe ET qu'il ne correspond pas à la carte active
+            return;
         }
-        // Les régions sans mapId (anciennes données) sont affichées sur toutes les cartes
 
         // Extraire les points depuis différentes structures possibles
         let points = [];

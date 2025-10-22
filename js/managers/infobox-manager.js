@@ -173,45 +173,6 @@ class InfoBoxManager {
         infoBox.style.transform = 'none';
     }
 
-    updateMapIdDisplay(item) {
-        const infoBoxTitle = document.getElementById('info-box-title');
-        if (!infoBoxTitle) return;
-
-        // Supprimer l'ancien affichage MapID s'il existe
-        const existingMapIdDisplay = document.getElementById('info-box-mapid-display');
-        if (existingMapIdDisplay) {
-            existingMapIdDisplay.remove();
-        }
-
-        // Créer le conteneur pour l'affichage du MapID
-        const mapIdContainer = document.createElement('div');
-        mapIdContainer.id = 'info-box-mapid-display';
-        mapIdContainer.style.fontSize = '11px';
-        mapIdContainer.style.color = '#9ca3af';
-        mapIdContainer.style.marginTop = '4px';
-        mapIdContainer.style.display = 'flex';
-        mapIdContainer.style.alignItems = 'center';
-        mapIdContainer.style.gap = '6px';
-
-        if (!item.mapId) {
-            // Pas de MapID : afficher avertissement
-            mapIdContainer.innerHTML = `
-                <i class="fas fa-exclamation-triangle" style="color: #f59e0b; font-size: 14px;" title="Ce lieu/région n'est pas associé à une carte"></i>
-                <span style="color: #f59e0b; font-size: 11px;">Non associé à une carte</span>
-            `;
-        } else {
-            // MapID existe : afficher discrètement
-            const mapName = item.mapId.split('/').pop().replace(/\.[^/.]+$/, ''); // Extraire le nom du fichier sans extension
-            mapIdContainer.innerHTML = `
-                <i class="fas fa-map" style="font-size: 11px;"></i>
-                <span title="${item.mapId}">${mapName}</span>
-            `;
-        }
-
-        // Insérer après le titre
-        infoBoxTitle.parentNode.insertBefore(mapIdContainer, infoBoxTitle.nextSibling);
-    }
-
     updateInfoBoxContent() {
         if (!this.currentItem) return;
 
@@ -258,9 +219,6 @@ class InfoBoxManager {
     renderReadMode() {
         const item = this.currentItem;
         const type = this.currentType;
-
-        // Afficher le MapID ou l'avertissement dans le header
-        this.updateMapIdDisplay(item);
 
         // Onglet Image
         const imageTab = document.getElementById('image-tab');
