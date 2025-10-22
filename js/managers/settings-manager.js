@@ -452,12 +452,12 @@ class SettingsManager {
                      onclick="window.settingsManager.setActiveMap(${index})">
                     <div class="flex items-center space-x-3">
                         <div class="w-16 h-16 bg-gray-700 rounded overflow-hidden flex-shrink-0">
-                            <img src="${map.url}" alt="${map.name}" class="w-full h-full object-cover" 
+                            <img src="${map.url}" alt="${map.name}" class="w-full h-full object-cover map-preview-img" data-map-index="${index}"
                                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjc3NDhDIi8+Cjwvc3ZnPg=='">
                         </div>
                         <div class="flex-grow min-w-0">
                             <div class="text-sm font-medium text-white truncate">${map.name}</div>
-                            <div class="text-xs text-gray-400 mt-0.5">${mapWidth}px • ${mapScale} miles</div>
+                            <div class="text-xs text-gray-400 mt-0.5" id="map-dims-${index}">${mapWidth}px • ${mapScale} miles</div>
                             ${isActive ? '<div class="text-xs text-blue-400 mt-1"><i class="fas fa-check-circle mr-1"></i>Carte active</div>' : '<div class="text-xs text-gray-500 mt-1">Cliquer pour activer</div>'}
                         </div>
                         <div class="flex flex-col gap-1">
@@ -479,6 +479,39 @@ class SettingsManager {
 
         // Mettre à jour l'affichage de la carte active
         this.updateActiveMapDisplay();
+        
+        // Charger les dimensions réelles pour chaque carte
+        this.loadRealMapDimensions();
+    }
+
+    loadRealMapDimensions() {
+        // Pour chaque carte, charger l'image pour obtenir ses dimensions réelles
+        this.availableMaps.forEach((map, index) => {
+            const img = new Image();
+            img.onload = () => {
+                const realWidth = img.naturalWidth;
+                const realHeight = img.naturalHeight;
+                
+                // Mettre à jour les dimensions stockées si elles sont différentes
+                if (map.width !== realWidth || map.height !== realHeight) {
+                    console.log(`📐 Carte "${map.name}": dimensions réelles ${realWidth}x${realHeight}px (stockées: ${map.width || 'N/A'}x${map.height || 'N/A'}px)`);
+                    map.width = realWidth;
+                    map.height = realHeight;
+                    this.saveMapsData();
+                }
+                
+                // Mettre à jour l'affichage
+                const dimsElement = document.getElementById(`map-dims-${index}`);
+                if (dimsElement) {
+                    const mapScale = map.scale || 600;
+                    dimsElement.textContent = `${realWidth} × ${realHeight}px • ${mapScale} miles`;
+                }
+            };
+            img.onerror = () => {
+                console.error(`❌ Erreur chargement image: ${map.url}`);
+            };
+            img.src = map.url;
+        });
     }
 
     updateActiveMapDisplay() {
