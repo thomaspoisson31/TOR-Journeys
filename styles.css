@@ -804,6 +804,12 @@ body {
 }
 
 /* Settings modal styles */
+#settings-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .settings-tab-button {
     transition: all 0.2s ease;
     border-bottom-width: 2px;
