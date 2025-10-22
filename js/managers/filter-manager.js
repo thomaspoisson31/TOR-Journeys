@@ -613,7 +613,6 @@ export default class FilterManager {
     loadFiltersForMap(mapUrl) {
         console.log(`🔍 [loadFiltersForMap] Tentative de chargement pour carte: ${mapUrl}`);
         console.log(`🔍 [loadFiltersForMap] filtersByMap disponibles:`, Object.keys(this.filtersByMap));
-        console.log(`🔍 [loadFiltersForMap] filtersByMap complet:`, this.filtersByMap);
         
         if (this.filtersByMap[mapUrl]) {
             console.log(`📥 [loadFiltersForMap] Filtres trouvés:`, this.filtersByMap[mapUrl]);
@@ -625,15 +624,33 @@ export default class FilterManager {
             this.updateFilterUI();
             console.log(`✅ [loadFiltersForMap] Appel de applyFilters...`);
             this.applyFilters();
+            
+            // Forcer le rendu après application des filtres
+            setTimeout(() => {
+                console.log(`🔄 [loadFiltersForMap] Rendu forcé des lieux et régions`);
+                if (typeof window.renderLocations === 'function') {
+                    window.renderLocations();
+                }
+                if (typeof window.renderRegions === 'function') {
+                    window.renderRegions();
+                }
+            }, 100);
+            
             return true;
         } else {
             console.warn(`⚠️ [loadFiltersForMap] Aucun filtre trouvé pour la carte ${mapUrl}`);
-            console.log(`🔍 [loadFiltersForMap] Clés exactes dans filtersByMap:`, Object.keys(this.filtersByMap));
-            // Vérifier si la clé existe avec une légère différence
-            const similarKey = Object.keys(this.filtersByMap).find(key => key.includes(mapUrl.split('/').pop()));
-            if (similarKey) {
-                console.log(`🔍 [loadFiltersForMap] Clé similaire trouvée: ${similarKey}`);
-            }
+            // Si aucun filtre, réinitialiser aux valeurs par défaut et afficher tout
+            this.activeFilters = {
+                colors: [],
+                visited: [],
+                known: [],
+                types: [],
+                showLocations: true,
+                showRegions: false,
+                regionsOpacity: 0.5
+            };
+            this.updateFilterUI();
+            this.applyFilters();
         }
         return false;
     }

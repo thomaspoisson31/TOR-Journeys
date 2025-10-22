@@ -510,6 +510,17 @@ class SettingsManager {
         this.saveMapsData();
         this.renderMapsGrid();
         
+        // IMPORTANT: Charger les filtres pour la nouvelle carte active
+        if (window.filterManager) {
+            console.log(`🔍 [switchMap] Chargement des filtres pour la nouvelle carte: ${mapUrl}`);
+            const filtersLoaded = window.filterManager.loadFiltersForMap(mapUrl);
+            if (filtersLoaded) {
+                console.log(`✅ [switchMap] Filtres chargés pour ${mapUrl}`);
+            } else {
+                console.log(`📝 [switchMap] Aucun filtre sauvegardé pour ${mapUrl}, utilisation des filtres par défaut`);
+            }
+        }
+        
         // Re-render les lieux et régions avec le nouveau filtre de carte
         if (typeof window.renderLocations === 'function') {
             window.renderLocations();
