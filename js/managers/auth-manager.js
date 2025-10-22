@@ -799,7 +799,7 @@ class AuthManager {
             const localData = this.collectCurrentContextData();
             this.logAuth("📦 Données locales collectées");
 
-            // 3. Attribuer le mapId de la carte active aux lieux/régions sans mapId
+            // 3. Attribuer le mapId de la carte active aux lieux/régions sans mapId DIRECTEMENT dans les données collectées
             const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl;
             this.logAuth(`🔍 [syncUserData] activeMapId: ${activeMapId}`);
 
@@ -810,77 +810,34 @@ class AuthManager {
                 this.logAuth(`🔍 [syncUserData] AVANT attribution - localData.locations count: ${localData.locations?.locations?.length || 0}`);
                 this.logAuth(`🔍 [syncUserData] AVANT attribution - localData.regions count: ${localData.regions?.regions?.length || 0}`);
 
-                // Mise à jour des lieux sans mapId
+                // Mise à jour des lieux sans mapId DIRECTEMENT dans localData (qui sera envoyé au cloud)
                 if (localData.locations?.locations) {
-                    localData.locations.locations.forEach((loc, index) => {
+                    localData.locations.locations = localData.locations.locations.map((loc, index) => {
                         if (!loc.mapId) {
                             this.logAuth(`🔍 [syncUserData] Location ${index} "${loc.name}" sans mapId, attribution de ${activeMapId}`);
-                            loc.mapId = activeMapId;
                             locationsUpdated++;
-                        } else {
-                            this.logAuth(`🔍 [syncUserData] Location ${index} "${loc.name}" a déjà mapId: ${loc.mapId}`);
+                            return { ...loc, mapId: activeMapId };
                         }
+                        this.logAuth(`🔍 [syncUserData] Location ${index} "${loc.name}" a déjà mapId: ${loc.mapId}`);
+                        return loc;
                     });
                 }
 
-                // Mise à jour des régions sans mapId
+                // Mise à jour des régions sans mapId DIRECTEMENT dans localData (qui sera envoyé au cloud)
                 if (localData.regions?.regions) {
-                    localData.regions.regions.forEach((reg, index) => {
+                    localData.regions.regions = localData.regions.regions.map((reg, index) => {
                         if (!reg.mapId) {
                             this.logAuth(`🔍 [syncUserData] Region ${index} "${reg.name}" sans mapId, attribution de ${activeMapId}`);
-                            reg.mapId = activeMapId;
                             regionsUpdated++;
-                        } else {
-                            this.logAuth(`🔍 [syncUserData] Region ${index} "${reg.name}" a déjà mapId: ${reg.mapId}`);
+                            return { ...reg, mapId: activeMapId };
                         }
+                        this.logAuth(`🔍 [syncUserData] Region ${index} "${reg.name}" a déjà mapId: ${reg.mapId}`);
+                        return reg;
                     });
                 }
 
                 if (locationsUpdated > 0 || regionsUpdated > 0) {
                     this.logAuth(`🗺️ Attribution mapId actif (${activeMapId}): ${locationsUpdated} lieux, ${regionsUpdated} régions`);
-
-                    // IMPORTANT: Synchroniser IMMÉDIATEMENT avec variables globales ET localStorage
-                    if (localData.locations?.locations && locationsUpdated > 0) {
-                        this.logAuth(`🔍 [syncUserData] Synchronisation locationsData avec ${localData.locations.locations.length} lieux`);
-
-                        // Vérifier que les mapId sont bien présents
-                        const sample = localData.locations.locations.slice(0, 3);
-                        this.logAuth(`🔍 [syncUserData] Échantillon locations AVANT sync:`, sample.map(l => ({ name: l.name, mapId: l.mapId })));
-
-                        window.locationsData = JSON.parse(JSON.stringify(localData.locations)); // Deep copy
-                        if (window.dataManager) {
-                            window.dataManager.locationsData = JSON.parse(JSON.stringify(localData.locations));
-                        }
-
-                        const locationStr = JSON.stringify(localData.locations);
-                        localStorage.setItem('middleEarthLocations', locationStr);
-
-                        // Vérifier que ça a bien été sauvé
-                        const verif = JSON.parse(localStorage.getItem('middleEarthLocations'));
-                        const verifSample = verif.locations.slice(0, 3);
-                        this.logAuth(`🔍 [syncUserData] Vérif localStorage locations:`, verifSample.map(l => ({ name: l.name, mapId: l.mapId })));
-
-                        this.logAuth(`✅ Variables globales locationsData synchronisées avec les nouveaux mapId`);
-                    }
-
-                    if (localData.regions?.regions && regionsUpdated > 0) {
-                        this.logAuth(`🔍 [syncUserData] Synchronisation regionsData avec ${localData.regions.regions.length} régions`);
-
-                        window.regionsData = JSON.parse(JSON.stringify(localData.regions)); // Deep copy
-                        if (window.dataManager) {
-                            window.dataManager.regionsData = JSON.parse(JSON.stringify(localData.regions));
-                        }
-
-                        const regionStr = JSON.stringify(localData.regions);
-                        localStorage.setItem('middleEarthRegions', regionStr);
-
-                        // Vérifier que ça a bien été sauvé
-                        const verif = JSON.parse(localStorage.getItem('middleEarthRegions'));
-                        const verifSample = verif.regions.slice(0, 3);
-                        this.logAuth(`🔍 [syncUserData] Vérif localStorage regions:`, verifSample.map(r => ({ name: r.name, mapId: r.mapId })));
-
-                        this.logAuth(`✅ Variables globales regionsData synchronisées avec les nouveaux mapId`);
-                    }
                 } else {
                     this.logAuth(`ℹ️ Aucun lieu/région sans mapId à mettre à jour`);
                 }
