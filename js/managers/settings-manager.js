@@ -285,16 +285,24 @@ class SettingsManager {
     handleMapUploaded(uploadResult) {
         const mapName = uploadResult.name || `Carte ${Date.now()}`;
 
-        const newMap = {
-            id: Date.now(),
-            name: mapName,
-            url: uploadResult.url,
-            isDefault: false
-        };
+        // Créer une image temporaire pour obtenir les dimensions
+        const img = new Image();
+        img.onload = () => {
+            const newMap = {
+                id: Date.now(),
+                name: mapName,
+                url: uploadResult.url,
+                isDefault: false,
+                width: img.naturalWidth,
+                height: img.naturalHeight,
+                scale: 600 // Distance en miles par défaut (comme MAP_DISTANCE_MILES)
+            };
 
-        this.availableMaps.push(newMap);
-        this.saveMapsData();
-        this.renderMapsGrid();
+            this.availableMaps.push(newMap);
+            this.saveMapsData();
+            this.renderMapsGrid();
+        };
+        img.src = uploadResult.url;
     }
 
     async openLibraryForMapSelection(mapModal) {
@@ -438,6 +446,9 @@ class SettingsManager {
         mapsGrid.innerHTML = this.availableMaps.map((map, index) => {
             const isActive = this.activeMapUrl === map.url;
 
+            const mapWidth = map.width || 5103;
+            const mapScale = map.scale || 600;
+            
             return `
                 <div class="bg-gray-800 rounded-lg p-2 border ${isActive ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 hover:border-gray-600'} transition-all cursor-pointer"
                      onclick="window.settingsManager.setActiveMap(${index})">
@@ -448,13 +459,21 @@ class SettingsManager {
                         </div>
                         <div class="flex-grow min-w-0">
                             <div class="text-sm font-medium text-white truncate">${map.name}</div>
+                            <div class="text-xs text-gray-400 mt-0.5">${mapWidth}px • ${mapScale} miles</div>
                             ${isActive ? '<div class="text-xs text-blue-400 mt-1"><i class="fas fa-check-circle mr-1"></i>Carte active</div>' : '<div class="text-xs text-gray-500 mt-1">Cliquer pour activer</div>'}
                         </div>
-                        <button class="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors flex-shrink-0" 
-                                onclick="event.stopPropagation(); window.settingsManager.deleteMap(${index})"
-                                title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div class="flex flex-col gap-1">
+                            <button class="p-1.5 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 rounded transition-colors" 
+                                    onclick="event.stopPropagation(); window.settingsManager.editMapScale(${index})"
+                                    title="Modifier l'échelle">
+                                <i class="fas fa-ruler"></i>
+                            </button>
+                            <button class="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors" 
+                                    onclick="event.stopPropagation(); window.settingsManager.deleteMap(${index})"
+                                    title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -488,6 +507,12 @@ class SettingsManager {
         this.activeMapUrl = map.url;
         this.activeMapName = map.name;
 
+        // Mettre à jour l'échelle pour le PathManager
+        if (window.pathManager) {
+            window.pathManager.mapConstants.MAP_DISTANCE_MILES = map.scale || 600;
+            console.log(`🗺️ Échelle de carte mise à jour : ${map.scale || 600} miles`);
+        }
+
         // Mettre à jour l'image de la carte principale
         const mapImage = document.getElementById('map-image');
         if (mapImage) {
@@ -512,12 +537,12 @@ class SettingsManager {
         
         // IMPORTANT: Charger les filtres pour la nouvelle carte active
         if (window.filterManager) {
-            console.log(`🔍 [switchMap] Chargement des filtres pour la nouvelle carte: ${mapUrl}`);
-            const filtersLoaded = window.filterManager.loadFiltersForMap(mapUrl);
+            console.log(`🔍 [switchMap] Chargement des filtres pour la nouvelle carte: ${this.activeMapUrl}`);
+            const filtersLoaded = window.filterManager.loadFiltersForMap(this.activeMapUrl);
             if (filtersLoaded) {
-                console.log(`✅ [switchMap] Filtres chargés pour ${mapUrl}`);
+                console.log(`✅ [switchMap] Filtres chargés pour ${this.activeMapUrl}`);
             } else {
-                console.log(`📝 [switchMap] Aucun filtre sauvegardé pour ${mapUrl}, utilisation des filtres par défaut`);
+                console.log(`📝 [switchMap] Aucun filtre sauvegardé pour ${this.activeMapUrl}, utilisation des filtres par défaut`);
             }
         }
         
@@ -527,6 +552,34 @@ class SettingsManager {
         }
         if (typeof window.renderRegions === 'function') {
             window.renderRegions();
+        }
+    }
+
+    editMapScale(index) {
+        const map = this.availableMaps[index];
+        
+        const newScale = prompt(
+            `Échelle de la carte "${map.name}"\n\n` +
+            `Distance représentée par la largeur de la carte (en miles) :\n` +
+            `(actuellement : ${map.scale || 600} miles)`,
+            map.scale || 600
+        );
+        
+        if (newScale !== null) {
+            const scaleNum = parseFloat(newScale);
+            if (!isNaN(scaleNum) && scaleNum > 0) {
+                map.scale = scaleNum;
+                this.saveMapsData();
+                this.renderMapsGrid();
+                
+                // Mettre à jour les constantes si c'est la carte active
+                if (map.url === this.activeMapUrl && window.pathManager) {
+                    window.pathManager.mapConstants.MAP_DISTANCE_MILES = scaleNum;
+                    console.log(`✅ Échelle mise à jour : ${scaleNum} miles`);
+                }
+            } else {
+                alert('Veuillez entrer une valeur numérique positive.');
+            }
         }
     }
 
@@ -991,7 +1044,13 @@ class SettingsManager {
 
         // Charger les cartes
         if (settings.availableMaps && Array.isArray(settings.availableMaps)) {
-            this.availableMaps = settings.availableMaps;
+            // Migrer les anciennes cartes sans dimensions/échelle
+            this.availableMaps = settings.availableMaps.map(map => ({
+                ...map,
+                width: map.width || 5103,
+                height: map.height || 3296,
+                scale: map.scale || 600
+            }));
             console.log('✅ Cartes chargées:', this.availableMaps.length);
         }
         if (settings.activeMapUrl) {
