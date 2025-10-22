@@ -799,6 +799,37 @@ class AuthManager {
             const localData = this.collectCurrentContextData();
             this.logAuth("📦 Données locales collectées");
 
+            // 3. Attribuer le mapId de la carte active aux lieux/régions sans mapId
+            const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl;
+            if (activeMapId) {
+                let locationsUpdated = 0;
+                let regionsUpdated = 0;
+
+                // Mise à jour des lieux sans mapId
+                if (localData.locations?.locations) {
+                    localData.locations.locations.forEach(loc => {
+                        if (!loc.mapId) {
+                            loc.mapId = activeMapId;
+                            locationsUpdated++;
+                        }
+                    });
+                }
+
+                // Mise à jour des régions sans mapId
+                if (localData.regions?.regions) {
+                    localData.regions.regions.forEach(reg => {
+                        if (!reg.mapId) {
+                            reg.mapId = activeMapId;
+                            regionsUpdated++;
+                        }
+                    });
+                }
+
+                if (locationsUpdated > 0 || regionsUpdated > 0) {
+                    this.logAuth(`🗺️ Attribution mapId actif (${activeMapId}): ${locationsUpdated} lieux, ${regionsUpdated} régions`);
+                }
+            }
+
             // 3. Fusionner intelligemment les données
             const mergedData = this.mergeContextData(cloudData, localData);
             this.logAuth("🔀 Données fusionnées pour sauvegarde");
