@@ -210,6 +210,12 @@ class SettingsManager {
         if (deleteAllBtn) {
             deleteAllBtn.addEventListener('click', () => this.deleteAllLocationsAndRegions());
         }
+
+        // Setup du bouton d'association des lieux/régions sans mapId
+        const associateBtn = document.getElementById('associate-to-active-map-btn');
+        if (associateBtn) {
+            associateBtn.addEventListener('click', () => this.associateOrphansToActiveMap());
+        }
     }
 
     showAddMapModal() {
@@ -1064,6 +1070,102 @@ class SettingsManager {
         }
 
         console.log('✅ Paramètres chargés avec succès');
+    }
+
+    associateOrphansToActiveMap() {
+        // Compter les lieux et régions sans mapId
+        let orphanLocations = 0;
+        let orphanRegions = 0;
+
+        if (window.locationsData && window.locationsData.locations) {
+            orphanLocations = window.locationsData.locations.filter(loc => !loc.mapId).length;
+        }
+
+        if (window.regionsData && window.regionsData.regions) {
+            orphanRegions = window.regionsData.regions.filter(reg => !reg.mapId).length;
+        }
+
+        if (orphanLocations === 0 && orphanRegions === 0) {
+            alert('✅ Tous les lieux et régions sont déjà associés à une carte.');
+            return;
+        }
+
+        const confirmed = confirm(
+            `📍 Association à la carte active\n\n` +
+            `Cette action va associer ${orphanLocations} lieu(x) et ${orphanRegions} région(s) sans carte\n` +
+            `à la carte actuellement active : "${this.activeMapName}"\n\n` +
+            `Voulez-vous continuer ?`
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            console.log(`🔗 Association des éléments orphelins à la carte: ${this.activeMapUrl}`);
+
+            let locationsUpdated = 0;
+            let regionsUpdated = 0;
+
+            // Associer les lieux sans mapId
+            if (window.locationsData && window.locationsData.locations) {
+                window.locationsData.locations.forEach(location => {
+                    if (!location.mapId) {
+                        location.mapId = this.activeMapUrl;
+                        locationsUpdated++;
+                    }
+                });
+            }
+
+            // Associer les régions sans mapId
+            if (window.regionsData && window.regionsData.regions) {
+                window.regionsData.regions.forEach(region => {
+                    if (!region.mapId) {
+                        region.mapId = this.activeMapUrl;
+                        regionsUpdated++;
+                    }
+                });
+            }
+
+            // Sauvegarder dans localStorage
+            if (window.dataManager) {
+                window.dataManager.saveLocationsToLocal();
+                window.dataManager.saveRegionsToLocal();
+            } else {
+                localStorage.setItem('middleEarthLocations', JSON.stringify(window.locationsData));
+                localStorage.setItem('middleEarthRegions', JSON.stringify(window.regionsData));
+            }
+
+            // Re-render la carte
+            if (typeof window.renderLocations === 'function') {
+                window.renderLocations();
+            }
+            if (typeof window.renderRegions === 'function') {
+                window.renderRegions();
+            }
+
+            // Marquer comme non sauvegardé
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+
+            // Synchroniser
+            if (typeof window.scheduleAutoSync === 'function') {
+                window.scheduleAutoSync();
+            }
+
+            alert(
+                `✅ Association terminée !\n\n` +
+                `${locationsUpdated} lieu(x) associé(s)\n` +
+                `${regionsUpdated} région(s) associée(s)\n\n` +
+                `à la carte : "${this.activeMapName}"`
+            );
+            console.log(`✅ Association complète: ${locationsUpdated} lieux, ${regionsUpdated} régions`);
+
+        } catch (error) {
+            console.error('❌ Erreur lors de l\'association:', error);
+            alert('❌ Erreur lors de l\'association : ' + error.message);
+        }
     }
 
     deleteAllLocationsAndRegions() {
