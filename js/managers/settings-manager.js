@@ -1100,18 +1100,26 @@ class SettingsManager {
                 console.log(`🗺️ [loadSettings] Échelle appliquée au PathManager: ${mapScale} miles`);
             }
 
-            // Vérifier si l'image est déjà chargée avec la bonne URL
-            if (mapImage.complete && mapImage.naturalWidth > 0 && mapImage.src.endsWith(this.activeMapUrl)) {
-                console.log('✅ [loadSettings] Image déjà chargée, initialisation immédiate');
-                // Reset MAP_WIDTH pour forcer la réinitialisation complète
-                window.MAP_WIDTH = 0;
-                window.MAP_HEIGHT = 0;
-                if (typeof window.initializeMap === 'function') {
-                    window.initializeMap();
+            // Vérifier si l'image est déjà chargée avec la bonne URL (normaliser les URLs pour comparaison)
+            const currentSrc = mapImage.src.split('/').pop() || '';
+            const targetSrc = this.activeMapUrl.split('/').pop() || '';
+            const isAlreadyLoaded = mapImage.complete && mapImage.naturalWidth > 0 && currentSrc === targetSrc;
+
+            console.log(`🔍 [loadSettings] Comparaison URLs: current="${currentSrc}", target="${targetSrc}", isAlreadyLoaded=${isAlreadyLoaded}`);
+
+            if (isAlreadyLoaded) {
+                console.log('✅ [loadSettings] Image déjà chargée, initialisation immédiate (SANS rechargement)');
+                // NE PAS réinitialiser la carte si elle est déjà correctement chargée
+                // Juste re-render les lieux et régions avec les bons filtres
+                if (typeof window.renderLocations === 'function') {
+                    window.renderLocations();
+                }
+                if (typeof window.renderRegions === 'function') {
+                    window.renderRegions();
                 }
             } else {
                 console.log('🗺️ [loadSettings] Chargement de la nouvelle image:', this.activeMapUrl);
-                // Définir le callback avant de changer le src
+                // Définir le callback AVANT de changer le src
                 mapImage.onload = () => {
                     console.log('✅ [loadSettings] Image de carte chargée');
                     console.log(`📐 [loadSettings] Dimensions réelles image: ${mapImage.naturalWidth}x${mapImage.naturalHeight}px`);
@@ -1125,7 +1133,7 @@ class SettingsManager {
                     }
                 };
                 
-                // Changer le src pour déclencher le chargement
+                // Changer le src SEULEMENT si nécessaire pour déclencher le chargement
                 mapImage.src = this.activeMapUrl;
             }
         }
