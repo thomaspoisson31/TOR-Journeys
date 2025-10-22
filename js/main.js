@@ -549,12 +549,6 @@ function initializeMap() {
         console.warn("⚠️ Map image not loaded yet, retrying...");
         return;
     }
-    
-    // Éviter la double initialisation
-    if (MAP_WIDTH > 0) {
-        console.log("⚠️ Map already initialized, skipping");
-        return;
-    }
 
     console.log("📐 Map dimensions:", mapImage.naturalWidth, "x", mapImage.naturalHeight);
     MAP_WIDTH = mapImage.naturalWidth;

@@ -538,6 +538,18 @@ class SettingsManager {
         window.MAP_WIDTH = 0;
         window.MAP_HEIGHT = 0;
         
+        // IMPORTANT: Nettoyer complètement les couches avant réinitialisation
+        const locationsLayer = document.getElementById('locations-layer');
+        const regionsLayer = document.getElementById('regions-layer');
+        if (locationsLayer) {
+            locationsLayer.innerHTML = '';
+            console.log('🧹 [switchMap] Couche de lieux vidée');
+        }
+        if (regionsLayer) {
+            regionsLayer.innerHTML = '';
+            console.log('🧹 [switchMap] Couche de régions vidée');
+        }
+        
         // IMPORTANT: Forcer la réinitialisation complète de la carte
         if (typeof window.initializeMap === 'function') {
             console.log('🗺️ [switchMap] Réinitialisation complète de la carte');
@@ -553,6 +565,12 @@ class SettingsManager {
             } else {
                 console.log(`📝 [switchMap] Aucun filtre sauvegardé pour ${this.activeMapUrl}, utilisation des filtres par défaut`);
             }
+        }
+        
+        // IMPORTANT: Re-render explicite des lieux et régions pour la nouvelle carte
+        console.log('🎨 [switchMap] Re-render des lieux et régions pour la nouvelle carte');
+        if (typeof window.renderLocations === 'function') {
+            window.renderLocations();
         }
         if (typeof window.renderRegions === 'function') {
             window.renderRegions();
