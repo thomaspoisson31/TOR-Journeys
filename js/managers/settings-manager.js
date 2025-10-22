@@ -541,7 +541,13 @@ class SettingsManager {
         // Mettre à jour l'échelle pour le PathManager
         if (window.pathManager) {
             window.pathManager.mapConstants.MAP_DISTANCE_MILES = map.scale || 600;
-            console.log(`🗺️ Échelle de carte mise à jour : ${map.scale || 600} miles`);
+            console.log(`🗺️ PathManager: échelle de carte mise à jour : ${map.scale || 600} miles`);
+        }
+        
+        // Mettre à jour l'échelle pour le VoyageManager
+        if (window.voyageManager) {
+            window.voyageManager.MAP_DISTANCE_MILES = map.scale || 600;
+            console.log(`🗺️ VoyageManager: échelle de carte mise à jour : ${map.scale || 600} miles`);
         }
 
         // Mettre à jour l'image de la carte principale

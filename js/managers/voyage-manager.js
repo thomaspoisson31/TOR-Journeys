@@ -23,7 +23,17 @@ class VoyageManager {
         this.setupEventListeners();
     }
 
+    updateMapScale() {
+        // Mettre à jour l'échelle de la carte depuis la carte active
+        const activeMap = window.settingsManager?.availableMaps?.find(m => m.url === window.settingsManager.activeMapUrl);
+        if (activeMap && activeMap.scale) {
+            this.MAP_DISTANCE_MILES = activeMap.scale;
+            console.log(`🗺️ VoyageManager: échelle mise à jour à ${this.MAP_DISTANCE_MILES} miles`);
+        }
+    }
+
     setupEventListeners() {
+        // Bouton principal des paramètres
         const voyageBtn = this.dom.getElementById('voyage-segments-btn');
         const closeBtn = this.dom.getElementById('close-voyage-segments');
 
@@ -87,6 +97,7 @@ class VoyageManager {
         } else {
             noVoyageMessage.classList.add('hidden');
             currentSegmentDisplay.classList.remove('hidden');
+            this.updateMapScale(); // Mettre à jour l'échelle avant de générer les données du voyage
             this.generateJourneyData();
             this.renderCurrentDay();
         }
@@ -375,9 +386,9 @@ class VoyageManager {
     }
 
     renderCurrentDay() {
-        const segmentTitle = document.getElementById('segment-title');
-        const dayCounter = document.getElementById('day-counter');
-        const segmentContent = document.getElementById('segment-content');
+        const segmentTitle = this.dom.getElementById('segment-title');
+        const dayCounter = this.dom.getElementById('day-counter');
+        const segmentContent = this.dom.getElementById('segment-content');
         const progressBar = this.dom.getElementById('voyage-progress-bar');
         const voyageEndMessage = this.dom.getElementById('voyage-end-message');
         const randomEventBtn = this.dom.getElementById('random-event-btn');
