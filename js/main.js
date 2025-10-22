@@ -166,16 +166,14 @@ async function initializeApp() {
         window.regionsData = regionsData;
         console.log("✅ Data structures initialized (will be populated from cloud)");
 
-        // Attendre que SettingsManager charge la carte active
+        // Callback unique pour le chargement de l'image de carte
         if (mapImage) {
-            // La carte sera chargée par SettingsManager.loadSettings() appelé par AuthManager
             mapImage.onload = () => {
-                console.log("🗺️ Map image loaded successfully");
+                console.log("🗺️ [main.js] Map image loaded successfully");
                 initializeMap();
-                console.log("⏳ Waiting for cloud data before rendering...");
             };
             mapImage.onerror = () => {
-                console.error("❌ Map image failed to load");
+                console.error("❌ [main.js] Map image failed to load");
                 if (loaderOverlay) {
                     loaderOverlay.innerHTML = `
                         <div class="text-2xl text-red-500 text-center p-4">
@@ -188,7 +186,7 @@ async function initializeApp() {
                     `;
                 }
             };
-            console.log("⏳ Waiting for SettingsManager to load active map...");
+            console.log("✅ [main.js] Callback onload configuré");
         }
 
     } catch (error) {

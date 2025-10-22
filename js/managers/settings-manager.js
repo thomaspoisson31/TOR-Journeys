@@ -1083,47 +1083,20 @@ class SettingsManager {
         // Mettre à jour l'image de la carte principale
         const mapImage = document.getElementById('map-image');
         if (mapImage && this.activeMapUrl) {
-            console.log('🗺️ Mise à jour de l\'image de la carte:', this.activeMapUrl);
+            console.log('🗺️ [loadSettings] Changement de carte vers:', this.activeMapUrl);
 
             // Trouver la carte active pour récupérer son échelle
             const activeMap = this.availableMaps.find(m => m.url === this.activeMapUrl);
             const mapScale = activeMap?.scale || 600;
-            console.log(`🗺️ Échelle de la carte active: ${mapScale} miles`);
 
-            // Callback pour re-render après chargement
-            const onImageLoaded = () => {
-                console.log('✅ Image de carte chargée, re-initialisation de la carte');
-                
-                // IMPORTANT: Appliquer l'échelle AVANT l'initialisation de la carte
-                if (window.pathManager) {
-                    window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
-                    console.log(`🗺️ Échelle appliquée au PathManager: ${mapScale} miles`);
-                }
-                
-                // Toujours réinitialiser la carte lors du changement d'image
-                if (typeof window.initializeMap === 'function') {
-                    // Reset MAP_WIDTH pour forcer la réinitialisation complète
-                    window.MAP_WIDTH = 0;
-                    console.log('🗺️ Réinitialisation de la carte depuis loadSettings');
-                    window.initializeMap();
-                } else {
-                    // Si initializeMap n'existe pas encore, juste re-render
-                    if (typeof window.renderLocations === 'function') {
-                        window.renderLocations();
-                        console.log('✅ Lieux rendus après loadSettings');
-                    }
-                    if (typeof window.renderRegions === 'function') {
-                        window.renderRegions();
-                        console.log('✅ Régions rendues après loadSettings');
-                    }
-                }
-            };
+            // IMPORTANT: Appliquer l'échelle IMMÉDIATEMENT
+            if (window.pathManager) {
+                window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
+                console.log(`🗺️ [loadSettings] Échelle appliquée au PathManager: ${mapScale} miles`);
+            }
 
-            // Toujours définir le callback avant de changer src
-            mapImage.onload = onImageLoaded;
-            
-            // Forcer le rechargement en changeant toujours le src
-            console.log('🗺️ Chargement de l\'image:', this.activeMapUrl);
+            // Simplement changer le src - le callback onload dans main.js s'occupera du reste
+            console.log('🗺️ [loadSettings] Mise à jour du src de l\'image');
             mapImage.src = this.activeMapUrl;
         }
 
