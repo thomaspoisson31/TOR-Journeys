@@ -561,6 +561,9 @@ function initializeMap() {
     MAP_HEIGHT = mapImage.naturalHeight;
     mapContainer.style.width = `${MAP_WIDTH}px`;
     mapContainer.style.height = `${MAP_HEIGHT}px`;
+    
+    // Mettre à jour l'affichage des dimensions
+    updateMapDimensionsDisplay();
 
     // Mettre à jour les constantes du PathManager avec les vraies dimensions
     if (pathManager) {
@@ -728,6 +731,19 @@ let currentColorChangeType = null; // 'location' ou 'region'
 // --- Fonctions de navigation de la carte ---
 function updateMapTransform() {
     mapContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    updateMapDimensionsDisplay();
+}
+
+function updateMapDimensionsDisplay() {
+    const widthDisplay = document.getElementById('map-width-display');
+    const heightDisplay = document.getElementById('map-height-display');
+    
+    if (widthDisplay && heightDisplay && MAP_WIDTH > 0 && MAP_HEIGHT > 0) {
+        const renderedWidth = Math.round(MAP_WIDTH * scale);
+        const renderedHeight = Math.round(MAP_HEIGHT * scale);
+        widthDisplay.textContent = renderedWidth;
+        heightDisplay.textContent = renderedHeight;
+    }
 }
 
 function constrainPan() {
@@ -2112,6 +2128,9 @@ function showColorChangeModal(event, target, type) {
     const colorPicker = document.getElementById('color-change-picker');
     const visitedCheckbox = document.getElementById('color-change-visited');
     const knownCheckbox = document.getElementById('color-change-known');
+    const coordinatesDiv = document.getElementById('color-change-coordinates');
+    const coordXDisplay = document.getElementById('coord-x-display');
+    const coordYDisplay = document.getElementById('coord-y-display');
 
     if (!modal || !title || !colorPicker) return;
 
@@ -2121,6 +2140,17 @@ function showColorChangeModal(event, target, type) {
 
     // Mettre à jour le titre
     title.textContent = `Modifier "${target.name}"`;
+
+    // Afficher les coordonnées pour les lieux uniquement
+    if (coordinatesDiv && coordXDisplay && coordYDisplay) {
+        if (type === 'location' && target.coordinates) {
+            coordinatesDiv.classList.remove('hidden');
+            coordXDisplay.textContent = Math.round(target.coordinates.x);
+            coordYDisplay.textContent = Math.round(target.coordinates.y);
+        } else {
+            coordinatesDiv.classList.add('hidden');
+        }
+    }
 
     // Sélectionner la couleur actuelle
     colorPicker.querySelectorAll('.color-swatch').forEach(swatch => {

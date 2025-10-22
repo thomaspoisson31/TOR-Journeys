@@ -139,6 +139,10 @@
 
         <!-- Travel Info Panel (always visible) -->
         <div id="distance-container" class="absolute top-4 right-4 z-10 bg-gray-900 bg-opacity-80 p-3 rounded-lg shadow-xl border border-gray-700 text-sm max-w-xs">
+            <!-- Dimensions de la carte -->
+            <div id="map-dimensions-display" class="text-xs text-gray-400 mb-2 text-center">
+                Carte: <span id="map-width-display">0</span> × <span id="map-height-display">0</span> px
+            </div>
             <!-- Date du jour ajoutée -->
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center">
@@ -391,6 +395,10 @@
         <div id="color-change-modal" class="hidden absolute z-50 bg-gray-900 bg-opacity-95 border border-gray-700 rounded-lg p-4 shadow-xl min-w-[280px]">
             <div class="mb-3">
                 <h4 class="text-sm font-semibold text-white" id="color-change-title">Changer la couleur</h4>
+            </div>
+            <!-- Coordonnées -->
+            <div id="color-change-coordinates" class="mb-3 text-xs text-gray-400 hidden">
+                <span>Coordonnées: <span id="coord-x-display">0</span>, <span id="coord-y-display">0</span></span>
             </div>
             <div class="mb-4">
                 <div id="color-change-picker" class="grid grid-cols-6 gap-2">
