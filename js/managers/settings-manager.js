@@ -497,6 +497,8 @@ class SettingsManager {
         const map = this.availableMaps[index];
         if (!map) return;
 
+        console.log(`🗺️ [setActiveMap] Activation de la carte: ${map.name} (échelle: ${map.scale || 600} miles)`);
+
         // Désactiver toutes les cartes
         this.availableMaps.forEach(m => m.isActive = false);
         
@@ -505,10 +507,10 @@ class SettingsManager {
         this.activeMapUrl = map.url;
         this.activeMapName = map.name;
 
-        // Mettre à jour l'échelle pour le PathManager
+        // IMPORTANT: Mettre à jour l'échelle AVANT tout rendu
         if (window.pathManager) {
             window.pathManager.mapConstants.MAP_DISTANCE_MILES = map.scale || 600;
-            console.log(`🗺️ Échelle de carte mise à jour : ${map.scale || 600} miles`);
+            console.log(`🗺️ [setActiveMap] Échelle PathManager mise à jour: ${map.scale || 600} miles`);
         }
 
         // Mettre à jour l'image de la carte principale

@@ -544,23 +544,31 @@ window.initializeMap = initializeMap;
 
 // --- Initialisation carte simplifiée ---
 function initializeMap() {
-    console.log("🗺️ Initializing map...");
-    if (mapImage.naturalWidth === 0) {
-        console.warn("⚠️ Map image not loaded yet, retrying...");
-        return;
-    }
-    
-    // Éviter la double initialisation
-    if (MAP_WIDTH > 0) {
-        console.log("⚠️ Map already initialized, skipping");
+    console.log("🗺️ initializeMap appelé");
+
+    const mapImage = document.getElementById('map-image');
+    if (!mapImage || !mapImage.complete || mapImage.naturalWidth === 0) {
+        console.log("⏳ Image de carte pas encore chargée, attente...");
         return;
     }
 
-    console.log("📐 Map dimensions:", mapImage.naturalWidth, "x", mapImage.naturalHeight);
+    // Récupérer les dimensions réelles de l'image chargée
     MAP_WIDTH = mapImage.naturalWidth;
     MAP_HEIGHT = mapImage.naturalHeight;
-    mapContainer.style.width = `${MAP_WIDTH}px`;
-    mapContainer.style.height = `${MAP_HEIGHT}px`;
+    window.MAP_WIDTH = MAP_WIDTH;
+    window.MAP_HEIGHT = MAP_HEIGHT;
+
+    console.log(`📐 Dimensions de la carte: ${MAP_WIDTH}x${MAP_HEIGHT}px`);
+
+    // IMPORTANT: Appliquer l'échelle de la carte active
+    if (window.settingsManager && window.settingsManager.availableMaps && window.pathManager) {
+        const activeMapUrl = window.settingsManager.activeMapUrl;
+        const activeMap = window.settingsManager.availableMaps.find(m => m.url === activeMapUrl);
+        if (activeMap && activeMap.scale) {
+            window.pathManager.mapConstants.MAP_DISTANCE_MILES = activeMap.scale;
+            console.log(`🗺️ [initializeMap] Échelle de carte appliquée: ${activeMap.scale} miles`);
+        }
+    }
 
     // Mettre à jour les constantes du PathManager avec les vraies dimensions
     if (pathManager) {
@@ -922,14 +930,6 @@ function setupMapNavigation() {
 
                     touchStartX = currentCenterX;
                     touchStartY = currentCenterY;
-
-                    // Rafraîchir les marqueurs si on passe le seuil de 50%
-                    const shouldShowThumbnails = scale > 0.5;
-                    const wasShowingThumbnails = oldScale > 0.5;
-                    if (shouldShowThumbnails !== wasShowingThumbnails) {
-                        console.log(`📱 [MOBILE] Basculement vignettes: ${shouldShowThumbnails ? 'OUI' : 'NON'} (scale=${scale.toFixed(3)})`);
-                        renderLocations();
-                    }
                 }
 
                 // Mettre à jour le ZoomManager

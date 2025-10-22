@@ -529,65 +529,39 @@ class AuthManager {
         }
 
         if (data.settings && window.settingsManager) {
-            this.logAuth("⚙️ Application des paramètres");
+            this.logAuth("⚙️ Chargement des paramètres...");
             window.settingsManager.loadSettings(data.settings);
-            this.logAuth("✅ Paramètres appliqués");
         }
 
-        if (data.journal) {
-            this.logAuth(`📖 Application de ${data.journal.length} entrées de journal depuis le contexte`);
-            localStorage.setItem('travelJournal', JSON.stringify(data.journal));
-            if (window.journalManager) {
-                window.journalManager.loadJournal();
-                this.logAuth("✅ Journal chargé depuis le contexte");
+        // 5.5. IMPORTANT: Appliquer l'échelle de la carte active AVANT le rendu
+        if (window.settingsManager && window.settingsManager.availableMaps && window.pathManager) {
+            const activeMapUrl = window.settingsManager.activeMapUrl;
+            const activeMap = window.settingsManager.availableMaps.find(m => m.url === activeMapUrl);
+            if (activeMap && activeMap.scale) {
+                window.pathManager.mapConstants.MAP_DISTANCE_MILES = activeMap.scale;
+                this.logAuth(`🗺️ [AuthManager] Échelle de carte appliquée: ${activeMap.scale} miles pour ${activeMapUrl}`);
             }
         }
 
-        // Restaurer la position du marqueur - PRIORITÉ CLOUD/CONTEXTE
-        if (data.position) {
-            this.logAuth("📍 [applyContextData] Restauration de la position du marqueur depuis le contexte:", data.position);
-
-            // FORCER la sauvegarde dans localStorage immédiatement avec le flag
-            console.log("📍 [applyContextData] AVANT setItem - position à sauver:", data.position);
-            localStorage.setItem('adventurers_position', JSON.stringify(data.position));
-            localStorage.setItem('adventurers_position_from_cloud', 'true'); // Marqueur qu'elle vient du cloud/contexte
-
-            const verif = localStorage.getItem('adventurers_position');
-            const verifFlag = localStorage.getItem('adventurers_position_from_cloud');
-            console.log("📍 [applyContextData] APRÈS setItem - position vérif:", verif);
-            console.log("📍 [applyContextData] APRÈS setItem - flag vérif:", verifFlag);
-
-            this.logAuth("✅ Position du contexte forcée dans localStorage avec flag:", data.position);
-
-            // Si PositionManager existe déjà, mettre à jour visuellement
-            if (window.positionManager) {
-                console.log("📍 [applyContextData] Mise à jour visuelle du PositionManager");
-                // Assurer que currentPosition est bien mis à jour avant updateMarkerPosition
-                window.positionManager.currentPosition = JSON.parse(verif); // Utiliser la valeur vérifiée
-                window.positionManager.updateMarkerPosition();
-            }
+        // 6. Charger les filtres sauvegardés pour la carte active
+        if (window.filterManager && window.settingsManager) {
+            const activeMapUrl = window.settingsManager.activeMapUrl;
+            this.logAuth(`🔍 Chargement des filtres pour la carte active: ${activeMapUrl}`);
+            window.filterManager.loadFiltersForMap(activeMapUrl);
         }
 
-        // Sauvegarder les filtres pour restauration après initialisation complète
-        if (data.filtersByMap) {
-            this.logAuth("🔍 [applyContextData] Sauvegarde des filtres pour restauration différée");
-            this.logAuth("🔍 [applyContextData] Données filtersByMap reçues:", data.filtersByMap);
-            this.logAuth(`🔍 [applyContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap).length}`);
-
-            // Sauvegarder dans localStorage pour que FilterManager les charge à son init
-            localStorage.setItem('filtersByMap', JSON.stringify(data.filtersByMap));
-            this.logAuth("💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager");
-
-            // Appeler setAllFiltersByMap sur le FilterManager s'il existe
-            if (window.filterManager) {
-                this.logAuth("📤 [applyContextData] Application des filtres via FilterManager.setAllFiltersByMap");
-                window.filterManager.setAllFiltersByMap(data.filtersByMap);
-            } else {
-                this.logAuth("⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init");
-            }
-        } else {
-            this.logAuth("⚠️ [applyContextData] Aucune donnée filtersByMap dans le contexte");
+        // 7. Re-render les lieux et régions
+        this.logAuth("🎨 Rendu des lieux et régions");
+        if (typeof window.renderLocations === 'function') {
+            window.renderLocations();
         }
+        if (typeof window.renderRegions === 'function') {
+            window.renderRegions();
+        }
+        if (window.positionManager) {
+            window.positionManager.updateMarkerPosition();
+        }
+
 
         // 5. Le rendu sera fait dans loadUserData() après l'application complète
         this.logAuth("✅ Données du contexte synchronisées (rendu différé)");
