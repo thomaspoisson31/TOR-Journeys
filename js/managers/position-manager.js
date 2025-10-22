@@ -30,9 +30,18 @@ class PositionManager {
             try {
                 const position = JSON.parse(saved);
                 
+                // Convertir pourcentages -> pixels si nécessaire
+                if (position.isPercent && this.mapConstants.MAP_WIDTH && this.mapConstants.MAP_HEIGHT) {
+                    const pixels = {
+                        x: Math.round((position.x * this.mapConstants.MAP_WIDTH) / 100),
+                        y: Math.round((position.y * this.mapConstants.MAP_HEIGHT) / 100)
+                    };
+                    console.log(`📍 [PositionManager] Position convertie: ${position.x}%,${position.y}% -> ${pixels.x}px,${pixels.y}px`);
+                    return pixels;
+                }
+                
                 if (fromCloud === 'true') {
                     console.log("📍 [PositionManager] Position chargée depuis CLOUD via localStorage:", position);
-                    // NE PAS nettoyer le flag ici - il sera nettoyé après le reload
                 } else {
                     console.log("📍 [PositionManager] Position chargée depuis localStorage local:", position);
                 }
@@ -40,7 +49,6 @@ class PositionManager {
                 return position;
             } catch (e) {
                 console.error("❌ [PositionManager] Erreur parsing position:", e);
-                // Nettoyer le flag en cas d'erreur
                 localStorage.removeItem('adventurers_position_from_cloud');
             }
         }
@@ -55,8 +63,15 @@ class PositionManager {
     }
 
     savePosition() {
-        console.log("💾 [PositionManager.savePosition] Sauvegarde position:", this.currentPosition);
-        localStorage.setItem('adventurers_position', JSON.stringify(this.currentPosition));
+        // Convertir en pourcentages avant de sauvegarder
+        const percentPosition = {
+            x: (this.currentPosition.x / this.mapConstants.MAP_WIDTH) * 100,
+            y: (this.currentPosition.y / this.mapConstants.MAP_HEIGHT) * 100,
+            isPercent: true
+        };
+        
+        console.log(`💾 [PositionManager.savePosition] Sauvegarde position: ${this.currentPosition.x}px,${this.currentPosition.y}px -> ${percentPosition.x.toFixed(2)}%,${percentPosition.y.toFixed(2)}%`);
+        localStorage.setItem('adventurers_position', JSON.stringify(percentPosition));
         
         // Log pour vérifier que le flag cloud n'est pas présent
         const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
