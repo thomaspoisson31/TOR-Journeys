@@ -533,6 +533,17 @@ class SettingsManager {
         this.saveMapsData();
         this.renderMapsGrid();
         
+        // IMPORTANT: Reset complet des dimensions globales pour forcer recalcul
+        console.log('🗺️ [switchMap] Reset MAP_WIDTH et MAP_HEIGHT à 0');
+        window.MAP_WIDTH = 0;
+        window.MAP_HEIGHT = 0;
+        
+        // IMPORTANT: Forcer la réinitialisation complète de la carte
+        if (typeof window.initializeMap === 'function') {
+            console.log('🗺️ [switchMap] Réinitialisation complète de la carte');
+            window.initializeMap();
+        }
+        
         // IMPORTANT: Charger les filtres pour la nouvelle carte active
         if (window.filterManager) {
             console.log(`🔍 [switchMap] Chargement des filtres pour la nouvelle carte: ${this.activeMapUrl}`);
@@ -542,11 +553,6 @@ class SettingsManager {
             } else {
                 console.log(`📝 [switchMap] Aucun filtre sauvegardé pour ${this.activeMapUrl}, utilisation des filtres par défaut`);
             }
-        }
-        
-        // Re-render les lieux et régions avec le nouveau filtre de carte
-        if (typeof window.renderLocations === 'function') {
-            window.renderLocations();
         }
         if (typeof window.renderRegions === 'function') {
             window.renderRegions();
@@ -1098,10 +1104,13 @@ class SettingsManager {
                     console.log(`🗺️ Échelle appliquée au PathManager: ${mapScale} miles`);
                 }
                 
+                // IMPORTANT: Reset complet des dimensions globales
+                window.MAP_WIDTH = 0;
+                window.MAP_HEIGHT = 0;
+                console.log('🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation');
+                
                 // Toujours réinitialiser la carte lors du changement d'image
                 if (typeof window.initializeMap === 'function') {
-                    // Reset MAP_WIDTH pour forcer la réinitialisation complète
-                    window.MAP_WIDTH = 0;
                     console.log('🗺️ Réinitialisation de la carte depuis loadSettings');
                     window.initializeMap();
                 } else {
