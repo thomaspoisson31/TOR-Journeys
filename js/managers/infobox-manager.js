@@ -186,6 +186,10 @@ class InfoBoxManager {
             infoBoxTitle.classList.remove('hidden');
         }
 
+        // Mettre à jour l'affichage du MapID
+        this.updateMapIdDisplay(this.currentItem);
+
+
         // Toujours afficher le bouton crayon
         if (editBtn) {
             editBtn.classList.remove('hidden');
@@ -449,8 +453,8 @@ class InfoBoxManager {
         // Onglet Rumeurs et Traditions (mode édition)
         const rumeursTab = document.getElementById('rumeurs-traditions-tab');
         if (rumeursTab) {
-            const currentRumeurs = type === 'region' ? 
-                (item.Rumeur || '') : 
+            const currentRumeurs = type === 'region' ?
+                (item.Rumeur || '') :
                 (item.Rumeurs ? item.Rumeurs.join('\n\n---\n\n') : (item.Rumeur || ''));
 
             // Cacher la vue lecture et afficher le mode édition
@@ -463,32 +467,34 @@ class InfoBoxManager {
             let editForm = rumeursTab.querySelector('.edit-form');
             if (!editForm) {
                 editForm = document.createElement('div');
-                editForm.className = 'edit-form p-4';
+                editForm.className = 'edit-form'; // Retirer p-4 pour que le style du parent s'applique
                 rumeursTab.appendChild(editForm);
             }
 
             editForm.style.display = 'block';
             editForm.innerHTML = `
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-2 text-white">
-                        Rumeurs ${type === 'location' ? '(séparez par une ligne "---")' : ''} (Markdown supporté) :
-                    </label>
-                    <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-40 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.${type === 'location' ? '\n\nSéparez les rumeurs par:\n---' : ''}">${currentRumeurs}</textarea>
-                    ${type === 'location' ? '<div class="text-xs text-gray-400 mt-1">Utilisez "---" sur une ligne seule pour séparer plusieurs rumeurs</div>' : ''}
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-2 text-white">
-                        Tradition Ancienne (Markdown supporté) :
-                    </label>
-                    <textarea id="edit-tradition" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.Tradition_Ancienne || ''}</textarea>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                        <i class="fas fa-save mr-1"></i>Sauvegarder
-                    </button>
-                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
-                        <i class="fas fa-times mr-1"></i>Annuler
-                    </button>
+                <div class="p-4">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2 text-white">
+                            Rumeurs ${type === 'location' ? '(séparez par une ligne "---")' : ''} (Markdown supporté) :
+                        </label>
+                        <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-40 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.${type === 'location' ? '\n\nSéparez les rumeurs par:\n---' : ''}">${currentRumeurs}</textarea>
+                        ${type === 'location' ? '<div class="text-xs text-gray-400 mt-1">Utilisez "---" sur une ligne seule pour séparer plusieurs rumeurs</div>' : ''}
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-2 text-white">
+                            Tradition Ancienne (Markdown supporté) :
+                        </label>
+                        <textarea id="edit-tradition" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.Tradition_Ancienne || ''}</textarea>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-save mr-1"></i>Sauvegarder
+                        </button>
+                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-times mr-1"></i>Annuler
+                        </button>
+                    </div>
                 </div>
             `;
         }
@@ -708,6 +714,36 @@ class InfoBoxManager {
         return textView;
     }
 
+    updateMapIdDisplay(item) {
+        const infoBoxTitle = document.getElementById('info-box-title');
+        if (!infoBoxTitle) return;
+
+        // Supprimer l'ancien affichage MapID s'il existe
+        const existingMapIdDisplay = document.getElementById('info-box-mapid-display');
+        if (existingMapIdDisplay) {
+            existingMapIdDisplay.remove();
+        }
+
+        // Créer le conteneur pour l'affichage du MapID
+        const mapIdContainer = document.createElement('div');
+        mapIdContainer.id = 'info-box-mapid-display';
+        mapIdContainer.style.fontSize = '11px';
+        mapIdContainer.style.color = '#9ca3af';
+        mapIdContainer.style.marginTop = '4px';
+        mapIdContainer.style.marginBottom = '8px';
+
+        if (!item.mapId) {
+            // Pas de MapID : afficher message simple
+            mapIdContainer.textContent = 'Aucun Map ID';
+        } else {
+            // MapID existe : afficher discrètement
+            mapIdContainer.textContent = item.mapId;
+            mapIdContainer.title = item.mapId;
+        }
+
+        // Insérer après le titre
+        infoBoxTitle.parentNode.insertBefore(mapIdContainer, infoBoxTitle.nextSibling);
+    }
 
 
     enterEditMode() {
@@ -978,9 +1014,9 @@ class InfoBoxManager {
                 }
 
                 // Valider les entrées
-                const isValid = jsonData.every(item => 
-                    item.hasOwnProperty('Dé du destin') || 
-                    item.hasOwnProperty('Résultat') || 
+                const isValid = jsonData.every(item =>
+                    item.hasOwnProperty('Dé du destin') ||
+                    item.hasOwnProperty('Résultat') ||
                     item.hasOwnProperty('Description')
                 );
 
