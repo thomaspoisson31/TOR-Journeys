@@ -1040,7 +1040,7 @@ class SettingsManager {
             return;
         }
 
-        console.log('⚙️ [loadSettings] Début chargement des paramètres:', settings);
+        console.log('⚙️ Chargement des paramètres depuis le contexte:', settings);
 
         // Charger les cartes
         if (settings.availableMaps && Array.isArray(settings.availableMaps)) {
@@ -1051,29 +1051,29 @@ class SettingsManager {
                 height: map.height || 3296,
                 scale: map.scale || 600
             }));
-            console.log('✅ [loadSettings] Cartes chargées:', this.availableMaps);
+            console.log('✅ Cartes chargées:', this.availableMaps.length);
         }
         if (settings.activeMapUrl) {
             this.activeMapUrl = settings.activeMapUrl;
-            console.log('✅ [loadSettings] Carte active URL:', this.activeMapUrl);
+            console.log('✅ Carte active URL:', this.activeMapUrl);
         }
         if (settings.activeMapName) {
             this.activeMapName = settings.activeMapName;
-            console.log('✅ [loadSettings] Carte active nom:', this.activeMapName);
+            console.log('✅ Carte active nom:', this.activeMapName);
         }
 
         // Charger les descriptions
         if (settings.partyDescription !== undefined) {
             this.partyDescription = settings.partyDescription;
-            console.log('✅ [loadSettings] Description aventuriers chargée');
+            console.log('✅ Description aventuriers chargée');
         }
         if (settings.questDescription !== undefined) {
             this.questDescription = settings.questDescription;
-            console.log('✅ [loadSettings] Description quête chargée');
+            console.log('✅ Description quête chargée');
         }
         if (settings.narrationStyle) {
             this.narrationStyle = settings.narrationStyle;
-            console.log('✅ [loadSettings] Style de narration chargé:', this.narrationStyle);
+            console.log('✅ Style de narration chargé:', this.narrationStyle);
         }
 
         // Sauvegarder dans localStorage
@@ -1083,59 +1083,48 @@ class SettingsManager {
         // Mettre à jour l'image de la carte principale
         const mapImage = document.getElementById('map-image');
         if (mapImage && this.activeMapUrl) {
-            console.log('🗺️ [loadSettings] Mise à jour de l\'image de la carte:', this.activeMapUrl);
+            console.log('🗺️ Mise à jour de l\'image de la carte:', this.activeMapUrl);
 
             // Trouver la carte active pour récupérer son échelle
             const activeMap = this.availableMaps.find(m => m.url === this.activeMapUrl);
-            console.log('🗺️ [loadSettings] Carte active trouvée:', activeMap);
-            
             const mapScale = activeMap?.scale || 600;
-            const mapWidth = activeMap?.width || 5103;
-            const mapHeight = activeMap?.height || 3296;
-            console.log(`🗺️ [loadSettings] Dimensions carte: ${mapWidth}x${mapHeight}px, échelle: ${mapScale} miles`);
+            console.log(`🗺️ Échelle de la carte active: ${mapScale} miles`);
 
-            // IMPORTANT: Appliquer l'échelle AVANT tout rendu
-            if (window.pathManager) {
-                window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
-                console.log(`🗺️ [loadSettings] Échelle appliquée au PathManager: ${mapScale} miles`);
-            }
-
-            // Vérifier si l'image est déjà chargée avec la bonne URL (normaliser les URLs pour comparaison)
-            const currentSrc = mapImage.src.split('/').pop() || '';
-            const targetSrc = this.activeMapUrl.split('/').pop() || '';
-            const isAlreadyLoaded = mapImage.complete && mapImage.naturalWidth > 0 && currentSrc === targetSrc;
-
-            console.log(`🔍 [loadSettings] Comparaison URLs: current="${currentSrc}", target="${targetSrc}", isAlreadyLoaded=${isAlreadyLoaded}`);
-
-            if (isAlreadyLoaded) {
-                console.log('✅ [loadSettings] Image déjà chargée, initialisation immédiate (SANS rechargement)');
-                // NE PAS réinitialiser la carte si elle est déjà correctement chargée
-                // Juste re-render les lieux et régions avec les bons filtres
-                if (typeof window.renderLocations === 'function') {
-                    window.renderLocations();
+            // Callback pour re-render après chargement
+            const onImageLoaded = () => {
+                console.log('✅ Image de carte chargée, re-initialisation de la carte');
+                
+                // IMPORTANT: Appliquer l'échelle AVANT l'initialisation de la carte
+                if (window.pathManager) {
+                    window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
+                    console.log(`🗺️ Échelle appliquée au PathManager: ${mapScale} miles`);
                 }
-                if (typeof window.renderRegions === 'function') {
-                    window.renderRegions();
-                }
-            } else {
-                console.log('🗺️ [loadSettings] Chargement de la nouvelle image:', this.activeMapUrl);
-                // Définir le callback AVANT de changer le src
-                mapImage.onload = () => {
-                    console.log('✅ [loadSettings] Image de carte chargée');
-                    console.log(`📐 [loadSettings] Dimensions réelles image: ${mapImage.naturalWidth}x${mapImage.naturalHeight}px`);
-                    
+                
+                // Toujours réinitialiser la carte lors du changement d'image
+                if (typeof window.initializeMap === 'function') {
                     // Reset MAP_WIDTH pour forcer la réinitialisation complète
                     window.MAP_WIDTH = 0;
-                    window.MAP_HEIGHT = 0;
-                    console.log('🗺️ [loadSettings] Réinitialisation MAP_WIDTH/HEIGHT, appel initializeMap()');
-                    if (typeof window.initializeMap === 'function') {
-                        window.initializeMap();
+                    console.log('🗺️ Réinitialisation de la carte depuis loadSettings');
+                    window.initializeMap();
+                } else {
+                    // Si initializeMap n'existe pas encore, juste re-render
+                    if (typeof window.renderLocations === 'function') {
+                        window.renderLocations();
+                        console.log('✅ Lieux rendus après loadSettings');
                     }
-                };
-                
-                // Changer le src SEULEMENT si nécessaire pour déclencher le chargement
-                mapImage.src = this.activeMapUrl;
-            }
+                    if (typeof window.renderRegions === 'function') {
+                        window.renderRegions();
+                        console.log('✅ Régions rendues après loadSettings');
+                    }
+                }
+            };
+
+            // Toujours définir le callback avant de changer src
+            mapImage.onload = onImageLoaded;
+            
+            // Forcer le rechargement en changeant toujours le src
+            console.log('🗺️ Chargement de l\'image:', this.activeMapUrl);
+            mapImage.src = this.activeMapUrl;
         }
 
         // Mettre à jour l'affichage si la modale des paramètres est ouverte
@@ -1146,7 +1135,7 @@ class SettingsManager {
             this.updateNarrationStyleDisplay();
         }
 
-        console.log('✅ [loadSettings] Paramètres chargés avec succès');
+        console.log('✅ Paramètres chargés avec succès');
     }
 
     deleteAllLocationsAndRegions() {

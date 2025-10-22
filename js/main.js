@@ -209,18 +209,16 @@ async function initializeApp() {
 
 // --- Fonction d'affichage des lieux ---
 function renderLocations() {
-    console.log("🎯 [renderLocations] Début rendering locations");
-    console.log(`📐 [renderLocations] MAP_WIDTH=${MAP_WIDTH}, MAP_HEIGHT=${MAP_HEIGHT}`);
-    console.log(`🔍 [renderLocations] activeMapUrl=${window.settingsManager?.activeMapUrl}`);
+    console.log("🎯 Rendering locations...");
 
     // IMPORTANT: Synchroniser avec window.locationsData si elle existe
     if (window.locationsData && (!locationsData || locationsData.locations?.length === 0)) {
         locationsData = window.locationsData;
-        console.log("🔄 [renderLocations] Synchronisation avec window.locationsData");
+        console.log("🔄 Synchronisation avec window.locationsData");
     }
 
-    console.log(`📊 [renderLocations] locationsData:`, locationsData);
-    console.log(`📊 [renderLocations] Nombre de lieux: ${locationsData?.locations?.length || 0}`);
+    console.log("📊 locationsData:", locationsData);
+    console.log("📊 locationsData.locations:", locationsData?.locations);
 
     const locationsLayer = document.getElementById('locations-layer');
     if (!locationsLayer) {
@@ -242,12 +240,9 @@ function renderLocations() {
 
     console.log(`📱 [renderLocations] currentScale=${currentScale.toFixed(3)}, showThumbnails=${showThumbnails}`);
 
-    let filteredCount = 0;
-    let renderedCount = 0;
-    
     locationsData.locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
-            console.warn(`⚠️ [renderLocations] Location ${location.name} has invalid coordinates`);
+            console.warn(`⚠️ Location ${location.name} has invalid coordinates`);
             return;
         }
 
@@ -255,12 +250,8 @@ function renderLocations() {
         const activeMapId = window.settingsManager?.activeMapUrl;
         if (location.mapId && activeMapId && location.mapId !== activeMapId) {
             // Ne pas afficher uniquement si un mapId existe ET qu'il ne correspond pas à la carte active
-            filteredCount++;
             return;
         }
-        
-        console.log(`📍 [renderLocations] Rendering location: ${location.name} at (${location.coordinates.x}, ${location.coordinates.y}), mapId=${location.mapId}`);
-        renderedCount++;
 
         // Créer le marqueur
         const marker = document.createElement('div');
@@ -388,25 +379,26 @@ function renderLocations() {
 
         // Ajouter à la couche des lieux
         locationsLayer.appendChild(marker);
+        renderedCount++;
     });
 
-    console.log(`✅ [renderLocations] Rendu terminé: ${renderedCount} affichés, ${filteredCount} filtrés (thumbnails: ${showThumbnails})`);
-    console.log(`📍 [renderLocations] Locations layer z-index:`, window.getComputedStyle(locationsLayer).zIndex);
+    console.log(`✅ Rendered ${renderedCount} location markers (thumbnails: ${showThumbnails})`);
+
+    // Vérifier que la couche des lieux est bien au-dessus
+    console.log(`📍 Locations layer z-index:`, window.getComputedStyle(locationsLayer).zIndex);
 }
 
 // --- Fonction d'affichage des régions ---
 function renderRegions() {
-    console.log("🌍 [renderRegions] Début rendering regions");
-    console.log(`📐 [renderRegions] MAP_WIDTH=${MAP_WIDTH}, MAP_HEIGHT=${MAP_HEIGHT}`);
-    console.log(`🔍 [renderRegions] activeMapUrl=${window.settingsManager?.activeMapUrl}`);
+    console.log("🌍 Rendering regions...");
 
     // IMPORTANT: Synchroniser avec window.regionsData si elle existe
     if (window.regionsData && (!regionsData || regionsData.regions?.length === 0)) {
         regionsData = window.regionsData;
-        console.log("🔄 [renderRegions] Synchronisation avec window.regionsData");
+        console.log("🔄 Synchronisation avec window.regionsData");
     }
 
-    console.log(`🌍 [renderRegions] Nombre de régions: ${regionsData?.regions?.length || 0}`);
+    console.log("🌍 RegionsData:", regionsData);
 
     const regionsLayer = document.getElementById('regions-layer');
     if (!regionsLayer) {
@@ -427,18 +419,16 @@ function renderRegions() {
     }
 
     let renderedCount = 0;
-    let filteredCount = 0;
     const activeMapId = window.settingsManager?.activeMapUrl;
 
     regionsData.regions.forEach(region => {
+        console.log('🔍 Processing region:', region.name, region);
+
         // Filtrer les régions : afficher celles sans mapId OU celles correspondant à la carte active
         if (region.mapId && activeMapId && region.mapId !== activeMapId) {
             // Ne pas afficher uniquement si un mapId existe ET qu'il ne correspond pas à la carte active
-            filteredCount++;
             return;
         }
-        
-        console.log(`🗺️ [renderRegions] Rendering region: ${region.name}, mapId=${region.mapId}`);
 
         // Extraire les points depuis différentes structures possibles
         let points = [];
@@ -541,10 +531,10 @@ function renderRegions() {
         regionsLayer.appendChild(polygon);
         renderedCount++;
 
-        console.log(`✅ [renderRegions] Region ${region.name} rendue avec ${points.length} points`);
+        console.log(`✅ Rendered region: ${region.name} with ${points.length} points`);
     });
 
-    console.log(`✅ [renderRegions] Rendu terminé: ${renderedCount} affichées, ${filteredCount} filtrées`);
+    console.log(`✅ Rendered ${renderedCount} region polygons`);
 }
 
 // Exposer les fonctions de rendu globalement
@@ -554,16 +544,13 @@ window.initializeMap = initializeMap;
 
 // --- Initialisation carte simplifiée ---
 function initializeMap() {
-    console.log("🗺️ [initializeMap] Début initialisation");
+    console.log("🗺️ initializeMap appelé");
 
     const mapImage = document.getElementById('map-image');
     if (!mapImage || !mapImage.complete || mapImage.naturalWidth === 0) {
-        console.log("⏳ [initializeMap] Image de carte pas encore chargée, attente...");
+        console.log("⏳ Image de carte pas encore chargée, attente...");
         return;
     }
-
-    console.log(`📊 [initializeMap] État image: complete=${mapImage.complete}, naturalWidth=${mapImage.naturalWidth}, naturalHeight=${mapImage.naturalHeight}`);
-    console.log(`📊 [initializeMap] Image src: ${mapImage.src}`);
 
     // Récupérer les dimensions réelles de l'image chargée
     MAP_WIDTH = mapImage.naturalWidth;
@@ -571,31 +558,21 @@ function initializeMap() {
     window.MAP_WIDTH = MAP_WIDTH;
     window.MAP_HEIGHT = MAP_HEIGHT;
 
-    console.log(`📐 [initializeMap] Dimensions de la carte: ${MAP_WIDTH}x${MAP_HEIGHT}px`);
+    console.log(`📐 Dimensions de la carte: ${MAP_WIDTH}x${MAP_HEIGHT}px`);
 
     // IMPORTANT: Appliquer l'échelle de la carte active
     if (window.settingsManager && window.settingsManager.availableMaps && window.pathManager) {
         const activeMapUrl = window.settingsManager.activeMapUrl;
-        console.log(`🗺️ [initializeMap] Recherche carte active: ${activeMapUrl}`);
-        console.log(`🗺️ [initializeMap] Cartes disponibles:`, window.settingsManager.availableMaps);
-        
         const activeMap = window.settingsManager.availableMaps.find(m => m.url === activeMapUrl);
-        console.log(`🗺️ [initializeMap] Carte active trouvée:`, activeMap);
-        
         if (activeMap && activeMap.scale) {
             window.pathManager.mapConstants.MAP_DISTANCE_MILES = activeMap.scale;
             console.log(`🗺️ [initializeMap] Échelle de carte appliquée: ${activeMap.scale} miles`);
-        } else {
-            console.log(`⚠️ [initializeMap] Échelle non trouvée, utilisation valeur par défaut: ${window.pathManager.mapConstants.MAP_DISTANCE_MILES}`);
         }
-    } else {
-        console.log(`⚠️ [initializeMap] Managers non disponibles pour appliquer l'échelle`);
     }
 
     // Mettre à jour les constantes du PathManager avec les vraies dimensions
     if (pathManager) {
         pathManager.mapConstants.MAP_WIDTH = MAP_WIDTH;
-        console.log(`📐 [initializeMap] PathManager MAP_WIDTH mis à jour: ${MAP_WIDTH}`);
     }
 
     // Configuration de la couche SVG des régions
@@ -610,7 +587,7 @@ function initializeMap() {
         regionsLayer.style.width = `${MAP_WIDTH}px`;
         regionsLayer.style.height = `${MAP_HEIGHT}px`;
         regionsLayer.style.pointerEvents = 'auto'; // Permettre les clics sur les régions
-        console.log("✅ [initializeMap] Regions layer configured");
+        console.log("✅ Regions layer configured");
     }
 
     // Simple reset view
