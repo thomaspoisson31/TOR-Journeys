@@ -234,23 +234,11 @@ function renderLocations() {
         return;
     }
 
-    // Migration automatique si nécessaire
-    if (MAP_WIDTH > 0 && MAP_HEIGHT > 0 && dataManager) {
-        const needsMigration = locationsData.locations.some(loc => 
-            loc.coordinates && !loc.coordinates.isPercent
-        );
-        if (needsMigration) {
-            console.log("🔄 Migration automatique des coordonnées en pourcentages");
-            dataManager.migrateLocationsToPercent(MAP_WIDTH, MAP_HEIGHT);
-            dataManager.saveLocationsToLocal();
-        }
-    }
-
     let renderedCount = 0;
     const currentScale = window.scale || 1;
     const showThumbnails = currentScale > 0.5; // Afficher les vignettes si zoom > 50%
 
-    console.log(`📱 [renderLocations] currentScale=${currentScale.toFixed(3)}, showThumbnails=${showThumbnails}, MAP_SIZE=${MAP_WIDTH}x${MAP_HEIGHT}`);
+    console.log(`📱 [renderLocations] currentScale=${currentScale.toFixed(3)}, showThumbnails=${showThumbnails}`);
 
     locationsData.locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
@@ -265,27 +253,15 @@ function renderLocations() {
             return;
         }
 
-        // Convertir coordonnées (pourcentages -> pixels pour cette carte)
-        let pixelX, pixelY;
-        if (location.coordinates.isPercent) {
-            const pixels = dataManager.coordsToPixels(location.coordinates, MAP_WIDTH, MAP_HEIGHT);
-            pixelX = pixels.x;
-            pixelY = pixels.y;
-        } else {
-            // Anciennes coordonnées en pixels (compatibilité)
-            pixelX = location.coordinates.x;
-            pixelY = location.coordinates.y;
-        }
-
         // Créer le marqueur
         const marker = document.createElement('div');
         marker.className = 'location-marker';
         marker.dataset.id = location.id;
         marker.title = location.name;
 
-        // Positionner le marqueur avec les coordonnées converties
-        marker.style.left = `${pixelX}px`;
-        marker.style.top = `${pixelY}px`;
+        // Positionner le marqueur
+        marker.style.left = `${location.coordinates.x}px`;
+        marker.style.top = `${location.coordinates.y}px`;
 
         // Chercher une image de type vignette
         let thumbnailUrl = null;
@@ -442,23 +418,8 @@ function renderRegions() {
         return;
     }
 
-    // Migration automatique si nécessaire
-    if (MAP_WIDTH > 0 && MAP_HEIGHT > 0 && dataManager) {
-        const needsMigration = regionsData.regions.some(reg => {
-            let points = reg.points || reg.coordinates?.points || reg.coordinates || [];
-            return points.length > 0 && !points[0].isPercent;
-        });
-        if (needsMigration) {
-            console.log("🔄 Migration automatique des régions en pourcentages");
-            dataManager.migrateRegionsToPercent(MAP_WIDTH, MAP_HEIGHT);
-            dataManager.saveRegionsToLocal();
-        }
-    }
-
     let renderedCount = 0;
     const activeMapId = window.settingsManager?.activeMapUrl;
-
-    console.log(`🌍 [renderRegions] MAP_SIZE=${MAP_WIDTH}x${MAP_HEIGHT}, activeMapId=${activeMapId}`);
 
     regionsData.regions.forEach(region => {
         console.log('🔍 Processing region:', region.name, region);
@@ -495,15 +456,6 @@ function renderRegions() {
             return;
         }
 
-        // Convertir coordonnées (pourcentages -> pixels pour cette carte)
-        let pixelPoints;
-        if (points[0].isPercent) {
-            pixelPoints = points.map(point => dataManager.coordsToPixels(point, MAP_WIDTH, MAP_HEIGHT));
-        } else {
-            // Anciennes coordonnées en pixels (compatibilité)
-            pixelPoints = points;
-        }
-
         // Créer le polygone SVG directement dans la couche SVG
         const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
         polygon.setAttribute('data-id', region.id);
@@ -518,8 +470,8 @@ function renderRegions() {
         polygon.setAttribute('stroke-opacity', '1');
         polygon.setAttribute('stroke-width', '3');
 
-        // Créer les points du polygone avec les coordonnées converties
-        const pointsStr = pixelPoints
+        // Créer les points du polygone
+        const pointsStr = points
             .map(pt => `${pt.x},${pt.y}`)
             .join(' ');
         polygon.setAttribute('points', pointsStr);
@@ -1395,20 +1347,16 @@ function confirmRegionCreation() {
     // Ajout du mapId
     const activeMapId = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
 
-    // Convertir les points en pourcentages
-    const percentPoints = regionPoints.map(point => ({
-        ...dataManager.coordsToPercent(point, MAP_WIDTH, MAP_HEIGHT),
-        isPercent: true
-    }));
-
     const newRegion = {
         id: `region_${Date.now()}`,
         name: regionName,
         description: regionDescription,
         color: selectedRegionColor,
         mapId: activeMapId,
-        coordinates: percentPoints,
-        points: percentPoints,
+        coordinates: regionPoints.map(point => ({
+            x: point.x,
+            y: point.y
+        })),
         known: true,
         visited: false
     };
@@ -1651,20 +1599,10 @@ function confirmLocationCreation() {
     // Ajout du mapId
     const activeMapId = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
 
-    // Convertir en pourcentages pour la sauvegarde
-    const percentCoords = dataManager.coordsToPercent(
-        window.pendingLocationCoordinates,
-        MAP_WIDTH,
-        MAP_HEIGHT
-    );
-
     const newLocation = {
         id: `location_${Date.now()}`,
         name: locationName,
-        coordinates: { 
-            ...percentCoords,
-            isPercent: true
-        },
+        coordinates: { x: window.pendingLocationCoordinates.x, y: window.pendingLocationCoordinates.y },
         description: locationDesc,
         color: selectedColor,
         known: locationKnown,
@@ -2396,19 +2334,10 @@ function handleLocationDragEnd(e) {
             const newX = parseFloat(draggedLocationMarker.style.left);
             const newY = parseFloat(draggedLocationMarker.style.top);
 
-            // Convertir en pourcentages avant de sauvegarder
-            const percentCoords = dataManager.coordsToPercent(
-                { x: newX, y: newY },
-                MAP_WIDTH,
-                MAP_HEIGHT
-            );
+            location.coordinates.x = newX;
+            location.coordinates.y = newY;
 
-            location.coordinates = {
-                ...percentCoords,
-                isPercent: true
-            };
-
-            console.log(`🎯 Updated location ${location.name} coordinates to (${newX.toFixed(1)}, ${newY.toFixed(1)}) = (${percentCoords.x.toFixed(2)}%, ${percentCoords.y.toFixed(2)}%)`);
+            console.log(`🎯 Updated location ${location.name} coordinates to (${newX.toFixed(1)}, ${newY.toFixed(1)})`);
 
             // Sauvegarder les changements
             if (dataManager) {
