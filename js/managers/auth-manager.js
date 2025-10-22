@@ -403,7 +403,10 @@ class AuthManager {
         // Collecter l'état des filtres par carte
         if (window.filterManager) {
             data.filtersByMap = window.filterManager.getAllFiltersByMap();
-            this.logAuth("🔍 Filtres par carte collectés:", data.filtersByMap);
+            this.logAuth("🔍 [collectCurrentContextData] Filtres par carte collectés:", data.filtersByMap);
+            this.logAuth(`🔍 [collectCurrentContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap || {}).length}`);
+        } else {
+            this.logAuth("⚠️ [collectCurrentContextData] FilterManager non disponible");
         }
 
         this.logAuth("📦 Données collectées pour le contexte", Object.keys(data));
@@ -560,9 +563,12 @@ class AuthManager {
             }
         }
 
-        // Restaurer l'état des filtres par carte APRÈS le rendu initial
+        // Restaurer l'état des filtres par carte
         if (data.filtersByMap && window.filterManager) {
-            this.logAuth("🔍 Restauration des filtres par carte depuis le contexte");
+            this.logAuth("🔍 [applyContextData] Restauration des filtres par carte depuis le contexte");
+            this.logAuth("🔍 [applyContextData] Données filtersByMap reçues:", data.filtersByMap);
+            this.logAuth(`🔍 [applyContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap).length}`);
+            
             // Charger tous les filtres par carte
             window.filterManager.setAllFiltersByMap(data.filtersByMap);
             
@@ -570,15 +576,27 @@ class AuthManager {
             setTimeout(() => {
                 // Charger les filtres pour la carte active
                 const activeMapUrl = window.settingsManager?.activeMapUrl;
+                this.logAuth(`🔍 [applyContextData] Carte active pour filtres: ${activeMapUrl}`);
+                
                 if (activeMapUrl) {
                     const loaded = window.filterManager.loadFiltersForMap(activeMapUrl);
                     if (loaded) {
-                        this.logAuth("✅ Filtres de la carte active restaurés:", activeMapUrl);
+                        this.logAuth("✅ [applyContextData] Filtres de la carte active restaurés:", activeMapUrl);
                     } else {
-                        this.logAuth("ℹ️ Aucun filtre sauvegardé pour la carte active:", activeMapUrl);
+                        this.logAuth("ℹ️ [applyContextData] Aucun filtre sauvegardé pour la carte active:", activeMapUrl);
+                        this.logAuth("🔍 [applyContextData] Filtres disponibles pour les cartes:", Object.keys(data.filtersByMap));
                     }
+                } else {
+                    this.logAuth("⚠️ [applyContextData] Pas de carte active définie");
                 }
             }, 150); // Délai suffisant pour les initialisations
+        } else {
+            if (!data.filtersByMap) {
+                this.logAuth("⚠️ [applyContextData] Aucune donnée filtersByMap dans le contexte");
+            }
+            if (!window.filterManager) {
+                this.logAuth("⚠️ [applyContextData] FilterManager non disponible");
+            }
         }
 
         // 5. Le rendu sera fait dans loadUserData() après l'application complète

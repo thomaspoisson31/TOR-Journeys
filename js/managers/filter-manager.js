@@ -540,12 +540,13 @@ export default class FilterManager {
     saveFiltersForCurrentMap() {
         const activeMapUrl = window.settingsManager?.activeMapUrl;
         if (!activeMapUrl) {
-            console.warn("⚠️ Pas de carte active pour sauvegarder les filtres");
+            console.warn("⚠️ [saveFiltersForCurrentMap] Pas de carte active pour sauvegarder les filtres");
             return;
         }
 
         this.filtersByMap[activeMapUrl] = { ...this.activeFilters };
-        console.log(`💾 Filtres sauvegardés pour la carte ${activeMapUrl}:`, this.filtersByMap[activeMapUrl]);
+        console.log(`💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte ${activeMapUrl}:`, this.filtersByMap[activeMapUrl]);
+        console.log(`💾 [saveFiltersForCurrentMap] Total filtersByMap:`, this.filtersByMap);
 
         // Marquer comme non sauvegardé pour déclencher la sync cloud
         if (typeof window.markAsUnsaved === 'function') {
@@ -555,14 +556,19 @@ export default class FilterManager {
 
     // Charger les filtres pour une carte spécifique
     loadFiltersForMap(mapUrl) {
+        console.log(`🔍 [loadFiltersForMap] Tentative de chargement pour carte: ${mapUrl}`);
+        console.log(`🔍 [loadFiltersForMap] filtersByMap disponibles:`, Object.keys(this.filtersByMap));
+        
         if (this.filtersByMap[mapUrl]) {
             this.activeFilters = { ...this.filtersByMap[mapUrl] };
-            console.log(`📥 Filtres chargés pour la carte ${mapUrl}:`, this.activeFilters);
+            console.log(`📥 [loadFiltersForMap] Filtres chargés pour la carte ${mapUrl}:`, this.activeFilters);
             
             // Mettre à jour l'UI
             this.updateFilterUI();
             this.applyFilters();
             return true;
+        } else {
+            console.log(`⚠️ [loadFiltersForMap] Aucun filtre trouvé pour la carte ${mapUrl}`);
         }
         return false;
     }
@@ -607,9 +613,15 @@ export default class FilterManager {
 
     // Charger tous les filtres par carte (depuis le cloud)
     setAllFiltersByMap(filtersByMap) {
+        console.log("🔍 [setAllFiltersByMap] Appelé avec:", filtersByMap);
+        
         if (filtersByMap && typeof filtersByMap === 'object') {
             this.filtersByMap = { ...filtersByMap };
-            console.log("📥 Filtres par carte chargés depuis le cloud:", this.filtersByMap);
+            console.log("📥 [setAllFiltersByMap] Filtres par carte chargés depuis le cloud:", this.filtersByMap);
+            console.log(`📥 [setAllFiltersByMap] Nombre de cartes: ${Object.keys(this.filtersByMap).length}`);
+            console.log(`📥 [setAllFiltersByMap] Cartes disponibles:`, Object.keys(this.filtersByMap));
+        } else {
+            console.warn("⚠️ [setAllFiltersByMap] Données invalides:", filtersByMap);
         }
     }
 }
