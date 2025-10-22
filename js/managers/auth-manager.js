@@ -429,34 +429,9 @@ class AuthManager {
         this.isAuthenticated = false;
         this.logAuth("🚫 Auto-sync temporairement désactivée pendant l'application du contexte");
 
-        // MIGRATION AUTOMATIQUE : Ajouter mapId si absent
-        const activeMapId = data.activeMapId || data.settings?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
-
-        if (data.locations?.locations) {
-            let migrated = 0;
-            data.locations.locations.forEach(loc => {
-                if (!loc.mapId) {
-                    loc.mapId = activeMapId;
-                    migrated++;
-                }
-            });
-            if (migrated > 0) {
-                this.logAuth(`🔄 Migration: ${migrated} lieux associés à la carte ${activeMapId}`);
-            }
-        }
-
-        if (data.regions?.regions) {
-            let migrated = 0;
-            data.regions.regions.forEach(reg => {
-                if (!reg.mapId) {
-                    reg.mapId = activeMapId;
-                    migrated++;
-                }
-            });
-            if (migrated > 0) {
-                this.logAuth(`🔄 Migration: ${migrated} régions associées à la carte ${activeMapId}`);
-            }
-        }
+        // NE PAS MIGRER automatiquement les mapId
+        // Les lieux sans mapId doivent rester identifiables et s'affichent sur toutes les cartes
+        // (voir logique de filtrage dans renderLocations et renderRegions)
 
         // 1. SAUVEGARDER D'ABORD dans localStorage
         if (data.locations) {
