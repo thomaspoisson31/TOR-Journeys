@@ -739,10 +739,9 @@ function updateMapDimensionsDisplay() {
     const heightDisplay = document.getElementById('map-height-display');
     
     if (widthDisplay && heightDisplay && MAP_WIDTH > 0 && MAP_HEIGHT > 0) {
-        const renderedWidth = Math.round(MAP_WIDTH * scale);
-        const renderedHeight = Math.round(MAP_HEIGHT * scale);
-        widthDisplay.textContent = renderedWidth;
-        heightDisplay.textContent = renderedHeight;
+        // Afficher les dimensions réelles de la carte (100%), sans tenir compte du zoom
+        widthDisplay.textContent = MAP_WIDTH;
+        heightDisplay.textContent = MAP_HEIGHT;
     }
 }
 
@@ -2141,10 +2140,11 @@ function showColorChangeModal(event, target, type) {
     // Mettre à jour le titre
     title.textContent = `Modifier "${target.name}"`;
 
-    // Afficher les coordonnées pour les lieux uniquement
+    // Afficher les coordonnées réelles pour les lieux (position absolue sur la carte originale)
     if (coordinatesDiv && coordXDisplay && coordYDisplay) {
         if (type === 'location' && target.coordinates) {
             coordinatesDiv.classList.remove('hidden');
+            // Coordonnées réelles (100%), non affectées par le zoom
             coordXDisplay.textContent = Math.round(target.coordinates.x);
             coordYDisplay.textContent = Math.round(target.coordinates.y);
         } else {
