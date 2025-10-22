@@ -568,7 +568,7 @@ class AuthManager {
             this.logAuth("🔍 [applyContextData] Sauvegarde des filtres pour restauration différée");
             this.logAuth("🔍 [applyContextData] Données filtersByMap reçues:", data.filtersByMap);
             this.logAuth(`🔍 [applyContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap).length}`);
-            
+
             // Sauvegarder dans localStorage pour que FilterManager les charge à son init
             localStorage.setItem('filtersByMap', JSON.stringify(data.filtersByMap));
             this.logAuth("💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager");
@@ -830,7 +830,7 @@ class AuthManager {
 
                 if (locationsUpdated > 0 || regionsUpdated > 0) {
                     this.logAuth(`🗺️ Attribution mapId actif (${activeMapId}): ${locationsUpdated} lieux, ${regionsUpdated} régions`);
-                    
+
                     // IMPORTANT: Synchroniser IMMÉDIATEMENT avec les variables globales et localStorage
                     // AVANT la fusion, pour garantir la persistance
                     if (localData.locations?.locations) {
@@ -841,7 +841,7 @@ class AuthManager {
                         localStorage.setItem('middleEarthLocations', JSON.stringify(localData.locations));
                         this.logAuth(`✅ Variables globales locationsData mises à jour avec les nouveaux mapId`);
                     }
-                    
+
                     if (localData.regions?.regions) {
                         window.regionsData = { ...localData.regions };
                         if (window.dataManager) {

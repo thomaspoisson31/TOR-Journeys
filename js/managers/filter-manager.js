@@ -662,6 +662,16 @@ export default class FilterManager {
             console.log("📥 [setAllFiltersByMap] Filtres par carte chargés depuis le cloud:", this.filtersByMap);
             console.log(`📥 [setAllFiltersByMap] Nombre de cartes: ${Object.keys(this.filtersByMap).length}`);
             console.log(`📥 [setAllFiltersByMap] Cartes disponibles:`, Object.keys(this.filtersByMap));
+            
+            // IMPORTANT: Charger et appliquer les filtres de la carte active immédiatement
+            // (même principe que renderLocations/renderRegions après chargement des données)
+            const activeMapUrl = window.settingsManager?.activeMapUrl;
+            if (activeMapUrl && this.filtersByMap[activeMapUrl]) {
+                console.log(`🎯 [setAllFiltersByMap] Application immédiate des filtres pour ${activeMapUrl}`);
+                this.loadFiltersForMap(activeMapUrl);
+            } else {
+                console.log(`ℹ️ [setAllFiltersByMap] Pas de filtres pour la carte active ${activeMapUrl}`);
+            }
         } else {
             console.warn("⚠️ [setAllFiltersByMap] Données invalides:", filtersByMap);
         }
