@@ -15,6 +15,7 @@ export default class FilterManager {
         this.isFilterPanelOpen = false;
         this.filteredLocations = [];
         this.filteredRegions = [];
+        this.filtersByMap = {}; // Filtres par carte (mapId -> filtres)
 
         console.log("🔍 FilterManager initialized");
     }
@@ -337,6 +338,9 @@ export default class FilterManager {
         // Mettre à jour l'indicateur du bouton de filtre
         this.updateFilterButton();
 
+        // Sauvegarder les filtres pour la carte active
+        this.saveFiltersForCurrentMap();
+
         // Déclencher un événement personnalisé pour notifier les autres composants
         document.dispatchEvent(new CustomEvent('filtersApplied', {
             detail: {
@@ -530,5 +534,82 @@ export default class FilterManager {
 
     getActiveFilters() {
         return { ...this.activeFilters };
+    }
+
+    // Sauvegarder les filtres pour la carte active
+    saveFiltersForCurrentMap() {
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        if (!activeMapUrl) {
+            console.warn("⚠️ Pas de carte active pour sauvegarder les filtres");
+            return;
+        }
+
+        this.filtersByMap[activeMapUrl] = { ...this.activeFilters };
+        console.log(`💾 Filtres sauvegardés pour la carte ${activeMapUrl}:`, this.filtersByMap[activeMapUrl]);
+
+        // Marquer comme non sauvegardé pour déclencher la sync cloud
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+    }
+
+    // Charger les filtres pour une carte spécifique
+    loadFiltersForMap(mapUrl) {
+        if (this.filtersByMap[mapUrl]) {
+            this.activeFilters = { ...this.filtersByMap[mapUrl] };
+            console.log(`📥 Filtres chargés pour la carte ${mapUrl}:`, this.activeFilters);
+            
+            // Mettre à jour l'UI
+            this.updateFilterUI();
+            this.applyFilters();
+            return true;
+        }
+        return false;
+    }
+
+    // Mettre à jour l'interface des filtres
+    updateFilterUI() {
+        // Checkboxes couleurs
+        document.querySelectorAll('input[type="checkbox"][id^="filter-color-"]').forEach(cb => {
+            const color = cb.value;
+            cb.checked = this.activeFilters.colors?.includes(color) || false;
+        });
+
+        // Checkboxes status
+        const visitedCheckbox = document.getElementById('visited-checkbox');
+        const notVisitedCheckbox = document.getElementById('not-visited-checkbox');
+        const knownCheckbox = document.getElementById('known-checkbox');
+        const unknownCheckbox = document.getElementById('unknown-checkbox');
+        
+        if (visitedCheckbox) visitedCheckbox.checked = this.activeFilters.visited?.includes('visited') || false;
+        if (notVisitedCheckbox) notVisitedCheckbox.checked = this.activeFilters.visited?.includes('not_visited') || false;
+        if (knownCheckbox) knownCheckbox.checked = this.activeFilters.known?.includes('known') || false;
+        if (unknownCheckbox) unknownCheckbox.checked = this.activeFilters.known?.includes('unknown') || false;
+
+        // Cases à cocher d'affichage
+        const showLocationsFilter = document.getElementById('show-locations');
+        const showRegionsFilter = document.getElementById('show-regions');
+        if (showLocationsFilter) showLocationsFilter.checked = this.activeFilters.showLocations !== false;
+        if (showRegionsFilter) showRegionsFilter.checked = this.activeFilters.showRegions || false;
+
+        // Slider d'opacité
+        const opacitySlider = document.getElementById('regions-opacity-slider');
+        const opacityValue = document.getElementById('regions-opacity-value');
+        const opacity = this.activeFilters.regionsOpacity || 0.5;
+        if (opacitySlider) opacitySlider.value = opacity * 100;
+        if (opacityValue) opacityValue.textContent = `${Math.round(opacity * 100)}%`;
+    }
+
+    // Obtenir tous les filtres par carte (pour la sauvegarde cloud)
+    getAllFiltersByMap() {
+        return { ...this.filtersByMap };
+    }
+
+    // Charger tous les filtres par carte (depuis le cloud)
+    setAllFiltersByMap(filtersByMap) {
+        if (filtersByMap && typeof filtersByMap === 'object') {
+            this.filtersByMap = { ...filtersByMap };
+            console.log("📥 Filtres par carte chargés depuis le cloud:", this.filtersByMap);
+        }
     }
 }

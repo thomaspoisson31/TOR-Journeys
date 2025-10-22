@@ -400,10 +400,10 @@ class AuthManager {
             this.logAuth("📍 Position du marqueur collectée:", data.position);
         }
 
-        // Collecter l'état des filtres
+        // Collecter l'état des filtres par carte
         if (window.filterManager) {
-            data.filters = window.filterManager.getActiveFilters();
-            this.logAuth("🔍 Filtres collectés:", data.filters);
+            data.filtersByMap = window.filterManager.getAllFiltersByMap();
+            this.logAuth("🔍 Filtres par carte collectés:", data.filtersByMap);
         }
 
         this.logAuth("📦 Données collectées pour le contexte", Object.keys(data));
@@ -560,21 +560,23 @@ class AuthManager {
             }
         }
 
-        // Restaurer l'état des filtres APRÈS le rendu initial
-        if (data.filters && window.filterManager) {
-            this.logAuth("🔍 Restauration des filtres depuis le contexte");
+        // Restaurer l'état des filtres par carte APRÈS le rendu initial
+        if (data.filtersByMap && window.filterManager) {
+            this.logAuth("🔍 Restauration des filtres par carte depuis le contexte");
+            // Charger tous les filtres par carte
+            window.filterManager.setAllFiltersByMap(data.filtersByMap);
+            
             // Utiliser un délai pour s'assurer que le FilterManager a terminé son initialisation
             setTimeout(() => {
-                // Appliquer directement les filtres restaurés
-                if (typeof window.filterManager.loadFiltersFromContext === 'function') {
-                    window.filterManager.loadFiltersFromContext(data.filters);
-                    this.logAuth("✅ Filtres restaurés via loadFiltersFromContext:", data.filters);
-                } else {
-                    // Fallback si la méthode spécifique n'existe pas
-                    window.filterManager.activeFilters = { ...data.filters };
-                    this.updateFilterUI(data.filters); // Mettre à jour l'UI des checkboxes etc.
-                    window.filterManager.applyFilters(); // Appliquer les filtres
-                    this.logAuth("✅ Filtres restaurés via propriétés directes:", data.filters);
+                // Charger les filtres pour la carte active
+                const activeMapUrl = window.settingsManager?.activeMapUrl;
+                if (activeMapUrl) {
+                    const loaded = window.filterManager.loadFiltersForMap(activeMapUrl);
+                    if (loaded) {
+                        this.logAuth("✅ Filtres de la carte active restaurés:", activeMapUrl);
+                    } else {
+                        this.logAuth("ℹ️ Aucun filtre sauvegardé pour la carte active:", activeMapUrl);
+                    }
                 }
             }, 150); // Délai suffisant pour les initialisations
         }

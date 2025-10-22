@@ -494,6 +494,14 @@ class SettingsManager {
             mapImage.src = this.activeMapUrl;
         }
 
+        // Charger les filtres sauvegardés pour cette carte
+        if (window.filterManager) {
+            const loaded = window.filterManager.loadFiltersForMap(this.activeMapUrl);
+            if (!loaded) {
+                console.log("ℹ️ Aucun filtre sauvegardé pour cette carte, utilisation des filtres par défaut");
+            }
+        }
+
         // Marquer comme non sauvegardé pour afficher l'icône cloud
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
