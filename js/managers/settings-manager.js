@@ -1094,44 +1094,40 @@ class SettingsManager {
             const mapHeight = activeMap?.height || 3296;
             console.log(`🗺️ [loadSettings] Dimensions carte: ${mapWidth}x${mapHeight}px, échelle: ${mapScale} miles`);
 
-            // Callback pour re-render après chargement
-            const onImageLoaded = () => {
-                console.log('✅ [loadSettings] Image de carte chargée');
-                console.log(`📐 [loadSettings] Dimensions réelles image: ${mapImage.naturalWidth}x${mapImage.naturalHeight}px`);
-                
-                // IMPORTANT: Appliquer l'échelle AVANT l'initialisation de la carte
-                if (window.pathManager) {
-                    window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
-                    console.log(`🗺️ [loadSettings] Échelle appliquée au PathManager: ${mapScale} miles`);
-                }
-                
-                // Toujours réinitialiser la carte lors du changement d'image
+            // IMPORTANT: Appliquer l'échelle AVANT tout rendu
+            if (window.pathManager) {
+                window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
+                console.log(`🗺️ [loadSettings] Échelle appliquée au PathManager: ${mapScale} miles`);
+            }
+
+            // Vérifier si l'image est déjà chargée avec la bonne URL
+            if (mapImage.complete && mapImage.naturalWidth > 0 && mapImage.src.endsWith(this.activeMapUrl)) {
+                console.log('✅ [loadSettings] Image déjà chargée, initialisation immédiate');
+                // Reset MAP_WIDTH pour forcer la réinitialisation complète
+                window.MAP_WIDTH = 0;
+                window.MAP_HEIGHT = 0;
                 if (typeof window.initializeMap === 'function') {
+                    window.initializeMap();
+                }
+            } else {
+                console.log('🗺️ [loadSettings] Chargement de la nouvelle image:', this.activeMapUrl);
+                // Définir le callback avant de changer le src
+                mapImage.onload = () => {
+                    console.log('✅ [loadSettings] Image de carte chargée');
+                    console.log(`📐 [loadSettings] Dimensions réelles image: ${mapImage.naturalWidth}x${mapImage.naturalHeight}px`);
+                    
                     // Reset MAP_WIDTH pour forcer la réinitialisation complète
                     window.MAP_WIDTH = 0;
                     window.MAP_HEIGHT = 0;
                     console.log('🗺️ [loadSettings] Réinitialisation MAP_WIDTH/HEIGHT, appel initializeMap()');
-                    window.initializeMap();
-                } else {
-                    console.log('⚠️ [loadSettings] initializeMap() non disponible, fallback sur render direct');
-                    // Si initializeMap n'existe pas encore, juste re-render
-                    if (typeof window.renderLocations === 'function') {
-                        window.renderLocations();
-                        console.log('✅ [loadSettings] Lieux rendus après loadSettings');
+                    if (typeof window.initializeMap === 'function') {
+                        window.initializeMap();
                     }
-                    if (typeof window.renderRegions === 'function') {
-                        window.renderRegions();
-                        console.log('✅ [loadSettings] Régions rendues après loadSettings');
-                    }
-                }
-            };
-
-            // Toujours définir le callback avant de changer src
-            mapImage.onload = onImageLoaded;
-            
-            // Forcer le rechargement en changeant toujours le src
-            console.log('🗺️ [loadSettings] Chargement de l\'image:', this.activeMapUrl);
-            mapImage.src = this.activeMapUrl;
+                };
+                
+                // Changer le src pour déclencher le chargement
+                mapImage.src = this.activeMapUrl;
+            }
         }
 
         // Mettre à jour l'affichage si la modale des paramètres est ouverte
