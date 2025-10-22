@@ -1028,6 +1028,18 @@ class SettingsManager {
                         console.log('✅ Régions rendues après loadSettings');
                     }
                 }
+                
+                // IMPORTANT: Forcer un second re-render après un court délai
+                // pour s'assurer que le filtre par carte active est bien appliqué
+                setTimeout(() => {
+                    console.log('🔄 Re-render final avec filtre de carte active:', this.activeMapUrl);
+                    if (typeof window.renderLocations === 'function') {
+                        window.renderLocations();
+                    }
+                    if (typeof window.renderRegions === 'function') {
+                        window.renderRegions();
+                    }
+                }, 100);
             };
 
             // Toujours définir le callback avant de changer src
