@@ -405,6 +405,11 @@ class AuthManager {
             data.filtersByMap = window.filterManager.getAllFiltersByMap();
             this.logAuth("🔍 [collectCurrentContextData] Filtres par carte collectés:", data.filtersByMap);
             this.logAuth(`🔍 [collectCurrentContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap || {}).length}`);
+            this.logAuth(`🔍 [collectCurrentContextData] Cartes avec filtres:`, Object.keys(data.filtersByMap || {}));
+            // Vérifier que filtersByMap est bien un objet non vide
+            if (!data.filtersByMap || Object.keys(data.filtersByMap).length === 0) {
+                this.logAuth("⚠️ [collectCurrentContextData] ATTENTION: filtersByMap est vide !");
+            }
         } else {
             this.logAuth("⚠️ [collectCurrentContextData] FilterManager non disponible");
         }

@@ -594,10 +594,18 @@ export default class FilterManager {
         this.filtersByMap[activeMapUrl] = { ...this.activeFilters };
         console.log(`💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte ${activeMapUrl}:`, this.filtersByMap[activeMapUrl]);
         console.log(`💾 [saveFiltersForCurrentMap] Total filtersByMap:`, this.filtersByMap);
+        console.log(`💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: ${Object.keys(this.filtersByMap).length}`);
+        
+        // Sauvegarder aussi dans localStorage pour persistance immédiate
+        localStorage.setItem('filtersByMap', JSON.stringify(this.filtersByMap));
+        console.log(`💾 [saveFiltersForCurrentMap] Filtres sauvegardés dans localStorage`);
 
         // Marquer comme non sauvegardé pour déclencher la sync cloud
         if (typeof window.markAsUnsaved === 'function') {
+            console.log(`☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud`);
             window.markAsUnsaved();
+        } else {
+            console.warn(`⚠️ [saveFiltersForCurrentMap] window.markAsUnsaved n'existe pas !`);
         }
     }
 

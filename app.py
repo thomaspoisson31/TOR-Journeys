@@ -484,7 +484,8 @@ def debug_user_data():
             'has_settings': 'settings' in parsed_data,
             'has_journal': 'journal' in parsed_data,
             'has_position': 'position' in parsed_data,
-            'has_filters': 'filters' in parsed_data
+            'has_filtersByMap': 'filtersByMap' in parsed_data,
+            'filtersByMap_count': len(parsed_data.get('filtersByMap', {})) if 'filtersByMap' in parsed_data else 0
         },
         'full_data': parsed_data,
         'raw_json_size': len(user_data['data_json'])
