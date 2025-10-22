@@ -1119,8 +1119,19 @@ class SettingsManager {
                 }
             };
 
-            // Toujours définir le callback avant de changer src
-            mapImage.onload = onImageLoaded;
+            // Vérifier si l'URL de l'image a changé
+            const needsReload = mapImage.src !== this.activeMapUrl && 
+                               !mapImage.src.endsWith(this.activeMapUrl);
+            
+            if (needsReload) {
+                // Toujours définir le callback avant de changer src
+                mapImage.onload = onImageLoaded;
+                mapImage.src = this.activeMapUrl;
+                console.log('🗺️ Chargement de la nouvelle image:', this.activeMapUrl);
+            } else {
+                console.log('🗺️ Image déjà chargée, déclenchement manuel de onImageLoaded');
+                onImageLoaded();
+            }
             
             // Si l'image est déjà complètement chargée avec cette URL, déclencher manuellement
             if (mapImage.complete && mapImage.naturalWidth > 0 && mapImage.src.endsWith(this.activeMapUrl)) {
