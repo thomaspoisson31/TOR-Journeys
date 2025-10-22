@@ -497,8 +497,6 @@ class SettingsManager {
         const map = this.availableMaps[index];
         if (!map) return;
 
-        console.log(`🗺️ [setActiveMap] Activation de la carte: ${map.name} (échelle: ${map.scale || 600} miles)`);
-
         // Désactiver toutes les cartes
         this.availableMaps.forEach(m => m.isActive = false);
         
@@ -507,10 +505,10 @@ class SettingsManager {
         this.activeMapUrl = map.url;
         this.activeMapName = map.name;
 
-        // IMPORTANT: Mettre à jour l'échelle AVANT tout rendu
+        // Mettre à jour l'échelle pour le PathManager
         if (window.pathManager) {
             window.pathManager.mapConstants.MAP_DISTANCE_MILES = map.scale || 600;
-            console.log(`🗺️ [setActiveMap] Échelle PathManager mise à jour: ${map.scale || 600} miles`);
+            console.log(`🗺️ Échelle de carte mise à jour : ${map.scale || 600} miles`);
         }
 
         // Mettre à jour l'image de la carte principale
@@ -1083,21 +1081,53 @@ class SettingsManager {
         // Mettre à jour l'image de la carte principale
         const mapImage = document.getElementById('map-image');
         if (mapImage && this.activeMapUrl) {
-            console.log('🗺️ [loadSettings] Changement de carte vers:', this.activeMapUrl);
+            console.log('🗺️ Mise à jour de l\'image de la carte:', this.activeMapUrl);
 
             // Trouver la carte active pour récupérer son échelle
             const activeMap = this.availableMaps.find(m => m.url === this.activeMapUrl);
             const mapScale = activeMap?.scale || 600;
+            console.log(`🗺️ Échelle de la carte active: ${mapScale} miles`);
 
-            // IMPORTANT: Appliquer l'échelle IMMÉDIATEMENT
-            if (window.pathManager) {
-                window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
-                console.log(`🗺️ [loadSettings] Échelle appliquée au PathManager: ${mapScale} miles`);
+            // Callback pour re-render après chargement
+            const onImageLoaded = () => {
+                console.log('✅ Image de carte chargée, re-initialisation de la carte');
+                
+                // IMPORTANT: Appliquer l'échelle AVANT l'initialisation de la carte
+                if (window.pathManager) {
+                    window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
+                    console.log(`🗺️ Échelle appliquée au PathManager: ${mapScale} miles`);
+                }
+                
+                // Toujours réinitialiser la carte lors du changement d'image
+                if (typeof window.initializeMap === 'function') {
+                    // Reset MAP_WIDTH pour forcer la réinitialisation complète
+                    window.MAP_WIDTH = 0;
+                    console.log('🗺️ Réinitialisation de la carte depuis loadSettings');
+                    window.initializeMap();
+                } else {
+                    // Si initializeMap n'existe pas encore, juste re-render
+                    if (typeof window.renderLocations === 'function') {
+                        window.renderLocations();
+                        console.log('✅ Lieux rendus après loadSettings');
+                    }
+                    if (typeof window.renderRegions === 'function') {
+                        window.renderRegions();
+                        console.log('✅ Régions rendues après loadSettings');
+                    }
+                }
+            };
+
+            // Toujours définir le callback avant de changer src
+            mapImage.onload = onImageLoaded;
+            
+            // Si l'image est déjà complètement chargée avec cette URL, déclencher manuellement
+            if (mapImage.complete && mapImage.naturalWidth > 0 && mapImage.src.endsWith(this.activeMapUrl)) {
+                console.log('⚡ Image déjà chargée, callback immédiat');
+                onImageLoaded();
+            } else {
+                // Forcer le rechargement
+                mapImage.src = this.activeMapUrl;
             }
-
-            // Simplement changer le src - le callback onload dans main.js s'occupera du reste
-            console.log('🗺️ [loadSettings] Mise à jour du src de l\'image');
-            mapImage.src = this.activeMapUrl;
         }
 
         // Mettre à jour l'affichage si la modale des paramètres est ouverte

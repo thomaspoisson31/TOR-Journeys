@@ -166,14 +166,16 @@ async function initializeApp() {
         window.regionsData = regionsData;
         console.log("✅ Data structures initialized (will be populated from cloud)");
 
-        // Callback unique pour le chargement de l'image de carte
+        // Attendre que SettingsManager charge la carte active
         if (mapImage) {
+            // La carte sera chargée par SettingsManager.loadSettings() appelé par AuthManager
             mapImage.onload = () => {
-                console.log("🗺️ [main.js] Map image loaded successfully");
+                console.log("🗺️ Map image loaded successfully");
                 initializeMap();
+                console.log("⏳ Waiting for cloud data before rendering...");
             };
             mapImage.onerror = () => {
-                console.error("❌ [main.js] Map image failed to load");
+                console.error("❌ Map image failed to load");
                 if (loaderOverlay) {
                     loaderOverlay.innerHTML = `
                         <div class="text-2xl text-red-500 text-center p-4">
@@ -186,7 +188,7 @@ async function initializeApp() {
                     `;
                 }
             };
-            console.log("✅ [main.js] Callback onload configuré");
+            console.log("⏳ Waiting for SettingsManager to load active map...");
         }
 
     } catch (error) {
@@ -542,31 +544,23 @@ window.initializeMap = initializeMap;
 
 // --- Initialisation carte simplifiée ---
 function initializeMap() {
-    console.log("🗺️ initializeMap appelé");
-
-    const mapImage = document.getElementById('map-image');
-    if (!mapImage || !mapImage.complete || mapImage.naturalWidth === 0) {
-        console.log("⏳ Image de carte pas encore chargée, attente...");
+    console.log("🗺️ Initializing map...");
+    if (mapImage.naturalWidth === 0) {
+        console.warn("⚠️ Map image not loaded yet, retrying...");
+        return;
+    }
+    
+    // Éviter la double initialisation
+    if (MAP_WIDTH > 0) {
+        console.log("⚠️ Map already initialized, skipping");
         return;
     }
 
-    // Récupérer les dimensions réelles de l'image chargée
+    console.log("📐 Map dimensions:", mapImage.naturalWidth, "x", mapImage.naturalHeight);
     MAP_WIDTH = mapImage.naturalWidth;
     MAP_HEIGHT = mapImage.naturalHeight;
-    window.MAP_WIDTH = MAP_WIDTH;
-    window.MAP_HEIGHT = MAP_HEIGHT;
-
-    console.log(`📐 Dimensions de la carte: ${MAP_WIDTH}x${MAP_HEIGHT}px`);
-
-    // IMPORTANT: Appliquer l'échelle de la carte active
-    if (window.settingsManager && window.settingsManager.availableMaps && window.pathManager) {
-        const activeMapUrl = window.settingsManager.activeMapUrl;
-        const activeMap = window.settingsManager.availableMaps.find(m => m.url === activeMapUrl);
-        if (activeMap && activeMap.scale) {
-            window.pathManager.mapConstants.MAP_DISTANCE_MILES = activeMap.scale;
-            console.log(`🗺️ [initializeMap] Échelle de carte appliquée: ${activeMap.scale} miles`);
-        }
-    }
+    mapContainer.style.width = `${MAP_WIDTH}px`;
+    mapContainer.style.height = `${MAP_HEIGHT}px`;
 
     // Mettre à jour les constantes du PathManager avec les vraies dimensions
     if (pathManager) {
@@ -928,6 +922,14 @@ function setupMapNavigation() {
 
                     touchStartX = currentCenterX;
                     touchStartY = currentCenterY;
+
+                    // Rafraîchir les marqueurs si on passe le seuil de 50%
+                    const shouldShowThumbnails = scale > 0.5;
+                    const wasShowingThumbnails = oldScale > 0.5;
+                    if (shouldShowThumbnails !== wasShowingThumbnails) {
+                        console.log(`📱 [MOBILE] Basculement vignettes: ${shouldShowThumbnails ? 'OUI' : 'NON'} (scale=${scale.toFixed(3)})`);
+                        renderLocations();
+                    }
                 }
 
                 // Mettre à jour le ZoomManager
