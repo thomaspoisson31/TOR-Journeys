@@ -104,10 +104,16 @@ class VoyageManager {
     }
 
     generateJourneyData() {
+        // Récupérer les dimensions réelles de la carte active
+        const mapImage = document.getElementById('map-image');
+        const actualMapWidth = mapImage?.naturalWidth || window.MAP_WIDTH || 5103;
+        
         // Calculate total journey duration using global variables
-        const miles = totalPathPixels * (this.MAP_DISTANCE_MILES / this.MAP_WIDTH);
+        const miles = totalPathPixels * (this.MAP_DISTANCE_MILES / actualMapWidth);
         const days = Math.ceil(miles / 20); // 20 miles per day
         this.totalJourneyDays = Math.max(1, days);
+        
+        console.log(`🗺️ VoyageManager calcul: ${totalPathPixels.toFixed(0)}px × (${this.MAP_DISTANCE_MILES} miles / ${actualMapWidth}px) = ${miles.toFixed(0)} miles = ${days} jours`);
 
         // Récupérer ou définir la date de début du voyage
         this.journeyStartDate = this.getJourneyStartDate();

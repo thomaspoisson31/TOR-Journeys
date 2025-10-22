@@ -580,11 +580,16 @@ class PathManager {
             return;
         }
 
+        // Récupérer les dimensions réelles de la carte active
+        const mapImage = document.getElementById('map-image');
+        const actualMapWidth = mapImage?.naturalWidth || window.MAP_WIDTH || 5103;
+        
         // Convertir pixels en miles (basé sur les constantes de la carte)
         const MAP_DISTANCE_MILES = this.mapConstants.MAP_DISTANCE_MILES || 600;
-        const MAP_WIDTH = this.mapConstants.MAP_WIDTH || 5103;
-        const miles = this.totalDistance * (MAP_DISTANCE_MILES / MAP_WIDTH);
+        const miles = this.totalDistance * (MAP_DISTANCE_MILES / actualMapWidth);
         const days = Math.ceil(miles / 20); // 20 miles par jour
+
+        console.log(`📏 Calcul distance: ${this.totalDistance.toFixed(0)}px × (${MAP_DISTANCE_MILES} miles / ${actualMapWidth}px) = ${miles.toFixed(0)} miles`);
 
         distanceDisplay.innerHTML = `
             <div class="text-sm">
