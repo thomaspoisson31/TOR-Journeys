@@ -1085,9 +1085,20 @@ class SettingsManager {
         if (mapImage && this.activeMapUrl) {
             console.log('🗺️ Mise à jour de l\'image de la carte:', this.activeMapUrl);
 
+            // Trouver la carte active pour récupérer son échelle
+            const activeMap = this.availableMaps.find(m => m.url === this.activeMapUrl);
+            const mapScale = activeMap?.scale || 600;
+            console.log(`🗺️ Échelle de la carte active: ${mapScale} miles`);
+
             // Callback pour re-render après chargement
             const onImageLoaded = () => {
                 console.log('✅ Image de carte chargée, re-initialisation de la carte');
+                
+                // IMPORTANT: Appliquer l'échelle AVANT l'initialisation de la carte
+                if (window.pathManager) {
+                    window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
+                    console.log(`🗺️ Échelle appliquée au PathManager: ${mapScale} miles`);
+                }
                 
                 // Toujours réinitialiser la carte lors du changement d'image
                 if (typeof window.initializeMap === 'function') {
