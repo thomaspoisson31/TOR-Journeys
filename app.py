@@ -697,6 +697,11 @@ def google_auth_callback():
         return redirect('/?error=oauth_not_configured')
 
     try:
+        # Vérifier si l'utilisateur est déjà authentifié
+        if 'user_id' in session and 'google_id' in session:
+            print(f"✅ Utilisateur déjà authentifié (user_id: {session['user_id']}), redirection vers /")
+            return redirect('/')
+
         # Utiliser url_for avec _external=True pour générer l'URL complète en HTTPS
         redirect_uri = url_for('google_auth_callback', _external=True, _scheme='https')
 
