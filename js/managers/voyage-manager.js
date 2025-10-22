@@ -108,6 +108,9 @@ class VoyageManager {
         const mapImage = document.getElementById('map-image');
         const actualMapWidth = mapImage?.naturalWidth || window.MAP_WIDTH || 5103;
         
+        // Mettre à jour l'échelle depuis la carte active
+        this.updateMapScale();
+        
         // Calculate total journey duration using global variables
         const miles = totalPathPixels * (this.MAP_DISTANCE_MILES / actualMapWidth);
         const days = Math.ceil(miles / 20); // 20 miles per day
