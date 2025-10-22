@@ -36,13 +36,6 @@ export default class FilterManager {
     setupFilterListeners() {
         console.log("🔍 Setting up filter listeners...");
 
-        // Charger les filtres de la carte active si disponibles
-        const activeMapUrl = window.settingsManager?.activeMapUrl;
-        if (activeMapUrl && this.filtersByMap[activeMapUrl]) {
-            console.log(`🔍 Chargement des filtres pour la carte active: ${activeMapUrl}`);
-            this.loadFiltersForMap(activeMapUrl);
-        }
-
         // Bouton principal de filtrage
         const filterBtn = document.getElementById('filter-btn');
         if (filterBtn) {
@@ -77,6 +70,26 @@ export default class FilterManager {
         this.setupOutsideClickListener();
 
         console.log("✅ Filter listeners setup complete");
+
+        // Charger les filtres de la carte active APRÈS l'initialisation complète
+        setTimeout(() => {
+            const activeMapUrl = window.settingsManager?.activeMapUrl;
+            console.log(`🔍 [setupFilterListeners DELAYED] activeMapUrl:`, activeMapUrl);
+            console.log(`🔍 [setupFilterListeners DELAYED] filtersByMap keys:`, Object.keys(this.filtersByMap));
+            console.log(`🔍 [setupFilterListeners DELAYED] filtersByMap content:`, this.filtersByMap);
+            
+            if (activeMapUrl) {
+                if (this.filtersByMap[activeMapUrl]) {
+                    console.log(`🔍 Chargement DIFFÉRÉ des filtres pour la carte active: ${activeMapUrl}`);
+                    this.loadFiltersForMap(activeMapUrl);
+                } else {
+                    console.warn(`⚠️ Aucun filtre trouvé pour la carte active ${activeMapUrl}`);
+                    console.log(`🔍 Filtres disponibles:`, Object.keys(this.filtersByMap));
+                }
+            } else {
+                console.warn(`⚠️ Pas de carte active définie`);
+            }
+        }, 100);
     }
 
     setupOutsideClickListener() {
@@ -577,17 +590,27 @@ export default class FilterManager {
     loadFiltersForMap(mapUrl) {
         console.log(`🔍 [loadFiltersForMap] Tentative de chargement pour carte: ${mapUrl}`);
         console.log(`🔍 [loadFiltersForMap] filtersByMap disponibles:`, Object.keys(this.filtersByMap));
+        console.log(`🔍 [loadFiltersForMap] filtersByMap complet:`, this.filtersByMap);
         
         if (this.filtersByMap[mapUrl]) {
+            console.log(`📥 [loadFiltersForMap] Filtres trouvés:`, this.filtersByMap[mapUrl]);
             this.activeFilters = { ...this.filtersByMap[mapUrl] };
-            console.log(`📥 [loadFiltersForMap] Filtres chargés pour la carte ${mapUrl}:`, this.activeFilters);
+            console.log(`📥 [loadFiltersForMap] activeFilters après copie:`, this.activeFilters);
             
             // Mettre à jour l'UI
+            console.log(`🎨 [loadFiltersForMap] Mise à jour de l'UI...`);
             this.updateFilterUI();
+            console.log(`✅ [loadFiltersForMap] Appel de applyFilters...`);
             this.applyFilters();
             return true;
         } else {
-            console.log(`⚠️ [loadFiltersForMap] Aucun filtre trouvé pour la carte ${mapUrl}`);
+            console.warn(`⚠️ [loadFiltersForMap] Aucun filtre trouvé pour la carte ${mapUrl}`);
+            console.log(`🔍 [loadFiltersForMap] Clés exactes dans filtersByMap:`, Object.keys(this.filtersByMap));
+            // Vérifier si la clé existe avec une légère différence
+            const similarKey = Object.keys(this.filtersByMap).find(key => key.includes(mapUrl.split('/').pop()));
+            if (similarKey) {
+                console.log(`🔍 [loadFiltersForMap] Clé similaire trouvée: ${similarKey}`);
+            }
         }
         return false;
     }
