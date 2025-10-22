@@ -838,6 +838,25 @@ class AuthManager {
 
                 if (locationsUpdated > 0 || regionsUpdated > 0) {
                     this.logAuth(`🗺️ Attribution mapId actif (${activeMapId}): ${locationsUpdated} lieux, ${regionsUpdated} régions`);
+                    
+                    // IMPORTANT: Synchroniser immédiatement avec les variables globales et localStorage
+                    if (localData.locations?.locations) {
+                        window.locationsData = localData.locations;
+                        if (window.dataManager) {
+                            window.dataManager.locationsData = localData.locations;
+                        }
+                        localStorage.setItem('middleEarthLocations', JSON.stringify(localData.locations));
+                        this.logAuth(`✅ Variables globales locationsData mises à jour avec les nouveaux mapId`);
+                    }
+                    
+                    if (localData.regions?.regions) {
+                        window.regionsData = localData.regions;
+                        if (window.dataManager) {
+                            window.dataManager.regionsData = localData.regions;
+                        }
+                        localStorage.setItem('middleEarthRegions', JSON.stringify(localData.regions));
+                        this.logAuth(`✅ Variables globales regionsData mises à jour avec les nouveaux mapId`);
+                    }
                 } else {
                     this.logAuth(`ℹ️ Aucun lieu/région sans mapId à mettre à jour`);
                 }
