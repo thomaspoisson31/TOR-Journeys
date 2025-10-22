@@ -799,7 +799,7 @@ class AuthManager {
             const localData = this.collectCurrentContextData();
             this.logAuth("📦 Données locales collectées");
 
-            // 3. Attribuer le mapId de la carte active aux lieux/régions sans mapId DIRECTEMENT dans les données collectées
+            // 3. Attribuer le mapId de la carte active aux lieux/régions sans mapId
             const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl;
             this.logAuth(`🔍 [syncUserData] activeMapId: ${activeMapId}`);
 
@@ -807,31 +807,26 @@ class AuthManager {
                 let locationsUpdated = 0;
                 let regionsUpdated = 0;
 
-                this.logAuth(`🔍 [syncUserData] AVANT attribution - localData.locations count: ${localData.locations?.locations?.length || 0}`);
-                this.logAuth(`🔍 [syncUserData] AVANT attribution - localData.regions count: ${localData.regions?.regions?.length || 0}`);
-
-                // Mise à jour des lieux sans mapId DIRECTEMENT dans localData (qui sera envoyé au cloud)
+                // Mise à jour des lieux sans mapId
                 if (localData.locations?.locations) {
-                    localData.locations.locations = localData.locations.locations.map((loc, index) => {
+                    localData.locations.locations = localData.locations.locations.map((loc) => {
                         if (!loc.mapId) {
-                            this.logAuth(`🔍 [syncUserData] Location ${index} "${loc.name}" sans mapId, attribution de ${activeMapId}`);
+                            this.logAuth(`🔍 [syncUserData] Location "${loc.name}" sans mapId, attribution de ${activeMapId}`);
                             locationsUpdated++;
                             return { ...loc, mapId: activeMapId };
                         }
-                        this.logAuth(`🔍 [syncUserData] Location ${index} "${loc.name}" a déjà mapId: ${loc.mapId}`);
                         return loc;
                     });
                 }
 
-                // Mise à jour des régions sans mapId DIRECTEMENT dans localData (qui sera envoyé au cloud)
+                // Mise à jour des régions sans mapId
                 if (localData.regions?.regions) {
-                    localData.regions.regions = localData.regions.regions.map((reg, index) => {
+                    localData.regions.regions = localData.regions.regions.map((reg) => {
                         if (!reg.mapId) {
-                            this.logAuth(`🔍 [syncUserData] Region ${index} "${reg.name}" sans mapId, attribution de ${activeMapId}`);
+                            this.logAuth(`🔍 [syncUserData] Region "${reg.name}" sans mapId, attribution de ${activeMapId}`);
                             regionsUpdated++;
                             return { ...reg, mapId: activeMapId };
                         }
-                        this.logAuth(`🔍 [syncUserData] Region ${index} "${reg.name}" a déjà mapId: ${reg.mapId}`);
                         return reg;
                     });
                 }
@@ -839,30 +834,39 @@ class AuthManager {
                 if (locationsUpdated > 0 || regionsUpdated > 0) {
                     this.logAuth(`🗺️ Attribution mapId actif (${activeMapId}): ${locationsUpdated} lieux, ${regionsUpdated} régions`);
                     
-                    // IMPORTANT: Synchroniser immédiatement avec les variables globales et localStorage
+                    // IMPORTANT: Synchroniser IMMÉDIATEMENT avec les variables globales et localStorage
+                    // AVANT la fusion, pour garantir la persistance
                     if (localData.locations?.locations) {
-                        window.locationsData = localData.locations;
+                        window.locationsData = { ...localData.locations };
                         if (window.dataManager) {
-                            window.dataManager.locationsData = localData.locations;
+                            window.dataManager.locationsData = { ...localData.locations };
                         }
                         localStorage.setItem('middleEarthLocations', JSON.stringify(localData.locations));
                         this.logAuth(`✅ Variables globales locationsData mises à jour avec les nouveaux mapId`);
                     }
                     
                     if (localData.regions?.regions) {
-                        window.regionsData = localData.regions;
+                        window.regionsData = { ...localData.regions };
                         if (window.dataManager) {
-                            window.dataManager.regionsData = localData.regions;
+                            window.dataManager.regionsData = { ...localData.regions };
                         }
                         localStorage.setItem('middleEarthRegions', JSON.stringify(localData.regions));
                         this.logAuth(`✅ Variables globales regionsData mises à jour avec les nouveaux mapId`);
+                    }
+
+                    // Forcer le re-render immédiat pour afficher les changements
+                    if (typeof window.renderLocations === 'function') {
+                        window.renderLocations();
+                    }
+                    if (typeof window.renderRegions === 'function') {
+                        window.renderRegions();
                     }
                 } else {
                     this.logAuth(`ℹ️ Aucun lieu/région sans mapId à mettre à jour`);
                 }
             }
 
-            // 3. Fusionner intelligemment les données
+            // 4. Fusionner intelligemment les données (utilise localData déjà modifié)
             const mergedData = this.mergeContextData(cloudData, localData);
             this.logAuth("🔀 Données fusionnées pour sauvegarde");
 
@@ -923,32 +927,40 @@ class AuthManager {
 
         const merged = { ...localData };
 
-        // Fusionner les lieux
+        // Fusionner les lieux - PRIORITÉ AUX DONNÉES LOCALES pour les mapId
         const cloudLocations = cloudData.locations?.locations || [];
         const localLocations = localData.locations?.locations || [];
 
-        const mergedLocations = [...cloudLocations];
-        localLocations.forEach(localLoc => {
-            const exists = mergedLocations.find(cl => cl.id === localLoc.id);
-            if (!exists) {
-                mergedLocations.push(localLoc);
-                this.logAuth(`➕ Ajout lieu local: ${localLoc.name}`);
+        const mergedLocations = [...localLocations]; // Commencer par les locales
+        cloudLocations.forEach(cloudLoc => {
+            const localExists = mergedLocations.find(ll => ll.id === cloudLoc.id);
+            if (!localExists) {
+                // Lieu uniquement dans le cloud, l'ajouter
+                mergedLocations.push(cloudLoc);
+                this.logAuth(`➕ Ajout lieu cloud: ${cloudLoc.name}`);
+            } else {
+                // Le lieu existe localement, on garde la version locale (avec mapId potentiellement mis à jour)
+                this.logAuth(`🔄 Lieu existe localement: ${cloudLoc.name}, conservation version locale`);
             }
         });
 
         merged.locations = { locations: mergedLocations };
         this.logAuth(`🔀 Fusion lieux: ${cloudLocations.length} cloud + ${localLocations.length} local = ${mergedLocations.length} total`);
 
-        // Fusionner les régions
+        // Fusionner les régions - PRIORITÉ AUX DONNÉES LOCALES pour les mapId
         const cloudRegions = cloudData.regions?.regions || [];
         const localRegions = localData.regions?.regions || [];
 
-        const mergedRegions = [...cloudRegions];
-        localRegions.forEach(localReg => {
-            const exists = mergedRegions.find(cr => cr.id === localReg.id);
-            if (!exists) {
-                mergedRegions.push(localReg);
-                this.logAuth(`➕ Ajout région locale: ${localReg.name}`);
+        const mergedRegions = [...localRegions]; // Commencer par les locales
+        cloudRegions.forEach(cloudReg => {
+            const localExists = mergedRegions.find(lr => lr.id === cloudReg.id);
+            if (!localExists) {
+                // Région uniquement dans le cloud, l'ajouter
+                mergedRegions.push(cloudReg);
+                this.logAuth(`➕ Ajout région cloud: ${cloudReg.name}`);
+            } else {
+                // La région existe localement, on garde la version locale (avec mapId potentiellement mis à jour)
+                this.logAuth(`🔄 Région existe localement: ${cloudReg.name}, conservation version locale`);
             }
         });
 
