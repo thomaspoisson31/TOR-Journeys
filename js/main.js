@@ -633,32 +633,45 @@ function initializeMap() {
         console.error("❌ PathManager not initialized");
     }
 
-    // Initialiser ZoomManager
-    zoomManager = new ZoomManager(
-        { getElementById: (id) => document.getElementById(id) },
-        { 
-            minScale: minScale, 
-            maxScale: maxScale,
-            MAP_WIDTH: MAP_WIDTH,
-            MAP_HEIGHT: MAP_HEIGHT
-        }
-    );
-    zoomManager.onZoomChange = (newScale) => {
-        // Zoomer en centrant sur le centre du viewport
-        const viewportWidth = viewport.clientWidth;
-        const viewportHeight = viewport.clientHeight;
-        const currentScale = window.scale || scale;
-        zoomToPoint(newScale / currentScale, viewportWidth / 2, viewportHeight / 2);
-
-        // Mettre à jour la taille du marqueur de position après un court délai
-        setTimeout(() => {
-            if (positionManager) {
-                positionManager.updateMarkerSize();
+    // Initialiser ou réutiliser ZoomManager
+    if (window.zoomManager) {
+        console.log('🔍 [initializeMap] ZoomManager existe déjà, mise à jour des constantes');
+        // Mettre à jour les constantes avec les nouvelles dimensions
+        window.zoomManager.mapConstants.MAP_WIDTH = MAP_WIDTH;
+        window.zoomManager.mapConstants.MAP_HEIGHT = MAP_HEIGHT;
+        window.zoomManager.mapConstants.minScale = minScale;
+        window.zoomManager.mapConstants.maxScale = maxScale;
+        
+        // Synchroniser l'affichage
+        window.zoomManager.updateDisplay();
+    } else {
+        console.log('🔍 [initializeMap] Création du ZoomManager');
+        zoomManager = new ZoomManager(
+            { getElementById: (id) => document.getElementById(id) },
+            { 
+                minScale: minScale, 
+                maxScale: maxScale,
+                MAP_WIDTH: MAP_WIDTH,
+                MAP_HEIGHT: MAP_HEIGHT
             }
-        }, 10);
-    };
-    zoomManager.init();
-    window.zoomManager = zoomManager; // Exposer globalement
+        );
+        zoomManager.onZoomChange = (newScale) => {
+            // Zoomer en centrant sur le centre du viewport
+            const viewportWidth = viewport.clientWidth;
+            const viewportHeight = viewport.clientHeight;
+            const currentScale = window.scale || scale;
+            zoomToPoint(newScale / currentScale, viewportWidth / 2, viewportHeight / 2);
+
+            // Mettre à jour la taille du marqueur de position après un court délai
+            setTimeout(() => {
+                if (positionManager) {
+                    positionManager.updateMarkerSize();
+                }
+            }, 10);
+        };
+        zoomManager.init();
+        window.zoomManager = zoomManager; // Exposer globalement
+    }
 
     // Initialiser PositionManager
     console.log("📍 [main.js] Création du PositionManager avec MAP_WIDTH:", MAP_WIDTH, "MAP_HEIGHT:", MAP_HEIGHT);

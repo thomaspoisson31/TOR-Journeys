@@ -621,9 +621,9 @@ class SettingsManager {
             window.renderRegions();
         }
 
-        // IMPORTANT: Le ZoomManager sera recréé automatiquement par initializeMap()
+        // IMPORTANT: Le ZoomManager sera mis à jour automatiquement par initializeMap()
         // qui est appelé après le chargement de la nouvelle carte
-        console.log('🔍 [switchMap] Le ZoomManager sera recréé par initializeMap()');
+        console.log('🔍 [switchMap] Le ZoomManager sera mis à jour par initializeMap()');
     }
 
     editMapScale(index) {
