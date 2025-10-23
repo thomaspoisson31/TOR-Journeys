@@ -19,6 +19,12 @@ class DataManager {
         if (this.locationsData) {
             localStorage.setItem('middleEarthLocations', JSON.stringify(this.locationsData));
             window.locationsData = this.locationsData;
+            console.log(`💾 [DataManager] ${this.locationsData.locations?.length || 0} lieux sauvegardés dans localStorage`);
+        }
+        
+        // Marquer comme non sauvegardé et déclencher la synchronisation
+        if (window.authManager && window.authManager.isAuthenticated) {
+            window.authManager.markAsUnsaved();
         }
         if (typeof scheduleAutoSync === 'function') {
             scheduleAutoSync();
@@ -29,6 +35,12 @@ class DataManager {
         if (this.regionsData) {
             localStorage.setItem('middleEarthRegions', JSON.stringify(this.regionsData));
             window.regionsData = this.regionsData;
+            console.log(`💾 [DataManager] ${this.regionsData.regions?.length || 0} régions sauvegardées dans localStorage`);
+        }
+        
+        // Marquer comme non sauvegardé et déclencher la synchronisation
+        if (window.authManager && window.authManager.isAuthenticated) {
+            window.authManager.markAsUnsaved();
         }
         if (typeof scheduleAutoSync === 'function') {
             scheduleAutoSync();

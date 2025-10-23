@@ -1221,10 +1221,7 @@ class AuthManager {
 
 
     async debugCloudData() {
-        if (!this.isAuthenticated) {
-            alert('Vous devez être authentifié pour voir les données cloud');
-            return;
-        }
+        this.logAuth("🔍 Ouverture du debug des données cloud");
 
         try {
             const response = await fetch('/api/user/data/debug', {
@@ -1232,33 +1229,68 @@ class AuthManager {
                 credentials: 'include'
             });
 
-            if (response.ok) {
-                const debugData = await response.json();
-
-                console.log('🔍 === DONNÉES CLOUD DEBUG ===', debugData);
-
-                // Afficher dans une alerte formatée
-                let message = `📊 DONNÉES CLOUD STOCKÉES\n\n`;
-                message += `User ID: ${debugData.user_id}\n`;
-                message += `Dernière mise à jour: ${debugData.updated_at}\n\n`;
-                message += `📍 Lieux: ${debugData.data_summary.locations_count}\n`;
-                message += `🗺️ Régions: ${debugData.data_summary.regions_count}\n`;
-                message += `📅 Calendrier: ${debugData.data_summary.has_calendar ? 'Oui' : 'Non'}\n`;
-                message += `📖 Journal: ${debugData.data_summary.has_journal ? 'Oui' : 'Non'}\n`;
-                message += `📍 Position: ${debugData.data_summary.has_position ? 'Oui' : 'Non'}\n`;
-                message += `🔍 Filtres: ${debugData.data_summary.has_filters ? 'Oui' : 'Non'}\n`;
-                message += `\n💾 Taille JSON: ${(debugData.raw_json_size / 1024).toFixed(2)} KB\n`;
-                message += `\nDétails complets dans la console (F12)`;
-
-                alert(message);
-            } else {
-                const error = await response.json();
-                alert(`Erreur: ${error.message || error.error}`);
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
             }
+
+            const debugData = await response.json();
+
+            // Afficher dans la console
+            console.log("=== DEBUG DONNÉES CLOUD ===");
+            console.log("Status:", debugData.status);
+            console.log("User ID:", debugData.user_id);
+            console.log("Record ID:", debugData.record_id);
+            console.log("Created:", debugData.created_at);
+            console.log("Updated:", debugData.updated_at);
+            console.log("Summary:", debugData.data_summary);
+            console.log("Full Data:", debugData.full_data);
+            console.log("Raw JSON Size:", debugData.raw_json_size, "bytes");
+            console.log("=========================");
+
+            // Créer une modale pour afficher les données brutes
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100]';
+            modal.innerHTML = `
+                <div class="bg-gray-800 rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-white">📊 Données Cloud Brutes</h3>
+                        <button class="text-gray-400 hover:text-white text-2xl" onclick="this.closest('.fixed').remove()">×</button>
+                    </div>
+
+                    <div class="mb-4 text-sm text-gray-300 grid grid-cols-2 gap-2">
+                        <div>📍 Lieux: ${debugData.data_summary.locations_count}</div>
+                        <div>🗺️ Régions: ${debugData.data_summary.regions_count}</div>
+                        <div>📅 Calendrier: ${debugData.data_summary.has_calendar ? 'Oui' : 'Non'}</div>
+                        <div>💾 Taille: ${(debugData.raw_json_size / 1024).toFixed(2)} KB</div>
+                    </div>
+
+                    <div class="flex-1 overflow-auto bg-gray-900 rounded p-4">
+                        <pre class="text-xs text-green-400 whitespace-pre-wrap font-mono">${this.escapeHtml(debugData.raw_json_text || JSON.stringify(debugData.full_data, null, 2))}</pre>
+                    </div>
+
+                    <div class="mt-4 flex gap-2">
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="navigator.clipboard.writeText(this.dataset.json); alert('Copié dans le presse-papier!');" data-json="${this.escapeHtml(debugData.raw_json_text || JSON.stringify(debugData.full_data, null, 2))}">
+                            📋 Copier
+                        </button>
+                        <button class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" onclick="this.closest('.fixed').remove()">
+                            Fermer
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
         } catch (error) {
-            console.error('Erreur debug:', error);
-            alert(`Erreur réseau: ${error.message}`);
+            this.logAuth(`❌ Erreur debug cloud: ${error.message}`);
+            alert(`Erreur lors du debug: ${error.message}`);
         }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     async handleLogout(event) {

@@ -508,6 +508,9 @@ def debug_user_data():
 
     # Parser le JSON pour afficher de manière structurée
     parsed_data = json.loads(user_data['data_json'])
+    
+    # Formater en texte lisible
+    raw_json_text = json.dumps(parsed_data, indent=2, ensure_ascii=False)
 
     return jsonify({
         'status': 'ok',
@@ -526,6 +529,7 @@ def debug_user_data():
             'filtersByMap_count': len(parsed_data.get('filtersByMap', {})) if 'filtersByMap' in parsed_data else 0
         },
         'full_data': parsed_data,
+        'raw_json_text': raw_json_text,
         'raw_json_size': len(user_data['data_json'])
     })
 
