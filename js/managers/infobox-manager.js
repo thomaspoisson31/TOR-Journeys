@@ -281,7 +281,7 @@ class InfoBoxManager {
 
                 // Normaliser les rumeurs en tableau
                 const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
-                const rumeursValides = rumeurs.filter(rumeur => rumeur && != "A définir");
+                const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
 
                 if (rumeursValides.length > 0) {
                     rumeursHTML = rumeursValides.map((rumeur, index) => `
