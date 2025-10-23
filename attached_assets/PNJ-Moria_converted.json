@@ -1,0 +1,68 @@
+
+{
+  "characters": [
+    {
+      "id": "100000",
+      "name": "Fróra, Fille de Dwalin",
+      "description": "Fille de Dwalin et nièce de Balin. Riche princesse d'Erebor envoyée dans les Montagnes Bleues, mais cherchant secrètement à recruter des aventuriers pour explorer la Moria, partageant le rêve de reconquête de son oncle. Enthousiaste et fortunée.\n\nOccupation: Princesse naine\nParticularités: Majestueuse, Passionnée",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100001",
+      "name": "Guldi le Guetteur",
+      "description": "Nain Barbe-Longue obsédé par Khazad-dûm. Rôde aux abords de la Moria, traquant les pilleurs. Ignore être devenu fou, volant lui-même des trésors avant d'accuser et tuer des voyageurs pour retrouver 'son' butin.\n\nOccupation: Vagabond\nParticularités: Dément",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100002",
+      "name": "Seigneur Mjolin de Durefonte",
+      "description": "Seigneur nain de Durefonte dont la mine d'or est tarie. Cherche désespérément une nouvelle source de richesse et envisage secrètement d'envoyer des non-Nains explorer la Moria en quête de trésors.\n\nOccupation: Seigneur nain",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100003",
+      "name": "Ibin",
+      "description": "Nain amoureux d'Alfrigga, qui lui a promis sa main s'il rapporte l'Anneau de sa famille, perdu dans la Moria. Sot téméraire parti dans une quête insensée, pourrait être trouvé prisonnier ou perdu.\n\nOccupation: Chasseur de Trésors\nParticularités: Imprudent",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100004",
+      "name": "Daza Main-Rouge",
+      "description": "Nain de Nogrod à la chevelure rouge et voix forte. Ancien combattant d'Azanulbizar, mercenaire puis héraut des Nains des Montagnes Bleues après une mutilation par un Orque. Projette une expédition pour les trésors de la Moria, mais rêve surtout de vengeance.\n\nOccupation: Héraut\nParticularités: Impétueux, Vengeur",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100005",
+      "name": "Nál des Monts du Fer",
+      "description": "Très vieille Naine forgeronne renommée, issue de Belegost mais au service des Monts du Fer. Partie en pèlerinage pour étudier les œuvres anciennes dans la Moria. Campe près de la Vallée des Rigoles Sombres.\n\nOccupation: Forgeronne naine\nParticularités: Méfiante, Sévère",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100006",
+      "name": "Naldin",
+      "description": "",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    }
+  ]
+}
