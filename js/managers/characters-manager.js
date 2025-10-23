@@ -95,18 +95,26 @@ class CharactersManager {
         const listContainer = document.getElementById('characters-list');
         if (!listContainer) return;
 
-        if (this.characters.length === 0) {
+        // Filtrer les personnages par carte active
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const filteredCharacters = this.characters.filter(character => {
+            // Afficher les personnages sans mapId OU ceux correspondant à la carte active
+            if (!character.mapId || !activeMapId) return true;
+            return character.mapId === activeMapId;
+        });
+
+        if (filteredCharacters.length === 0) {
             listContainer.innerHTML = `
                 <div class="text-center py-12 text-gray-400">
                     <i class="fas fa-users fa-3x mb-4"></i>
-                    <p class="text-lg">Aucun personnage créé</p>
+                    <p class="text-lg">Aucun personnage pour cette carte</p>
                     <p class="text-sm mt-2">Cliquez sur "Ajouter un personnage" pour commencer</p>
                 </div>
             `;
             return;
         }
 
-        const html = this.characters.map(character => {
+        const html = filteredCharacters.map(character => {
             const thumbnailImage = character.images?.find(img => img.type === 'vignette');
             const principalImage = character.images?.find(img => img.type === 'principale');
             const displayImage = thumbnailImage || principalImage || character.images?.[0];
@@ -279,12 +287,16 @@ class CharactersManager {
             return;
         }
 
+        // Récupérer la carte active
+        const activeMapId = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
+
         const newCharacter = {
             id: Date.now(),
             name: name,
             description: description,
             type: type,
-            images: this.tempCharacterImages || []
+            images: this.tempCharacterImages || [],
+            mapId: activeMapId
         };
 
         this.characters.push(newCharacter);
@@ -293,7 +305,7 @@ class CharactersManager {
         this.closeAddCharacterModal();
         this.renderCharactersList();
         
-        console.log(`✅ Personnage créé: ${name} (${type})`);
+        console.log(`✅ Personnage créé: ${name} (${type}) avec mapId: ${activeMapId}`);
     }
 
     showCharacterInfoBox(characterId) {
@@ -365,7 +377,8 @@ class CharactersManager {
                     type: character.type || "PNJ",
                     images: character.images || [],
                     associatedLocations: character.associatedLocations || [],
-                    associatedRegions: character.associatedRegions || []
+                    associatedRegions: character.associatedRegions || [],
+                    mapId: character.mapId || null
                 }))
             };
 
@@ -439,6 +452,9 @@ class CharactersManager {
 
     processImportCharacters(importedCharacters, mode) {
         try {
+            // Récupérer la carte active pour associer les personnages importés
+            const activeMapId = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
+
             if (mode === 'replace') {
                 console.log("📥 Mode REPLACE - Remplacement de tous les personnages");
                 this.characters = importedCharacters.map(char => ({
@@ -448,7 +464,8 @@ class CharactersManager {
                     type: char.type || 'PNJ',
                     images: char.images || [],
                     associatedLocations: char.associatedLocations || [],
-                    associatedRegions: char.associatedRegions || []
+                    associatedRegions: char.associatedRegions || [],
+                    mapId: char.mapId || activeMapId
                 }));
             } else {
                 console.log("📥 Mode MERGE - Fusion des personnages");
@@ -462,11 +479,12 @@ class CharactersManager {
                             type: importedChar.type || existingChar.type,
                             images: importedChar.images || existingChar.images,
                             associatedLocations: importedChar.associatedLocations || existingChar.associatedLocations,
-                            associatedRegions: importedChar.associatedRegions || existingChar.associatedRegions
+                            associatedRegions: importedChar.associatedRegions || existingChar.associatedRegions,
+                            mapId: importedChar.mapId || existingChar.mapId || activeMapId
                         });
                         console.log(`🔄 Personnage mis à jour: ${importedChar.name}`);
                     } else {
-                        // Ajouter le nouveau personnage avec un ID unique
+                        // Ajouter le nouveau personnage avec un ID unique et le mapId
                         const newChar = {
                             id: importedChar.id || Date.now() + Math.random(),
                             name: importedChar.name || 'Personnage sans nom',
@@ -474,10 +492,11 @@ class CharactersManager {
                             type: importedChar.type || 'PNJ',
                             images: importedChar.images || [],
                             associatedLocations: importedChar.associatedLocations || [],
-                            associatedRegions: importedChar.associatedRegions || []
+                            associatedRegions: importedChar.associatedRegions || [],
+                            mapId: importedChar.mapId || activeMapId
                         };
                         this.characters.push(newChar);
-                        console.log(`➕ Nouveau personnage ajouté: ${importedChar.name}`);
+                        console.log(`➕ Nouveau personnage ajouté: ${importedChar.name} avec mapId: ${newChar.mapId}`);
                     }
                 });
             }
