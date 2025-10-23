@@ -658,7 +658,12 @@ class SettingsManager {
                         const ZoomManager = module.default;
                         window.zoomManager = new ZoomManager(
                             { getElementById: (id) => document.getElementById(id) },
-                            { minScale: 0.1, maxScale: 4.0 }
+                            { 
+                                minScale: 0.1, 
+                                maxScale: 4.0,
+                                MAP_WIDTH: window.MAP_WIDTH,
+                                MAP_HEIGHT: window.MAP_HEIGHT
+                            }
                         );
                         window.zoomManager.onZoomChange = (newScale) => {
                             const viewport = document.getElementById('viewport');

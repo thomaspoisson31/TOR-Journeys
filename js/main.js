@@ -636,7 +636,12 @@ function initializeMap() {
     // Initialiser ZoomManager
     zoomManager = new ZoomManager(
         { getElementById: (id) => document.getElementById(id) },
-        { minScale, maxScale }
+        { 
+            minScale: minScale, 
+            maxScale: maxScale,
+            MAP_WIDTH: MAP_WIDTH,
+            MAP_HEIGHT: MAP_HEIGHT
+        }
     );
     zoomManager.onZoomChange = (newScale) => {
         // Zoomer en centrant sur le centre du viewport
