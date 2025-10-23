@@ -23,11 +23,19 @@ export default class ZoomManager {
     }
     
     init() {
-        console.log("🔍 Initializing ZoomManager...");
+        console.log("🔍 Initializing ZoomManager...", {
+            scale: window.scale,
+            MAP_WIDTH: window.MAP_WIDTH,
+            MAP_HEIGHT: window.MAP_HEIGHT
+        });
         this.createZoomBar();
         this.setupEventListeners();
         this.updateDisplay();
-        console.log("✅ ZoomManager initialized");
+        console.log("✅ ZoomManager initialized", {
+            scale: window.scale,
+            sliderWidth: this.sliderWidth,
+            controlExists: !!this.zoomControl
+        });
     }
     
     createZoomBar() {
@@ -74,8 +82,20 @@ export default class ZoomManager {
         // État du plein écran
         this.isFullscreen = false;
         
-        // Calculer la largeur du slider
-        this.sliderWidth = this.zoomTrack.offsetWidth;
+        // Calculer la largeur du slider avec un délai pour s'assurer que le DOM est rendu
+        requestAnimationFrame(() => {
+            this.sliderWidth = this.zoomTrack.offsetWidth;
+            console.log('🔍 [ZoomManager] Largeur du slider calculée:', this.sliderWidth);
+            
+            // Si la largeur est 0, réessayer après un court délai
+            if (this.sliderWidth === 0) {
+                console.warn('⚠️ [ZoomManager] Largeur du slider = 0, nouvelle tentative dans 100ms');
+                setTimeout(() => {
+                    this.sliderWidth = this.zoomTrack.offsetWidth;
+                    console.log('🔍 [ZoomManager] Largeur du slider (2e tentative):', this.sliderWidth);
+                }, 100);
+            }
+        });
     }
     
     setupEventListeners() {
@@ -208,10 +228,15 @@ export default class ZoomManager {
     updateSliderPosition() {
         const currentScale = window.scale || 1;
         const ratio = (currentScale - this.mapConstants.minScale) / (this.mapConstants.maxScale - this.mapConstants.minScale);
-        const x = ratio * this.sliderWidth;
+        const x = ratio * (this.sliderWidth || 150); // Fallback à 150px si sliderWidth n'est pas calculé
         
         console.log(`🔍 [ZoomManager] updateSliderPosition: scale=${window.scale ? window.scale.toFixed(3) : 'undefined'}, ratio=${ratio.toFixed(3)}, x=${x.toFixed(1)}px, sliderWidth=${this.sliderWidth}px`);
-        this.zoomMarker.style.left = `${x}px`;
+        
+        if (this.zoomMarker) {
+            this.zoomMarker.style.left = `${x}px`;
+        } else {
+            console.error('❌ [ZoomManager] zoomMarker introuvable lors de updateSliderPosition');
+        }
     }
     
     getZoomPercentage() {
