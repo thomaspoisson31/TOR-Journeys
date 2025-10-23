@@ -2255,12 +2255,12 @@ function confirmColorChange() {
     const newVisited = visitedCheckbox ? visitedCheckbox.checked : currentColorChangeTarget.visited;
     const newKnown = knownCheckbox ? knownCheckbox.checked : currentColorChangeTarget.known;
 
-    const oldColor = currentColorChangeTarget.color;
-    const oldVisited = currentColorChangeTarget.visited;
-    const oldKnown = currentColorChangeTarget.known;
+    const originalColor = currentColorChangeTarget.color;
+    const originalVisited = currentColorChangeTarget.visited;
+    const originalKnown = currentColorChangeTarget.known;
 
     // Vérifier s'il y a des changements
-    const hasChanges = newColor !== oldColor || newVisited !== oldVisited || newKnown !== oldKnown;
+    const hasChanges = newColor !== originalColor || newVisited !== originalVisited || newKnown !== originalKnown;
 
     if (!hasChanges) {
         console.log("🎨 No changes needed");
@@ -2268,41 +2268,65 @@ function confirmColorChange() {
         return;
     }
 
-    console.log(`🎨 Updating ${currentColorChangeType}: ${currentColorChangeTarget.name}`, {
-        color: `${oldColor} → ${newColor}`,
-        visited: `${oldVisited} → ${newVisited}`,
-        known: `${oldKnown} → ${newKnown}`
-    });
-
     // Appliquer les changements
     currentColorChangeTarget.color = newColor;
     currentColorChangeTarget.visited = newVisited;
     currentColorChangeTarget.known = newKnown;
 
+    console.log(`🎨 Updating ${currentColorChangeType}: ${currentColorChangeTarget.name}`, {
+        color: `${originalColor} → ${newColor}`,
+        visited: `${originalVisited} → ${newVisited}`,
+        known: `${originalKnown} → ${newKnown}`
+    });
+
     if (currentColorChangeType === 'location') {
-        // Sauvegarder les lieux
-        if (dataManager) {
-            dataManager.saveLocationsToLocal();
+        // IMPORTANT: Mettre à jour l'objet dans locationsData.locations
+        const locationIndex = locationsData.locations.findIndex(loc => 
+            String(loc.id) === String(currentColorChangeTarget.id)
+        );
+
+        if (locationIndex !== -1) {
+            locationsData.locations[locationIndex] = currentColorChangeTarget;
+            console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}`);
+        } else {
+            console.error(`❌ Lieu non trouvé dans locationsData: ${currentColorChangeTarget.id}`);
         }
-        // Re-render les lieux
+
+        // Synchroniser avec window.locationsData
+        window.locationsData = locationsData;
+
+        // Mettre à jour les données
+        dataManager.saveLocationsToLocal();
+        // Marquer comme non sauvegardé
+        if (typeof scheduleAutoSync === 'function') {
+            scheduleAutoSync();
+        }
+        // Re-render
         renderLocations();
     } else if (currentColorChangeType === 'region') {
-        // Sauvegarder les régions
-        if (dataManager) {
-            dataManager.saveRegionsToLocal();
+        // IMPORTANT: Mettre à jour l'objet dans regionsData.regions
+        const regionIndex = regionsData.regions.findIndex(reg => 
+            String(reg.id) === String(currentColorChangeTarget.id)
+        );
+
+        if (regionIndex !== -1) {
+            regionsData.regions[regionIndex] = currentColorChangeTarget;
+            console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}`);
+        } else {
+            console.error(`❌ Région non trouvée dans regionsData: ${currentColorChangeTarget.id}`);
         }
-        // Re-render les régions
+
+        // Synchroniser avec window.regionsData
+        window.regionsData = regionsData;
+
+        // Mettre à jour les données
+        dataManager.saveRegionsToLocal();
+        // Marquer comme non sauvegardé
+        if (typeof scheduleAutoSync === 'function') {
+            scheduleAutoSync();
+        }
+        // Re-render
         renderRegions();
-    }
-
-    // Marquer comme non sauvegardé pour afficher l'icône cloud
-    if (typeof window.markAsUnsaved === 'function') {
-        window.markAsUnsaved();
-    }
-
-    // Programmer la synchronisation
-    if (typeof scheduleAutoSync === 'function') {
-        scheduleAutoSync();
     }
 
     // Fermer la modale
