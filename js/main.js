@@ -210,16 +210,16 @@ async function initializeApp() {
 
 // --- Fonction d'affichage des lieux ---
 function renderLocations() {
-    console.log("🎯 Rendering locations...");
+    // console.log("🎯 Rendering locations...");
 
     // IMPORTANT: Synchroniser avec window.locationsData si elle existe
     if (window.locationsData && (!locationsData || locationsData.locations?.length === 0)) {
         locationsData = window.locationsData;
-        console.log("🔄 Synchronisation avec window.locationsData");
+        // console.log("🔄 Synchronisation avec window.locationsData");
     }
 
-    console.log("📊 locationsData:", locationsData);
-    console.log("📊 locationsData.locations:", locationsData?.locations);
+    // console.log("📊 locationsData:", locationsData);
+    // console.log("📊 locationsData.locations:", locationsData?.locations);
 
     const locationsLayer = document.getElementById('locations-layer');
     if (!locationsLayer) {
@@ -239,7 +239,7 @@ function renderLocations() {
     const currentScale = window.scale || 1;
     const showThumbnails = currentScale > 0.5; // Afficher les vignettes si zoom > 50%
 
-    console.log(`📱 [renderLocations] currentScale=${currentScale.toFixed(3)}, showThumbnails=${showThumbnails}`);
+    // console.log(`📱 [renderLocations] currentScale=${currentScale.toFixed(3)}, showThumbnails=${showThumbnails}`);
 
     locationsData.locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
@@ -388,15 +388,15 @@ function renderLocations() {
 
 // --- Fonction d'affichage des régions ---
 function renderRegions() {
-    console.log("🌍 Rendering regions...");
+    // console.log("🌍 Rendering regions...");
 
     // IMPORTANT: Synchroniser avec window.regionsData si elle existe
     if (window.regionsData && (!regionsData || regionsData.regions?.length === 0)) {
         regionsData = window.regionsData;
-        console.log("🔄 Synchronisation avec window.regionsData");
+        // console.log("🔄 Synchronisation avec window.regionsData");
     }
 
-    console.log("🌍 RegionsData:", regionsData);
+    // console.log("🌍 RegionsData:", regionsData);
 
     const regionsLayer = document.getElementById('regions-layer');
     if (!regionsLayer) {
@@ -420,7 +420,7 @@ function renderRegions() {
     const activeMapId = window.settingsManager?.activeMapUrl;
 
     regionsData.regions.forEach(region => {
-        console.log('🔍 Processing region:', region.name, region);
+        // console.log('🔍 Processing region:', region.name, region);
 
         // Filtrer les régions : afficher celles sans mapId OU celles correspondant à la carte active
         if (region.mapId && activeMapId && region.mapId !== activeMapId) {

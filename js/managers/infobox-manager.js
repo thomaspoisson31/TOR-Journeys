@@ -765,7 +765,7 @@ class InfoBoxManager {
     async saveEdit() {
         if (!this.currentItem) return;
 
-        console.log("💾 Saving edit for:", this.currentItem.name);
+        console.log("💾 [SAVE] Début sauvegarde:", this.currentItem.name, "Type:", this.currentType);
 
         try {
             // Récupérer les valeurs des champs
@@ -821,20 +821,25 @@ class InfoBoxManager {
                 this.tempEvenements = undefined;
             }
 
+            console.log("💾 [SAVE] Objet après modification:", JSON.stringify(this.currentItem).substring(0, 200) + "...");
+
             // Sauvegarder via DataManager
             if (this.currentType === 'region') {
                 const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
                     String(reg.id) === String(this.currentItem.id)
                 );
                 if (regionIndex === -1) {
-                    console.error(`❌ Région non trouvée dans regionsData pour sauvegarde: ${this.currentItem.id}`);
+                    console.error(`❌ [SAVE] Région non trouvée dans regionsData: ${this.currentItem.id}`);
                     alert("Erreur : impossible de sauvegarder la région.");
                     return;
                 }
                 
+                console.log(`💾 [SAVE] Région AVANT mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
+                
                 // Mettre à jour l'objet complet dans le tableau
                 this.dataManager.regionsData.regions[regionIndex] = { ...this.currentItem };
-                console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}:`, this.dataManager.regionsData.regions[regionIndex]);
+                
+                console.log(`💾 [SAVE] Région APRÈS mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
                 
                 // Synchroniser avec la variable globale
                 window.regionsData = this.dataManager.regionsData;
@@ -851,14 +856,17 @@ class InfoBoxManager {
                     String(loc.id) === String(this.currentItem.id)
                 );
                 if (locationIndex === -1) {
-                    console.error(`❌ Lieu non trouvé dans locationsData pour sauvegarde: ${this.currentItem.id}`);
+                    console.error(`❌ [SAVE] Lieu non trouvé dans locationsData: ${this.currentItem.id}`);
                     alert("Erreur : impossible de sauvegarder le lieu.");
                     return;
                 }
                 
+                console.log(`💾 [SAVE] Lieu AVANT mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
+                
                 // Mettre à jour l'objet complet dans le tableau
                 this.dataManager.locationsData.locations[locationIndex] = { ...this.currentItem };
-                console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}:`, this.dataManager.locationsData.locations[locationIndex]);
+                
+                console.log(`💾 [SAVE] Lieu APRÈS mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
                 
                 // Synchroniser avec la variable globale
                 window.locationsData = this.dataManager.locationsData;
@@ -880,10 +888,10 @@ class InfoBoxManager {
             this.isEditMode = false;
             this.updateInfoBoxContent();
 
-            console.log("✅ Edit saved successfully");
+            console.log("✅ [SAVE] Sauvegarde locale terminée");
 
         } catch (error) {
-            console.error("❌ Error saving edit:", error);
+            console.error("❌ [SAVE] Erreur:", error);
             alert("Erreur lors de la sauvegarde : " + error.message);
         }
     }

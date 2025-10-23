@@ -876,12 +876,19 @@ class AuthManager {
                 }
             }
 
-            // 4. Fusionner intelligemment les données (utilise localData déjà modifié)
+            // 3. Fusionner les données
+            console.log("🔀 [CLOUD] Fusion données...");
             const mergedData = this.mergeContextData(cloudData, localData);
-            this.logAuth("🔀 Données fusionnées pour sauvegarde");
 
-            // 4. Ajouter un timestamp pour détecter les conflits
-            mergedData._sync_timestamp = Date.now();
+            console.log("📤 [CLOUD] Données fusionnées:", {
+                locations_count: mergedData.locations?.locations?.length || 0,
+                regions_count: mergedData.regions?.regions?.length || 0,
+                taille_json: JSON.stringify(mergedData).length
+            });
+
+            // 4. Envoyer vers le cloud
+            console.log("📤 [CLOUD] Envoi vers serveur...");
+            console.log("📤 [CLOUD] PAYLOAD COMPLET:", JSON.stringify(mergedData, null, 2));
 
             const response = await fetch('/api/user/data', {
                 method: 'PUT',
@@ -892,39 +899,29 @@ class AuthManager {
                 body: JSON.stringify(mergedData)
             });
 
-            if (response.ok) {
-                const result = await response.json();
+            console.log("📥 [CLOUD] Réponse serveur - Status:", response.status, response.statusText);
 
-                // Vérifier s'il y a un conflit détecté par le serveur
-                if (result.conflict_detected) {
-                    this.logAuth("⚠️ Conflit de synchronisation détecté");
-                    await this.handleSyncConflict(mergedData, result.cloud_data);
-                    return;
-                }
-
-                this.lastSyncTimestamp = Date.now();
-                localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp);
-                this.updateLastSyncDateDisplay();
-
-                this.logAuth("✅ Données fusionnées synchronisées dans le cloud");
-                // Mise à jour locale pour cohérence UI
-                this.saveToLocalStorage(mergedData, true);
-            } else {
-                const error = await response.json();
-                this.logAuth(`⚠️ Erreur sync: ${error.error || response.statusText}`);
-
-                if (response.status === 401) {
-                    alert('Session expirée. Reconnexion requise.');
-                    window.location.href = '/login';
-                } else {
-                    alert(`Erreur synchronisation: ${error.error || response.statusText}`);
-                }
-                throw new Error(error.error || response.statusText);
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("❌ [CLOUD] Erreur serveur:", errorText);
+                throw new Error(`Erreur HTTP: ${response.status}`);
             }
+
+            const result = await response.json();
+            console.log("📥 [CLOUD] Résultat serveur:", result);
+
+            if (result.conflict_detected) {
+                console.warn("⚠️ [CLOUD] Conflit détecté");
+                await this.handleSyncConflict(result.cloud_data, mergedData);
+            } else {
+                this.lastSyncTimestamp = Date.now();
+                this.updateCloudStatus('synced');
+                console.log("✅ [CLOUD] === SYNCHRONISATION RÉUSSIE ===");
+            }
+
         } catch (error) {
-            this.logAuth(`❌ Erreur réseau sync: ${error.message}`);
-            alert(`Erreur réseau. Vos modifications seront sauvegardées à la prochaine synchronisation.`);
-            throw error;
+            console.error("❌ [CLOUD] Erreur:", error);
+            this.updateCloudStatus('error');
         }
     }
 
