@@ -2298,8 +2298,9 @@ function confirmColorChange() {
             console.error(`❌ Lieu non trouvé dans locationsData: ${currentColorChangeTarget.id}`);
         }
 
-        // Synchroniser avec window.locationsData
+        // Synchroniser avec window.locationsData ET dataManager
         window.locationsData = locationsData;
+        dataManager.locationsData = locationsData;
 
         // Mettre à jour les données
         dataManager.saveLocationsToLocal();
@@ -2322,8 +2323,9 @@ function confirmColorChange() {
             console.error(`❌ Région non trouvée dans regionsData: ${currentColorChangeTarget.id}`);
         }
 
-        // Synchroniser avec window.regionsData
+        // Synchroniser avec window.regionsData ET dataManager
         window.regionsData = regionsData;
+        dataManager.regionsData = regionsData;
 
         // Mettre à jour les données
         dataManager.saveRegionsToLocal();
@@ -2435,8 +2437,9 @@ function handleLocationDragEnd(event) {
             locationsData.locations[locationIndex].coordinates.x = newX;
             locationsData.locations[locationIndex].coordinates.y = newY;
 
-            // Synchroniser avec window.locationsData
+            // Synchroniser avec window.locationsData ET dataManager
             window.locationsData = locationsData;
+            dataManager.locationsData = locationsData;
 
             // Sauvegarder les modifications
             dataManager.saveLocationsToLocal();
