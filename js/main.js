@@ -2407,53 +2407,40 @@ function handleLocationDrag(e) {
     dragStartY = e.clientY;
 }
 
-function handleLocationDragEnd(e) {
+function handleLocationDragEnd(event) {
     if (!isDraggingLocation || !draggedLocationMarker) return;
 
-    console.log(`🎯 Ending location interaction - ${hasDraggedLocation ? 'drag' : 'click'} detected`);
+    isDraggingLocation = false;
+    viewport.style.cursor = 'grab';
 
-    // Seulement sauvegarder si un vrai drag a eu lieu
-    if (hasDraggedLocation) {
-        // Trouver le lieu correspondant et mettre à jour ses coordonnées
+    if (draggedLocationMarker && hasDraggedLocation) {
         const locationId = draggedLocationMarker.dataset.id;
-        const location = locationsData.locations.find(loc => loc.id == locationId);
+        const locationIndex = locationsData.locations.findIndex(loc => String(loc.id) === String(locationId));
 
-        if (location) {
-            const newX = parseFloat(draggedLocationMarker.style.left);
-            const newY = parseFloat(draggedLocationMarker.style.top);
+        if (locationIndex !== -1) {
+            const newX = parseInt(draggedLocationMarker.style.left);
+            const newY = parseInt(draggedLocationMarker.style.top);
 
-            location.coordinates.x = newX;
-            location.coordinates.y = newY;
+            console.log(`📍 Moved location ${locationsData.locations[locationIndex].name}: (${locationsData.locations[locationIndex].coordinates.x}, ${locationsData.locations[locationIndex].coordinates.y}) → (${newX}, ${newY})`);
 
-            console.log(`🎯 Updated location ${location.name} coordinates to (${newX.toFixed(1)}, ${newY.toFixed(1)})`);
+            // Mettre à jour directement dans le tableau
+            locationsData.locations[locationIndex].coordinates.x = newX;
+            locationsData.locations[locationIndex].coordinates.y = newY;
 
-            // Sauvegarder les changements
-            if (dataManager) {
-                dataManager.saveLocationsToLocal();
-            }
+            // Synchroniser avec window.locationsData
+            window.locationsData = locationsData;
 
-            // Marquer comme non sauvegardé pour afficher l'icône cloud
-            if (typeof window.markAsUnsaved === 'function') {
-                window.markAsUnsaved();
-            }
+            // Sauvegarder
+            dataManager.saveLocationsToLocal();
 
-            // Programmer la synchronisation
-            if (typeof scheduleAutoSync === 'function') {
-                scheduleAutoSync();
-            }
+            console.log(`✅ Position du lieu mise à jour et sauvegardée`);
+        } else {
+            console.error(`❌ Lieu non trouvé pour la sauvegarde du déplacement: ${locationId}`);
         }
     }
 
-    // Réinitialiser l'état
-    isDraggingLocation = false;
-    draggedLocationMarker.style.cursor = 'pointer';
     draggedLocationMarker = null;
-    viewport.style.cursor = 'grab';
-
-    // Reset du flag drag pour le prochain événement
-    setTimeout(() => {
-        hasDraggedLocation = false;
-    }, 10); // Délai minimal pour permettre au mouseup de se déclencher
+    hasDraggedLocation = false;
 }
 
 // --- Fonctions utilitaires pour la compatibilité ---

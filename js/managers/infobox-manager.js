@@ -826,14 +826,23 @@ class InfoBoxManager {
                 const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
                     String(reg.id) === String(this.currentItem.id)
                 );
-                if (regionIndex !== -1) {
-                    this.dataManager.regionsData.regions[regionIndex] = this.currentItem;
-                    console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}`);
-                } else {
+                if (regionIndex === -1) {
                     console.error(`❌ Région non trouvée dans regionsData pour sauvegarde: ${this.currentItem.id}`);
+                    alert("Erreur : impossible de sauvegarder la région.");
+                    return;
                 }
-                window.regionsData = this.dataManager.regionsData; // Synchroniser avec la variable globale
+                
+                // Mettre à jour l'objet complet dans le tableau
+                this.dataManager.regionsData.regions[regionIndex] = { ...this.currentItem };
+                console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}:`, this.dataManager.regionsData.regions[regionIndex]);
+                
+                // Synchroniser avec la variable globale
+                window.regionsData = this.dataManager.regionsData;
+                
+                // Sauvegarder
                 this.dataManager.saveRegionsToLocal();
+                
+                // Re-render
                 if (typeof renderRegions === 'function') {
                     renderRegions();
                 }
@@ -841,32 +850,30 @@ class InfoBoxManager {
                 const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
                     String(loc.id) === String(this.currentItem.id)
                 );
-                if (locationIndex !== -1) {
-                    this.dataManager.locationsData.locations[locationIndex] = this.currentItem;
-                    console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}`);
-                } else {
+                if (locationIndex === -1) {
                     console.error(`❌ Lieu non trouvé dans locationsData pour sauvegarde: ${this.currentItem.id}`);
+                    alert("Erreur : impossible de sauvegarder le lieu.");
+                    return;
                 }
-                 window.locationsData = this.dataManager.locationsData; // Synchroniser avec la variable globale
+                
+                // Mettre à jour l'objet complet dans le tableau
+                this.dataManager.locationsData.locations[locationIndex] = { ...this.currentItem };
+                console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}:`, this.dataManager.locationsData.locations[locationIndex]);
+                
+                // Synchroniser avec la variable globale
+                window.locationsData = this.dataManager.locationsData;
+                
+                // Sauvegarder
                 this.dataManager.saveLocationsToLocal();
+                
+                // Re-render
                 if (typeof renderLocations === 'function') {
                     renderLocations();
                 }
             } else if (this.currentType === 'character') {
-                 if (window.charactersManager) {
+                if (window.charactersManager) {
                     window.charactersManager.updateCharacter(this.currentItem.id, this.currentItem);
                 }
-            }
-
-
-            // Programmer la synchronisation
-            if (typeof scheduleAutoSync === 'function') {
-                scheduleAutoSync();
-            }
-
-            // Marquer comme non sauvegardé pour afficher l'icône cloud
-            if (typeof window.markAsUnsaved === 'function') {
-                window.markAsUnsaved();
             }
 
             // Passer en mode lecture
