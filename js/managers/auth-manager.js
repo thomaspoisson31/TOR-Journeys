@@ -1125,6 +1125,18 @@ class AuthManager {
             this.logAuth("  - Filtres sauvegardés dans localStorage.");
         }
 
+        // Ajout pour la nouvelle fonctionnalité Personnages
+        if (data.characters) {
+            localStorage.setItem('middleEarthCharacters', JSON.stringify(data.characters));
+            this.logAuth(`  - ${data.characters.characters?.length || 0} personnages sauvegardés dans localStorage.`);
+            // Synchroniser immédiatement avec les variables globales si CharactersManager existe
+            if (window.charactersManager) {
+                window.charactersManager.characters = data.characters; // Assurez-vous que la structure correspond
+                this.logAuth("✅ CharactersManager.characters mis à jour.");
+            }
+        }
+
+
         // Si ce n'est pas depuis le cloud, marquer comme modifications non sauvegardées
         if (!fromCloud && this.isAuthenticated) {
             this.markAsUnsaved();

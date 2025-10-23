@@ -49,6 +49,7 @@ Structure des fichiers:
 │   │   ├── calendar-manager.js
 │   │   ├── journal-manager.js
 │   │   ├── adventure-manager.js
+│   │   ├── characters-manager.js
 │   │   ├── import-export-manager.js
 │   │   ├── upload-manager.js
 │   │   └── gemini-manager.js
@@ -200,12 +201,22 @@ FONCTIONNALITÉS PRINCIPALES
     - Upload images multiples
     - Bibliothèque images utilisateur
 
+12. PERSONNAGES (v1.1.5):
+    - Gestion liste personnages aventure
+    - Types: PJ (Personnage Joueur) / PNJ
+    - Propriétés: nom, description, images (principale/vignette)
+    - InfoBox partagée avec lieux/régions
+    - Création/modification/suppression
+    - Vignettes conditionnelles (type)
+    - Sync cloud
+
 STRUCTURE DONNÉES
 -----------------
 
 localStorage keys:
 - middleEarthLocations: { locations: [...] }
 - middleEarthRegions: { regions: [...] }
+- middleEarthCharacters: { characters: [...] }
 - availableMaps: [{ id, name, url, scale, width, height }]
 - activeMapUrl: string
 - currentCalendarDate: { day, month, season }
@@ -245,6 +256,15 @@ Format Region:
   visited: boolean,
   mapId: string | undefined,
   type: "region"
+}
+
+Format Character:
+{
+  id: number,
+  name: string,
+  description: string,
+  type: "PJ" | "PNJ",
+  images: [{ url, type }]
 }
 
 API ENDPOINTS

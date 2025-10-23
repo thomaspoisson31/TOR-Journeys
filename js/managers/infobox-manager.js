@@ -281,7 +281,7 @@ class InfoBoxManager {
 
                 // Normaliser les rumeurs en tableau
                 const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
-                const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
+                const rumeursValides = rumeurs.filter(rumeur => rumeur && != "A définir");
 
                 if (rumeursValides.length > 0) {
                     rumeursHTML = rumeursValides.map((rumeur, index) => `
@@ -828,13 +828,18 @@ class InfoBoxManager {
                 if (typeof renderRegions === 'function') {
                     renderRegions();
                 }
-            } else {
+            } else if (this.currentType === 'location') {
                 this.dataManager.saveLocationsToLocal();
                 // Re-render les lieux
                 if (typeof renderLocations === 'function') {
                     renderLocations();
                 }
+            } else if (this.currentType === 'character') {
+                 if (window.charactersManager) {
+                    window.charactersManager.saveCharacter(this.currentItem);
+                }
             }
+
 
             // Programmer la synchronisation
             if (typeof scheduleAutoSync === 'function') {
@@ -1285,111 +1290,39 @@ class InfoBoxManager {
     }
 
     deleteItem() {
-        if (!this.currentItem) return;
+        if (!this.currentItem || !this.currentType) return;
 
-        const itemType = this.currentType === 'region' ? 'région' : 'lieu';
-        const confirmed = confirm(`Êtes-vous sûr de vouloir supprimer ${this.currentType === 'region' ? 'cette' : 'ce'} ${itemType} "${this.currentItem.name}" ?\n\nCette action est irréversible.`);
+        const itemName = this.currentItem.name;
+        if (!confirm(`Supprimer "${itemName}" ?`)) {
+            return;
+        }
 
-        if (!confirmed) return;
-
-        console.log(`🗑️ Deleting ${itemType}:`, this.currentItem.name);
-
-        try {
-            if (this.currentType === 'region') {
-                // Supprimer de la liste des régions
-                const regionIndex = this.dataManager.regionsData.regions.findIndex(
-                    region => region.id === this.currentItem.id
-                );
-
-                console.log(`🔍 Region index found: ${regionIndex}, Total regions: ${this.dataManager.regionsData.regions.length}`);
-
-                if (regionIndex !== -1) {
-                    // Supprimer la région
-                    this.dataManager.regionsData.regions.splice(regionIndex, 1);
-
-                    console.log(`✅ Region removed from array, remaining: ${this.dataManager.regionsData.regions.length}`);
-
-                    // Mettre à jour toutes les références
-                    window.regionsData = this.dataManager.regionsData;
-
-                    // Sauvegarder dans localStorage
-                    this.dataManager.saveRegionsToLocal();
-
-                    // Re-render les régions AVANT de fermer l'infobox
-                    if (typeof window.renderRegions === 'function') {
-                        window.renderRegions();
-                    } else if (typeof renderRegions === 'function') {
-                        renderRegions();
-                    }
-
-                    // Programmer la synchronisation
-                    if (typeof scheduleAutoSync === 'function') {
-                        scheduleAutoSync();
-                    }
-                    // Marquer comme non sauvegardé pour afficher l'icône cloud
-                    if (typeof window.markAsUnsaved === 'function') {
-                        window.markAsUnsaved();
-                    }
-
-                    // Fermer l'info-box APRÈS le re-render pour éviter les références fantômes
-                    this.hideInfoBox();
-
-                    console.log("✅ Region deleted successfully");
-                } else {
-                    console.error("❌ Region not found in data");
-                    alert("Erreur : région non trouvée dans les données");
-                }
-            } else {
-                // Supprimer de la liste des lieux
-                const locationIndex = this.dataManager.locationsData.locations.findIndex(
-                    location => location.id === this.currentItem.id
-                );
-
-                console.log(`🔍 Location index found: ${locationIndex}, Total locations: ${this.dataManager.locationsData.locations.length}`);
-
-                if (locationIndex !== -1) {
-                    // Supprimer le lieu
-                    this.dataManager.locationsData.locations.splice(locationIndex, 1);
-
-                    console.log(`✅ Location removed from array, remaining: ${this.dataManager.locationsData.locations.length}`);
-
-                    // Mettre à jour toutes les références
-                    window.locationsData = this.dataManager.locationsData;
-
-                    // Sauvegarder dans localStorage
-                    this.dataManager.saveLocationsToLocal();
-
-                    // Re-render les lieux AVANT de fermer l'infobox
-                    if (typeof window.renderLocations === 'function') {
-                        window.renderLocations();
-                    } else if (typeof renderLocations === 'function') {
-                        renderLocations();
-                    }
-
-                    // Programmer la synchronisation
-                    if (typeof scheduleAutoSync === 'function') {
-                        scheduleAutoSync();
-                    }
-                    // Marquer comme non sauvegardé pour afficher l'icône cloud
-                    if (typeof window.markAsUnsaved === 'function') {
-                        window.markAsUnsaved();
-                    }
-
-                    // Fermer l'info-box APRÈS le re-render pour éviter les références fantômes
-                    this.hideInfoBox();
-
-                    console.log("✅ Location deleted successfully");
-                } else {
-                    console.error("❌ Location not found in data");
-                    alert("Erreur : lieu non trouvé dans les données");
+        if (this.currentType === 'location') {
+            const index = this.dataManager.locationsData.locations.findIndex(l => l.id === this.currentItem.id);
+            if (index !== -1) {
+                this.dataManager.locationsData.locations.splice(index, 1);
+                this.dataManager.saveLocationsToLocal();
+                if (typeof renderLocations === 'function') {
+                    renderLocations();
                 }
             }
-
-
-        } catch (error) {
-            console.error("❌ Error deleting item:", error);
-            alert(`Erreur lors de la suppression : ${error.message}`);
+        } else if (this.currentType === 'region') {
+            const index = this.dataManager.regionsData.regions.findIndex(r => r.id === this.currentItem.id);
+            if (index !== -1) {
+                this.dataManager.regionsData.regions.splice(index, 1);
+                this.dataManager.saveRegionsToLocal();
+                if (typeof renderRegions === 'function') {
+                    renderRegions();
+                }
+            }
+        } else if (this.currentType === 'character') {
+            if (window.charactersManager) {
+                window.charactersManager.deleteCharacter(this.currentItem.id);
+            }
         }
+
+        this.hideInfoBox();
+        console.log(`🗑️ ${itemName} supprimé`);
     }
 }
 

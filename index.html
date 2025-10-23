@@ -43,6 +43,9 @@
             <button id="adventure-btn" title="Aventure" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors">
                 <i class="fas fa-scroll"></i>
             </button>
+            <button id="characters-btn" title="Personnages" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors">
+                <i class="fas fa-users"></i>
+            </button>
             <hr class="border-gray-600">
             <button id="draw-mode" title="Tracer un voyage" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors"><i class="fas fa-route"></i></button>
             <hr class="border-gray-600">
@@ -296,6 +299,71 @@
                     <button id="close-journey-log" class="text-gray-400 hover:text-white"><i class="fas fa-times fa-lg"></i></button>
                 </div>
                 <div id="journey-log-content" class="prose prose-invert overflow-y-auto text-gray-300"></div>
+            </div>
+        </div>
+
+        <!-- Characters Modal -->
+        <div id="characters-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">
+                        <i class="fas fa-users mr-2"></i>Personnages de l'Aventure
+                    </h2>
+                    <button id="close-characters-modal" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+
+                <div class="mb-4">
+                    <button id="add-character-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-plus mr-2"></i>Ajouter un personnage
+                    </button>
+                </div>
+
+                <div id="characters-list" class="space-y-3">
+                    <!-- Les personnages seront générés ici -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Character Modal -->
+        <div id="add-character-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[70]">
+            <div class="bg-gray-900 border border-gray-700 rounded-lg p-6 shadow-xl w-full max-w-md">
+                <h3 class="text-lg font-bold mb-4">Ajouter un personnage</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="character-name-input" class="block text-sm font-medium text-gray-300">Nom du personnage</label>
+                        <input type="text" id="character-name-input" class="mt-1 block w-full bg-gray-800 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="character-desc-input" class="block text-sm font-medium text-gray-300">Description</label>
+                        <textarea id="character-desc-input" rows="3" class="mt-1 block w-full bg-gray-800 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Type</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="character-type" id="character-type-pj" value="PJ" checked class="mr-2">
+                                <span>PJ (Personnage Joueur)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="character-type" id="character-type-pnj" value="PNJ" class="mr-2">
+                                <span>PNJ</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Images</label>
+                        <div id="character-image-upload-container" class="mb-3"></div>
+                        <div id="character-images-list" class="mt-3">
+                            <p class="text-gray-500 text-sm">Aucune image ajoutée</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button id="cancel-add-character" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors">Annuler</button>
+                    <button id="confirm-add-character" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">Ajouter</button>
+                </div>
             </div>
         </div>
 

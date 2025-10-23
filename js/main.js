@@ -28,6 +28,7 @@ import PositionManager from './managers/position-manager.js';
 import JournalManager from './managers/journal-manager.js';
 import AdventureManager from './managers/adventure-manager.js';
 import LibraryManager from './managers/library-manager.js';
+import CharactersManager from './managers/characters-manager.js'; // Import du CharactersManager
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -58,7 +59,7 @@ let zoomManager;
 let positionManager;
 let journalManager;
 let adventureManager;
-let libraryManager;
+let charactersManager; // Déclaration du CharactersManager
 
 console.log("✅ Global variables initialized");
 
@@ -383,9 +384,6 @@ function renderLocations() {
     });
 
     console.log(`✅ Rendered ${renderedCount} location markers (thumbnails: ${showThumbnails})`);
-
-    // Vérifier que la couche des lieux est bien au-dessus
-    console.log(`📍 Locations layer z-index:`, window.getComputedStyle(locationsLayer).zIndex);
 }
 
 // --- Fonction d'affichage des régions ---
@@ -555,7 +553,7 @@ function initializeMap() {
     MAP_HEIGHT = mapImage.naturalHeight;
     mapContainer.style.width = `${MAP_WIDTH}px`;
     mapContainer.style.height = `${MAP_HEIGHT}px`;
-    
+
     // Mettre à jour l'affichage des dimensions
     updateMapDimensionsDisplay();
 
@@ -641,15 +639,15 @@ function initializeMap() {
         window.zoomManager.mapConstants.MAP_HEIGHT = MAP_HEIGHT;
         window.zoomManager.mapConstants.minScale = minScale;
         window.zoomManager.mapConstants.maxScale = maxScale;
-        
+
         // Synchroniser l'affichage
         window.zoomManager.updateDisplay();
     } else {
         console.log('🔍 [initializeMap] Création du ZoomManager');
         zoomManager = new ZoomManager(
             { getElementById: (id) => document.getElementById(id) },
-            { 
-                minScale: minScale, 
+            {
+                minScale: minScale,
                 maxScale: maxScale,
                 MAP_WIDTH: MAP_WIDTH,
                 MAP_HEIGHT: MAP_HEIGHT
@@ -707,6 +705,12 @@ function initializeMap() {
     window.adventureManager = adventureManager; // Exposer globalement
     console.log("✅ AdventureManager initialized");
 
+    // Initialiser CharactersManager
+    charactersManager = new CharactersManager();
+    charactersManager.init();
+    window.charactersManager = charactersManager; // Exposer globalement
+    console.log("✅ CharactersManager initialized");
+
     // LibraryManager supprimé - fonctionnalité intégrée dans les modales
 
     // Configurer les événements de dessin après que tous les managers soient initialisés
@@ -751,7 +755,7 @@ function updateMapTransform() {
 function updateMapDimensionsDisplay() {
     const widthDisplay = document.getElementById('map-width-display');
     const heightDisplay = document.getElementById('map-height-display');
-    
+
     if (widthDisplay && heightDisplay && MAP_WIDTH > 0 && MAP_HEIGHT > 0) {
         // Afficher les dimensions réelles de la carte (100%), sans tenir compte du zoom
         widthDisplay.textContent = MAP_WIDTH;
@@ -843,7 +847,7 @@ function resetView() {
         const scaleX = viewportWidth / MAP_WIDTH;
         const scaleY = viewportHeight / MAP_HEIGHT;
         const newScale = Math.min(scaleX, scaleY) * 0.9; // 90% pour laisser un peu de marge
-        
+
         // IMPORTANT: Toujours synchroniser scale ET window.scale
         scale = newScale;
         window.scale = newScale;
