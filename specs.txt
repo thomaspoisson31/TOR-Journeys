@@ -324,6 +324,7 @@ python app.py
 8. Refactoring ZoomManager (réutilisation instance)
 9. Fix synchronisation window.scale
 10. Amélioration gestion mapId (locations/regions)
+11. Correction import JSON sur tablette (accept: ".json,application/json")
 
 MAINTENANCE
 -----------
@@ -332,5 +333,14 @@ Logs format: [Manager] Action: détails
 Testing: manuel via console browser
 Debugging: Chrome DevTools + console.log
 Backup: export JSON régulier
+
+PROBLÈMES RÉSOLUS
+-----------------
+
+1. Import JSON sur tablette (v1.1.4):
+   - Problème: Fichiers .json grisés dans l'interface de sélection mobile
+   - Cause: Attribut accept=".json" trop restrictif pour certains navigateurs mobiles
+   - Solution: accept=".json,application/json" (extension + type MIME)
+   - Fichier concerné: index.html (input#import-file-input)
 
 ================================================================================
