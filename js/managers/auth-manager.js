@@ -394,6 +394,28 @@ class AuthManager {
             }
         }
 
+        // Collecter les personnages
+        const savedCharacters = localStorage.getItem('middleEarthCharacters');
+        if (savedCharacters) {
+            try {
+                data.characters = JSON.parse(savedCharacters);
+                this.logAuth(`👥 ${data.characters.characters?.length || 0} personnages collectés`);
+            } catch (e) {
+                console.error("Erreur lors de la collecte des personnages:", e);
+            }
+        }
+
+        // Collecter les données d'aventure
+        const savedAdventure = localStorage.getItem('adventureData');
+        if (savedAdventure) {
+            try {
+                data.adventure = JSON.parse(savedAdventure);
+                this.logAuth("🎲 Données d'aventure collectées");
+            } catch (e) {
+                console.error("Erreur lors de la collecte de l'aventure:", e);
+            }
+        }
+
         // Collecter la position du marqueur
         if (window.positionManager) {
             data.position = window.positionManager.getPosition();
@@ -543,6 +565,26 @@ class AuthManager {
             }
         }
 
+        // Restaurer les personnages
+        if (data.characters) {
+            this.logAuth(`👥 Application de ${data.characters.characters?.length || 0} personnages depuis le contexte`);
+            localStorage.setItem('middleEarthCharacters', JSON.stringify(data.characters));
+            if (window.charactersManager) {
+                window.charactersManager.loadCharactersFromLocal();
+                this.logAuth("✅ Personnages chargés depuis le contexte");
+            }
+        }
+
+        // Restaurer les données d'aventure
+        if (data.adventure) {
+            this.logAuth("🎲 Application des données d'aventure depuis le contexte");
+            localStorage.setItem('adventureData', JSON.stringify(data.adventure));
+            if (window.adventureManager) {
+                window.adventureManager.loadFromLocalStorage();
+                this.logAuth("✅ Aventure chargée depuis le contexte");
+            }
+        }
+
         // Restaurer la position du marqueur - PRIORITÉ CLOUD/CONTEXTE
         if (data.position) {
             const activeMapId = window.settingsManager?.activeMapUrl;
@@ -656,6 +698,12 @@ class AuthManager {
                     calendar: {},
                     settings: {},
                     journal: [],
+                    characters: { characters: [] },
+                    adventure: {
+                        quest: '',
+                        rumors: [],
+                        threats: []
+                    },
                     position: null,
                     filtersByMap: {}
                 };

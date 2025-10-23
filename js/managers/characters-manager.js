@@ -536,6 +536,11 @@ class CharactersManager {
             }
         }, 5000);
     }
+
+    // Méthode pour récupérer toutes les données (pour synchronisation)
+    getAllData() {
+        return { characters: this.characters };
+    }
 }
 
 export default CharactersManager;

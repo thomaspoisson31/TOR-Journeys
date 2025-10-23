@@ -418,6 +418,11 @@ class AdventureManager {
             }
         }
     }
+
+    // Méthode pour récupérer toutes les données (pour synchronisation)
+    getAllData() {
+        return this.adventureData;
+    }
 }
 
 export default AdventureManager;

@@ -245,6 +245,11 @@ class JournalManager {
 
         console.log("📖 Journal exporté en Markdown");
     }
+
+    // Méthode pour récupérer toutes les données (pour synchronisation)
+    getAllData() {
+        return this.journal;
+    }
 }
 
 export default JournalManager;
