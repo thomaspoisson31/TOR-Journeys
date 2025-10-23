@@ -586,6 +586,7 @@ function initializeMap() {
         window.scale = scale; // Synchroniser avec window.scale
         panX = 0;
         panY = 0;
+        console.log(`🗺️ [initializeMap] Scale initial: ${scale.toFixed(3)} (viewportWidth=${viewportWidth}, MAP_WIDTH=${MAP_WIDTH})`);
         mapContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     }
 
@@ -826,6 +827,8 @@ function resetView() {
         scale = Math.min(scaleX, scaleY) * 0.9; // 90% pour laisser un peu de marge
         window.scale = scale; // Synchroniser avec window.scale
 
+        console.log(`🔍 [resetView] Nouveau scale calculé: ${scale.toFixed(3)} (MAP_WIDTH=${MAP_WIDTH}, MAP_HEIGHT=${MAP_HEIGHT})`);
+
         // Centrer la carte
         panX = (viewportWidth - MAP_WIDTH * scale) / 2;
         panY = (viewportHeight - MAP_HEIGHT * scale) / 2;
@@ -842,9 +845,10 @@ function resetView() {
         // Synchroniser le ZoomManager APRÈS avoir mis à jour scale et window.scale
         if (zoomManager) {
             console.log(`🔍 [resetView] Synchronisation ZoomManager avec scale=${scale.toFixed(3)}`);
-            setTimeout(() => {
+            // Attendre que le DOM soit mis à jour
+            requestAnimationFrame(() => {
                 zoomManager.updateDisplay();
-            }, 100);
+            });
         }
     }
 }

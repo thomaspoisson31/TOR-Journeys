@@ -577,6 +577,12 @@ class SettingsManager {
         window.MAP_WIDTH = 0;
         window.MAP_HEIGHT = 0;
         
+        // IMPORTANT: Réinitialiser scale à 1 avant recalcul
+        if (typeof window.scale !== 'undefined') {
+            window.scale = 1;
+            console.log('🗺️ [switchMap] Reset window.scale à 1');
+        }
+        
         // IMPORTANT: Nettoyer complètement les couches avant réinitialisation
         const locationsLayer = document.getElementById('locations-layer');
         const regionsLayer = document.getElementById('regions-layer');
