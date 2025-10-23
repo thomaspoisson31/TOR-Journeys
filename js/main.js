@@ -2236,9 +2236,15 @@ function hideColorChangeModal() {
         modal.classList.add('hidden');
     }
 
-    isColorChangeModalOpen = false;
+    // Nettoyer les variables temporaires AVANT de fermer la modale
+    const targetName = currentColorChangeTarget ? currentColorChangeTarget.name : 'inconnu';
     currentColorChangeTarget = null;
     currentColorChangeType = null;
+
+    // Fermer la modale
+    modal.classList.add('hidden');
+
+    console.log(`✅ Modification de couleur terminée pour: ${targetName}`);
 }
 
 function confirmColorChange() {
@@ -2421,19 +2427,21 @@ function handleLocationDragEnd(event) {
             const newX = parseInt(draggedLocationMarker.style.left);
             const newY = parseInt(draggedLocationMarker.style.top);
 
-            console.log(`📍 Moved location ${locationsData.locations[locationIndex].name}: (${locationsData.locations[locationIndex].coordinates.x}, ${locationsData.locations[locationIndex].coordinates.y}) → (${newX}, ${newY})`);
+            const originalLocation = locationsData.locations[locationIndex]; // Récupérer l'objet original
+            
+            console.log(`📍 Moved location ${originalLocation.name}: (${originalLocation.coordinates.x}, ${originalLocation.coordinates.y}) → (${newX}, ${newY})`);
 
-            // Mettre à jour directement dans le tableau
+            // IMPORTANT: Mettre à jour l'objet dans locationsData.locations
             locationsData.locations[locationIndex].coordinates.x = newX;
             locationsData.locations[locationIndex].coordinates.y = newY;
 
             // Synchroniser avec window.locationsData
             window.locationsData = locationsData;
 
-            // Sauvegarder
+            // Sauvegarder les modifications
             dataManager.saveLocationsToLocal();
 
-            console.log(`✅ Position du lieu mise à jour et sauvegardée`);
+            console.log("✅ Position du lieu mise à jour et sauvegardée");
         } else {
             console.error(`❌ Lieu non trouvé pour la sauvegarde du déplacement: ${locationId}`);
         }

@@ -915,13 +915,14 @@ class AuthManager {
                 await this.handleSyncConflict(result.cloud_data, mergedData);
             } else {
                 this.lastSyncTimestamp = Date.now();
-                this.updateCloudStatus('synced');
+                localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp);
+                this.updateLastSyncDateDisplay();
                 console.log("✅ [CLOUD] === SYNCHRONISATION RÉUSSIE ===");
             }
 
         } catch (error) {
             console.error("❌ [CLOUD] Erreur:", error);
-            this.updateCloudStatus('error');
+            this.updateSyncStatus('error');
         }
     }
 
