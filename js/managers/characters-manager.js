@@ -339,6 +339,171 @@ class CharactersManager {
         
         console.log(`✏️ Personnage mis à jour: ${character.name}`);
     }
+
+    exportCharacters() {
+        try {
+            console.log("📤 Starting characters export...");
+
+            const exportData = {
+                characters: this.characters.map(character => ({
+                    id: character.id,
+                    name: character.name,
+                    description: character.description || "",
+                    type: character.type || "PNJ",
+                    images: character.images || [],
+                    associatedLocations: character.associatedLocations || [],
+                    associatedRegions: character.associatedRegions || []
+                }))
+            };
+
+            // Télécharger le fichier
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "Characters.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            document.body.removeChild(downloadAnchorNode);
+
+            console.log(`✅ Export terminé - ${this.characters.length} personnages sauvegardés`);
+            this.showNotification("Export réussi", `${this.characters.length} personnages exportés`, "success");
+
+        } catch (error) {
+            console.error("❌ Erreur lors de l'export des personnages:", error);
+            this.showNotification("Erreur d'export", error.message, "error");
+        }
+    }
+
+    handleImportCharacters(event) {
+        const file = event.target.files[0];
+        console.log("📥 Fichier sélectionné:", file ? file.name : "aucun");
+
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                console.log("📥 JSON parsé avec succès:", importedData);
+
+                if (!importedData.characters || !Array.isArray(importedData.characters)) {
+                    this.showNotification("Import échoué", "Format de fichier invalide. Attendu: { characters: [...] }", "error");
+                    return;
+                }
+
+                const importedCharacters = importedData.characters;
+                console.log(`📥 ${importedCharacters.length} personnages à importer`);
+
+                // Afficher la modal de confirmation
+                this.showImportCharactersModal(importedCharacters);
+
+            } catch (err) {
+                console.error("❌ Erreur lors de l'import:", err);
+                this.showNotification("Erreur d'import", "Fichier JSON invalide: " + err.message, "error");
+            }
+
+            // Nettoyer l'input
+            event.target.value = '';
+        };
+
+        reader.readAsText(file);
+    }
+
+    showImportCharactersModal(importedCharacters) {
+        const message = `Voulez-vous importer ${importedCharacters.length} personnage(s) ?\n\n` +
+                       `Remplacer : Supprime tous les personnages existants\n` +
+                       `Fusionner : Ajoute les nouveaux personnages`;
+
+        const userChoice = confirm(message + "\n\nOK = Remplacer, Annuler pour choisir Fusionner");
+
+        if (userChoice === null) {
+            return; // Annulation complète
+        }
+
+        const mode = userChoice ? 'replace' : 'merge';
+        this.processImportCharacters(importedCharacters, mode);
+    }
+
+    processImportCharacters(importedCharacters, mode) {
+        try {
+            if (mode === 'replace') {
+                console.log("📥 Mode REPLACE - Remplacement de tous les personnages");
+                this.characters = importedCharacters.map(char => ({
+                    id: char.id || Date.now() + Math.random(),
+                    name: char.name || 'Personnage sans nom',
+                    description: char.description || '',
+                    type: char.type || 'PNJ',
+                    images: char.images || [],
+                    associatedLocations: char.associatedLocations || [],
+                    associatedRegions: char.associatedRegions || []
+                }));
+            } else {
+                console.log("📥 Mode MERGE - Fusion des personnages");
+                importedCharacters.forEach(importedChar => {
+                    const existingChar = this.characters.find(c => c.name === importedChar.name);
+                    
+                    if (existingChar) {
+                        // Mettre à jour le personnage existant
+                        Object.assign(existingChar, {
+                            description: importedChar.description || existingChar.description,
+                            type: importedChar.type || existingChar.type,
+                            images: importedChar.images || existingChar.images,
+                            associatedLocations: importedChar.associatedLocations || existingChar.associatedLocations,
+                            associatedRegions: importedChar.associatedRegions || existingChar.associatedRegions
+                        });
+                        console.log(`🔄 Personnage mis à jour: ${importedChar.name}`);
+                    } else {
+                        // Ajouter le nouveau personnage avec un ID unique
+                        const newChar = {
+                            id: importedChar.id || Date.now() + Math.random(),
+                            name: importedChar.name || 'Personnage sans nom',
+                            description: importedChar.description || '',
+                            type: importedChar.type || 'PNJ',
+                            images: importedChar.images || [],
+                            associatedLocations: importedChar.associatedLocations || [],
+                            associatedRegions: importedChar.associatedRegions || []
+                        };
+                        this.characters.push(newChar);
+                        console.log(`➕ Nouveau personnage ajouté: ${importedChar.name}`);
+                    }
+                });
+            }
+
+            this.saveCharactersToLocal();
+            this.renderCharactersList();
+
+            this.showNotification("Import réussi", `${importedCharacters.length} personnage(s) importé(s) (mode: ${mode})`, "success");
+            console.log(`✅ Import terminé: ${importedCharacters.length} personnages`);
+
+        } catch (error) {
+            console.error("❌ Erreur lors du traitement de l'import:", error);
+            this.showNotification("Erreur d'import", error.message, "error");
+        }
+    }
+
+    showNotification(title, message, type = 'info') {
+        // Créer une notification simple
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+            type === 'success' ? 'bg-green-500 text-white' :
+            type === 'error' ? 'bg-red-500 text-white' :
+            'bg-blue-500 text-white'
+        }`;
+
+        notification.innerHTML = `
+            <div class="font-semibold">${title}</div>
+            <div class="text-sm">${message}</div>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Supprimer après 5 secondes
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 5000);
+    }
 }
 
 export default CharactersManager;

@@ -72,12 +72,12 @@ class SettingsManager {
         localStorage.setItem('availableMaps', JSON.stringify(this.availableMaps));
         localStorage.setItem('activeMapUrl', this.activeMapUrl);
         localStorage.setItem('activeMapName', this.activeMapName);
-        
+
         // Marquer comme non sauvegardé
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
-        
+
         this.scheduleAutoSync();
     }
 
@@ -85,12 +85,12 @@ class SettingsManager {
         localStorage.setItem('partyDescription', this.partyDescription);
         localStorage.setItem('questDescription', this.questDescription);
         localStorage.setItem('narrationStyle', this.narrationStyle);
-        
+
         // Marquer comme non sauvegardé
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
-        
+
         this.scheduleAutoSync();
     }
 
@@ -299,7 +299,7 @@ class SettingsManager {
         this.availableMaps.push(newMap);
         this.saveMapsData();
         this.renderMapsGrid();
-        
+
         console.log(`✅ Carte ajoutée: ${mapName} (${newMap.width}x${newMap.height}px)`);
     }
 
@@ -398,7 +398,7 @@ class SettingsManager {
 
     selectLibraryImageForMap(imageUrl, encodedFilename) {
         const filename = decodeURIComponent(encodedFilename);
-        
+
         // Récupérer le nom de la carte ou utiliser le nom de fichier
         const nameInput = document.getElementById('temp-map-name-input');
         const mapName = nameInput.value.trim() || filename.replace(/\.[^/.]+$/, ''); // Enlever l'extension
@@ -446,7 +446,7 @@ class SettingsManager {
 
             const mapWidth = map.width || 5103;
             const mapScale = map.scale || 600;
-            
+
             return `
                 <div class="bg-gray-800 rounded-lg p-2 border ${isActive ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 hover:border-gray-600'} transition-all cursor-pointer"
                      onclick="window.settingsManager.setActiveMap(${index})">
@@ -479,7 +479,7 @@ class SettingsManager {
 
         // Mettre à jour l'affichage de la carte active
         this.updateActiveMapDisplay();
-        
+
         // Charger les dimensions réelles pour chaque carte
         this.loadRealMapDimensions();
     }
@@ -491,7 +491,7 @@ class SettingsManager {
             img.onload = () => {
                 const realWidth = img.naturalWidth;
                 const realHeight = img.naturalHeight;
-                
+
                 // Mettre à jour les dimensions stockées si elles sont différentes
                 if (map.width !== realWidth || map.height !== realHeight) {
                     console.log(`📐 Carte "${map.name}": dimensions réelles ${realWidth}x${realHeight}px (stockées: ${map.width || 'N/A'}x${map.height || 'N/A'}px)`);
@@ -499,7 +499,7 @@ class SettingsManager {
                     map.height = realHeight;
                     this.saveMapsData();
                 }
-                
+
                 // Mettre à jour l'affichage
                 const dimsElement = document.getElementById(`map-dims-${index}`);
                 if (dimsElement) {
@@ -532,7 +532,7 @@ class SettingsManager {
 
         // Désactiver toutes les cartes
         this.availableMaps.forEach(m => m.isActive = false);
-        
+
         // Activer la carte sélectionnée
         map.isActive = true;
         this.activeMapUrl = map.url;
@@ -543,7 +543,7 @@ class SettingsManager {
             window.pathManager.mapConstants.MAP_DISTANCE_MILES = map.scale || 600;
             console.log(`🗺️ PathManager: échelle de carte mise à jour : ${map.scale || 600} miles`);
         }
-        
+
         // Mettre à jour l'échelle pour le VoyageManager
         if (window.voyageManager) {
             window.voyageManager.MAP_DISTANCE_MILES = map.scale || 600;
@@ -571,18 +571,18 @@ class SettingsManager {
 
         this.saveMapsData();
         this.renderMapsGrid();
-        
+
         // IMPORTANT: Reset complet des dimensions globales pour forcer recalcul
         console.log('🗺️ [switchMap] Reset MAP_WIDTH et MAP_HEIGHT à 0');
         window.MAP_WIDTH = 0;
         window.MAP_HEIGHT = 0;
-        
+
         // IMPORTANT: Réinitialiser scale à 1 avant recalcul
         if (typeof window.scale !== 'undefined') {
             window.scale = 1;
             console.log('🗺️ [switchMap] Reset window.scale à 1');
         }
-        
+
         // IMPORTANT: Nettoyer complètement les couches avant réinitialisation
         const locationsLayer = document.getElementById('locations-layer');
         const regionsLayer = document.getElementById('regions-layer');
@@ -594,13 +594,13 @@ class SettingsManager {
             regionsLayer.innerHTML = '';
             console.log('🧹 [switchMap] Couche de régions vidée');
         }
-        
+
         // IMPORTANT: Forcer la réinitialisation complète de la carte
         if (typeof window.initializeMap === 'function') {
             console.log('🗺️ [switchMap] Réinitialisation complète de la carte');
             window.initializeMap();
         }
-        
+
         // IMPORTANT: Charger les filtres pour la nouvelle carte active
         if (window.filterManager) {
             console.log(`🔍 [switchMap] Chargement des filtres pour la nouvelle carte: ${this.activeMapUrl}`);
@@ -611,7 +611,7 @@ class SettingsManager {
                 console.log(`📝 [switchMap] Aucun filtre sauvegardé pour ${this.activeMapUrl}, utilisation des filtres par défaut`);
             }
         }
-        
+
         // IMPORTANT: Re-render explicite des lieux et régions pour la nouvelle carte
         console.log('🎨 [switchMap] Re-render des lieux et régions pour la nouvelle carte');
         if (typeof window.renderLocations === 'function') {
@@ -628,21 +628,21 @@ class SettingsManager {
 
     editMapScale(index) {
         const map = this.availableMaps[index];
-        
+
         const newScale = prompt(
             `Échelle de la carte "${map.name}"\n\n` +
             `Distance représentée par la largeur de la carte (en miles) :\n` +
             `(actuellement : ${map.scale || 600} miles)`,
             map.scale || 600
         );
-        
+
         if (newScale !== null) {
             const scaleNum = parseFloat(newScale);
             if (!isNaN(scaleNum) && scaleNum > 0) {
                 map.scale = scaleNum;
                 this.saveMapsData();
                 this.renderMapsGrid();
-                
+
                 // Mettre à jour les constantes si c'est la carte active
                 if (map.url === this.activeMapUrl && window.pathManager) {
                     window.pathManager.mapConstants.MAP_DISTANCE_MILES = scaleNum;
@@ -656,7 +656,7 @@ class SettingsManager {
 
     deleteMap(index) {
         const map = this.availableMaps[index];
-        
+
         // Vérifier qu'il reste au moins une carte après suppression
         if (this.availableMaps.length <= 1) {
             alert('Impossible de supprimer la dernière carte. Au moins une carte doit être disponible.');
@@ -673,7 +673,7 @@ class SettingsManager {
                 const newActiveIndex = index === 0 ? 1 : 0;
                 this.activeMapUrl = this.availableMaps[newActiveIndex].url;
                 this.activeMapName = this.availableMaps[newActiveIndex].name;
-                
+
                 // Mettre à jour l'image de la carte principale
                 const mapImage = document.getElementById('map-image');
                 if (mapImage) {
@@ -684,7 +684,7 @@ class SettingsManager {
             this.availableMaps.splice(index, 1);
             this.saveMapsData();
             this.renderMapsGrid();
-            
+
             // Re-render les lieux et régions avec la nouvelle carte active
             if (typeof window.renderLocations === 'function') {
                 window.renderLocations();
@@ -902,23 +902,8 @@ class SettingsManager {
         }
     }
 
-    setupQuestListeners() {
-        const editBtn = document.getElementById('edit-quest-btn');
-        const cancelEditBtn = document.getElementById('cancel-quest-edit');
-        const saveEditBtn = document.getElementById('save-quest-edit');
-
-        if (editBtn) {
-            editBtn.addEventListener('click', () => this.enterQuestEditMode());
-        }
-
-        if (cancelEditBtn) {
-            cancelEditBtn.addEventListener('click', () => this.exitQuestEditMode());
-        }
-
-        if (saveEditBtn) {
-            saveEditBtn.addEventListener('click', () => this.saveQuestDescription());
-        }
-    }
+    // setupQuestListeners is duplicated. The first one is used above.
+    // This second one is removed to avoid conflicts.
 
     updateQuestContent() {
         const readContent = document.getElementById('quest-content');
@@ -1026,22 +1011,60 @@ class SettingsManager {
 
     // === GESTION IMPORT/EXPORT ===
     setupImportExportListeners() {
-        const exportBtn = document.getElementById('export-data-btn');
-        const importBtn = document.getElementById('import-data-btn');
-        const importFileInput = document.getElementById('import-file-input');
+        // Import/Export Lieux et Régions
+        const exportLocationsBtn = document.getElementById('export-locations-btn');
+        const importLocationsBtn = document.getElementById('import-locations-btn');
+        const importLocationsFileInput = document.getElementById('import-locations-file-input');
 
-        if (exportBtn) {
-            exportBtn.addEventListener('click', () => {
+        if (exportLocationsBtn) {
+            exportLocationsBtn.addEventListener('click', () => {
                 if (window.importExportManager) {
                     window.importExportManager.exportUnifiedData();
                 }
             });
         }
 
-        if (importBtn) {
-            importBtn.addEventListener('click', () => {
-                if (importFileInput) {
-                    importFileInput.click();
+        if (importLocationsBtn) {
+            importLocationsBtn.addEventListener('click', () => {
+                if (importLocationsFileInput) {
+                    importLocationsFileInput.click();
+                }
+            });
+        }
+
+        if (importLocationsFileInput) {
+            importLocationsFileInput.addEventListener('change', (event) => {
+                if (window.importExportManager) {
+                    window.importExportManager.handleImportFile(event);
+                }
+            });
+        }
+
+        // Import/Export Personnages
+        const exportCharactersBtn = document.getElementById('export-characters-btn');
+        const importCharactersBtn = document.getElementById('import-characters-btn');
+        const importCharactersFileInput = document.getElementById('import-characters-file-input');
+
+        if (exportCharactersBtn) {
+            exportCharactersBtn.addEventListener('click', () => {
+                if (window.charactersManager) {
+                    window.charactersManager.exportCharacters();
+                }
+            });
+        }
+
+        if (importCharactersBtn) {
+            importCharactersBtn.addEventListener('click', () => {
+                if (importCharactersFileInput) {
+                    importCharactersFileInput.click();
+                }
+            });
+        }
+
+        if (importCharactersFileInput) {
+            importCharactersFileInput.addEventListener('change', (event) => {
+                if (window.charactersManager) {
+                    window.charactersManager.handleImportCharacters(event);
                 }
             });
         }
@@ -1164,18 +1187,18 @@ class SettingsManager {
             // Callback pour re-render après chargement
             const onImageLoaded = () => {
                 console.log('✅ Image de carte chargée, re-initialisation de la carte');
-                
+
                 // IMPORTANT: Appliquer l'échelle AVANT l'initialisation de la carte
                 if (window.pathManager) {
                     window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
                     console.log(`🗺️ Échelle appliquée au PathManager: ${mapScale} miles`);
                 }
-                
+
                 // IMPORTANT: Reset complet des dimensions globales
                 window.MAP_WIDTH = 0;
                 window.MAP_HEIGHT = 0;
                 console.log('🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation');
-                
+
                 // Toujours réinitialiser la carte lors du changement d'image
                 if (typeof window.initializeMap === 'function') {
                     console.log('🗺️ Réinitialisation de la carte depuis loadSettings');
@@ -1195,7 +1218,7 @@ class SettingsManager {
 
             // Toujours définir le callback avant de changer src
             mapImage.onload = onImageLoaded;
-            
+
             // Si l'image est déjà complètement chargée avec cette URL, déclencher manuellement
             if (mapImage.complete && mapImage.naturalWidth > 0 && mapImage.src.endsWith(this.activeMapUrl)) {
                 console.log('⚡ Image déjà chargée, callback immédiat');
