@@ -346,6 +346,35 @@ python app.py
 10. Amélioration gestion mapId (locations/regions)
 11. Correction import JSON sur tablette (accept: ".json,application/json")
 
+SYNCHRONISATION DONNÉES (CRITIQUE)
+----------------------------------
+
+Principe de triple synchronisation pour locations/regions:
+1. Variable locale (locationsData/regionsData dans main.js)
+2. Variable globale (window.locationsData/window.regionsData)
+3. DataManager (dataManager.locationsData/dataManager.regionsData)
+
+Règle impérative lors de modifications:
+- TOUJOURS synchroniser les 3 références AVANT saveToLocal()
+- Ordre: locale → window → dataManager → saveToLocal()
+
+Exemple type (changement couleur, drag, création):
+```javascript
+// 1. Modifier l'objet dans le tableau local
+locationsData.locations[index].property = newValue;
+
+// 2. Synchroniser window
+window.locationsData = locationsData;
+
+// 3. Synchroniser dataManager
+dataManager.locationsData = locationsData;
+
+// 4. Sauvegarder
+dataManager.saveLocationsToLocal();
+```
+
+Fichiers concernés: main.js (handleLocationDragEnd, confirmColorChange)
+
 MAINTENANCE
 -----------
 
@@ -362,5 +391,11 @@ PROBLÈMES RÉSOLUS
    - Cause: Attribut accept=".json" trop restrictif pour certains navigateurs mobiles
    - Solution: accept=".json,application/json" (extension + type MIME)
    - Fichier concerné: index.html (input#import-file-input)
+
+2. Sauvegarde lieux/régions (v1.1.5):
+   - Problème: "0 lieux sauvegardés" malgré modifications (drag, couleur)
+   - Cause: dataManager.locationsData non synchronisé avec locationsData locale
+   - Solution: Triple sync (locale → window → dataManager) avant saveToLocal()
+   - Fichiers: main.js (handleLocationDragEnd, confirmColorChange)
 
 ================================================================================
