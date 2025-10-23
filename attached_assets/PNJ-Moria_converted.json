@@ -58,7 +58,232 @@
     {
       "id": "100006",
       "name": "Naldin",
-      "description": "",
+      "description": "Arrière-petit-neveu et valet de Nál. Craint d'entrer dans la Moria mais ne peut refuser d'aider sa grand-tante. Cherche des aventuriers pour elle.\n\nOccupation: Valet nain\nParticularités: Sincère",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100007",
+      "name": "Haldir de la Lórien",
+      "description": "Éclaireur elfe surveillant les frontières de la Lothlórien, y compris la vallée du Cours d'Argent près de la Moria. Peut secourir des voyageurs égarés sortant de la Moria.\n\nOccupation: Éclaireur\nParticularités: Circonspect",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100008",
+      "name": "Tharnow, Fils de Gurnow",
+      "description": "Fils rustaud et ambitieux du Maître de Tharbad. Parti chercher trésors et aventures dans la Moria, s'attendant à les trouver facilement près de la Porte Ouest. Accompagné de brutes plus malignes.\n\nOccupation: \nParticularités: Rustaud",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100009",
+      "name": "Arcinyas le Guérisseur",
+      "description": "Vieil érudit mortel, agent fiable de Saroumane. Se présente comme guérisseur cherchant la connaissance pour aborder les explorateurs de la Moria et les attirer (ou forcer) à Isengard.\n\nOccupation: Érudit, Agent de Saroumane",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100010",
+      "name": "Malech le Borgne",
+      "description": "Chef Orque actuel de la Moria, lieutenant de Gorgol. Vétéran d'Azanulbizar et des Cinq Armées. Rongé par la peur et la paranoïa depuis son repaire (ancien Palais des Marches).\n\nOccupation: Seigneur de la Moria (Orque), Chef de guerre\nParticularités: Affreux, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100011",
+      "name": "Yagul l'Esclavagiste",
+      "description": "Bras droit de Malech, responsable des esclaves. Mène des raids pour capturer plus d'esclaves, surtout des Nains. Cruel et sournois, espère succéder à Malech.\n\nOccupation: Lieutenant orque, Esclavagiste\nParticularités: Cruel, Sournois",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100012",
+      "name": "Uftak la Brute",
+      "description": "Orque massif (sang de Troll?), stupide mais loyal à Malech. Sert de gros bras pour exécuter les basses besognes.\n\nOccupation: Garde du corps orque, Exécuteur\nParticularités: Coriace, Massif",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100013",
+      "name": "Imri le Traître",
+      "description": "Forgeron nain capturé qui a trahi les siens pour survivre. Travaille pour Malech, fabrique armes et outils, et attire parfois d'autres Nains dans des pièges. Espère secrètement se révolter.\n\nOccupation: Forgeron asservi\nParticularités: Hésitant, Secret",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100014",
+      "name": "Corbel le Moqueur",
+      "description": "Vieux et grand corbeau rusé vivant dans la Vallée des Rigoles Sombres. Parle Langue Commune et Orque. Manipule les informations à son avantage. Aime les objets brillants. Craint les Aigles.\n\nOccupation: Espion\nParticularités: Cupide, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100015",
+      "name": "Morlena Sansrépit",
+      "description": "Marchande humaine traversant régulièrement l'Escalier des Rigoles Sombres. Robuste et connaissant bien la route. A des contacts variés. Connait des histoires sur la Moria.\n\nOccupation: Marchande\nParticularités: Circonspecte, Opiniâtre",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100016",
+      "name": "Tig le Farfouilleur",
+      "description": "Homme sauvage étrange vivant près des Tertres d'Azanulbizar. Ancien prisonnier des Orques. Récupère des armes sur le champ de bataille pour les échanger. Pourrait connaître une entrée secrète.\n\nOccupation: Pilleur de champ de bataille\nParticularités: Passionné, Secret",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100017",
+      "name": "Gorlakh le Gardien de la Porte",
+      "description": "Vieil Orque gardant la Porte Est. Intelligent et prudent, espionne les voyageurs. Loyal à Malech mais envisage de s'allier aux Orques du Mordor.\n\nOccupation: Gardien de la Porte\nParticularités: Circonspect, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100018",
+      "name": "Rikba le Putois",
+      "description": "Créature étrange (Gobelin difforme?) avec des membranes pour planer. Sert d'espion à Malech dans la Deuxième Salle.\n\nOccupation: Espion\nParticularités: Infect, Secret",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100019",
+      "name": "Buna",
+      "description": "Naine errante capturée par les Gobelins, échappée et cachée dans les Cavernes de Thrym. Cherche de l'aide pour s'enfuir. Servait Daza ou Fróra. Pense que la Moria devrait être abandonnée.\n\nOccupation: Chasseuse de Trésors errante\nParticularités: Circonspecte, Rustre",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100020",
+      "name": "Hagrot le Sournois",
+      "description": "Orque ambitieux contrôlant la Vingt et unième Salle. Veut gagner en influence. Lié à Mère-Grand du Village des Gobelins. Pourrait trahir Malech.\n\nOccupation: Chef orque\nParticularités: Ambitieux, Sournois",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100021",
+      "name": "Har",
+      "description": "Nain corrompu des clans de l'Est, allié de Sauron. Dirige les Orques du Mordor dans les Galeries de la Montagne. Vise à prendre le contrôle de la Moria pour Sauron, espérant l'Anneau de Thráin en récompense.\n\nOccupation: Agent de Sauron\nParticularités: Astucieux, Corrompu",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100022",
+      "name": "Naglur, Épée de Sauron",
+      "description": "Puissant Uruk du Mordor, lieutenant de Har mais considéré comme le vrai chef par les Orques. Impatient et brutal, préfère l'action directe.\n\nOccupation: Capitaine Uruk\nParticularités: Arrogant, Impétueux",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100023",
+      "name": "Tarloch (Chef)",
+      "description": "Chef actuel du village humain isolé près de la Moria. A vu une vision du Fléau de Durin et croit la fin du monde proche. Méfiant envers les étrangers mais peut devenir très accueillant.\n\nOccupation: Dirigeant\nParticularités: Circonspect, Généreux",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100024",
+      "name": "Meru la Chasseresse",
+      "description": "Femme sauvage apparentée au peuple de Tarloch, vit seule dans les montagnes. Chasse et commerce de fourrures. Pourrait être Changeuse de peau. Doit aider les voyageurs par obligation, mais est bougonne.\n\nOccupation: Chasseresse, Trappeuse\nParticularités: Bougonne, Taciturne",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100025",
+      "name": "Vesna",
+      "description": "Vieille gardienne du 'Tertre' sacré du Village de Tarloch. Supervise l'initiation des jeunes et élimine secrètement les 'indignes' avec des pièges. Hostile aux intrus.\n\nOccupation: Gardienne de tombeau, Initiatrice\nParticularités: Secrète, Sépulcrale",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100026",
+      "name": "Mère-Grand",
+      "description": "Vieille Gobeline rusée et manipulatrice qui dirige le marché du Village des Gobelins. Guérisseuse et brasseuse. Monte les factions orques les unes contre les autres.\n\nOccupation: Entrepreneuse, Matriarche\nParticularités: Bavarde, Maligne",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100027",
+      "name": "Le Marteau-de-forge",
+      "description": "Très grand Troll des Cavernes en armure, ancien champion d'Azog réfugié dans les Armureries. Obsédé par sa propre protection.\n\nOccupation: Reclus\nParticularités: Bestial, Pataud",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100028",
+      "name": "Grimnar le Geôlier",
+      "description": "Vieux Garde du Corps Grand Orque, geôlier de la Corniche de l'Infortune. Vétéran des Cinq Armées, rival de Yagul. Possède une dague naine brillante. Envisage de s'allier aux Orques du Mordor.\n\nOccupation: Geôlier\nParticularités: Attentif, Cruel",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100029",
+      "name": "Thu, la Voix de la Flamme",
+      "description": "Chef du culte orque d'Udûn vénérant le Balrog. Horriblement brûlé, prétend être son prophète. Pratique la sorcellerie ancienne. Très secret.\n\nOccupation: Grand prêtre\nParticularités: Loyal, Secret",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100030",
+      "name": "Shagram, le « Joyeux Luron »",
+      "description": "Maître Orque de la Barbacane Noire (mines). Sadique mais affiche une fausse jovialité. Complotte pour éliminer Uftak et prendre le pouvoir.\n\nOccupation: Maître de la Barbacane\nParticularités: Jovial, Sadique",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "100031",
+      "name": "Vieille-Griffe",
+      "description": "Très vieux Gobelin noueux vivant dans les mines et le Labyrinthe Gobelin. Ramasse du mithril. Pourrait servir de guide (non fiable). Craint le Balrog.\n\nOccupation: Chercheur de mithril\nParticularités: Perfide, Vue perçante",
       "type": "PNJ",
       "images": [],
       "associatedLocations": [],
