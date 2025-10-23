@@ -1011,13 +1011,22 @@ class SettingsManager {
 
     // === GESTION IMPORT/EXPORT ===
     setupImportExportListeners() {
+        console.log('⚙️ Configuration des listeners Import/Export...');
+        
         // Import/Export Lieux et Régions
         const exportLocationsBtn = document.getElementById('export-locations-btn');
         const importLocationsBtn = document.getElementById('import-locations-btn');
         const importLocationsFileInput = document.getElementById('import-locations-file-input');
 
+        console.log('📍 Boutons Lieux/Régions:', {
+            exportBtn: !!exportLocationsBtn,
+            importBtn: !!importLocationsBtn,
+            fileInput: !!importLocationsFileInput
+        });
+
         if (exportLocationsBtn) {
             exportLocationsBtn.addEventListener('click', () => {
+                console.log('📤 Export lieux/régions demandé');
                 if (window.importExportManager) {
                     window.importExportManager.exportUnifiedData();
                 }
@@ -1026,6 +1035,7 @@ class SettingsManager {
 
         if (importLocationsBtn) {
             importLocationsBtn.addEventListener('click', () => {
+                console.log('📥 Import lieux/régions demandé');
                 if (importLocationsFileInput) {
                     importLocationsFileInput.click();
                 }
@@ -1045,29 +1055,46 @@ class SettingsManager {
         const importCharactersBtn = document.getElementById('import-characters-btn');
         const importCharactersFileInput = document.getElementById('import-characters-file-input');
 
+        console.log('👥 Boutons Personnages:', {
+            exportBtn: !!exportCharactersBtn,
+            importBtn: !!importCharactersBtn,
+            fileInput: !!importCharactersFileInput
+        });
+
         if (exportCharactersBtn) {
             exportCharactersBtn.addEventListener('click', () => {
+                console.log('📤 Export personnages demandé');
                 if (window.charactersManager) {
                     window.charactersManager.exportCharacters();
+                } else {
+                    console.error('❌ charactersManager non disponible');
                 }
             });
         }
 
         if (importCharactersBtn) {
             importCharactersBtn.addEventListener('click', () => {
+                console.log('📥 Import personnages demandé');
                 if (importCharactersFileInput) {
                     importCharactersFileInput.click();
+                } else {
+                    console.error('❌ import-characters-file-input non trouvé');
                 }
             });
         }
 
         if (importCharactersFileInput) {
             importCharactersFileInput.addEventListener('change', (event) => {
+                console.log('📄 Fichier personnages sélectionné');
                 if (window.charactersManager) {
                     window.charactersManager.handleImportCharacters(event);
+                } else {
+                    console.error('❌ charactersManager non disponible');
                 }
             });
         }
+
+        console.log('✅ Listeners Import/Export configurés');
     }
 
 
