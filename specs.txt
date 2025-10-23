@@ -1,0 +1,336 @@
+
+================================================================================
+SPÉCIFICATIONS TECHNIQUES - APPLICATION CARTOGRAPHIE TERRE DU MILIEU
+Version: 1.1.4
+Dernière mise à jour: 23 octobre 2025
+================================================================================
+
+VUE D'ENSEMBLE
+--------------
+Application web de cartographie interactive pour la Terre du Milieu (jeu de rôle).
+Architecture modulaire JavaScript avec backend Flask/Python et base SQLite.
+Authentification Google OAuth pour sauvegarde cloud synchronisée.
+
+ARCHITECTURE GLOBALE
+--------------------
+
+Frontend:
+- HTML5 + CSS3 (Tailwind CDN) + Vanilla JavaScript (ES6 modules)
+- Architecture modulaire avec pattern Manager
+- Responsive design (desktop + mobile)
+- Navigation tactile et souris
+
+Backend:
+- Flask (Python 3.x)
+- SQLite pour persistance
+- Google OAuth 2.0
+- API REST pour sync cloud
+
+Structure des fichiers:
+/
+├── index.html              # Page principale
+├── login.html              # Page d'authentification
+├── styles.css              # Styles desktop
+├── styles-mobile.css       # Styles mobile (<768px)
+├── app.py                  # Serveur Flask
+├── database.py             # Gestionnaire SQLite
+├── js/
+│   ├── main.js             # Point d'entrée, initialisation
+│   ├── managers/           # Modules fonctionnels
+│   │   ├── auth-manager.js
+│   │   ├── data-manager.js
+│   │   ├── filter-manager.js
+│   │   ├── settings-manager.js
+│   │   ├── zoom-manager.js
+│   │   ├── position-manager.js
+│   │   ├── voyage-manager.js
+│   │   ├── path-manager.js
+│   │   ├── infobox-manager.js
+│   │   ├── calendar-manager.js
+│   │   ├── journal-manager.js
+│   │   ├── adventure-manager.js
+│   │   ├── import-export-manager.js
+│   │   ├── upload-manager.js
+│   │   └── gemini-manager.js
+│   └── utils/
+│       ├── constants.js    # Constantes globales
+│       └── helpers.js      # Fonctions utilitaires
+└── uploads/                # Stockage images utilisateur
+
+CONVENTIONS DE CODAGE JAVASCRIPT
+---------------------------------
+
+1. STRUCTURE DES MANAGERS:
+   - Un fichier = un Manager
+   - Export par défaut: export default class NomManager
+   - Pattern singleton via window.nomManager
+   - Constructor avec injection de dépendances
+
+2. NAMING CONVENTIONS:
+   - Classes: PascalCase (DataManager, FilterManager)
+   - Fichiers: kebab-case (data-manager.js)
+   - Méthodes: camelCase (loadData, applyFilters)
+   - Constantes: UPPER_SNAKE_CASE (MAP_WIDTH, MAX_SCALE)
+   - Variables globales: camelCase avec window. prefix
+
+3. ORGANISATION DES MÉTHODES:
+   class ExampleManager {
+       constructor(dependencies, config) { }  // Injection dépendances
+       
+       init() { }                             // Initialisation
+       
+       // Méthodes publiques
+       publicMethod() { }
+       
+       // Méthodes privées (préfixe _)
+       _privateMethod() { }
+       
+       // Event handlers
+       handleEvent(e) { }
+       
+       // Getters/Setters
+       getData() { }
+       setData(data) { }
+   }
+
+4. GESTION DES ÉVÉNEMENTS:
+   - Listeners dans init() ou setup methods
+   - Cleanup explicite si nécessaire
+   - Delegation pour éléments dynamiques
+   - Arrow functions pour conserver context
+
+5. IMPORTS/EXPORTS:
+   // constants.js
+   export const CONSTANT_NAME = value;
+   
+   // manager.js
+   import { CONSTANT } from '../utils/constants.js';
+   export default class Manager { }
+
+6. LOGGING:
+   - Console.log avec emojis pour catégorisation:
+     🚀 Initialisation
+     ✅ Succès
+     ❌ Erreur
+     ⚠️  Warning
+     📍 Position/Navigation
+     🗺️  Carte
+     🔍 Zoom/Filtres
+     📱 Mobile/Touch
+
+FONCTIONNALITÉS PRINCIPALES
+----------------------------
+
+1. GESTION MULTI-CARTES (v1.1.4):
+   - Ajout/suppression de cartes personnalisées
+   - Upload d'images (auto-resize à 5000px largeur)
+   - Configuration échelle par carte (miles/largeur)
+   - Basculement entre cartes actives
+   - Filtres et données par carte (mapId)
+   - Stockage: settings dans localStorage + cloud
+
+2. NAVIGATION CARTE:
+   - Pan (drag souris ou 2 doigts tactile)
+   - Zoom (molette, pinch, slider UI)
+   - Reset view (bouton home)
+   - Contraintes viewport (bounds)
+   - Scale range: 0.1 (10%) à 4.0 (400%)
+   - Transform: CSS translate + scale
+
+3. LIEUX (Locations):
+   - Placement manuel (clic + modal)
+   - Drag & drop repositionnement
+   - Propriétés: nom, description, couleur, images
+   - États: connu/inconnu, visité/non-visité
+   - Vignettes 64x64px (affichées si zoom > 50%)
+   - Affichage cercle coloré (zoom < 50%)
+   - Association à une carte (mapId)
+
+4. RÉGIONS (Regions):
+   - Tracé polygonal (multi-points)
+   - Clic droit pour terminer
+   - Propriétés: nom, description, couleur
+   - Opacité ajustable (slider)
+   - Rendering SVG overlay
+   - Association à une carte (mapId)
+
+5. VOYAGES (Paths):
+   - Tracé ligne brisée
+   - Calcul distances (miles)
+   - Segmentation journalière
+   - Détection régions traversées
+   - Détection lieux proximité (50px)
+   - Génération descriptions IA (Gemini)
+   - Modale segments jour par jour
+
+6. FILTRES:
+   - Par couleur (locations + regions)
+   - Par statut (connu/inconnu, visité/non-visité)
+   - Visibilité lieux/régions
+   - Opacité régions (slider 0-100%)
+   - Sauvegarde par carte (localStorage)
+
+7. POSITION AVENTURIERS:
+   - Marqueur draggable Position.png
+   - Stockage coordonnées (x, y)
+   - Redimensionnement auto selon zoom
+   - Sync cloud
+
+8. CALENDRIER:
+   - Date courante (jour/mois Terre du Milieu)
+   - Saisons avec symboles (🌱☀️🍂❄️)
+   - Indicateur UI cliquable
+
+9. JOURNAL DE VOYAGE:
+   - Stockage descriptions générées
+   - Organisation par voyage
+   - Export/consultation historique
+
+10. AUTHENTIFICATION & SYNC:
+    - Google OAuth 2.0
+    - Sauvegarde auto (2s delay)
+    - Détection conflits (timestamp)
+    - Résolution manuelle
+    - Indicateur statut cloud (icône)
+
+11. IMPORT/EXPORT:
+    - Format JSON unifié
+    - Export complet données
+    - Import avec merge
+    - Upload images multiples
+    - Bibliothèque images utilisateur
+
+STRUCTURE DONNÉES
+-----------------
+
+localStorage keys:
+- middleEarthLocations: { locations: [...] }
+- middleEarthRegions: { regions: [...] }
+- availableMaps: [{ id, name, url, scale, width, height }]
+- activeMapUrl: string
+- currentCalendarDate: { day, month, season }
+- adventurers_position: { x, y }
+- filtersByMap: { [mapId]: { colors, visited, known } }
+
+Cloud (SQLite):
+- users: id, google_id, email, name
+- travel_contexts: id, user_id, name, data_json
+- api_usage: id, user_id, endpoint, tokens_used
+
+Format Location:
+{
+  id: number,
+  name: string,
+  description: string,
+  color: string,
+  coordinates: { x: number, y: number },
+  images: [{ url, type, isDefault }],
+  known: boolean,
+  visited: boolean,
+  mapId: string | undefined,
+  Rumeurs: string[],
+  Tradition_Ancienne: string,
+  evenements_voyage: object[]
+}
+
+Format Region:
+{
+  id: number,
+  name: string,
+  description: string,
+  color: string,
+  points: [{ x, y }],
+  images: [],
+  known: boolean,
+  visited: boolean,
+  mapId: string | undefined,
+  type: "region"
+}
+
+API ENDPOINTS
+-------------
+
+GET  /api/auth/user              # Info utilisateur connecté
+GET  /api/user/data              # Récupération données cloud
+PUT  /api/user/data              # Sauvegarde données cloud
+POST /api/upload/image           # Upload image
+GET  /api/images/library         # Liste images utilisateur
+POST /api/gemini/generate        # Génération texte IA
+
+RÈGLES MÉTIER
+-------------
+
+1. ÉCHELLE CARTES:
+   - Configurable par carte (défaut 600 miles)
+   - Calculs distances: (pixels / MAP_WIDTH) * MAP_DISTANCE_MILES
+
+2. FILTRES PAR CARTE:
+   - Chaque carte a ses propres filtres
+   - Auto-load au changement carte
+   - Fallback filtres par défaut
+
+3. SYNCHRONISATION:
+   - Auto-save 2s après modification
+   - Détection conflits par timestamp
+   - Merge intelligent import/export
+
+4. RESPONSIVENESS:
+   - Breakpoint mobile: 768px
+   - Touch events séparés souris
+   - UI adaptative (toolbar bottom mobile)
+
+5. PERFORMANCES:
+   - Vignettes conditionnelles (zoom > 50%)
+   - Lazy rendering régions
+   - Debounce sync/filters
+
+DÉPENDANCES
+-----------
+
+Frontend:
+- Tailwind CSS (CDN)
+- Font Awesome 6 (CDN)
+- Marked.js (markdown rendering)
+
+Backend:
+- Flask
+- google-auth-oauthlib
+- google-auth
+- Pillow (image processing)
+
+DÉPLOIEMENT
+-----------
+
+Port: 8080 (Flask)
+Environnement: Replit
+Variables requises:
+- GOOGLE_CLIENT_ID
+- GOOGLE_CLIENT_SECRET
+- GOOGLE_API_KEY (Gemini)
+
+Workflow Run:
+python app.py
+
+ÉVOLUTIONS RÉCENTES (v1.1.4)
+----------------------------
+
+1. Gestion multi-cartes complète
+2. Configuration échelle par carte
+3. Filtres persistants par carte
+4. Upload et resize automatique images (5000px)
+5. Bibliothèque images utilisateur
+6. Amélioration détection conflits sync
+7. Optimisation rendering mobile
+8. Refactoring ZoomManager (réutilisation instance)
+9. Fix synchronisation window.scale
+10. Amélioration gestion mapId (locations/regions)
+
+MAINTENANCE
+-----------
+
+Logs format: [Manager] Action: détails
+Testing: manuel via console browser
+Debugging: Chrome DevTools + console.log
+Backup: export JSON régulier
+
+================================================================================
