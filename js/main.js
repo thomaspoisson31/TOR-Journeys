@@ -824,19 +824,22 @@ function resetView() {
         // Calculer le zoom pour faire rentrer la carte dans le viewport
         const scaleX = viewportWidth / MAP_WIDTH;
         const scaleY = viewportHeight / MAP_HEIGHT;
-        scale = Math.min(scaleX, scaleY) * 0.9; // 90% pour laisser un peu de marge
-        window.scale = scale; // Synchroniser avec window.scale
+        const newScale = Math.min(scaleX, scaleY) * 0.9; // 90% pour laisser un peu de marge
+        
+        // IMPORTANT: Toujours synchroniser scale ET window.scale
+        scale = newScale;
+        window.scale = newScale;
 
-        console.log(`🔍 [resetView] Nouveau scale calculé: ${scale.toFixed(3)} (MAP_WIDTH=${MAP_WIDTH}, MAP_HEIGHT=${MAP_HEIGHT})`);
+        console.log(`🔍 [resetView] Nouveau scale calculé: ${newScale.toFixed(3)} (MAP_WIDTH=${MAP_WIDTH}, MAP_HEIGHT=${MAP_HEIGHT})`);
 
         // Centrer la carte
-        panX = (viewportWidth - MAP_WIDTH * scale) / 2;
-        panY = (viewportHeight - MAP_HEIGHT * scale) / 2;
+        panX = (viewportWidth - MAP_WIDTH * newScale) / 2;
+        panY = (viewportHeight - MAP_HEIGHT * newScale) / 2;
 
         updateMapTransform();
 
         // Rafraîchir les marqueurs si on passe le seuil de 50%
-        const shouldShowThumbnails = scale > 0.5;
+        const shouldShowThumbnails = newScale > 0.5;
         const wasShowingThumbnails = oldScale > 0.5;
         if (shouldShowThumbnails !== wasShowingThumbnails) {
             renderLocations();
@@ -844,7 +847,7 @@ function resetView() {
 
         // Synchroniser le ZoomManager APRÈS avoir mis à jour scale et window.scale
         if (zoomManager) {
-            console.log(`🔍 [resetView] Synchronisation ZoomManager avec scale=${scale.toFixed(3)}`);
+            console.log(`🔍 [resetView] Synchronisation ZoomManager avec scale=${window.scale.toFixed(3)}`);
             // Attendre que le DOM soit mis à jour
             requestAnimationFrame(() => {
                 zoomManager.updateDisplay();

@@ -623,10 +623,12 @@ class SettingsManager {
 
         // IMPORTANT: Forcer la mise à jour du ZoomManager après changement de carte
         if (window.zoomManager) {
-            console.log('🔍 [switchMap] Mise à jour du ZoomManager');
+            console.log('🔍 [switchMap] Mise à jour du ZoomManager après réinitialisation');
+            // Attendre que initializeMap et resetView soient complètement terminés
             setTimeout(() => {
+                console.log(`🔍 [switchMap] ZoomManager.updateDisplay() avec window.scale=${window.scale ? window.scale.toFixed(3) : 'undefined'}`);
                 window.zoomManager.updateDisplay();
-            }, 200);
+            }, 500);
         }
     }
 
