@@ -614,6 +614,14 @@ class SettingsManager {
         if (typeof window.renderRegions === 'function') {
             window.renderRegions();
         }
+
+        // IMPORTANT: Forcer la mise à jour du ZoomManager après changement de carte
+        if (window.zoomManager) {
+            console.log('🔍 [switchMap] Mise à jour du ZoomManager');
+            setTimeout(() => {
+                window.zoomManager.updateDisplay();
+            }, 200);
+        }
     }
 
     editMapScale(index) {

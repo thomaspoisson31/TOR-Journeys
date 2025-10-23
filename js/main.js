@@ -724,6 +724,7 @@ let currentColorChangeType = null; // 'location' ou 'region'
 
 // --- Fonctions de navigation de la carte ---
 function updateMapTransform() {
+    window.scale = scale; // Toujours synchroniser window.scale
     mapContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     updateMapDimensionsDisplay();
 }
@@ -802,6 +803,13 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
         if (positionManager) {
             positionManager.updateMarkerSize();
         }
+
+        // Synchroniser le ZoomManager après le changement de zoom
+        if (zoomManager) {
+            setTimeout(() => {
+                zoomManager.updateDisplay();
+            }, 10);
+        }
     }
 }
 
@@ -831,9 +839,12 @@ function resetView() {
             renderLocations();
         }
 
-        // Synchroniser le ZoomManager
+        // Synchroniser le ZoomManager APRÈS avoir mis à jour scale et window.scale
         if (zoomManager) {
-            zoomManager.updateDisplay();
+            console.log(`🔍 [resetView] Synchronisation ZoomManager avec scale=${scale.toFixed(3)}`);
+            setTimeout(() => {
+                zoomManager.updateDisplay();
+            }, 100);
         }
     }
 }
