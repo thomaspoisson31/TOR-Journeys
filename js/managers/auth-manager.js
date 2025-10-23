@@ -646,6 +646,35 @@ class AuthManager {
                 credentials: 'include'
             });
 
+            if (response.status === 404) {
+                // Pas de données cloud encore - initialiser avec des données vides
+                this.logAuth("ℹ️ Aucune donnée cloud trouvée - initialisation avec données vides");
+                
+                const emptyData = {
+                    locations: { locations: [] },
+                    regions: { regions: [] },
+                    calendar: {},
+                    settings: {},
+                    journal: [],
+                    position: null,
+                    filtersByMap: {}
+                };
+                
+                await this.applyContextData(emptyData);
+                this.saveToLocalStorage(emptyData, true);
+                
+                if (typeof window.renderLocations === 'function') {
+                    window.renderLocations();
+                }
+                if (typeof window.renderRegions === 'function') {
+                    window.renderRegions();
+                }
+                
+                this.markAsSaved();
+                this.logAuth("✅ Initialisation terminée - prêt à créer du contenu");
+                return;
+            }
+
             if (!response.ok) {
                 throw new Error(`Erreur HTTP: ${response.status}`);
             }
