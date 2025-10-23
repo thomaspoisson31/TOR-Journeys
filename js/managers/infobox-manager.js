@@ -694,7 +694,7 @@ class InfoBoxManager {
             })
             // Nettoyage
             .replace(/<p><\/p>/g, '')
-            .replace(/<p>(<h[1-6]>)/g, '$1')
+            .replace(/<p>(<h[1-6]>) /g, '$1')
             .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
             .replace(/<p>(<ul>)/g, '$1')
             .replace(/(<\/ul>)<\/p>/g, '$1');
@@ -823,14 +823,32 @@ class InfoBoxManager {
 
             // Sauvegarder via DataManager
             if (this.currentType === 'region') {
+                const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
+                    String(reg.id) === String(this.currentItem.id)
+                );
+                if (regionIndex !== -1) {
+                    this.dataManager.regionsData.regions[regionIndex] = this.currentItem;
+                    console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}`);
+                } else {
+                    console.error(`❌ Région non trouvée dans regionsData pour sauvegarde: ${this.currentItem.id}`);
+                }
+                window.regionsData = this.dataManager.regionsData; // Synchroniser avec la variable globale
                 this.dataManager.saveRegionsToLocal();
-                // Re-render les régions
                 if (typeof renderRegions === 'function') {
                     renderRegions();
                 }
             } else if (this.currentType === 'location') {
+                const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
+                    String(loc.id) === String(this.currentItem.id)
+                );
+                if (locationIndex !== -1) {
+                    this.dataManager.locationsData.locations[locationIndex] = this.currentItem;
+                    console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}`);
+                } else {
+                    console.error(`❌ Lieu non trouvé dans locationsData pour sauvegarde: ${this.currentItem.id}`);
+                }
+                 window.locationsData = this.dataManager.locationsData; // Synchroniser avec la variable globale
                 this.dataManager.saveLocationsToLocal();
-                // Re-render les lieux
                 if (typeof renderLocations === 'function') {
                     renderLocations();
                 }
@@ -1301,6 +1319,7 @@ class InfoBoxManager {
             const index = this.dataManager.locationsData.locations.findIndex(l => l.id === this.currentItem.id);
             if (index !== -1) {
                 this.dataManager.locationsData.locations.splice(index, 1);
+                window.locationsData = this.dataManager.locationsData; // Synchroniser avec la variable globale
                 this.dataManager.saveLocationsToLocal();
                 if (typeof renderLocations === 'function') {
                     renderLocations();
@@ -1310,6 +1329,7 @@ class InfoBoxManager {
             const index = this.dataManager.regionsData.regions.findIndex(r => r.id === this.currentItem.id);
             if (index !== -1) {
                 this.dataManager.regionsData.regions.splice(index, 1);
+                window.regionsData = this.dataManager.regionsData; // Synchroniser avec la variable globale
                 this.dataManager.saveRegionsToLocal();
                 if (typeof renderRegions === 'function') {
                     renderRegions();
@@ -1323,6 +1343,250 @@ class InfoBoxManager {
 
         this.hideInfoBox();
         console.log(`🗑️ ${itemName} supprimé`);
+    }
+
+    // Méthodes ajoutées pour la gestion spécifique des éditions
+    saveLocationEdit() {
+        const location = this.dataManager.locationsData.locations.find(loc => loc.id === this.currentItem.id);
+        if (!location) {
+            console.error(`❌ Lieu non trouvé pour sauvegarde: ${this.currentItem.id}`);
+            return;
+        }
+
+        location.name = document.getElementById('edit-name').value.trim();
+        location.description = document.getElementById('edit-description').value.trim();
+        // Récupérer la couleur du sélecteur (si existant)
+        const colorPicker = document.querySelector('#edit-color-picker .color-swatch.selected');
+        if (colorPicker) {
+            location.color = colorPicker.dataset.color;
+        }
+
+        // Handle images - Assurez-vous que 'images' est géré correctement
+        const imagesListElement = document.getElementById('edit-images-list');
+        if (imagesListElement) {
+            // Reconstruire l'array 'images' à partir du DOM ou de l'état actuel de this.currentItem.images
+            // Ici, on suppose que this.currentItem.images a déjà été mis à jour par les méthodes addImage/removeImage
+            if (this.currentItem.images && this.currentItem.images.length > 0) {
+                location.images = this.currentItem.images;
+            } else {
+                delete location.images; // Supprimer la propriété si vide
+            }
+        }
+
+
+        // IMPORTANT: Mettre à jour l'objet dans locationsData.locations
+        const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
+            String(loc.id) === String(this.currentItem.id)
+        );
+
+        if (locationIndex !== -1) {
+            this.dataManager.locationsData.locations[locationIndex] = location;
+            console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}`);
+        } else {
+            console.error(`❌ Lieu non trouvé dans locationsData pour mise à jour directe: ${this.currentItem.id}`);
+            // Optionnellement, ajouter le lieu s'il n'est pas trouvé (si c'est un nouvel ajout)
+            // this.dataManager.locationsData.locations.push(location);
+        }
+
+        // Synchroniser avec window.locationsData
+        window.locationsData = this.dataManager.locationsData;
+
+        // Sauvegarder et re-render
+        this.dataManager.saveLocationsToLocal();
+        this.exitEditMode();
+        if (typeof renderLocations === 'function') {
+            renderLocations();
+        }
+    }
+
+    saveRegionEdit() {
+        const region = this.dataManager.regionsData.regions.find(reg => reg.id === this.currentItem.id);
+        if (!region) {
+            console.error(`❌ Région non trouvée pour sauvegarde: ${this.currentItem.id}`);
+            return;
+        }
+
+        region.name = document.getElementById('edit-name').value.trim();
+        region.description = document.getElementById('edit-description').value.trim();
+        const rumeursText = document.getElementById('edit-rumeurs')?.value.trim();
+        const traditionText = document.getElementById('edit-tradition')?.value.trim();
+
+        if (rumeursText) {
+            region.Rumeurs = rumeursText.split('\n').map(r => r.trim()).filter(r => r !== '');
+            region.Rumeur = region.Rumeurs.join('\n\n---\n\n'); // Pour compatibilité
+        } else {
+            region.Rumeurs = [];
+            region.Rumeur = '';
+        }
+        region.Tradition_Ancienne = traditionText;
+
+        // Récupérer la couleur du sélecteur (si existant)
+        const colorPicker = document.querySelector('#edit-color-picker .color-swatch.selected');
+        if (colorPicker) {
+            region.color = colorPicker.dataset.color;
+        }
+
+        // Handle images - Assurez-vous que 'images' est géré correctement
+        const imagesListElement = document.getElementById('edit-images-list');
+         if (imagesListElement) {
+            if (this.currentItem.images && this.currentItem.images.length > 0) {
+                region.images = this.currentItem.images;
+            } else {
+                delete region.images;
+            }
+        }
+
+        // IMPORTANT: Mettre à jour l'objet dans regionsData.regions
+        const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
+            String(reg.id) === String(this.currentItem.id)
+        );
+
+        if (regionIndex !== -1) {
+            this.dataManager.regionsData.regions[regionIndex] = region;
+            console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}`);
+        } else {
+            console.error(`❌ Région non trouvée dans regionsData pour mise à jour directe: ${this.currentItem.id}`);
+        }
+
+        // Synchroniser avec window.regionsData
+        window.regionsData = this.dataManager.regionsData;
+
+        // Sauvegarder et re-render
+        this.dataManager.saveRegionsToLocal();
+        this.exitEditMode();
+        if (typeof renderRegions === 'function') {
+            renderRegions();
+        }
+    }
+
+    handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        console.log("📤 Uploading image...");
+
+        if (window.uploadManager) {
+            window.uploadManager.uploadImage(file, 'locations')
+                .then(result => {
+                    if (result.success) {
+                        const location = this.dataManager.locationsData.locations.find(loc => loc.id === this.currentItem.id);
+                        if (!location) {
+                             console.error(`❌ Lieu non trouvé pour ajout d'image: ${this.currentItem.id}`);
+                            return;
+                        }
+
+                        if (!location.images) {
+                            location.images = [];
+                        }
+
+                        location.images.push({
+                            url: result.url,
+                            type: location.images.length === 0 ? 'principale' : null, // Définir comme principale si c'est la première
+                            thumbnailUrl: null
+                        });
+
+                        // IMPORTANT: Mettre à jour l'objet dans locationsData.locations
+                        const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
+                            String(loc.id) === String(this.currentItem.id)
+                        );
+
+                        if (locationIndex !== -1) {
+                            this.dataManager.locationsData.locations[locationIndex] = location;
+                            console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}`);
+                        }
+
+                        // Synchroniser avec window.locationsData
+                        window.locationsData = this.dataManager.locationsData;
+
+                        this.dataManager.saveLocationsToLocal();
+                        // Re-render la liste des images dans l'onglet d'édition
+                        const imagesList = document.getElementById('edit-images-list');
+                        if(imagesList) {
+                            imagesList.innerHTML = this.renderEditImagesList();
+                        }
+                        console.log("✅ Image added successfully");
+                    }
+                })
+                .catch(error => {
+                    console.error("❌ Image upload failed:", error);
+                    alert("Erreur lors de l'upload de l'image");
+                });
+        }
+    }
+
+    handleRegionImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        console.log("📤 Uploading region image...");
+
+        if (window.uploadManager) {
+            window.uploadManager.uploadImage(file, 'regions')
+                .then(result => {
+                    if (result.success) {
+                        const region = this.dataManager.regionsData.regions.find(reg => reg.id === this.currentItem.id);
+                        if (!region) {
+                            console.error(`❌ Région non trouvée pour ajout d'image: ${this.currentItem.id}`);
+                            return;
+                        }
+
+                        if (!region.images) {
+                            region.images = [];
+                        }
+
+                        region.images.push({
+                            url: result.url,
+                            type: region.images.length === 0 ? 'principale' : null, // Définir comme principale si c'est la première
+                            thumbnailUrl: null
+                        });
+
+                        // IMPORTANT: Mettre à jour l'objet dans regionsData.regions
+                        const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
+                            String(reg.id) === String(this.currentItem.id)
+                        );
+
+                        if (regionIndex !== -1) {
+                            this.dataManager.regionsData.regions[regionIndex] = region;
+                            console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}`);
+                        }
+
+                        // Synchroniser avec window.regionsData
+                        window.regionsData = this.dataManager.regionsData;
+
+                        this.dataManager.saveRegionsToLocal();
+                        // Re-render la liste des images dans l'onglet d'édition
+                        const imagesList = document.getElementById('edit-images-list');
+                        if(imagesList) {
+                            imagesList.innerHTML = this.renderEditImagesList();
+                        }
+                        console.log("✅ Region image added successfully");
+                    }
+                })
+                .catch(error => {
+                    console.error("❌ Region image upload failed:", error);
+                    alert("Erreur lors de l'upload de l'image");
+                });
+        }
+    }
+
+    // Méthode placeholder pour updateImageTabForLocationEdit (à implémenter si nécessaire)
+    updateImageTabForLocationEdit(location) {
+        console.log("Placeholder: updateImageTabForLocationEdit called for", location.name);
+        // Logique pour mettre à jour l'affichage de l'onglet image dans le mode édition
+        const imagesList = document.getElementById('edit-images-list');
+        if (imagesList) {
+            imagesList.innerHTML = this.renderEditImagesList();
+        }
+    }
+
+    // Méthode placeholder pour updateImageTabForRegionEdit (à implémenter si nécessaire)
+    updateImageTabForRegionEdit(region) {
+        console.log("Placeholder: updateImageTabForRegionEdit called for", region.name);
+         // Logique pour mettre à jour l'affichage de l'onglet image dans le mode édition
+        const imagesList = document.getElementById('edit-images-list');
+        if (imagesList) {
+            imagesList.innerHTML = this.renderEditImagesList();
+        }
     }
 }
 
