@@ -545,27 +545,35 @@ class AuthManager {
 
         // Restaurer la position du marqueur - PRIORITÉ CLOUD/CONTEXTE
         if (data.position) {
-            this.logAuth("📍 [applyContextData] Restauration de la position du marqueur depuis le contexte:", data.position);
+            const activeMapId = window.settingsManager?.activeMapUrl;
+            const positionMapId = data.position.mapId;
 
-            // FORCER la sauvegarde dans localStorage immédiatement avec le flag
-            console.log("📍 [applyContextData] AVANT setItem - position à sauver:", data.position);
-            localStorage.setItem('adventurers_position', JSON.stringify(data.position));
-            localStorage.setItem('adventurers_position_from_cloud', 'true'); // Marqueur qu'elle vient du cloud/contexte
+            console.log("📍 [applyContextData] Position reçue du cloud:", data.position);
+            console.log("📍 [applyContextData] Carte active:", activeMapId);
+            console.log("📍 [applyContextData] Carte de la position:", positionMapId);
 
-            const verif = localStorage.getItem('adventurers_position');
-            const verifFlag = localStorage.getItem('adventurers_position_from_cloud');
-            console.log("📍 [applyContextData] APRÈS setItem - position vérif:", verif);
-            console.log("📍 [applyContextData] APRÈS setItem - flag vérif:", verifFlag);
+            // Restaurer la position uniquement si elle correspond à la carte active
+            // ou si elle n'a pas de mapId (ancienne version)
+            if (!positionMapId || positionMapId === activeMapId) {
+                console.log("📍 [applyContextData] AVANT setItem - position à sauver:", data.position);
 
-            this.logAuth("✅ Position du contexte forcée dans localStorage avec flag:", data.position);
+                localStorage.setItem('adventurers_position', JSON.stringify(data.position));
 
-            // Si PositionManager existe déjà, mettre à jour visuellement
-            if (window.positionManager) {
-                console.log("📍 [applyContextData] Mise à jour visuelle du PositionManager");
-                // Assurer que currentPosition est bien mis à jour avant updateMarkerPosition
-                window.positionManager.currentPosition = JSON.parse(verif); // Utiliser la valeur vérifiée
-                window.positionManager.updateMarkerPosition();
+                // Vérification immédiate
+                const verif = localStorage.getItem('adventurers_position');
+                console.log("📍 [applyContextData] APRÈS setItem - position vérif:", verif);
+
+                // Ajouter le flag pour signaler que la position vient du cloud
+                localStorage.setItem('adventurers_position_from_cloud', 'true');
+                const flagVerif = localStorage.getItem('adventurers_position_from_cloud');
+                console.log("📍 [applyContextData] APRÈS setItem - flag vérif:", flagVerif);
+
+                console.log("[AuthManager] ✅ Position du contexte forcée dans localStorage avec flag:", data.position);
+            } else {
+                console.log("[AuthManager] ⚠️ Position ignorée car elle correspond à une autre carte");
             }
+        } else {
+            console.log("[AuthManager] ⚠️ [applyContextData] Aucune position dans le contexte");
         }
 
         // Sauvegarder les filtres pour restauration après initialisation complète

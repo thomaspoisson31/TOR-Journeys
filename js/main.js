@@ -671,13 +671,22 @@ function initializeMap() {
         window.zoomManager = zoomManager; // Exposer globalement
     }
 
-    // Initialiser PositionManager
+    // Initialiser ou réinitialiser PositionManager
     console.log("📍 [main.js] Création du PositionManager avec MAP_WIDTH:", MAP_WIDTH, "MAP_HEIGHT:", MAP_HEIGHT);
 
     // Log de l'état du localStorage avant init
     const savedPos = localStorage.getItem('adventurers_position');
     const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
     console.log("📍 [main.js] État localStorage AVANT init PositionManager - position:", savedPos, "flag:", cloudFlag);
+
+    // Détruire l'ancien PositionManager s'il existe
+    if (window.positionManager) {
+        console.log("📍 [main.js] Destruction de l'ancien PositionManager");
+        // Nettoyer les event listeners si nécessaire
+        if (window.positionManager.positionMarker) {
+            window.positionManager.positionMarker.remove();
+        }
+    }
 
     positionManager = new PositionManager(
         { getElementById: (id) => document.getElementById(id) },

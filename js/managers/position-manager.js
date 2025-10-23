@@ -20,8 +20,10 @@ class PositionManager {
     loadPosition() {
         // Vérifier si la position vient du cloud (flag temporaire)
         const fromCloud = localStorage.getItem('adventurers_position_from_cloud');
+        const activeMapId = window.settingsManager?.activeMapUrl;
         
         console.log("📍 [PositionManager.loadPosition] État du flag cloud:", fromCloud);
+        console.log("📍 [PositionManager.loadPosition] Carte active:", activeMapId);
         
         const saved = localStorage.getItem('adventurers_position');
         console.log("📍 [PositionManager.loadPosition] Position dans localStorage:", saved);
@@ -30,9 +32,14 @@ class PositionManager {
             try {
                 const position = JSON.parse(saved);
                 
+                // Vérifier si la position correspond à la carte active
+                if (position.mapId && activeMapId && position.mapId !== activeMapId) {
+                    console.log("📍 [PositionManager] Position d'une autre carte, utilisation position par défaut");
+                    return this.getDefaultPosition();
+                }
+                
                 if (fromCloud === 'true') {
                     console.log("📍 [PositionManager] Position chargée depuis CLOUD via localStorage:", position);
-                    // NE PAS nettoyer le flag ici - il sera nettoyé après le reload
                 } else {
                     console.log("📍 [PositionManager] Position chargée depuis localStorage local:", position);
                 }
@@ -40,23 +47,34 @@ class PositionManager {
                 return position;
             } catch (e) {
                 console.error("❌ [PositionManager] Erreur parsing position:", e);
-                // Nettoyer le flag en cas d'erreur
                 localStorage.removeItem('adventurers_position_from_cloud');
             }
         }
         
-        // Position par défaut au centre de la carte
+        return this.getDefaultPosition();
+    }
+
+    getDefaultPosition() {
+        const activeMapId = window.settingsManager?.activeMapUrl;
         const defaultPosition = {
             x: this.mapConstants.MAP_WIDTH / 2,
-            y: this.mapConstants.MAP_HEIGHT / 2
+            y: this.mapConstants.MAP_HEIGHT / 2,
+            mapId: activeMapId
         };
         console.log("📍 [PositionManager] Utilisation de la position par défaut:", defaultPosition);
         return defaultPosition;
     }
 
     savePosition() {
-        console.log("💾 [PositionManager.savePosition] Sauvegarde position:", this.currentPosition);
-        localStorage.setItem('adventurers_position', JSON.stringify(this.currentPosition));
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const positionToSave = {
+            x: this.currentPosition.x,
+            y: this.currentPosition.y,
+            mapId: activeMapId
+        };
+        
+        console.log("💾 [PositionManager.savePosition] Sauvegarde position:", positionToSave);
+        localStorage.setItem('adventurers_position', JSON.stringify(positionToSave));
         
         // Log pour vérifier que le flag cloud n'est pas présent
         const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
@@ -69,6 +87,11 @@ class PositionManager {
             console.error("❌ Position layer not found");
             return;
         }
+
+        // Nettoyer tous les marqueurs existants pour éviter les doublons
+        const existingMarkers = positionLayer.querySelectorAll('.position-marker');
+        existingMarkers.forEach(marker => marker.remove());
+        console.log(`📍 [PositionManager] ${existingMarkers.length} marqueur(s) existant(s) supprimé(s)`);
 
         // Créer le marqueur de position
         this.positionMarker = document.createElement('div');
@@ -504,7 +527,8 @@ class PositionManager {
 
     // Méthode pour mettre à jour la position programmatiquement
     setPosition(x, y) {
-        this.currentPosition = { x, y };
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        this.currentPosition = { x, y, mapId: activeMapId };
         this.updateMarkerPosition();
         this.savePosition();
     }
@@ -543,8 +567,12 @@ class PositionManager {
                 requestAnimationFrame(animate);
             } else {
                 // Animation terminée - sauvegarder la position finale
-                this.currentPosition.x = targetX;
-                this.currentPosition.y = targetY;
+                const activeMapId = window.settingsManager?.activeMapUrl;
+                this.currentPosition = {
+                    x: targetX,
+                    y: targetY,
+                    mapId: activeMapId
+                };
                 this.updateMarkerPosition();
                 this.savePosition();
 
