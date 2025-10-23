@@ -1032,77 +1032,79 @@
                     </div>
 
                     <!-- Import/Export Tab -->
-                <div id="import-export-tab" class="settings-tab-content hidden flex-col space-y-6">
-                    <h3 class="text-lg font-semibold text-white mb-4">Import / Export de Données</h3>
+                <div id="import-export-tab" class="settings-tab-content hidden">
+                    <div class="space-y-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">Import / Export de Données</h3>
 
-                    <!-- Section Lieux et Régions -->
-                    <div class="space-y-4">
-                        <div class="flex items-center mb-3">
-                            <i class="fas fa-map-marker-alt text-blue-400 mr-2"></i>
-                            <h4 class="text-md font-semibold text-white">Lieux et Régions</h4>
-                        </div>
-
-                        <div class="bg-gray-800 rounded-lg p-4 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h5 class="text-white font-medium">Exporter les lieux et régions</h5>
-                                    <p class="text-sm text-gray-400 mt-1">Télécharger tous les lieux et régions en JSON</p>
-                                </div>
-                                <button id="export-locations-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium transition-colors">
-                                    <i class="fas fa-file-export mr-2"></i>Export
-                                </button>
+                        <!-- Section Lieux et Régions -->
+                        <div class="space-y-4">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-map-marker-alt text-blue-400 mr-2"></i>
+                                <h4 class="text-md font-semibold text-white">Lieux et Régions</h4>
                             </div>
-                        </div>
 
-                        <div class="bg-gray-800 rounded-lg p-4 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h5 class="text-white font-medium">Importer des lieux et régions</h5>
-                                    <p class="text-sm text-gray-400 mt-1">Charger des lieux et régions depuis un fichier JSON</p>
+                            <div class="bg-gray-800 rounded-lg p-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h5 class="text-white font-medium">Exporter les lieux et régions</h5>
+                                        <p class="text-sm text-gray-400 mt-1">Télécharger tous les lieux et régions en JSON</p>
+                                    </div>
+                                    <button id="export-locations-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium transition-colors">
+                                        <i class="fas fa-file-export mr-2"></i>Export
+                                    </button>
                                 </div>
-                                <button id="import-locations-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors">
-                                    <i class="fas fa-file-import mr-2"></i>Import
-                                </button>
                             </div>
-                        </div>
 
-                        <input type="file" id="import-locations-file-input" class="hidden" accept=".json">
-                    </div>
-
-                    <hr class="border-gray-600">
-
-                    <!-- Section Personnages -->
-                    <div class="space-y-4">
-                        <div class="flex items-center mb-3">
-                            <i class="fas fa-users text-purple-400 mr-2"></i>
-                            <h4 class="text-md font-semibold text-white">Personnages</h4>
-                        </div>
-
-                        <div class="bg-gray-800 rounded-lg p-4 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h5 class="text-white font-medium">Exporter les personnages</h5>
-                                    <p class="text-sm text-gray-400 mt-1">Télécharger tous les personnages en JSON</p>
+                            <div class="bg-gray-800 rounded-lg p-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h5 class="text-white font-medium">Importer des lieux et régions</h5>
+                                        <p class="text-sm text-gray-400 mt-1">Charger des lieux et régions depuis un fichier JSON</p>
+                                    </div>
+                                    <button id="import-locations-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors">
+                                        <i class="fas fa-file-import mr-2"></i>Import
+                                    </button>
                                 </div>
-                                <button id="export-characters-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium transition-colors">
-                                    <i class="fas fa-file-export mr-2"></i>Export
-                                </button>
                             </div>
+
+                            <input type="file" id="import-locations-file-input" class="hidden" accept=".json">
                         </div>
 
-                        <div class="bg-gray-800 rounded-lg p-4 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h5 class="text-white font-medium">Importer des personnages</h5>
-                                    <p class="text-sm text-gray-400 mt-1">Charger des personnages depuis un fichier JSON</p>
+                        <hr class="border-gray-600">
+
+                        <!-- Section Personnages -->
+                        <div class="space-y-4">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-users text-purple-400 mr-2"></i>
+                                <h4 class="text-md font-semibold text-white">Personnages</h4>
+                            </div>
+
+                            <div class="bg-gray-800 rounded-lg p-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h5 class="text-white font-medium">Exporter les personnages</h5>
+                                        <p class="text-sm text-gray-400 mt-1">Télécharger tous les personnages en JSON</p>
+                                    </div>
+                                    <button id="export-characters-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium transition-colors">
+                                        <i class="fas fa-file-export mr-2"></i>Export
+                                    </button>
                                 </div>
-                                <button id="import-characters-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors">
-                                    <i class="fas fa-file-import mr-2"></i>Import
-                                </button>
                             </div>
-                        </div>
 
-                        <input type="file" id="import-characters-file-input" class="hidden" accept=".json">
+                            <div class="bg-gray-800 rounded-lg p-4 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h5 class="text-white font-medium">Importer des personnages</h5>
+                                        <p class="text-sm text-gray-400 mt-1">Charger des personnages depuis un fichier JSON</p>
+                                    </div>
+                                    <button id="import-characters-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors">
+                                        <i class="fas fa-file-import mr-2"></i>Import
+                                    </button>
+                                </div>
+                            </div>
+
+                            <input type="file" id="import-characters-file-input" class="hidden" accept=".json">
+                        </div>
                     </div>
                 </div>
                 </div>
