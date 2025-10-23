@@ -468,12 +468,16 @@ def get_user_data():
     if 'user_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
+    # Récupérer le préfixe d'environnement
+    env_prefix = request.args.get('env', 'prod_')
+    context_name = f"_user_data_{env_prefix}"
+
     conn = get_db_connection()
 
-    # Chercher les données utilisateur dans un contexte spécial "user_data"
+    # Chercher les données utilisateur avec le préfixe d'environnement
     user_data = conn.execute(
-        'SELECT data_json FROM travel_contexts WHERE user_id = ? AND name = "_user_data_"',
-        (session['user_id'],)
+        'SELECT data_json FROM travel_contexts WHERE user_id = ? AND name = ?',
+        (session['user_id'], context_name)
     ).fetchone()
 
     conn.close()
@@ -489,12 +493,16 @@ def debug_user_data():
     if 'user_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
+    # Récupérer le préfixe d'environnement
+    env_prefix = request.args.get('env', 'prod_')
+    context_name = f"_user_data_{env_prefix}"
+
     conn = get_db_connection()
 
-    # Récupérer TOUTES les infos du contexte utilisateur
+    # Récupérer TOUTES les infos du contexte utilisateur avec préfixe
     user_data = conn.execute(
-        'SELECT * FROM travel_contexts WHERE user_id = ? AND name = "_user_data_"',
-        (session['user_id'],)
+        'SELECT * FROM travel_contexts WHERE user_id = ? AND name = ?',
+        (session['user_id'], context_name)
     ).fetchone()
 
     conn.close()
@@ -543,13 +551,17 @@ def update_user_data():
     if not data:
         return jsonify({'error': 'Données manquantes'}), 400
 
+    # Récupérer le préfixe d'environnement
+    env_prefix = request.args.get('env', 'prod_')
+    context_name = f"_user_data_{env_prefix}"
+
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Vérifier si un enregistrement de données utilisateur existe déjà
+    # Vérifier si un enregistrement de données utilisateur existe déjà avec préfixe
     existing = conn.execute(
-        'SELECT data_json, updated_at FROM travel_contexts WHERE user_id = ? AND name = "_user_data_"',
-        (session['user_id'],)
+        'SELECT data_json, updated_at FROM travel_contexts WHERE user_id = ? AND name = ?',
+        (session['user_id'], context_name)
     ).fetchone()
 
     # Gérer les conflits de synchronisation
@@ -604,14 +616,14 @@ def update_user_data():
     if existing:
         # Mettre à jour l'enregistrement existant
         cursor.execute(
-            'UPDATE travel_contexts SET data_json = ?, updated_at = ? WHERE user_id = ? AND name = "_user_data_"',
-            (data_json_to_save, datetime.now(), session['user_id'])
+            'UPDATE travel_contexts SET data_json = ?, updated_at = ? WHERE user_id = ? AND name = ?',
+            (data_json_to_save, datetime.now(), session['user_id'], context_name)
         )
     else:
         # Créer un nouvel enregistrement
         cursor.execute(
             'INSERT INTO travel_contexts (user_id, name, data_json, updated_at) VALUES (?, ?, ?, ?)',
-            (session['user_id'], '_user_data_', data_json_to_save, datetime.now())
+            (session['user_id'], context_name, data_json_to_save, datetime.now())
         )
 
     conn.commit()

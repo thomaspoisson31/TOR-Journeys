@@ -618,16 +618,30 @@ class AuthManager {
     // loadUserContexts, renderContextsList, loadContext, deleteContext
 
 
+    getEnvironmentPrefix() {
+        // Déterminer l'environnement actuel
+        const hostname = window.location.hostname;
+        
+        // Si c'est un domaine Replit dev (*.replit.dev), préfixer avec "dev_"
+        if (hostname.includes('replit.dev')) {
+            return 'dev_';
+        }
+        
+        // Si c'est un domaine de production (*.replit.app ou custom domain), préfixer avec "prod_"
+        return 'prod_';
+    }
+
     async loadUserData() {
         if (!this.isAuthenticated) {
             this.logAuth("❌ Tentative de chargement sans authentification");
             return;
         }
 
-        this.logAuth("📥 Chargement des données depuis le cloud");
+        const envPrefix = this.getEnvironmentPrefix();
+        this.logAuth(`📥 Chargement des données depuis le cloud (environnement: ${envPrefix})`);
 
         try {
-            const response = await fetch('/api/user/data', {
+            const response = await fetch(`/api/user/data?env=${envPrefix}`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -798,11 +812,12 @@ class AuthManager {
             return;
         }
 
-        this.logAuth("🔄 Synchronisation manuelle vers cloud");
+        const envPrefix = this.getEnvironmentPrefix();
+        this.logAuth(`🔄 Synchronisation manuelle vers cloud (environnement: ${envPrefix})`);
 
         try {
             // 1. D'abord récupérer les données cloud actuelles
-            const cloudResponse = await fetch('/api/user/data', {
+            const cloudResponse = await fetch(`/api/user/data?env=${envPrefix}`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -898,7 +913,7 @@ class AuthManager {
             console.log("📤 [CLOUD] Envoi vers serveur...");
             console.log("📤 [CLOUD] PAYLOAD COMPLET:", JSON.stringify(mergedData, null, 2));
 
-            const response = await fetch('/api/user/data', {
+            const response = await fetch(`/api/user/data?env=${envPrefix}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1004,7 +1019,8 @@ class AuthManager {
             // Forcer la synchronisation avec un flag
             localData._force_overwrite = true;
 
-            const response = await fetch('/api/user/data', {
+            const envPrefix = this.getEnvironmentPrefix();
+            const response = await fetch(`/api/user/data?env=${envPrefix}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1229,8 +1245,9 @@ class AuthManager {
     async debugCloudData() {
         this.logAuth("🔍 Ouverture du debug des données cloud");
 
+        const envPrefix = this.getEnvironmentPrefix();
         try {
-            const response = await fetch('/api/user/data/debug', {
+            const response = await fetch(`/api/user/data/debug?env=${envPrefix}`, {
                 method: 'GET',
                 credentials: 'include'
             });
