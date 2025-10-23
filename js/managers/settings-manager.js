@@ -621,14 +621,53 @@ class SettingsManager {
             window.renderRegions();
         }
 
-        // IMPORTANT: Forcer la mise à jour du ZoomManager après changement de carte
+        // IMPORTANT: Réinitialiser complètement le ZoomManager après changement de carte
         if (window.zoomManager) {
-            console.log('🔍 [switchMap] Mise à jour du ZoomManager après réinitialisation');
-            // Attendre que initializeMap et resetView soient complètement terminés
-            setTimeout(() => {
-                console.log(`🔍 [switchMap] ZoomManager.updateDisplay() avec window.scale=${window.scale ? window.scale.toFixed(3) : 'undefined'}`);
-                window.zoomManager.updateDisplay();
-            }, 500);
+            console.log('🔍 [switchMap] Destruction et recréation du ZoomManager');
+            
+            // Supprimer l'ancien ZoomManager
+            const oldZoomControl = document.getElementById('zoom-control');
+            if (oldZoomControl) {
+                oldZoomControl.remove();
+            }
+            
+            // Attendre que la carte soit complètement chargée
+            const mapImage = document.getElementById('map-image');
+            if (mapImage) {
+                const waitForMapLoad = () => {
+                    if (mapImage.complete && mapImage.naturalWidth > 0 && window.MAP_WIDTH > 0) {
+                        console.log('🔍 [switchMap] Carte chargée, recréation du ZoomManager');
+                        
+                        // Importer et recréer le ZoomManager
+                        import('./zoom-manager.js').then(module => {
+                            const ZoomManager = module.default;
+                            window.zoomManager = new ZoomManager(
+                                { getElementById: (id) => document.getElementById(id) },
+                                { minScale: 0.1, maxScale: 4.0 }
+                            );
+                            window.zoomManager.onZoomChange = (newScale) => {
+                                const viewport = document.getElementById('viewport');
+                                const viewportWidth = viewport.clientWidth;
+                                const viewportHeight = viewport.clientHeight;
+                                const currentScale = window.scale || 1;
+                                if (typeof window.zoomToPoint === 'function') {
+                                    window.zoomToPoint(newScale / currentScale, viewportWidth / 2, viewportHeight / 2);
+                                }
+                                setTimeout(() => {
+                                    if (window.positionManager) {
+                                        window.positionManager.updateMarkerSize();
+                                    }
+                                }, 10);
+                            };
+                            window.zoomManager.init();
+                            console.log('✅ [switchMap] ZoomManager recréé avec succès');
+                        });
+                    } else {
+                        setTimeout(waitForMapLoad, 100);
+                    }
+                };
+                waitForMapLoad();
+            }
         }
     }
 
