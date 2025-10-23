@@ -114,7 +114,7 @@ class CharactersManager {
             return `
                 <div class="character-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer" 
                      data-character-id="${character.id}"
-                     onclick="window.charactersManager.showCharacterInfoBox(${character.id})">
+                     onclick="window.charactersManager.showCharacterInfoBox('${character.id}')">
                     <div class="flex items-center space-x-4">
                         ${displayImage ? `
                             <img src="${displayImage.url}" alt="${character.name}" 
@@ -297,8 +297,12 @@ class CharactersManager {
     }
 
     showCharacterInfoBox(characterId) {
-        const character = this.characters.find(c => c.id === characterId);
-        if (!character) return;
+        // Gérer les ID string et number
+        const character = this.characters.find(c => String(c.id) === String(characterId));
+        if (!character) {
+            console.warn(`Personnage non trouvé avec l'ID: ${characterId}`);
+            return;
+        }
 
         this.currentCharacter = character;
         this.closeCharactersModal();
@@ -316,7 +320,7 @@ class CharactersManager {
     }
 
     deleteCharacter(characterId) {
-        const index = this.characters.findIndex(c => c.id === characterId);
+        const index = this.characters.findIndex(c => String(c.id) === String(characterId));
         if (index === -1) return;
 
         const character = this.characters[index];
@@ -337,8 +341,11 @@ class CharactersManager {
     }
 
     updateCharacter(characterId, updates) {
-        const character = this.characters.find(c => c.id === characterId);
-        if (!character) return;
+        const character = this.characters.find(c => String(c.id) === String(characterId));
+        if (!character) {
+            console.warn(`Personnage non trouvé avec l'ID: ${characterId}`);
+            return;
+        }
 
         Object.assign(character, updates);
         this.saveCharactersToLocal();
