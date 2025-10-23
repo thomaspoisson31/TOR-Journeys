@@ -239,10 +239,10 @@ class InfoBoxManager {
                     <div class="image-caption">${item.name}</div>
                 `;
             } else {
-                const typeLabel = type === 'region' ? 'Région' : 'Lieu';
+                const typeLabel = type === 'region' ? 'Région' : (type === 'character' ? 'Personnage' : 'Lieu');
                 imageView.innerHTML = `
                     <div class="compact-title">${item.name}</div>
-                    <div class="image-placeholder">Aucune image disponible pour cette ${typeLabel.toLowerCase()}</div>
+                    <div class="image-placeholder">Aucune image disponible pour ce ${typeLabel.toLowerCase()}</div>
                 `;
             }
         }
@@ -836,7 +836,7 @@ class InfoBoxManager {
                 }
             } else if (this.currentType === 'character') {
                  if (window.charactersManager) {
-                    window.charactersManager.saveCharacter(this.currentItem);
+                    window.charactersManager.updateCharacter(this.currentItem.id, this.currentItem);
                 }
             }
 

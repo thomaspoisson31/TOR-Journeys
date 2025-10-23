@@ -305,7 +305,13 @@ class CharactersManager {
 
         // Utiliser la même infobox que les lieux
         if (window.infoBoxManager) {
-            window.infoBoxManager.showInfoBox({ clientX: 0, clientY: 0 }, character, 'character');
+            // Créer un événement simulé pour le positionnement
+            const fakeEvent = {
+                clientX: window.innerWidth / 2,
+                clientY: window.innerHeight / 2,
+                type: 'click'
+            };
+            window.infoBoxManager.showInfoBox(fakeEvent, character, 'character');
         }
     }
 
