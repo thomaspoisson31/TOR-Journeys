@@ -923,6 +923,20 @@ def session_test():
         'cookie_secure': app.config.get('SESSION_COOKIE_SECURE')
     })
 
+@app.route('/api/environment')
+def get_environment():
+    """Déterminer l'environnement actuel (dev ou prod)"""
+    # REPLIT_DEPLOYMENT est défini à "1" lors d'un déploiement Replit
+    is_deployment = os.environ.get('REPLIT_DEPLOYMENT') == '1'
+    
+    env_prefix = 'prod_' if is_deployment else 'dev_'
+    
+    return jsonify({
+        'environment': 'production' if is_deployment else 'development',
+        'prefix': env_prefix,
+        'is_deployment': is_deployment
+    })
+
 @app.route('/api/gemini/config')
 def get_gemini_config():
     """Obtenir la configuration Gemini API"""

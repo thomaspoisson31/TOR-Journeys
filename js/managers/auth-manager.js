@@ -660,17 +660,35 @@ class AuthManager {
     // loadUserContexts, renderContextsList, loadContext, deleteContext
 
 
-    getEnvironmentPrefix() {
-        // Déterminer l'environnement actuel
-        const hostname = window.location.hostname;
-        
-        // Si c'est un domaine Replit dev (*.replit.dev), préfixer avec "dev_"
-        if (hostname.includes('replit.dev')) {
-            return 'dev_';
+    async getEnvironmentPrefix() {
+        // Cache pour éviter les appels répétés
+        if (this._cachedEnvPrefix) {
+            return this._cachedEnvPrefix;
         }
-        
-        // Si c'est un domaine de production (*.replit.app ou custom domain), préfixer avec "prod_"
-        return 'prod_';
+
+        try {
+            // Interroger le backend pour obtenir l'environnement
+            const response = await fetch('/api/environment', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this._cachedEnvPrefix = data.prefix;
+                this.logAuth(`🌍 Environnement détecté: ${data.environment} (préfixe: ${data.prefix})`);
+                return this._cachedEnvPrefix;
+            }
+        } catch (error) {
+            this.logAuth(`⚠️ Erreur lors de la détection d'environnement: ${error.message}`);
+        }
+
+        // Fallback sur la détection côté client si l'API échoue
+        const hostname = window.location.hostname;
+        const fallbackPrefix = hostname.includes('replit.dev') ? 'dev_' : 'prod_';
+        this._cachedEnvPrefix = fallbackPrefix;
+        this.logAuth(`⚠️ Utilisation du fallback pour l'environnement: ${fallbackPrefix}`);
+        return fallbackPrefix;
     }
 
     async loadUserData() {
@@ -679,7 +697,7 @@ class AuthManager {
             return;
         }
 
-        const envPrefix = this.getEnvironmentPrefix();
+        const envPrefix = await this.getEnvironmentPrefix();
         this.logAuth(`📥 Chargement des données depuis le cloud (environnement: ${envPrefix})`);
 
         try {
@@ -889,7 +907,7 @@ class AuthManager {
             return;
         }
 
-        const envPrefix = this.getEnvironmentPrefix();
+        const envPrefix = await this.getEnvironmentPrefix();
         this.logAuth(`🔄 Synchronisation manuelle vers cloud (environnement: ${envPrefix})`);
 
         try {
@@ -1322,7 +1340,7 @@ class AuthManager {
     async debugCloudData() {
         this.logAuth("🔍 Ouverture du debug des données cloud");
 
-        const envPrefix = this.getEnvironmentPrefix();
+        const envPrefix = await this.getEnvironmentPrefix();
         try {
             const response = await fetch(`/api/user/data/debug?env=${envPrefix}`, {
                 method: 'GET',
