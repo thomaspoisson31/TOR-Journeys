@@ -1149,6 +1149,19 @@ def get_image_library():
             'error': f'Erreur serveur: {str(e)}'
         }), 500
 
+@app.route('/api/storage/status')
+def storage_status():
+    """Vérifier le statut du système de stockage"""
+    return jsonify({
+        'storage_available': STORAGE_AVAILABLE,
+        'storage_client_initialized': storage_client is not None,
+        'bucket_name': bucket_name,
+        'bucket_configured': bucket_name is not None,
+        'using_object_storage': storage_client is not None and bucket_name is not None,
+        'using_local_storage': storage_client is None or bucket_name is None,
+        'message': 'Object Storage actif' if (storage_client and bucket_name) else 'Stockage local actif'
+    })
+
 @app.route('/auth/verify-config')
 def verify_oauth_config():
     """Vérifier la configuration OAuth avec Google"""
