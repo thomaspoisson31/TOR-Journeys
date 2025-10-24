@@ -56,106 +56,8 @@ def force_https():
         request.environ['SERVER_PORT'] = '443'
         request.environ['HTTPS'] = 'on'
 
-# Configuration de la base de données
-DATABASE = 'travel_contexts.db'
-
-def init_db():
-    """Initialiser la base de données avec les tables nécessaires"""
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-
-    # Table des utilisateurs
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            google_id TEXT UNIQUE,
-            email TEXT,
-            name TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-
-    # Migration : Vérifier et corriger le schéma de la table users
-    try:
-        # Vérifier si la colonne google_id existe
-        cursor.execute("PRAGMA table_info(users)")
-        columns = [row[1] for row in cursor.fetchall()]
-
-        if 'google_id' not in columns:
-            print("🔧 Migration nécessaire : recréation de la table users avec google_id")
-
-            # Sauvegarder les données existantes
-            cursor.execute("SELECT * FROM users")
-            existing_users = cursor.fetchall()
-
-            # Supprimer l'ancienne table
-            cursor.execute("DROP TABLE IF EXISTS users")
-
-            # Recréer la table avec le bon schéma
-            cursor.execute('''
-                CREATE TABLE users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    google_id TEXT UNIQUE,
-                    email TEXT,
-                    name TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
-
-            # Restaurer les données existantes (sans google_id pour l'instant)
-            for user in existing_users:
-                if len(user) >= 5:  # Ancien format avec replit_user_id
-                    cursor.execute(
-                        'INSERT INTO users (id, email, name, created_at) VALUES (?, ?, ?, ?)',
-                        (user[0], user[3] if len(user) > 3 else None, user[4] if len(user) > 4 else None, user[5] if len(user) > 5 else datetime.now())
-                    )
-                else:  # Format simple
-                    cursor.execute(
-                        'INSERT INTO users (id, email, name, created_at) VALUES (?, ?, ?, ?)',
-                        (user[0], user[2] if len(user) > 2 else None, user[3] if len(user) > 3 else None, user[4] if len(user) > 4 else datetime.now())
-                    )
-
-            print("✅ Table users recréée avec succès avec la colonne google_id")
-        else:
-            print("ℹ️  Colonne google_id existe déjà")
-    except sqlite3.OperationalError as e:
-        print(f"⚠️  Erreur lors de la migration de la table users: {e}")
-
-    # Table des contextes de voyage
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS travel_contexts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            name TEXT NOT NULL,
-            data_json TEXT NOT NULL,
-            shared BOOLEAN DEFAULT 0,
-            share_token TEXT UNIQUE,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users (id)
-        )
-    ''')
-
-    # Table de l'usage API
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS api_usage (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            endpoint TEXT,
-            tokens_used INTEGER,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users (id)
-        )
-    ''')
-
-    conn.commit()
-    conn.close()
-
-def get_db_connection():
-    """Obtenir une connexion à la base de données"""
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+# Note: Nous utilisons maintenant Replit Database au lieu de SQLite
+# Les fonctions d'accès à la base de données sont gérées par ReplitDBManager
 
 def allowed_file(filename):
     """Vérifier si le fichier a une extension autorisée"""
@@ -231,23 +133,20 @@ def index():
 def get_current_user():
     """Obtenir les informations de l'utilisateur actuel via session Google"""
     if 'user_id' in session and 'google_id' in session:
-        conn = get_db_connection()
-        user = conn.execute(
-            'SELECT * FROM users WHERE id = ?', 
-            (session['user_id'],)
-        ).fetchone()
-        conn.close()
-
-        if user:
-            user_data = dict(user)
-            # Ajouter la photo de profil stockée en session si disponible
-            if 'user_picture' in session:
-                user_data['picture'] = session['user_picture']
-            return jsonify({
-                'authenticated': True,
-                'user': user_data,
-                'auth_method': 'google'
-            })
+        # Récupérer les informations utilisateur depuis la session
+        user_data = {
+            'id': session['user_id'],
+            'google_id': session['google_id'],
+            'name': session.get('user_name'),
+            'email': session.get('user_email'),
+            'picture': session.get('user_picture')
+        }
+        
+        return jsonify({
+            'authenticated': True,
+            'user': user_data,
+            'auth_method': 'google'
+        })
 
     # Utilisateur non authentifié
     return jsonify({
@@ -261,186 +160,47 @@ def get_contexts():
     if 'user_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
-    conn = get_db_connection()
-    contexts = conn.execute(
-        'SELECT id, name, created_at, updated_at, shared FROM travel_contexts WHERE user_id = ? ORDER BY updated_at DESC',
-        (session['user_id'],)
-    ).fetchall()
-    conn.close()
-
-    return jsonify([dict(ctx) for ctx in contexts])
+    # Cette fonctionnalité n'est plus utilisée car nous utilisons Replit Database
+    # pour stocker les données utilisateur directement
+    return jsonify([])
 
 @app.route('/api/contexts', methods=['POST'])
 def save_context():
-    """Sauvegarder un nouveau contexte de voyage"""
+    """Sauvegarder un nouveau contexte de voyage (obsolète)"""
     if 'user_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
-
-    data = request.json
-    name = data.get('name', 'Contexte sans nom')
-    context_data = data.get('data', {})
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        'INSERT INTO travel_contexts (user_id, name, data_json, updated_at) VALUES (?, ?, ?, ?)',
-        (session['user_id'], name, json.dumps(context_data), datetime.now())
-    )
-    context_id = cursor.lastrowid
-    conn.commit()
-    conn.close()
-
-    return jsonify({'id': context_id, 'message': 'Contexte sauvegardé avec succès'})
+    return jsonify({'message': 'Cette fonctionnalité n\'est plus utilisée'}), 200
 
 @app.route('/api/contexts/<int:context_id>', methods=['GET'])
 def get_context(context_id):
-    """Obtenir un contexte de voyage spécifique"""
-    conn = get_db_connection()
-
-    # Vérifier si c'est un contexte partagé ou appartenant à l'utilisateur
-    if 'user_id' in session:
-        context = conn.execute(
-            'SELECT * FROM travel_contexts WHERE id = ? AND (user_id = ? OR shared = 1)',
-            (context_id, session['user_id'])
-        ).fetchone()
-    else:
-        # Contexte partagé seulement
-        context = conn.execute(
-            'SELECT * FROM travel_contexts WHERE id = ? AND shared = 1',
-            (context_id,)
-        ).fetchone()
-
-    conn.close()
-
-    if context is None:
-        return jsonify({'error': 'Contexte non trouvé'}), 404
-
-    context_dict = dict(context)
-    context_dict['data'] = json.loads(context_dict['data_json'])
-    del context_dict['data_json']
-
-    return jsonify(context_dict)
+    """Obtenir un contexte de voyage spécifique (obsolète)"""
+    return jsonify({'error': 'Cette fonctionnalité n\'est plus utilisée'}), 404
 
 @app.route('/api/contexts/<int:context_id>', methods=['PUT'])
 def update_context(context_id):
-    """Mettre à jour un contexte de voyage"""
+    """Mettre à jour un contexte de voyage (obsolète)"""
     if 'user_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
-
-    data = request.json
-    name = data.get('name')
-    context_data = data.get('data')
-
-    conn = get_db_connection()
-
-    # Vérifier que le contexte appartient à l'utilisateur
-    context = conn.execute(
-        'SELECT * FROM travel_contexts WHERE id = ? AND user_id = ?',
-        (context_id, session['user_id'])
-    ).fetchone()
-
-    if context is None:
-        conn.close()
-        return jsonify({'error': 'Contexte non trouvé ou accès refusé'}), 403
-
-    # Mettre à jour
-    cursor = conn.cursor()
-    if name and context_data:
-        cursor.execute(
-            'UPDATE travel_contexts SET name = ?, data_json = ?, updated_at = ? WHERE id = ?',
-            (name, json.dumps(context_data), datetime.now(), context_id)
-        )
-    elif name:
-        cursor.execute(
-            'UPDATE travel_contexts SET name = ?, updated_at = ? WHERE id = ?',
-            (name, datetime.now(), context_id)
-        )
-    elif context_data:
-        cursor.execute(
-            'UPDATE travel_contexts SET data_json = ?, updated_at = ? WHERE id = ?',
-            (json.dumps(context_data), datetime.now(), context_id)
-        )
-
-    conn.commit()
-    conn.close()
-
-    return jsonify({'message': 'Contexte mis à jour avec succès'})
+    return jsonify({'message': 'Cette fonctionnalité n\'est plus utilisée'}), 200
 
 @app.route('/api/contexts/<int:context_id>', methods=['DELETE'])
 def delete_context(context_id):
-    """Supprimer un contexte de voyage"""
+    """Supprimer un contexte de voyage (obsolète)"""
     if 'user_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
-
-    conn = get_db_connection()
-
-    # Vérifier que le contexte appartient à l'utilisateur
-    context = conn.execute(
-        'SELECT * FROM travel_contexts WHERE id = ? AND user_id = ?',
-        (context_id, session['user_id'])
-    ).fetchone()
-
-    if context is None:
-        conn.close()
-        return jsonify({'error': 'Contexte non trouvé ou accès refusé'}), 403
-
-    # Supprimer le contexte
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM travel_contexts WHERE id = ?', (context_id,))
-    conn.commit()
-    conn.close()
-
-    return jsonify({'message': 'Contexte supprimé avec succès'})
+    return jsonify({'message': 'Cette fonctionnalité n\'est plus utilisée'}), 200
 
 @app.route('/api/contexts/<int:context_id>/share', methods=['POST'])
 def share_context(context_id):
-    """Partager un contexte de voyage"""
+    """Partager un contexte de voyage (obsolète)"""
     if 'user_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
-
-    conn = get_db_connection()
-
-    # Vérifier que le contexte appartient à l'utilisateur
-    context = conn.execute(
-        'SELECT * FROM travel_contexts WHERE id = ? AND user_id = ?',
-        (context_id, session['user_id'])
-    ).fetchone()
-
-    if context is None:
-        conn.close()
-        return jsonify({'error': 'Contexte non trouvé ou accès refusé'}), 403
-
-    # Générer un token de partage et activer le partage
-    share_token = secrets.token_urlsafe(32)
-    cursor = conn.cursor()
-    cursor.execute(
-        'UPDATE travel_contexts SET shared = 1, share_token = ? WHERE id = ?',
-        (share_token, context_id)
-    )
-    conn.commit()
-    conn.close()
-
-    return jsonify({
-        'message': 'Contexte partagé avec succès',
-        'share_token': share_token,
-        'share_url': f'/shared/{share_token}'
-    })
+    return jsonify({'message': 'Cette fonctionnalité n\'est plus utilisée'}), 200
 
 @app.route('/shared/<share_token>')
 def view_shared_context(share_token):
-    """Voir un contexte partagé"""
-    conn = get_db_connection()
-    context = conn.execute(
-        'SELECT * FROM travel_contexts WHERE share_token = ? AND shared = 1',
-        (share_token,)
-    ).fetchone()
-    conn.close()
-
-    if context is None:
-        return "Contexte partagé non trouvé", 404
-
-    # Servir l'interface en mode lecture seule
-    return send_from_directory('.', 'index.html')
+    """Voir un contexte partagé (obsolète)"""
+    return "Cette fonctionnalité n'est plus disponible", 404
 
 @app.route('/api/user/data', methods=['GET'])
 def get_user_data():
@@ -1374,10 +1134,8 @@ def verify_oauth_config():
         }), 500
 
 if __name__ == '__main__':
-    init_db()
-    print("🚀 Serveur Flask démarré avec base de données SQLite")
-    print("📊 Base de données initialisée avec les tables users, travel_contexts, api_usage")
-    print("🔑 Prêt pour l'authentification Google et la gestion des contextes de voyage")
+    print("🚀 Serveur Flask démarré avec Replit Database")
+    print("🔑 Prêt pour l'authentification Google et la gestion des données utilisateur")
 
     # Configuration HTTPS pour Replit
     app.config['PREFERRED_URL_SCHEME'] = 'https'
