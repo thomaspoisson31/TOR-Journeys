@@ -347,6 +347,10 @@ class AuthManager {
     collectCurrentContextData() {
         const data = {};
 
+        // IMPORTANT: Stocker l'environnement actuel dans les données
+        data._environment = this._cachedEnvPrefix || 'prod_';
+        data._saved_at = new Date().toISOString();
+
         // Collecter les données des lieux
         if (window.locationsData) {
             data.locations = window.locationsData;
@@ -745,6 +749,58 @@ class AuthManager {
             });
 
             if (response.status === 404) {
+                // Pas de données cloud encore - vérifier si on a des données dans l'autre environnement
+                const otherEnv = envPrefix === 'dev_' ? 'prod_' : 'dev_';
+                this.logAuth(`ℹ️ Aucune donnée trouvée pour ${envPrefix}, vérification de ${otherEnv}...`);
+                
+                const otherResponse = await fetch(`/api/user/data?env=${otherEnv}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (otherResponse.ok) {
+                    const otherData = await otherResponse.json();
+                    const hasData = (otherData.locations?.locations?.length || 0) > 0 || 
+                                  (otherData.regions?.regions?.length || 0) > 0;
+                    
+                    if (hasData) {
+                        const shouldMigrate = confirm(
+                            `⚠️ INCOHÉRENCE DÉTECTÉE\n\n` +
+                            `Environnement actuel: ${envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n` +
+                            `Données trouvées dans: ${otherEnv === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n\n` +
+                            `Vous avez ${otherData.locations?.locations?.length || 0} lieux et ${otherData.regions?.regions?.length || 0} régions dans l'autre environnement.\n\n` +
+                            `Voulez-vous copier ces données vers l'environnement ${envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'} actuel ?\n\n` +
+                            `✅ OK = Copier les données\n` +
+                            `❌ ANNULER = Démarrer avec des données vides`
+                        );
+
+                        if (shouldMigrate) {
+                            this.logAuth(`🔄 Migration des données de ${otherEnv} vers ${envPrefix}`);
+                            // Marquer les données avec le nouvel environnement
+                            otherData._environment = envPrefix;
+                            otherData._migrated_from = otherEnv;
+                            otherData._migrated_at = new Date().toISOString();
+                            
+                            await this.applyContextData(otherData);
+                            this.saveToLocalStorage(otherData, true);
+                            
+                            // Sauvegarder immédiatement dans le nouvel environnement
+                            await this.syncUserData();
+                            
+                            if (typeof window.renderLocations === 'function') {
+                                window.renderLocations();
+                            }
+                            if (typeof window.renderRegions === 'function') {
+                                window.renderRegions();
+                            }
+                            
+                            this.markAsSaved();
+                            this.logAuth("✅ Migration terminée avec succès");
+                            return;
+                        }
+                    }
+                }
+                
                 // Pas de données cloud encore - initialiser avec des données vides
                 this.logAuth("ℹ️ Aucune donnée cloud trouvée - initialisation avec données vides");
                 
@@ -785,6 +841,54 @@ class AuthManager {
 
             const cloudData = await response.json();
             this.logAuth("✅ Données cloud récupérées", cloudData);
+
+            // Vérifier la cohérence de l'environnement
+            if (cloudData._environment && cloudData._environment !== envPrefix) {
+                this.logAuth(`⚠️ ATTENTION: Incohérence environnement détectée!`);
+                this.logAuth(`   Données stockées avec: ${cloudData._environment}`);
+                this.logAuth(`   Environnement actuel: ${envPrefix}`);
+                
+                const shouldContinue = confirm(
+                    `⚠️ INCOHÉRENCE D'ENVIRONNEMENT\n\n` +
+                    `Les données ont été sauvegardées dans: ${cloudData._environment === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n` +
+                    `Environnement actuel: ${envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n\n` +
+                    `Voulez-vous quand même charger ces données ?\n` +
+                    `(Elles seront automatiquement réenregistrées dans l'environnement actuel)\n\n` +
+                    `✅ OK = Charger et migrer\n` +
+                    `❌ ANNULER = Démarrer avec des données vides`
+                );
+
+                if (!shouldContinue) {
+                    this.logAuth("❌ Chargement annulé par l'utilisateur");
+                    const emptyData = {
+                        locations: { locations: [] },
+                        regions: { regions: [] },
+                        calendar: {},
+                        settings: {},
+                        journal: [],
+                        characters: { characters: [] },
+                        adventure: { quest: '', rumors: [], threats: [] },
+                        position: null,
+                        filtersByMap: {},
+                        _environment: envPrefix
+                    };
+                    await this.applyContextData(emptyData);
+                    this.saveToLocalStorage(emptyData, true);
+                    if (typeof window.renderLocations === 'function') {
+                        window.renderLocations();
+                    }
+                    if (typeof window.renderRegions === 'function') {
+                        window.renderRegions();
+                    }
+                    this.markAsSaved();
+                    return;
+                }
+                
+                // Mettre à jour l'environnement dans les données
+                cloudData._environment = envPrefix;
+                cloudData._migrated_from = cloudData._environment;
+                cloudData._migrated_at = new Date().toISOString();
+            }
 
             // NETTOYER IMMÉDIATEMENT le localStorage - le cloud est la source unique
             localStorage.removeItem('middleEarthLocations');
@@ -1395,6 +1499,8 @@ class AuthManager {
 
             // Afficher dans la console
             console.log("=== DEBUG DONNÉES CLOUD ===");
+            console.log("Environnement actuel:", envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION', `(${envPrefix})`);
+            console.log("Environnement des données:", debugData.full_data?._environment || 'non spécifié');
             console.log("Status:", debugData.status);
             console.log("User ID:", debugData.user_id);
             console.log("Record ID:", debugData.record_id);
@@ -1406,6 +1512,11 @@ class AuthManager {
             console.log("=========================");
 
             // Créer une modale pour afficher les données brutes
+            const currentEnv = envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION';
+            const dataEnv = debugData.full_data?._environment;
+            const dataEnvLabel = dataEnv === 'dev_' ? 'DEVELOPMENT' : dataEnv === 'prod_' ? 'PRODUCTION' : 'non spécifié';
+            const envMatch = !dataEnv || dataEnv === envPrefix;
+            
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100]';
             modal.innerHTML = `
@@ -1413,6 +1524,18 @@ class AuthManager {
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-bold text-white">📊 Données Cloud Brutes</h3>
                         <button class="text-gray-400 hover:text-white text-2xl" onclick="this.closest('.fixed').remove()">×</button>
+                    </div>
+
+                    <div class="mb-4 p-3 rounded ${envMatch ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}">
+                        <div class="font-bold ${envMatch ? 'text-green-400' : 'text-red-400'} mb-2">
+                            ${envMatch ? '✅ Environnements cohérents' : '⚠️ INCOHÉRENCE DÉTECTÉE'}
+                        </div>
+                        <div class="text-sm text-gray-300 grid grid-cols-2 gap-2">
+                            <div>🌍 Environnement actuel: <span class="font-bold">${currentEnv}</span> (${envPrefix})</div>
+                            <div>💾 Environnement des données: <span class="font-bold">${dataEnvLabel}</span> ${dataEnv ? `(${dataEnv})` : ''}</div>
+                        </div>
+                        ${debugData.full_data?._saved_at ? `<div class="text-xs text-gray-400 mt-2">Sauvegardé le: ${new Date(debugData.full_data._saved_at).toLocaleString()}</div>` : ''}
+                        ${debugData.full_data?._migrated_from ? `<div class="text-xs text-yellow-400 mt-1">⚠️ Migré depuis: ${debugData.full_data._migrated_from === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'} le ${new Date(debugData.full_data._migrated_at).toLocaleString()}</div>` : ''}
                     </div>
 
                     <div class="mb-4 text-sm text-gray-300 grid grid-cols-2 gap-2">
