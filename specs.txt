@@ -22,7 +22,7 @@ Frontend:
 
 Backend:
 - Flask (Python 3.x)
-- SQLite pour persistance
+- Replit Database (Key-Value Store) pour persistance
 - Google OAuth 2.0
 - API REST pour sync cloud
 
@@ -213,7 +213,7 @@ FONCTIONNALITÉS PRINCIPALES
 STRUCTURE DONNÉES
 -----------------
 
-localStorage keys:
+localStorage keys (cache frontend uniquement):
 - middleEarthLocations: { locations: [...] }
 - middleEarthRegions: { regions: [...] }
 - middleEarthCharacters: { characters: [...] }
@@ -223,10 +223,25 @@ localStorage keys:
 - adventurers_position: { x, y }
 - filtersByMap: { [mapId]: { colors, visited, known } }
 
-Cloud (SQLite):
-- users: id, google_id, email, name
-- travel_contexts: id, user_id, name, data_json
-- api_usage: id, user_id, endpoint, tokens_used
+Cloud (Replit Database - Key-Value Store):
+Structure des clés:
+- users: dict {google_id: {google_id, name, email, created_at}}
+- travel_contexts: dict {google_id_env_prefix: json_string}
+  
+Format des données stockées:
+{
+  "locations": { "locations": [...] },
+  "regions": { "regions": [...] },
+  "calendar": { "day": int, "month": int, "season": string },
+  "settings": { "availableMaps": [...], "activeMapUrl": string },
+  "journal": { "voyages": [...] },
+  "position": { "x": int, "y": int, "mapId": string },
+  "filtersByMap": { [mapId]: {...} },
+  "characters": { "characters": [...] },
+  "_environment": "dev_" | "prod_",
+  "_saved_at": ISO_timestamp,
+  "_sync_timestamp": milliseconds_epoch
+}
 
 Format Location:
 {
@@ -271,11 +286,88 @@ API ENDPOINTS
 -------------
 
 GET  /api/auth/user              # Info utilisateur connecté
-GET  /api/user/data              # Récupération données cloud
-PUT  /api/user/data              # Sauvegarde données cloud
+GET  /api/environment            # Déterminer environnement (dev/prod)
+GET  /api/user/data?env=X_       # Récupération données cloud (X=dev|prod)
+GET  /api/user/data/debug?env=X_ # Debug données cloud brutes
+PUT  /api/user/data?env=X_       # Sauvegarde données cloud
 POST /api/upload/image           # Upload image
 GET  /api/images/library         # Liste images utilisateur
 POST /api/gemini/generate        # Génération texte IA
+
+GESTION DE LA PERSISTANCE
+-------------------------
+
+Principe de double stockage:
+
+1. STOCKAGE LOCAL (localStorage):
+   - Cache frontend pour performances
+   - Chargement immédiat au démarrage
+   - Persistance entre sessions navigateur
+   - NON synchronisé entre appareils
+
+2. STOCKAGE CLOUD (Replit Database):
+   - Source de vérité centrale
+   - Synchronisation multi-appareils
+   - Séparation dev/prod par préfixe (dev_, prod_)
+   - Détection automatique d'environnement
+
+3. FLUX DE SYNCHRONISATION:
+   
+   Chargement initial:
+   - Démarrage → localStorage vide (structure par défaut)
+   - Authentification Google réussie
+   - Détection environnement (dev_ ou prod_)
+   - Chargement depuis Replit DB
+   - Application données → localStorage
+   - Rendu interface
+   
+   Sauvegarde:
+   - Modification données (lieu, région, etc.)
+   - Sauvegarde immédiate → localStorage
+   - Marquage "unsaved" (icône cloud)
+   - Délai 2 secondes (debounce)
+   - Collecte contexte complet
+   - Sauvegarde → Replit DB avec préfixe env
+   - Marquage "saved" (icône cloud verte)
+
+4. DÉTECTION ENVIRONNEMENT:
+   
+   Ordre de priorité:
+   a) Variable ENV (Secrets Replit)
+      - "production" ou "prod" → prod_
+      - "development" ou "dev" → dev_
+   
+   b) Détection automatique
+      - REPLIT_DEPLOYMENT=1 → prod_
+      - Hostname contient ".replit.app" ET pas REPLIT_DEV_DOMAIN → prod_
+      - Sinon → dev_
+
+5. GESTION DES CONFLITS:
+   
+   - Timestamp de synchronisation (_sync_timestamp)
+   - Détection: cloud_timestamp > client_timestamp
+   - Résolution manuelle proposée à l'utilisateur
+   - Option force_overwrite disponible
+
+6. STRUCTURE REPLIT DATABASE:
+   
+   Clés:
+   - "users": dict des utilisateurs
+   - "travel_contexts": dict des contextes de voyage
+   
+   Format clé contexte: "{google_id}_{env_prefix}"
+   Exemples:
+   - "101960341020312309143_dev_"
+   - "101960341020312309143_prod_"
+   
+   Valeur: JSON string complet du contexte
+
+7. MÉTADONNÉES:
+   
+   Chaque sauvegarde inclut:
+   - _environment: préfixe utilisé
+   - _saved_at: timestamp ISO format
+   - _sync_timestamp: milliseconds epoch pour conflits
 
 RÈGLES MÉTIER
 -------------
@@ -314,6 +406,7 @@ Frontend:
 
 Backend:
 - Flask
+- replit (Replit Database client)
 - google-auth-oauthlib
 - google-auth
 - Pillow (image processing)
@@ -323,28 +416,51 @@ DÉPLOIEMENT
 
 Port: 8080 (Flask)
 Environnement: Replit
-Variables requises:
+Variables requises (Secrets):
 - GOOGLE_CLIENT_ID
 - GOOGLE_CLIENT_SECRET
 - GOOGLE_API_KEY (Gemini)
+- ENV (optionnel): "production" ou "development" pour forcer l'environnement
 
 Workflow Run:
 python app.py
 
-ÉVOLUTIONS RÉCENTES (v1.1.4)
+Environnements:
+- Développement: REPLIT_DEV_DOMAIN présent → préfixe "dev_"
+- Production: Deployment Replit → préfixe "prod_"
+- Override: Variable ENV dans Secrets pour forcer
+
+Note: Replit Database est automatiquement disponible, aucune configuration requise
+
+ÉVOLUTIONS RÉCENTES (v1.1.5)
 ----------------------------
 
-1. Gestion multi-cartes complète
-2. Configuration échelle par carte
-3. Filtres persistants par carte
-4. Upload et resize automatique images (5000px)
-5. Bibliothèque images utilisateur
-6. Amélioration détection conflits sync
-7. Optimisation rendering mobile
-8. Refactoring ZoomManager (réutilisation instance)
-9. Fix synchronisation window.scale
-10. Amélioration gestion mapId (locations/regions)
-11. Correction import JSON sur tablette (accept: ".json,application/json")
+1. Migration vers Replit Database (v1.1.5)
+   - Remplacement SQLite par Replit Key-Value Store
+   - Séparation environnements dev/prod automatique
+   - Détection environnement multicritères
+   - ReplitDBManager pour abstraction persistance
+
+2. Améliorations synchronisation (v1.1.5)
+   - Endpoint /api/environment pour détection auto
+   - Endpoint /api/user/data/debug pour diagnostics
+   - Affichage environnement actuel dans modale debug
+   - Meilleure gestion des conflits de synchronisation
+
+3. Corrections majeures (v1.1.5)
+   - Fix sauvegarde lieux/régions (triple sync locale→window→dataManager)
+   - Fix chargement initial (structure vide → cloud → rendu)
+   - Fix persistance position aventuriers avec mapId
+   - Fix import JSON tablette (accept: ".json,application/json")
+
+4. Fonctionnalités précédentes (v1.1.4)
+   - Gestion multi-cartes complète
+   - Configuration échelle par carte
+   - Filtres persistants par carte
+   - Upload et resize automatique images (5000px)
+   - Bibliothèque images utilisateur
+   - Optimisation rendering mobile
+   - Refactoring ZoomManager
 
 SYNCHRONISATION DONNÉES (CRITIQUE)
 ----------------------------------
@@ -397,5 +513,17 @@ PROBLÈMES RÉSOLUS
    - Cause: dataManager.locationsData non synchronisé avec locationsData locale
    - Solution: Triple sync (locale → window → dataManager) avant saveToLocal()
    - Fichiers: main.js (handleLocationDragEnd, confirmColorChange)
+
+3. Perte de données après republish (v1.1.5):
+   - Problème: Données perdues lors du déploiement en production
+   - Cause: SQLite non persistant sur Replit Deployments
+   - Solution: Migration vers Replit Database avec séparation dev/prod
+   - Fichiers: app.py, replit_db_manager.py, auth-manager.js
+
+4. Chargement initial lent (v1.1.5):
+   - Problème: Données par défaut chargées avant le cloud
+   - Cause: loadInitialLocations chargeait depuis localStorage/URL
+   - Solution: Structure vide → attente authentification → chargement cloud
+   - Fichiers: data-manager.js, auth-manager.js
 
 ================================================================================
