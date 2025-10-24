@@ -15,8 +15,16 @@ import mimetypes
 from PIL import Image
 import io
 from replit_db_manager import ReplitDBManager
-from google.cloud import storage
 import base64
+
+# Import conditionnel de Google Cloud Storage
+try:
+    from google.cloud import storage as gcs_storage
+    STORAGE_AVAILABLE = True
+except ImportError:
+    print("⚠️ Google Cloud Storage non disponible")
+    STORAGE_AVAILABLE = False
+    gcs_storage = None
 
 app = Flask(__name__)
 
@@ -27,21 +35,24 @@ db_manager = ReplitDBManager()
 storage_client = None
 bucket_name = None
 
-try:
-    storage_client = storage.Client()
-    # Récupérer le bucket ID depuis .replit
-    import re
-    with open('.replit', 'r') as f:
-        replit_config = f.read()
-        match = re.search(r'defaultBucketID\s*=\s*"([^"]+)"', replit_config)
-        if match:
-            bucket_name = match.group(1)
-            print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
-        else:
-            print("⚠️ Bucket ID non trouvé dans .replit")
-except Exception as e:
-    print(f"⚠️ Object Storage non disponible: {e}")
-    print("📁 Utilisation du système de fichiers local")
+if STORAGE_AVAILABLE:
+    try:
+        storage_client = gcs_storage.Client()
+        # Récupérer le bucket ID depuis .replit
+        import re
+        with open('.replit', 'r') as f:
+            replit_config = f.read()
+            match = re.search(r'defaultBucketID\s*=\s*"([^"]+)"', replit_config)
+            if match:
+                bucket_name = match.group(1)
+                print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
+            else:
+                print("⚠️ Bucket ID non trouvé dans .replit")
+    except Exception as e:
+        print(f"⚠️ Object Storage non disponible: {e}")
+        print("📁 Utilisation du système de fichiers local")
+else:
+    print("📁 Google Cloud Storage non installé, utilisation du système de fichiers local")
 
 # Utiliser une clé secrète fixe en développement pour la persistance
 if os.environ.get('REPLIT_DEV_DOMAIN'):
