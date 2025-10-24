@@ -952,6 +952,32 @@ def session_test():
 @app.route('/api/environment')
 def get_environment():
     """Déterminer l'environnement actuel (dev ou prod)"""
+    # PRIORITÉ 1 : Variable d'environnement ENV explicite (à configurer dans Secrets)
+    env_override = os.environ.get('ENV', '').lower()
+    if env_override in ['production', 'prod']:
+        print("🌍 Environnement forcé à PRODUCTION via ENV")
+        return jsonify({
+            'environment': 'production',
+            'prefix': 'prod_',
+            'is_deployment': True,
+            'detection_method': {
+                'source': 'ENV variable',
+                'value': env_override
+            }
+        })
+    elif env_override in ['development', 'dev']:
+        print("🌍 Environnement forcé à DEVELOPMENT via ENV")
+        return jsonify({
+            'environment': 'development',
+            'prefix': 'dev_',
+            'is_deployment': False,
+            'detection_method': {
+                'source': 'ENV variable',
+                'value': env_override
+            }
+        })
+    
+    # PRIORITÉ 2 : Détection automatique basée sur plusieurs facteurs
     # Méthode 1 : REPLIT_DEPLOYMENT est défini à "1" lors d'un déploiement Replit
     is_deployment_var = os.environ.get('REPLIT_DEPLOYMENT') == '1'
     
@@ -968,6 +994,8 @@ def get_environment():
     is_deployment = is_deployment_var or (is_production_domain and not is_dev_domain)
     
     env_prefix = 'prod_' if is_deployment else 'dev_'
+    
+    print(f"🌍 Détection automatique : {'PRODUCTION' if is_deployment else 'DEVELOPMENT'}")
     
     return jsonify({
         'environment': 'production' if is_deployment else 'development',

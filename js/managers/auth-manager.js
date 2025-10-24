@@ -382,6 +382,23 @@ class AuthManager {
         // Collecter les paramètres de l'application
         if (window.settingsManager) {
             data.settings = window.settingsManager.getAllSettings();
+            
+            // S'assurer que les cartes sont incluses
+            if (!data.settings.availableMaps && window.settingsManager.availableMaps) {
+                data.settings.availableMaps = window.settingsManager.availableMaps;
+            }
+            if (!data.settings.activeMapUrl && window.settingsManager.activeMapUrl) {
+                data.settings.activeMapUrl = window.settingsManager.activeMapUrl;
+            }
+            if (!data.settings.activeMapName && window.settingsManager.activeMapName) {
+                data.settings.activeMapName = window.settingsManager.activeMapName;
+            }
+            
+            this.logAuth("⚙️ Paramètres collectés avec cartes:", {
+                availableMaps_count: data.settings.availableMaps?.length || 0,
+                activeMapUrl: data.settings.activeMapUrl,
+                activeMapName: data.settings.activeMapName
+            });
         }
 
         // Collecter le journal de voyage depuis localStorage
@@ -551,9 +568,30 @@ class AuthManager {
         }
 
         if (data.settings && window.settingsManager) {
-            this.logAuth("⚙️ Application des paramètres");
+            this.logAuth("⚙️ Application des paramètres depuis le cloud");
+            
+            // Restaurer TOUTES les données de settings
             window.settingsManager.loadSettings(data.settings);
-            this.logAuth("✅ Paramètres appliqués");
+            
+            // S'assurer que les cartes sont bien restaurées
+            if (data.settings.availableMaps) {
+                window.settingsManager.availableMaps = data.settings.availableMaps;
+                localStorage.setItem('availableMaps', JSON.stringify(data.settings.availableMaps));
+                this.logAuth(`🗺️ ${data.settings.availableMaps.length} carte(s) restaurée(s) depuis le cloud`);
+            }
+            
+            if (data.settings.activeMapUrl) {
+                window.settingsManager.activeMapUrl = data.settings.activeMapUrl;
+                localStorage.setItem('activeMapUrl', data.settings.activeMapUrl);
+                this.logAuth(`🗺️ Carte active restaurée: ${data.settings.activeMapUrl}`);
+            }
+            
+            if (data.settings.activeMapName) {
+                window.settingsManager.activeMapName = data.settings.activeMapName;
+                localStorage.setItem('activeMapName', data.settings.activeMapName);
+            }
+            
+            this.logAuth("✅ Paramètres et cartes appliqués depuis le cloud");
         }
 
         if (data.journal) {
@@ -1195,11 +1233,14 @@ class AuthManager {
             }
         }
         if (data.settings) {
+            // Sauvegarder TOUTES les données de settings
             if (data.settings.availableMaps) {
                 localStorage.setItem('availableMaps', JSON.stringify(data.settings.availableMaps));
+                this.logAuth(`💾 ${data.settings.availableMaps.length} carte(s) sauvegardée(s) dans localStorage`);
             }
             if (data.settings.activeMapUrl) {
                 localStorage.setItem('activeMapUrl', data.settings.activeMapUrl);
+                this.logAuth(`💾 Carte active sauvegardée: ${data.settings.activeMapUrl}`);
             }
             if (data.settings.activeMapName) {
                 localStorage.setItem('activeMapName', data.settings.activeMapName);
@@ -1213,7 +1254,6 @@ class AuthManager {
             if (data.settings.narrationStyle) {
                 localStorage.setItem('narrationStyle', data.settings.narrationStyle);
             }
-            // Ajouter d'autres paramètres si nécessaire
         }
         if (data.calendar) {
             if (data.calendar.currentSeason) {
