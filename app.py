@@ -926,15 +926,30 @@ def session_test():
 @app.route('/api/environment')
 def get_environment():
     """Déterminer l'environnement actuel (dev ou prod)"""
-    # REPLIT_DEPLOYMENT est défini à "1" lors d'un déploiement Replit
-    is_deployment = os.environ.get('REPLIT_DEPLOYMENT') == '1'
+    # Méthode 1 : REPLIT_DEPLOYMENT est défini à "1" lors d'un déploiement Replit
+    is_deployment_var = os.environ.get('REPLIT_DEPLOYMENT') == '1'
+    
+    # Méthode 2 : Vérifier le hostname - les déploiements utilisent .replit.app
+    hostname = request.host
+    is_production_domain = '.replit.app' in hostname and not '.replit.dev' in hostname
+    
+    # Méthode 3 : Vérifier si on est en mode debug (False en production normalement)
+    is_not_debug = not app.debug
+    
+    # On considère qu'on est en production si AU MOINS un des indicateurs est vrai
+    is_deployment = is_deployment_var or is_production_domain or (is_production_domain and is_not_debug)
     
     env_prefix = 'prod_' if is_deployment else 'dev_'
     
     return jsonify({
         'environment': 'production' if is_deployment else 'development',
         'prefix': env_prefix,
-        'is_deployment': is_deployment
+        'is_deployment': is_deployment,
+        'detection_method': {
+            'deployment_var': is_deployment_var,
+            'production_domain': is_production_domain,
+            'hostname': hostname
+        }
     })
 
 @app.route('/api/gemini/config')
