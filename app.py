@@ -3,7 +3,6 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from google_auth_oauthlib.flow import Flow
-import sqlite3
 import json
 import os
 from datetime import datetime
@@ -15,8 +14,12 @@ from werkzeug.datastructures import FileStorage
 import mimetypes
 from PIL import Image
 import io
+from replit_db_manager import ReplitDBManager
 
 app = Flask(__name__)
+
+# Initialiser le gestionnaire de base de données Replit
+db_manager = ReplitDBManager()
 
 # Utiliser une clé secrète fixe en développement pour la persistance
 if os.environ.get('REPLIT_DEV_DOMAIN'):
@@ -210,30 +213,7 @@ def generate_unique_filename(original_filename, category='general'):
 
 def get_or_create_user(google_id, name=None, email=None):
     """Obtenir ou créer un utilisateur basé sur l'ID Google"""
-    conn = get_db_connection()
-
-    user = conn.execute(
-        'SELECT * FROM users WHERE google_id = ?', 
-        (google_id,)
-    ).fetchone()
-
-    if user is None:
-        # Créer un nouvel utilisateur
-        cursor = conn.cursor()
-        cursor.execute(
-            'INSERT INTO users (google_id, name, email) VALUES (?, ?, ?)',
-            (google_id, name, email)
-        )
-        user_id = cursor.lastrowid
-        conn.commit()
-
-        user = conn.execute(
-            'SELECT * FROM users WHERE id = ?', 
-            (user_id,)
-        ).fetchone()
-
-    conn.close()
-    return dict(user)
+    return db_manager.get_or_create_user(google_id, name, email)
 
 @app.route('/login')
 def login_page():
@@ -465,26 +445,19 @@ def view_shared_context(share_token):
 @app.route('/api/user/data', methods=['GET'])
 def get_user_data():
     """Obtenir les données personnelles de l'utilisateur (lieux, régions, etc.)"""
-    if 'user_id' not in session:
+    if 'user_id' not in session or 'google_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
     # Récupérer le préfixe d'environnement
     env_prefix = request.args.get('env', 'prod_')
-    context_name = f"_user_data_{env_prefix}"
-
-    conn = get_db_connection()
-
-    # Chercher les données utilisateur avec le préfixe d'environnement
-    user_data = conn.execute(
-        'SELECT data_json FROM travel_contexts WHERE user_id = ? AND name = ?',
-        (session['user_id'], context_name)
-    ).fetchone()
-
+    google_id = session['google_id']
+    
+    user_data = db_manager.get_user_data(google_id, env_prefix)
+    
     # Si aucune donnée n'existe, créer un jeu de données vide
     if user_data is None:
-        print(f"🆕 Création automatique du jeu de données {context_name} pour user {session['user_id']}")
+        print(f"🆕 Création automatique des données {env_prefix} pour {google_id}")
         
-        # Créer un jeu de données vide
         empty_data = {
             'locations': {'locations': []},
             'regions': {'regions': []},
@@ -492,83 +465,61 @@ def get_user_data():
             'settings': {},
             'journal': {},
             'position': {},
-            'filtersByMap': {}
+            'filtersByMap': {},
+            '_environment': env_prefix
         }
         
-        cursor = conn.cursor()
-        cursor.execute(
-            'INSERT INTO travel_contexts (user_id, name, data_json, updated_at) VALUES (?, ?, ?, ?)',
-            (session['user_id'], context_name, json.dumps(empty_data), datetime.now())
-        )
-        conn.commit()
-        
-        user_data_json = json.dumps(empty_data)
-        print(f"✅ Jeu de données {context_name} créé pour user {session['user_id']}")
-    else:
-        user_data_json = user_data['data_json']
-
-    conn.close()
-
-    return jsonify(json.loads(user_data_json))
+        db_manager.save_user_data(google_id, empty_data, env_prefix)
+        return jsonify(empty_data)
+    
+    return jsonify(user_data)
 
 @app.route('/api/user/data/debug', methods=['GET'])
 def debug_user_data():
     """Endpoint de debug pour visualiser les données cloud brutes"""
-    if 'user_id' not in session:
+    if 'user_id' not in session or 'google_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
     # Récupérer le préfixe d'environnement
     env_prefix = request.args.get('env', 'prod_')
-    context_name = f"_user_data_{env_prefix}"
-
-    conn = get_db_connection()
-
-    # Récupérer TOUTES les infos du contexte utilisateur avec préfixe
-    user_data = conn.execute(
-        'SELECT * FROM travel_contexts WHERE user_id = ? AND name = ?',
-        (session['user_id'], context_name)
-    ).fetchone()
-
-    conn.close()
+    google_id = session['google_id']
+    
+    user_data = db_manager.get_user_data(google_id, env_prefix)
 
     if user_data is None:
         return jsonify({
             'status': 'empty',
             'message': 'Aucune donnée cloud trouvée pour cet utilisateur',
-            'user_id': session['user_id']
+            'google_id': google_id
         })
 
-    # Parser le JSON pour afficher de manière structurée
-    parsed_data = json.loads(user_data['data_json'])
-    
     # Formater en texte lisible
-    raw_json_text = json.dumps(parsed_data, indent=2, ensure_ascii=False)
+    raw_json_text = json.dumps(user_data, indent=2, ensure_ascii=False)
 
     return jsonify({
         'status': 'ok',
-        'user_id': session['user_id'],
-        'record_id': user_data['id'],
-        'created_at': user_data['created_at'],
-        'updated_at': user_data['updated_at'],
+        'google_id': google_id,
+        'created_at': user_data.get('_saved_at', 'unknown'),
+        'updated_at': user_data.get('_saved_at', 'unknown'),
         'data_summary': {
-            'locations_count': len(parsed_data.get('locations', {}).get('locations', [])),
-            'regions_count': len(parsed_data.get('regions', {}).get('regions', [])),
-            'has_calendar': 'calendar' in parsed_data,
-            'has_settings': 'settings' in parsed_data,
-            'has_journal': 'journal' in parsed_data,
-            'has_position': 'position' in parsed_data,
-            'has_filtersByMap': 'filtersByMap' in parsed_data,
-            'filtersByMap_count': len(parsed_data.get('filtersByMap', {})) if 'filtersByMap' in parsed_data else 0
+            'locations_count': len(user_data.get('locations', {}).get('locations', [])),
+            'regions_count': len(user_data.get('regions', {}).get('regions', [])),
+            'has_calendar': 'calendar' in user_data,
+            'has_settings': 'settings' in user_data,
+            'has_journal': 'journal' in user_data,
+            'has_position': 'position' in user_data,
+            'has_filtersByMap': 'filtersByMap' in user_data,
+            'filtersByMap_count': len(user_data.get('filtersByMap', {}))
         },
-        'full_data': parsed_data,
+        'full_data': user_data,
         'raw_json_text': raw_json_text,
-        'raw_json_size': len(user_data['data_json'])
+        'raw_json_size': len(json.dumps(user_data))
     })
 
 @app.route('/api/user/data', methods=['PUT'])
 def update_user_data():
     """Mettre à jour les données personnelles de l'utilisateur"""
-    if 'user_id' not in session:
+    if 'user_id' not in session or 'google_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
     data = request.json
@@ -577,86 +528,32 @@ def update_user_data():
 
     # Récupérer le préfixe d'environnement
     env_prefix = request.args.get('env', 'prod_')
-    context_name = f"_user_data_{env_prefix}"
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    # Vérifier si un enregistrement de données utilisateur existe déjà avec préfixe
-    existing = conn.execute(
-        'SELECT data_json, updated_at FROM travel_contexts WHERE user_id = ? AND name = ?',
-        (session['user_id'], context_name)
-    ).fetchone()
-
+    google_id = session['google_id']
+    
     # Gérer les conflits de synchronisation
     force_overwrite = data.get('_force_overwrite', False)
-    client_timestamp = data.get('_sync_timestamp')  # Peut être int (Unix) ou string (ISO)
-
-    conflict_detected = False
-    cloud_data_json = None
-
-    if existing and not force_overwrite:
-        cloud_data_json = existing['data_json']
-        cloud_timestamp_str = existing['updated_at']
-
-        if client_timestamp and cloud_timestamp_str:
-            try:
-                # Convertir le timestamp client en datetime
-                if isinstance(client_timestamp, (int, float)):
-                    # Timestamp Unix en millisecondes
-                    client_dt = datetime.fromtimestamp(client_timestamp / 1000)
-                elif isinstance(client_timestamp, str):
-                    # Format ISO string
-                    client_dt = datetime.fromisoformat(client_timestamp.replace('Z', '+00:00'))
-                else:
-                    raise ValueError(f"Format de timestamp non supporté: {type(client_timestamp)}")
-
-                # Convertir le timestamp cloud en datetime
-                cloud_dt = datetime.fromisoformat(cloud_timestamp_str.replace('Z', '+00:00'))
-
-                if cloud_dt > client_dt:
-                    conflict_detected = True
-                    print(f"⚠️ Conflit détecté pour user {session['user_id']}: cloud={cloud_timestamp_str}, client={client_timestamp}")
-                    return jsonify({
-                        'conflict_detected': True,
-                        'cloud_data': json.loads(cloud_data_json),
-                        'cloud_timestamp': cloud_timestamp_str
-                    }), 200
-            except (ValueError, TypeError) as e:
-                print(f"❌ Erreur de parsing de timestamp: {e}")
-                # Continuer sans détection de conflit si le timestamp est invalide
-                pass
-
-    # Pas de conflit ou force_overwrite: sauvegarder
-    # Préparer les données pour la sauvegarde
-    data_to_save = data.copy()
-    # Assurer que le timestamp du client est bien présent dans les données sauvegardées,
-    # même s'il n'était pas utilisé pour la détection (cas où il n'y avait pas de conflit)
-    if client_timestamp:
-        data_to_save['_sync_timestamp'] = client_timestamp
-
-    data_json_to_save = json.dumps(data_to_save)
-
-    if existing:
-        # Mettre à jour l'enregistrement existant
-        cursor.execute(
-            'UPDATE travel_contexts SET data_json = ?, updated_at = ? WHERE user_id = ? AND name = ?',
-            (data_json_to_save, datetime.now(), session['user_id'], context_name)
-        )
-        print(f"✅ Données {context_name} mises à jour pour user {session['user_id']}")
-    else:
-        # Créer un nouvel enregistrement
-        cursor.execute(
-            'INSERT INTO travel_contexts (user_id, name, data_json, updated_at) VALUES (?, ?, ?, ?)',
-            (session['user_id'], context_name, data_json_to_save, datetime.now())
-        )
-        print(f"🆕 Données {context_name} créées pour user {session['user_id']}")
-
-    conn.commit()
-    conn.close()
-
-    print(f"✅ Données utilisateur {session['user_id']} sauvegardées dans {context_name} (force={force_overwrite}, conflict={conflict_detected})")
-    return jsonify({'success': True, 'conflict_detected': conflict_detected}), 200
+    
+    if not force_overwrite:
+        # Vérifier les données existantes
+        existing_data = db_manager.get_user_data(google_id, env_prefix)
+        
+        if existing_data:
+            client_timestamp = data.get('_sync_timestamp')
+            cloud_timestamp = existing_data.get('_sync_timestamp')
+            
+            if client_timestamp and cloud_timestamp and cloud_timestamp > client_timestamp:
+                print(f"⚠️ Conflit détecté pour {google_id}")
+                return jsonify({
+                    'conflict_detected': True,
+                    'cloud_data': existing_data,
+                    'cloud_timestamp': cloud_timestamp
+                }), 200
+    
+    # Sauvegarder les données
+    db_manager.save_user_data(google_id, data, env_prefix)
+    
+    print(f"✅ Données sauvegardées pour {google_id} ({env_prefix})")
+    return jsonify({'success': True, 'conflict_detected': False}), 200
 
 # Routes pour servir les fichiers statiques existants
 @app.route('/<path:filename>')
