@@ -833,20 +833,20 @@ class InfoBoxManager {
                     alert("Erreur : impossible de sauvegarder la région.");
                     return;
                 }
-                
+
                 console.log(`💾 [SAVE] Région AVANT mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
-                
+
                 // Mettre à jour l'objet complet dans le tableau
                 this.dataManager.regionsData.regions[regionIndex] = { ...this.currentItem };
-                
+
                 console.log(`💾 [SAVE] Région APRÈS mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
-                
+
                 // Synchroniser avec la variable globale
                 window.regionsData = this.dataManager.regionsData;
-                
+
                 // Sauvegarder
                 this.dataManager.saveRegionsToLocal();
-                
+
                 // Re-render
                 if (typeof renderRegions === 'function') {
                     renderRegions();
@@ -860,20 +860,20 @@ class InfoBoxManager {
                     alert("Erreur : impossible de sauvegarder le lieu.");
                     return;
                 }
-                
+
                 console.log(`💾 [SAVE] Lieu AVANT mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
-                
+
                 // Mettre à jour l'objet complet dans le tableau
                 this.dataManager.locationsData.locations[locationIndex] = { ...this.currentItem };
-                
+
                 console.log(`💾 [SAVE] Lieu APRÈS mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
-                
+
                 // Synchroniser avec la variable globale
                 window.locationsData = this.dataManager.locationsData;
-                
+
                 // Sauvegarder
                 this.dataManager.saveLocationsToLocal();
-                
+
                 // Re-render
                 if (typeof renderLocations === 'function') {
                     renderLocations();
@@ -1331,33 +1331,56 @@ class InfoBoxManager {
         }
 
         if (this.currentType === 'location') {
-            const index = this.dataManager.locationsData.locations.findIndex(l => l.id === this.currentItem.id);
+            // Rechercher l'index dans window.locationsData (source de vérité)
+            const index = window.locationsData.locations.findIndex(l => String(l.id) === String(this.currentItem.id));
             if (index !== -1) {
-                this.dataManager.locationsData.locations.splice(index, 1);
-                window.locationsData = this.dataManager.locationsData; // Synchroniser avec la variable globale
+                console.log(`🗑️ Suppression du lieu: ${itemName} (index: ${index})`);
+
+                // Supprimer de window.locationsData
+                window.locationsData.locations.splice(index, 1);
+
+                // Synchroniser avec dataManager
+                this.dataManager.locationsData = window.locationsData;
+
+                // Sauvegarder
                 this.dataManager.saveLocationsToLocal();
-                if (typeof renderLocations === 'function') {
-                    renderLocations();
+
+                // Re-render
+                if (typeof window.renderLocations === 'function') {
+                    window.renderLocations();
                 }
+
+                console.log(`✅ Lieu supprimé avec succès`);
+            } else {
+                console.error(`❌ Lieu non trouvé pour suppression: ${this.currentItem.id}`);
             }
         } else if (this.currentType === 'region') {
-            const index = this.dataManager.regionsData.regions.findIndex(r => r.id === this.currentItem.id);
+            // Rechercher l'index dans window.regionsData (source de vérité)
+            const index = window.regionsData.regions.findIndex(r => String(r.id) === String(this.currentItem.id));
             if (index !== -1) {
-                this.dataManager.regionsData.regions.splice(index, 1);
-                window.regionsData = this.dataManager.regionsData; // Synchroniser avec la variable globale
+                console.log(`🗑️ Suppression de la région: ${itemName} (index: ${index})`);
+
+                // Supprimer de window.regionsData
+                window.regionsData.regions.splice(index, 1);
+
+                // Synchroniser avec dataManager
+                this.dataManager.regionsData = window.regionsData;
+
+                // Sauvegarder
                 this.dataManager.saveRegionsToLocal();
-                if (typeof renderRegions === 'function') {
-                    renderRegions();
+
+                // Re-render
+                if (typeof window.renderRegions === 'function') {
+                    window.renderRegions();
                 }
-            }
-        } else if (this.currentType === 'character') {
-            if (window.charactersManager) {
-                window.charactersManager.deleteCharacter(this.currentItem.id);
+
+                console.log(`✅ Région supprimée avec succès`);
+            } else {
+                console.error(`❌ Région non trouvée pour suppression: ${this.currentItem.id}`);
             }
         }
 
         this.hideInfoBox();
-        console.log(`🗑️ ${itemName} supprimé`);
     }
 
     // Méthodes ajoutées pour la gestion spécifique des éditions
