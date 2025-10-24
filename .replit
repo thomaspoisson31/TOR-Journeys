@@ -37,3 +37,6 @@ externalPort = 80
 
 [agent]
 expertMode = true
+
+[objectStorage]
+defaultBucketID = "replit-objstore-a6aeacc0-f0a7-4bb6-8baf-a326a5519f37"
