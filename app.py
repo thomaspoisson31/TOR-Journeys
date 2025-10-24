@@ -480,12 +480,36 @@ def get_user_data():
         (session['user_id'], context_name)
     ).fetchone()
 
+    # Si aucune donnée n'existe, créer un jeu de données vide
+    if user_data is None:
+        print(f"🆕 Création automatique du jeu de données {context_name} pour user {session['user_id']}")
+        
+        # Créer un jeu de données vide
+        empty_data = {
+            'locations': {'locations': []},
+            'regions': {'regions': []},
+            'calendar': {},
+            'settings': {},
+            'journal': {},
+            'position': {},
+            'filtersByMap': {}
+        }
+        
+        cursor = conn.cursor()
+        cursor.execute(
+            'INSERT INTO travel_contexts (user_id, name, data_json, updated_at) VALUES (?, ?, ?, ?)',
+            (session['user_id'], context_name, json.dumps(empty_data), datetime.now())
+        )
+        conn.commit()
+        
+        user_data_json = json.dumps(empty_data)
+        print(f"✅ Jeu de données {context_name} créé pour user {session['user_id']}")
+    else:
+        user_data_json = user_data['data_json']
+
     conn.close()
 
-    if user_data is None:
-        return jsonify({'error': 'Aucune donnée utilisateur trouvée'}), 404
-
-    return jsonify(json.loads(user_data['data_json']))
+    return jsonify(json.loads(user_data_json))
 
 @app.route('/api/user/data/debug', methods=['GET'])
 def debug_user_data():
@@ -619,17 +643,19 @@ def update_user_data():
             'UPDATE travel_contexts SET data_json = ?, updated_at = ? WHERE user_id = ? AND name = ?',
             (data_json_to_save, datetime.now(), session['user_id'], context_name)
         )
+        print(f"✅ Données {context_name} mises à jour pour user {session['user_id']}")
     else:
         # Créer un nouvel enregistrement
         cursor.execute(
             'INSERT INTO travel_contexts (user_id, name, data_json, updated_at) VALUES (?, ?, ?, ?)',
             (session['user_id'], context_name, data_json_to_save, datetime.now())
         )
+        print(f"🆕 Données {context_name} créées pour user {session['user_id']}")
 
     conn.commit()
     conn.close()
 
-    print(f"✅ Données utilisateur {session['user_id']} sauvegardées (force={force_overwrite}, conflict={conflict_detected})")
+    print(f"✅ Données utilisateur {session['user_id']} sauvegardées dans {context_name} (force={force_overwrite}, conflict={conflict_detected})")
     return jsonify({'success': True, 'conflict_detected': conflict_detected}), 200
 
 # Routes pour servir les fichiers statiques existants
@@ -931,13 +957,15 @@ def get_environment():
     
     # Méthode 2 : Vérifier le hostname - les déploiements utilisent .replit.app
     hostname = request.host
-    is_production_domain = '.replit.app' in hostname and not '.replit.dev' in hostname
+    is_production_domain = '.replit.app' in hostname
     
-    # Méthode 3 : Vérifier si on est en mode debug (False en production normalement)
-    is_not_debug = not app.debug
+    # Méthode 3 : Vérifier la présence de REPLIT_DEV_DOMAIN (seulement en dev)
+    is_dev_domain = os.environ.get('REPLIT_DEV_DOMAIN') is not None
     
-    # On considère qu'on est en production si AU MOINS un des indicateurs est vrai
-    is_deployment = is_deployment_var or is_production_domain or (is_production_domain and is_not_debug)
+    # On est en production si :
+    # - REPLIT_DEPLOYMENT=1 OU
+    # - hostname contient .replit.app ET pas de REPLIT_DEV_DOMAIN
+    is_deployment = is_deployment_var or (is_production_domain and not is_dev_domain)
     
     env_prefix = 'prod_' if is_deployment else 'dev_'
     
@@ -948,6 +976,7 @@ def get_environment():
         'detection_method': {
             'deployment_var': is_deployment_var,
             'production_domain': is_production_domain,
+            'dev_domain': is_dev_domain,
             'hostname': hostname
         }
     })
