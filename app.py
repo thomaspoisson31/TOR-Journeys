@@ -15,11 +15,33 @@ import mimetypes
 from PIL import Image
 import io
 from replit_db_manager import ReplitDBManager
+from google.cloud import storage
+import base64
 
 app = Flask(__name__)
 
 # Initialiser le gestionnaire de base de données Replit
 db_manager = ReplitDBManager()
+
+# Initialiser Object Storage (automatique avec Replit)
+storage_client = None
+bucket_name = None
+
+try:
+    storage_client = storage.Client()
+    # Récupérer le bucket ID depuis .replit
+    import re
+    with open('.replit', 'r') as f:
+        replit_config = f.read()
+        match = re.search(r'defaultBucketID\s*=\s*"([^"]+)"', replit_config)
+        if match:
+            bucket_name = match.group(1)
+            print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
+        else:
+            print("⚠️ Bucket ID non trouvé dans .replit")
+except Exception as e:
+    print(f"⚠️ Object Storage non disponible: {e}")
+    print("📁 Utilisation du système de fichiers local")
 
 # Utiliser une clé secrète fixe en développement pour la persistance
 if os.environ.get('REPLIT_DEV_DOMAIN'):
@@ -834,54 +856,53 @@ def upload_image():
         if category not in ['locations', 'regions', 'general', 'maps']:
             category = 'general'
 
-        # Générer un nom de fichier unique avec user_id
-        user_id = session['user_id']
-        google_id = session['google_id'] # Utiliser google_id pour la structure du dossier
+        # Générer un nom de fichier unique avec google_id
+        google_id = session['google_id']
         filename_base = secure_filename(file.filename)
         
         # Déterminer le format et l'extension
         img_format = Image.open(file).format
-        file.seek(0) # Rembobiner le fichier après l'avoir lu pour Image.open
+        file.seek(0)
         
         ext = get_file_extension(filename_base)
         if not ext:
             ext = mimetypes.guess_extension(file.content_type) or 'bin'
-        
-        image_format_to_save = img_format if img_format else ext.upper()
-        if image_format_to_save == 'JPG': image_format_to_save = 'JPEG'
-
-
-        # Structure de dossiers par utilisateur (google_id) et catégorie
-        upload_dir = f'uploads/{google_id}/{category}'
-        os.makedirs(upload_dir, exist_ok=True)
 
         # Générer le nom de fichier unique
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         unique_id = str(uuid.uuid4())
-        
         final_filename = f"{timestamp}_{unique_id}.{ext}"
-        file_path = os.path.join(upload_dir, final_filename)
+        
+        # Chemin dans Object Storage: google_id/category/filename
+        object_path = f"{google_id}/{category}/{final_filename}"
 
         # Redimensionner si la catégorie est 'maps'
         width, height = None, None
+        image_data = None
+        content_type = file.content_type
+        
         if category == 'maps':
             print(f"🗺️ Redimensionnement de la carte '{filename_base}' à 5000px de largeur...")
             try:
                 resized_buffer, target_width, target_height, saved_format = resize_map_image(file, target_width=5000)
                 
                 # Déterminer l'extension basée sur le format de sauvegarde
-                if saved_format == 'JPEG': ext = 'jpg'
-                elif saved_format == 'PNG': ext = 'png'
-                elif saved_format in ['WEBP', 'WebP']: ext = 'webp'
+                if saved_format == 'JPEG': 
+                    ext = 'jpg'
+                    content_type = 'image/jpeg'
+                elif saved_format == 'PNG': 
+                    ext = 'png'
+                    content_type = 'image/png'
+                elif saved_format in ['WEBP', 'WebP']: 
+                    ext = 'webp'
+                    content_type = 'image/webp'
                 
                 final_filename = f"{timestamp}_{unique_id}.{ext}"
-                file_path = os.path.join(upload_dir, final_filename)
-                
-                with open(file_path, 'wb') as f:
-                    f.write(resized_buffer.read())
+                object_path = f"{google_id}/{category}/{final_filename}"
+                image_data = resized_buffer.read()
                 
                 width, height = target_width, target_height
-                print(f"✅ Carte redimensionnée et sauvegardée: {file_path} ({width}x{height}px)")
+                print(f"✅ Carte redimensionnée: {final_filename} ({width}x{height}px)")
 
             except Exception as resize_e:
                 print(f"❌ Erreur lors du redimensionnement de la carte: {resize_e}")
@@ -889,27 +910,61 @@ def upload_image():
                     'error': f"Erreur lors du redimensionnement de la carte: {str(resize_e)}"
                 }), 500
         else:
-            # Pour les autres types d'images, sauvegarder normalement
-            file.save(file_path)
-            # Obtenir les dimensions de l'image sauvegardée
-            with Image.open(file_path) as img:
+            # Pour les autres types d'images
+            image_data = file.read()
+            with Image.open(io.BytesIO(image_data)) as img:
                 width, height = img.size
-        
-        # Générer l'URL publique
-        public_url = f'/uploads/{google_id}/{category}/{final_filename}'
 
-        # Log de l'upload
-        print(f"📸 Image uploadée: {category}/{final_filename} par user {user_id} ({width}x{height}px)")
+        # Upload vers Object Storage ou fallback vers système de fichiers
+        public_url = None
+        
+        if storage_client and bucket_name:
+            try:
+                # Upload vers Object Storage
+                bucket = storage_client.bucket(bucket_name)
+                blob = bucket.blob(object_path)
+                
+                blob.upload_from_string(
+                    image_data,
+                    content_type=content_type
+                )
+                
+                # Rendre le fichier public
+                blob.make_public()
+                
+                # Générer l'URL publique
+                public_url = blob.public_url
+                
+                print(f"📦 Image uploadée vers Object Storage: {object_path}")
+                print(f"🔗 URL publique: {public_url}")
+                
+            except Exception as storage_error:
+                print(f"⚠️ Erreur Object Storage: {storage_error}")
+                print("📁 Fallback vers système de fichiers local")
+                storage_client_available = False
+        
+        # Fallback: système de fichiers local
+        if not public_url:
+            upload_dir = f'uploads/{google_id}/{category}'
+            os.makedirs(upload_dir, exist_ok=True)
+            file_path = os.path.join(upload_dir, final_filename)
+            
+            with open(file_path, 'wb') as f:
+                f.write(image_data)
+            
+            public_url = f'/uploads/{google_id}/{category}/{final_filename}'
+            print(f"📁 Image sauvegardée localement: {file_path}")
 
         return jsonify({
             'success': True,
             'url': public_url,
             'filename': final_filename,
-            'size': os.path.getsize(file_path),
-            'user_id': user_id,
+            'size': len(image_data),
+            'user_id': session['user_id'],
             'category': category,
             'width': width,
             'height': height,
+            'storage': 'object_storage' if storage_client and bucket_name else 'local',
             'message': 'Image uploadée avec succès'
         })
 
