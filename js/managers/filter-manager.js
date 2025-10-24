@@ -17,19 +17,23 @@ export default class FilterManager {
         this.filteredRegions = [];
         this.filtersByMap = {}; // Filtres par carte (mapId -> filtres)
 
-        // Charger les filtres depuis localStorage si disponibles
+        console.log("🔍 FilterManager initialized");
+    }
+
+    // Méthode pour charger les filtres depuis localStorage (appelée après l'init complète)
+    loadFiltersFromStorage() {
         const savedFiltersByMap = localStorage.getItem('filtersByMap');
         if (savedFiltersByMap) {
             try {
                 this.filtersByMap = JSON.parse(savedFiltersByMap);
                 console.log("🔍 FilterManager: Filtres chargés depuis localStorage:", this.filtersByMap);
                 console.log(`🔍 FilterManager: ${Object.keys(this.filtersByMap).length} carte(s) avec filtres`);
+                return true;
             } catch (e) {
                 console.error("❌ Erreur lors du chargement des filtres depuis localStorage:", e);
             }
         }
-
-        console.log("🔍 FilterManager initialized");
+        return false;
     }
 
     // Initialiser les événements du gestionnaire de filtres
@@ -71,6 +75,9 @@ export default class FilterManager {
 
         console.log("✅ Filter listeners setup complete");
 
+        // IMPORTANT: Charger d'abord depuis localStorage avant les retries
+        this.loadFiltersFromStorage();
+        
         // IMPORTANT: Charger les filtres immédiatement si disponibles
         this.tryLoadFiltersForActiveMap();
     }
@@ -703,13 +710,19 @@ export default class FilterManager {
             console.log(`📥 [setAllFiltersByMap] Nombre de cartes: ${Object.keys(this.filtersByMap).length}`);
             console.log(`📥 [setAllFiltersByMap] Cartes disponibles:`, Object.keys(this.filtersByMap));
             
-            // Sauvegarder aussi dans localStorage pour persistance
+            // Sauvegarder IMMÉDIATEMENT dans localStorage pour persistance
             localStorage.setItem('filtersByMap', JSON.stringify(this.filtersByMap));
             console.log("💾 [setAllFiltersByMap] Filtres sauvegardés dans localStorage");
             
             // IMPORTANT: Charger et appliquer les filtres de la carte active immédiatement
-            // avec retry si nécessaire (la carte peut ne pas encore être chargée)
-            this.tryLoadFiltersForActiveMap();
+            const activeMapUrl = window.settingsManager?.activeMapUrl;
+            if (activeMapUrl && this.filtersByMap[activeMapUrl]) {
+                console.log(`✅ [setAllFiltersByMap] Application immédiate des filtres pour ${activeMapUrl}`);
+                this.loadFiltersForMap(activeMapUrl);
+            } else {
+                console.log(`⏳ [setAllFiltersByMap] Lancement du retry pour carte active`);
+                this.tryLoadFiltersForActiveMap();
+            }
         } else {
             console.warn("⚠️ [setAllFiltersByMap] Données invalides:", filtersByMap);
         }
