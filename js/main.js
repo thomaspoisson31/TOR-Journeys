@@ -1984,26 +1984,19 @@ function renderLibraryFolders() {
 
     const folderNames = Object.keys(libraryFolders);
 
-    content.innerHTML = '';
-    
-    // Ajouter le titre
-    const titleDiv = document.createElement('div');
-    titleDiv.className = 'col-span-full mb-4';
-    titleDiv.innerHTML = '<h3 class="text-lg font-semibold text-white mb-2">Sélectionner un dossier :</h3>';
-    content.appendChild(titleDiv);
-
-    // Ajouter chaque dossier
-    folderNames.forEach(folder => {
-        const folderCard = document.createElement('div');
-        folderCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center';
-        folderCard.innerHTML = `
-            <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
-            <div class="text-white font-medium">${folder}</div>
-            <div class="text-gray-400 text-sm">${libraryFolders[folder].length} image(s)</div>
-        `;
-        folderCard.addEventListener('click', () => selectLibraryFolder(folder));
-        content.appendChild(folderCard);
-    });
+    content.innerHTML = `
+        <div class="col-span-full mb-4">
+            <h3 class="text-lg font-semibold text-white mb-2">Sélectionner un dossier :</h3>
+        </div>
+        ${folderNames.map(folder => `
+            <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
+                 onclick="window.selectLibraryFolder('${folder}')">
+                <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
+                <div class="text-white font-medium">${folder}</div>
+                <div class="text-gray-400 text-sm">${libraryFolders[folder].length} image(s)</div>
+            </div>
+        `).join('')}
+    `;
 }
 
 // Exposer globalement pour renderLibraryImagesWithBackButton
@@ -2053,26 +2046,16 @@ function renderLibraryImagesWithBackButton(images) {
     const content = document.getElementById('library-selection-content');
     if (!content) return;
 
-    content.innerHTML = '';
-    
-    // Ajouter le header avec bouton retour
-    const headerDiv = document.createElement('div');
-    headerDiv.className = 'col-span-full mb-4 flex items-center';
-    
-    const backButton = document.createElement('button');
-    backButton.className = 'flex items-center text-blue-400 hover:text-blue-300';
-    backButton.innerHTML = '<i class="fas fa-arrow-left mr-2"></i>Retour aux dossiers';
-    backButton.addEventListener('click', renderLibraryFolders);
-    
-    const titleH3 = document.createElement('h3');
-    titleH3.className = 'text-lg font-semibold text-white ml-4';
-    titleH3.textContent = currentLibraryFolder || 'Images';
-    
-    headerDiv.appendChild(backButton);
-    headerDiv.appendChild(titleH3);
-    content.appendChild(headerDiv);
+    content.innerHTML = `
+        <div class="col-span-full mb-4 flex items-center">
+            <button onclick="renderLibraryFolders()" class="flex items-center text-blue-400 hover:text-blue-300">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Retour aux dossiers
+            </button>
+            <h3 class="text-lg font-semibold text-white ml-4">${currentLibraryFolder || 'Images'}</h3>
+        </div>
+    `;
 
-    // Ajouter les images
     images.forEach(image => {
         const imageCard = document.createElement('div');
         imageCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card';
