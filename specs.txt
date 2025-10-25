@@ -430,30 +430,44 @@ Environnements:
 - Production: Deployment Replit → préfixe "prod_"
 - Override: Variable ENV dans Secrets pour forcer
 
-Note: Replit Database est automatiquement disponible, aucune configuration requise
+Stockage:
+- Replit Database: automatiquement disponible pour données utilisateur
+- Object Storage: automatiquement configuré via .replit (defaultBucketID)
+  * Utilise AnonymousCredentials pour authentification automatique
+  * Fallback vers système fichiers local si indisponible
+  * URLs publiques persistantes en production
 
-ÉVOLUTIONS RÉCENTES (v1.1.5)
+ÉVOLUTIONS RÉCENTES (v1.1.6)
 ----------------------------
 
-1. Migration vers Replit Database (v1.1.5)
+1. Object Storage (v1.1.6)
+   - Intégration Replit Object Storage pour images
+   - Upload images vers Google Cloud Storage
+   - URLs publiques persistantes en production
+   - Fallback système fichiers local si indisponible
+   - Configuration AnonymousCredentials pour Replit
+
+2. Migration vers Replit Database (v1.1.5)
    - Remplacement SQLite par Replit Key-Value Store
    - Séparation environnements dev/prod automatique
    - Détection environnement multicritères
    - ReplitDBManager pour abstraction persistance
 
-2. Améliorations synchronisation (v1.1.5)
+3. Améliorations synchronisation (v1.1.5)
    - Endpoint /api/environment pour détection auto
    - Endpoint /api/user/data/debug pour diagnostics
    - Affichage environnement actuel dans modale debug
    - Meilleure gestion des conflits de synchronisation
+   - Affichage statut Object Storage dans modale debug
 
-3. Corrections majeures (v1.1.5)
+4. Corrections majeures (v1.1.5-1.1.6)
    - Fix sauvegarde lieux/régions (triple sync locale→window→dataManager)
    - Fix chargement initial (structure vide → cloud → rendu)
    - Fix persistance position aventuriers avec mapId
    - Fix import JSON tablette (accept: ".json,application/json")
+   - Fix Object Storage avec AnonymousCredentials pour Replit
 
-4. Fonctionnalités précédentes (v1.1.4)
+5. Fonctionnalités précédentes (v1.1.4)
    - Gestion multi-cartes complète
    - Configuration échelle par carte
    - Filtres persistants par carte
@@ -525,5 +539,11 @@ PROBLÈMES RÉSOLUS
    - Cause: loadInitialLocations chargeait depuis localStorage/URL
    - Solution: Structure vide → attente authentification → chargement cloud
    - Fichiers: data-manager.js, auth-manager.js
+
+5. Object Storage non fonctionnel (v1.1.6):
+   - Problème: "Failed to retrieve metadata from Google Compute Engine"
+   - Cause: Tentative d'accès aux métadonnées GCE non disponibles sur Replit
+   - Solution: Utiliser AnonymousCredentials() pour authentification automatique
+   - Fichier concerné: app.py (initialisation storage_client)
 
 ================================================================================
