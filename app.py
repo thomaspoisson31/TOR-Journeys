@@ -1154,7 +1154,7 @@ def create_thumbnail():
 
 @app.route('/api/images/library', methods=['GET'])
 def get_image_library():
-    """Récupérer toutes les images de l'utilisateur authentifié"""
+    """Récupérer toutes les images de l'utilisateur authentifié, organisées par dossiers"""
     if 'user_id' not in session or 'google_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
@@ -1168,17 +1168,21 @@ def get_image_library():
         if not os.path.exists(user_dir):
             return jsonify({
                 'success': True,
-                'images': [],
+                'folders': {},
+                'total': 0,
                 'message': 'Aucune image trouvée'
             })
 
-        images = []
+        # Organiser les images par dossier
+        folders = {}
 
         # Parcourir tous les sous-dossiers (locations, regions, general, maps, etc.)
         for category in os.listdir(user_dir):
             category_path = os.path.join(user_dir, category)
 
             if os.path.isdir(category_path):
+                folder_images = []
+                
                 for filename in os.listdir(category_path):
                     file_path = os.path.join(category_path, filename)
 
@@ -1198,7 +1202,7 @@ def get_image_library():
                         except Exception as img_e:
                             print(f"⚠️ Impossible de lire les dimensions de {file_path}: {img_e}")
 
-                        images.append({
+                        folder_images.append({
                             'filename': filename,
                             'url': public_url,
                             'category': category,
@@ -1206,13 +1210,18 @@ def get_image_library():
                             'width': width,
                             'height': height
                         })
+                
+                # Ajouter le dossier seulement s'il contient des images
+                if folder_images:
+                    folders[category] = folder_images
 
-        print(f"📚 {len(images)} image(s) trouvée(s) pour l'utilisateur {google_id}")
+        total_images = sum(len(images) for images in folders.values())
+        print(f"📚 {total_images} image(s) trouvée(s) dans {len(folders)} dossier(s) pour l'utilisateur {google_id}")
 
         return jsonify({
             'success': True,
-            'images': images,
-            'total': len(images)
+            'folders': folders,
+            'total': total_images
         })
 
     except Exception as e:

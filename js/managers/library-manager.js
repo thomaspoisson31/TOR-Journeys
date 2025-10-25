@@ -1,4 +1,5 @@
 
+
 class LibraryManager {
     constructor() {
         this.libraryBtn = null;
@@ -7,7 +8,8 @@ class LibraryManager {
         this.libraryContent = null;
         this.libraryEmpty = null;
         this.libraryLoading = null;
-        this.images = [];
+        this.folders = {};
+        this.selectedFolder = null;
     }
 
     init() {
@@ -77,9 +79,9 @@ class LibraryManager {
 
             const data = await response.json();
 
-            if (data.success && data.images && data.images.length > 0) {
-                this.images = data.images;
-                this.renderImages();
+            if (data.success && data.folders && Object.keys(data.folders).length > 0) {
+                this.folders = data.folders;
+                this.renderFolders();
                 this.libraryContent.classList.remove('hidden');
             } else {
                 this.libraryEmpty.classList.remove('hidden');
@@ -94,16 +96,50 @@ class LibraryManager {
         }
     }
 
-    renderImages() {
+    renderFolders() {
         if (!this.libraryContent) return;
 
-        this.libraryContent.innerHTML = '';
+        const folderNames = Object.keys(this.folders);
+        
+        this.libraryContent.innerHTML = `
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Dossier :</label>
+                <select id="folder-select" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2">
+                    <option value="">-- Sélectionner un dossier --</option>
+                    ${folderNames.map(folder => `
+                        <option value="${folder}">${folder} (${this.folders[folder].length})</option>
+                    `).join('')}
+                </select>
+            </div>
+            <div id="folder-images" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
+                <p class="text-gray-400 col-span-full text-center py-8">Sélectionnez un dossier pour voir les images</p>
+            </div>
+        `;
 
-        this.images.forEach(image => {
-            const imageCard = document.createElement('div');
-            imageCard.className = 'relative group cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all';
-            
-            imageCard.innerHTML = `
+        const folderSelect = document.getElementById('folder-select');
+        folderSelect.addEventListener('change', (e) => {
+            this.selectedFolder = e.target.value;
+            if (this.selectedFolder) {
+                this.renderFolderImages(this.selectedFolder);
+            }
+        });
+
+        console.log(`✅ ${folderNames.length} dossier(s) affichés dans la bibliothèque`);
+    }
+
+    renderFolderImages(folderName) {
+        const folderImagesDiv = document.getElementById('folder-images');
+        if (!folderImagesDiv) return;
+
+        const images = this.folders[folderName] || [];
+
+        if (images.length === 0) {
+            folderImagesDiv.innerHTML = '<p class="text-gray-400 col-span-full text-center py-8">Aucune image dans ce dossier</p>';
+            return;
+        }
+
+        folderImagesDiv.innerHTML = images.map(image => `
+            <div class="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all" data-url="${image.url}" data-filename="${image.filename}">
                 <img src="${image.url}" alt="${image.filename}" class="w-full h-24 object-cover">
                 <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity flex items-center justify-center">
                     <div class="opacity-0 group-hover:opacity-100 transition-opacity text-white text-center p-2">
@@ -111,17 +147,20 @@ class LibraryManager {
                         <p class="text-xs text-gray-300">${this.formatFileSize(image.size)}</p>
                     </div>
                 </div>
-            `;
+            </div>
+        `).join('');
 
-            // Événement de clic pour sélectionner l'image
-            imageCard.addEventListener('click', () => {
-                this.selectImage(image);
+        // Ajouter les événements de clic
+        folderImagesDiv.querySelectorAll('[data-url]').forEach(card => {
+            card.addEventListener('click', () => {
+                this.selectImage({
+                    url: card.dataset.url,
+                    filename: card.dataset.filename
+                });
             });
-
-            this.libraryContent.appendChild(imageCard);
         });
 
-        console.log(`✅ ${this.images.length} image(s) affichée(s) dans la bibliothèque`);
+        console.log(`✅ ${images.length} image(s) affichée(s) pour le dossier "${folderName}"`);
     }
 
     selectImage(image) {
@@ -161,3 +200,4 @@ if (typeof module !== 'undefined' && module.exports) {
 export default LibraryManager;
 
 console.log("📚 LibraryManager module loaded");
+

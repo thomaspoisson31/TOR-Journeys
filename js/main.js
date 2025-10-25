@@ -1900,7 +1900,7 @@ function setupLibrarySelectionModal() {
     }
 }
 
-async function openLibrarySelection() {
+async function loadLibraryForSelection() {
     const modal = document.getElementById('library-selection-modal');
     const content = document.getElementById('library-selection-content');
     const empty = document.getElementById('library-selection-empty');
@@ -1928,7 +1928,7 @@ async function openLibrarySelection() {
     // Afficher le chemin de stockage
     if (pathInfo && pathDisplay && authManager.currentUser) {
         const googleId = authManager.currentUser.google_id;
-        pathDisplay.textContent = `uploads/${googleId}/locations/`;
+        pathDisplay.textContent = `uploads/${googleId}/`;
         pathInfo.classList.remove('hidden');
     }
 
@@ -1940,6 +1940,7 @@ async function openLibrarySelection() {
     modal.classList.remove('hidden');
 
     try {
+        // IMPORTANT: Enlever '/locations' pour accéder au dossier parent
         const response = await fetch('/api/images/library', {
             method: 'GET',
             credentials: 'include'
@@ -2286,7 +2287,7 @@ function deleteFromColorChangeModal() {
 
             // Sauvegarder localement
             dataManager.saveLocationsToLocal();
-            
+
             // Re-render
             renderLocations();
         } else {
@@ -2308,7 +2309,7 @@ function deleteFromColorChangeModal() {
 
             // Sauvegarder localement
             dataManager.saveRegionsToLocal();
-            
+
             // Re-render
             renderRegions();
         } else {
@@ -2337,7 +2338,7 @@ function showTemporaryMessage(message, type = 'success') {
     notification.className = `fixed top-20 left-1/2 transform -translate-x-1/2 z-[100] px-6 py-3 rounded-lg shadow-xl text-white font-medium transition-all duration-300 ${type === 'error' ? 'bg-red-600' : 'bg-green-600'}`;
     notification.textContent = message;
     notification.style.opacity = '0';
-    
+
     document.body.appendChild(notification);
 
     // Animation d'apparition
@@ -2537,7 +2538,7 @@ function handleLocationDragEnd(event) {
             const newY = parseInt(draggedLocationMarker.style.top);
 
             const originalLocation = locationsData.locations[locationIndex]; // Récupérer l'objet original
-            
+
             console.log(`📍 Moved location ${originalLocation.name}: (${originalLocation.coordinates.x}, ${originalLocation.coordinates.y}) → (${newX}, ${newY})`);
 
             // IMPORTANT: Mettre à jour l'objet dans locationsData.locations
