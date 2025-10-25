@@ -386,7 +386,7 @@ class AuthManager {
         // Collecter les paramètres de l'application
         if (window.settingsManager) {
             data.settings = window.settingsManager.getAllSettings();
-            
+
             // S'assurer que les cartes sont incluses
             if (!data.settings.availableMaps && window.settingsManager.availableMaps) {
                 data.settings.availableMaps = window.settingsManager.availableMaps;
@@ -397,7 +397,7 @@ class AuthManager {
             if (!data.settings.activeMapName && window.settingsManager.activeMapName) {
                 data.settings.activeMapName = window.settingsManager.activeMapName;
             }
-            
+
             this.logAuth("⚙️ Paramètres collectés avec cartes:", {
                 availableMaps_count: data.settings.availableMaps?.length || 0,
                 activeMapUrl: data.settings.activeMapUrl,
@@ -573,28 +573,28 @@ class AuthManager {
 
         if (data.settings && window.settingsManager) {
             this.logAuth("⚙️ Application des paramètres depuis le cloud");
-            
+
             // Restaurer TOUTES les données de settings
             window.settingsManager.loadSettings(data.settings);
-            
+
             // S'assurer que les cartes sont bien restaurées
             if (data.settings.availableMaps) {
                 window.settingsManager.availableMaps = data.settings.availableMaps;
                 localStorage.setItem('availableMaps', JSON.stringify(data.settings.availableMaps));
                 this.logAuth(`🗺️ ${data.settings.availableMaps.length} carte(s) restaurée(s) depuis le cloud`);
             }
-            
+
             if (data.settings.activeMapUrl) {
                 window.settingsManager.activeMapUrl = data.settings.activeMapUrl;
                 localStorage.setItem('activeMapUrl', data.settings.activeMapUrl);
                 this.logAuth(`🗺️ Carte active restaurée: ${data.settings.activeMapUrl}`);
             }
-            
+
             if (data.settings.activeMapName) {
                 window.settingsManager.activeMapName = data.settings.activeMapName;
                 localStorage.setItem('activeMapName', data.settings.activeMapName);
             }
-            
+
             this.logAuth("✅ Paramètres et cartes appliqués depuis le cloud");
         }
 
@@ -752,7 +752,7 @@ class AuthManager {
                 // Pas de données cloud encore - vérifier si on a des données dans l'autre environnement
                 const otherEnv = envPrefix === 'dev_' ? 'prod_' : 'dev_';
                 this.logAuth(`ℹ️ Aucune donnée trouvée pour ${envPrefix}, vérification de ${otherEnv}...`);
-                
+
                 const otherResponse = await fetch(`/api/user/data?env=${otherEnv}`, {
                     method: 'GET',
                     credentials: 'include'
@@ -760,9 +760,9 @@ class AuthManager {
 
                 if (otherResponse.ok) {
                     const otherData = await otherResponse.json();
-                    const hasData = (otherData.locations?.locations?.length || 0) > 0 || 
+                    const hasData = (otherData.locations?.locations?.length || 0) > 0 ||
                                   (otherData.regions?.regions?.length || 0) > 0;
-                    
+
                     if (hasData) {
                         const shouldMigrate = confirm(
                             `⚠️ INCOHÉRENCE DÉTECTÉE\n\n` +
@@ -780,30 +780,30 @@ class AuthManager {
                             otherData._environment = envPrefix;
                             otherData._migrated_from = otherEnv;
                             otherData._migrated_at = new Date().toISOString();
-                            
+
                             await this.applyContextData(otherData);
                             this.saveToLocalStorage(otherData, true);
-                            
+
                             // Sauvegarder immédiatement dans le nouvel environnement
                             await this.syncUserData();
-                            
+
                             if (typeof window.renderLocations === 'function') {
                                 window.renderLocations();
                             }
                             if (typeof window.renderRegions === 'function') {
                                 window.renderRegions();
                             }
-                            
+
                             this.markAsSaved();
                             this.logAuth("✅ Migration terminée avec succès");
                             return;
                         }
                     }
                 }
-                
+
                 // Pas de données cloud encore - initialiser avec des données vides
                 this.logAuth("ℹ️ Aucune donnée cloud trouvée - initialisation avec données vides");
-                
+
                 const emptyData = {
                     locations: { locations: [] },
                     regions: { regions: [] },
@@ -819,17 +819,17 @@ class AuthManager {
                     position: null,
                     filtersByMap: {}
                 };
-                
+
                 await this.applyContextData(emptyData);
                 this.saveToLocalStorage(emptyData, true);
-                
+
                 if (typeof window.renderLocations === 'function') {
                     window.renderLocations();
                 }
                 if (typeof window.renderRegions === 'function') {
                     window.renderRegions();
                 }
-                
+
                 this.markAsSaved();
                 this.logAuth("✅ Initialisation terminée - prêt à créer du contenu");
                 return;
@@ -847,7 +847,7 @@ class AuthManager {
                 this.logAuth(`⚠️ ATTENTION: Incohérence environnement détectée!`);
                 this.logAuth(`   Données stockées avec: ${cloudData._environment}`);
                 this.logAuth(`   Environnement actuel: ${envPrefix}`);
-                
+
                 const shouldContinue = confirm(
                     `⚠️ INCOHÉRENCE D'ENVIRONNEMENT\n\n` +
                     `Les données ont été sauvegardées dans: ${cloudData._environment === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n` +
@@ -883,7 +883,7 @@ class AuthManager {
                     this.markAsSaved();
                     return;
                 }
-                
+
                 // Mettre à jour l'environnement dans les données
                 cloudData._environment = envPrefix;
                 cloudData._migrated_from = cloudData._environment;
@@ -1268,10 +1268,8 @@ class AuthManager {
 
             if (response.ok) {
                 this.lastSyncTimestamp = Date.now();
-                localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp); // Sauvegarder le timestamp
-                this.updateLastSyncDateDisplay(); // Mettre à jour l'affichage immédiatement
-
-                this.logAuth("✅ Données locales forcées dans le cloud");
+                localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp);
+                this.updateLastSyncDateDisplay();
                 this.saveToLocalStorage(localData);
                 this.updateSyncStatus('success');
                 setTimeout(() => this.updateSyncStatus('idle'), 2000);
@@ -1528,7 +1526,7 @@ class AuthManager {
             const dataEnv = debugData.full_data?._environment;
             const dataEnvLabel = dataEnv === 'dev_' ? 'DEVELOPMENT' : dataEnv === 'prod_' ? 'PRODUCTION' : 'non spécifié';
             const envMatch = !dataEnv || dataEnv === envPrefix;
-            
+
             // Préparer les infos Object Storage
             const storageInfo = storageStatus ? `
                 <div class="mb-4 p-3 rounded ${storageStatus.using_object_storage ? 'bg-blue-900/20 border border-blue-500' : 'bg-yellow-900/20 border border-yellow-500'}">
@@ -1541,11 +1539,11 @@ class AuthManager {
                     </div>
                 </div>
             ` : '';
-            
+
             // Compter le nombre de cartes
-            const mapsCount = debugData.data_summary?.maps_count || 
+            const mapsCount = debugData.data_summary?.maps_count ||
                             debugData.full_data?.settings?.availableMaps?.length || 0;
-            
+
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100]';
             modal.innerHTML = `
