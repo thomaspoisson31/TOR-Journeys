@@ -2100,6 +2100,7 @@ function setupColorChangeModal() {
 
     const cancelBtn = document.getElementById('cancel-color-change');
     const confirmBtn = document.getElementById('confirm-color-change');
+    const deleteBtn = document.getElementById('delete-color-change');
 
     if (cancelBtn) {
         cancelBtn.addEventListener('click', hideColorChangeModal);
@@ -2107,6 +2108,10 @@ function setupColorChangeModal() {
 
     if (confirmBtn) {
         confirmBtn.addEventListener('click', confirmColorChange);
+    }
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', deleteFromColorChangeModal);
     }
 
     // Créer les couleurs disponibles
@@ -2254,6 +2259,98 @@ function hideColorChangeModal() {
     modal.classList.add('hidden');
 
     console.log(`✅ Modification de couleur terminée pour: ${targetName}`);
+}
+
+function deleteFromColorChangeModal() {
+    if (!currentColorChangeTarget || !currentColorChangeType) {
+        console.warn("⚠️ No target to delete");
+        return;
+    }
+
+    const targetName = currentColorChangeTarget.name;
+    console.log(`🗑️ Deleting ${currentColorChangeType}: ${targetName}`);
+
+    if (currentColorChangeType === 'location') {
+        // Supprimer le lieu
+        const locationIndex = locationsData.locations.findIndex(loc => 
+            String(loc.id) === String(currentColorChangeTarget.id)
+        );
+
+        if (locationIndex !== -1) {
+            locationsData.locations.splice(locationIndex, 1);
+            console.log(`✅ Lieu supprimé de locationsData à l'index ${locationIndex}`);
+
+            // Synchroniser avec window.locationsData ET dataManager
+            window.locationsData = locationsData;
+            dataManager.locationsData = locationsData;
+
+            // Sauvegarder
+            dataManager.saveLocationsToLocal();
+            
+            // Re-render
+            renderLocations();
+        } else {
+            console.error(`❌ Lieu non trouvé: ${currentColorChangeTarget.id}`);
+        }
+    } else if (currentColorChangeType === 'region') {
+        // Supprimer la région
+        const regionIndex = regionsData.regions.findIndex(reg => 
+            String(reg.id) === String(currentColorChangeTarget.id)
+        );
+
+        if (regionIndex !== -1) {
+            regionsData.regions.splice(regionIndex, 1);
+            console.log(`✅ Région supprimée de regionsData à l'index ${regionIndex}`);
+
+            // Synchroniser avec window.regionsData ET dataManager
+            window.regionsData = regionsData;
+            dataManager.regionsData = regionsData;
+
+            // Sauvegarder
+            dataManager.saveRegionsToLocal();
+            
+            // Re-render
+            renderRegions();
+        } else {
+            console.error(`❌ Région non trouvée: ${currentColorChangeTarget.id}`);
+        }
+    }
+
+    // Marquer comme non sauvegardé
+    if (typeof scheduleAutoSync === 'function') {
+        scheduleAutoSync();
+    }
+
+    // Fermer la modale
+    hideColorChangeModal();
+
+    // Afficher un message de confirmation temporaire
+    showTemporaryMessage(`"${targetName}" supprimé${currentColorChangeType === 'location' ? '' : 'e'}`, 'error');
+
+    console.log(`✅ ${currentColorChangeType} deleted successfully: ${targetName}`);
+}
+
+function showTemporaryMessage(message, type = 'success') {
+    // Créer un élément de notification temporaire
+    const notification = document.createElement('div');
+    notification.className = `fixed top-20 left-1/2 transform -translate-x-1/2 z-[100] px-6 py-3 rounded-lg shadow-xl text-white font-medium transition-all duration-300 ${type === 'error' ? 'bg-red-600' : 'bg-green-600'}`;
+    notification.textContent = message;
+    notification.style.opacity = '0';
+    
+    document.body.appendChild(notification);
+
+    // Animation d'apparition
+    setTimeout(() => {
+        notification.style.opacity = '1';
+    }, 10);
+
+    // Disparition après 3 secondes
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
 }
 
 function confirmColorChange() {
