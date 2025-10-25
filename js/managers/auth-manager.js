@@ -1620,12 +1620,12 @@ class AuthManager {
                         <div>💾 Taille: ${(debugData.raw_json_size / 1024).toFixed(2)} KB</div>
                     </div>
 
-                    <div class="flex-1 overflow-auto bg-gray-900 rounded p-4">
+                    <div class="flex-1 overflow-auto bg-gray-900 rounded p-4" id="cloud-json-display">
                         <pre class="text-xs text-green-400 whitespace-pre-wrap font-mono">${this.escapeHtml(debugData.raw_json_text || JSON.stringify(debugData.full_data, null, 2))}</pre>
                     </div>
 
                     <div class="mt-4 flex gap-2">
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="navigator.clipboard.writeText(this.dataset.json); alert('Copié dans le presse-papier!');" data-json="${this.escapeHtml(debugData.raw_json_text || JSON.stringify(debugData.full_data, null, 2))}">
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="(function(btn) { const preEl = document.querySelector('#cloud-json-display pre'); const jsonText = preEl.textContent; navigator.clipboard.writeText(jsonText).then(() => alert('✅ JSON complet copié (' + Math.round(jsonText.length / 1024) + ' KB)'), () => alert('❌ Erreur lors de la copie')); })(this);">
                             📋 Copier
                         </button>
                         <button class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" onclick="this.closest('.fixed').remove()">
