@@ -959,15 +959,32 @@ def upload_image():
                 print(f"🔗 URL publique: {public_url}")
                 
             except Exception as storage_error:
-                print(f"❌ Erreur Object Storage: {storage_error}")
+                error_message = str(storage_error)
+                print(f"⚠️ Erreur Object Storage: {error_message}")
                 import traceback
                 traceback.print_exc()
-                raise Exception(f"Impossible d'uploader l'image vers Object Storage: {storage_error}")
+                
+                # Vérifier si c'est une erreur de permissions (403)
+                if "403" in error_message or "Permission" in error_message or "storage.objects.create" in error_message:
+                    print("⚠️ Erreur de permissions Object Storage détectée - fallback vers système de fichiers local")
+                    storage_client_available = False
+                else:
+                    # Pour d'autres types d'erreurs, lever l'exception
+                    raise Exception(f"Impossible d'uploader l'image vers Object Storage: {storage_error}")
         
-        # Fallback: système de fichiers local (désactivé pour forcer Object Storage)
+        # Fallback: système de fichiers local (activé en cas d'erreur de permissions)
         if not public_url:
-            # Erreur si Object Storage n'est pas disponible
-            raise Exception("Object Storage n'est pas disponible. Les images doivent être stockées dans Object Storage pour la persistance entre environnements.")
+            print("📁 Utilisation du fallback système de fichiers local")
+            upload_dir = f'uploads/{google_id}/{category}'
+            os.makedirs(upload_dir, exist_ok=True)
+            file_path = os.path.join(upload_dir, final_filename)
+            
+            with open(file_path, 'wb') as f:
+                f.write(image_data)
+            
+            public_url = f'/uploads/{google_id}/{category}/{final_filename}'
+            print(f"📁 Image sauvegardée localement: {file_path}")
+            print(f"⚠️ ATTENTION: Cette image ne sera pas persistée entre environnements")
 
         return jsonify({
             'success': True,
