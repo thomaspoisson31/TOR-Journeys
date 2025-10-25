@@ -2284,7 +2284,7 @@ function deleteFromColorChangeModal() {
             window.locationsData = locationsData;
             dataManager.locationsData = locationsData;
 
-            // Sauvegarder
+            // Sauvegarder localement
             dataManager.saveLocationsToLocal();
             
             // Re-render
@@ -2306,7 +2306,7 @@ function deleteFromColorChangeModal() {
             window.regionsData = regionsData;
             dataManager.regionsData = regionsData;
 
-            // Sauvegarder
+            // Sauvegarder localement
             dataManager.saveRegionsToLocal();
             
             // Re-render
@@ -2316,9 +2316,10 @@ function deleteFromColorChangeModal() {
         }
     }
 
-    // Marquer comme non sauvegardé
-    if (typeof scheduleAutoSync === 'function') {
-        scheduleAutoSync();
+    // Marquer comme non sauvegardé et synchroniser avec le cloud
+    if (window.authManager && window.authManager.isAuthenticated) {
+        window.authManager.markAsUnsaved();
+        window.authManager.scheduleAutoSync();
     }
 
     // Fermer la modale

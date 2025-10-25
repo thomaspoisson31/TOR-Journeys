@@ -1342,7 +1342,7 @@ class InfoBoxManager {
                 // Synchroniser avec dataManager
                 this.dataManager.locationsData = window.locationsData;
 
-                // Sauvegarder
+                // Sauvegarder localement
                 this.dataManager.saveLocationsToLocal();
 
                 // Re-render
@@ -1366,7 +1366,7 @@ class InfoBoxManager {
                 // Synchroniser avec dataManager
                 this.dataManager.regionsData = window.regionsData;
 
-                // Sauvegarder
+                // Sauvegarder localement
                 this.dataManager.saveRegionsToLocal();
 
                 // Re-render
@@ -1378,6 +1378,12 @@ class InfoBoxManager {
             } else {
                 console.error(`❌ Région non trouvée pour suppression: ${this.currentItem.id}`);
             }
+        }
+
+        // Marquer comme non sauvegardé et synchroniser avec le cloud
+        if (window.authManager && window.authManager.isAuthenticated) {
+            window.authManager.markAsUnsaved();
+            window.authManager.scheduleAutoSync();
         }
 
         this.hideInfoBox();
