@@ -364,14 +364,11 @@ class SettingsManager {
 
             // L'API retourne maintenant {folders: {category: [images]}}
             if (data.success && data.folders && Object.keys(data.folders).length > 0) {
-                // Aplatir toutes les images de tous les dossiers
-                const allImages = [];
-                Object.values(data.folders).forEach(folderImages => {
-                    allImages.push(...folderImages);
-                });
+                // Récupérer uniquement les images du dossier "maps"
+                const mapsImages = data.folders['maps'] || [];
 
-                if (allImages.length > 0) {
-                    contentDiv.innerHTML = allImages.map(image => `
+                if (mapsImages.length > 0) {
+                    contentDiv.innerHTML = mapsImages.map(image => `
                         <div class="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all"
                              onclick="window.settingsManager.selectLibraryImageForMap('${image.url}', '${encodeURIComponent(image.filename)}')">
                             <img src="${image.url}" alt="${image.filename}" class="w-full h-24 object-cover">
