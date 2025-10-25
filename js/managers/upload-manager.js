@@ -82,6 +82,13 @@ class UploadManager {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('category', category);
+        
+        // Option pour stocker en Base64 (pour contourner Object Storage)
+        // Activer uniquement pour les images < 100KB
+        if (file.size < 100 * 1024) {
+            formData.append('use_base64', 'true');
+            console.log("💾 Upload en mode Base64 (image < 100KB)");
+        }
 
         try {
             // Créer la requête avec suivi de progression

@@ -935,6 +935,44 @@ def upload_image():
             with Image.open(io.BytesIO(image_data)) as img:
                 width, height = img.size
 
+        # Option d'upload Base64 pour contourner les problèmes Object Storage
+        use_base64 = request.form.get('use_base64', 'false').lower() == 'true'
+        
+        if use_base64:
+            # Encoder l'image en Base64 et stocker dans Replit Database
+            import base64
+            base64_data = base64.b64encode(image_data).decode('utf-8')
+            data_uri = f"data:{content_type};base64,{base64_data}"
+            
+            # Stocker dans Replit Database avec un ID unique
+            image_id = f"img_{google_id}_{category}_{timestamp}_{unique_id}"
+            db_manager.db[image_id] = {
+                'data_uri': data_uri,
+                'filename': final_filename,
+                'category': category,
+                'width': width,
+                'height': height,
+                'size': len(image_data),
+                'user_id': session['user_id'],
+                'created_at': datetime.now().isoformat()
+            }
+            
+            public_url = data_uri
+            print(f"💾 Image stockée en Base64 dans Replit Database: {image_id}")
+            
+            return jsonify({
+                'success': True,
+                'url': public_url,
+                'filename': final_filename,
+                'size': len(image_data),
+                'user_id': session['user_id'],
+                'category': category,
+                'width': width,
+                'height': height,
+                'storage': 'replit_database_base64',
+                'message': 'Image stockée en Base64 (accessible en dev et prod)'
+            })
+        
         # Upload vers Object Storage ou fallback vers système de fichiers
         public_url = None
         
