@@ -37,7 +37,6 @@ bucket_name = None
 
 if STORAGE_AVAILABLE:
     try:
-        storage_client = gcs_storage.Client()
         # Récupérer le bucket ID depuis .replit
         import re
         with open('.replit', 'r') as f:
@@ -45,9 +44,17 @@ if STORAGE_AVAILABLE:
             match = re.search(r'defaultBucketID\s*=\s*"([^"]+)"', replit_config)
             if match:
                 bucket_name = match.group(1)
+                
+                # Initialiser le client avec le projet dérivé du bucket
+                # Format du bucket: replit-objstore-{uuid}
+                # Le projet Replit est toujours "replit-objstore"
+                storage_client = gcs_storage.Client(project="replit-objstore")
+                
                 print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
+                print(f"✅ Object Storage actif et prêt pour la persistance des images")
             else:
                 print("⚠️ Bucket ID non trouvé dans .replit")
+                print("📁 Utilisation du système de fichiers local")
     except Exception as e:
         print(f"⚠️ Object Storage non disponible: {e}")
         print("📁 Utilisation du système de fichiers local")
