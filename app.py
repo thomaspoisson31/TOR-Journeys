@@ -966,21 +966,15 @@ def upload_image():
                 print(f"🔗 URL publique: {public_url}")
                 
             except Exception as storage_error:
-                print(f"⚠️ Erreur Object Storage: {storage_error}")
-                print("📁 Fallback vers système de fichiers local")
-                storage_client_available = False
+                print(f"❌ Erreur Object Storage: {storage_error}")
+                import traceback
+                traceback.print_exc()
+                raise Exception(f"Impossible d'uploader l'image vers Object Storage: {storage_error}")
         
-        # Fallback: système de fichiers local
+        # Fallback: système de fichiers local (désactivé pour forcer Object Storage)
         if not public_url:
-            upload_dir = f'uploads/{google_id}/{category}'
-            os.makedirs(upload_dir, exist_ok=True)
-            file_path = os.path.join(upload_dir, final_filename)
-            
-            with open(file_path, 'wb') as f:
-                f.write(image_data)
-            
-            public_url = f'/uploads/{google_id}/{category}/{final_filename}'
-            print(f"📁 Image sauvegardée localement: {file_path}")
+            # Erreur si Object Storage n'est pas disponible
+            raise Exception("Object Storage n'est pas disponible. Les images doivent être stockées dans Object Storage pour la persistance entre environnements.")
 
         return jsonify({
             'success': True,
@@ -1005,9 +999,25 @@ def upload_image():
 
 @app.route('/uploads/<path:filepath>')
 def serve_uploaded_file(filepath):
-    """Servir les fichiers uploadés (avec ou sans user_id)"""
-    # Gérer le format /uploads/google_id/category/filename
-    return send_from_directory('uploads', filepath)
+    """Rediriger vers Object Storage si disponible, sinon servir localement"""
+    if storage_client and bucket_name:
+        try:
+            # Construire le chemin dans Object Storage
+            bucket = storage_client.bucket(bucket_name)
+            blob = bucket.blob(filepath)
+            
+            # Vérifier si le blob existe
+            if blob.exists():
+                # Rediriger vers l'URL publique
+                return redirect(blob.public_url)
+        except Exception as e:
+            print(f"⚠️ Erreur lors de la récupération depuis Object Storage: {e}")
+    
+    # Fallback: servir depuis le système de fichiers local (anciennes images)
+    if os.path.exists(os.path.join('uploads', filepath)):
+        return send_from_directory('uploads', filepath)
+    else:
+        return jsonify({'error': 'Image non trouvée'}), 404
 
 @app.route('/api/image/create-thumbnail', methods=['POST'])
 def create_thumbnail():
