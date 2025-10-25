@@ -45,16 +45,9 @@ if STORAGE_AVAILABLE:
             if match:
                 bucket_name = match.group(1)
                 
-                # Sur Replit, utiliser les credentials anonymes pour Object Storage
-                # car l'authentification se fait automatiquement via l'environnement Replit
-                from google.auth.credentials import AnonymousCredentials
-                
-                # Initialiser le client sans authentification explicite
-                # Replit gère automatiquement l'accès au bucket
-                storage_client = gcs_storage.Client(
-                    project="replit-objstore",
-                    credentials=AnonymousCredentials()
-                )
+                # Sur Replit, le client utilise automatiquement les credentials de l'environnement
+                # Ne pas spécifier de credentials explicites - Replit gère tout automatiquement
+                storage_client = gcs_storage.Client()
                 
                 print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
                 print(f"✅ Object Storage actif et prêt pour la persistance des images")
