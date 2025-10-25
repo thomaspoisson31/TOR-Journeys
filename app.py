@@ -312,6 +312,7 @@ def debug_user_data():
         'data_summary': {
             'locations_count': len(user_data.get('locations', {}).get('locations', [])),
             'regions_count': len(user_data.get('regions', {}).get('regions', [])),
+            'maps_count': len(user_data.get('settings', {}).get('availableMaps', [])),
             'has_calendar': 'calendar' in user_data,
             'has_settings': 'settings' in user_data,
             'has_journal': 'journal' in user_data,

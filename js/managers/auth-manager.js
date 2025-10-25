@@ -1542,6 +1542,10 @@ class AuthManager {
                 </div>
             ` : '';
             
+            // Compter le nombre de cartes
+            const mapsCount = debugData.data_summary?.maps_count || 
+                            debugData.full_data?.settings?.availableMaps?.length || 0;
+            
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100]';
             modal.innerHTML = `
@@ -1568,6 +1572,7 @@ class AuthManager {
                     <div class="mb-4 text-sm text-gray-300 grid grid-cols-2 gap-2">
                         <div>📍 Lieux: ${debugData.data_summary.locations_count}</div>
                         <div>🗺️ Régions: ${debugData.data_summary.regions_count}</div>
+                        <div>🗾 Cartes: ${mapsCount}</div>
                         <div>📅 Calendrier: ${debugData.data_summary.has_calendar ? 'Oui' : 'Non'}</div>
                         <div>💾 Taille: ${(debugData.raw_json_size / 1024).toFixed(2)} KB</div>
                     </div>
