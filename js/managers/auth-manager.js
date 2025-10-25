@@ -1486,6 +1486,7 @@ class AuthManager {
 
         const envPrefix = await this.getEnvironmentPrefix();
         try {
+            // Récupérer les données de debug
             const response = await fetch(`/api/user/data/debug?env=${envPrefix}`, {
                 method: 'GET',
                 credentials: 'include'
@@ -1496,6 +1497,17 @@ class AuthManager {
             }
 
             const debugData = await response.json();
+
+            // Récupérer le statut d'Object Storage
+            const storageResponse = await fetch('/api/storage/status', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            let storageStatus = null;
+            if (storageResponse.ok) {
+                storageStatus = await storageResponse.json();
+            }
 
             // Afficher dans la console
             console.log("=== DEBUG DONNÉES CLOUD ===");
@@ -1517,6 +1529,19 @@ class AuthManager {
             const dataEnvLabel = dataEnv === 'dev_' ? 'DEVELOPMENT' : dataEnv === 'prod_' ? 'PRODUCTION' : 'non spécifié';
             const envMatch = !dataEnv || dataEnv === envPrefix;
             
+            // Préparer les infos Object Storage
+            const storageInfo = storageStatus ? `
+                <div class="mb-4 p-3 rounded ${storageStatus.using_object_storage ? 'bg-blue-900/20 border border-blue-500' : 'bg-yellow-900/20 border border-yellow-500'}">
+                    <div class="font-bold ${storageStatus.using_object_storage ? 'text-blue-400' : 'text-yellow-400'} mb-2">
+                        ${storageStatus.using_object_storage ? '☁️ Object Storage ACTIF' : '📁 Stockage local ACTIF'}
+                    </div>
+                    <div class="text-sm text-gray-300 grid grid-cols-2 gap-2">
+                        <div>📦 Bucket: ${storageStatus.bucket_name || 'N/A'}</div>
+                        <div>🔌 Statut: ${storageStatus.message}</div>
+                    </div>
+                </div>
+            ` : '';
+            
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100]';
             modal.innerHTML = `
@@ -1525,6 +1550,8 @@ class AuthManager {
                         <h3 class="text-xl font-bold text-white">📊 Données Cloud Brutes</h3>
                         <button class="text-gray-400 hover:text-white text-2xl" onclick="this.closest('.fixed').remove()">×</button>
                     </div>
+
+                    ${storageInfo}
 
                     <div class="mb-4 p-3 rounded ${envMatch ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}">
                         <div class="font-bold ${envMatch ? 'text-green-400' : 'text-red-400'} mb-2">
