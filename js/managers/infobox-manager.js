@@ -1323,26 +1323,35 @@ class InfoBoxManager {
     }
 
     deleteItem() {
-        if (!this.currentItem || !this.currentType) return;
+        if (!this.currentItem) return;
 
-        const itemName = this.currentItem.name;
-        if (!confirm(`Supprimer "${itemName}" ?`)) {
+        const itemType = this.currentType === 'region' ? 'région' : 
+                        (this.currentType === 'character' ? 'personnage' : 'lieu');
+
+        if (!confirm(`Êtes-vous sûr de vouloir supprimer ce ${itemType} ?`)) {
             return;
         }
 
+        console.log(`🗑️ [DELETE] Début suppression de ${itemType}: ${this.currentItem.name}`);
+
         if (this.currentType === 'location') {
-            // Rechercher l'index dans window.locationsData (source de vérité)
-            const index = window.locationsData.locations.findIndex(l => String(l.id) === String(this.currentItem.id));
-            if (index !== -1) {
-                console.log(`🗑️ Suppression du lieu: ${itemName} (index: ${index})`);
+            const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
+                String(loc.id) === String(this.currentItem.id)
+            );
 
-                // Supprimer de window.locationsData
-                window.locationsData.locations.splice(index, 1);
+            if (locationIndex !== -1) {
+                console.log(`🗑️ [DELETE] Lieu trouvé à l'index ${locationIndex}, suppression...`);
+                console.log(`🗑️ [DELETE] Nombre de lieux AVANT suppression: ${this.dataManager.locationsData.locations.length}`);
 
-                // Synchroniser avec dataManager
-                this.dataManager.locationsData = window.locationsData;
+                // Supprimer le lieu
+                this.dataManager.locationsData.locations.splice(locationIndex, 1);
 
-                // Sauvegarder localement
+                console.log(`🗑️ [DELETE] Nombre de lieux APRÈS suppression: ${this.dataManager.locationsData.locations.length}`);
+
+                // Synchroniser avec la variable globale
+                window.locationsData = this.dataManager.locationsData;
+
+                // Sauvegarder localement (déclenchera aussi markAsUnsaved et scheduleAutoSync via DataManager)
                 this.dataManager.saveLocationsToLocal();
 
                 // Re-render
@@ -1350,23 +1359,28 @@ class InfoBoxManager {
                     window.renderLocations();
                 }
 
-                console.log(`✅ Lieu supprimé avec succès`);
+                console.log(`✅ [DELETE] Lieu supprimé: ${this.currentItem.name}`);
             } else {
-                console.error(`❌ Lieu non trouvé pour suppression: ${this.currentItem.id}`);
+                console.error(`❌ [DELETE] Lieu non trouvé pour suppression: ${this.currentItem.id}`);
             }
         } else if (this.currentType === 'region') {
-            // Rechercher l'index dans window.regionsData (source de vérité)
-            const index = window.regionsData.regions.findIndex(r => String(r.id) === String(this.currentItem.id));
-            if (index !== -1) {
-                console.log(`🗑️ Suppression de la région: ${itemName} (index: ${index})`);
+            const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
+                String(reg.id) === String(this.currentItem.id)
+            );
 
-                // Supprimer de window.regionsData
-                window.regionsData.regions.splice(index, 1);
+            if (regionIndex !== -1) {
+                console.log(`🗑️ [DELETE] Région trouvée à l'index ${regionIndex}, suppression...`);
+                console.log(`🗑️ [DELETE] Nombre de régions AVANT suppression: ${this.dataManager.regionsData.regions.length}`);
 
-                // Synchroniser avec dataManager
-                this.dataManager.regionsData = window.regionsData;
+                // Supprimer la région
+                this.dataManager.regionsData.regions.splice(regionIndex, 1);
 
-                // Sauvegarder localement
+                console.log(`🗑️ [DELETE] Nombre de régions APRÈS suppression: ${this.dataManager.regionsData.regions.length}`);
+
+                // Synchroniser avec la variable globale
+                window.regionsData = this.dataManager.regionsData;
+
+                // Sauvegarder localement (déclenchera aussi markAsUnsaved et scheduleAutoSync via DataManager)
                 this.dataManager.saveRegionsToLocal();
 
                 // Re-render
@@ -1374,16 +1388,15 @@ class InfoBoxManager {
                     window.renderRegions();
                 }
 
-                console.log(`✅ Région supprimée avec succès`);
+                console.log(`✅ [DELETE] Région supprimée: ${this.currentItem.name}`);
             } else {
-                console.error(`❌ Région non trouvée pour suppression: ${this.currentItem.id}`);
+                console.error(`❌ [DELETE] Région non trouvée pour suppression: ${this.currentItem.id}`);
             }
-        }
-
-        // Marquer comme non sauvegardé et synchroniser avec le cloud
-        if (window.authManager && window.authManager.isAuthenticated) {
-            window.authManager.markAsUnsaved();
-            window.authManager.scheduleAutoSync();
+        } else if (this.currentType === 'character') {
+            if (window.charactersManager) {
+                window.charactersManager.deleteCharacter(this.currentItem.id);
+                console.log(`✅ [DELETE] Personnage supprimé: ${this.currentItem.name}`);
+            }
         }
 
         this.hideInfoBox();
