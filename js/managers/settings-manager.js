@@ -362,18 +362,29 @@ class SettingsManager {
 
             loadingDiv.classList.add('hidden');
 
-            if (data.success && data.images && data.images.length > 0) {
-                contentDiv.innerHTML = data.images.map(image => `
-                    <div class="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all"
-                         onclick="window.settingsManager.selectLibraryImageForMap('${image.url}', '${encodeURIComponent(image.filename)}')">
-                        <img src="${image.url}" alt="${image.filename}" class="w-full h-24 object-cover">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity flex items-center justify-center">
-                            <div class="opacity-0 group-hover:opacity-100 transition-opacity text-white text-center p-2">
-                                <p class="text-xs truncate">${image.filename}</p>
+            // L'API retourne maintenant {folders: {category: [images]}}
+            if (data.success && data.folders && Object.keys(data.folders).length > 0) {
+                // Aplatir toutes les images de tous les dossiers
+                const allImages = [];
+                Object.values(data.folders).forEach(folderImages => {
+                    allImages.push(...folderImages);
+                });
+
+                if (allImages.length > 0) {
+                    contentDiv.innerHTML = allImages.map(image => `
+                        <div class="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all"
+                             onclick="window.settingsManager.selectLibraryImageForMap('${image.url}', '${encodeURIComponent(image.filename)}')">
+                            <img src="${image.url}" alt="${image.filename}" class="w-full h-24 object-cover">
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity flex items-center justify-center">
+                                <div class="opacity-0 group-hover:opacity-100 transition-opacity text-white text-center p-2">
+                                    <p class="text-xs truncate">${image.filename}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('');
+                } else {
+                    emptyDiv.classList.remove('hidden');
+                }
             } else {
                 emptyDiv.classList.remove('hidden');
             }
@@ -861,7 +872,7 @@ class SettingsManager {
         }
 
         const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu). 
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
         Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
 
         try {
@@ -1011,7 +1022,7 @@ class SettingsManager {
     // === GESTION IMPORT/EXPORT ===
     setupImportExportListeners() {
         console.log('⚙️ Configuration des listeners Import/Export...');
-        
+
         // Import/Export Lieux et Régions
         const exportLocationsBtn = document.getElementById('export-locations-btn');
         const importLocationsBtn = document.getElementById('import-locations-btn');

@@ -45,20 +45,27 @@ if STORAGE_AVAILABLE:
             if match:
                 bucket_name = match.group(1)
                 
-                # Sur Replit, spécifier explicitement le projet "replit-objstore"
-                # Le client utilisera automatiquement les credentials de l'environnement Replit
-                storage_client = gcs_storage.Client(project="replit-objstore")
-                
-                print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
-                print(f"✅ Object Storage actif et prêt pour la persistance des images")
+                # Ne tenter d'initialiser le client que si nous sommes en environnement de développement
+                # (car Object Storage nécessite des credentials spécifiques)
+                if os.environ.get('REPLIT_DEV_DOMAIN'):
+                    try:
+                        storage_client = gcs_storage.Client(project="replit-objstore")
+                        print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
+                        print(f"✅ Object Storage actif et prêt pour la persistance des images")
+                    except Exception as storage_error:
+                        print(f"⚠️ Impossible d'initialiser Object Storage: {storage_error}")
+                        print("📁 Utilisation du système de fichiers local")
+                        storage_client = None
+                else:
+                    print("🚀 Environnement de production détecté")
+                    print("📁 Utilisation du système de fichiers local")
+                    storage_client = None
             else:
                 print("⚠️ Bucket ID non trouvé dans .replit")
                 print("📁 Utilisation du système de fichiers local")
     except Exception as e:
         print(f"⚠️ Object Storage non disponible: {e}")
         print("📁 Utilisation du système de fichiers local")
-        import traceback
-        traceback.print_exc()
 else:
     print("📁 Google Cloud Storage non installé, utilisation du système de fichiers local")
 

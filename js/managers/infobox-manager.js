@@ -1179,9 +1179,20 @@ class InfoBoxManager {
 
             loading.classList.add('hidden');
 
-            if (data.success && data.images && data.images.length > 0) {
-                this.renderLibraryImagesForEdit(data.images);
-                content.classList.remove('hidden');
+            // L'API retourne maintenant {folders: {category: [images]}}
+            if (data.success && data.folders && Object.keys(data.folders).length > 0) {
+                // Aplatir toutes les images de tous les dossiers
+                const allImages = [];
+                Object.values(data.folders).forEach(folderImages => {
+                    allImages.push(...folderImages);
+                });
+
+                if (allImages.length > 0) {
+                    this.renderLibraryImagesForEdit(allImages);
+                    content.classList.remove('hidden');
+                } else {
+                    empty.classList.remove('hidden');
+                }
             } else {
                 empty.classList.remove('hidden');
             }
