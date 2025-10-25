@@ -1990,7 +1990,7 @@ function renderLibraryFolders() {
         </div>
         ${folderNames.map(folder => `
             <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
-                 onclick="selectLibraryFolder('${folder}')">
+                 onclick="window.selectLibraryFolder('${folder}')">
                 <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
                 <div class="text-white font-medium">${folder}</div>
                 <div class="text-gray-400 text-sm">${libraryFolders[folder].length} image(s)</div>
@@ -1999,11 +1999,17 @@ function renderLibraryFolders() {
     `;
 }
 
+// Exposer globalement pour renderLibraryImagesWithBackButton
+window.renderLibraryFolders = renderLibraryFolders;
+
 function selectLibraryFolder(folderName) {
     currentLibraryFolder = folderName;
     const images = libraryFolders[folderName] || [];
     renderLibraryImagesWithBackButton(images);
 }
+
+// Exposer globalement pour les onclick
+window.selectLibraryFolder = selectLibraryFolder;
 
 function renderLibraryImages(images) {
     const content = document.getElementById('library-selection-content');
