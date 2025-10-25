@@ -1098,23 +1098,11 @@ class AuthManager {
         this.logAuth(`🔄 Synchronisation manuelle vers cloud (environnement: ${envPrefix})`);
 
         try {
-            // 1. D'abord récupérer les données cloud actuelles
-            const cloudResponse = await fetch(`/api/user/data?env=${envPrefix}`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-
-            let cloudData = null;
-            if (cloudResponse.ok) {
-                cloudData = await cloudResponse.json();
-                this.logAuth("📥 Données cloud récupérées pour fusion");
-            }
-
-            // 2. Collecter les données locales
+            // 1. Collecter les données locales (ce sont les données à sauvegarder)
             const localData = this.collectCurrentContextData();
             this.logAuth("📦 Données locales collectées");
 
-            // 3. Attribuer le mapId de la carte active aux lieux/régions sans mapId
+            // 2. Attribuer le mapId de la carte active aux lieux/régions sans mapId
             const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl;
             this.logAuth(`🔍 [syncUserData] activeMapId: ${activeMapId}`);
 
@@ -1150,7 +1138,6 @@ class AuthManager {
                     this.logAuth(`🗺️ Attribution mapId actif (${activeMapId}): ${locationsUpdated} lieux, ${regionsUpdated} régions`);
 
                     // IMPORTANT: Synchroniser IMMÉDIATEMENT avec les variables globales et localStorage
-                    // AVANT la fusion, pour garantir la persistance
                     if (localData.locations?.locations) {
                         window.locationsData = { ...localData.locations };
                         if (window.dataManager) {
@@ -1181,19 +1168,17 @@ class AuthManager {
                 }
             }
 
-            // 3. Fusionner les données
-            console.log("🔀 [CLOUD] Fusion données...");
-            const mergedData = this.mergeContextData(cloudData, localData);
-
-            console.log("📤 [CLOUD] Données fusionnées:", {
-                locations_count: mergedData.locations?.locations?.length || 0,
-                regions_count: mergedData.regions?.regions?.length || 0,
-                taille_json: JSON.stringify(mergedData).length
+            // 3. PAS DE FUSION - Les données locales ÉCRASENT le cloud
+            // La fusion ne doit se faire qu'au chargement, pas à la sauvegarde
+            console.log("📤 [CLOUD] Envoi des données locales (écrasement cloud):", {
+                locations_count: localData.locations?.locations?.length || 0,
+                regions_count: localData.regions?.regions?.length || 0,
+                taille_json: JSON.stringify(localData).length
             });
 
             // 4. Envoyer vers le cloud
             console.log("📤 [CLOUD] Envoi vers serveur...");
-            console.log("📤 [CLOUD] PAYLOAD COMPLET:", JSON.stringify(mergedData, null, 2));
+            console.log("📤 [CLOUD] PAYLOAD COMPLET:", JSON.stringify(localData, null, 2));
 
             const response = await fetch(`/api/user/data?env=${envPrefix}`, {
                 method: 'PUT',
@@ -1201,7 +1186,7 @@ class AuthManager {
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
-                body: JSON.stringify(mergedData)
+                body: JSON.stringify(localData)
             });
 
             console.log("📥 [CLOUD] Réponse serveur - Status:", response.status, response.statusText);
@@ -1217,7 +1202,7 @@ class AuthManager {
 
             if (result.conflict_detected) {
                 console.warn("⚠️ [CLOUD] Conflit détecté");
-                await this.handleSyncConflict(result.cloud_data, mergedData);
+                await this.handleSyncConflict(result.cloud_data, localData);
             } else {
                 this.lastSyncTimestamp = Date.now();
                 localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp);
