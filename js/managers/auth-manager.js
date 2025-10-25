@@ -959,6 +959,9 @@ class AuthManager {
             return;
         }
 
+        // Afficher le loader immédiatement
+        this.showSyncLoader();
+        
         this.updateSyncStatus('syncing');
         this.isSyncing = true;
 
@@ -969,15 +972,57 @@ class AuthManager {
             // Marquer comme sauvegardé et masquer l'icône
             this.markAsSaved();
 
+            // Masquer le loader
+            this.hideSyncLoader();
+
             // Afficher message de confirmation
             this.showSyncSuccessMessage();
 
             setTimeout(() => this.updateSyncStatus('idle'), 2000);
         } catch (error) {
+            // Masquer le loader en cas d'erreur
+            this.hideSyncLoader();
+            
             this.updateSyncStatus('error');
             setTimeout(() => this.updateSyncStatus('idle'), 3000);
         } finally {
             this.isSyncing = false;
+        }
+    }
+
+    showSyncLoader() {
+        // Créer un loader si non existant
+        let loader = document.getElementById('sync-loader');
+        if (!loader) {
+            loader = document.createElement('div');
+            loader.id = 'sync-loader';
+            loader.className = 'fixed top-20 left-4 z-[100] bg-blue-600 text-white px-4 py-3 rounded-lg shadow-xl flex items-center space-x-3';
+            loader.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="font-medium">Synchronisation en cours...</span>
+            `;
+            document.body.appendChild(loader);
+        }
+        loader.style.display = 'flex';
+        loader.style.opacity = '0';
+        
+        // Animation d'apparition
+        setTimeout(() => {
+            loader.style.transition = 'opacity 0.3s ease';
+            loader.style.opacity = '1';
+        }, 10);
+    }
+
+    hideSyncLoader() {
+        const loader = document.getElementById('sync-loader');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 300);
         }
     }
 
