@@ -1139,6 +1139,8 @@ class InfoBoxManager {
 
         // Initialiser la sélection
         this.selectedLibraryImagesForEdit = [];
+        this.currentLibraryFolder = null;
+        this.libraryFolders = {};
 
         // Vérifier l'authentification
         if (!window.authManager || !window.authManager.isAuthenticated) {
@@ -1154,7 +1156,7 @@ class InfoBoxManager {
         // Afficher le chemin de stockage
         if (pathInfo && pathDisplay && window.authManager.currentUser) {
             const googleId = window.authManager.currentUser.google_id;
-            pathDisplay.textContent = `uploads/${googleId}/locations/`;
+            pathDisplay.textContent = `uploads/${googleId}/`;
             pathInfo.classList.remove('hidden');
         }
 
@@ -1179,81 +1181,83 @@ class InfoBoxManager {
 
             loading.classList.add('hidden');
 
-            // L'API retourne maintenant {folders: {category: [images]}}
             if (data.success && data.folders && Object.keys(data.folders).length > 0) {
-                // Aplatir toutes les images de tous les dossiers
-                const allImages = [];
-                Object.values(data.folders).forEach(folderImages => {
-                    allImages.push(...folderImages);
-                });
-
-                if (allImages.length > 0) {
-                    this.renderLibraryImagesForEdit(allImages);
-                    content.classList.remove('hidden');
-                } else {
-                    empty.classList.remove('hidden');
-                }
+                this.libraryFolders = data.folders;
+                this.renderLibraryFolders();
+                content.classList.remove('hidden');
             } else {
                 empty.classList.remove('hidden');
             }
 
         } catch (error) {
-            console.error("❌ Erreur lors du chargement de la bibliothèque:", error);
+            console.error('❌ Erreur lors du chargement de la bibliothèque:', error);
+            alert('Erreur lors du chargement de la bibliothèque: ' + error.message);
             loading.classList.add('hidden');
             empty.classList.remove('hidden');
         }
+    }
+
+    renderLibraryFolders() {
+        const content = document.getElementById('library-selection-content');
+        if (!content) return;
+
+        const folderNames = Object.keys(this.libraryFolders);
+
+        content.innerHTML = `
+            <div class="col-span-full mb-4">
+                <h3 class="text-lg font-semibold text-white mb-2">Sélectionner un dossier :</h3>
+            </div>
+            ${folderNames.map(folder => `
+                <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
+                     onclick="window.infoBoxManager.selectLibraryFolder('${folder}')">
+                    <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
+                    <div class="text-white font-medium">${folder}</div>
+                    <div class="text-gray-400 text-sm">${this.libraryFolders[folder].length} image(s)</div>
+                </div>
+            `).join('')}
+        `;
+    }
+
+    selectLibraryFolder(folderName) {
+        this.currentLibraryFolder = folderName;
+        const images = this.libraryFolders[folderName] || [];
+        this.renderLibraryImagesForEdit(images);
     }
 
     renderLibraryImagesForEdit(images) {
         const content = document.getElementById('library-selection-content');
         if (!content) return;
 
-        content.innerHTML = '';
-
-        images.forEach(image => {
-            const imageCard = document.createElement('div');
-            imageCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card';
-            imageCard.dataset.url = image.url;
-            imageCard.dataset.filename = image.filename;
-
-            imageCard.innerHTML = `
-                <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
-                <div class="absolute top-2 right-2 hidden selected-indicator">
-                    <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                        <i class="fas fa-check text-xs"></i>
+        content.innerHTML = `
+            <div class="col-span-full mb-4 flex items-center">
+                <button onclick="window.infoBoxManager.renderLibraryFolders()" class="flex items-center text-blue-400 hover:text-blue-300">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Retour aux dossiers
+                </button>
+                <h3 class="text-lg font-semibold text-white ml-4">${this.currentLibraryFolder || 'Images'}</h3>
+            </div>
+            ${images.map(image => `
+                <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card"
+                     onclick="window.infoBoxManager.toggleLibraryImageSelectionForEdit('${image.url}', '${encodeURIComponent(image.filename)}')">
+                    <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
+                    <div class="absolute top-2 right-2 hidden selected-indicator-${image.url.replace(/[^a-zA-Z0-9]/g, '_')}">
+                        <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                            <i class="fas fa-check text-xs"></i>
+                        </div>
+                    </div>
+                    <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
+                        <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
+                            <p class="text-xs truncate">${image.filename}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
-                    <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
-                        <p class="text-xs truncate">${image.filename}</p>
-                    </div>
-                </div>
-            `;
-
-            imageCard.addEventListener('click', () => this.toggleImageSelectionForEdit(imageCard));
-            content.appendChild(imageCard);
-        });
-
-        // Setup des boutons de la modale
-        const confirmBtn = document.getElementById('confirm-library-selection-btn');
-        const cancelBtn = document.getElementById('cancel-library-selection-btn');
-        const closeBtn = document.getElementById('close-library-selection-btn');
-
-        if (confirmBtn) {
-            confirmBtn.onclick = () => this.confirmLibrarySelectionForEdit();
-        }
-        if (cancelBtn) {
-            cancelBtn.onclick = () => this.closeLibrarySelection();
-        }
-        if (closeBtn) {
-            closeBtn.onclick = () => this.closeLibrarySelection();
-        }
+            `).join('')}
+        `;
     }
 
-    toggleImageSelectionForEdit(card) {
-        const url = card.dataset.url;
-        const filename = card.dataset.filename;
-        const indicator = card.querySelector('.selected-indicator');
+    toggleLibraryImageSelectionForEdit(url, filename) {
+        const card = document.querySelector(`.library-image-card[data-url="${url}"]`); // Assurez-vous que data-url est correctement défini
+        const indicator = card.querySelector('.selected-indicator'); // Ajuster le sélecteur si nécessaire
 
         if (!this.selectedLibraryImagesForEdit) {
             this.selectedLibraryImagesForEdit = [];
@@ -1268,7 +1272,7 @@ class InfoBoxManager {
             card.classList.remove('ring-2', 'ring-blue-500');
         } else {
             // Sélectionner
-            this.selectedLibraryImagesForEdit.push({ url, filename });
+            this.selectedLibraryImagesForEdit.push({ url, filename: decodeURIComponent(filename) }); // Décoder le nom de fichier
             indicator.classList.remove('hidden');
             card.classList.add('ring-2', 'ring-blue-500');
         }

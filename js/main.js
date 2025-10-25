@@ -1900,6 +1900,9 @@ function setupLibrarySelectionModal() {
     }
 }
 
+let currentLibraryFolder = null;
+let libraryFolders = {};
+
 async function loadLibraryForSelection() {
     const modal = document.getElementById('library-selection-modal');
     const content = document.getElementById('library-selection-content');
@@ -1913,6 +1916,8 @@ async function loadLibraryForSelection() {
 
     // Réinitialiser la sélection
     selectedLibraryImages = [];
+    currentLibraryFolder = null;
+    libraryFolders = {};
 
     // Vérifier l'authentification
     if (!authManager || !authManager.isAuthenticated) {
@@ -1940,7 +1945,6 @@ async function loadLibraryForSelection() {
     modal.classList.remove('hidden');
 
     try {
-        // IMPORTANT: Enlever '/locations' pour accéder au dossier parent
         const response = await fetch('/api/images/library', {
             method: 'GET',
             credentials: 'include'
@@ -1954,20 +1958,10 @@ async function loadLibraryForSelection() {
 
         loading.classList.add('hidden');
 
-        // L'API retourne maintenant {folders: {category: [images]}}
         if (data.success && data.folders && Object.keys(data.folders).length > 0) {
-            // Aplatir toutes les images de tous les dossiers
-            const allImages = [];
-            Object.values(data.folders).forEach(folderImages => {
-                allImages.push(...folderImages);
-            });
-
-            if (allImages.length > 0) {
-                renderLibraryImages(allImages);
-                content.classList.remove('hidden');
-            } else {
-                empty.classList.remove('hidden');
-            }
+            libraryFolders = data.folders;
+            renderLibraryFolders();
+            content.classList.remove('hidden');
         } else {
             empty.classList.remove('hidden');
         }
@@ -1975,8 +1969,7 @@ async function loadLibraryForSelection() {
     } catch (error) {
         console.error("❌ Erreur lors du chargement de la bibliothèque:", error);
         loading.classList.add('hidden');
-        empty.classList.add('hidden'); // Ensure empty is hidden if loading fails
-        // Optionally show an error message to the user
+        empty.classList.add('hidden');
         const errorElement = document.getElementById('library-selection-error');
         if (errorElement) {
             errorElement.textContent = `Impossible de charger la bibliothèque : ${error.message}`;
@@ -1985,11 +1978,77 @@ async function loadLibraryForSelection() {
     }
 }
 
+function renderLibraryFolders() {
+    const content = document.getElementById('library-selection-content');
+    if (!content) return;
+
+    const folderNames = Object.keys(libraryFolders);
+
+    content.innerHTML = `
+        <div class="col-span-full mb-4">
+            <h3 class="text-lg font-semibold text-white mb-2">Sélectionner un dossier :</h3>
+        </div>
+        ${folderNames.map(folder => `
+            <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
+                 onclick="selectLibraryFolder('${folder}')">
+                <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
+                <div class="text-white font-medium">${folder}</div>
+                <div class="text-gray-400 text-sm">${libraryFolders[folder].length} image(s)</div>
+            </div>
+        `).join('')}
+    `;
+}
+
+function selectLibraryFolder(folderName) {
+    currentLibraryFolder = folderName;
+    const images = libraryFolders[folderName] || [];
+    renderLibraryImagesWithBackButton(images);
+}
+
 function renderLibraryImages(images) {
     const content = document.getElementById('library-selection-content');
     if (!content) return;
 
     content.innerHTML = '';
+
+    images.forEach(image => {
+        const imageCard = document.createElement('div');
+        imageCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card';
+        imageCard.dataset.url = image.url;
+        imageCard.dataset.filename = image.filename;
+
+        imageCard.innerHTML = `
+            <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
+            <div class="absolute top-2 right-2 hidden selected-indicator">
+                <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                    <i class="fas fa-check text-xs"></i>
+                </div>
+            </div>
+            <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
+                <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
+                    <p class="text-xs truncate">${image.filename}</p>
+                </div>
+            </div>
+        `;
+
+        imageCard.addEventListener('click', () => toggleImageSelection(imageCard));
+        content.appendChild(imageCard);
+    });
+}
+
+function renderLibraryImagesWithBackButton(images) {
+    const content = document.getElementById('library-selection-content');
+    if (!content) return;
+
+    content.innerHTML = `
+        <div class="col-span-full mb-4 flex items-center">
+            <button onclick="renderLibraryFolders()" class="flex items-center text-blue-400 hover:text-blue-300">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Retour aux dossiers
+            </button>
+            <h3 class="text-lg font-semibold text-white ml-4">${currentLibraryFolder || 'Images'}</h3>
+        </div>
+    `;
 
     images.forEach(image => {
         const imageCard = document.createElement('div');
