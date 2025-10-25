@@ -45,9 +45,9 @@ if STORAGE_AVAILABLE:
             if match:
                 bucket_name = match.group(1)
                 
-                # Sur Replit, le client utilise automatiquement les credentials de l'environnement
-                # Ne pas spécifier de credentials explicites - Replit gère tout automatiquement
-                storage_client = gcs_storage.Client()
+                # Sur Replit, spécifier explicitement le projet "replit-objstore"
+                # Le client utilisera automatiquement les credentials de l'environnement Replit
+                storage_client = gcs_storage.Client(project="replit-objstore")
                 
                 print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
                 print(f"✅ Object Storage actif et prêt pour la persistance des images")
