@@ -45,10 +45,16 @@ if STORAGE_AVAILABLE:
             if match:
                 bucket_name = match.group(1)
                 
-                # Initialiser le client avec le projet dérivé du bucket
-                # Format du bucket: replit-objstore-{uuid}
-                # Le projet Replit est toujours "replit-objstore"
-                storage_client = gcs_storage.Client(project="replit-objstore")
+                # Sur Replit, utiliser les credentials anonymes pour Object Storage
+                # car l'authentification se fait automatiquement via l'environnement Replit
+                from google.auth.credentials import AnonymousCredentials
+                
+                # Initialiser le client sans authentification explicite
+                # Replit gère automatiquement l'accès au bucket
+                storage_client = gcs_storage.Client(
+                    project="replit-objstore",
+                    credentials=AnonymousCredentials()
+                )
                 
                 print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
                 print(f"✅ Object Storage actif et prêt pour la persistance des images")
@@ -58,6 +64,8 @@ if STORAGE_AVAILABLE:
     except Exception as e:
         print(f"⚠️ Object Storage non disponible: {e}")
         print("📁 Utilisation du système de fichiers local")
+        import traceback
+        traceback.print_exc()
 else:
     print("📁 Google Cloud Storage non installé, utilisation du système de fichiers local")
 
