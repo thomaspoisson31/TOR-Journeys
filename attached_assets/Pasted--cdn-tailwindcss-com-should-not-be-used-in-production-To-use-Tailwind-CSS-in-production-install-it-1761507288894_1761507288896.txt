@@ -1,0 +1,345 @@
+ cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+ 📤 UploadManager module loaded
+ 📋 InfoBoxManager module loaded
+ 📚 LibraryManager module loaded
+ 👥 CharactersManager module loaded
+ ✅ Constants loaded successfully
+ ✅ Global variables initialized
+ ✅ Essential DOM elements: Object
+ 📋 Simplified main.js loaded - waiting for DOM ready
+ 🚀 Starting simplified application...
+ ✅ DataManager initialized
+ 🔍 FilterManager initialized
+ ✅ FilterManager initialized
+ ✅ VoyageManager initialized
+ ✅ PathManager initialized
+ 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+ 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+ 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+ 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+ 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+ 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+ 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+ 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+ 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+ 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+ 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+ 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 📅 Données calendrier exposées globalement: Object
+ ✅ CalendarManager initialized
+ ⚙️ SettingsManager initialized
+ ⚙️ Configuration des listeners Import/Export...
+ 📍 Boutons Lieux/Régions: Object
+ 👥 Boutons Personnages: Object
+ ✅ Listeners Import/Export configurés
+ ✅ SettingsManager initialized
+ [AuthManager] 🔑 Initialisation AuthManager null
+ [AuthManager] 🔍 Vérification du statut d'authentification null
+ [AuthManager] 👂 Écoute des changements de localStorage activée. null
+ ✅ AuthManager initialized
+ 📤 UploadManager initialized
+ 📋 InfoBoxManager initialized with UploadManager
+ ✅ InfoBoxManager initialized
+ 📤 ImportExportManager initialized
+ 📤 ImportExportManager event listeners configured
+ ✅ ImportExportManager initialized
+ 📍 Initializing data structures...
+ 📍 loadInitialLocations: Initialisation avec structure vide
+ ✅ Structure de données initialisée (vide, en attente du cloud)
+ 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+ ✅ Structure de régions initialisée (vide, en attente du cloud)
+ ✅ Data structures initialized (will be populated from cloud)
+ ⏳ Waiting for SettingsManager to load active map...
+ 📤 UploadManager initialized
+ 🤖 Gemini API disponible: true
+ [AuthManager] ✅ Utilisateur authentifié trouvé null
+ [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+ 🤖 Gemini API disponible: true
+ [AuthManager] 🌍 Environnement détecté: development (préfixe: dev_) null
+ [AuthManager] 📥 Chargement des données depuis le cloud (environnement: dev_) null
+ [AuthManager] ✅ Données cloud récupérées Object
+ [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+ [AuthManager] 🔄 Application des données du contexte Array(10)
+ [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+ [AuthManager] 💾 6 lieux sauvegardés dans localStorage null
+ [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+ [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 6 lieux null
+ [AuthManager] 📊 Structure locationsData: Object
+ [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+ [AuthManager] 📊 Structure regionsData: Object
+ [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+ [AuthManager] 📅 [applyContextData] Données calendar reçues: Object
+ [AuthManager] 📅 [applyContextData] Saison appliquée: printemps-fin null
+ [AuthManager] 📅 [applyContextData] Date appliquée: Object
+ [AuthManager] 📅 [applyContextData] Données calendrier appliquées: 12 mois null
+ [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+ [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 📅 Données calendrier exposées globalement: Object
+ [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+ [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+ ⚙️ Chargement des paramètres depuis le contexte: Object
+ ✅ Cartes chargées: 3
+ ✅ Carte active URL: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ ✅ Carte active nom: La Comté
+ ✅ Description aventuriers chargée
+ ✅ Description quête chargée
+ ✅ Style de narration chargé: brief
+ 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 🗺️ Échelle de la carte active: 600 miles
+ ✅ Paramètres chargés avec succès
+ [AuthManager] 🗺️ 3 carte(s) restaurée(s) depuis le cloud null
+ [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp null
+ [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+ [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+ [AuthManager] 👥 Application de 34 personnages depuis le contexte null
+ [AuthManager] 🎲 Application des données d'aventure depuis le contexte null
+ [AuthManager] ⚠️ [applyContextData] Aucune position dans le contexte
+ [AuthManager] ⚠️ [applyContextData] Aucune donnée filtersByMap dans le contexte null
+ [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+ [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+ [AuthManager] ✅ Contexte appliqué avec succès null
+ [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+ [AuthManager] 💾 3 carte(s) sauvegardée(s) dans localStorage null
+ [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp null
+ [AuthManager]   - 34 personnages sauvegardés dans localStorage. null
+ [AuthManager]   - Données sauvegardées dans localStorage. null
+ [AuthManager] 🎨 Rendu forcé après chargement cloud null
+ ✅ Rendered 1 location markers (thumbnails: true)
+ [AuthManager] ✅ 6 lieux rendus depuis le cloud null
+ ✅ Rendered 0 region polygons
+ [AuthManager] ✅ 0 régions rendues depuis le cloud null
+ [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+ [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+ ✅ Image de carte chargée, re-initialisation de la carte
+ 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+ 🗺️ Réinitialisation de la carte depuis loadSettings
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 5000 x 3875
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+main.js:1501 Uncaught 
+ 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+ 🔍 [main.js] zoomToPoint: oldScale=0.320, zoomFactor=0.900, newScale=0.288
+ 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+ 🔍 [main.js] zoomToPoint: oldScale=0.288, zoomFactor=0.900, newScale=0.259
+ 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+ 🔍 [main.js] zoomToPoint: oldScale=0.259, zoomFactor=1.100, newScale=0.285
+ [AuthManager] 🔔 Modifications non sauvegardées détectées null
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ 🗺️ [switchMap] Reset MAP_WIDTH et MAP_HEIGHT à 0
+ 🗺️ [switchMap] Reset window.scale à 1
+ 🧹 [switchMap] Couche de lieux vidée
+ 🧹 [switchMap] Couche de régions vidée
+ 🗺️ [switchMap] Réinitialisation complète de la carte
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 5000 x 3229
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+main.js:1501 Uncaught 
+ ✅ Image de carte chargée, re-initialisation de la carte
+ 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+ 🗺️ Réinitialisation de la carte depuis loadSettings
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 5000 x 3229
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+main.js:1501 Uncaught 
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ 🗺️ [switchMap] Reset MAP_WIDTH et MAP_HEIGHT à 0
+ 🗺️ [switchMap] Reset window.scale à 1
+ 🧹 [switchMap] Couche de lieux vidée
+ 🧹 [switchMap] Couche de régions vidée
+ 🗺️ [switchMap] Réinitialisation complète de la carte
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 4252 x 3296
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.376 (viewportWidth=1600, MAP_WIDTH=4252)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+main.js:1501 Uncaught 
+ ✅ Image de carte chargée, re-initialisation de la carte
+ 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+ 🗺️ Réinitialisation de la carte depuis loadSettings
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 4252 x 3296
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.376 (viewportWidth=1600, MAP_WIDTH=4252)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+main.js:1501 Uncaught 
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ 🗺️ [switchMap] Reset MAP_WIDTH et MAP_HEIGHT à 0
+ 🗺️ [switchMap] Reset window.scale à 1
+ 🧹 [switchMap] Couche de lieux vidée
+ 🧹 [switchMap] Couche de régions vidée
+ 🗺️ [switchMap] Réinitialisation complète de la carte
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 5000 x 3229
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+main.js:1186 ✅ Info-box listeners setup complete
+main.js:1191 🎨 Setting up region drawing...
+main.js:1213 ✅ Region drawing setup complete
+main.js:1466 📍 Setting up location adding...
+main.js:1489 ✅ Generate description button configured
+main.js:1501 Uncaught ReferenceError: openLibrarySelection is not defined
+    at setupLocationAdding (main.js:1501:56)
+    at initializeMap (main.js:601:5)
+    at SettingsManager.setActiveMap (settings-manager.js:608:20)
+    at HTMLDivElement.onclick ((index):1:24)
+settings-manager.js:1223 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1234 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+settings-manager.js:1238 🗺️ Réinitialisation de la carte depuis loadSettings
+main.js:545 🗺️ Initializing map...
+main.js:551 📐 Map dimensions: 5000 x 3229
+main.js:577 ✅ Regions layer configured
+main.js:587 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+main.js:913 🎮 Setting up map navigation...
+main.js:1140 ✅ Map navigation setup complete
+main.js:1145 📋 Setting up info-box listeners...
+main.js:1186 ✅ Info-box listeners setup complete
+main.js:1191 🎨 Setting up region drawing...
+main.js:1213 ✅ Region drawing setup complete
+main.js:1466 📍 Setting up location adding...
+main.js:1489 ✅ Generate description button configured
+main.js:1501 Uncaught ReferenceError: openLibrarySelection is not defined
+    at setupLocationAdding (main.js:1501:56)
+    at initializeMap (main.js:601:5)
+    at HTMLImageElement.onImageLoaded (settings-manager.js:1239:28)
+auth-manager.js:1697 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+settings-manager.js:583 🗺️ [switchMap] Reset MAP_WIDTH et MAP_HEIGHT à 0
+settings-manager.js:590 🗺️ [switchMap] Reset window.scale à 1
+settings-manager.js:598 🧹 [switchMap] Couche de lieux vidée
+settings-manager.js:602 🧹 [switchMap] Couche de régions vidée
+settings-manager.js:607 🗺️ [switchMap] Réinitialisation complète de la carte
+main.js:545 🗺️ Initializing map...
+main.js:551 📐 Map dimensions: 5000 x 3875
+main.js:577 ✅ Regions layer configured
+main.js:587 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+main.js:913 🎮 Setting up map navigation...
+main.js:1140 ✅ Map navigation setup complete
+main.js:1145 📋 Setting up info-box listeners...
+main.js:1186 ✅ Info-box listeners setup complete
+main.js:1191 🎨 Setting up region drawing...
+main.js:1213 ✅ Region drawing setup complete
+main.js:1466 📍 Setting up location adding...
+main.js:1489 ✅ Generate description button configured
+main.js:1501 Uncaught ReferenceError: openLibrarySelection is not defined
+    at setupLocationAdding (main.js:1501:56)
+    at initializeMap (main.js:601:5)
+    at SettingsManager.setActiveMap (settings-manager.js:608:20)
+    at HTMLDivElement.onclick ((index):1:24)
+settings-manager.js:1223 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1234 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+settings-manager.js:1238 🗺️ Réinitialisation de la carte depuis loadSettings
+main.js:545 🗺️ Initializing map...
+main.js:551 📐 Map dimensions: 5000 x 3875
+main.js:577 ✅ Regions layer configured
+main.js:587 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+main.js:913 🎮 Setting up map navigation...
+main.js:1140 ✅ Map navigation setup complete
+main.js:1145 📋 Setting up info-box listeners...
+main.js:1186 ✅ Info-box listeners setup complete
+main.js:1191 🎨 Setting up region drawing...
+main.js:1213 ✅ Region drawing setup complete
+main.js:1466 📍 Setting up location adding...
+main.js:1489 ✅ Generate description button configured
+main.js:1501 Uncaught ReferenceError: openLibrarySelection is not defined
+    at setupLocationAdding (main.js:1501:56)
+    at initializeMap (main.js:601:5)
+    at HTMLImageElement.onImageLoaded (settings-manager.js:1239:28)
+main.js:1521 📍 Entering location adding mode
+main.js:1575 📍 Selected location coordinates: (2491, 1425)
+main.js:1673 💾 Creating new location: Object
+data-manager.js:22 💾 [DataManager] 7 lieux sauvegardés dans localStorage
+auth-manager.js:1697 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+main.js:386 ✅ Rendered 2 location markers (thumbnails: false)
+main.js:1716 ✅ Location created successfully: qdjklqjkldjkdqsjl
+main.js:2563 🎯 Starting potential drag for location: qdjklqjkldjkdqsjl
+infobox-manager.js:70 📋 [InfoBoxManager] Showing info box for: qdjklqjkldjkdqsjl Type: location Object
+infobox-manager.js:109 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:752 ✏️ Entering edit mode for: qdjklqjkldjkdqsjl
+main.js:2563 🎯 Starting potential drag for location: qdjklqjkldjkdqsjl
+infobox-manager.js:70 📋 [InfoBoxManager] Showing info box for: qdjklqjkldjkdqsjl Type: location Object
+infobox-manager.js:109 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:752 ✏️ Entering edit mode for: qdjklqjkldjkdqsjl
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+toggleLibraryImageSelectionForEdit @ infobox-manager.js:1260
+onclick @ (index):1
+infobox-manager.js:1260 Uncaught TypeError: Cannot read properties of null (reading 'querySelector')
+    at InfoBoxManager.toggleLibraryImageSelectionForEdit (infobox-manager.js:1260:32)
+    at HTMLDivElement.onclick ((index):1:23)
+toggleLibraryImageSelectionForEdit @ infobox-manager.js:1260
+onclick @ (index):1
