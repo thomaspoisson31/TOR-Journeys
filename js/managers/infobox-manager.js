@@ -1126,7 +1126,7 @@ class InfoBoxManager {
         }
     }
 
-    async openLibraryForEdit() {
+    openLibraryForEdit() {
         const modal = document.getElementById('library-selection-modal');
         const content = document.getElementById('library-selection-content');
         const empty = document.getElementById('library-selection-empty');

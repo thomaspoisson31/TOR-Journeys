@@ -1498,7 +1498,13 @@ function setupLocationAdding() {
     // Setup du bouton de bibliothèque
     const chooseFromLibraryBtn = document.getElementById('choose-from-library-btn');
     if (chooseFromLibraryBtn) {
-        chooseFromLibraryBtn.addEventListener('click', openLibrarySelection);
+        chooseFromLibraryBtn.addEventListener('click', () => {
+            if (window.infoBoxManager) {
+                window.infoBoxManager.openLibrarySelectionForEdit();
+            } else {
+                openLibrarySelection();
+            }
+        });
     }
 
     // Setup de la modale de sélection de bibliothèque
@@ -1902,6 +1908,10 @@ function setupLibrarySelectionModal() {
 
 let currentLibraryFolder = null;
 let libraryFolders = {};
+
+function openLibrarySelection() {
+    loadLibraryForSelection();
+}
 
 async function loadLibraryForSelection() {
     const modal = document.getElementById('library-selection-modal');
