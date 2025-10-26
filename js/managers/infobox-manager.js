@@ -1142,7 +1142,9 @@ class InfoBoxManager {
             this.selectedLibraryImagesForEdit = [];
         }
         this.currentLibraryFolder = null;
+        this.currentLibraryPath = [];
         this.libraryFolders = {};
+        this.libraryStructure = {};
 
         // Vérifier l'authentification
         if (!window.authManager || !window.authManager.isAuthenticated) {
@@ -1185,6 +1187,7 @@ class InfoBoxManager {
 
             if (data.success && data.folders && Object.keys(data.folders).length > 0) {
                 this.libraryFolders = data.folders;
+                this.buildLibraryStructure(data.folders);
                 this.renderLibraryFolders();
                 content.classList.remove('hidden');
             } else {
@@ -1199,71 +1202,156 @@ class InfoBoxManager {
         }
     }
 
-    renderLibraryFolders() {
+    buildLibraryStructure(folders) {
+        this.libraryStructure = {};
+        
+        Object.keys(folders).forEach(folderPath => {
+            const parts = folderPath.split('/');
+            let current = this.libraryStructure;
+            
+            parts.forEach((part, index) => {
+                if (!current[part]) {
+                    current[part] = {
+                        subfolders: {},
+                        images: [],
+                        fullPath: parts.slice(0, index + 1).join('/')
+                    };
+                }
+                
+                if (index === parts.length - 1) {
+                    current[part].images = folders[folderPath];
+                }
+                
+                current = current[part].subfolders;
+            });
+        });
+        
+        console.log('📁 Structure de bibliothèque construite:', this.libraryStructure);
+    }
+
+    renderLibraryFolders(path = []) {
         const content = document.getElementById('library-selection-content');
         if (!content) return;
 
-        const folderNames = Object.keys(this.libraryFolders);
+        let currentLevel = this.libraryStructure;
+        path.forEach(folder => {
+            if (currentLevel[folder]) {
+                currentLevel = currentLevel[folder].subfolders;
+            }
+        });
+
+        const folders = Object.keys(currentLevel);
+        const hasImages = path.length > 0;
+        
+        let breadcrumb = '';
+        if (path.length > 0) {
+            breadcrumb = `
+                <div class="col-span-full mb-4 flex items-center space-x-2">
+                    <button onclick="window.infoBoxManager.navigateLibraryUp()" class="flex items-center text-blue-400 hover:text-blue-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Retour
+                    </button>
+                    <span class="text-gray-400">/</span>
+                    <span class="text-white font-medium">${path.join(' / ')}</span>
+                </div>
+            `;
+        }
 
         content.innerHTML = `
+            ${breadcrumb}
             <div class="col-span-full mb-4">
-                <h3 class="text-lg font-semibold text-white mb-2">Sélectionner un dossier :</h3>
+                <h3 class="text-lg font-semibold text-white mb-2">${path.length > 0 ? 'Contenu :' : 'Sélectionner un dossier :'}</h3>
             </div>
-            ${folderNames.map(folder => `
-                <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
-                     onclick="window.infoBoxManager.selectLibraryFolder('${folder}')">
-                    <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
-                    <div class="text-white font-medium">${folder}</div>
-                    <div class="text-gray-400 text-sm">${this.libraryFolders[folder].length} image(s)</div>
-                </div>
-            `).join('')}
+            ${folders.map(folder => {
+                const folderData = this.libraryStructure;
+                let current = folderData;
+                path.forEach(p => { current = current[p].subfolders; });
+                const info = current[folder];
+                const imageCount = info.images.length;
+                const subfolderCount = Object.keys(info.subfolders).length;
+                
+                return `
+                    <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
+                         onclick="window.infoBoxManager.navigateIntoLibraryFolder('${folder}')">
+                        <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
+                        <div class="text-white font-medium">${folder}</div>
+                        <div class="text-gray-400 text-sm">
+                            ${imageCount > 0 ? `${imageCount} image(s)` : ''}
+                            ${imageCount > 0 && subfolderCount > 0 ? ' • ' : ''}
+                            ${subfolderCount > 0 ? `${subfolderCount} dossier(s)` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+            ${hasImages ? this.renderCurrentFolderImages(path) : ''}
         `;
     }
 
-    selectLibraryFolder(folderName) {
-        this.currentLibraryFolder = folderName;
-        const images = this.libraryFolders[folderName] || [];
-        this.renderLibraryImagesForEdit(images);
-    }
-
-    renderLibraryImagesForEdit(images) {
-        const content = document.getElementById('library-selection-content');
-        if (!content) return;
-
-        content.innerHTML = `
-            <div class="col-span-full mb-4 flex items-center justify-between">
-                <button onclick="window.infoBoxManager.renderLibraryFolders()" class="flex items-center text-blue-400 hover:text-blue-300">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Retour aux dossiers
-                </button>
-                <h3 class="text-lg font-semibold text-white">${this.currentLibraryFolder || 'Images'}</h3>
-                <button onclick="window.infoBoxManager.confirmLibrarySelectionForEdit()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
-                    <i class="fas fa-check mr-2"></i>Valider
-                </button>
+    renderCurrentFolderImages(path) {
+        let currentData = this.libraryStructure;
+        path.forEach(folder => {
+            currentData = currentData[folder].subfolders;
+        });
+        
+        const lastFolder = path[path.length - 1];
+        let images = [];
+        
+        if (currentData && currentData[Object.keys(currentData)[0]]) {
+            const parentData = this.libraryStructure;
+            let current = parentData;
+            path.slice(0, -1).forEach(p => { current = current[p].subfolders; });
+            if (current[lastFolder]) {
+                images = current[lastFolder].images || [];
+            }
+        }
+        
+        if (images.length === 0) return '';
+        
+        return `
+            <div class="col-span-full mt-6 mb-2">
+                <h4 class="text-md font-semibold text-white">Images dans ce dossier :</h4>
             </div>
             ${images.map(image => {
                 const safeId = image.url.replace(/[^a-zA-Z0-9]/g, '_');
                 return `
-                <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card"
-                     data-url="${image.url}"
-                     data-filename="${encodeURIComponent(image.filename)}"
-                     onclick="window.infoBoxManager.toggleLibraryImageSelectionForEdit('${image.url}', '${encodeURIComponent(image.filename)}')">
-                    <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
-                    <div class="absolute top-2 right-2 hidden selected-indicator-${safeId}">
-                        <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                            <i class="fas fa-check text-xs"></i>
+                    <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card"
+                         data-url="${image.url}"
+                         data-filename="${encodeURIComponent(image.filename)}"
+                         onclick="window.infoBoxManager.toggleLibraryImageSelectionForEdit('${image.url}', '${encodeURIComponent(image.filename)}')">
+                        <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
+                        <div class="absolute top-2 right-2 hidden selected-indicator-${safeId}">
+                            <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                <i class="fas fa-check text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
+                            <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
+                                <p class="text-xs truncate">${image.filename}</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
-                        <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
-                            <p class="text-xs truncate">${image.filename}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
+                `;
             }).join('')}
         `;
     }
+
+    navigateIntoLibraryFolder(folderName) {
+        if (!this.currentLibraryPath) {
+            this.currentLibraryPath = [];
+        }
+        this.currentLibraryPath.push(folderName);
+        this.renderLibraryFolders(this.currentLibraryPath);
+    }
+
+    navigateLibraryUp() {
+        if (!this.currentLibraryPath || this.currentLibraryPath.length === 0) return;
+        this.currentLibraryPath.pop();
+        this.renderLibraryFolders(this.currentLibraryPath);
+    }
+
+    
+
+    
 
     toggleLibraryImageSelectionForEdit(url, filename) {
         const card = document.querySelector(`.library-image-card[data-url="${url}"]`);
