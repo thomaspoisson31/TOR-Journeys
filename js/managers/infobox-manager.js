@@ -1137,8 +1137,10 @@ class InfoBoxManager {
 
         if (!modal) return;
 
-        // Initialiser la sélection
-        this.selectedLibraryImagesForEdit = [];
+        // Initialiser la sélection UNIQUEMENT si elle n'existe pas déjà
+        if (!this.selectedLibraryImagesForEdit) {
+            this.selectedLibraryImagesForEdit = [];
+        }
         this.currentLibraryFolder = null;
         this.libraryFolders = {};
 
@@ -1229,12 +1231,15 @@ class InfoBoxManager {
         if (!content) return;
 
         content.innerHTML = `
-            <div class="col-span-full mb-4 flex items-center">
+            <div class="col-span-full mb-4 flex items-center justify-between">
                 <button onclick="window.infoBoxManager.renderLibraryFolders()" class="flex items-center text-blue-400 hover:text-blue-300">
                     <i class="fas fa-arrow-left mr-2"></i>
                     Retour aux dossiers
                 </button>
-                <h3 class="text-lg font-semibold text-white ml-4">${this.currentLibraryFolder || 'Images'}</h3>
+                <h3 class="text-lg font-semibold text-white">${this.currentLibraryFolder || 'Images'}</h3>
+                <button onclick="window.infoBoxManager.confirmLibrarySelectionForEdit()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
+                    <i class="fas fa-check mr-2"></i>Valider
+                </button>
             </div>
             ${images.map(image => {
                 const safeId = image.url.replace(/[^a-zA-Z0-9]/g, '_');
@@ -1295,10 +1300,15 @@ class InfoBoxManager {
     }
 
     confirmLibrarySelectionForEdit() {
+        console.log("🔍 confirmLibrarySelectionForEdit appelée, selectedLibraryImagesForEdit:", this.selectedLibraryImagesForEdit);
+        
         if (!this.selectedLibraryImagesForEdit || this.selectedLibraryImagesForEdit.length === 0) {
+            console.warn("⚠️ Aucune image sélectionnée");
             alert("Veuillez sélectionner au moins une image");
             return;
         }
+
+        console.log(`✅ ${this.selectedLibraryImagesForEdit.length} image(s) à ajouter`);
 
         // Initialiser le tableau d'images si nécessaire
         if (!this.currentItem.images) {
@@ -1315,6 +1325,8 @@ class InfoBoxManager {
             this.currentItem.images.push(newImage);
         });
 
+        console.log("🖼️ Images ajoutées, total:", this.currentItem.images.length);
+
         // Re-render la liste des images
         const imagesList = document.getElementById('edit-images-list');
         if (imagesList) {
@@ -1327,7 +1339,7 @@ class InfoBoxManager {
         // Fermer la modale
         this.closeLibrarySelection();
 
-        console.log("🖼️ Images ajoutées depuis la bibliothèque");
+        console.log("✅ Images ajoutées depuis la bibliothèque");
     }
 
     closeLibrarySelection() {
