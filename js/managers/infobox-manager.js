@@ -1236,11 +1236,15 @@ class InfoBoxManager {
                 </button>
                 <h3 class="text-lg font-semibold text-white ml-4">${this.currentLibraryFolder || 'Images'}</h3>
             </div>
-            ${images.map(image => `
+            ${images.map(image => {
+                const safeId = image.url.replace(/[^a-zA-Z0-9]/g, '_');
+                return `
                 <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card"
+                     data-url="${image.url}"
+                     data-filename="${encodeURIComponent(image.filename)}"
                      onclick="window.infoBoxManager.toggleLibraryImageSelectionForEdit('${image.url}', '${encodeURIComponent(image.filename)}')">
                     <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
-                    <div class="absolute top-2 right-2 hidden selected-indicator-${image.url.replace(/[^a-zA-Z0-9]/g, '_')}">
+                    <div class="absolute top-2 right-2 hidden selected-indicator-${safeId}">
                         <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
                             <i class="fas fa-check text-xs"></i>
                         </div>
@@ -1251,13 +1255,25 @@ class InfoBoxManager {
                         </div>
                     </div>
                 </div>
-            `).join('')}
+            `;
+            }).join('')}
         `;
     }
 
     toggleLibraryImageSelectionForEdit(url, filename) {
-        const card = document.querySelector(`.library-image-card[data-url="${url}"]`); // Assurez-vous que data-url est correctement défini
-        const indicator = card.querySelector('.selected-indicator'); // Ajuster le sélecteur si nécessaire
+        const card = document.querySelector(`.library-image-card[data-url="${url}"]`);
+        if (!card) {
+            console.error('❌ Carte d\'image non trouvée pour url:', url);
+            return;
+        }
+
+        const safeId = url.replace(/[^a-zA-Z0-9]/g, '_');
+        const indicator = card.querySelector(`.selected-indicator-${safeId}`);
+        
+        if (!indicator) {
+            console.error('❌ Indicateur non trouvé pour url:', url);
+            return;
+        }
 
         if (!this.selectedLibraryImagesForEdit) {
             this.selectedLibraryImagesForEdit = [];
@@ -1272,7 +1288,7 @@ class InfoBoxManager {
             card.classList.remove('ring-2', 'ring-blue-500');
         } else {
             // Sélectionner
-            this.selectedLibraryImagesForEdit.push({ url, filename: decodeURIComponent(filename) }); // Décoder le nom de fichier
+            this.selectedLibraryImagesForEdit.push({ url, filename: decodeURIComponent(filename) });
             indicator.classList.remove('hidden');
             card.classList.add('ring-2', 'ring-blue-500');
         }
