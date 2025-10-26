@@ -1218,8 +1218,9 @@ class InfoBoxManager {
                     };
                 }
                 
+                // Ajouter les images au dernier niveau du chemin
                 if (index === parts.length - 1) {
-                    current[part].images = folders[folderPath];
+                    current[part].images = folders[folderPath] || [];
                 }
                 
                 current = current[part].subfolders;
@@ -1234,14 +1235,18 @@ class InfoBoxManager {
         if (!content) return;
 
         let currentLevel = this.libraryStructure;
+        let currentData = null;
+        
+        // Naviguer jusqu'au niveau actuel
         path.forEach(folder => {
             if (currentLevel[folder]) {
+                currentData = currentLevel[folder];
                 currentLevel = currentLevel[folder].subfolders;
             }
         });
 
         const folders = Object.keys(currentLevel);
-        const hasImages = path.length > 0;
+        const currentImages = currentData ? currentData.images : [];
         
         let breadcrumb = '';
         if (path.length > 0) {
@@ -1259,51 +1264,44 @@ class InfoBoxManager {
 
         content.innerHTML = `
             ${breadcrumb}
-            <div class="col-span-full mb-4">
-                <h3 class="text-lg font-semibold text-white mb-2">${path.length > 0 ? 'Contenu :' : 'Sélectionner un dossier :'}</h3>
-            </div>
-            ${folders.map(folder => {
-                const folderData = this.libraryStructure;
-                let current = folderData;
-                path.forEach(p => { current = current[p].subfolders; });
-                const info = current[folder];
-                const imageCount = info.images.length;
-                const subfolderCount = Object.keys(info.subfolders).length;
-                
-                return `
-                    <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
-                         onclick="window.infoBoxManager.navigateIntoLibraryFolder('${folder}')">
-                        <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
-                        <div class="text-white font-medium">${folder}</div>
-                        <div class="text-gray-400 text-sm">
-                            ${imageCount > 0 ? `${imageCount} image(s)` : ''}
-                            ${imageCount > 0 && subfolderCount > 0 ? ' • ' : ''}
-                            ${subfolderCount > 0 ? `${subfolderCount} dossier(s)` : ''}
+            ${folders.length > 0 ? `
+                <div class="col-span-full mb-4">
+                    <h3 class="text-lg font-semibold text-white mb-2">${path.length > 0 ? 'Sous-dossiers :' : 'Sélectionner un dossier :'}</h3>
+                </div>
+                ${folders.map(folder => {
+                    const info = currentLevel[folder];
+                    const imageCount = info.images.length;
+                    const subfolderCount = Object.keys(info.subfolders).length;
+                    
+                    return `
+                        <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
+                             onclick="window.infoBoxManager.navigateIntoLibraryFolder('${folder}')">
+                            <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
+                            <div class="text-white font-medium">${folder}</div>
+                            <div class="text-gray-400 text-sm">
+                                ${imageCount > 0 ? `${imageCount} image(s)` : ''}
+                                ${imageCount > 0 && subfolderCount > 0 ? ' • ' : ''}
+                                ${subfolderCount > 0 ? `${subfolderCount} dossier(s)` : ''}
+                                ${imageCount === 0 && subfolderCount === 0 ? 'Vide' : ''}
+                            </div>
                         </div>
-                    </div>
-                `;
-            }).join('')}
-            ${hasImages ? this.renderCurrentFolderImages(path) : ''}
+                    `;
+                }).join('')}
+            ` : ''}
+            ${currentImages.length > 0 ? this.renderCurrentFolderImages(path) : ''}
         `;
     }
 
     renderCurrentFolderImages(path) {
-        let currentData = this.libraryStructure;
+        // Naviguer jusqu'au niveau actuel pour récupérer les images
+        let current = this.libraryStructure;
         path.forEach(folder => {
-            currentData = currentData[folder].subfolders;
+            if (current[folder]) {
+                current = current[folder];
+            }
         });
         
-        const lastFolder = path[path.length - 1];
-        let images = [];
-        
-        if (currentData && currentData[Object.keys(currentData)[0]]) {
-            const parentData = this.libraryStructure;
-            let current = parentData;
-            path.slice(0, -1).forEach(p => { current = current[p].subfolders; });
-            if (current[lastFolder]) {
-                images = current[lastFolder].images || [];
-            }
-        }
+        const images = current.images || [];
         
         if (images.length === 0) return '';
         
