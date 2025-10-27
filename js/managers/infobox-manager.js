@@ -1330,11 +1330,16 @@ class InfoBoxManager {
                 const selectedClass = isSelected ? 'ring-2 ring-blue-500' : '';
                 const indicatorClass = isSelected ? '' : 'hidden';
                 
+                // Échapper correctement l'URL et le filename pour éviter les problèmes avec les caractères spéciaux
+                const escapedUrl = image.url.replace(/'/g, "\\'");
+                const escapedFilename = encodeURIComponent(image.filename).replace(/'/g, "\\'");
+                
                 return `
                     <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card ${selectedClass}"
                          data-url="${image.url}"
                          data-filename="${encodeURIComponent(image.filename)}"
-                         onclick="window.infoBoxManager.toggleLibraryImageSelectionForEdit('${image.url}', '${encodeURIComponent(image.filename)}')">
+                         data-safeid="${safeId}"
+                         onclick="event.preventDefault(); event.stopPropagation(); window.infoBoxManager.toggleLibraryImageSelectionForEdit('${escapedUrl}', '${escapedFilename}', '${safeId}');">
                         <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
                         <div class="absolute top-2 right-2 ${indicatorClass} selected-indicator-${safeId}">
                             <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
@@ -1374,58 +1379,48 @@ class InfoBoxManager {
 
 
 
-    toggleLibraryImageSelectionForEdit(url, filename) {
-        console.log('🔍 [toggleLibraryImageSelectionForEdit] DÉBUT - url:', url, 'filename:', filename);
-        console.log('🔍 [toggleLibraryImageSelectionForEdit] État actuel selectedLibraryImagesForEdit:', this.selectedLibraryImagesForEdit);
+    toggleLibraryImageSelectionForEdit(url, filename, safeId) {
+        console.log('🔍 [toggleLibraryImageSelectionForEdit] DÉBUT - url:', url, 'filename:', filename, 'safeId:', safeId);
         
-        const card = document.querySelector(`.library-image-card[data-url="${url}"]`);
-        if (!card) {
-            console.error('❌ Carte d\'image non trouvée pour url:', url);
-            console.error('❌ Cartes disponibles:', document.querySelectorAll('.library-image-card'));
-            return;
-        }
-        console.log('✅ Carte trouvée:', card);
-
-        const safeId = url.replace(/[^a-zA-Z0-9]/g, '_');
-        console.log('🔍 safeId généré:', safeId);
-        
-        const indicator = card.querySelector(`.selected-indicator-${safeId}`);
-
-        if (!indicator) {
-            console.error('❌ Indicateur non trouvé pour safeId:', safeId);
-            console.error('❌ Sélecteurs disponibles dans la carte:', card.innerHTML);
-            return;
-        }
-        console.log('✅ Indicateur trouvé:', indicator);
-
+        // Initialiser le tableau si nécessaire
         if (!this.selectedLibraryImagesForEdit) {
-            console.log('⚠️ selectedLibraryImagesForEdit n\'existe pas, initialisation à []');
             this.selectedLibraryImagesForEdit = [];
         }
-
+        
+        console.log('🔍 État actuel:', this.selectedLibraryImagesForEdit.length, 'image(s) sélectionnée(s)');
+        
+        // Rechercher la carte par data-safeid pour éviter les problèmes d'échappement
+        const card = document.querySelector(`.library-image-card[data-safeid="${safeId}"]`);
+        if (!card) {
+            console.error('❌ Carte non trouvée pour safeId:', safeId);
+            return;
+        }
+        
+        const indicator = card.querySelector(`.selected-indicator-${safeId}`);
+        if (!indicator) {
+            console.error('❌ Indicateur non trouvé pour safeId:', safeId);
+            return;
+        }
+        
+        // Vérifier si l'image est déjà sélectionnée
         const index = this.selectedLibraryImagesForEdit.findIndex(img => img.url === url);
-        console.log('🔍 Index de l\'image dans la sélection:', index);
-
+        
         if (index > -1) {
             // Désélectionner
-            console.log('🔽 Désélection de l\'image...');
             this.selectedLibraryImagesForEdit.splice(index, 1);
             indicator.classList.add('hidden');
             card.classList.remove('ring-2', 'ring-blue-500');
             console.log(`🔽 Image désélectionnée. Total: ${this.selectedLibraryImagesForEdit.length}`);
         } else {
             // Sélectionner
-            console.log('🔼 Sélection de l\'image...');
             const decodedFilename = decodeURIComponent(filename);
-            console.log('🔍 Filename décodé:', decodedFilename);
             this.selectedLibraryImagesForEdit.push({ url, filename: decodedFilename });
             indicator.classList.remove('hidden');
             card.classList.add('ring-2', 'ring-blue-500');
-            console.log(`🔼 Image sélectionnée. Total: ${this.selectedLibraryImagesForEdit.length}`);
+            console.log(`🔼 Image sélectionnée: ${decodedFilename}. Total: ${this.selectedLibraryImagesForEdit.length}`);
         }
         
-        console.log('📋 Images sélectionnées APRÈS modification:', JSON.stringify(this.selectedLibraryImagesForEdit, null, 2));
-        console.log('🔍 [toggleLibraryImageSelectionForEdit] FIN');
+        console.log('📋 Images sélectionnées:', this.selectedLibraryImagesForEdit.map(img => img.filename));
     }
 
     confirmLibrarySelectionForEdit() {
