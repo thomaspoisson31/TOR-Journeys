@@ -1143,13 +1143,9 @@ class InfoBoxManager {
 
         console.log("🔍 selectedLibraryImagesForEdit AVANT initialisation:", this.selectedLibraryImagesForEdit);
 
-        // Initialiser la sélection UNIQUEMENT si elle n'existe pas déjà
-        if (!this.selectedLibraryImagesForEdit) {
-            console.log("⚠️ Initialisation de selectedLibraryImagesForEdit à []");
-            this.selectedLibraryImagesForEdit = [];
-        } else {
-            console.log("✅ selectedLibraryImagesForEdit existe déjà, conservation:", this.selectedLibraryImagesForEdit);
-        }
+        // Toujours réinitialiser la sélection à l'ouverture de la modale
+        this.selectedLibraryImagesForEdit = [];
+        console.log("✅ Initialisation de selectedLibraryImagesForEdit à []");
         
         this.currentLibraryFolder = null;
         this.currentLibraryPath = [];
@@ -1380,30 +1376,38 @@ class InfoBoxManager {
 
 
     toggleLibraryImageSelectionForEdit(url, filename, safeId) {
-        console.log('🔍 [toggleLibraryImageSelectionForEdit] DÉBUT - url:', url, 'filename:', filename, 'safeId:', safeId);
+        console.log('🔍 [toggleLibraryImageSelectionForEdit] DÉBUT');
+        console.log('   url:', url);
+        console.log('   filename:', filename);
+        console.log('   safeId:', safeId);
         
         // Initialiser le tableau si nécessaire
         if (!this.selectedLibraryImagesForEdit) {
+            console.warn('⚠️ selectedLibraryImagesForEdit était undefined, réinitialisation');
             this.selectedLibraryImagesForEdit = [];
         }
         
-        console.log('🔍 État actuel:', this.selectedLibraryImagesForEdit.length, 'image(s) sélectionnée(s)');
+        console.log('🔍 État actuel: this.selectedLibraryImagesForEdit =', JSON.stringify(this.selectedLibraryImagesForEdit));
+        console.log('🔍 Nombre d\'images sélectionnées:', this.selectedLibraryImagesForEdit.length);
         
         // Rechercher la carte par data-safeid pour éviter les problèmes d'échappement
         const card = document.querySelector(`.library-image-card[data-safeid="${safeId}"]`);
         if (!card) {
             console.error('❌ Carte non trouvée pour safeId:', safeId);
+            console.error('   Toutes les cartes présentes:', document.querySelectorAll('.library-image-card'));
             return;
         }
         
         const indicator = card.querySelector(`.selected-indicator-${safeId}`);
         if (!indicator) {
             console.error('❌ Indicateur non trouvé pour safeId:', safeId);
+            console.error('   Contenu de la carte:', card.innerHTML);
             return;
         }
         
         // Vérifier si l'image est déjà sélectionnée
         const index = this.selectedLibraryImagesForEdit.findIndex(img => img.url === url);
+        console.log('🔍 Index de l\'image dans le tableau:', index);
         
         if (index > -1) {
             // Désélectionner
@@ -1420,24 +1424,34 @@ class InfoBoxManager {
             console.log(`🔼 Image sélectionnée: ${decodedFilename}. Total: ${this.selectedLibraryImagesForEdit.length}`);
         }
         
-        console.log('📋 Images sélectionnées:', this.selectedLibraryImagesForEdit.map(img => img.filename));
+        console.log('📋 Images sélectionnées actuellement:', this.selectedLibraryImagesForEdit.map(img => img.filename));
+        console.log('🔍 [toggleLibraryImageSelectionForEdit] FIN');
     }
 
     confirmLibrarySelectionForEdit() {
         console.log("🔍 ========== DÉBUT confirmLibrarySelectionForEdit ==========");
+        console.log("🔍 this:", this);
         console.log("🔍 Type de selectedLibraryImagesForEdit:", typeof this.selectedLibraryImagesForEdit);
         console.log("🔍 Est un tableau?", Array.isArray(this.selectedLibraryImagesForEdit));
         console.log("🔍 Contenu selectedLibraryImagesForEdit:", JSON.stringify(this.selectedLibraryImagesForEdit, null, 2));
         console.log("🔍 Longueur:", this.selectedLibraryImagesForEdit ? this.selectedLibraryImagesForEdit.length : 'undefined');
+        
+        // Vérifier toutes les cartes sélectionnées dans le DOM
+        const selectedCardsInDOM = document.querySelectorAll('.library-image-card.ring-2.ring-blue-500');
+        console.log("🔍 Cartes sélectionnées dans le DOM:", selectedCardsInDOM.length);
+        selectedCardsInDOM.forEach((card, i) => {
+            console.log(`   Carte ${i + 1}:`, card.dataset.url, card.dataset.filename);
+        });
 
         if (!this.selectedLibraryImagesForEdit) {
             console.error("❌ selectedLibraryImagesForEdit est null ou undefined");
-            alert("Erreur: le tableau de sélection n'existe pas");
+            alert("Erreur: le tableau de sélection n'existe pas. Vérifiez la console.");
             return;
         }
 
         if (this.selectedLibraryImagesForEdit.length === 0) {
             console.warn("⚠️ selectedLibraryImagesForEdit est vide (longueur: 0)");
+            console.warn("   Mais", selectedCardsInDOM.length, "cartes semblent sélectionnées dans le DOM");
             alert("Veuillez sélectionner au moins une image");
             return;
         }
