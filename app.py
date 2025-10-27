@@ -17,57 +17,17 @@ import io
 from replit_db_manager import ReplitDBManager
 import base64
 
-# Import conditionnel de Google Cloud Storage
-try:
-    from google.cloud import storage as gcs_storage
-    STORAGE_AVAILABLE = True
-except ImportError:
-    print("⚠️ Google Cloud Storage non disponible")
-    STORAGE_AVAILABLE = False
-    gcs_storage = None
+# Object Storage désactivé - utilisation du système de fichiers local persistant
+storage_client = None
+bucket_name = None
+STORAGE_AVAILABLE = False
+
+print("📁 Stockage local persistant activé (pas d'initialisation Object Storage)")
 
 app = Flask(__name__)
 
 # Initialiser le gestionnaire de base de données Replit
 db_manager = ReplitDBManager()
-
-# Initialiser Object Storage (automatique avec Replit)
-storage_client = None
-bucket_name = None
-
-if STORAGE_AVAILABLE:
-    try:
-        # Récupérer le bucket ID depuis .replit
-        import re
-        with open('.replit', 'r') as f:
-            replit_config = f.read()
-            match = re.search(r'defaultBucketID\s*=\s*"([^"]+)"', replit_config)
-            if match:
-                bucket_name = match.group(1)
-                
-                # Ne tenter d'initialiser le client que si nous sommes en environnement de développement
-                # (car Object Storage nécessite des credentials spécifiques)
-                if os.environ.get('REPLIT_DEV_DOMAIN'):
-                    try:
-                        storage_client = gcs_storage.Client(project="replit-objstore")
-                        print(f"📦 Object Storage configuré avec bucket: {bucket_name}")
-                        print(f"✅ Object Storage actif et prêt pour la persistance des images")
-                    except Exception as storage_error:
-                        print(f"⚠️ Impossible d'initialiser Object Storage: {storage_error}")
-                        print("📁 Utilisation du système de fichiers local")
-                        storage_client = None
-                else:
-                    print("🚀 Environnement de production détecté")
-                    print("📁 Utilisation du système de fichiers local")
-                    storage_client = None
-            else:
-                print("⚠️ Bucket ID non trouvé dans .replit")
-                print("📁 Utilisation du système de fichiers local")
-    except Exception as e:
-        print(f"⚠️ Object Storage non disponible: {e}")
-        print("📁 Utilisation du système de fichiers local")
-else:
-    print("📁 Google Cloud Storage non installé, utilisation du système de fichiers local")
 
 # Utiliser une clé secrète fixe en développement pour la persistance
 if os.environ.get('REPLIT_DEV_DOMAIN'):
@@ -942,10 +902,10 @@ def upload_image():
             with Image.open(io.BytesIO(image_data)) as img:
                 width, height = img.size
 
-        # Option d'upload Base64 pour contourner les problèmes Object Storage
+        # Option d'upload Base64 pour petites images seulement
         use_base64 = request.form.get('use_base64', 'false').lower() == 'true'
         
-        if use_base64:
+        if use_base64 and len(image_data) < 100 * 1024:
             # Encoder l'image en Base64 et stocker dans Replit Database
             import base64
             base64_data = base64.b64encode(image_data).decode('utf-8')
@@ -977,59 +937,20 @@ def upload_image():
                 'width': width,
                 'height': height,
                 'storage': 'replit_database_base64',
-                'message': 'Image stockée en Base64 (accessible en dev et prod)'
+                'message': 'Image stockée en Base64 (< 100KB)'
             })
         
-        # Upload vers Object Storage ou fallback vers système de fichiers
-        public_url = None
+        # Stockage dans le système de fichiers local persistant
+        upload_dir = f'uploads/{google_id}/{category}'
+        os.makedirs(upload_dir, exist_ok=True)
+        file_path = os.path.join(upload_dir, final_filename)
         
-        if storage_client and bucket_name:
-            try:
-                # Upload vers Object Storage
-                bucket = storage_client.bucket(bucket_name)
-                blob = bucket.blob(object_path)
-                
-                blob.upload_from_string(
-                    image_data,
-                    content_type=content_type
-                )
-                
-                # Rendre le fichier public
-                blob.make_public()
-                
-                # Générer l'URL publique
-                public_url = blob.public_url
-                
-                print(f"📦 Image uploadée vers Object Storage: {object_path}")
-                print(f"🔗 URL publique: {public_url}")
-                
-            except Exception as storage_error:
-                error_message = str(storage_error)
-                print(f"⚠️ Erreur Object Storage: {error_message}")
-                import traceback
-                traceback.print_exc()
-                
-                # Vérifier si c'est une erreur de permissions (403)
-                if "403" in error_message or "Permission" in error_message or "storage.objects.create" in error_message:
-                    print("⚠️ Erreur de permissions Object Storage détectée - fallback vers système de fichiers local")
-                    storage_client_available = False
-                else:
-                    # Pour d'autres types d'erreurs, lever l'exception
-                    raise Exception(f"Impossible d'uploader l'image vers Object Storage: {storage_error}")
+        with open(file_path, 'wb') as f:
+            f.write(image_data)
         
-        # Fallback: système de fichiers local (activé en cas d'erreur de permissions)
-        if not public_url:
-            print("📁 Utilisation du fallback système de fichiers local")
-            upload_dir = f'uploads/{google_id}/{category}'
-            os.makedirs(upload_dir, exist_ok=True)
-            file_path = os.path.join(upload_dir, final_filename)
-            
-            with open(file_path, 'wb') as f:
-                f.write(image_data)
-            
-            public_url = f'/uploads/{google_id}/{category}/{final_filename}'
-            print(f"📁 Image sauvegardée localement: {file_path}")
-            print(f"⚠️ ATTENTION: Cette image ne sera pas persistée entre environnements")
+        public_url = f'/uploads/{google_id}/{category}/{final_filename}'
+        print(f"📁 Image sauvegardée: {file_path}")
+        print(f"✅ Stockage local persistant (accessible en dev et prod)")
 
         return jsonify({
             'success': True,
@@ -1040,8 +961,8 @@ def upload_image():
             'category': category,
             'width': width,
             'height': height,
-            'storage': 'object_storage' if storage_client and bucket_name else 'local',
-            'message': 'Image uploadée avec succès'
+            'storage': 'local_persistent',
+            'message': 'Image uploadée avec succès (stockage local persistant)'
         })
 
     except Exception as e:
@@ -1054,21 +975,7 @@ def upload_image():
 
 @app.route('/uploads/<path:filepath>')
 def serve_uploaded_file(filepath):
-    """Rediriger vers Object Storage si disponible, sinon servir localement"""
-    if storage_client and bucket_name:
-        try:
-            # Construire le chemin dans Object Storage
-            bucket = storage_client.bucket(bucket_name)
-            blob = bucket.blob(filepath)
-            
-            # Vérifier si le blob existe
-            if blob.exists():
-                # Rediriger vers l'URL publique
-                return redirect(blob.public_url)
-        except Exception as e:
-            print(f"⚠️ Erreur lors de la récupération depuis Object Storage: {e}")
-    
-    # Fallback: servir depuis le système de fichiers local (anciennes images)
+    """Servir les images depuis le système de fichiers local persistant"""
     if os.path.exists(os.path.join('uploads', filepath)):
         return send_from_directory('uploads', filepath)
     else:
@@ -1276,13 +1183,13 @@ def get_image_library():
 def storage_status():
     """Vérifier le statut du système de stockage"""
     return jsonify({
-        'storage_available': STORAGE_AVAILABLE,
-        'storage_client_initialized': storage_client is not None,
-        'bucket_name': bucket_name,
-        'bucket_configured': bucket_name is not None,
-        'using_object_storage': storage_client is not None and bucket_name is not None,
-        'using_local_storage': storage_client is None or bucket_name is None,
-        'message': 'Object Storage actif' if (storage_client and bucket_name) else 'Stockage local actif'
+        'storage_available': False,
+        'storage_client_initialized': False,
+        'bucket_name': None,
+        'bucket_configured': False,
+        'using_object_storage': False,
+        'using_local_storage': True,
+        'message': 'Stockage local persistant actif (pas d\'Object Storage)'
     })
 
 @app.route('/auth/verify-config')
