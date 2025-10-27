@@ -1205,8 +1205,9 @@ class InfoBoxManager {
     buildLibraryStructure(folders) {
         this.libraryStructure = {};
         
+        // Construire d'abord tous les dossiers (même vides)
         Object.keys(folders).forEach(folderPath => {
-            const parts = folderPath.split('/');
+            const parts = folderPath.split('/').filter(p => p); // Filtrer les parties vides
             let current = this.libraryStructure;
             
             parts.forEach((part, index) => {
@@ -1218,12 +1219,13 @@ class InfoBoxManager {
                     };
                 }
                 
-                // Ajouter les images au dernier niveau du chemin
-                if (index === parts.length - 1) {
+                // Se déplacer vers les sous-dossiers pour la prochaine itération
+                if (index < parts.length - 1) {
+                    current = current[part].subfolders;
+                } else {
+                    // Dernier niveau : ajouter les images
                     current[part].images = folders[folderPath] || [];
                 }
-                
-                current = current[part].subfolders;
             });
         });
         
@@ -1295,13 +1297,14 @@ class InfoBoxManager {
     renderCurrentFolderImages(path) {
         // Naviguer jusqu'au niveau actuel pour récupérer les images
         let current = this.libraryStructure;
+        
         path.forEach(folder => {
-            if (current[folder]) {
+            if (current && current[folder]) {
                 current = current[folder];
             }
         });
         
-        const images = current.images || [];
+        const images = (current && current.images) ? current.images : [];
         
         if (images.length === 0) return '';
         
