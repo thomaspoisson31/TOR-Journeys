@@ -1309,13 +1309,18 @@ class InfoBoxManager {
             </div>
             ${images.map(image => {
                 const safeId = image.url.replace(/[^a-zA-Z0-9]/g, '_');
+                const isSelected = this.selectedLibraryImagesForEdit && 
+                                  this.selectedLibraryImagesForEdit.some(img => img.url === image.url);
+                const selectedClass = isSelected ? 'ring-2 ring-blue-500' : '';
+                const indicatorClass = isSelected ? '' : 'hidden';
+                
                 return `
-                    <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card"
+                    <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card ${selectedClass}"
                          data-url="${image.url}"
                          data-filename="${encodeURIComponent(image.filename)}"
                          onclick="window.infoBoxManager.toggleLibraryImageSelectionForEdit('${image.url}', '${encodeURIComponent(image.filename)}')">
                         <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
-                        <div class="absolute top-2 right-2 hidden selected-indicator-${safeId}">
+                        <div class="absolute top-2 right-2 ${indicatorClass} selected-indicator-${safeId}">
                             <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
                                 <i class="fas fa-check text-xs"></i>
                             </div>
@@ -1379,12 +1384,16 @@ class InfoBoxManager {
             this.selectedLibraryImagesForEdit.splice(index, 1);
             indicator.classList.add('hidden');
             card.classList.remove('ring-2', 'ring-blue-500');
+            console.log(`🔽 Image désélectionnée. Total: ${this.selectedLibraryImagesForEdit.length}`);
         } else {
             // Sélectionner
             this.selectedLibraryImagesForEdit.push({ url, filename: decodeURIComponent(filename) });
             indicator.classList.remove('hidden');
             card.classList.add('ring-2', 'ring-blue-500');
+            console.log(`🔼 Image sélectionnée. Total: ${this.selectedLibraryImagesForEdit.length}`);
         }
+        
+        console.log('📋 Images sélectionnées actuellement:', this.selectedLibraryImagesForEdit);
     }
 
     confirmLibrarySelectionForEdit() {
