@@ -1,0 +1,317 @@
+ cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+ 📤 UploadManager module loaded
+ 📋 InfoBoxManager module loaded
+ 📚 LibraryManager module loaded
+ 👥 CharactersManager module loaded
+ ✅ Constants loaded successfully
+ ✅ Global variables initialized
+ ✅ Essential DOM elements: Object
+ 📋 Simplified main.js loaded - waiting for DOM ready
+ 🚀 Starting simplified application...
+ ✅ DataManager initialized
+ 🔍 FilterManager initialized
+ ✅ FilterManager initialized
+ ✅ VoyageManager initialized
+ ✅ PathManager initialized
+ 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+ 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+ 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+ 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+ 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+ 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+ 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+ 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+ 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+ 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+ 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+ 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 📅 Données calendrier exposées globalement: Object
+ ✅ CalendarManager initialized
+ ⚙️ SettingsManager initialized
+ ⚙️ Configuration des listeners Import/Export...
+ 📍 Boutons Lieux/Régions: Object
+ 👥 Boutons Personnages: Object
+ ✅ Listeners Import/Export configurés
+ ✅ SettingsManager initialized
+ [AuthManager] 🔑 Initialisation AuthManager null
+ [AuthManager] 🔍 Vérification du statut d'authentification null
+ [AuthManager] 👂 Écoute des changements de localStorage activée. null
+ ✅ AuthManager initialized
+ 📤 UploadManager initialized
+ 📋 InfoBoxManager initialized with UploadManager
+ ✅ InfoBoxManager initialized
+ 📤 ImportExportManager initialized
+ 📤 ImportExportManager event listeners configured
+ ✅ ImportExportManager initialized
+ 📍 Initializing data structures...
+ 📍 loadInitialLocations: Initialisation avec structure vide
+ ✅ Structure de données initialisée (vide, en attente du cloud)
+ 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+ ✅ Structure de régions initialisée (vide, en attente du cloud)
+ ✅ Data structures initialized (will be populated from cloud)
+ ⏳ Waiting for SettingsManager to load active map...
+ 📤 UploadManager initialized
+ 🤖 Gemini API disponible: true
+ [AuthManager] ✅ Utilisateur authentifié trouvé null
+ [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+ 🤖 Gemini API disponible: true
+ [AuthManager] 🌍 Environnement détecté: development (préfixe: dev_) null
+ [AuthManager] 📥 Chargement des données depuis le cloud (environnement: dev_) null
+ [AuthManager] ✅ Données cloud récupérées Object
+ [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+ [AuthManager] 🔄 Application des données du contexte Array(10)
+ [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+ [AuthManager] 💾 6 lieux sauvegardés dans localStorage null
+ [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+ [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 6 lieux null
+ [AuthManager] 📊 Structure locationsData: Object
+ [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+ [AuthManager] 📊 Structure regionsData: Object
+ [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+ [AuthManager] 📅 [applyContextData] Données calendar reçues: Object
+ [AuthManager] 📅 [applyContextData] Saison appliquée: printemps-fin null
+ [AuthManager] 📅 [applyContextData] Date appliquée: Object
+ [AuthManager] 📅 [applyContextData] Données calendrier appliquées: 12 mois null
+ [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+ [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 📅 Données calendrier exposées globalement: Object
+ [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+ [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+ ⚙️ Chargement des paramètres depuis le contexte: Object
+ ✅ Cartes chargées: 3
+ ✅ Carte active URL: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ ✅ Carte active nom: La Comté
+ ✅ Description aventuriers chargée
+ ✅ Description quête chargée
+ ✅ Style de narration chargé: brief
+ 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 🗺️ Échelle de la carte active: 600 miles
+ ✅ Paramètres chargés avec succès
+ [AuthManager] 🗺️ 3 carte(s) restaurée(s) depuis le cloud null
+ [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp null
+ [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+ [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+ [AuthManager] 👥 Application de 34 personnages depuis le contexte null
+ [AuthManager] 🎲 Application des données d'aventure depuis le contexte null
+ [AuthManager] ⚠️ [applyContextData] Aucune position dans le contexte
+ [AuthManager] ⚠️ [applyContextData] Aucune donnée filtersByMap dans le contexte null
+ [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+ [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+ [AuthManager] ✅ Contexte appliqué avec succès null
+ [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+ [AuthManager] 💾 3 carte(s) sauvegardée(s) dans localStorage null
+ [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp null
+ [AuthManager]   - 34 personnages sauvegardés dans localStorage. null
+ [AuthManager]   - Données sauvegardées dans localStorage. null
+ [AuthManager] 🎨 Rendu forcé après chargement cloud null
+ ✅ Rendered 1 location markers (thumbnails: true)
+ [AuthManager] ✅ 6 lieux rendus depuis le cloud null
+ ✅ Rendered 0 region polygons
+ [AuthManager] ✅ 0 régions rendues depuis le cloud null
+ [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+ [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+ ✅ Image de carte chargée, re-initialisation de la carte
+ 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+ 🗺️ Réinitialisation de la carte depuis loadSettings
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 5000 x 3875
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.427 (viewportWidth=2133, MAP_WIDTH=5000)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+ 🎨 Setting up color change modal...
+ ✅ Color change modal setup complete
+ ✅ Location adding setup complete
+ 🔍 Setting up FilterManager...
+ 🔍 Setting up filter listeners...
+ ✅ Filter listeners setup complete
+ 🔍 FilterManager: Filtres chargés depuis localStorage: Object
+ 🔍 FilterManager: 2 carte(s) avec filtres
+ 🔍 [tryLoadFiltersForActiveMap retry=0] activeMapUrl: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(2)
+ ⏳ Retry 1/5 pour charger les filtres...
+ ✅ FilterManager setup complete
+ 🚀 Setting up VoyageManager...
+ ✅ VoyageManager setup complete
+ 🗺️ Setting up PathManager...
+ 🎨 Canvas configuré : 5000x3875
+ 🛤️ PathManager initialized
+ ✅ PathManager setup complete
+ 🔍 [initializeMap] Création du ZoomManager
+ 🔍 Initializing ZoomManager... Object
+ 🔍 [ZoomManager] updateDisplay called: scale=0.427
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.427, ratio=0.084, x=12.6px, sliderWidth=0px
+ ✅ ZoomManager initialized Object
+ 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 5000 MAP_HEIGHT: 3875
+ 📍 [main.js] État localStorage AVANT init PositionManager - position: {"mapId":"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg","x":2105.9604803161574,"y":1297.3084055327556} flag: null
+ 📍 [PositionManager.loadPosition] État du flag cloud: null
+ 📍 [PositionManager.loadPosition] Carte active: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 📍 [PositionManager.loadPosition] Position dans localStorage: {"mapId":"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg","x":2105.9604803161574,"y":1297.3084055327556}
+ 📍 [PositionManager] Position d'une autre carte, utilisation position par défaut
+ 📍 [PositionManager] Utilisation de la position par défaut: Object
+ 📍 Initializing PositionManager...
+ 📍 [PositionManager] 0 marqueur(s) existant(s) supprimé(s)
+ ✅ PositionManager initialized with position: Object
+ ✅ PositionManager initialized with position: Object
+ 📖 Initialisation du JournalManager
+ 📖 undefined voyage(s) chargé(s) depuis le localStorage
+ ✅ JournalManager initialized
+ ✅ Adventure data loaded from localStorage
+ 🎲 Initializing AdventureManager...
+ ✅ AdventureManager initialized
+ ✅ AdventureManager initialized
+ 👥 CharactersManager initialized
+ 📚 34 personnages chargés depuis localStorage
+ ✅ CharactersManager setup complete
+ ✅ CharactersManager initialized
+ 🖌️ Setting up drawing events...
+ 👂 Adding VoyageManager drawing listeners...
+ 🎨 VoyageManager drawing listeners configured
+ ✅ VoyageManager drawing listeners added
+ ✅ Drawing events setup complete
+ 🔍 [resetView] Nouveau scale calculé: 0.226 (MAP_WIDTH=5000, MAP_HEIGHT=3875)
+ 🔍 [resetView] Synchronisation ZoomManager avec scale=0.226
+ ✅ Map initialized successfully
+ 🔍 [ZoomManager] Largeur du slider calculée: 150
+ 🔍 [ZoomManager] updateDisplay called: scale=0.226
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.226, ratio=0.032, x=4.9px, sliderWidth=150px
+ 🔍 [tryLoadFiltersForActiveMap retry=1] activeMapUrl: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(2)
+ ⏳ Retry 2/5 pour charger les filtres...
+ 🔍 [tryLoadFiltersForActiveMap retry=2] activeMapUrl: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(2)
+ ⏳ Retry 3/5 pour charger les filtres...
+ 🔍 [tryLoadFiltersForActiveMap retry=3] activeMapUrl: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(2)
+ ⏳ Retry 4/5 pour charger les filtres...
+ 🔍 [tryLoadFiltersForActiveMap retry=4] activeMapUrl: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(2)
+ ⏳ Retry 5/5 pour charger les filtres...
+ 🔍 [tryLoadFiltersForActiveMap retry=5] activeMapUrl: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(2)
+ ⚠️ Impossible de charger les filtres après 5 tentatives
+tryLoadFiltersForActiveMap @ filter-manager.js:106
+ 🔍 activeMapUrl final: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+ 🔍 Filtres disponibles: Array(2)
+ 🔍 [main.js] wheel event: deltaY=-222.22220865885416, zoomFactor=1.1
+ 🔍 [main.js] zoomToPoint: oldScale=0.226, zoomFactor=1.100, newScale=0.249
+ 🔍 [ZoomManager] updateDisplay called: scale=0.249
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.249, ratio=0.038, x=5.7px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-222.22220865885416, zoomFactor=1.1
+ 🔍 [main.js] zoomToPoint: oldScale=0.249, zoomFactor=1.100, newScale=0.274
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.274
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.274, ratio=0.045, x=6.7px, sliderWidth=150px
+ 🔍 [ZoomManager] updateDisplay called: scale=0.274
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.274, ratio=0.045, x=6.7px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.274
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.274, ratio=0.045, x=6.7px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-222.22220865885416, zoomFactor=1.1
+ 🔍 [main.js] zoomToPoint: oldScale=0.274, zoomFactor=1.100, newScale=0.301
+ 🔍 [ZoomManager] updateDisplay called: scale=0.301
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.301, ratio=0.052, x=7.7px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.301
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.301, ratio=0.052, x=7.7px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-222.22220865885416, zoomFactor=1.1
+ 🔍 [main.js] zoomToPoint: oldScale=0.301, zoomFactor=1.100, newScale=0.332
+ 🔍 [ZoomManager] updateDisplay called: scale=0.332
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.332, ratio=0.059, x=8.9px, sliderWidth=150px
+main.js:1020 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.332
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.332, ratio=0.059, x=8.9px, sliderWidth=150px
+main.js:1014 🔍 [main.js] wheel event: deltaY=-222.22220865885416, zoomFactor=1.1
+main.js:815 🔍 [main.js] zoomToPoint: oldScale=0.332, zoomFactor=1.100, newScale=0.365
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.365
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.365, ratio=0.068, x=10.2px, sliderWidth=150px
+main.js:1020 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.365
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.365, ratio=0.068, x=10.2px, sliderWidth=150px
+main.js:2573 🎯 Starting potential drag for location: Xholfhlxh.
+infobox-manager.js:70 📋 [InfoBoxManager] Showing info box for: Xholfhlxh. Type: location Object
+infobox-manager.js:109 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:752 ✏️ Entering edit mode for: Xholfhlxh.
+infobox-manager.js:1130 🔍 ========== DÉBUT openLibraryForEdit ==========
+infobox-manager.js:1144 🔍 selectedLibraryImagesForEdit AVANT initialisation: undefined
+infobox-manager.js:1148 ✅ Initialisation de selectedLibraryImagesForEdit à []
+infobox-manager.js:1155 🔍 État après initialisation: Object
+infobox-manager.js:1244 📁 Structure de bibliothèque construite: Object
+infobox-manager.js:1265 📂 [renderLibraryFolders] Chemin actuel: Array(0)
+infobox-manager.js:1266 📂 Dossiers au niveau actuel: Array(3)
+infobox-manager.js:1267 📂 Images au niveau actuel: 0
+infobox-manager.js:1312 ✅ [renderLibraryFolders] Contenu HTML généré pour 3 dossier(s) et 0 image(s)
+infobox-manager.js:1357 🔽 [navigateIntoLibraryFolder] Navigation vers: locations
+infobox-manager.js:1362 🔽 Nouveau chemin: Array(2)
+infobox-manager.js:1265 📂 [renderLibraryFolders] Chemin actuel: Array(2)
+infobox-manager.js:1266 📂 Dossiers au niveau actuel: Array(1)
+infobox-manager.js:1267 📂 Images au niveau actuel: 0
+infobox-manager.js:1312 ✅ [renderLibraryFolders] Contenu HTML généré pour 1 dossier(s) et 0 image(s)
+infobox-manager.js:1357 🔽 [navigateIntoLibraryFolder] Navigation vers: Eriador
+infobox-manager.js:1362 🔽 Nouveau chemin: Array(2)
+infobox-manager.js:1265 📂 [renderLibraryFolders] Chemin actuel: Array(2)
+infobox-manager.js:1266 📂 Dossiers au niveau actuel: Array(0)
+infobox-manager.js:1267 📂 Images au niveau actuel: 41
+infobox-manager.js:1312 ✅ [renderLibraryFolders] Contenu HTML généré pour 0 dossier(s) et 41 image(s)
+infobox-manager.js:1379 🔍 [toggleLibraryImageSelectionForEdit] DÉBUT
+infobox-manager.js:1380    url: /uploads/101960341020312309143/locations/Eriador/dolomedia_s_lair.jpg
+infobox-manager.js:1381    filename: dolomedia_s_lair.jpg
+infobox-manager.js:1382    safeId: _uploads_101960341020312309143_locations_Eriador_dolomedia_s_lair_jpg
+infobox-manager.js:1390 🔍 État actuel: this.selectedLibraryImagesForEdit = []
+infobox-manager.js:1391 🔍 Nombre d'images sélectionnées: 0
+infobox-manager.js:1410 🔍 Index de l'image dans le tableau: -1
+infobox-manager.js:1424 🔼 Image sélectionnée: dolomedia_s_lair.jpg. Total: 1
+infobox-manager.js:1427 📋 Images sélectionnées actuellement: Array(1)
+infobox-manager.js:1428 🔍 [toggleLibraryImageSelectionForEdit] FIN
+infobox-manager.js:1432 🔍 ========== DÉBUT confirmLibrarySelectionForEdit ==========
+infobox-manager.js:1433 🔍 this: InfoBoxManager
+infobox-manager.js:1434 🔍 Type de selectedLibraryImagesForEdit: object
+infobox-manager.js:1435 🔍 Est un tableau? true
+infobox-manager.js:1436 🔍 Contenu selectedLibraryImagesForEdit: [
+  {
+    "url": "/uploads/101960341020312309143/locations/Eriador/dolomedia_s_lair.jpg",
+    "filename": "dolomedia_s_lair.jpg"
+  }
+]
+infobox-manager.js:1437 🔍 Longueur: 1
+infobox-manager.js:1441 🔍 Cartes sélectionnées dans le DOM: 1
+infobox-manager.js:1443    Carte 1: /uploads/101960341020312309143/locations/Eriador/dolomedia_s_lair.jpg dolomedia_s_lair.jpg
+infobox-manager.js:1459 ✅ 1 image(s) à ajouter
+infobox-manager.js:1460 🔍 currentItem: Object
+infobox-manager.js:1461 🔍 currentItem.images AVANT: Array(1)
+infobox-manager.js:1471 🔍 Ajout image 1/1: Object
+infobox-manager.js:1477 🔍 Nouvelle image créée: Object
+infobox-manager.js:1479 🔍 currentItem.images après ajout: 1 image(s)
+infobox-manager.js:1482 🖼️ Images ajoutées, total: 1
+infobox-manager.js:1483 🔍 currentItem.images APRÈS: [
+  {
+    "url": "/uploads/101960341020312309143/locations/Eriador/dolomedia_s_lair.jpg",
+    "type": "principale",
+    "thumbnailUrl": null
+  }
+]
+infobox-manager.js:1487 🔍 Élément edit-images-list trouvé? true
+infobox-manager.js:1489 🔍 Re-render de la liste des images...
+infobox-manager.js:1491 ✅ Liste des images re-rendue
+infobox-manager.js:1497 🔍 Réinitialisation de selectedLibraryImagesForEdit...
+infobox-manager.js:1499 ✅ selectedLibraryImagesForEdit réinitialisé: Array(0)
+infobox-manager.js:1502 🔍 Fermeture de la modale...
+infobox-manager.js:1505 ✅ Images ajoutées depuis la bibliothèque
+infobox-manager.js:1506 🔍 ========== FIN confirmLibrarySelectionForEdit ==========
+infobox-manager.js:768 💾 [SAVE] Début sauvegarde: Xholfhlxh. Type: location
+infobox-manager.js:824 💾 [SAVE] Objet après modification: {"color":"blue","coordinates":{"x":2506,"y":2044},"description":"","id":"location_1761429550887","images":[{"url":"/uploads/101960341020312309143/locations/Eriador/dolomedia_s_lair.jpg","type":"princi...
+infobox-manager.js:859 ❌ [SAVE] Lieu non trouvé dans locationsData: location_1761429550887
+saveEdit @ infobox-manager.js:859
