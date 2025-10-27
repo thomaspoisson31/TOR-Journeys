@@ -1250,6 +1250,10 @@ class InfoBoxManager {
         const folders = Object.keys(currentLevel);
         const currentImages = currentData ? currentData.images : [];
         
+        console.log(`📂 [renderLibraryFolders] Chemin actuel:`, path);
+        console.log(`📂 Dossiers au niveau actuel:`, folders);
+        console.log(`📂 Images au niveau actuel:`, currentImages.length);
+        
         let breadcrumb = '';
         if (path.length > 0) {
             breadcrumb = `
@@ -1334,19 +1338,25 @@ class InfoBoxManager {
                 `;
             }).join('')}
         `;
+        
+        console.log(`✅ [renderLibraryFolders] Contenu HTML généré pour ${folders.length} dossier(s) et ${currentImages.length} image(s)`);
     }
 
     navigateIntoLibraryFolder(folderName) {
+        console.log(`🔽 [navigateIntoLibraryFolder] Navigation vers: ${folderName}`);
         if (!this.currentLibraryPath) {
             this.currentLibraryPath = [];
         }
         this.currentLibraryPath.push(folderName);
+        console.log(`🔽 Nouveau chemin:`, this.currentLibraryPath);
         this.renderLibraryFolders(this.currentLibraryPath);
     }
 
     navigateLibraryUp() {
+        console.log(`🔼 [navigateLibraryUp] Retour en arrière depuis:`, this.currentLibraryPath);
         if (!this.currentLibraryPath || this.currentLibraryPath.length === 0) return;
         this.currentLibraryPath.pop();
+        console.log(`🔼 Nouveau chemin:`, this.currentLibraryPath);
         this.renderLibraryFolders(this.currentLibraryPath);
     }
 
