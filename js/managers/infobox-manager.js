@@ -190,25 +190,15 @@ class InfoBoxManager {
         this.updateMapIdDisplay(this.currentItem);
 
 
-        // Afficher le bouton crayon seulement si le lieu existe déjà
-        // (pas en mode ajout avec pendingLocationCoordinates)
-        const isCreating = window.pendingLocationCoordinates && !this.dataManager.locationsData.locations.find(loc => loc.id === this.currentItem.id);
-        
+        // Toujours afficher le bouton crayon
         if (editBtn) {
-            if (isCreating) {
-                // Masquer le bouton d'édition pour les lieux en cours de création
-                editBtn.classList.add('hidden');
-                editBtn.style.display = 'none';
+            editBtn.classList.remove('hidden');
+            editBtn.style.display = 'inline-block';
+            // Changer la couleur selon le mode
+            if (this.isEditMode) {
+                editBtn.style.color = '#60a5fa'; // bleu clair
             } else {
-                // Afficher le bouton crayon pour les lieux existants
-                editBtn.classList.remove('hidden');
-                editBtn.style.display = 'inline-block';
-                // Changer la couleur selon le mode
-                if (this.isEditMode) {
-                    editBtn.style.color = '#60a5fa'; // bleu clair
-                } else {
-                    editBtn.style.color = '#ffffff'; // blanc
-                }
+                editBtn.style.color = '#ffffff'; // blanc
             }
         }
 
@@ -865,19 +855,7 @@ class InfoBoxManager {
                 const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
                     String(loc.id) === String(this.currentItem.id)
                 );
-                
                 if (locationIndex === -1) {
-                    // Le lieu n'existe pas encore (cas d'un lieu en cours de création)
-                    console.log("💾 [SAVE] Lieu en cours de création, mise à jour des données temporaires");
-                    
-                    // Mettre à jour window.pendingLocationData si le lieu est en mode ajout
-                    if (window.pendingLocationCoordinates) {
-                        console.log("💾 [SAVE] Mise à jour du lieu temporaire avant confirmation");
-                        // Les données seront utilisées par confirmLocationCreation() dans main.js
-                        this.hideInfoBox();
-                        return;
-                    }
-                    
                     console.error(`❌ [SAVE] Lieu non trouvé dans locationsData: ${this.currentItem.id}`);
                     alert("Erreur : impossible de sauvegarder le lieu.");
                     return;
