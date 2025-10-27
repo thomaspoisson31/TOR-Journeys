@@ -1127,6 +1127,7 @@ class InfoBoxManager {
     }
 
     async openLibraryForEdit() {
+        console.log("🔍 ========== DÉBUT openLibraryForEdit ==========");
         const modal = document.getElementById('library-selection-modal');
         const content = document.getElementById('library-selection-content');
         const empty = document.getElementById('library-selection-empty');
@@ -1135,16 +1136,31 @@ class InfoBoxManager {
         const pathInfo = document.getElementById('library-path-info');
         const pathDisplay = document.getElementById('library-path-display');
 
-        if (!modal) return;
+        if (!modal) {
+            console.error("❌ Modal library-selection-modal non trouvée");
+            return;
+        }
+
+        console.log("🔍 selectedLibraryImagesForEdit AVANT initialisation:", this.selectedLibraryImagesForEdit);
 
         // Initialiser la sélection UNIQUEMENT si elle n'existe pas déjà
         if (!this.selectedLibraryImagesForEdit) {
+            console.log("⚠️ Initialisation de selectedLibraryImagesForEdit à []");
             this.selectedLibraryImagesForEdit = [];
+        } else {
+            console.log("✅ selectedLibraryImagesForEdit existe déjà, conservation:", this.selectedLibraryImagesForEdit);
         }
+        
         this.currentLibraryFolder = null;
         this.currentLibraryPath = [];
         this.libraryFolders = {};
         this.libraryStructure = {};
+        
+        console.log("🔍 État après initialisation:", {
+            selectedLibraryImagesForEdit: this.selectedLibraryImagesForEdit,
+            currentLibraryFolder: this.currentLibraryFolder,
+            currentLibraryPath: this.currentLibraryPath
+        });
 
         // Vérifier l'authentification
         if (!window.authManager || !window.authManager.isAuthenticated) {
@@ -1359,84 +1375,126 @@ class InfoBoxManager {
 
 
     toggleLibraryImageSelectionForEdit(url, filename) {
+        console.log('🔍 [toggleLibraryImageSelectionForEdit] DÉBUT - url:', url, 'filename:', filename);
+        console.log('🔍 [toggleLibraryImageSelectionForEdit] État actuel selectedLibraryImagesForEdit:', this.selectedLibraryImagesForEdit);
+        
         const card = document.querySelector(`.library-image-card[data-url="${url}"]`);
         if (!card) {
             console.error('❌ Carte d\'image non trouvée pour url:', url);
+            console.error('❌ Cartes disponibles:', document.querySelectorAll('.library-image-card'));
             return;
         }
+        console.log('✅ Carte trouvée:', card);
 
         const safeId = url.replace(/[^a-zA-Z0-9]/g, '_');
+        console.log('🔍 safeId généré:', safeId);
+        
         const indicator = card.querySelector(`.selected-indicator-${safeId}`);
 
         if (!indicator) {
-            console.error('❌ Indicateur non trouvé pour url:', url);
+            console.error('❌ Indicateur non trouvé pour safeId:', safeId);
+            console.error('❌ Sélecteurs disponibles dans la carte:', card.innerHTML);
             return;
         }
+        console.log('✅ Indicateur trouvé:', indicator);
 
         if (!this.selectedLibraryImagesForEdit) {
+            console.log('⚠️ selectedLibraryImagesForEdit n\'existe pas, initialisation à []');
             this.selectedLibraryImagesForEdit = [];
         }
 
         const index = this.selectedLibraryImagesForEdit.findIndex(img => img.url === url);
+        console.log('🔍 Index de l\'image dans la sélection:', index);
 
         if (index > -1) {
             // Désélectionner
+            console.log('🔽 Désélection de l\'image...');
             this.selectedLibraryImagesForEdit.splice(index, 1);
             indicator.classList.add('hidden');
             card.classList.remove('ring-2', 'ring-blue-500');
             console.log(`🔽 Image désélectionnée. Total: ${this.selectedLibraryImagesForEdit.length}`);
         } else {
             // Sélectionner
-            this.selectedLibraryImagesForEdit.push({ url, filename: decodeURIComponent(filename) });
+            console.log('🔼 Sélection de l\'image...');
+            const decodedFilename = decodeURIComponent(filename);
+            console.log('🔍 Filename décodé:', decodedFilename);
+            this.selectedLibraryImagesForEdit.push({ url, filename: decodedFilename });
             indicator.classList.remove('hidden');
             card.classList.add('ring-2', 'ring-blue-500');
             console.log(`🔼 Image sélectionnée. Total: ${this.selectedLibraryImagesForEdit.length}`);
         }
         
-        console.log('📋 Images sélectionnées actuellement:', this.selectedLibraryImagesForEdit);
+        console.log('📋 Images sélectionnées APRÈS modification:', JSON.stringify(this.selectedLibraryImagesForEdit, null, 2));
+        console.log('🔍 [toggleLibraryImageSelectionForEdit] FIN');
     }
 
     confirmLibrarySelectionForEdit() {
-        console.log("🔍 confirmLibrarySelectionForEdit appelée, selectedLibraryImagesForEdit:", this.selectedLibraryImagesForEdit);
+        console.log("🔍 ========== DÉBUT confirmLibrarySelectionForEdit ==========");
+        console.log("🔍 Type de selectedLibraryImagesForEdit:", typeof this.selectedLibraryImagesForEdit);
+        console.log("🔍 Est un tableau?", Array.isArray(this.selectedLibraryImagesForEdit));
+        console.log("🔍 Contenu selectedLibraryImagesForEdit:", JSON.stringify(this.selectedLibraryImagesForEdit, null, 2));
+        console.log("🔍 Longueur:", this.selectedLibraryImagesForEdit ? this.selectedLibraryImagesForEdit.length : 'undefined');
 
-        if (!this.selectedLibraryImagesForEdit || this.selectedLibraryImagesForEdit.length === 0) {
-            console.warn("⚠️ Aucune image sélectionnée");
+        if (!this.selectedLibraryImagesForEdit) {
+            console.error("❌ selectedLibraryImagesForEdit est null ou undefined");
+            alert("Erreur: le tableau de sélection n'existe pas");
+            return;
+        }
+
+        if (this.selectedLibraryImagesForEdit.length === 0) {
+            console.warn("⚠️ selectedLibraryImagesForEdit est vide (longueur: 0)");
             alert("Veuillez sélectionner au moins une image");
             return;
         }
 
         console.log(`✅ ${this.selectedLibraryImagesForEdit.length} image(s) à ajouter`);
+        console.log("🔍 currentItem:", this.currentItem);
+        console.log("🔍 currentItem.images AVANT:", this.currentItem.images);
 
         // Initialiser le tableau d'images si nécessaire
         if (!this.currentItem.images) {
+            console.log("⚠️ currentItem.images n'existe pas, initialisation...");
             this.currentItem.images = [];
         }
 
         // Ajouter les images sélectionnées
-        this.selectedLibraryImagesForEdit.forEach(image => {
+        this.selectedLibraryImagesForEdit.forEach((image, index) => {
+            console.log(`🔍 Ajout image ${index + 1}/${this.selectedLibraryImagesForEdit.length}:`, image);
             const newImage = {
                 url: image.url,
                 type: this.currentItem.images.length === 0 ? 'principale' : null,
                 thumbnailUrl: null
             };
+            console.log("🔍 Nouvelle image créée:", newImage);
             this.currentItem.images.push(newImage);
+            console.log("🔍 currentItem.images après ajout:", this.currentItem.images.length, "image(s)");
         });
 
         console.log("🖼️ Images ajoutées, total:", this.currentItem.images.length);
+        console.log("🔍 currentItem.images APRÈS:", JSON.stringify(this.currentItem.images, null, 2));
 
         // Re-render la liste des images
         const imagesList = document.getElementById('edit-images-list');
+        console.log("🔍 Élément edit-images-list trouvé?", !!imagesList);
         if (imagesList) {
+            console.log("🔍 Re-render de la liste des images...");
             imagesList.innerHTML = this.renderEditImagesList();
+            console.log("✅ Liste des images re-rendue");
+        } else {
+            console.warn("⚠️ Élément edit-images-list non trouvé, impossible de re-render");
         }
 
         // Réinitialiser la sélection
+        console.log("🔍 Réinitialisation de selectedLibraryImagesForEdit...");
         this.selectedLibraryImagesForEdit = [];
+        console.log("✅ selectedLibraryImagesForEdit réinitialisé:", this.selectedLibraryImagesForEdit);
 
         // Fermer la modale
+        console.log("🔍 Fermeture de la modale...");
         this.closeLibrarySelection();
 
         console.log("✅ Images ajoutées depuis la bibliothèque");
+        console.log("🔍 ========== FIN confirmLibrarySelectionForEdit ==========");
     }
 
     closeLibrarySelection() {
