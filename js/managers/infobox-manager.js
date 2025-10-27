@@ -1204,12 +1204,12 @@ class InfoBoxManager {
 
     buildLibraryStructure(folders) {
         this.libraryStructure = {};
-        
+
         // Construire d'abord tous les dossiers (même vides)
         Object.keys(folders).forEach(folderPath => {
             const parts = folderPath.split('/').filter(p => p); // Filtrer les parties vides
             let current = this.libraryStructure;
-            
+
             parts.forEach((part, index) => {
                 if (!current[part]) {
                     current[part] = {
@@ -1218,7 +1218,7 @@ class InfoBoxManager {
                         fullPath: parts.slice(0, index + 1).join('/')
                     };
                 }
-                
+
                 // Se déplacer vers les sous-dossiers pour la prochaine itération
                 if (index < parts.length - 1) {
                     current = current[part].subfolders;
@@ -1228,7 +1228,7 @@ class InfoBoxManager {
                 }
             });
         });
-        
+
         console.log('📁 Structure de bibliothèque construite:', this.libraryStructure);
     }
 
@@ -1238,7 +1238,7 @@ class InfoBoxManager {
 
         let currentLevel = this.libraryStructure;
         let currentData = null;
-        
+
         // Naviguer jusqu'au niveau actuel
         path.forEach(folder => {
             if (currentLevel[folder]) {
@@ -1249,11 +1249,11 @@ class InfoBoxManager {
 
         const folders = Object.keys(currentLevel);
         const currentImages = currentData ? currentData.images : [];
-        
+
         console.log(`📂 [renderLibraryFolders] Chemin actuel:`, path);
         console.log(`📂 Dossiers au niveau actuel:`, folders);
         console.log(`📂 Images au niveau actuel:`, currentImages.length);
-        
+
         let breadcrumb = '';
         if (path.length > 0) {
             breadcrumb = `
@@ -1278,7 +1278,7 @@ class InfoBoxManager {
                     const info = currentLevel[folder];
                     const imageCount = info.images.length;
                     const subfolderCount = Object.keys(info.subfolders).length;
-                    
+
                     return `
                         <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
                              onclick="window.infoBoxManager.navigateIntoLibraryFolder('${folder}')">
@@ -1294,24 +1294,15 @@ class InfoBoxManager {
                     `;
                 }).join('')}
             ` : ''}
-            ${currentImages.length > 0 ? this.renderCurrentFolderImages(path) : ''}
+            ${currentImages.length > 0 ? this.renderCurrentFolderImages(currentImages) : ''}
         `;
+
+        console.log(`✅ [renderLibraryFolders] Contenu HTML généré pour ${folders.length} dossier(s) et ${currentImages.length} image(s)`);
     }
 
-    renderCurrentFolderImages(path) {
-        // Naviguer jusqu'au niveau actuel pour récupérer les images
-        let current = this.libraryStructure;
-        
-        path.forEach(folder => {
-            if (current && current[folder]) {
-                current = current[folder];
-            }
-        });
-        
-        const images = (current && current.images) ? current.images : [];
-        
-        if (images.length === 0) return '';
-        
+    renderCurrentFolderImages(images) {
+        if (!images || images.length === 0) return '';
+
         return `
             <div class="col-span-full mt-6 mb-2">
                 <h4 class="text-md font-semibold text-white">Images dans ce dossier :</h4>
@@ -1338,8 +1329,6 @@ class InfoBoxManager {
                 `;
             }).join('')}
         `;
-        
-        console.log(`✅ [renderLibraryFolders] Contenu HTML généré pour ${folders.length} dossier(s) et ${currentImages.length} image(s)`);
     }
 
     navigateIntoLibraryFolder(folderName) {
@@ -1360,9 +1349,9 @@ class InfoBoxManager {
         this.renderLibraryFolders(this.currentLibraryPath);
     }
 
-    
 
-    
+
+
 
     toggleLibraryImageSelectionForEdit(url, filename) {
         const card = document.querySelector(`.library-image-card[data-url="${url}"]`);
@@ -1373,7 +1362,7 @@ class InfoBoxManager {
 
         const safeId = url.replace(/[^a-zA-Z0-9]/g, '_');
         const indicator = card.querySelector(`.selected-indicator-${safeId}`);
-        
+
         if (!indicator) {
             console.error('❌ Indicateur non trouvé pour url:', url);
             return;
@@ -1400,7 +1389,7 @@ class InfoBoxManager {
 
     confirmLibrarySelectionForEdit() {
         console.log("🔍 confirmLibrarySelectionForEdit appelée, selectedLibraryImagesForEdit:", this.selectedLibraryImagesForEdit);
-        
+
         if (!this.selectedLibraryImagesForEdit || this.selectedLibraryImagesForEdit.length === 0) {
             console.warn("⚠️ Aucune image sélectionnée");
             alert("Veuillez sélectionner au moins une image");
