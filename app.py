@@ -1172,7 +1172,10 @@ def get_image_library():
         # Chercher le répertoire basé sur le google_id
         user_dir = f'uploads/{google_id}'
 
+        print(f"📂 [LIBRARY DEBUG] Lecture du répertoire: {user_dir}")
+        
         if not os.path.exists(user_dir):
+            print(f"⚠️ [LIBRARY DEBUG] Le répertoire {user_dir} n'existe pas")
             return jsonify({
                 'success': True,
                 'folders': {},
@@ -1180,50 +1183,80 @@ def get_image_library():
                 'message': 'Aucune image trouvée'
             })
 
-        # Organiser les images par dossier
-        folders = {}
+        print(f"✅ [LIBRARY DEBUG] Le répertoire {user_dir} existe")
 
-        # Parcourir tous les sous-dossiers (locations, regions, general, maps, etc.)
-        for category in os.listdir(user_dir):
-            category_path = os.path.join(user_dir, category)
-
-            if os.path.isdir(category_path):
-                folder_images = []
+        # Fonction récursive pour parcourir l'arborescence
+        def scan_directory(base_path, relative_path=''):
+            """Parcourt récursivement un répertoire et retourne la structure"""
+            structure = {}
+            full_path = os.path.join(base_path, relative_path) if relative_path else base_path
+            
+            print(f"🔍 [LIBRARY DEBUG] Scan de: {full_path}")
+            
+            try:
+                items = os.listdir(full_path)
+                print(f"📋 [LIBRARY DEBUG] Contenu de {full_path}: {items}")
                 
-                for filename in os.listdir(category_path):
-                    file_path = os.path.join(category_path, filename)
-
-                    # Vérifier que c'est bien un fichier image
-                    if os.path.isfile(file_path) and any(filename.lower().endswith(ext) for ext in ALLOWED_IMAGE_EXTENSIONS):
-                        # Construire l'URL publique
-                        public_url = f'/uploads/{google_id}/{category}/{filename}'
-
-                        # Récupérer la taille du fichier
-                        file_size = os.path.getsize(file_path)
-
-                        # Obtenir les dimensions de l'image
-                        width, height = None, None
-                        try:
-                            with Image.open(file_path) as img:
-                                width, height = img.size
-                        except Exception as img_e:
-                            print(f"⚠️ Impossible de lire les dimensions de {file_path}: {img_e}")
-
-                        folder_images.append({
-                            'filename': filename,
-                            'url': public_url,
-                            'category': category,
-                            'size': file_size,
-                            'width': width,
-                            'height': height
-                        })
+                for item in items:
+                    item_path = os.path.join(full_path, item)
+                    relative_item_path = os.path.join(relative_path, item) if relative_path else item
+                    
+                    if os.path.isdir(item_path):
+                        print(f"📁 [LIBRARY DEBUG] Dossier trouvé: {relative_item_path}")
+                        # Récursivement scanner les sous-dossiers
+                        sub_structure = scan_directory(base_path, relative_item_path)
+                        if sub_structure:
+                            structure.update(sub_structure)
+                    elif os.path.isfile(item_path):
+                        # Vérifier si c'est une image
+                        if any(item.lower().endswith(ext) for ext in ALLOWED_IMAGE_EXTENSIONS):
+                            print(f"🖼️ [LIBRARY DEBUG] Image trouvée: {relative_item_path}")
+                            
+                            # Ajouter l'image au dossier approprié
+                            folder_key = relative_path if relative_path else 'root'
+                            
+                            if folder_key not in structure:
+                                structure[folder_key] = []
+                            
+                            # Construire l'URL publique
+                            public_url = f'/uploads/{google_id}/{relative_item_path}'
+                            
+                            # Récupérer la taille du fichier
+                            file_size = os.path.getsize(item_path)
+                            
+                            # Obtenir les dimensions de l'image
+                            width, height = None, None
+                            try:
+                                with Image.open(item_path) as img:
+                                    width, height = img.size
+                            except Exception as img_e:
+                                print(f"⚠️ [LIBRARY DEBUG] Impossible de lire les dimensions de {item_path}: {img_e}")
+                            
+                            structure[folder_key].append({
+                                'filename': item,
+                                'url': public_url,
+                                'category': relative_path,
+                                'size': file_size,
+                                'width': width,
+                                'height': height
+                            })
+                        else:
+                            print(f"⏭️ [LIBRARY DEBUG] Fichier ignoré (non-image): {relative_item_path}")
                 
-                # Ajouter le dossier seulement s'il contient des images
-                if folder_images:
-                    folders[category] = folder_images
+            except Exception as scan_e:
+                print(f"❌ [LIBRARY DEBUG] Erreur lors du scan de {full_path}: {scan_e}")
+            
+            return structure
+
+        # Scanner l'arborescence complète
+        folders = scan_directory(user_dir)
+        
+        print(f"📊 [LIBRARY DEBUG] Structure complète des dossiers:")
+        for folder_path, images in folders.items():
+            print(f"  📁 {folder_path}: {len(images)} image(s)")
 
         total_images = sum(len(images) for images in folders.values())
-        print(f"📚 {total_images} image(s) trouvée(s) dans {len(folders)} dossier(s) pour l'utilisateur {google_id}")
+        print(f"📚 [LIBRARY DEBUG] Total: {total_images} image(s) dans {len(folders)} dossier(s) pour {google_id}")
 
         return jsonify({
             'success': True,
