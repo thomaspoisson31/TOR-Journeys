@@ -47,6 +47,39 @@ window.scale = scale;
 
 // --- Managers ---
 let dataManager;
+
+
+// --- Fonction de chargement de la version ---
+async function loadVersionInfo() {
+    try {
+        // Vérifier si on est en environnement de développement
+        const envResponse = await fetch('/api/environment');
+        const envData = await envResponse.json();
+        const isDevelopment = envData.environment === 'development';
+
+        if (!isDevelopment) {
+            console.log('🏭 Production mode - version badge hidden');
+            return;
+        }
+
+        // Charger le fichier version.json
+        const versionResponse = await fetch('/version.json');
+        const versionData = await versionResponse.json();
+
+        // Afficher le badge de version
+        const versionBadge = document.getElementById('version-badge');
+        const versionNumber = document.getElementById('version-number');
+
+        if (versionBadge && versionNumber) {
+            versionNumber.textContent = `v${versionData.version}`;
+            versionBadge.classList.remove('hidden');
+            console.log(`🏷️ Version affichée: v${versionData.version} (${versionData.date})`);
+        }
+    } catch (error) {
+        console.warn('⚠️ Unable to load version info:', error);
+    }
+}
+
 let filterManager;
 let voyageManager;
 let pathManager;
@@ -79,6 +112,9 @@ console.log("✅ Essential DOM elements:", {
 // --- Fonction d'initialisation simplifiée ---
 async function initializeApp() {
     console.log('🚀 Starting simplified application...');
+
+    // Charger et afficher la version en développement
+    await loadVersionInfo();
 
     try {
         // Initialiser les managers
