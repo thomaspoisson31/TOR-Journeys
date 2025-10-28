@@ -608,11 +608,11 @@ export default class FilterManager {
         console.log(`💾 [saveFiltersForCurrentMap] Filtres sauvegardés dans localStorage`);
 
         // Marquer comme non sauvegardé pour déclencher la sync cloud
-        if (typeof window.markAsUnsaved === 'function') {
+        if (window.authManager && window.authManager.isAuthenticated) {
             console.log(`☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud`);
-            window.markAsUnsaved();
+            window.authManager.markAsUnsaved();
         } else {
-            console.warn(`⚠️ [saveFiltersForCurrentMap] window.markAsUnsaved n'existe pas !`);
+            console.warn(`⚠️ [saveFiltersForCurrentMap] AuthManager non disponible ou utilisateur non authentifié`);
         }
     }
 
