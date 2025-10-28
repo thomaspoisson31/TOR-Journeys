@@ -23,15 +23,20 @@ export default class FilterManager {
     // Méthode pour charger les filtres depuis localStorage (appelée après l'init complète)
     loadFiltersFromStorage() {
         const savedFiltersByMap = localStorage.getItem('filtersByMap');
+        console.log("🔍 [loadFiltersFromStorage] Tentative de chargement - localStorage contient:", savedFiltersByMap ? "données présentes" : "aucune donnée");
+        
         if (savedFiltersByMap) {
             try {
                 this.filtersByMap = JSON.parse(savedFiltersByMap);
-                console.log("🔍 FilterManager: Filtres chargés depuis localStorage:", this.filtersByMap);
-                console.log(`🔍 FilterManager: ${Object.keys(this.filtersByMap).length} carte(s) avec filtres`);
+                console.log("✅ [loadFiltersFromStorage] Filtres chargés depuis localStorage:", this.filtersByMap);
+                console.log(`✅ [loadFiltersFromStorage] ${Object.keys(this.filtersByMap).length} carte(s) avec filtres`);
+                console.log(`✅ [loadFiltersFromStorage] Cartes avec filtres:`, Object.keys(this.filtersByMap));
                 return true;
             } catch (e) {
-                console.error("❌ Erreur lors du chargement des filtres depuis localStorage:", e);
+                console.error("❌ [loadFiltersFromStorage] Erreur lors du chargement des filtres:", e);
             }
+        } else {
+            console.warn("⚠️ [loadFiltersFromStorage] Aucune donnée filtersByMap dans localStorage");
         }
         return false;
     }
@@ -603,9 +608,17 @@ export default class FilterManager {
         console.log(`💾 [saveFiltersForCurrentMap] Total filtersByMap:`, this.filtersByMap);
         console.log(`💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: ${Object.keys(this.filtersByMap).length}`);
         
-        // Sauvegarder aussi dans localStorage pour persistance immédiate
-        localStorage.setItem('filtersByMap', JSON.stringify(this.filtersByMap));
-        console.log(`💾 [saveFiltersForCurrentMap] Filtres sauvegardés dans localStorage`);
+        // Sauvegarder IMMÉDIATEMENT dans localStorage pour persistance
+        try {
+            localStorage.setItem('filtersByMap', JSON.stringify(this.filtersByMap));
+            console.log(`💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage:`, JSON.stringify(this.filtersByMap));
+            
+            // Vérification immédiate
+            const verification = localStorage.getItem('filtersByMap');
+            console.log(`✅ [saveFiltersForCurrentMap] Vérification localStorage:`, verification);
+        } catch (e) {
+            console.error(`❌ [saveFiltersForCurrentMap] Erreur sauvegarde localStorage:`, e);
+        }
 
         // Marquer comme non sauvegardé pour déclencher la sync cloud
         if (window.authManager && window.authManager.isAuthenticated) {
@@ -703,6 +716,22 @@ export default class FilterManager {
             this.filtersByMap[activeMapUrl] = { ...this.activeFilters };
             console.log(`📤 [getAllFiltersByMap] Synchronisation filtres actifs pour ${activeMapUrl}:`, this.activeFilters);
         }
+        
+        // Recharger depuis localStorage pour être sûr d'avoir les dernières données
+        const savedFiltersByMap = localStorage.getItem('filtersByMap');
+        if (savedFiltersByMap) {
+            try {
+                const localData = JSON.parse(savedFiltersByMap);
+                console.log(`📤 [getAllFiltersByMap] Fusion avec données localStorage:`, localData);
+                // Fusionner avec les données locales
+                this.filtersByMap = { ...localData, ...this.filtersByMap };
+            } catch (e) {
+                console.error(`❌ [getAllFiltersByMap] Erreur lecture localStorage:`, e);
+            }
+        }
+        
+        console.log(`📤 [getAllFiltersByMap] Retour de ${Object.keys(this.filtersByMap).length} carte(s) avec filtres`);
+        console.log(`📤 [getAllFiltersByMap] Données finales:`, this.filtersByMap);
         
         return { ...this.filtersByMap };
     }
