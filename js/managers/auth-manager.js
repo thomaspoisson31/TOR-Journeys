@@ -445,13 +445,24 @@ class AuthManager {
 
         // Collecter l'état des filtres par carte
         if (window.filterManager) {
+            // IMPORTANT: Forcer la sauvegarde des filtres actifs AVANT la collecte
+            const activeMapUrl = window.settingsManager?.activeMapUrl;
+            if (activeMapUrl) {
+                this.logAuth(`🔍 [collectCurrentContextData] Sauvegarde forcée des filtres actifs pour ${activeMapUrl}`);
+                window.filterManager.saveFiltersForCurrentMap();
+            }
+            
             data.filtersByMap = window.filterManager.getAllFiltersByMap();
             this.logAuth("🔍 [collectCurrentContextData] Filtres par carte collectés:", data.filtersByMap);
             this.logAuth(`🔍 [collectCurrentContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap || {}).length}`);
             this.logAuth(`🔍 [collectCurrentContextData] Cartes avec filtres:`, Object.keys(data.filtersByMap || {}));
+            
             // Vérifier que filtersByMap est bien un objet non vide
             if (!data.filtersByMap || Object.keys(data.filtersByMap).length === 0) {
                 this.logAuth("⚠️ [collectCurrentContextData] ATTENTION: filtersByMap est vide !");
+                // Vérifier aussi dans localStorage
+                const savedFiltersByMap = localStorage.getItem('filtersByMap');
+                this.logAuth(`🔍 [collectCurrentContextData] Vérification localStorage filtersByMap:`, savedFiltersByMap);
             }
         } else {
             this.logAuth("⚠️ [collectCurrentContextData] FilterManager non disponible");
@@ -661,24 +672,22 @@ class AuthManager {
         }
 
         // Sauvegarder les filtres pour restauration après initialisation complète
-        if (data.filtersByMap) {
-            this.logAuth("🔍 [applyContextData] Sauvegarde des filtres pour restauration différée");
-            this.logAuth("🔍 [applyContextData] Données filtersByMap reçues:", data.filtersByMap);
-            this.logAuth(`🔍 [applyContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap).length}`);
+        // IMPORTANT: Toujours traiter filtersByMap, même s'il est vide ou undefined
+        const filtersByMap = data.filtersByMap || {};
+        this.logAuth("🔍 [applyContextData] Sauvegarde des filtres pour restauration différée");
+        this.logAuth("🔍 [applyContextData] Données filtersByMap reçues:", filtersByMap);
+        this.logAuth(`🔍 [applyContextData] Nombre de cartes avec filtres: ${Object.keys(filtersByMap).length}`);
 
-            // Sauvegarder dans localStorage pour que FilterManager les charge à son init
-            localStorage.setItem('filtersByMap', JSON.stringify(data.filtersByMap));
-            this.logAuth("💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager");
+        // Sauvegarder dans localStorage pour que FilterManager les charge à son init
+        localStorage.setItem('filtersByMap', JSON.stringify(filtersByMap));
+        this.logAuth("💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager");
 
-            // Appeler setAllFiltersByMap sur le FilterManager s'il existe
-            if (window.filterManager) {
-                this.logAuth("📤 [applyContextData] Application des filtres via FilterManager.setAllFiltersByMap");
-                window.filterManager.setAllFiltersByMap(data.filtersByMap);
-            } else {
-                this.logAuth("⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init");
-            }
+        // Appeler setAllFiltersByMap sur le FilterManager s'il existe
+        if (window.filterManager) {
+            this.logAuth("📤 [applyContextData] Application des filtres via FilterManager.setAllFiltersByMap");
+            window.filterManager.setAllFiltersByMap(filtersByMap);
         } else {
-            this.logAuth("⚠️ [applyContextData] Aucune donnée filtersByMap dans le contexte");
+            this.logAuth("⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init");
         }
 
         // 5. Le rendu sera fait dans loadUserData() après l'application complète
