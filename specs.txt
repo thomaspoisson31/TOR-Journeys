@@ -555,11 +555,5 @@ PROBLÈMES RÉSOLUS
    - Solution: Utiliser AnonymousCredentials() pour authentification automatique
    - Fichier concerné: app.py (initialisation storage_client)
 
-6. Sauvegarde images bibliothèque (v1.1.7):
-   - Problème: "Erreur : impossible de sauvegarder le lieu" après ajout d'images depuis la bibliothèque
-   - Cause: Synchronisation complexe entre currentItem, locationsData et dataManager
-   - Solution: Création/ajout des images dans la même session pour éviter les problèmes de synchronisation
-   - Fichiers concernés: infobox-manager.js, library-manager.js
-   - Note: Problème temporairement résolu par workflow utilisateur, à revisiter si récurrent
 
 ================================================================================
