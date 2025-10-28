@@ -1202,7 +1202,7 @@ class AuthManager {
 
             if (result.conflict_detected) {
                 console.warn("⚠️ [CLOUD] Conflit détecté");
-                await this.handleSyncConflict(result.cloud_data, localData);
+                await this.handleSyncConflict(localData, result.cloud_data);
             } else {
                 this.lastSyncTimestamp = Date.now();
                 localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp);
