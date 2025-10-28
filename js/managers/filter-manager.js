@@ -645,16 +645,8 @@ export default class FilterManager {
             console.log(`✅ [loadFiltersForMap] Appel de applyFilters...`);
             this.applyFilters();
             
-            // Forcer le rendu après application des filtres
-            setTimeout(() => {
-                console.log(`🔄 [loadFiltersForMap] Rendu forcé des lieux et régions`);
-                if (typeof window.renderLocations === 'function') {
-                    window.renderLocations();
-                }
-                if (typeof window.renderRegions === 'function') {
-                    window.renderRegions();
-                }
-            }, 100);
+            // Les filtres sont déjà appliqués par applyFilters() ci-dessus
+            // Pas besoin de forcer un rendu supplémentaire
             
             return true;
         } else {

@@ -727,6 +727,14 @@ function initializeMap() {
 
     resetView(); // Vue initiale optimale
 
+    // Forcer l'application des filtres après resetView pour garantir l'affichage correct
+    if (filterManager) {
+        console.log("🔍 [initializeMap] Application finale des filtres après resetView");
+        setTimeout(() => {
+            filterManager.applyFilters();
+        }, 150);
+    }
+
     console.log("✅ Map initialized successfully");
 }
 
