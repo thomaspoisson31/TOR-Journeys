@@ -697,6 +697,13 @@ export default class FilterManager {
 
     // Obtenir tous les filtres par carte (pour la sauvegarde cloud)
     getAllFiltersByMap() {
+        // IMPORTANT: Sauvegarder les filtres actifs AVANT de les retourner
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        if (activeMapUrl) {
+            this.filtersByMap[activeMapUrl] = { ...this.activeFilters };
+            console.log(`📤 [getAllFiltersByMap] Synchronisation filtres actifs pour ${activeMapUrl}:`, this.activeFilters);
+        }
+        
         return { ...this.filtersByMap };
     }
 
