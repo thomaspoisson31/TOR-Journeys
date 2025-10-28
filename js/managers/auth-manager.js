@@ -453,20 +453,27 @@ class AuthManager {
             }
             
             data.filtersByMap = window.filterManager.getAllFiltersByMap();
-            this.logAuth("🔍 [collectCurrentContextData] Filtres par carte collectés:", data.filtersByMap);
-            this.logAuth(`🔍 [collectCurrentContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap || {}).length}`);
-            this.logAuth(`🔍 [collectCurrentContextData] Cartes avec filtres:`, Object.keys(data.filtersByMap || {}));
-            
-            // Vérifier que filtersByMap est bien un objet non vide
-            if (!data.filtersByMap || Object.keys(data.filtersByMap).length === 0) {
-                this.logAuth("⚠️ [collectCurrentContextData] ATTENTION: filtersByMap est vide !");
-                // Vérifier aussi dans localStorage
-                const savedFiltersByMap = localStorage.getItem('filtersByMap');
-                this.logAuth(`🔍 [collectCurrentContextData] Vérification localStorage filtersByMap:`, savedFiltersByMap);
-            }
+            this.logAuth("🔍 [collectCurrentContextData] Filtres collectés via FilterManager:", data.filtersByMap);
         } else {
-            this.logAuth("⚠️ [collectCurrentContextData] FilterManager non disponible");
+            // FALLBACK: Si FilterManager n'existe pas encore, lire depuis localStorage
+            this.logAuth("⚠️ [collectCurrentContextData] FilterManager non disponible - lecture depuis localStorage");
+            const savedFiltersByMap = localStorage.getItem('filtersByMap');
+            if (savedFiltersByMap) {
+                try {
+                    data.filtersByMap = JSON.parse(savedFiltersByMap);
+                    this.logAuth("✅ [collectCurrentContextData] Filtres collectés depuis localStorage:", data.filtersByMap);
+                } catch (e) {
+                    this.logAuth("❌ [collectCurrentContextData] Erreur lecture filtersByMap depuis localStorage:", e);
+                    data.filtersByMap = {};
+                }
+            } else {
+                this.logAuth("ℹ️ [collectCurrentContextData] Aucun filtre dans localStorage");
+                data.filtersByMap = {};
+            }
         }
+        
+        this.logAuth(`🔍 [collectCurrentContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap || {}).length}`);
+        this.logAuth(`🔍 [collectCurrentContextData] Cartes avec filtres:`, Object.keys(data.filtersByMap || {}));
 
         this.logAuth("📦 Données collectées pour le contexte", Object.keys(data));
         this.logAuth("📅 [collectCurrentContextData] Calendar dans les données collectées:", data.calendar ? {
