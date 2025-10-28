@@ -1,8 +1,8 @@
 
 ================================================================================
 SPÉCIFICATIONS TECHNIQUES - APPLICATION CARTOGRAPHIE TERRE DU MILIEU
-Version: 1.1.4
-Dernière mise à jour: 23 octobre 2025
+Version: 1.2.0
+Dernière mise à jour: 28 octobre 2025
 ================================================================================
 
 VUE D'ENSEMBLE
@@ -32,6 +32,7 @@ Structure des fichiers:
 ├── login.html              # Page d'authentification
 ├── styles.css              # Styles desktop
 ├── styles-mobile.css       # Styles mobile (<768px)
+├── version.json            # Fichier de versioning (format sémantique)
 ├── app.py                  # Serveur Flask
 ├── database.py             # Gestionnaire SQLite
 ├── js/
@@ -118,6 +119,41 @@ CONVENTIONS DE CODAGE JAVASCRIPT
      🗺️  Carte
      🔍 Zoom/Filtres
      📱 Mobile/Touch
+
+VERSIONING
+----------
+
+1. FORMAT VERSION:
+   - Format sémantique: MAJEUR.MINEUR.PATCH (ex: 1.2.0)
+   - MAJEUR: Changements incompatibles ou refonte majeure
+   - MINEUR: Nouvelles fonctionnalités compatibles
+   - PATCH: Corrections de bugs
+
+2. FICHIER VERSION.JSON:
+   ```json
+   {
+     "version": "1.2.0",
+     "date": "2025-10-28"
+   }
+   ```
+
+3. AFFICHAGE VERSION:
+   - Badge visible uniquement en développement
+   - Positionnement: top-center, z-index 90
+   - Détection environnement via /api/environment
+   - Chargement automatique au démarrage de l'application
+
+4. FONCTION loadVersionInfo() (main.js):
+   - Vérification environnement (dev/prod)
+   - Fetch de version.json
+   - Affichage conditionnel du badge
+   - Logs console avec emoji 🏷️
+
+5. RÈGLES DE MISE À JOUR:
+   - Incrémenter manuellement version.json après chaque modification
+   - Mettre à jour la date au format YYYY-MM-DD
+   - Documenter les changements dans specs.txt
+   - Le badge s'actualise automatiquement après rechargement
 
 FONCTIONNALITÉS PRINCIPALES
 ----------------------------
@@ -220,8 +256,10 @@ localStorage keys (cache frontend uniquement):
 - availableMaps: [{ id, name, url, scale, width, height }]
 - activeMapUrl: string
 - currentCalendarDate: { day, month, season }
-- adventurers_position: { x, y }
-- filtersByMap: { [mapId]: { colors, visited, known } }
+- adventurers_position: { x, y, mapId }
+- filtersByMap: { [mapId]: { colors, visited, known, regionsOpacity, showLocations, showRegions } }
+
+Note: version.json n'est PAS stocké dans localStorage, toujours chargé depuis le serveur
 
 Cloud (Replit Database - Key-Value Store):
 Structure des clés:
@@ -372,7 +410,14 @@ Principe de double stockage:
 RÈGLES MÉTIER
 -------------
 
-1. ÉCHELLE CARTES:
+1. VERSIONING ET DÉVELOPPEMENT:
+   - Incrémenter version.json après chaque modification significative
+   - Documenter les changements dans specs.txt (section ÉVOLUTIONS RÉCENTES)
+   - Maintenir la cohérence entre version.json, specs.txt et code
+   - Utiliser le format sémantique strict (MAJEUR.MINEUR.PATCH)
+   - Date au format ISO (YYYY-MM-DD)
+
+2. ÉCHELLE CARTES:
    - Configurable par carte (défaut 600 miles)
    - Calculs distances: (pixels / MAP_WIDTH) * MAP_DISTANCE_MILES
 
@@ -437,10 +482,17 @@ Stockage:
   * Fallback vers système fichiers local si indisponible
   * URLs publiques persistantes en production
 
-ÉVOLUTIONS RÉCENTES (v1.1.7)
-----------------------------
+ÉVOLUTIONS RÉCENTES
+-------------------
 
-1. Bibliothèque d'images (v1.1.7)
+1. Système de versioning (v1.2.0)
+   - Fichier version.json centralisé (format sémantique)
+   - Affichage automatique en développement
+   - Badge positionné en haut au centre
+   - Détection environnement via API endpoint
+   - Masquage automatique en production
+
+2. Bibliothèque d'images (v1.1.7)
    - Intégration complète de la bibliothèque dans InfoBox
    - Possibilité d'ajouter des images depuis la bibliothèque en mode édition
    - Organisation par dossiers (locations/Eriador, maps, general)
