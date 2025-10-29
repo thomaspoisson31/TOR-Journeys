@@ -1233,11 +1233,11 @@ class InfoBoxManager {
                             filteredFolders[key] = data.folders[key];
                         }
                     });
-                    this.libraryStructure = filteredFolders;
-                    console.log("✅ Structure filtrée pour", startPath, ":", Object.keys(this.libraryStructure).length, "dossiers");
+                    this.buildLibraryStructure(filteredFolders);
+                    console.log("✅ Structure filtrée pour", startPath, ":", Object.keys(filteredFolders).length, "dossiers");
                 } else {
-                    this.libraryStructure = data.folders;
-                    console.log("✅ Structure de bibliothèque complète chargée:", Object.keys(this.libraryStructure).length, "dossiers");
+                    this.buildLibraryStructure(data.folders);
+                    console.log("✅ Structure de bibliothèque complète chargée:", Object.keys(data.folders).length, "dossiers");
                 }
 
                 this.renderLibraryNavigation(); // Utiliser la nouvelle méthode
@@ -1298,12 +1298,12 @@ class InfoBoxManager {
         path.forEach(folder => {
             if (currentLevel[folder]) {
                 currentData = currentLevel[folder];
-                currentLevel = currentLevel[folder].subfolders;
+                currentLevel = currentLevel[folder].subfolders || {};
             }
         });
 
         const folders = Object.keys(currentLevel);
-        const currentImages = currentData ? currentData.images : [];
+        const currentImages = currentData ? (currentData.images || []) : [];
 
         console.log(`📂 [renderLibraryNavigation] Chemin actuel:`, path);
         console.log(`📂 Dossiers au niveau actuel:`, folders);
@@ -1331,8 +1331,8 @@ class InfoBoxManager {
                 </div>
                 ${folders.map(folder => {
                     const info = currentLevel[folder];
-                    const imageCount = info.images.length;
-                    const subfolderCount = Object.keys(info.subfolders).length;
+                    const imageCount = (info.images || []).length;
+                    const subfolderCount = Object.keys(info.subfolders || {}).length;
 
                     return `
                         <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
