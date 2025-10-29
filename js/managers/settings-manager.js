@@ -232,11 +232,9 @@ class SettingsManager {
                         <input type="text" id="temp-map-name-input" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Ex: Eriador - Ma carte personnalisée">
                     </div>
 
-                    <div id="temp-map-upload-container">
-                        <!-- Le composant d'upload sera inséré ici -->
+                    <div id="temp-map-upload-container" class="hidden">
+                        <!-- Le composant d'upload sera inséré ici (masqué) -->
                     </div>
-
-                    <div class="text-center text-gray-400">ou</div>
 
                     <button type="button" id="choose-map-from-library-btn" class="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center space-x-2">
                         <i class="fas fa-images"></i>
@@ -252,7 +250,7 @@ class SettingsManager {
 
         document.body.appendChild(modal);
 
-        // Setup du composant d'upload dans la modale
+        // Setup du composant d'upload dans la modale (toujours créé mais masqué)
         const uploadContainer = document.getElementById('temp-map-upload-container');
         if (uploadContainer && this.uploadManager) {
             this.uploadManager.createUploadComponent(uploadContainer, 'maps', (result) => {
