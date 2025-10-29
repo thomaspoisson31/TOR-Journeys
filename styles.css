@@ -296,15 +296,29 @@ body {
     transition: all 0.2s ease;
     font-size: 1rem;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.tab-button i {
+    transition: color 0.2s ease;
 }
 
 .tab-button:hover {
     color: #d1d5db;
 }
 
+.tab-button:hover i {
+    color: #d1d5db;
+}
+
 .tab-button.active {
     color: white;
     border-bottom-color: #3b82f6;
+}
+
+.tab-button.active i {
+    color: white;
 }
 
 .tab-content {
