@@ -115,17 +115,16 @@ class CharactersManager {
         }
 
         const html = filteredCharacters.map(character => {
+            // Afficher UNIQUEMENT l'image de type "vignette"
             const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-            const principalImage = character.images?.find(img => img.type === 'principale');
-            const displayImage = thumbnailImage || principalImage || character.images?.[0];
 
             return `
                 <div class="character-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer" 
                      data-character-id="${character.id}"
                      onclick="window.charactersManager.showCharacterInfoBox('${character.id}')">
                     <div class="flex items-center space-x-4">
-                        ${displayImage ? `
-                            <img src="${displayImage.url}" alt="${character.name}" 
+                        ${thumbnailImage ? `
+                            <img src="${thumbnailImage.url}" alt="${character.name}" 
                                  class="w-16 h-16 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
                         ` : `
                             <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">

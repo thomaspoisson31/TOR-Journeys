@@ -234,10 +234,32 @@ class InfoBoxManager {
             if (item.images && item.images.length > 0) {
                 // Chercher l'image principale, sinon prendre la première
                 const principaleImage = item.images.find(img => img.type === 'principale') || item.images[0];
-                imageView.innerHTML = `
-                    <img src="${principaleImage.url}" alt="${item.name}" class="modal-image">
-                    <div class="image-caption">${item.name}</div>
-                `;
+                
+                // Pour les personnages, utiliser uniquement les images de type 'Vignette' si disponibles
+                let displayImage = principaleImage;
+                if (type === 'character') {
+                    const vignetteImage = item.images.find(img => img.type === 'vignette');
+                    if (vignetteImage) {
+                        displayImage = vignetteImage;
+                    } else if (principaleImage && principaleImage.type !== 'vignette') {
+                        // Si pas de vignette, et l'image principale n'est pas une vignette, on n'affiche rien pour le moment
+                        // ou on pourrait envisager une image par défaut. Pour l'instant, on laisse vide pour forcer la vignette.
+                        displayImage = null; 
+                    }
+                }
+
+                if (displayImage) {
+                    imageView.innerHTML = `
+                        <img src="${displayImage.url}" alt="${item.name}" class="modal-image">
+                        <div class="image-caption">${item.name}</div>
+                    `;
+                } else {
+                    const typeLabel = type === 'region' ? 'Région' : (type === 'character' ? 'Personnage' : 'Lieu');
+                    imageView.innerHTML = `
+                        <div class="compact-title">${item.name}</div>
+                        <div class="image-placeholder">Aucune image de type 'Vignette' disponible pour ce ${typeLabel.toLowerCase()}</div>
+                    `;
+                }
             } else {
                 const typeLabel = type === 'region' ? 'Région' : (type === 'character' ? 'Personnage' : 'Lieu');
                 imageView.innerHTML = `
@@ -1127,7 +1149,6 @@ class InfoBoxManager {
     }
 
     async openLibraryForEdit() {
-        console.log("🔍 ========== DÉBUT openLibraryForEdit ==========");
         const modal = document.getElementById('library-selection-modal');
         const content = document.getElementById('library-selection-content');
         const empty = document.getElementById('library-selection-empty');
@@ -1146,12 +1167,12 @@ class InfoBoxManager {
         // Toujours réinitialiser la sélection à l'ouverture de la modale
         this.selectedLibraryImagesForEdit = [];
         console.log("✅ Initialisation de selectedLibraryImagesForEdit à []");
-        
+
         this.currentLibraryFolder = null;
         this.currentLibraryPath = [];
         this.libraryFolders = {};
         this.libraryStructure = {};
-        
+
         console.log("🔍 État après initialisation:", {
             selectedLibraryImagesForEdit: this.selectedLibraryImagesForEdit,
             currentLibraryFolder: this.currentLibraryFolder,
@@ -1169,10 +1190,17 @@ class InfoBoxManager {
             return;
         }
 
+        // Déterminer le dossier de départ selon le type d'élément
+        const isCharacter = this.currentItem && this.currentItemType === 'character';
+        const startPath = isCharacter ? 'people' : null;
+
+        console.log("🔍 Type d'élément:", this.currentItemType, "- Chemin de départ:", startPath);
+
         // Afficher le chemin de stockage
         if (pathInfo && pathDisplay && window.authManager.currentUser) {
             const googleId = window.authManager.currentUser.google_id;
-            pathDisplay.textContent = `uploads/${googleId}/`;
+            // Utiliser le chemin de départ déterminé
+            pathDisplay.textContent = `uploads/${googleId}/${startPath || ''}`;
             pathInfo.classList.remove('hidden');
         }
 
@@ -1195,25 +1223,39 @@ class InfoBoxManager {
 
             const data = await response.json();
 
-            loading.classList.add('hidden');
-
             if (data.success && data.folders && Object.keys(data.folders).length > 0) {
-                this.libraryFolders = data.folders;
-                this.buildLibraryStructure(data.folders);
-                this.renderLibraryFolders();
+                // Filtrer la structure selon le type d'élément
+                if (startPath) {
+                    // Pour les personnages, filtrer uniquement les dossiers commençant par 'people'
+                    const filteredFolders = {};
+                    Object.keys(data.folders).forEach(key => {
+                        if (key === startPath || key.startsWith(startPath + '/')) {
+                            filteredFolders[key] = data.folders[key];
+                        }
+                    });
+                    this.libraryStructure = filteredFolders;
+                    console.log("✅ Structure filtrée pour", startPath, ":", Object.keys(this.libraryStructure).length, "dossiers");
+                } else {
+                    this.libraryStructure = data.folders;
+                    console.log("✅ Structure de bibliothèque complète chargée:", Object.keys(this.libraryStructure).length, "dossiers");
+                }
+
+                this.renderLibraryNavigation(); // Utiliser la nouvelle méthode
                 content.classList.remove('hidden');
             } else {
                 empty.classList.remove('hidden');
             }
 
         } catch (error) {
-            console.error('❌ Erreur lors du chargement de la bibliothèque:', error);
-            alert('Erreur lors du chargement de la bibliothèque: ' + error.message);
-            loading.classList.add('hidden');
+            console.error("❌ Erreur lors du chargement de la bibliothèque:", error);
+            alert(`Erreur lors du chargement de la bibliothèque: ${error.message}`);
             empty.classList.remove('hidden');
+        } finally {
+            loading.classList.add('hidden');
         }
     }
 
+    // Nouvelle méthode pour construire et naviguer dans la structure
     buildLibraryStructure(folders) {
         this.libraryStructure = {};
 
@@ -1244,7 +1286,8 @@ class InfoBoxManager {
         console.log('📁 Structure de bibliothèque construite:', this.libraryStructure);
     }
 
-    renderLibraryFolders(path = []) {
+    // Nouvelle méthode pour rendre la navigation de la bibliothèque
+    renderLibraryNavigation(path = []) {
         const content = document.getElementById('library-selection-content');
         if (!content) return;
 
@@ -1262,7 +1305,7 @@ class InfoBoxManager {
         const folders = Object.keys(currentLevel);
         const currentImages = currentData ? currentData.images : [];
 
-        console.log(`📂 [renderLibraryFolders] Chemin actuel:`, path);
+        console.log(`📂 [renderLibraryNavigation] Chemin actuel:`, path);
         console.log(`📂 Dossiers au niveau actuel:`, folders);
         console.log(`📂 Images au niveau actuel:`, currentImages.length);
 
@@ -1309,7 +1352,7 @@ class InfoBoxManager {
             ${currentImages.length > 0 ? this.renderCurrentFolderImages(currentImages) : ''}
         `;
 
-        console.log(`✅ [renderLibraryFolders] Contenu HTML généré pour ${folders.length} dossier(s) et ${currentImages.length} image(s)`);
+        console.log(`✅ [renderLibraryNavigation] Contenu HTML généré pour ${folders.length} dossier(s) et ${currentImages.length} image(s)`);
     }
 
     renderCurrentFolderImages(images) {
@@ -1325,11 +1368,11 @@ class InfoBoxManager {
                                   this.selectedLibraryImagesForEdit.some(img => img.url === image.url);
                 const selectedClass = isSelected ? 'ring-2 ring-blue-500' : '';
                 const indicatorClass = isSelected ? '' : 'hidden';
-                
+
                 // Échapper correctement l'URL et le filename pour éviter les problèmes avec les caractères spéciaux
                 const escapedUrl = image.url.replace(/'/g, "\\'");
                 const escapedFilename = encodeURIComponent(image.filename).replace(/'/g, "\\'");
-                
+
                 return `
                     <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card ${selectedClass}"
                          data-url="${image.url}"
@@ -1360,7 +1403,7 @@ class InfoBoxManager {
         }
         this.currentLibraryPath.push(folderName);
         console.log(`🔽 Nouveau chemin:`, this.currentLibraryPath);
-        this.renderLibraryFolders(this.currentLibraryPath);
+        this.renderLibraryNavigation(this.currentLibraryPath);
     }
 
     navigateLibraryUp() {
@@ -1368,7 +1411,7 @@ class InfoBoxManager {
         if (!this.currentLibraryPath || this.currentLibraryPath.length === 0) return;
         this.currentLibraryPath.pop();
         console.log(`🔼 Nouveau chemin:`, this.currentLibraryPath);
-        this.renderLibraryFolders(this.currentLibraryPath);
+        this.renderLibraryNavigation(this.currentLibraryPath);
     }
 
 
@@ -1380,16 +1423,16 @@ class InfoBoxManager {
         console.log('   url:', url);
         console.log('   filename:', filename);
         console.log('   safeId:', safeId);
-        
+
         // Initialiser le tableau si nécessaire
         if (!this.selectedLibraryImagesForEdit) {
             console.warn('⚠️ selectedLibraryImagesForEdit était undefined, réinitialisation');
             this.selectedLibraryImagesForEdit = [];
         }
-        
+
         console.log('🔍 État actuel: this.selectedLibraryImagesForEdit =', JSON.stringify(this.selectedLibraryImagesForEdit));
         console.log('🔍 Nombre d\'images sélectionnées:', this.selectedLibraryImagesForEdit.length);
-        
+
         // Rechercher la carte par data-safeid pour éviter les problèmes d'échappement
         const card = document.querySelector(`.library-image-card[data-safeid="${safeId}"]`);
         if (!card) {
@@ -1397,18 +1440,18 @@ class InfoBoxManager {
             console.error('   Toutes les cartes présentes:', document.querySelectorAll('.library-image-card'));
             return;
         }
-        
+
         const indicator = card.querySelector(`.selected-indicator-${safeId}`);
         if (!indicator) {
             console.error('❌ Indicateur non trouvé pour safeId:', safeId);
             console.error('   Contenu de la carte:', card.innerHTML);
             return;
         }
-        
+
         // Vérifier si l'image est déjà sélectionnée
         const index = this.selectedLibraryImagesForEdit.findIndex(img => img.url === url);
         console.log('🔍 Index de l\'image dans le tableau:', index);
-        
+
         if (index > -1) {
             // Désélectionner
             this.selectedLibraryImagesForEdit.splice(index, 1);
@@ -1423,7 +1466,7 @@ class InfoBoxManager {
             card.classList.add('ring-2', 'ring-blue-500');
             console.log(`🔼 Image sélectionnée: ${decodedFilename}. Total: ${this.selectedLibraryImagesForEdit.length}`);
         }
-        
+
         console.log('📋 Images sélectionnées actuellement:', this.selectedLibraryImagesForEdit.map(img => img.filename));
         console.log('🔍 [toggleLibraryImageSelectionForEdit] FIN');
     }
@@ -1435,7 +1478,7 @@ class InfoBoxManager {
         console.log("🔍 Est un tableau?", Array.isArray(this.selectedLibraryImagesForEdit));
         console.log("🔍 Contenu selectedLibraryImagesForEdit:", JSON.stringify(this.selectedLibraryImagesForEdit, null, 2));
         console.log("🔍 Longueur:", this.selectedLibraryImagesForEdit ? this.selectedLibraryImagesForEdit.length : 'undefined');
-        
+
         // Vérifier toutes les cartes sélectionnées dans le DOM
         const selectedCardsInDOM = document.querySelectorAll('.library-image-card.ring-2.ring-blue-500');
         console.log("🔍 Cartes sélectionnées dans le DOM:", selectedCardsInDOM.length);
