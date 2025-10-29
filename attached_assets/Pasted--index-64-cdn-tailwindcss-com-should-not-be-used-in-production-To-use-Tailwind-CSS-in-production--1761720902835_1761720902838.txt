@@ -1,0 +1,249 @@
+(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+(anonymous) @ (index):64
+upload-manager.js:355 📤 UploadManager module loaded
+infobox-manager.js:1912 📋 InfoBoxManager module loaded
+library-manager.js:202 📚 LibraryManager module loaded
+characters-manager.js:547 👥 CharactersManager module loaded
+main.js:34 ✅ Constants loaded successfully
+main.js:97 ✅ Global variables initialized
+main.js:105 ✅ Essential DOM elements: {viewport: true, mapContainer: true, mapImage: true, loaderOverlay: true}
+main.js:2760 📋 Simplified main.js loaded - waiting for DOM ready
+main.js:114 🚀 Starting simplified application...
+main.js:76 🏷️ Version affichée: v1.2.3 (2025-10-29)
+main.js:122 ✅ DataManager initialized
+filter-manager.js:20 🔍 FilterManager initialized
+main.js:124 ✅ FilterManager initialized
+main.js:134 ✅ VoyageManager initialized
+main.js:141 ✅ PathManager initialized
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"day":19,"month":"Lothron"}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {day: 19, month: 'Lothron'}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"day":19,"month":"Lothron"}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {day: 19, month: 'Lothron'}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+main.js:147 ✅ CalendarManager initialized
+settings-manager.js:17 ⚙️ SettingsManager initialized
+settings-manager.js:1019 ⚙️ Configuration des listeners Import/Export...
+settings-manager.js:1026 📍 Boutons Lieux/Régions: {exportBtn: true, importBtn: true, fileInput: true}
+settings-manager.js:1063 👥 Boutons Personnages: {exportBtn: true, importBtn: true, fileInput: true}
+settings-manager.js:1102 ✅ Listeners Import/Export configurés
+main.js:153 ✅ SettingsManager initialized
+auth-manager.js:1713 [AuthManager] 🔑 Initialisation AuthManager null
+auth-manager.js:1713 [AuthManager] 🔍 Vérification du statut d'authentification null
+auth-manager.js:1713 [AuthManager] 👂 Écoute des changements de localStorage activée. null
+main.js:175 ✅ AuthManager initialized
+upload-manager.js:10 📤 UploadManager initialized
+infobox-manager.js:22 📋 InfoBoxManager initialized with UploadManager
+main.js:184 ✅ InfoBoxManager initialized
+import-export-manager.js:17 📤 ImportExportManager initialized
+import-export-manager.js:44 📤 ImportExportManager event listeners configured
+main.js:193 ✅ ImportExportManager initialized
+main.js:196 📍 Initializing data structures...
+data-manager.js:10 📍 loadInitialLocations: Initialisation avec structure vide
+data-manager.js:15 ✅ Structure de données initialisée (vide, en attente du cloud)
+data-manager.js:51 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+data-manager.js:56 ✅ Structure de régions initialisée (vide, en attente du cloud)
+main.js:204 ✅ Data structures initialized (will be populated from cloud)
+main.js:228 ⏳ Waiting for SettingsManager to load active map...
+upload-manager.js:10 📤 UploadManager initialized
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1713 [AuthManager] ✅ Utilisateur authentifié trouvé null
+auth-manager.js:1713 [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1713 [AuthManager] 🌍 Environnement détecté: development (préfixe: dev_) null
+auth-manager.js:1713 [AuthManager] 📥 Chargement des données depuis le cloud (environnement: dev_) null
+auth-manager.js:1713 [AuthManager] ✅ Données cloud récupérées {_environment: 'dev_', _saved_at: '2025-10-29T06:36:43.210359', _sync_timestamp: 1761719803.210372, adventure: {…}, calendar: {…}, …}
+auth-manager.js:1713 [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+auth-manager.js:1713 [AuthManager] 🔄 Application des données du contexte (12) ['_environment', '_saved_at', '_sync_timestamp', 'adventure', 'calendar', 'characters', 'filtersByMap', 'journal', 'locations', 'position', 'regions', 'settings']
+auth-manager.js:1713 [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+auth-manager.js:1713 [AuthManager] 💾 10 lieux sauvegardés dans localStorage null
+auth-manager.js:1713 [AuthManager] 💾 1 régions sauvegardées dans localStorage null
+auth-manager.js:1713 [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 10 lieux null
+auth-manager.js:1713 [AuthManager] 📊 Structure locationsData: {locations: Array(10)}
+auth-manager.js:1713 [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 1 régions null
+auth-manager.js:1713 [AuthManager] 📊 Structure regionsData: {regions: Array(1)}
+auth-manager.js:1713 [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+auth-manager.js:1713 [AuthManager] 📅 [applyContextData] Données calendar reçues: {calendarData: Array(12), currentCalendarDate: {…}, currentSeason: 'printemps-fin', isCalendarMode: true}
+auth-manager.js:1713 [AuthManager] 📅 [applyContextData] Saison appliquée: printemps-fin null
+auth-manager.js:1713 [AuthManager] 📅 [applyContextData] Date appliquée: {day: 19, month: 'Lothron'}
+auth-manager.js:1713 [AuthManager] 📅 [applyContextData] Données calendrier appliquées: 12 mois null
+auth-manager.js:1713 [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+auth-manager.js:1713 [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+auth-manager.js:1713 [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+auth-manager.js:1713 [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+settings-manager.js:1169 ⚙️ Chargement des paramètres depuis le contexte: {activeMapName: '20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01', activeMapUrl: '/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', availableMaps: Array(3), narrationStyle: 'brief', partyDescription: '*   **Aelrindel**, une Elfe Sylvestre des lisières…par le massacre de son village par des pillards.\n', …}
+settings-manager.js:1180 ✅ Cartes chargées: 3
+settings-manager.js:1184 ✅ Carte active URL: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+settings-manager.js:1188 ✅ Carte active nom: 20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01
+settings-manager.js:1194 ✅ Description aventuriers chargée
+settings-manager.js:1198 ✅ Description quête chargée
+settings-manager.js:1202 ✅ Style de narration chargé: brief
+settings-manager.js:1212 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+settings-manager.js:1217 🗺️ Échelle de la carte active: 600 miles
+settings-manager.js:1272 ✅ Paramètres chargés avec succès
+auth-manager.js:1713 [AuthManager] 🗺️ 3 carte(s) restaurée(s) depuis le cloud null
+auth-manager.js:1713 [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg null
+auth-manager.js:1713 [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+auth-manager.js:1713 [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+auth-manager.js:1713 [AuthManager] 👥 Application de 34 personnages depuis le contexte null
+auth-manager.js:1713 [AuthManager] 🎲 Application des données d'aventure depuis le contexte null
+auth-manager.js:653 📍 [applyContextData] Position reçue du cloud: {mapId: '/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', x: 1589.9428484572118, y: 1567.84192126463}
+auth-manager.js:654 📍 [applyContextData] Carte active: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+auth-manager.js:655 📍 [applyContextData] Carte de la position: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+auth-manager.js:660 📍 [applyContextData] AVANT setItem - position à sauver: {mapId: '/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', x: 1589.9428484572118, y: 1567.84192126463}
+auth-manager.js:666 📍 [applyContextData] APRÈS setItem - position vérif: {"mapId":"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg","x":1589.9428484572118,"y":1567.84192126463}
+auth-manager.js:671 📍 [applyContextData] APRÈS setItem - flag vérif: true
+auth-manager.js:673 [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: {mapId: '/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', x: 1589.9428484572118, y: 1567.84192126463}
+auth-manager.js:1713 [AuthManager] 🔍 [applyContextData] Sauvegarde des filtres pour restauration différée null
+auth-manager.js:1713 [AuthManager] 🔍 [applyContextData] Données filtersByMap reçues: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}}
+auth-manager.js:1713 [AuthManager] 🔍 [applyContextData] Nombre de cartes avec filtres: 1 null
+auth-manager.js:1713 [AuthManager] 💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager null
+auth-manager.js:1713 [AuthManager] ⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init null
+auth-manager.js:1713 [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+auth-manager.js:1713 [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+auth-manager.js:1713 [AuthManager] ✅ Contexte appliqué avec succès null
+auth-manager.js:1713 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1713 [AuthManager] 💾 3 carte(s) sauvegardée(s) dans localStorage null
+auth-manager.js:1713 [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg null
+auth-manager.js:1713 [AuthManager]   - 34 personnages sauvegardés dans localStorage. null
+auth-manager.js:1713 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1713 [AuthManager] 🎨 Rendu forcé après chargement cloud null
+main.js:422 ✅ Rendered 3 location markers (thumbnails: true)
+auth-manager.js:1713 [AuthManager] ✅ 10 lieux rendus depuis le cloud null
+main.js:568 ✅ Rendered region: bn,nb,bn,nb with 8 points
+main.js:571 ✅ Rendered 1 region polygons
+auth-manager.js:1713 [AuthManager] ✅ 1 régions rendues depuis le cloud null
+auth-manager.js:1713 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+auth-manager.js:1713 [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+settings-manager.js:1221 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1232 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+settings-manager.js:1236 🗺️ Réinitialisation de la carte depuis loadSettings
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 4252 x 3296
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.238 (viewportWidth=1012, MAP_WIDTH=4252)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+ 🎨 Setting up color change modal...
+ ✅ Color change modal setup complete
+ ✅ Location adding setup complete
+ 🔍 Setting up FilterManager...
+ 🔍 Setting up filter listeners...
+filter-manager.js:81 ✅ Filter listeners setup complete
+filter-manager.js:26 🔍 [loadFiltersFromStorage] Tentative de chargement - localStorage contient: données présentes
+filter-manager.js:31 ✅ [loadFiltersFromStorage] Filtres chargés depuis localStorage: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}}
+filter-manager.js:32 ✅ [loadFiltersFromStorage] 1 carte(s) avec filtres
+filter-manager.js:33 ✅ [loadFiltersFromStorage] Cartes avec filtres: ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg']
+filter-manager.js:96 🔍 [tryLoadFiltersForActiveMap retry=0] activeMapUrl: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+filter-manager.js:97 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg']
+filter-manager.js:100 ✅ Chargement des filtres pour la carte active: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+filter-manager.js:101 📊 Filtres à charger: {colors: Array(2), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: false, …}
+filter-manager.js:634 🔍 [loadFiltersForMap] Tentative de chargement pour carte: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+filter-manager.js:635 🔍 [loadFiltersForMap] filtersByMap disponibles: ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg']
+filter-manager.js:638 📥 [loadFiltersForMap] Filtres trouvés: {colors: Array(2), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: false, …}
+filter-manager.js:640 📥 [loadFiltersForMap] activeFilters après copie: {colors: Array(2), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: false, …}
+filter-manager.js:643 🎨 [loadFiltersForMap] Mise à jour de l'UI...
+filter-manager.js:645 ✅ [loadFiltersForMap] Appel de applyFilters...
+filter-manager.js:373 🔍 Applying filters... {colors: Array(2), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: false, …}
+filter-manager.js:374 🔍 Current filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}}
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+filter-manager.js:392 📊 Filtered: 2/10 locations, 0/1 regions
+filter-manager.js:505 ✅ Display updated - 2 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {colors: Array(2), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: false, …}
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}}
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 1
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":["orange","blue"],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":["visited"]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":["orange","blue"],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":["visited"]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+auth-manager.js:1713 [AuthManager] 🔔 Modifications non sauvegardées détectées null
+main.js:649 ✅ FilterManager setup complete
+main.js:656 🚀 Setting up VoyageManager...
+main.js:658 ✅ VoyageManager setup complete
+main.js:663 🗺️ Setting up PathManager...
+path-manager.js:50 🎨 Canvas configuré : 4252x3296
+path-manager.js:38 🛤️ PathManager initialized
+main.js:665 ✅ PathManager setup complete
+main.js:682 🔍 [initializeMap] Création du ZoomManager
+zoom-manager.js:26 🔍 Initializing ZoomManager... {scale: 0.23800564440263405, MAP_WIDTH: 0, MAP_HEIGHT: 0}
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.238
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.238, ratio=0.035, x=5.3px, sliderWidth=0px
+zoom-manager.js:34 ✅ ZoomManager initialized {scale: 0.23800564440263405, sliderWidth: 0, controlExists: true}
+main.js:711 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 4252 MAP_HEIGHT: 3296
+main.js:716 📍 [main.js] État localStorage AVANT init PositionManager - position: {"mapId":"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg","x":1589.9428484572118,"y":1567.84192126463} flag: true
+position-manager.js:25 📍 [PositionManager.loadPosition] État du flag cloud: true
+position-manager.js:26 📍 [PositionManager.loadPosition] Carte active: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+position-manager.js:29 📍 [PositionManager.loadPosition] Position dans localStorage: {"mapId":"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg","x":1589.9428484572118,"y":1567.84192126463}
+position-manager.js:42 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: {mapId: '/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', x: 1589.9428484572118, y: 1567.84192126463}
+position-manager.js:14 📍 Initializing PositionManager...
+position-manager.js:94 📍 [PositionManager] 0 marqueur(s) existant(s) supprimé(s)
+position-manager.js:17 ✅ PositionManager initialized with position: {mapId: '/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', x: 1589.9428484572118, y: 1567.84192126463}
+main.js:733 ✅ PositionManager initialized with position: {mapId: '/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', x: 1589.9428484572118, y: 1567.84192126463}
+main.js:737 📍 [main.js] Nettoyage du flag cloud après initialisation
+journal-manager.js:11 📖 Initialisation du JournalManager
+journal-manager.js:48 📖 undefined voyage(s) chargé(s) depuis le localStorage
+main.js:745 ✅ JournalManager initialized
+adventure-manager.js:415 ✅ Adventure data loaded from localStorage
+adventure-manager.js:15 🎲 Initializing AdventureManager...
+adventure-manager.js:17 ✅ AdventureManager initialized
+main.js:751 ✅ AdventureManager initialized
+characters-manager.js:10 👥 CharactersManager initialized
+characters-manager.js:57 📚 34 personnages chargés depuis localStorage
+characters-manager.js:16 ✅ CharactersManager setup complete
+main.js:757 ✅ CharactersManager initialized
+main.js:2586 🖌️ Setting up drawing events...
+main.js:2590 👂 Adding VoyageManager drawing listeners...
+voyage-manager.js:86 🎨 VoyageManager drawing listeners configured
+main.js:2592 ✅ VoyageManager drawing listeners added
+main.js:2595 ✅ Drawing events setup complete
+main.js:908 🔍 [resetView] Nouveau scale calculé: 0.200 (MAP_WIDTH=4252, MAP_HEIGHT=3296)
+main.js:925 🔍 [resetView] Synchronisation ZoomManager avec scale=0.200
+main.js:768 🔍 [initializeMap] Application finale des filtres après resetView
+main.js:774 ✅ Map initialized successfully
+zoom-manager.js:88 🔍 [ZoomManager] Largeur du slider calculée: 150
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.200
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.200, ratio=0.026, x=3.8px, sliderWidth=150px
+filter-manager.js:373 🔍 Applying filters... {colors: Array(2), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: false, …}
+filter-manager.js:374 🔍 Current filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}}
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg
+filter-manager.js:392 📊 Filtered: 2/10 locations, 0/1 regions
+filter-manager.js:505 ✅ Display updated - 2 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {colors: Array(2), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: false, …}
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}}
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 1
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":["orange","blue"],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":["visited"]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":["orange","blue"],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":["visited"]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+infobox-manager.js:70 📋 [InfoBoxManager] Showing info box for: Guldi le Guetteur Type: character {eventType: 'click', timeStamp: undefined, target: undefined, currentItem: undefined, isEditMode: false}
+infobox-manager.js:109 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:774 ✏️ Entering edit mode for: Guldi le Guetteur
+infobox-manager.js:1165 🔍 selectedLibraryImagesForEdit AVANT initialisation: undefined
+infobox-manager.js:1169 ✅ Initialisation de selectedLibraryImagesForEdit à []
+infobox-manager.js:1176 🔍 État après initialisation: {selectedLibraryImagesForEdit: Array(0), currentLibraryFolder: null, currentLibraryPath: Array(0)}
+infobox-manager.js:1197 🔍 Type d'élément: undefined - Chemin de départ: null
+infobox-manager.js:1290 📁 Structure de bibliothèque construite: {general: {…}, locations: {…}, maps: {…}, people: {…}}
+infobox-manager.js:1244 ✅ Structure de bibliothèque complète chargée: 7 dossiers
+infobox-manager.js:1312 📂 [renderLibraryNavigation] Chemin actuel: []
+infobox-manager.js:1313 📂 Dossiers au niveau actuel: (4) ['general', 'locations', 'maps', 'people']
+infobox-manager.js:1314 📂 Images au niveau actuel: 0
+infobox-manager.js:1359 ✅ [renderLibraryNavigation] Contenu HTML généré pour 4 dossier(s) et 0 image(s)
