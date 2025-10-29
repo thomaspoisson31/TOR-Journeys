@@ -60,6 +60,19 @@
   /* Styles desktop existants préservés */
 }
 
+/* Onglets InfoBox - Icônes uniquement sur mobile */
+@media only screen and (max-width: 480px) {
+  .tab-button {
+    padding: 0.75rem 0.5rem !important;
+    font-size: 0 !important;
+  }
+
+  .tab-button i {
+    font-size: 1rem !important;
+    margin-right: 0 !important;
+  }
+}
+
 /* Améliorer la taille tactile des éléments interactifs */
 .location-marker {
     min-width: 48px !important;
