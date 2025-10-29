@@ -1230,11 +1230,15 @@ class InfoBoxManager {
                     const filteredFolders = {};
                     Object.keys(data.folders).forEach(key => {
                         if (key === startPath || key.startsWith(startPath + '/')) {
-                            filteredFolders[key] = data.folders[key];
+                            // Retirer le préfixe "people/" pour commencer directement dans ce dossier
+                            const relativeKey = key === startPath ? '' : key.substring(startPath.length + 1);
+                            if (relativeKey) { // Ignorer le dossier 'people' lui-même
+                                filteredFolders[relativeKey] = data.folders[key];
+                            }
                         }
                     });
                     this.buildLibraryStructure(filteredFolders);
-                    console.log("✅ Structure filtrée pour", startPath, ":", Object.keys(filteredFolders).length, "dossiers");
+                    console.log("✅ Structure filtrée pour", startPath, ":", Object.keys(filteredFolders).length, "sous-dossiers");
                 } else {
                     this.buildLibraryStructure(data.folders);
                     console.log("✅ Structure de bibliothèque complète chargée:", Object.keys(data.folders).length, "dossiers");
