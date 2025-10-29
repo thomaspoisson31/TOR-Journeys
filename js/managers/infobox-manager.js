@@ -1191,10 +1191,10 @@ class InfoBoxManager {
         }
 
         // Déterminer le dossier de départ selon le type d'élément
-        const isCharacter = this.currentItem && this.currentItemType === 'character';
+        const isCharacter = this.currentItem && this.currentType === 'character';
         const startPath = isCharacter ? 'people' : null;
 
-        console.log("🔍 Type d'élément:", this.currentItemType, "- Chemin de départ:", startPath);
+        console.log("🔍 Type d'élément:", this.currentType, "- Chemin de départ:", startPath);
 
         // Afficher le chemin de stockage
         if (pathInfo && pathDisplay && window.authManager.currentUser) {
