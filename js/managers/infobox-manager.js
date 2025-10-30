@@ -238,7 +238,7 @@ class InfoBoxManager {
             if (item.images && item.images.length > 0) {
                 // Chercher l'image principale, sinon prendre la première
                 const principaleImage = item.images.find(img => img.type === 'principale') || item.images[0];
-                
+
                 // Pour les personnages, utiliser uniquement les images de type 'Vignette' si disponibles
                 let displayImage = principaleImage;
                 if (type === 'character') {
@@ -248,7 +248,7 @@ class InfoBoxManager {
                     } else if (principaleImage && principaleImage.type !== 'vignette') {
                         // Si pas de vignette, et l'image principale n'est pas une vignette, on n'affiche rien pour le moment
                         // ou on pourrait envisager une image par défaut. Pour l'instant, on laisse vide pour forcer la vignette.
-                        displayImage = null; 
+                        displayImage = null;
                     }
                 }
 
@@ -1372,7 +1372,7 @@ class InfoBoxManager {
             </div>
             ${images.map(image => {
                 const safeId = image.url.replace(/[^a-zA-Z0-9]/g, '_');
-                const isSelected = this.selectedLibraryImagesForEdit && 
+                const isSelected = this.selectedLibraryImagesForEdit &&
                                   this.selectedLibraryImagesForEdit.some(img => img.url === image.url);
                 const selectedClass = isSelected ? 'ring-2 ring-blue-500' : '';
                 const indicatorClass = isSelected ? '' : 'hidden';
@@ -1583,7 +1583,7 @@ class InfoBoxManager {
     deleteItem() {
         if (!this.currentItem) return;
 
-        const itemType = this.currentType === 'region' ? 'région' : 
+        const itemType = this.currentType === 'region' ? 'région' :
                         (this.currentType === 'character' ? 'personnage' : 'lieu');
 
         if (!confirm(`Êtes-vous sûr de vouloir supprimer ce ${itemType} ?`)) {
