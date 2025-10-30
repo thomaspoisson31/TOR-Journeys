@@ -314,19 +314,22 @@ body {
     background: none;
     border: none;
     color: #666666 !important;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1rem;
     cursor: pointer;
     border-bottom: 2px solid transparent;
     transition: all 0.2s ease;
-    font-size: 1rem;
+    font-size: 1.25rem;
     font-weight: 500;
     display: flex;
     align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
 .tab-button i {
     transition: color 0.2s ease;
     color: #666666 !important;
+    margin: 0 !important;
 }
 
 .tab-button:hover {
