@@ -155,17 +155,17 @@ class InfoBoxManager {
 
         const viewportWidth = viewport.clientWidth;
         const viewportHeight = viewport.clientHeight;
-        const margin = 20;
 
-        // Utiliser 90% des dimensions du viewport
-        const desiredWidth = Math.floor(viewportWidth * 0.9);
-        const desiredHeight = Math.floor(viewportHeight * 0.9);
+        // Style similaire à la modale voyage : 50% de largeur, 95% de hauteur, ancré à droite
+        const desiredWidth = Math.floor(viewportWidth * 0.5);
+        const desiredHeight = Math.floor(viewportHeight * 0.95);
 
-        // Centrer l'info-box
-        const left = Math.floor((viewportWidth - desiredWidth) / 2);
+        // Positionner à droite avec marge (1.25rem = 20px)
+        const right = 20;
         const top = Math.floor((viewportHeight - desiredHeight) / 2);
 
-        infoBox.style.left = `${left}px`;
+        infoBox.style.right = `${right}px`;
+        infoBox.style.left = 'auto';
         infoBox.style.top = `${top}px`;
         infoBox.style.width = `${desiredWidth}px`;
         infoBox.style.height = `${desiredHeight}px`;

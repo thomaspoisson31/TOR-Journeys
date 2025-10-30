@@ -107,32 +107,38 @@ body {
 #info-box {
     position: absolute;
     display: none;
-    background-color: rgba(17, 24, 39, 0.95);
-    color: white;
+    background-color: white;
+    color: black;
     padding: 1rem;
     border-radius: 8px;
-    border: 1px solid #4b5563;
+    border: 1px solid #cccccc;
     font-size: 12.6px;
     z-index: 60;
     max-width: 280px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease-in-out;
+    font-family: 'Merriweather', serif;
 }
 
 #info-box.expanded {
     max-width: none;
-    width: 90vw;
-    height: 90vh;
+    width: 50%;
+    height: 95%;
     font-size: 14.4px;
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    right: 1.25rem;
+    left: auto;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 #info-box-scroll-wrapper {
     max-height: 250px;
     overflow-y: auto;
     padding-right: 0.5rem;
+    color: black;
 }
 
 #info-box.expanded #info-box-scroll-wrapper {
@@ -140,6 +146,19 @@ body {
     height: calc(100% - 3rem);
     overflow-y: auto;
     padding-right: 1rem;
+}
+
+/* Forcer le texte noir dans l'InfoBox */
+#info-box,
+#info-box * {
+    color: black !important;
+}
+
+/* Exception pour les icônes FontAwesome */
+#info-box i.fas,
+#info-box i.far,
+#info-box i.fab {
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free' !important;
 }
 
 /* Assurer le défilement pour tous les onglets */
@@ -181,7 +200,7 @@ body {
     top: 8px;
     right: 8px;
     cursor: pointer;
-    color: #9ca3af;
+    color: #666666 !important;
     font-size: 18px;
     width: 32px;
     height: 32px;
@@ -193,13 +212,13 @@ body {
 }
 
 #info-box-close:hover {
-    color: white;
-    background-color: rgba(239, 68, 68, 0.2);
+    color: black !important;
+    background-color: rgba(239, 68, 68, 0.1);
 }
 
 #info-box-expand {
     cursor: pointer;
-    color: #9ca3af;
+    color: #666666 !important;
     font-size: 18px;
     width: 32px;
     height: 32px;
@@ -211,13 +230,13 @@ body {
 }
 
 #info-box-expand:hover {
-    color: white;
-    background-color: rgba(59, 130, 246, 0.2);
+    color: black !important;
+    background-color: rgba(59, 130, 246, 0.1);
 }
 
 #info-box-delete {
     cursor: pointer;
-    color: #9ca3af;
+    color: #666666 !important;
     font-size: 18px;
     width: 32px;
     height: 32px;
@@ -230,13 +249,13 @@ body {
 }
 
 #info-box-delete:hover {
-    color: white;
-    background-color: rgba(239, 68, 68, 0.2);
+    color: black !important;
+    background-color: rgba(239, 68, 68, 0.1);
 }
 
 #info-box-edit {
     cursor: pointer;
-    color: #9ca3af;
+    color: #666666 !important;
     font-size: 18px;
     width: 32px;
     height: 32px;
@@ -248,8 +267,8 @@ body {
 }
 
 #info-box-edit:hover {
-    color: white;
-    background-color: rgba(59, 130, 246, 0.2);
+    color: black !important;
+    background-color: rgba(59, 130, 246, 0.1);
 }
 
 /* Enhanced content display for expanded mode */
@@ -278,7 +297,7 @@ body {
 /* Tab system styles */
 #info-box-tabs {
     display: none;
-    border-bottom: 1px solid #4b5563;
+    border-bottom: 1px solid #cccccc;
     margin-bottom: 1rem;
 }
 
@@ -286,10 +305,15 @@ body {
     display: flex;
 }
 
+#info-box-header {
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 0.75rem;
+}
+
 .tab-button {
     background: none;
     border: none;
-    color: #9ca3af;
+    color: #666666 !important;
     padding: 0.75rem 1.5rem;
     cursor: pointer;
     border-bottom: 2px solid transparent;
@@ -302,23 +326,24 @@ body {
 
 .tab-button i {
     transition: color 0.2s ease;
+    color: #666666 !important;
 }
 
 .tab-button:hover {
-    color: #d1d5db;
+    color: black !important;
 }
 
 .tab-button:hover i {
-    color: #d1d5db;
+    color: black !important;
 }
 
 .tab-button.active {
-    color: white;
-    border-bottom-color: #3b82f6;
+    color: #940000 !important;
+    border-bottom-color: #940000;
 }
 
 .tab-button.active i {
-    color: white;
+    color: #940000 !important;
 }
 
 .tab-content {
@@ -1284,7 +1309,7 @@ body {
 #info-box h3 {
     font-family: 'Merriweather', serif;
     font-weight: 700;
-    color: white;
+    color: #940000 !important;
     text-align: left;
     margin-bottom: 1rem;
     font-size: 1.35rem;
@@ -1293,10 +1318,16 @@ body {
 #info-box h4 {
     font-family: 'Merriweather', serif;
     font-weight: 700;
-    color: white;
+    color: #940000 !important;
     text-align: left;
     margin-bottom: 0.75rem;
     font-size: 1.08rem;
+}
+
+#info-box-title {
+    color: #940000 !important;
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
 }
 
 /* Masquer les icônes dans les titres de sections */
