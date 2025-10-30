@@ -1742,13 +1742,16 @@ function confirmLocationCreation() {
         window.markAsUnsaved();
     }
 
-    // Fermer la modal AVANT de re-render pour éviter les clics parasites
+    // Re-render les lieux
+    renderLocations();
+
+    // Fermer la modal
     const modal = document.getElementById('add-location-modal');
     if (modal) {
         modal.classList.add('hidden');
     }
 
-    // Sortir du mode ajout AVANT de re-render
+    // Sortir du mode ajout
     exitLocationAddingMode();
     window.pendingLocationCoordinates = null;
     window.pendingLocationImages = null; // Nettoyer les images temporaires
@@ -1760,12 +1763,7 @@ function confirmLocationCreation() {
         container.classList.add('hidden');
     }
 
-    // Re-render les lieux EN DERNIER, après avoir fermé la modal
-    // Attendre un court instant pour que la modal soit bien fermée
-    setTimeout(() => {
-        renderLocations();
-        console.log("✅ Location created successfully:", locationName);
-    }, 100);
+    console.log("✅ Location created successfully:", locationName);
 }
 
 // --- Fonctions de génération de description Gemini ---
