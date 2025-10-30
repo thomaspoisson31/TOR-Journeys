@@ -421,9 +421,8 @@ class InfoBoxManager {
             // Nettoyer complètement l'onglet
             imageTab.innerHTML = `
                 <div class="edit-form p-4">
-                    <h4 class="font-bold mb-3">Éditer les images</h4>
-                    <div id="edit-images-list" class="mb-3">
-                        ${this.renderEditImagesList()}
+                    <div id="edit-images-gallery" class="mb-3">
+                        ${this.renderEditImagesGallery()}
                     </div>
                     <div class="mb-3">
                         <label class="block text-sm font-medium mb-2 text-white">Ajouter une image :</label>
@@ -442,17 +441,6 @@ class InfoBoxManager {
                     </div>
                 </div>
             `;
-
-            // Créer le composant d'upload d'images
-            const uploadContainer = imageTab.querySelector('#image-upload-container');
-            if (uploadContainer) {
-                const category = this.currentType === 'region' ? 'regions' : 'locations';
-                this.uploadManager.createImageSelector(uploadContainer, category, (result) => {
-                    if (result) {
-                        this.addImageFromUpload(result);
-                    }
-                });
-            }
         }
 
         // Onglet Texte (mode édition)
@@ -579,43 +567,38 @@ class InfoBoxManager {
         }
     }
 
-    renderEditImagesList() {
+    renderEditImagesGallery() {
         const item = this.currentItem;
         if (!item.images || item.images.length === 0) {
-            return '<p class="text-gray-500">Aucune image</p>';
+            return '<p class="text-gray-400 text-center py-4">Aucune image</p>';
         }
 
-        return item.images.map((image, index) => {
-            const isVignette = image.type === 'vignette';
-
-            return `
-            <div class="flex items-center justify-between bg-gray-100 p-2 rounded mb-2">
-                <div class="flex items-center flex-grow">
-                    <img src="${image.url}" alt="Preview" class="w-12 h-12 object-cover rounded mr-3">
-                    <div class="flex-grow">
-                        <div class="text-sm font-medium text-gray-800">${image.url.substring(0, 30)}${image.url.length > 30 ? '...' : ''}</div>
-                        <div class="flex items-center space-x-2 mt-1">
-                            ${isVignette ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded">Vignette</span>' : '<span class="text-xs bg-gray-400 text-white px-2 py-1 rounded">Sans type</span>'}
+        return `
+            <div class="image-gallery">
+                ${item.images.map((image, index) => {
+                    const isVignette = image.type === 'vignette';
+                    
+                    return `
+                        <div class="gallery-item-edit relative">
+                            <img src="${image.url}" alt="${item.name}" class="gallery-image">
+                            <div class="flex items-center justify-center space-x-2 mt-2">
+                                ${isVignette ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded">Vignette</span>' : ''}
+                                <button onclick="window.infoBoxManager.toggleImageTypeMenu(${index})" class="text-white hover:text-blue-300 p-1" title="Changer le type">
+                                    <i class="fas fa-tag"></i>
+                                </button>
+                                <button onclick="window.infoBoxManager.removeImage(${index})" class="text-white hover:text-red-300 p-1" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div id="image-type-menu-${index}" class="hidden absolute bottom-10 left-1/2 transform -translate-x-1/2 bg-white border border-gray-300 rounded shadow-lg z-10 w-32">
+                                <button onclick="window.infoBoxManager.setImageType(${index}, 'vignette')" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Vignette</button>
+                                <button onclick="window.infoBoxManager.setImageType(${index}, null)" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Sans type</button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="flex space-x-1 ml-2">
-                    <div class="relative">
-                        <button onclick="window.infoBoxManager.toggleImageTypeMenu(${index})" class="text-blue-600 hover:text-blue-800 p-1" title="Changer le type">
-                            <i class="fas fa-tag"></i>
-                        </button>
-                        <div id="image-type-menu-${index}" class="hidden absolute right-0 mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 w-32">
-                            <button onclick="window.infoBoxManager.setImageType(${index}, 'vignette')" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Vignette</button>
-                            <button onclick="window.infoBoxManager.setImageType(${index}, null)" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Sans type</button>
-                        </div>
-                    </div>
-                    <button onclick="window.infoBoxManager.removeImage(${index})" class="text-red-600 hover:text-red-800 p-1" title="Supprimer">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
+                    `;
+                }).join('')}
             </div>
         `;
-        }).join('');
     }
 
     toggleImageTypeMenu(index) {
@@ -679,10 +662,10 @@ class InfoBoxManager {
         // Définir le nouveau type
         image.type = type;
 
-        // Re-render la liste des images
-        const imagesList = document.getElementById('edit-images-list');
-        if (imagesList) {
-            imagesList.innerHTML = this.renderEditImagesList();
+        // Re-render la galerie d'images
+        const imagesGallery = document.getElementById('edit-images-gallery');
+        if (imagesGallery) {
+            imagesGallery.innerHTML = this.renderEditImagesGallery();
         }
 
         console.log(`🏷️ Type d'image changé (index ${index}): ${oldType} → ${type}`);
@@ -749,8 +732,8 @@ class InfoBoxManager {
         // Créer le cercle de vignette
         const circle = document.createElement('div');
         circle.id = 'info-box-thumbnail-circle';
-        circle.style.width = '40px';
-        circle.style.height = '40px';
+        circle.style.width = '70px';
+        circle.style.height = '70px';
         circle.style.borderRadius = '50%';
         circle.style.border = '2px solid #940000';
         circle.style.flexShrink = '0';
@@ -993,16 +976,16 @@ class InfoBoxManager {
         // Ajouter l'image uploadée
         const newImage = {
             url: uploadResult.url,
-            type: this.currentItem.images.length === 0 ? 'principale' : null, // Première image = principale
+            type: null,
             thumbnailUrl: null
         };
 
         this.currentItem.images.push(newImage);
 
-        // Re-render la liste des images
-        const imagesList = document.getElementById('edit-images-list');
-        if (imagesList) {
-            imagesList.innerHTML = this.renderEditImagesList();
+        // Re-render la galerie d'images
+        const imagesGallery = document.getElementById('edit-images-gallery');
+        if (imagesGallery) {
+            imagesGallery.innerHTML = this.renderEditImagesGallery();
         }
 
         console.log("🖼️ Image added from upload:", uploadResult.url);
@@ -1013,18 +996,12 @@ class InfoBoxManager {
             return;
         }
 
-        const wasPrincipale = this.currentItem.images[index].type === 'principale';
         this.currentItem.images.splice(index, 1);
 
-        // Si on supprime l'image principale et qu'il reste des images, définir la première comme principale
-        if (wasPrincipale && this.currentItem.images.length > 0) {
-            this.currentItem.images[0].type = 'principale';
-        }
-
-        // Re-render la liste des images
-        const imagesList = document.getElementById('edit-images-list');
-        if (imagesList) {
-            imagesList.innerHTML = this.renderEditImagesList();
+        // Re-render la galerie d'images
+        const imagesGallery = document.getElementById('edit-images-gallery');
+        if (imagesGallery) {
+            imagesGallery.innerHTML = this.renderEditImagesGallery();
         }
 
         console.log("🗑️ Image removed at index:", index);
@@ -1549,7 +1526,7 @@ class InfoBoxManager {
             console.log(`🔍 Ajout image ${index + 1}/${this.selectedLibraryImagesForEdit.length}:`, image);
             const newImage = {
                 url: image.url,
-                type: this.currentItem.images.length === 0 ? 'principale' : null,
+                type: null,
                 thumbnailUrl: null
             };
             console.log("🔍 Nouvelle image créée:", newImage);
@@ -1560,15 +1537,15 @@ class InfoBoxManager {
         console.log("🖼️ Images ajoutées, total:", this.currentItem.images.length);
         console.log("🔍 currentItem.images APRÈS:", JSON.stringify(this.currentItem.images, null, 2));
 
-        // Re-render la liste des images
-        const imagesList = document.getElementById('edit-images-list');
-        console.log("🔍 Élément edit-images-list trouvé?", !!imagesList);
-        if (imagesList) {
-            console.log("🔍 Re-render de la liste des images...");
-            imagesList.innerHTML = this.renderEditImagesList();
-            console.log("✅ Liste des images re-rendue");
+        // Re-render la galerie d'images
+        const imagesGallery = document.getElementById('edit-images-gallery');
+        console.log("🔍 Élément edit-images-gallery trouvé?", !!imagesGallery);
+        if (imagesGallery) {
+            console.log("🔍 Re-render de la galerie d'images...");
+            imagesGallery.innerHTML = this.renderEditImagesGallery();
+            console.log("✅ Galerie d'images re-rendue");
         } else {
-            console.warn("⚠️ Élément edit-images-list non trouvé, impossible de re-render");
+            console.warn("⚠️ Élément edit-images-gallery non trouvé, impossible de re-render");
         }
 
         // Réinitialiser la sélection
