@@ -551,6 +551,13 @@ body {
     font-size: 0.875rem;
 }
 
+/* Harmoniser la taille de texte de l'onglet Description avec Rumeurs */
+#text-tab .text-view p,
+#text-tab .text-view div,
+#text-tab .prose {
+    font-size: 0.875rem;
+}
+
 /* Loader styles */
 #loader-overlay {
     transition: opacity 0.5s ease-out;

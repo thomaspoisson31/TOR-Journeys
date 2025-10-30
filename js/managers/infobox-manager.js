@@ -397,7 +397,7 @@ class InfoBoxManager {
                 `;
                 evenementsTab.innerHTML = tableHTML;
             } else {
-                evenementsTab.innerHTML = '<div class="p-4 prose prose-invert text-gray-400 italic">Aucun événement de voyage défini.</div>';
+                evenementsTab.innerHTML = '<div class="p-4 prose prose-invert text-gray-400 italic">Aucune table aléatoire</div>';
             }
         }
     }
@@ -750,25 +750,8 @@ class InfoBoxManager {
             existingMapIdDisplay.remove();
         }
 
-        // Créer le conteneur pour l'affichage du MapID
-        const mapIdContainer = document.createElement('div');
-        mapIdContainer.id = 'info-box-mapid-display';
-        mapIdContainer.style.fontSize = '11px';
-        mapIdContainer.style.color = '#9ca3af';
-        mapIdContainer.style.marginTop = '4px';
-        mapIdContainer.style.marginBottom = '8px';
-
-        if (!item.mapId) {
-            // Pas de MapID : afficher message simple
-            mapIdContainer.textContent = 'Aucun Map ID';
-        } else {
-            // MapID existe : afficher discrètement
-            mapIdContainer.textContent = item.mapId;
-            mapIdContainer.title = item.mapId;
-        }
-
-        // Insérer après le titre
-        infoBoxTitle.parentNode.insertBefore(mapIdContainer, infoBoxTitle.nextSibling);
+        // Ne plus afficher le MapID - commenté pour debug futur si nécessaire
+        // Le MapID est maintenant masqué de l'interface utilisateur
     }
 
 
