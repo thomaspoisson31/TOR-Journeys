@@ -228,47 +228,54 @@ class InfoBoxManager {
         const item = this.currentItem;
         const type = this.currentType;
 
-        // Onglet Image
+        // Onglet Image - Galerie
         const imageTab = document.getElementById('image-tab');
         if (imageTab) {
-            // Nettoyer complètement l'onglet et créer la structure
             imageTab.innerHTML = '';
-            const imageView = this.createImageView(imageTab);
 
             if (item.images && item.images.length > 0) {
-                // Chercher l'image principale, sinon prendre la première
-                const principaleImage = item.images.find(img => img.type === 'principale') || item.images[0];
+                // Créer une galerie d'images
+                const galleryHTML = `
+                    <div class="image-gallery">
+                        ${item.images.map((img, index) => `
+                            <div class="gallery-item" data-index="${index}">
+                                <img src="${img.url}" alt="${item.name}" class="gallery-image">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div id="fullscreen-overlay" class="fullscreen-overlay hidden">
+                        <img id="fullscreen-image" src="" alt="${item.name}">
+                    </div>
+                `;
+                imageTab.innerHTML = galleryHTML;
 
-                // Pour les personnages, utiliser uniquement les images de type 'Vignette' si disponibles
-                let displayImage = principaleImage;
-                if (type === 'character') {
-                    const vignetteImage = item.images.find(img => img.type === 'vignette');
-                    if (vignetteImage) {
-                        displayImage = vignetteImage;
-                    } else if (principaleImage && principaleImage.type !== 'vignette') {
-                        // Si pas de vignette, et l'image principale n'est pas une vignette, on n'affiche rien pour le moment
-                        // ou on pourrait envisager une image par défaut. Pour l'instant, on laisse vide pour forcer la vignette.
-                        displayImage = null;
+                // Ajouter les event listeners pour le plein écran
+                setTimeout(() => {
+                    const galleryItems = imageTab.querySelectorAll('.gallery-item');
+                    const fullscreenOverlay = imageTab.querySelector('#fullscreen-overlay');
+                    const fullscreenImage = imageTab.querySelector('#fullscreen-image');
+
+                    galleryItems.forEach((galleryItem) => {
+                        galleryItem.addEventListener('click', () => {
+                            const img = galleryItem.querySelector('img');
+                            fullscreenImage.src = img.src;
+                            fullscreenOverlay.classList.remove('hidden');
+                        });
+                    });
+
+                    if (fullscreenOverlay) {
+                        fullscreenOverlay.addEventListener('click', () => {
+                            fullscreenOverlay.classList.add('hidden');
+                        });
                     }
-                }
-
-                if (displayImage) {
-                    imageView.innerHTML = `
-                        <img src="${displayImage.url}" alt="${item.name}" class="modal-image">
-                        <div class="image-caption">${item.name}</div>
-                    `;
-                } else {
-                    const typeLabel = type === 'region' ? 'Région' : (type === 'character' ? 'Personnage' : 'Lieu');
-                    imageView.innerHTML = `
-                        <div class="compact-title">${item.name}</div>
-                        <div class="image-placeholder">Aucune image de type 'Vignette' disponible pour ce ${typeLabel.toLowerCase()}</div>
-                    `;
-                }
+                }, 100);
             } else {
                 const typeLabel = type === 'region' ? 'Région' : (type === 'character' ? 'Personnage' : 'Lieu');
-                imageView.innerHTML = `
-                    <div class="compact-title">${item.name}</div>
-                    <div class="image-placeholder">Aucune image disponible pour ce ${typeLabel.toLowerCase()}</div>
+                imageTab.innerHTML = `
+                    <div class="image-view">
+                        <div class="compact-title">${item.name}</div>
+                        <div class="image-placeholder">Aucune image disponible pour ce ${typeLabel.toLowerCase()}</div>
+                    </div>
                 `;
             }
         }
@@ -577,7 +584,6 @@ class InfoBoxManager {
         }
 
         return item.images.map((image, index) => {
-            const isPrincipale = image.type === 'principale';
             const isVignette = image.type === 'vignette';
 
             return `
@@ -587,9 +593,7 @@ class InfoBoxManager {
                     <div class="flex-grow">
                         <div class="text-sm font-medium text-gray-800">${image.url.substring(0, 30)}${image.url.length > 30 ? '...' : ''}</div>
                         <div class="flex items-center space-x-2 mt-1">
-                            ${isPrincipale ? '<span class="text-xs bg-blue-500 text-white px-2 py-1 rounded">Principale</span>' : ''}
-                            ${isVignette ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded">Vignette</span>' : ''}
-                            ${!isPrincipale && !isVignette ? '<span class="text-xs bg-gray-400 text-white px-2 py-1 rounded">Sans type</span>' : ''}
+                            ${isVignette ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded">Vignette</span>' : '<span class="text-xs bg-gray-400 text-white px-2 py-1 rounded">Sans type</span>'}
                         </div>
                     </div>
                 </div>
@@ -599,7 +603,6 @@ class InfoBoxManager {
                             <i class="fas fa-tag"></i>
                         </button>
                         <div id="image-type-menu-${index}" class="hidden absolute right-0 mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 w-32">
-                            <button onclick="window.infoBoxManager.setImageType(${index}, 'principale')" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Principale</button>
                             <button onclick="window.infoBoxManager.setImageType(${index}, 'vignette')" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Vignette</button>
                             <button onclick="window.infoBoxManager.setImageType(${index}, null)" class="block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 text-gray-800">Sans type</button>
                         </div>
@@ -631,15 +634,6 @@ class InfoBoxManager {
 
         const image = this.currentItem.images[index];
         const oldType = image.type;
-
-        // Si on définit une image comme principale, retirer ce type des autres
-        if (type === 'principale') {
-            this.currentItem.images.forEach((img, i) => {
-                if (i !== index && img.type === 'principale') {
-                    img.type = null;
-                }
-            });
-        }
 
         // Si on définit une image comme vignette, retirer ce type des autres
         if (type === 'vignette') {

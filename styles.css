@@ -433,6 +433,61 @@ body {
     background-color: rgba(55, 65, 81, 0.5);
 }
 
+/* Image gallery styles */
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+.gallery-item {
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+.fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.fullscreen-overlay.hidden {
+    display: none;
+}
+
+.fullscreen-overlay img {
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
 /* Image view styles */
 .image-view {
     display: flex;
@@ -554,8 +609,13 @@ body {
 /* Harmoniser la taille de texte de l'onglet Description avec Rumeurs */
 #text-tab .text-view p,
 #text-tab .text-view div,
-#text-tab .prose {
-    font-size: 0.875rem;
+#text-tab .text-view .prose,
+#text-tab .prose p {
+    font-size: 0.875rem !important;
+}
+
+#text-tab h3 {
+    font-size: 1.35rem !important;
 }
 
 /* Loader styles */
