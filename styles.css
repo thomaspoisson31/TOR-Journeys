@@ -330,6 +330,7 @@ body {
     transition: color 0.2s ease;
     color: #666666 !important;
     margin: 0 !important;
+    pointer-events: none; /* L'icône ne capture pas les clics, on clique toujours sur le bouton */
 }
 
 .tab-button:hover {

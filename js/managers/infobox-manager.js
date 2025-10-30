@@ -47,11 +47,15 @@ class InfoBoxManager {
             deleteBtn.addEventListener('click', () => this.deleteItem());
         }
 
-        // Gestion des onglets
+        // Gestion des onglets - amélioration pour gérer le clic sur l'icône
         const tabButtons = document.querySelectorAll('.tab-button');
         tabButtons.forEach(button => {
             button.addEventListener('click', (e) => {
-                this.switchTab(e.target.dataset.tab);
+                // Récupérer le data-tab du bouton, même si on clique sur l'icône
+                const tabName = button.dataset.tab || e.currentTarget.dataset.tab;
+                if (tabName) {
+                    this.switchTab(tabName);
+                }
             });
         });
 
