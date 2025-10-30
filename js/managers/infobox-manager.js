@@ -104,8 +104,8 @@ class InfoBoxManager {
 
         infoBox.style.display = 'block';
 
-        // S'assurer que l'onglet Image est actif par défaut
-        this.switchTab('image');
+        // S'assurer que l'onglet Description est actif par défaut
+        this.switchTab('text');
 
         // Mettre à jour le contenu après avoir configuré l'affichage
         this.updateInfoBoxContent();
@@ -189,6 +189,9 @@ class InfoBoxManager {
             infoBoxTitle.textContent = this.currentItem.name;
             infoBoxTitle.classList.remove('hidden');
         }
+
+        // Mettre à jour l'affichage du cercle de vignette
+        this.updateThumbnailCircle(this.currentItem);
 
         // Mettre à jour l'affichage du MapID
         this.updateMapIdDisplay(this.currentItem);
@@ -287,7 +290,6 @@ class InfoBoxManager {
             textTab.innerHTML = '';
             const textView = this.createTextView(textTab);
             textView.innerHTML = `
-                <h3>${item.name}</h3>
                 <div class="prose prose-invert">${this.renderMarkdown(item.description || 'Aucune description disponible.')}</div>
             `;
         }
@@ -732,6 +734,54 @@ class InfoBoxManager {
         textView.className = 'text-view';
         parent.appendChild(textView);
         return textView;
+    }
+
+    updateThumbnailCircle(item) {
+        const infoBoxHeader = document.getElementById('info-box-header');
+        if (!infoBoxHeader) return;
+
+        // Supprimer l'ancien cercle s'il existe
+        const existingCircle = document.getElementById('info-box-thumbnail-circle');
+        if (existingCircle) {
+            existingCircle.remove();
+        }
+
+        // Créer le cercle de vignette
+        const circle = document.createElement('div');
+        circle.id = 'info-box-thumbnail-circle';
+        circle.style.width = '40px';
+        circle.style.height = '40px';
+        circle.style.borderRadius = '50%';
+        circle.style.border = '2px solid #940000';
+        circle.style.flexShrink = '0';
+        circle.style.marginRight = '12px';
+        circle.style.overflow = 'hidden';
+        circle.style.backgroundColor = 'transparent';
+
+        // Chercher la vignette dans les images
+        let thumbnailUrl = null;
+        if (item.images && item.images.length > 0) {
+            const thumbnailImage = item.images.find(img => img.type === 'vignette');
+            if (thumbnailImage && thumbnailImage.thumbnailUrl) {
+                thumbnailUrl = thumbnailImage.thumbnailUrl;
+            }
+        }
+
+        // Si une vignette existe, l'afficher
+        if (thumbnailUrl) {
+            const img = document.createElement('img');
+            img.src = thumbnailUrl;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            circle.appendChild(img);
+        }
+
+        // Insérer le cercle au début du header, avant le titre
+        const titleContainer = infoBoxHeader.querySelector('.flex.items-center.flex-grow');
+        if (titleContainer) {
+            titleContainer.insertBefore(circle, titleContainer.firstChild);
+        }
     }
 
     updateMapIdDisplay(item) {
