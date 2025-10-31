@@ -476,9 +476,18 @@ class InfoBoxManager {
         // Onglet Rumeurs et Traditions (mode édition)
         const rumeursTab = document.getElementById('rumeurs-traditions-tab');
         if (rumeursTab) {
-            const currentRumeurs = type === 'region' ?
-                (item.Rumeur || '') :
-                (item.Rumeurs ? item.Rumeurs.join('\n\n---\n\n') : (item.Rumeur || ''));
+            // Préparer le tableau de rumeurs pour l'édition
+            let rumeursArray = [];
+            let currentTradition = item.Tradition_Ancienne || '';
+
+            if (type === 'region') {
+                // Pour les régions, on suppose que 'Rumeur' est une chaîne unique ou 'Rumeurs' un tableau
+                const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
+                rumeursArray = rumeurs.filter(r => r && r !== "A définir");
+            } else { // Pour les lieux, on suppose que 'Rumeurs' est déjà un tableau ou une chaîne séparée par '---'
+                const rumeursText = Array.isArray(item.Rumeurs) ? item.Rumeurs.join('\n\n---\n\n') : (item.Rumeur || '');
+                rumeursArray = rumeursText.split(/\n---\n/).map(r => r.trim()).filter(r => r !== '');
+            }
 
             // Cacher la vue lecture et afficher le mode édition
             const textView = rumeursTab.querySelector('.text-view');
@@ -495,29 +504,40 @@ class InfoBoxManager {
             }
 
             editForm.style.display = 'block';
+
+            // Générer le HTML pour les rumeurs
+            const rumeursHTML = rumeursArray.map((rumeur, index) => `
+                <div class="flex items-start space-x-2 mb-2" data-rumeur-index="${index}">
+                    <textarea rows="3" class="flex-1 p-2 border rounded bg-gray-800 text-white text-sm border-gray-600 edit-rumeur-input" data-index="${index}">${rumeur}</textarea>
+                    <button onclick="window.infoBoxManager.deleteRumeurInEdit(${index})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+
             editForm.innerHTML = `
-                <div class="p-4">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2 text-white">
-                            Rumeurs ${type === 'location' ? '(séparez par une ligne "---")' : ''} (Markdown supporté) :
-                        </label>
-                        <textarea id="edit-rumeurs" class="w-full p-2 border rounded h-40 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.${type === 'location' ? '\n\nSéparez les rumeurs par:\n---' : ''}">${currentRumeurs}</textarea>
-                        ${type === 'location' ? '<div class="text-xs text-gray-400 mt-1">Utilisez "---" sur une ligne seule pour séparer plusieurs rumeurs</div>' : ''}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-white mb-2">Rumeurs</label>
+                    <div id="edit-rumeurs-list" class="space-y-2 mb-3">
+                        ${rumeursHTML || '<p class="text-gray-400 italic text-sm">Aucune rumeur. Cliquez sur "Ajouter une rumeur" ci-dessous.</p>'}
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium mb-2 text-white">
-                            Tradition Ancienne (Markdown supporté) :
-                        </label>
-                        <textarea id="edit-tradition" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.Tradition_Ancienne || ''}</textarea>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-save mr-1"></i>Sauvegarder
-                        </button>
-                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-times mr-1"></i>Annuler
-                        </button>
-                    </div>
+                    <button onclick="window.infoBoxManager.addRumeurInEdit()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm">
+                        <i class="fas fa-plus mr-1"></i>Ajouter une rumeur
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-white mb-2">
+                        Tradition Ancienne (Markdown supporté) :
+                    </label>
+                    <textarea id="edit-tradition" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${currentTradition}</textarea>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-save mr-1"></i>Sauvegarder
+                    </button>
+                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-times mr-1"></i>Annuler
+                    </button>
                 </div>
             `;
         }
@@ -577,7 +597,7 @@ class InfoBoxManager {
             <div class="image-gallery">
                 ${item.images.map((image, index) => {
                     const isVignette = image.type === 'vignette';
-                    
+
                     return `
                         <div class="gallery-item-edit relative">
                             <img src="${image.url}" alt="${item.name}" class="gallery-image">
@@ -798,138 +818,166 @@ class InfoBoxManager {
         this.updateInfoBoxContent();
     }
 
+    addRumeurInEdit() {
+        const list = document.getElementById('edit-rumeurs-list');
+        if (!list) return;
+
+        // Supprimer le message "Aucune rumeur" s'il existe
+        const emptyMsg = list.querySelector('p.text-gray-400');
+        if (emptyMsg) emptyMsg.remove();
+
+        // Compter le nombre de rumeurs existantes
+        const existingRumeurs = list.querySelectorAll('[data-rumeur-index]');
+        const newIndex = existingRumeurs.length;
+
+        const newRumeurHTML = `
+            <div class="flex items-start space-x-2 mb-2" data-rumeur-index="${newIndex}">
+                <textarea rows="3" class="flex-1 p-2 border rounded bg-gray-800 text-white text-sm border-gray-600 edit-rumeur-input" data-index="${newIndex}" placeholder="Nouvelle rumeur..."></textarea>
+                <button onclick="window.infoBoxManager.deleteRumeurInEdit(${newIndex})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        list.insertAdjacentHTML('beforeend', newRumeurHTML);
+    }
+
+    deleteRumeurInEdit(index) {
+        const list = document.getElementById('edit-rumeurs-list');
+        if (!list) return;
+
+        const rumeurDiv = list.querySelector(`[data-rumeur-index="${index}"]`);
+        if (rumeurDiv) {
+            rumeurDiv.remove();
+        }
+
+        // Si plus aucune rumeur, afficher le message
+        const remainingRumeurs = list.querySelectorAll('[data-rumeur-index]');
+        if (remainingRumeurs.length === 0) {
+            list.innerHTML = '<p class="text-gray-400 italic text-sm">Aucune rumeur. Cliquez sur "Ajouter une rumeur" ci-dessous.</p>';
+        }
+    }
+
     async saveEdit() {
-        if (!this.currentItem) return;
+        console.log("💾 Saving edit...");
 
-        console.log("💾 [SAVE] Début sauvegarde:", this.currentItem.name, "Type:", this.currentType);
+        const nameInput = document.getElementById('edit-name');
+        const descTextarea = document.getElementById('edit-description');
+        const traditionTextarea = document.getElementById('edit-tradition');
 
-        try {
-            // Récupérer les valeurs des champs
-            const nameField = document.getElementById('edit-name');
-            const descField = document.getElementById('edit-description');
-            const rumeursField = document.getElementById('edit-rumeurs');
-            const traditionField = document.getElementById('edit-tradition');
+        // Valider les champs obligatoires
+        if (nameInput && !nameInput.value.trim()) {
+            alert("Le nom ne peut pas être vide.");
+            return;
+        }
 
-            // Valider les champs obligatoires
-            if (nameField && !nameField.value.trim()) {
-                alert("Le nom ne peut pas être vide.");
+        // Mettre à jour l'objet
+        if (nameInput) this.currentItem.name = nameInput.value.trim();
+        if (descTextarea) this.currentItem.description = descTextarea.value.trim();
+
+        // Gérer les rumeurs - récupérer depuis les textareas individuels
+        const rumeurInputs = document.querySelectorAll('.edit-rumeur-input');
+        if (rumeurInputs && rumeurInputs.length > 0) {
+            const rumeursArray = Array.from(rumeurInputs)
+                .map(input => input.value.trim())
+                .filter(r => r.length > 0);
+
+            if (rumeursArray.length > 1) {
+                this.currentItem.Rumeurs = rumeursArray;
+                delete this.currentItem.Rumeur; // Supprimer l'ancienne propriété si elle existe
+            } else if (rumeursArray.length === 1) {
+                this.currentItem.Rumeur = rumeursArray[0]; // Assigner comme Rumeur unique
+                delete this.currentItem.Rumeurs;
+            } else {
+                delete this.currentItem.Rumeur;
+                delete this.currentItem.Rumeurs;
+            }
+        } else {
+            // Si aucun champ de rumeur n'existe (peut arriver si la liste était vide et qu'on n'a pas ajouté),
+            // s'assurer que les propriétés sont supprimées si elles existaient.
+            delete this.currentItem.Rumeur;
+            delete this.currentItem.Rumeurs;
+        }
+
+        // Tradition ancienne
+        if (traditionTextarea) {
+            this.currentItem.Tradition_Ancienne = traditionTextarea.value.trim();
+        }
+
+        // Événements de voyage
+        if (this.tempEvenements !== undefined) {
+            this.currentItem.Evenements_Voyage = this.tempEvenements;
+            this.tempEvenements = undefined;
+        }
+
+        console.log("💾 [SAVE] Objet après modification:", JSON.stringify(this.currentItem).substring(0, 200) + "...");
+
+        // Sauvegarder via DataManager
+        if (this.currentType === 'region') {
+            const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
+                String(reg.id) === String(this.currentItem.id)
+            );
+            if (regionIndex === -1) {
+                console.error(`❌ [SAVE] Région non trouvée dans regionsData: ${this.currentItem.id}`);
+                alert("Erreur : impossible de sauvegarder la région.");
                 return;
             }
 
-            // Mettre à jour l'objet
-            if (nameField) this.currentItem.name = nameField.value.trim();
-            if (descField) this.currentItem.description = descField.value.trim();
+            console.log(`💾 [SAVE] Région AVANT mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
 
-            // Gestion des rumeurs
-            if (rumeursField) {
-                const rumeursText = rumeursField.value.trim();
-                if (this.currentType === 'region') {
-                    this.currentItem.Rumeur = rumeursText;
-                } else {
-                    // Pour les lieux, séparer par "---"
-                    if (rumeursText) {
-                        this.currentItem.Rumeurs = rumeursText
-                            .split(/\n---\n/)
-                            .map(r => r.trim())
-                            .filter(r => r !== '');
+            // Mettre à jour l'objet complet dans le tableau
+            this.dataManager.regionsData.regions[regionIndex] = { ...this.currentItem };
 
-                        // Compatibilité avec l'ancienne structure
-                        if (this.currentItem.Rumeurs.length === 1) {
-                            this.currentItem.Rumeur = this.currentItem.Rumeurs[0];
-                        } else if (this.currentItem.Rumeurs.length === 0) {
-                            this.currentItem.Rumeur = '';
-                        }
-                    } else {
-                        this.currentItem.Rumeurs = [];
-                        this.currentItem.Rumeur = '';
-                    }
-                }
+            console.log(`💾 [SAVE] Région APRÈS mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
+
+            // Synchroniser avec la variable globale
+            window.regionsData = this.dataManager.regionsData;
+
+            // Sauvegarder
+            this.dataManager.saveRegionsToLocal();
+
+            // Re-render
+            if (typeof renderRegions === 'function') {
+                renderRegions();
+            }
+        } else if (this.currentType === 'location') {
+            const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
+                String(loc.id) === String(this.currentItem.id)
+            );
+            if (locationIndex === -1) {
+                console.error(`❌ [SAVE] Lieu non trouvé dans locationsData: ${this.currentItem.id}`);
+                alert("Erreur : impossible de sauvegarder le lieu.");
+                return;
             }
 
-            // Tradition ancienne
-            if (traditionField) {
-                this.currentItem.Tradition_Ancienne = traditionField.value.trim();
+            console.log(`💾 [SAVE] Lieu AVANT mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
+
+            // Mettre à jour l'objet complet dans le tableau
+            this.dataManager.locationsData.locations[locationIndex] = { ...this.currentItem };
+
+            console.log(`💾 [SAVE] Lieu APRÈS mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
+
+            // Synchroniser avec la variable globale
+            window.locationsData = this.dataManager.locationsData;
+
+            // Sauvegarder
+            this.dataManager.saveLocationsToLocal();
+
+            // Re-render
+            if (typeof renderLocations === 'function') {
+                renderLocations();
             }
-
-            // Événements de voyage
-            if (this.tempEvenements !== undefined) {
-                this.currentItem.Evenements_Voyage = this.tempEvenements;
-                this.tempEvenements = undefined;
+        } else if (this.currentType === 'character') {
+            if (window.charactersManager) {
+                window.charactersManager.updateCharacter(this.currentItem.id, this.currentItem);
             }
-
-            console.log("💾 [SAVE] Objet après modification:", JSON.stringify(this.currentItem).substring(0, 200) + "...");
-
-            // Sauvegarder via DataManager
-            if (this.currentType === 'region') {
-                const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
-                    String(reg.id) === String(this.currentItem.id)
-                );
-                if (regionIndex === -1) {
-                    console.error(`❌ [SAVE] Région non trouvée dans regionsData: ${this.currentItem.id}`);
-                    alert("Erreur : impossible de sauvegarder la région.");
-                    return;
-                }
-
-                console.log(`💾 [SAVE] Région AVANT mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
-
-                // Mettre à jour l'objet complet dans le tableau
-                this.dataManager.regionsData.regions[regionIndex] = { ...this.currentItem };
-
-                console.log(`💾 [SAVE] Région APRÈS mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
-
-                // Synchroniser avec la variable globale
-                window.regionsData = this.dataManager.regionsData;
-
-                // Sauvegarder
-                this.dataManager.saveRegionsToLocal();
-
-                // Re-render
-                if (typeof renderRegions === 'function') {
-                    renderRegions();
-                }
-            } else if (this.currentType === 'location') {
-                const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
-                    String(loc.id) === String(this.currentItem.id)
-                );
-                if (locationIndex === -1) {
-                    console.error(`❌ [SAVE] Lieu non trouvé dans locationsData: ${this.currentItem.id}`);
-                    alert("Erreur : impossible de sauvegarder le lieu.");
-                    return;
-                }
-
-                console.log(`💾 [SAVE] Lieu AVANT mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
-
-                // Mettre à jour l'objet complet dans le tableau
-                this.dataManager.locationsData.locations[locationIndex] = { ...this.currentItem };
-
-                console.log(`💾 [SAVE] Lieu APRÈS mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
-
-                // Synchroniser avec la variable globale
-                window.locationsData = this.dataManager.locationsData;
-
-                // Sauvegarder
-                this.dataManager.saveLocationsToLocal();
-
-                // Re-render
-                if (typeof renderLocations === 'function') {
-                    renderLocations();
-                }
-            } else if (this.currentType === 'character') {
-                if (window.charactersManager) {
-                    window.charactersManager.updateCharacter(this.currentItem.id, this.currentItem);
-                }
-            }
-
-            // Passer en mode lecture
-            this.isEditMode = false;
-            this.updateInfoBoxContent();
-
-            console.log("✅ [SAVE] Sauvegarde locale terminée");
-
-        } catch (error) {
-            console.error("❌ [SAVE] Erreur:", error);
-            alert("Erreur lors de la sauvegarde : " + error.message);
         }
+
+        // Passer en mode lecture
+        this.isEditMode = false;
+        this.updateInfoBoxContent();
+
+        console.log("✅ [SAVE] Sauvegarde locale terminée");
+
     }
 
     addImageFromUrl() {
