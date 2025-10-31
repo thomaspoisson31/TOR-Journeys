@@ -1448,3 +1448,23 @@ body {
     font-size: 12px;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
 }
+
+/* Character cards in InfoBox */
+.character-card-infobox:hover {
+    transform: translateX(4px);
+}
+
+/* Info Box - Mode étendu */
+#info-box.expanded {
+    max-width: none;
+    width: 50%;
+    height: 95%;
+    font-size: 14.4px;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    right: 1.25rem;
+    left: auto;
+    top: 50%;
+    transform: translateY(-50%);
+}

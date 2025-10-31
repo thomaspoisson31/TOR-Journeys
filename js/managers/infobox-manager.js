@@ -294,6 +294,12 @@ class InfoBoxManager {
             `;
         }
 
+        // Onglet Personnages
+        const personnagesTab = document.getElementById('personnages-tab');
+        if (personnagesTab && (type === 'location' || type === 'region')) {
+            this.renderPersonnagesTabRead();
+        }
+
         // Onglet Rumeurs et Traditions
         const rumeursTab = document.getElementById('rumeurs-traditions-tab');
         if (rumeursTab) {
@@ -471,6 +477,12 @@ class InfoBoxManager {
                     </div>
                 </div>
             `;
+        }
+
+        // Onglet Personnages (mode édition)
+        const personnagesTab = document.getElementById('personnages-tab');
+        if (personnagesTab && (type === 'location' || type === 'region')) {
+            this.renderPersonnagesTabEdit();
         }
 
         // Onglet Rumeurs et Traditions (mode édition)
@@ -907,6 +919,15 @@ class InfoBoxManager {
         if (this.tempEvenements !== undefined) {
             this.currentItem.Evenements_Voyage = this.tempEvenements;
             this.tempEvenements = undefined;
+        }
+
+        // Personnages associés (pour lieux et régions uniquement)
+        if (this.currentType === 'location' || this.currentType === 'region') {
+            const checkboxes = document.querySelectorAll('.character-checkbox');
+            const associatedCharacterIds = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.dataset.characterId);
+            this.currentItem.associatedCharacters = associatedCharacterIds;
         }
 
         console.log("💾 [SAVE] Objet après modification:", JSON.stringify(this.currentItem).substring(0, 200) + "...");
@@ -1629,6 +1650,140 @@ class InfoBoxManager {
             } else {
                 toggleIcon.className = 'fas fa-chevron-down mr-2';
             }
+        }
+    }
+
+    renderPersonnagesTabRead() {
+        const personnagesContent = document.getElementById('personnages-content');
+        if (!personnagesContent) return;
+
+        // Récupérer les IDs des personnages associés
+        const associatedCharacterIds = this.currentItem.associatedCharacters || [];
+
+        if (!window.charactersManager || !window.charactersManager.characters) {
+            personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>';
+            return;
+        }
+
+        // Filtrer les personnages associés à ce lieu/région
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const associatedCharacters = window.charactersManager.characters.filter(char => {
+            const isAssociated = associatedCharacterIds.includes(char.id);
+            const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
+            return isAssociated && isOnCurrentMap;
+        });
+
+        if (associatedCharacters.length === 0) {
+            personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage associé à ce lieu</p>';
+            return;
+        }
+
+        const html = associatedCharacters.map(character => {
+            const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+            return `
+                <div class="character-card-infobox bg-gray-700 hover:bg-gray-600 rounded-lg p-3 mb-3 cursor-pointer transition-colors" 
+                     onclick="window.infoBoxManager.showCharacterFromLocation('${character.id}')">
+                    <div class="flex items-center space-x-3">
+                        ${thumbnailImage ? `
+                            <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                 class="w-12 h-12 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                        ` : `
+                            <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                        `}
+                        <div class="flex-1">
+                            <div class="font-semibold text-white">${character.name}</div>
+                            <span class="inline-block px-2 py-0.5 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'} text-white">
+                                ${character.type || 'PNJ'}
+                            </span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        personnagesContent.innerHTML = html;
+    }
+
+    renderPersonnagesTabEdit() {
+        const personnagesContent = document.getElementById('personnages-content');
+        if (!personnagesContent) return;
+
+        // Récupérer les IDs des personnages associés
+        const associatedCharacterIds = this.currentItem.associatedCharacters || [];
+
+        if (!window.charactersManager || !window.charactersManager.characters) {
+            personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>';
+            return;
+        }
+
+        // Filtrer les personnages de la carte active et trier par ordre alphabétique
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const availableCharacters = window.charactersManager.characters
+            .filter(char => !char.mapId || !activeMapId || char.mapId === activeMapId)
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        if (availableCharacters.length === 0) {
+            personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage disponible sur cette carte</p>';
+            return;
+        }
+
+        const html = `
+            <div class="space-y-2">
+                ${availableCharacters.map(character => {
+                    const isAssociated = associatedCharacterIds.includes(character.id);
+                    const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+                    
+                    return `
+                        <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
+                            <input type="checkbox" 
+                                   class="character-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                                   data-character-id="${character.id}"
+                                   ${isAssociated ? 'checked' : ''}>
+                            ${thumbnailImage ? `
+                                <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                     class="w-10 h-10 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                            ` : `
+                                <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                                    <i class="fas fa-user text-sm text-gray-400"></i>
+                                </div>
+                            `}
+                            <div class="flex-1">
+                                <div class="font-medium text-white text-sm">${character.name}</div>
+                                <span class="inline-block px-2 py-0.5 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'} text-white">
+                                    ${character.type || 'PNJ'}
+                                </span>
+                            </div>
+                        </label>
+                    `;
+                }).join('')}
+            </div>
+        `;
+
+        personnagesContent.innerHTML = html;
+    }
+
+    showCharacterFromLocation(characterId) {
+        if (!window.charactersManager) return;
+
+        const character = window.charactersManager.characters.find(c => String(c.id) === String(characterId));
+        if (!character) {
+            console.warn(`Personnage non trouvé avec l'ID: ${characterId}`);
+            return;
+        }
+
+        // Créer un événement simulé pour le positionnement
+        const fakeEvent = {
+            clientX: window.innerWidth / 2,
+            clientY: window.innerHeight / 2,
+            type: 'click'
+        };
+
+        // Ouvrir la modale du personnage en surimpression
+        if (window.infoBoxManager) {
+            window.infoBoxManager.showInfoBox(fakeEvent, character, 'character');
         }
     }
 
