@@ -1474,12 +1474,13 @@ body {
     flex-direction: column;
     height: 100%;
     padding: 1rem;
+    max-height: calc(100vh - 250px);
 }
 
 #personnages-tab .edit-form .space-y-2 {
     flex: 1;
     overflow-y: auto;
-    max-height: calc(100vh - 300px);
+    max-height: calc(100vh - 400px);
     margin-bottom: 1rem;
     padding-right: 0.5rem;
 }
@@ -1489,6 +1490,9 @@ body {
     margin-top: 0 !important;
     padding-top: 1rem;
     border-top: 1px solid #e5e7eb;
+    background-color: white;
+    position: sticky;
+    bottom: 0;
 }
 
 /* Info Box - Mode étendu */
