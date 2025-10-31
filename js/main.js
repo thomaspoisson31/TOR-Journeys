@@ -309,6 +309,9 @@ function renderLocations() {
             }
         }
 
+        // Appliquer l'opacité selon le statut connu
+        const opacity = location.known === false ? '0.5' : '1';
+        
         if (thumbnailUrl) {
             // Afficher la vignette avec effets visuels améliorés
             marker.style.backgroundColor = 'transparent';
@@ -320,6 +323,7 @@ function renderLocations() {
             marker.style.backgroundPosition = 'center';
             marker.style.borderRadius = '50%';
             marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
+            marker.style.opacity = opacity;
         } else {
             // Afficher le cercle coloré
             const color = colorMap[location.color] || colorMap.blue;
@@ -330,6 +334,7 @@ function renderLocations() {
             marker.style.border = 'none';
             marker.style.borderRadius = '50%';
             marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
+            marker.style.opacity = opacity;
         }
 
         // Événements de souris pour le glisser-déplacer
