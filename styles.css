@@ -1480,7 +1480,7 @@ body {
 #personnages-tab .edit-form .space-y-2 {
     flex: 1;
     overflow-y: auto;
-    max-height: calc(100vh - 400px);
+    max-height: 300px;
     margin-bottom: 1rem;
     padding-right: 0.5rem;
 }
