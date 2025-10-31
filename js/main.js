@@ -335,17 +335,29 @@ function renderLocations() {
         // Ajouter les événements de clic et de glisser-déplacer (souris)
         marker.addEventListener('mousedown', (e) => {
             if (e.button === 0) { // Clic gauche seulement
-                e.stopPropagation(); // Empêcher la propagation vers le viewport
-                handleLocationDragStart(e, marker, location);
+                e.stopPropagation();
+                e.preventDefault();
+                // Stocker les informations de début
+                mouseDownLocation = { marker, location, x: e.clientX, y: e.clientY };
+                hasDraggedLocation = false;
             }
         });
 
         marker.addEventListener('mouseup', (e) => {
-            if (e.button === 0 && !hasDraggedLocation) {
-                // Seulement si aucun drag n'a lieu
+            if (e.button === 0 && mouseDownLocation) {
                 e.stopPropagation();
                 e.preventDefault();
-                infoBoxManager.showInfoBox(e, location, 'location');
+                
+                // Si on n'a pas déplacé la souris (ou très peu), c'est un clic
+                if (!hasDraggedLocation) {
+                    infoBoxManager.showInfoBox(e, location, 'location');
+                }
+                
+                // Nettoyer
+                mouseDownLocation = null;
+                hasDraggedLocation = false;
+                isDraggingLocation = false;
+                draggedLocationMarker = null;
             }
         });
 
@@ -787,6 +799,8 @@ let draggedLocationMarker = null;
 let dragStartX = 0;
 let dragStartY = 0;
 let hasDraggedLocation = false; // Flag pour détecter si un drag a eu lieu
+let mouseDownLocation = null; // Stocker le lieu sur lequel on a fait mousedown
+let dragThreshold = 5; // Distance minimale en pixels pour considérer un drag
 
 // --- Variables d'état pour le tracé de régions ---
 let isRegionDrawingMode = false;
@@ -2596,34 +2610,41 @@ function setupDrawingEvents() {
 }
 
 // --- Fonctions de glisser-déplacer pour les lieux ---
-function handleLocationDragStart(e, marker, location) {
+function handleLocationDragStart(clientX, clientY) {
+    if (!mouseDownLocation) return;
+    
     // Ne pas permettre le drag si on est en mode tracé ou dessin
     if (isRegionDrawingMode || window.isDrawingMode || isLocationAddingMode) return;
 
-    e.stopPropagation();
-    e.preventDefault();
+    // Vérifier si on a dépassé le seuil de drag
+    const deltaX = Math.abs(clientX - mouseDownLocation.x);
+    const deltaY = Math.abs(clientY - mouseDownLocation.y);
+    
+    if (deltaX > dragThreshold || deltaY > dragThreshold) {
+        // Initialiser le drag
+        isDraggingLocation = true;
+        hasDraggedLocation = true;
+        draggedLocationMarker = mouseDownLocation.marker;
+        dragStartX = clientX;
+        dragStartY = clientY;
 
-    // Initialiser les flags de drag selon la méthode du document
-    isDraggingLocation = true;
-    hasDraggedLocation = false; // Reset du flag drag au mousedown
-    draggedLocationMarker = marker;
-    dragStartX = e.clientX;
-    dragStartY = e.clientY;
+        // Changer le curseur
+        viewport.style.cursor = 'move';
+        draggedLocationMarker.style.cursor = 'move';
 
-    // Changer le curseur
-    viewport.style.cursor = 'move';
-    marker.style.cursor = 'move';
-
-    console.log(`🎯 Starting potential drag for location: ${location.name}`);
+        console.log(`🎯 Starting drag for location: ${mouseDownLocation.location.name}`);
+    }
 }
 
 function handleLocationDrag(e) {
+    // Si on a un mousedown mais pas encore de drag, vérifier si on doit l'initier
+    if (mouseDownLocation && !isDraggingLocation) {
+        handleLocationDragStart(e.clientX, e.clientY);
+    }
+    
     if (!isDraggingLocation || !draggedLocationMarker) return;
 
     e.preventDefault();
-
-    // Marquer qu'un drag a eu lieu (selon la méthode du document)
-    hasDraggedLocation = true;
 
     const deltaX = e.clientX - dragStartX;
     const deltaY = e.clientY - dragStartY;
@@ -2654,7 +2675,12 @@ function handleLocationDrag(e) {
 }
 
 function handleLocationDragEnd(event) {
-    if (!isDraggingLocation || !draggedLocationMarker) return;
+    if (!isDraggingLocation || !draggedLocationMarker) {
+        // Même sans drag, nettoyer les variables
+        mouseDownLocation = null;
+        hasDraggedLocation = false;
+        return;
+    }
 
     isDraggingLocation = false;
     viewport.style.cursor = 'grab';
