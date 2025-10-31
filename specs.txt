@@ -176,12 +176,14 @@ FONCTIONNALITÉS PRINCIPALES
 
 3. LIEUX (Locations):
    - Placement manuel (clic + modal)
-   - Drag & drop repositionnement
+   - Drag & drop repositionnement avec seuil de détection (3px minimum)
+   - Distinction simple clic (ouvrir infobox) vs drag (déplacer)
    - Propriétés: nom, description, couleur, images
    - États: connu/inconnu, visité/non-visité
    - Vignettes 64x64px (affichées si zoom > 50%)
    - Affichage cercle coloré (zoom < 50%)
    - Association à une carte (mapId)
+   - Curseurs adaptatifs: `move` au survol, `grabbing` pendant drag, `pointer` par défaut
 
 4. RÉGIONS (Regions):
    - Tracé polygonal (multi-points)
@@ -292,7 +294,7 @@ Format Location:
   known: boolean,
   visited: boolean,
   mapId: string | undefined,
-  Rumeurs: string[],
+  Rumeurs: string[],  // Interface avec fond blanc pour édition, séparateur "---" pour créer plusieurs rumeurs
   Tradition_Ancienne: string,
   evenements_voyage: object[]
 }
@@ -485,14 +487,21 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Système de versioning (v1.2.0)
+1. Améliorations UX/UI (v1.3.1)
+   - Amélioration du glisser-déposer des lieux : distinction entre simple clic (ouvrir infobox) et drag (déplacer)
+   - Seuil de détection du drag : 3 pixels minimum pour éviter les faux positifs
+   - Curseur adaptatif : `move` au survol, `grabbing` pendant le drag, `pointer` par défaut
+   - Interface rumeurs modernisée : fond blanc pour les champs de saisie au lieu de gris
+   - Suppression du texte "Supprimer" dans la modale de couleur, conservation de l'icône poubelle uniquement
+
+2. Système de versioning (v1.2.0)
    - Fichier version.json centralisé (format sémantique)
    - Affichage automatique en développement
    - Badge positionné en haut au centre
    - Détection environnement via API endpoint
    - Masquage automatique en production
 
-2. Bibliothèque d'images (v1.1.7)
+3. Bibliothèque d'images (v1.1.7)
    - Intégration complète de la bibliothèque dans InfoBox
    - Possibilité d'ajouter des images depuis la bibliothèque en mode édition
    - Organisation par dossiers (locations/Eriador, maps, general)
@@ -501,27 +510,27 @@ Stockage:
    - Ajout automatique aux lieux/régions existants
    - Logs détaillés pour débogage (🔍, 📂, 🖼️, ✅)
 
-2. Object Storage (v1.1.6)
+4. Object Storage (v1.1.6)
    - Intégration Replit Object Storage pour images
    - Upload images vers Google Cloud Storage
    - URLs publiques persistantes en production
    - Fallback système fichiers local si indisponible
    - Configuration AnonymousCredentials pour Replit
 
-3. Migration vers Replit Database (v1.1.5)
+5. Migration vers Replit Database (v1.1.5)
    - Remplacement SQLite par Replit Key-Value Store
    - Séparation environnements dev/prod automatique
    - Détection environnement multicritères
    - ReplitDBManager pour abstraction persistance
 
-4. Améliorations synchronisation (v1.1.5)
+6. Améliorations synchronisation (v1.1.5)
    - Endpoint /api/environment pour détection auto
    - Endpoint /api/user/data/debug pour diagnostics
    - Affichage environnement actuel dans modale debug
    - Meilleure gestion des conflits de synchronisation
    - Affichage statut Object Storage dans modale debug
 
-5. Corrections majeures (v1.1.5-1.1.7)
+7. Corrections majeures (v1.1.5-1.1.7)
    - Fix sauvegarde lieux/régions (triple sync locale→window→dataManager)
    - Fix chargement initial (structure vide → cloud → rendu)
    - Fix persistance position aventuriers avec mapId
@@ -529,7 +538,7 @@ Stockage:
    - Fix Object Storage avec AnonymousCredentials pour Replit
    - Fix sauvegarde images bibliothèque en mode édition
 
-6. Fonctionnalités précédentes (v1.1.4)
+8. Fonctionnalités précédentes (v1.1.4)
    - Gestion multi-cartes complète
    - Configuration échelle par carte
    - Filtres persistants par carte
@@ -577,31 +586,45 @@ Backup: export JSON régulier
 PROBLÈMES RÉSOLUS
 -----------------
 
-1. Import JSON sur tablette (v1.1.4):
+1. Conflits entre clic et glisser-déposer (v1.3.1):
+   - Problème: Lieux devenaient déplaçables au simple clic pour ouvrir l'infobox
+   - Cause: Pas de distinction entre mousedown prolongé (drag) et simple clic
+   - Solution: Seuil de 3px + flag hasDraggedLocation pour détecter l'intention de l'utilisateur
+   - Événements distincts: mousedown (init), mousemove (détection seuil), mouseup (action finale)
+   - Fichier concerné: main.js (handleLocationDragEnd, event listeners)
+
+2. Curseur inapproprié sur les lieux (v1.3.1):
+   - Problème: Curseur ne changeait plus au survol après corrections du drag
+   - Cause: Gestion du curseur supprimée par erreur lors du fix précédent
+   - Solution: Rétablissement des event listeners mouseenter/mouseleave avec curseur `move`
+   - Curseur par défaut `pointer` défini dans le style initial
+   - Fichier concerné: main.js (renderLocations)
+
+3. Import JSON sur tablette (v1.1.4):
    - Problème: Fichiers .json grisés dans l'interface de sélection mobile
    - Cause: Attribut accept=".json" trop restrictif pour certains navigateurs mobiles
    - Solution: accept=".json,application/json" (extension + type MIME)
    - Fichier concerné: index.html (input#import-file-input)
 
-2. Sauvegarde lieux/régions (v1.1.5):
+4. Sauvegarde lieux/régions (v1.1.5):
    - Problème: "0 lieux sauvegardés" malgré modifications (drag, couleur)
    - Cause: dataManager.locationsData non synchronisé avec locationsData locale
    - Solution: Triple sync (locale → window → dataManager) avant saveToLocal()
    - Fichiers: main.js (handleLocationDragEnd, confirmColorChange)
 
-3. Perte de données après republish (v1.1.5):
+5. Perte de données après republish (v1.1.5):
    - Problème: Données perdues lors du déploiement en production
    - Cause: SQLite non persistant sur Replit Deployments
    - Solution: Migration vers Replit Database avec séparation dev/prod
    - Fichiers: app.py, replit_db_manager.py, auth-manager.js
 
-4. Chargement initial lent (v1.1.5):
+6. Chargement initial lent (v1.1.5):
    - Problème: Données par défaut chargées avant le cloud
    - Cause: loadInitialLocations chargeait depuis localStorage/URL
    - Solution: Structure vide → attente authentification → chargement cloud
    - Fichiers: data-manager.js, auth-manager.js
 
-5. Object Storage non fonctionnel (v1.1.6):
+7. Object Storage non fonctionnel (v1.1.6):
    - Problème: "Failed to retrieve metadata from Google Compute Engine"
    - Cause: Tentative d'accès aux métadonnées GCE non disponibles sur Replit
    - Solution: Utiliser AnonymousCredentials() pour authentification automatique
