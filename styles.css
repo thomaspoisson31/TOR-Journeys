@@ -1468,6 +1468,29 @@ body {
     background-color: #f3f4f6 !important;
 }
 
+/* Onglet Personnages - zone scrollable avec boutons fixes en bas */
+#personnages-tab .edit-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1rem;
+}
+
+#personnages-tab .edit-form .space-y-2 {
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 300px);
+    margin-bottom: 1rem;
+    padding-right: 0.5rem;
+}
+
+#personnages-tab .edit-form .flex.space-x-2 {
+    flex-shrink: 0;
+    margin-top: 0 !important;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
 /* Info Box - Mode étendu */
 #info-box.expanded {
     max-width: none;

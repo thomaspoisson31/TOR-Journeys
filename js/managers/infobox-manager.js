@@ -961,13 +961,15 @@ class InfoBoxManager {
                 renderRegions();
             }
         } else if (this.currentType === 'location') {
-            const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
+            let locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
                 String(loc.id) === String(this.currentItem.id)
             );
+            
+            // Si le lieu n'existe pas encore, l'ajouter au tableau
             if (locationIndex === -1) {
-                console.error(`❌ [SAVE] Lieu non trouvé dans locationsData: ${this.currentItem.id}`);
-                alert("Erreur : impossible de sauvegarder le lieu.");
-                return;
+                console.log(`ℹ️ [SAVE] Nouveau lieu détecté: ${this.currentItem.id}, ajout au tableau`);
+                this.dataManager.locationsData.locations.push({ ...this.currentItem });
+                locationIndex = this.dataManager.locationsData.locations.length - 1;
             }
 
             console.log(`💾 [SAVE] Lieu AVANT mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
