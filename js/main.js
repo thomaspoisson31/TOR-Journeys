@@ -352,13 +352,13 @@ function renderLocations() {
 
         // Survol pour montrer le curseur de déplacement
         marker.addEventListener('mouseenter', () => {
-            if (!isDraggingLocation) {
-                marker.style.cursor = 'grab';
+            if (!isDraggingLocation && !window.isDrawingMode) {
+                marker.style.cursor = 'move';
             }
         });
 
         marker.addEventListener('mouseleave', () => {
-            if (!isDraggingLocation) {
+            if (!isDraggingLocation && !window.isDrawingMode) {
                 marker.style.cursor = 'pointer';
             }
         });
@@ -422,6 +422,7 @@ function renderLocations() {
         // Forcer pointer-events pour s'assurer que les marqueurs sont cliquables
         marker.style.pointerEvents = 'auto';
         marker.style.touchAction = 'none'; // Empêcher le comportement par défaut du navigateur
+        marker.style.cursor = 'pointer'; // Curseur par défaut
 
         // Ajouter à la couche des lieux
         locationsLayer.appendChild(marker);
