@@ -508,7 +508,7 @@ class InfoBoxManager {
             // Générer le HTML pour les rumeurs
             const rumeursHTML = rumeursArray.map((rumeur, index) => `
                 <div class="flex items-start space-x-2 mb-2" data-rumeur-index="${index}">
-                    <textarea rows="3" class="flex-1 p-2 border rounded bg-gray-800 text-white text-sm border-gray-600 edit-rumeur-input" data-index="${index}">${rumeur}</textarea>
+                    <textarea rows="3" class="flex-1 p-2 border rounded bg-white text-black text-sm border-gray-600 edit-rumeur-input" data-index="${index}">${rumeur}</textarea>
                     <button onclick="window.infoBoxManager.deleteRumeurInEdit(${index})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -832,7 +832,7 @@ class InfoBoxManager {
 
         const newRumeurHTML = `
             <div class="flex items-start space-x-2 mb-2" data-rumeur-index="${newIndex}">
-                <textarea rows="3" class="flex-1 p-2 border rounded bg-gray-800 text-white text-sm border-gray-600 edit-rumeur-input" data-index="${newIndex}" placeholder="Nouvelle rumeur..."></textarea>
+                <textarea rows="3" class="flex-1 p-2 border rounded bg-white text-black text-sm border-gray-600 edit-rumeur-input" data-index="${newIndex}" placeholder="Nouvelle rumeur..."></textarea>
                 <button onclick="window.infoBoxManager.deleteRumeurInEdit(${newIndex})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
                     <i class="fas fa-trash"></i>
                 </button>
