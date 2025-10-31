@@ -1450,8 +1450,22 @@ body {
 }
 
 /* Character cards in InfoBox */
+.character-card-infobox {
+    background-color: white !important;
+}
+
 .character-card-infobox:hover {
     transform: translateX(4px);
+    background-color: #f3f4f6 !important;
+}
+
+/* Onglet Personnages en mode édition - fond blanc */
+#personnages-tab .space-y-2 label {
+    background-color: white !important;
+}
+
+#personnages-tab .space-y-2 label:hover {
+    background-color: #f3f4f6 !important;
 }
 
 /* Info Box - Mode étendu */

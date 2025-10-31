@@ -1731,7 +1731,7 @@ class InfoBoxManager {
         }
 
         const html = `
-            <div class="space-y-2">
+            <div class="space-y-2 mb-4">
                 ${availableCharacters.map(character => {
                     const isAssociated = associatedCharacterIds.includes(character.id);
                     const thumbnailImage = character.images?.find(img => img.type === 'vignette');
@@ -1759,6 +1759,14 @@ class InfoBoxManager {
                         </label>
                     `;
                 }).join('')}
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                    <i class="fas fa-save mr-1"></i>Sauvegarder
+                </button>
+                <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                    <i class="fas fa-times mr-1"></i>Annuler
+                </button>
             </div>
         `;
 
