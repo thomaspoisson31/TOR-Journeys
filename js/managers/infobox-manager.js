@@ -491,18 +491,28 @@ class InfoBoxManager {
     }
 
     renderLieuxRegionsTabRead() {
+        console.log(`🗺️ [renderLieuxRegionsTabRead] ========== DÉBUT DU RENDU ==========`);
+
         const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
-        if (!lieuxRegionsTab) return;
+        if (!lieuxRegionsTab) {
+            console.error(`❌ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab NON TROUVÉ !`);
+            return;
+        }
+
+        console.log(`✅ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab trouvé`);
 
         lieuxRegionsTab.innerHTML = '';
 
         const character = this.currentItem;
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Personnage complet:`, character);
+
         const associatedLocationIds = character.associatedLocations || [];
         const associatedRegionIds = character.associatedRegions || [];
 
         console.log(`🗺️ [renderLieuxRegionsTabRead] Rendu pour personnage "${character.name}"`);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedLocations:`, associatedLocationIds);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedRegions:`, associatedRegionIds);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedLocationIds:`, associatedLocationIds);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedRegionIds:`, associatedRegionIds);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Type de associatedLocationIds:`, typeof associatedLocationIds, Array.isArray(associatedLocationIds));
 
         // Récupérer les lieux associés
         const locationsData = window.locationsData || { locations: [] };
@@ -600,6 +610,7 @@ class InfoBoxManager {
 
         html += '</div>';
         lieuxRegionsTab.innerHTML = html;
+        console.log(`🗺️ [renderLieuxRegionsTabRead] ========== FIN DU RENDU ==========`);
     }
 
     renderLieuxRegionsTabEdit() {
@@ -2163,18 +2174,28 @@ class InfoBoxManager {
     }
 
     renderLieuxRegionsTabRead() {
+        console.log(`🗺️ [renderLieuxRegionsTabRead] ========== DÉBUT DU RENDU ==========`);
+
         const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
-        if (!lieuxRegionsTab) return;
+        if (!lieuxRegionsTab) {
+            console.error(`❌ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab NON TROUVÉ !`);
+            return;
+        }
+
+        console.log(`✅ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab trouvé`);
 
         lieuxRegionsTab.innerHTML = '';
 
         const character = this.currentItem;
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Personnage complet:`, character);
+
         const associatedLocationIds = character.associatedLocations || [];
         const associatedRegionIds = character.associatedRegions || [];
 
         console.log(`🗺️ [renderLieuxRegionsTabRead] Rendu pour personnage "${character.name}"`);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedLocations:`, associatedLocationIds);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedRegions:`, associatedRegionIds);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedLocationIds:`, associatedLocationIds);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedRegionIds:`, associatedRegionIds);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Type de associatedLocationIds:`, typeof associatedLocationIds, Array.isArray(associatedLocationIds));
 
         // Récupérer les lieux associés
         const locationsData = window.locationsData || { locations: [] };
@@ -2272,6 +2293,7 @@ class InfoBoxManager {
 
         html += '</div>';
         lieuxRegionsTab.innerHTML = html;
+        console.log(`🗺️ [renderLieuxRegionsTabRead] ========== FIN DU RENDU ==========`);
     }
 
 
