@@ -46,16 +46,30 @@ class ImportExportManager {
 
     /**
      * Exporte les données unifiées (lieux + régions) en format JSON
+     * Filtre par carte active uniquement
      */
     exportUnifiedData() {
         try {
             console.log("📤 Starting unified export...");
 
+            const activeMapUrl = window.settingsManager?.activeMapUrl;
+            const activeMapName = window.settingsManager?.activeMapName || 'Carte';
+            
+            if (!activeMapUrl) {
+                this.showNotification("Erreur d'export", "Aucune carte active", "error");
+                return;
+            }
+
             const allLocations = [];
 
-            // Ajouter les lieux normaux
+            // Ajouter les lieux normaux (filtrés par carte active)
             if (this.dataManager.locationsData?.locations) {
                 this.dataManager.locationsData.locations.forEach(location => {
+                    // Filtrer par carte active
+                    if (location.mapId && location.mapId !== activeMapUrl) {
+                        return; // Ignorer ce lieu
+                    }
+
                     const exportLocation = {
                         ...location,
                         type: location.type || "custom"
@@ -90,9 +104,14 @@ class ImportExportManager {
                 });
             }
 
-            // Ajouter les régions comme lieux avec type "region"
+            // Ajouter les régions comme lieux avec type "region" (filtrées par carte active)
             if (this.dataManager.regionsData?.regions) {
                 this.dataManager.regionsData.regions.forEach(region => {
+                    // Filtrer par carte active
+                    if (region.mapId && region.mapId !== activeMapUrl) {
+                        return; // Ignorer cette région
+                    }
+
                     // Extraire les points depuis la structure existante
                     let points = [];
                     if (region.points) {
@@ -134,19 +153,23 @@ class ImportExportManager {
                 locations: allLocations
             };
 
+            // Nom de fichier basé sur la carte active
+            const sanitizedMapName = activeMapName.replace(/[^a-z0-9]/gi, '_');
+            const fileName = `${sanitizedMapName}_Lieux_Regions.json`;
+
             // Télécharger le fichier
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(unifiedData, null, 2));
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "MiddleEarthData.json");
+            downloadAnchorNode.setAttribute("download", fileName);
             document.body.appendChild(downloadAnchorNode);
             downloadAnchorNode.click();
             document.body.removeChild(downloadAnchorNode);
 
-            console.log(`✅ Export unifié terminé - ${allLocations.length} éléments sauvegardés (lieux et régions)`);
+            console.log(`✅ Export unifié terminé - ${allLocations.length} éléments sauvegardés (lieux et régions) depuis "${activeMapName}"`);
 
             // Notification utilisateur
-            this.showNotification("Export réussi", `${allLocations.length} éléments exportés vers MiddleEarthData.json`, "success");
+            this.showNotification("Export réussi", `${allLocations.length} éléments de "${activeMapName}" exportés`, "success");
 
         } catch (error) {
             console.error("❌ Erreur lors de l'export unifié:", error);

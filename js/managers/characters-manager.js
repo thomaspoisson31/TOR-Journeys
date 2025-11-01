@@ -431,8 +431,23 @@ class CharactersManager {
         try {
             console.log("📤 Starting characters export...");
 
+            const activeMapUrl = window.settingsManager?.activeMapUrl;
+            const activeMapName = window.settingsManager?.activeMapName || 'Carte';
+            
+            if (!activeMapUrl) {
+                this.showNotification("Erreur d'export", "Aucune carte active", "error");
+                return;
+            }
+
+            // Filtrer les personnages par carte active
+            const charactersToExport = this.characters.filter(character => {
+                // Exporter les personnages sans mapId OU ceux correspondant à la carte active
+                if (!character.mapId) return true;
+                return character.mapId === activeMapUrl;
+            });
+
             const exportData = {
-                characters: this.characters.map(character => ({
+                characters: charactersToExport.map(character => ({
                     id: character.id,
                     name: character.name,
                     description: character.description || "",
@@ -444,17 +459,21 @@ class CharactersManager {
                 }))
             };
 
+            // Nom de fichier basé sur la carte active
+            const sanitizedMapName = activeMapName.replace(/[^a-z0-9]/gi, '_');
+            const fileName = `${sanitizedMapName}_Personnages.json`;
+
             // Télécharger le fichier
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "Characters.json");
+            downloadAnchorNode.setAttribute("download", fileName);
             document.body.appendChild(downloadAnchorNode);
             downloadAnchorNode.click();
             document.body.removeChild(downloadAnchorNode);
 
-            console.log(`✅ Export terminé - ${this.characters.length} personnages sauvegardés`);
-            this.showNotification("Export réussi", `${this.characters.length} personnages exportés`, "success");
+            console.log(`✅ Export terminé - ${charactersToExport.length} personnages de "${activeMapName}" sauvegardés`);
+            this.showNotification("Export réussi", `${charactersToExport.length} personnages de "${activeMapName}" exportés`, "success");
 
         } catch (error) {
             console.error("❌ Erreur lors de l'export des personnages:", error);

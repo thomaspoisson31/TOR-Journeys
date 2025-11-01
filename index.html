@@ -1055,15 +1055,15 @@
                         <!-- Section Lieux et Régions -->
                         <div class="bg-gray-800 rounded-lg p-3">
                             <div class="flex items-center mb-2">
-                                <i class="fas fa-map-marker-alt text-blue-400 mr-2"></i>
+                                <i class="fas fa-map-marked-alt text-blue-400 mr-2"></i>
                                 <h4 class="text-sm font-semibold text-white">Lieux et Régions</h4>
                             </div>
 
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between gap-2">
-                                    <span class="text-xs text-gray-300">Export</span>
+                                    <span class="text-xs text-gray-300">Export (carte active)</span>
                                     <button id="export-locations-btn" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-white text-xs font-medium transition-colors flex items-center gap-1">
-                                        <i class="fas fa-file-export"></i>
+                                        <i class="fas fa-download"></i>
                                         <span>Exporter</span>
                                     </button>
                                 </div>
@@ -1071,13 +1071,12 @@
                                 <div class="flex items-center justify-between gap-2">
                                     <span class="text-xs text-gray-300">Import</span>
                                     <button id="import-locations-btn" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-white text-xs font-medium transition-colors flex items-center gap-1">
-                                        <i class="fas fa-file-import"></i>
+                                        <i class="fas fa-upload"></i>
                                         <span>Importer</span>
                                     </button>
+                                    <input type="file" id="import-locations-file-input" accept=".json" class="hidden">
                                 </div>
                             </div>
-
-                            <input type="file" id="import-locations-file-input" class="hidden" accept=".json">
                         </div>
 
                         <!-- Section Personnages -->
@@ -1089,7 +1088,7 @@
 
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between gap-2">
-                                    <span class="text-xs text-gray-300">Export</span>
+                                    <span class="text-xs text-gray-300">Export (carte active)</span>
                                     <button id="export-characters-btn" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-white text-xs font-medium transition-colors flex items-center gap-1">
                                         <i class="fas fa-file-export"></i>
                                         <span>Exporter</span>
@@ -1102,10 +1101,9 @@
                                         <i class="fas fa-file-import"></i>
                                         <span>Importer</span>
                                     </button>
+                                    <input type="file" id="import-characters-file-input" class="hidden" accept=".json">
                                 </div>
                             </div>
-
-                            <input type="file" id="import-characters-file-input" class="hidden" accept=".json">
                         </div>
 
                         <div class="text-xs text-gray-400 italic mt-3 p-2 bg-gray-900 rounded">
