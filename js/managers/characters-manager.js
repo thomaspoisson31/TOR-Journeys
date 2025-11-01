@@ -118,6 +118,10 @@ class CharactersManager {
             // Afficher UNIQUEMENT l'image de type "vignette"
             const thumbnailImage = character.images?.find(img => img.type === 'vignette');
 
+            // Récupérer les noms des lieux et régions associés
+            const associatedLocationNames = this.getAssociatedLocationNames(character);
+            const associatedRegionNames = this.getAssociatedRegionNames(character);
+
             return `
                 <div class="character-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer" 
                      data-character-id="${character.id}"
@@ -133,9 +137,21 @@ class CharactersManager {
                         `}
                         <div class="flex-1">
                             <h3 class="text-lg font-bold">${character.name}</h3>
-                            <span class="inline-block px-2 py-1 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'}">
-                                ${character.type || 'PNJ'}
-                            </span>
+                            <div class="flex flex-wrap gap-2 mt-1">
+                                <span class="inline-block px-2 py-1 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'}">
+                                    ${character.type || 'PNJ'}
+                                </span>
+                                ${associatedLocationNames.map(name => `
+                                    <span class="inline-block px-2 py-1 text-xs rounded bg-purple-600">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>${name}
+                                    </span>
+                                `).join('')}
+                                ${associatedRegionNames.map(name => `
+                                    <span class="inline-block px-2 py-1 text-xs rounded bg-orange-600">
+                                        <i class="fas fa-mountain mr-1"></i>${name}
+                                    </span>
+                                `).join('')}
+                            </div>
                         </div>
                         <i class="fas fa-chevron-right text-gray-400"></i>
                     </div>
@@ -144,6 +160,42 @@ class CharactersManager {
         }).join('');
 
         listContainer.innerHTML = html;
+    }
+
+    getAssociatedLocationNames(character) {
+        if (!character.associatedLocations || character.associatedLocations.length === 0) {
+            return [];
+        }
+
+        const locationsData = window.locationsData;
+        if (!locationsData || !locationsData.locations) {
+            return [];
+        }
+
+        return character.associatedLocations
+            .map(locationId => {
+                const location = locationsData.locations.find(loc => String(loc.id) === String(locationId));
+                return location ? location.name : null;
+            })
+            .filter(name => name !== null);
+    }
+
+    getAssociatedRegionNames(character) {
+        if (!character.associatedRegions || character.associatedRegions.length === 0) {
+            return [];
+        }
+
+        const regionsData = window.regionsData;
+        if (!regionsData || !regionsData.regions) {
+            return [];
+        }
+
+        return character.associatedRegions
+            .map(regionId => {
+                const region = regionsData.regions.find(reg => String(reg.id) === String(regionId));
+                return region ? region.name : null;
+            })
+            .filter(name => name !== null);
     }
 
     openAddCharacterModal() {
