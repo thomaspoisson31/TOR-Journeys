@@ -956,7 +956,28 @@ class InfoBoxManager {
             const associatedCharacterIds = Array.from(checkboxes)
                 .filter(cb => cb.checked)
                 .map(cb => cb.dataset.characterId);
+            
+            console.log(`🔍 [SAVE] AVANT update - ${this.currentType} "${this.currentItem.name}" (id: ${this.currentItem.id})`);
+            console.log(`🔍 [SAVE] associatedCharacters AVANT:`, this.currentItem.associatedCharacters);
+            console.log(`🔍 [SAVE] Nouvelles associations cochées:`, associatedCharacterIds);
+            
             this.currentItem.associatedCharacters = associatedCharacterIds;
+            
+            console.log(`🔍 [SAVE] associatedCharacters APRÈS:`, this.currentItem.associatedCharacters);
+            
+            // Log des personnages concernés AVANT modification
+            if (window.charactersManager) {
+                console.log(`🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:`);
+                associatedCharacterIds.forEach(charId => {
+                    const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
+                    if (char) {
+                        console.log(`  - ${char.name} (id: ${char.id}):`, {
+                            associatedLocations: char.associatedLocations,
+                            associatedRegions: char.associatedRegions
+                        });
+                    }
+                });
+            }
         }
 
         console.log("💾 [SAVE] Objet après modification:", JSON.stringify(this.currentItem).substring(0, 200) + "...");
@@ -978,12 +999,27 @@ class InfoBoxManager {
             this.dataManager.regionsData.regions[regionIndex] = { ...this.currentItem };
 
             console.log(`💾 [SAVE] Région APRÈS mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
+            console.log(`🔍 [SAVE] region.associatedCharacters APRÈS sauvegarde:`, this.dataManager.regionsData.regions[regionIndex].associatedCharacters);
 
             // Synchroniser avec la variable globale
             window.regionsData = this.dataManager.regionsData;
 
             // Sauvegarder
             this.dataManager.saveRegionsToLocal();
+
+            // Log des personnages APRÈS modification bidirectionnelle
+            if (window.charactersManager && this.currentItem.associatedCharacters) {
+                console.log(`🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:`);
+                this.currentItem.associatedCharacters.forEach(charId => {
+                    const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
+                    if (char) {
+                        console.log(`  - ${char.name} (id: ${char.id}):`, {
+                            associatedLocations: char.associatedLocations,
+                            associatedRegions: char.associatedRegions
+                        });
+                    }
+                });
+            }
 
             // Re-render
             if (typeof renderRegions === 'function') {
@@ -1007,12 +1043,27 @@ class InfoBoxManager {
             this.dataManager.locationsData.locations[locationIndex] = { ...this.currentItem };
 
             console.log(`💾 [SAVE] Lieu APRÈS mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
+            console.log(`🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde:`, this.dataManager.locationsData.locations[locationIndex].associatedCharacters);
 
             // Synchroniser avec la variable globale
             window.locationsData = this.dataManager.locationsData;
 
             // Sauvegarder
             this.dataManager.saveLocationsToLocal();
+
+            // Log des personnages APRÈS modification bidirectionnelle
+            if (window.charactersManager && this.currentItem.associatedCharacters) {
+                console.log(`🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:`);
+                this.currentItem.associatedCharacters.forEach(charId => {
+                    const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
+                    if (char) {
+                        console.log(`  - ${char.name} (id: ${char.id}):`, {
+                            associatedLocations: char.associatedLocations,
+                            associatedRegions: char.associatedRegions
+                        });
+                    }
+                });
+            }
 
             // Re-render
             if (typeof renderLocations === 'function') {
