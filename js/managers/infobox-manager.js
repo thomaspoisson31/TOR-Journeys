@@ -123,6 +123,7 @@ class InfoBoxManager {
             if (this.previousInfoBox) {
                 console.log("🔙 Retour à l'infobox précédente:", this.previousInfoBox.item.name);
                 const previous = this.previousInfoBox;
+                const shouldShowPersonnagesTab = previous.shouldShowPersonnagesTab;
                 this.previousInfoBox = null; // Réinitialiser pour éviter une boucle
                 
                 // Créer un événement simulé pour le positionnement
@@ -134,6 +135,13 @@ class InfoBoxManager {
                 
                 // Réafficher l'infobox précédente
                 this.showInfoBox(fakeEvent, previous.item, previous.type);
+                
+                // Si demandé, afficher l'onglet Personnages
+                if (shouldShowPersonnagesTab) {
+                    setTimeout(() => {
+                        this.switchTab('personnages');
+                    }, 100);
+                }
             } else {
                 // Fermeture normale
                 infoBox.style.display = 'none';
@@ -1810,7 +1818,8 @@ class InfoBoxManager {
             console.log("💾 Sauvegarde de l'infobox appelante:", this.currentItem.name, this.currentType);
             this.previousInfoBox = {
                 item: this.currentItem,
-                type: this.currentType
+                type: this.currentType,
+                shouldShowPersonnagesTab: true // Flag pour afficher l'onglet Personnages au retour
             };
         }
 
