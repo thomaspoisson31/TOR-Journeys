@@ -14,6 +14,9 @@ class InfoBoxManager {
         this.isEditMode = false;
         this.isExpanded = false;
 
+        // Stack pour la navigation arrière
+        this.previousInfoBox = null;
+
         // Initialiser l'UploadManager
         this.uploadManager = new UploadManager();
 
@@ -116,12 +119,30 @@ class InfoBoxManager {
     hideInfoBox() {
         const infoBox = document.getElementById('info-box');
         if (infoBox) {
-            infoBox.style.display = 'none';
-            this.currentItem = null;
-            this.currentType = null;
-            this.isEditMode = false;
-            this.isExpanded = false;
-            infoBox.classList.remove('expanded');
+            // Vérifier s'il y a une infobox précédente à afficher
+            if (this.previousInfoBox) {
+                console.log("🔙 Retour à l'infobox précédente:", this.previousInfoBox.item.name);
+                const previous = this.previousInfoBox;
+                this.previousInfoBox = null; // Réinitialiser pour éviter une boucle
+                
+                // Créer un événement simulé pour le positionnement
+                const fakeEvent = {
+                    clientX: window.innerWidth / 2,
+                    clientY: window.innerHeight / 2,
+                    type: 'click'
+                };
+                
+                // Réafficher l'infobox précédente
+                this.showInfoBox(fakeEvent, previous.item, previous.type);
+            } else {
+                // Fermeture normale
+                infoBox.style.display = 'none';
+                this.currentItem = null;
+                this.currentType = null;
+                this.isEditMode = false;
+                this.isExpanded = false;
+                infoBox.classList.remove('expanded');
+            }
         }
     }
 
@@ -1782,6 +1803,15 @@ class InfoBoxManager {
         if (!character) {
             console.warn(`Personnage non trouvé avec l'ID: ${characterId}`);
             return;
+        }
+
+        // Sauvegarder l'infobox actuelle avant d'afficher le personnage
+        if (this.currentItem && this.currentType) {
+            console.log("💾 Sauvegarde de l'infobox appelante:", this.currentItem.name, this.currentType);
+            this.previousInfoBox = {
+                item: this.currentItem,
+                type: this.currentType
+            };
         }
 
         // Créer un événement simulé pour le positionnement
