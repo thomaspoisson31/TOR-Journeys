@@ -1,8 +1,8 @@
+import UploadManager from './upload-manager.js';
+
 /**
  * InfoBoxManager - Gestion des info-boxes avec édition
  */
-import UploadManager from './upload-manager.js';
-
 class InfoBoxManager {
     constructor(domUtils, dataManager, geminiManager) {
         this.domUtils = domUtils;
@@ -530,42 +530,39 @@ class InfoBoxManager {
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedRegions.length} régions associées trouvées`);
 
         if (associatedLocations.length === 0 && associatedRegions.length === 0) {
-            lieuxRegionsTab.innerHTML = '<p class="text-gray-500 p-4 italic" style="color: #6b7280 !important;">Aucun lieu ou région associé à ce personnage.</p>';
+            lieuxRegionsTab.innerHTML = '<p class="text-gray-400 p-4 italic">Aucun lieu ou région associé à ce personnage.</p>';
             return;
         }
 
-        let html = '<div class="p-4 space-y-6">';
+        let html = '<div class="p-4 space-y-4">';
 
         // Section Lieux
         if (associatedLocations.length > 0) {
             html += `
                 <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
-                        <i class="fas fa-map-marker-alt mr-2" style="color: #940000 !important;"></i>
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
+                        <i class="fas fa-map-marker-alt mr-2 text-purple-400"></i>
                         Lieux associés
                     </h3>
                     <div class="space-y-2">
                         ${associatedLocations.map(location => {
                             const thumbnailImage = location.images?.find(img => img.type === 'vignette');
                             return `
-                                <div class="location-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')"
-                                     style="background-color: white !important;">
+                                <div class="location-card-compact bg-gray-700 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer"
+                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')">
                                     <div class="flex items-center space-x-3">
                                         ${thumbnailImage ? `
                                             <img src="${thumbnailImage.url}" alt="${location.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2"
-                                                 style="border-color: #940000 !important;">
+                                                 class="w-10 h-10 rounded-full object-cover border-2 border-purple-500">
                                         ` : `
-                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
-                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
-                                                <i class="fas fa-map-marker-alt text-sm" style="color: white !important;"></i>
+                                            <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center border-2 border-purple-500">
+                                                <i class="fas fa-map-marker-alt text-white text-sm"></i>
                                             </div>
                                         `}
                                         <div class="flex-1">
-                                            <h4 class="font-medium" style="color: black !important;">${location.name}</h4>
+                                            <h4 class="font-medium text-white">${location.name}</h4>
                                         </div>
-                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
+                                        <i class="fas fa-chevron-right text-gray-400"></i>
                                     </div>
                                 </div>
                             `;
@@ -579,32 +576,29 @@ class InfoBoxManager {
         if (associatedRegions.length > 0) {
             html += `
                 <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
-                        <i class="fas fa-mountain mr-2" style="color: #940000 !important;"></i>
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
+                        <i class="fas fa-mountain mr-2 text-orange-400"></i>
                         Régions associées
                     </h3>
                     <div class="space-y-2">
                         ${associatedRegions.map(region => {
                             const thumbnailImage = region.images?.find(img => img.type === 'vignette');
                             return `
-                                <div class="region-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')"
-                                     style="background-color: white !important;">
+                                <div class="region-card-compact bg-gray-700 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer"
+                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')">
                                     <div class="flex items-center space-x-3">
                                         ${thumbnailImage ? `
                                             <img src="${thumbnailImage.url}" alt="${region.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2"
-                                                 style="border-color: #940000 !important;">
+                                                 class="w-10 h-10 rounded-full object-cover border-2 border-orange-500">
                                         ` : `
-                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
-                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
-                                                <i class="fas fa-mountain text-sm" style="color: white !important;"></i>
+                                            <div class="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center border-2 border-orange-500">
+                                                <i class="fas fa-mountain text-white text-sm"></i>
                                             </div>
                                         `}
                                         <div class="flex-1">
-                                            <h4 class="font-medium" style="color: black !important;">${region.name}</h4>
+                                            <h4 class="font-medium text-white">${region.name}</h4>
                                         </div>
-                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
+                                        <i class="fas fa-chevron-right text-gray-400"></i>
                                     </div>
                                 </div>
                             `;
@@ -2219,42 +2213,39 @@ class InfoBoxManager {
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedRegions.length} régions associées trouvées`);
 
         if (associatedLocations.length === 0 && associatedRegions.length === 0) {
-            lieuxRegionsTab.innerHTML = '<p class="text-gray-500 p-4 italic" style="color: #6b7280 !important;">Aucun lieu ou région associé à ce personnage.</p>';
+            lieuxRegionsTab.innerHTML = '<p class="text-gray-400 p-4 italic">Aucun lieu ou région associé à ce personnage.</p>';
             return;
         }
 
-        let html = '<div class="p-4 space-y-6">';
+        let html = '<div class="p-4 space-y-4">';
 
         // Section Lieux
         if (associatedLocations.length > 0) {
             html += `
                 <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
-                        <i class="fas fa-map-marker-alt mr-2" style="color: #940000 !important;"></i>
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
+                        <i class="fas fa-map-marker-alt mr-2 text-purple-400"></i>
                         Lieux associés
                     </h3>
                     <div class="space-y-2">
                         ${associatedLocations.map(location => {
                             const thumbnailImage = location.images?.find(img => img.type === 'vignette');
                             return `
-                                <div class="location-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')"
-                                     style="background-color: white !important;">
+                                <div class="location-card-compact bg-gray-700 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer"
+                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')">
                                     <div class="flex items-center space-x-3">
                                         ${thumbnailImage ? `
                                             <img src="${thumbnailImage.url}" alt="${location.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2"
-                                                 style="border-color: #940000 !important;">
+                                                 class="w-10 h-10 rounded-full object-cover border-2 border-purple-500">
                                         ` : `
-                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
-                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
-                                                <i class="fas fa-map-marker-alt text-sm" style="color: white !important;"></i>
+                                            <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center border-2 border-purple-500">
+                                                <i class="fas fa-map-marker-alt text-white text-sm"></i>
                                             </div>
                                         `}
                                         <div class="flex-1">
-                                            <h4 class="font-medium" style="color: black !important;">${location.name}</h4>
+                                            <h4 class="font-medium text-white">${location.name}</h4>
                                         </div>
-                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
+                                        <i class="fas fa-chevron-right text-gray-400"></i>
                                     </div>
                                 </div>
                             `;
@@ -2268,32 +2259,29 @@ class InfoBoxManager {
         if (associatedRegions.length > 0) {
             html += `
                 <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
-                        <i class="fas fa-mountain mr-2" style="color: #940000 !important;"></i>
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center">
+                        <i class="fas fa-mountain mr-2 text-orange-400"></i>
                         Régions associées
                     </h3>
                     <div class="space-y-2">
                         ${associatedRegions.map(region => {
                             const thumbnailImage = region.images?.find(img => img.type === 'vignette');
                             return `
-                                <div class="region-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')"
-                                     style="background-color: white !important;">
+                                <div class="region-card-compact bg-gray-700 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer"
+                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')">
                                     <div class="flex items-center space-x-3">
                                         ${thumbnailImage ? `
                                             <img src="${thumbnailImage.url}" alt="${region.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2"
-                                                 style="border-color: #940000 !important;">
+                                                 class="w-10 h-10 rounded-full object-cover border-2 border-orange-500">
                                         ` : `
-                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
-                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
-                                                <i class="fas fa-mountain text-sm" style="color: white !important;"></i>
+                                            <div class="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center border-2 border-orange-500">
+                                                <i class="fas fa-mountain text-white text-sm"></i>
                                             </div>
                                         `}
                                         <div class="flex-1">
-                                            <h4 class="font-medium" style="color: black !important;">${region.name}</h4>
+                                            <h4 class="font-medium text-white">${region.name}</h4>
                                         </div>
-                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
+                                        <i class="fas fa-chevron-right text-gray-400"></i>
                                     </div>
                                 </div>
                             `;
@@ -2337,6 +2325,7 @@ class InfoBoxManager {
                 ${availableCharacters.map(character => {
                     const isAssociated = associatedCharacterIds.includes(character.id);
                     const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+
                     return `
                         <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
                             <input type="checkbox" 
@@ -2586,8 +2575,8 @@ class InfoBoxManager {
                 this.dataManager.saveRegionsToLocal();
 
                 // Re-render
-                if (typeof renderRegions === 'function') {
-                    renderRegions();
+                if (typeof window.renderRegions === 'function') {
+                    window.renderRegions();
                 }
 
                 console.log(`✅ [DELETE] Région supprimée: ${this.currentItem.name}`);
@@ -3067,4 +3056,3 @@ if (typeof module !== 'undefined' && module.exports) {
 export default InfoBoxManager;
 
 console.log("📋 InfoBoxManager module loaded");
-</replit_final_file>
