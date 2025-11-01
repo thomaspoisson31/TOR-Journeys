@@ -692,6 +692,10 @@ class InfoBoxManager {
         };
 
         this.showInfoBox(fakeEvent, location, 'location');
+        // Activer l'onglet "Texte" après l'affichage
+        setTimeout(() => {
+            this.switchTab('text');
+        }, 100);
     }
 
     showRegionFromCharacter(regionId) {
@@ -718,6 +722,10 @@ class InfoBoxManager {
         };
 
         this.showInfoBox(fakeEvent, region, 'region');
+        // Activer l'onglet "Texte" après l'affichage
+        setTimeout(() => {
+            this.switchTab('text');
+        }, 100);
     }
 
     renderEditMode() {
@@ -2455,6 +2463,10 @@ class InfoBoxManager {
         // Ouvrir la modale du personnage en surimpression
         if (window.infoBoxManager) {
             window.infoBoxManager.showInfoBox(fakeEvent, character, 'character');
+            // Activer l'onglet "Texte" après l'affichage
+            setTimeout(() => {
+                this.switchTab('text');
+            }, 100);
         }
     }
 
