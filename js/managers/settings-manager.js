@@ -175,6 +175,7 @@ class SettingsManager {
         switch (tabName) {
             case 'maps':
                 this.renderMapsGrid();
+                this.updateActiveMapDisplay();
                 break;
             case 'adventurers':
                 this.updatePartyContent();
@@ -188,6 +189,18 @@ class SettingsManager {
             case 'importExport':
                 // Aucune action spécifique requise ici, juste l'affichage
                 break;
+        }
+    }
+
+    updateActiveMapDisplay() {
+        const activePreview = document.getElementById('active-map-preview');
+        const activeName = document.getElementById('active-map-name');
+
+        if (activePreview) {
+            activePreview.src = this.activeMapUrl;
+        }
+        if (activeName) {
+            activeName.textContent = this.activeMapName;
         }
     }
 
@@ -446,23 +459,44 @@ class SettingsManager {
         const mapsGrid = document.getElementById('maps-grid');
         if (!mapsGrid) return;
 
+        // Compter les lieux et régions par carte
+        const countsByMap = {};
+        this.availableMaps.forEach(map => {
+            const locationsCount = window.locationsData?.locations?.filter(loc => loc.mapId === map.url).length || 0;
+            const regionsCount = window.regionsData?.regions?.filter(reg => reg.mapId === map.url).length || 0;
+            countsByMap[map.url] = { locations: locationsCount, regions: regionsCount };
+        });
+
         mapsGrid.innerHTML = this.availableMaps.map((map, index) => {
             const isActive = this.activeMapUrl === map.url;
-
             const mapWidth = map.width || 5103;
             const mapScale = map.scale || 600;
+            const counts = countsByMap[map.url] || { locations: 0, regions: 0 };
 
             return `
-                <div class="bg-gray-800 rounded-lg p-2 border ${isActive ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 hover:border-gray-600'} transition-all cursor-pointer"
+                <div class="bg-gray-800 rounded-lg p-3 border ${isActive ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 hover:border-gray-600'} transition-all cursor-pointer"
                      onclick="window.settingsManager.setActiveMap(${index})">
                     <div class="flex items-center space-x-3">
-                        <div class="w-16 h-16 bg-gray-700 rounded overflow-hidden flex-shrink-0">
+                        <div class="w-32 h-32 bg-gray-700 rounded overflow-hidden flex-shrink-0">
                             <img src="${map.url}" alt="${map.name}" class="w-full h-full object-cover map-preview-img" data-map-index="${index}"
                                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjc3NDhDIi8+Cjwvc3ZnPg=='">
                         </div>
                         <div class="flex-grow min-w-0">
-                            <div class="text-sm font-medium text-white truncate">${map.name}</div>
-                            <div class="text-xs text-gray-400 mt-0.5" id="map-dims-${index}">${mapWidth}px • ${mapScale} miles</div>
+                            <div class="text-sm font-medium text-white truncate mb-1">${map.name}</div>
+                            <div class="text-xs text-gray-400 mb-1" id="map-dims-${index}">${mapWidth} × ${mapHeight || 3296}px • ${mapScale} miles</div>
+                            <div class="text-xs text-gray-400">
+                                <span class="mr-2"><i class="fas fa-map-marker-alt mr-1"></i>${counts.locations} lieu${counts.locations > 1 ? 'x' : ''}</span>
+                                <span><i class="fas fa-draw-polygon mr-1"></i>${counts.regions} région${counts.regions > 1 ? 's' : ''}</span>
+                            </div>
+                            ${isActive ? `
+                            <div class="mt-2 pt-2 border-t border-gray-600">
+                                <button class="w-full px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-xs text-white transition-colors flex items-center justify-center space-x-1" 
+                                        onclick="event.stopPropagation(); window.settingsManager.deleteAllLocationsAndRegions()">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span>Supprimer tous les Lieux et Régions</span>
+                                </button>
+                            </div>
+                            ` : ''}
                         </div>
                         <div class="flex flex-col gap-1">
                             <button class="p-1.5 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 rounded transition-colors" 
