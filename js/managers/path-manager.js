@@ -584,19 +584,23 @@ class PathManager {
         const mapImage = document.getElementById('map-image');
         const actualMapWidth = mapImage?.naturalWidth || window.MAP_WIDTH || 5103;
         
-        // Récupérer l'échelle de la carte active depuis le SettingsManager
+        // Récupérer l'échelle ET la vitesse de la carte active depuis le SettingsManager
         let MAP_DISTANCE_MILES = 600; // Valeur par défaut
+        let milesPerDay = 20; // Valeur par défaut
+        
         if (window.settingsManager && window.settingsManager.availableMaps) {
             const activeMap = window.settingsManager.availableMaps.find(
                 m => m.url === window.settingsManager.activeMapUrl
             );
-            if (activeMap && activeMap.scale) {
-                MAP_DISTANCE_MILES = activeMap.scale;
+            if (activeMap) {
+                if (activeMap.scale) {
+                    MAP_DISTANCE_MILES = activeMap.scale;
+                }
+                if (activeMap.milesPerDay) {
+                    milesPerDay = activeMap.milesPerDay;
+                }
             }
         }
-        
-        // Utiliser MILES_PER_DAY si défini, sinon 20 par défaut
-        const milesPerDay = this.mapConstants.MILES_PER_DAY || 20;
         
         // Convertir pixels en miles (basé sur les constantes de la carte)
         const miles = this.totalDistance * (MAP_DISTANCE_MILES / actualMapWidth);

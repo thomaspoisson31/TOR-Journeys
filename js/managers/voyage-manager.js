@@ -111,8 +111,13 @@ class VoyageManager {
         // Mettre à jour l'échelle depuis la carte active
         this.updateMapScale();
         
-        // Utiliser MILES_PER_DAY si défini, sinon 20 par défaut
-        const milesPerDay = this.MILES_PER_DAY || 20;
+        // Récupérer milesPerDay depuis la carte active
+        let milesPerDay = 20; // Valeur par défaut
+        const activeMap = window.settingsManager?.availableMaps?.find(m => m.url === window.settingsManager.activeMapUrl);
+        if (activeMap && activeMap.milesPerDay) {
+            milesPerDay = activeMap.milesPerDay;
+            console.log(`🗺️ VoyageManager: vitesse mise à jour à ${milesPerDay} miles/jour`);
+        }
         
         // Calculate total journey duration using global variables
         const miles = totalPathPixels * (this.MAP_DISTANCE_MILES / actualMapWidth);
