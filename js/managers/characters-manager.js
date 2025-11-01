@@ -1,4 +1,3 @@
-
 /**
  * CharactersManager - Gestion des personnages de l'aventure
  */
@@ -6,7 +5,7 @@ class CharactersManager {
     constructor() {
         this.characters = [];
         this.currentCharacter = null;
-        
+
         console.log("👥 CharactersManager initialized");
     }
 
@@ -38,11 +37,11 @@ class CharactersManager {
         // Boutons de la modale d'ajout
         const cancelAddBtn = document.getElementById('cancel-add-character');
         const confirmAddBtn = document.getElementById('confirm-add-character');
-        
+
         if (cancelAddBtn) {
             cancelAddBtn.addEventListener('click', () => this.closeAddCharacterModal());
         }
-        
+
         if (confirmAddBtn) {
             confirmAddBtn.addEventListener('click', () => this.confirmAddCharacter());
         }
@@ -66,7 +65,7 @@ class CharactersManager {
 
     saveCharactersToLocal() {
         localStorage.setItem('middleEarthCharacters', JSON.stringify({ characters: this.characters }));
-        
+
         // Synchronisation cloud
         if (typeof scheduleAutoSync === 'function') {
             scheduleAutoSync();
@@ -167,8 +166,9 @@ class CharactersManager {
             return [];
         }
 
-        const locationsData = window.locationsData;
-        if (!locationsData || !locationsData.locations) {
+        // Correction: S'assurer que window.locationsData est défini avant d'y accéder
+        const locationsData = window.locationsData || { locations: [] };
+        if (!locationsData.locations) {
             return [];
         }
 
@@ -185,8 +185,9 @@ class CharactersManager {
             return [];
         }
 
-        const regionsData = window.regionsData;
-        if (!regionsData || !regionsData.regions) {
+        // Correction: S'assurer que window.regionsData est défini avant d'y accéder
+        const regionsData = window.regionsData || { regions: [] };
+        if (!regionsData.regions) {
             return [];
         }
 
@@ -202,12 +203,12 @@ class CharactersManager {
         const modal = document.getElementById('add-character-modal');
         if (modal) {
             modal.classList.remove('hidden');
-            
+
             // Réinitialiser le formulaire
             document.getElementById('character-name-input').value = '';
             document.getElementById('character-desc-input').value = '';
             document.getElementById('character-type-pj').checked = true;
-            
+
             // Réinitialiser le composant d'upload
             const uploadContainer = document.getElementById('character-image-upload-container');
             if (uploadContainer && window.uploadManager) {
@@ -218,7 +219,7 @@ class CharactersManager {
                     }
                 });
             }
-            
+
             // Réinitialiser la liste des images
             this.tempCharacterImages = [];
             this.updateImagesList();
@@ -352,26 +353,28 @@ class CharactersManager {
 
         this.characters.push(newCharacter);
         this.saveCharactersToLocal();
-        
+
         this.closeAddCharacterModal();
         this.renderCharactersList();
-        
+
         console.log(`✅ Personnage créé: ${name} (${type}) avec mapId: ${activeMapId}`);
     }
 
     showCharacterInfoBox(characterId) {
-        // Gérer les ID string et number
         const character = this.characters.find(c => String(c.id) === String(characterId));
         if (!character) {
             console.warn(`Personnage non trouvé avec l'ID: ${characterId}`);
             return;
         }
 
-        this.currentCharacter = character;
+        // Fermer la modale de personnages
         this.closeCharactersModal();
 
         // Utiliser la même infobox que les lieux
         if (window.infoBoxManager) {
+            // Réinitialiser previousInfoBox car on vient de la liste des personnages, pas d'une InfoBox
+            window.infoBoxManager.previousInfoBox = null;
+
             // Créer un événement simulé pour le positionnement
             const fakeEvent = {
                 clientX: window.innerWidth / 2,
@@ -393,13 +396,13 @@ class CharactersManager {
 
         this.characters.splice(index, 1);
         this.saveCharactersToLocal();
-        
+
         // Fermer l'infobox et rafraîchir la liste
         if (window.infoBoxManager) {
             window.infoBoxManager.hideInfoBox();
         }
         this.openCharactersModal();
-        
+
         console.log(`🗑️ Personnage supprimé: ${character.name}`);
     }
 
@@ -412,7 +415,7 @@ class CharactersManager {
 
         Object.assign(character, updates);
         this.saveCharactersToLocal();
-        
+
         console.log(`✏️ Personnage mis à jour: ${character.name}`);
     }
 
@@ -522,7 +525,7 @@ class CharactersManager {
                 console.log("📥 Mode MERGE - Fusion des personnages");
                 importedCharacters.forEach(importedChar => {
                     const existingChar = this.characters.find(c => c.name === importedChar.name);
-                    
+
                     if (existingChar) {
                         // Mettre à jour le personnage existant
                         Object.assign(existingChar, {

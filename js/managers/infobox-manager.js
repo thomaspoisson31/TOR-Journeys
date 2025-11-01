@@ -119,8 +119,8 @@ class InfoBoxManager {
     hideInfoBox() {
         const infoBox = document.getElementById('info-box');
         if (infoBox) {
-            // Vérifier s'il y a une infobox précédente à afficher
-            if (this.previousInfoBox) {
+            // Vérifier s'il y a une infobox précédente à afficher ET qu'elle vient bien d'une InfoBox
+            if (this.previousInfoBox && this.previousInfoBox.fromInfoBox) {
                 console.log("🔙 Retour à l'infobox précédente:", this.previousInfoBox.item.name);
                 const previous = this.previousInfoBox;
                 const shouldShowPersonnagesTab = previous.shouldShowPersonnagesTab;
@@ -150,6 +150,8 @@ class InfoBoxManager {
                 this.isEditMode = false;
                 this.isExpanded = false;
                 infoBox.classList.remove('expanded');
+                // Réinitialiser previousInfoBox dans tous les cas
+                this.previousInfoBox = null;
             }
         }
     }
@@ -1909,8 +1911,9 @@ class InfoBoxManager {
         const lieuxRegionsContent = document.getElementById('lieux-regions-content');
         if (!lieuxRegionsContent) return;
 
-        // Récupérer les IDs des lieux/régions associés
-        const associatedLocationRegionIds = this.currentItem.associatedLocations || this.currentItem.associatedRegions || [];
+        // Récupérer les IDs des lieux ET régions associés
+        const associatedLocationIds = this.currentItem.associatedLocations || [];
+        const associatedRegionIds = this.currentItem.associatedRegions || [];
 
         if (!window.locationsManager && !window.regionsManager) {
             lieuxRegionsContent.innerHTML = '<p class="text-gray-400 italic text-sm">Gestionnaire de lieux/régions non disponible.</p>';
@@ -1920,12 +1923,19 @@ class InfoBoxManager {
         // Combiner les lieux et régions pour le filtrage
         const allLocations = window.locationsManager?.locationsData?.locations || [];
         const allRegions = window.regionsManager?.regionsData?.regions || [];
-        const combinedItems = [...allLocations, ...allRegions];
-
-        // Filtrer les lieux/régions associés à ce personnage
-        const associatedItems = combinedItems.filter(item =>
-            associatedLocationRegionIds.includes(String(item.id))
+        
+        // Filtrer les lieux associés à ce personnage
+        const associatedLocations = allLocations.filter(item =>
+            associatedLocationIds.includes(String(item.id))
         );
+        
+        // Filtrer les régions associées à ce personnage
+        const associatedRegions = allRegions.filter(item =>
+            associatedRegionIds.includes(String(item.id))
+        );
+        
+        // Combiner les deux listes
+        const associatedItems = [...associatedLocations, ...associatedRegions];
 
         if (associatedItems.length === 0) {
             lieuxRegionsContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun lieu ou région associé à ce personnage.</p>';
@@ -2121,7 +2131,8 @@ class InfoBoxManager {
             this.previousInfoBox = {
                 item: this.currentItem,
                 type: this.currentType,
-                shouldShowPersonnagesTab: true // Flag pour afficher l'onglet Personnages au retour
+                shouldShowPersonnagesTab: true, // Flag pour afficher l'onglet Personnages au retour
+                fromInfoBox: true // Flag indiquant que l'appel vient d'une InfoBox
             };
         }
 
