@@ -1418,6 +1418,36 @@ class InfoBoxManager {
             }
         }
 
+        // Log des personnages APRÈS modification bidirectionnelle
+        if (window.charactersManager && this.currentItem.associatedCharacters) {
+            console.log(`🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:`);
+            this.currentItem.associatedCharacters.forEach(charId => {
+                const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
+                if (char) {
+                    console.log(`  - ${char.name} (id: ${char.id}):`, {
+                        associatedLocations: char.associatedLocations,
+                        associatedRegions: char.associatedRegions
+                    });
+                }
+            });
+
+            // IMPORTANT: Si l'objet courant est un personnage affiché, le mettre à jour
+            if (this.currentType === 'character') {
+                const updatedChar = window.charactersManager.characters.find(
+                    c => String(c.id) === String(this.currentItem.id)
+                );
+                if (updatedChar) {
+                    this.currentItem = updatedChar;
+                    console.log(`🔄 [SAVE] Objet character rafraîchi dans InfoBox`);
+                }
+            }
+        }
+
+        // Re-render les lieux
+        if (window.renderLocations) {
+            window.renderLocations();
+        }
+
         // Passer en mode lecture
         this.isEditMode = false;
         this.updateInfoBoxContent();

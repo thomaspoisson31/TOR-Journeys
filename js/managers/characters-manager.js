@@ -361,11 +361,19 @@ class CharactersManager {
     }
 
     showCharacterInfoBox(characterId) {
+        // Recharger les données depuis localStorage pour avoir les associations à jour
+        this.loadCharactersFromLocal();
+        
         const character = this.characters.find(c => String(c.id) === String(characterId));
         if (!character) {
             console.warn(`Personnage non trouvé avec l'ID: ${characterId}`);
             return;
         }
+
+        console.log(`👁️ [showCharacterInfoBox] Affichage de "${character.name}" avec:`, {
+            associatedLocations: character.associatedLocations || [],
+            associatedRegions: character.associatedRegions || []
+        });
 
         // Fermer la modale de personnages
         this.closeCharactersModal();
