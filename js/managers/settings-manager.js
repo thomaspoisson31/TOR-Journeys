@@ -54,13 +54,21 @@ class SettingsManager {
                     name: 'Carte Eriador par défaut',
                     url: 'fr_tor_2nd_eriadors_map_page-0001.webp',
                     isDefault: true,
-                    isActive: true
+                    isActive: true,
+                    milesPerDay: 20
                 }
             ];
             this.activeMapUrl = this.availableMaps[0].url;
             this.activeMapName = this.availableMaps[0].name;
             this.saveMapsData();
         }
+
+        // Migrer les cartes existantes pour ajouter milesPerDay si manquant
+        this.availableMaps.forEach(map => {
+            if (!map.milesPerDay) {
+                map.milesPerDay = 20; // Valeur par défaut
+            }
+        });
 
         // Charger les descriptions
         this.partyDescription = localStorage.getItem('partyDescription') || '';
@@ -290,7 +298,8 @@ class SettingsManager {
             isDefault: false,
             width: uploadResult.width || 5000,
             height: uploadResult.height || 3230,
-            scale: 600 // Distance en miles par défaut (comme MAP_DISTANCE_MILES)
+            scale: 600, // Distance en miles par défaut (comme MAP_DISTANCE_MILES)
+            milesPerDay: 20 // Vitesse par défaut
         };
 
         this.availableMaps.push(newMap);
@@ -480,7 +489,7 @@ class SettingsManager {
                         </div>
                         <div class="flex-grow min-w-0">
                             <div class="text-base font-medium text-white truncate mb-2">${map.name}</div>
-                            <div class="text-xs text-gray-400 mb-1" id="map-dims-${index}">${mapWidth}px • ${mapScale} miles</div>
+                            <div class="text-xs text-gray-400 mb-1" id="map-dims-${index}">${mapWidth}px • ${mapScale} miles • ${map.milesPerDay || 20} mi/j</div>
                             <div class="text-xs text-gray-400 mb-2">
                                 <i class="fas fa-map-marker-alt mr-1"></i>${locationsCount} lieu${locationsCount > 1 ? 'x' : ''} • 
                                 <i class="fas fa-draw-polygon mr-1"></i>${regionsCount} région${regionsCount > 1 ? 's' : ''}
@@ -536,7 +545,8 @@ class SettingsManager {
                 const dimsElement = document.getElementById(`map-dims-${index}`);
                 if (dimsElement) {
                     const mapScale = map.scale || 600;
-                    dimsElement.textContent = `${realWidth} × ${realHeight}px • ${mapScale} miles`;
+                    const milesPerDay = map.milesPerDay || 20;
+                    dimsElement.textContent = `${realWidth} × ${realHeight}px • ${mapScale} miles • ${milesPerDay} mi/j`;
                 }
             };
             img.onerror = () => {
@@ -570,16 +580,20 @@ class SettingsManager {
         this.activeMapUrl = map.url;
         this.activeMapName = map.name;
 
-        // Mettre à jour l'échelle pour le PathManager
+        // Mettre à jour l'échelle et la vitesse pour le PathManager
         if (window.pathManager) {
             window.pathManager.mapConstants.MAP_DISTANCE_MILES = map.scale || 600;
+            window.pathManager.mapConstants.MILES_PER_DAY = map.milesPerDay || 20;
             console.log(`🗺️ PathManager: échelle de carte mise à jour : ${map.scale || 600} miles`);
+            console.log(`🗺️ PathManager: vitesse mise à jour : ${map.milesPerDay || 20} miles/jour`);
         }
 
-        // Mettre à jour l'échelle pour le VoyageManager
+        // Mettre à jour l'échelle et la vitesse pour le VoyageManager
         if (window.voyageManager) {
             window.voyageManager.MAP_DISTANCE_MILES = map.scale || 600;
+            window.voyageManager.MILES_PER_DAY = map.milesPerDay || 20;
             console.log(`🗺️ VoyageManager: échelle de carte mise à jour : ${map.scale || 600} miles`);
+            console.log(`🗺️ VoyageManager: vitesse mise à jour : ${map.milesPerDay || 20} miles/jour`);
         }
 
         // Mettre à jour l'image de la carte principale
@@ -672,13 +686,40 @@ class SettingsManager {
             const scaleNum = parseFloat(newScale);
             if (!isNaN(scaleNum) && scaleNum > 0) {
                 map.scale = scaleNum;
+
+                // Demander aussi la vitesse de déplacement
+                const newSpeed = prompt(
+                    `Vitesse de déplacement pour "${map.name}"\n\n` +
+                    `Distance parcourue par jour (en miles) :\n` +
+                    `(actuellement : ${map.milesPerDay || 20} miles/jour)`,
+                    map.milesPerDay || 20
+                );
+
+                if (newSpeed !== null) {
+                    const speedNum = parseFloat(newSpeed);
+                    if (!isNaN(speedNum) && speedNum > 0) {
+                        map.milesPerDay = speedNum;
+                    } else {
+                        alert('Veuillez entrer une valeur numérique positive pour la vitesse.');
+                        return;
+                    }
+                }
+
                 this.saveMapsData();
                 this.renderMapsGrid();
 
                 // Mettre à jour les constantes si c'est la carte active
-                if (map.url === this.activeMapUrl && window.pathManager) {
-                    window.pathManager.mapConstants.MAP_DISTANCE_MILES = scaleNum;
-                    console.log(`✅ Échelle mise à jour : ${scaleNum} miles`);
+                if (map.url === this.activeMapUrl) {
+                    if (window.pathManager) {
+                        window.pathManager.mapConstants.MAP_DISTANCE_MILES = scaleNum;
+                        window.pathManager.mapConstants.MILES_PER_DAY = map.milesPerDay || 20;
+                        console.log(`✅ Échelle mise à jour : ${scaleNum} miles`);
+                        console.log(`✅ Vitesse mise à jour : ${map.milesPerDay || 20} miles/jour`);
+                    }
+                    if (window.voyageManager) {
+                        window.voyageManager.MAP_DISTANCE_MILES = scaleNum;
+                        window.voyageManager.MILES_PER_DAY = map.milesPerDay || 20;
+                    }
                 }
             } else {
                 alert('Veuillez entrer une valeur numérique positive.');
@@ -1197,12 +1238,13 @@ class SettingsManager {
 
         // Charger les cartes
         if (settings.availableMaps && Array.isArray(settings.availableMaps)) {
-            // Migrer les anciennes cartes sans dimensions/échelle
+            // Migrer les anciennes cartes sans dimensions/échelle/vitesse
             this.availableMaps = settings.availableMaps.map(map => ({
                 ...map,
                 width: map.width || 5103,
                 height: map.height || 3296,
-                scale: map.scale || 600
+                scale: map.scale || 600,
+                milesPerDay: map.milesPerDay || 20
             }));
             console.log('✅ Cartes chargées:', this.availableMaps.length);
         }

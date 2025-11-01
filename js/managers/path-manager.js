@@ -595,11 +595,14 @@ class PathManager {
             }
         }
         
+        // Utiliser MILES_PER_DAY si défini, sinon 20 par défaut
+        const milesPerDay = this.mapConstants.MILES_PER_DAY || 20;
+        
         // Convertir pixels en miles (basé sur les constantes de la carte)
         const miles = this.totalDistance * (MAP_DISTANCE_MILES / actualMapWidth);
-        const days = Math.ceil(miles / 20); // 20 miles par jour
+        const days = Math.ceil(miles / milesPerDay);
 
-        console.log(`📏 Calcul distance: ${this.totalDistance.toFixed(0)}px × (${MAP_DISTANCE_MILES} miles / ${actualMapWidth}px) = ${miles.toFixed(0)} miles`);
+        console.log(`📏 Calcul distance: ${this.totalDistance.toFixed(0)}px × (${MAP_DISTANCE_MILES} miles / ${actualMapWidth}px) = ${miles.toFixed(0)} miles ÷ ${milesPerDay} mi/j`);
 
         distanceDisplay.innerHTML = `
             <div class="text-sm">

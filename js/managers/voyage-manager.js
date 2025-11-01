@@ -111,12 +111,15 @@ class VoyageManager {
         // Mettre à jour l'échelle depuis la carte active
         this.updateMapScale();
         
+        // Utiliser MILES_PER_DAY si défini, sinon 20 par défaut
+        const milesPerDay = this.MILES_PER_DAY || 20;
+        
         // Calculate total journey duration using global variables
         const miles = totalPathPixels * (this.MAP_DISTANCE_MILES / actualMapWidth);
-        const days = Math.ceil(miles / 20); // 20 miles per day
+        const days = Math.ceil(miles / milesPerDay);
         this.totalJourneyDays = Math.max(1, days);
         
-        console.log(`🗺️ VoyageManager calcul: ${totalPathPixels.toFixed(0)}px × (${this.MAP_DISTANCE_MILES} miles / ${actualMapWidth}px) = ${miles.toFixed(0)} miles = ${days} jours`);
+        console.log(`🗺️ VoyageManager calcul: ${totalPathPixels.toFixed(0)}px × (${this.MAP_DISTANCE_MILES} miles / ${actualMapWidth}px) = ${miles.toFixed(0)} miles ÷ ${milesPerDay} mi/j = ${days} jours`);
 
         // Récupérer ou définir la date de début du voyage
         this.journeyStartDate = this.getJourneyStartDate();
