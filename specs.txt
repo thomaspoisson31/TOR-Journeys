@@ -270,18 +270,25 @@ Structure des clés:
   
 Format des données stockées:
 {
-  "locations": { "locations": [...] },
-  "regions": { "regions": [...] },
+  "locations": { "locations": [...] },  // Chaque location contient associatedCharacters[]
+  "regions": { "regions": [...] },      // Chaque region contient associatedCharacters[]
   "calendar": { "day": int, "month": int, "season": string },
   "settings": { "availableMaps": [...], "activeMapUrl": string },
   "journal": { "voyages": [...] },
   "position": { "x": int, "y": int, "mapId": string },
   "filtersByMap": { [mapId]: {...} },
-  "characters": { "characters": [...] },
+  "characters": { "characters": [...] },  // Chaque character contient associatedLocations[] et associatedRegions[]
   "_environment": "dev_" | "prod_",
   "_saved_at": ISO_timestamp,
   "_sync_timestamp": milliseconds_epoch
 }
+
+Note importante sur les relations:
+- Les relations Personnages ↔ Lieux/Régions sont BIDIRECTIONNELLES
+- Locations/Regions stockent associatedCharacters (array d'IDs)
+- Characters stockent associatedLocations et associatedRegions (arrays d'IDs)
+- Ces relations sont synchronisées automatiquement lors des sauvegardes cloud
+- Format d'export JSON conserve toutes les relations bidirectionnelles
 
 Format Location:
 {
@@ -296,7 +303,8 @@ Format Location:
   mapId: string | undefined,
   Rumeurs: string[],  // Interface avec fond blanc pour édition, séparateur "---" pour créer plusieurs rumeurs
   Tradition_Ancienne: string,
-  evenements_voyage: object[]
+  evenements_voyage: object[],
+  associatedCharacters: [characterId1, characterId2, ...]  // IDs des personnages associés (bidirectionnel)
 }
 
 Format Region:
@@ -310,7 +318,8 @@ Format Region:
   known: boolean,
   visited: boolean,
   mapId: string | undefined,
-  type: "region"
+  type: "region",
+  associatedCharacters: [characterId1, characterId2, ...]  // IDs des personnages associés (bidirectionnel)
 }
 
 Format Character:
@@ -319,7 +328,9 @@ Format Character:
   name: string,
   description: string,
   type: "PJ" | "PNJ",
-  images: [{ url, type }]
+  images: [{ url, type }],
+  associatedLocations: [locationId1, locationId2, ...],  // IDs des lieux associés
+  associatedRegions: [regionId1, regionId2, ...]         // IDs des régions associées
 }
 
 API ENDPOINTS
@@ -412,7 +423,16 @@ Principe de double stockage:
 RÈGLES MÉTIER
 -------------
 
-1. VERSIONING ET DÉVELOPPEMENT:
+1. RELATIONS BIDIRECTIONNELLES PERSONNAGES-LIEUX/RÉGIONS:
+   - Architecture: relations stockées des deux côtés pour intégrité des données
+   - Locations/Regions: tableau associatedCharacters[] avec IDs des personnages
+   - Characters: tableaux associatedLocations[] et associatedRegions[] avec IDs
+   - Synchronisation: automatique lors de toute modification via InfoBoxManager
+   - Persistance: cloud ET export JSON conservent les relations complètes
+   - Import: relations restaurées automatiquement des deux côtés
+   - Suppression: si un personnage/lieu est supprimé, nettoyer les références
+
+2. VERSIONING ET DÉVELOPPEMENT:
    - Incrémenter version.json après chaque modification significative
    - Documenter les changements dans specs.txt (section ÉVOLUTIONS RÉCENTES)
    - Maintenir la cohérence entre version.json, specs.txt et code
@@ -487,7 +507,15 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Améliorations UX/UI (v1.3.1)
+1. Relations Personnages-Lieux/Régions (v1.3.2)
+   - Sauvegarde cloud des relations bidirectionnelles
+   - Export JSON avec relations complètes (associatedCharacters, associatedLocations, associatedRegions)
+   - Import automatique des relations depuis JSON
+   - Synchronisation bidirectionnelle lors des modifications
+   - AuthManager et ImportExportManager mis à jour pour gérer les relations
+   - Fichiers concernés: auth-manager.js, import-export-manager.js
+
+2. Améliorations UX/UI (v1.3.1)
    - Amélioration du glisser-déposer des lieux : distinction entre simple clic (ouvrir infobox) et drag (déplacer)
    - Seuil de détection du drag : 3 pixels minimum pour éviter les faux positifs
    - Curseur adaptatif : `move` au survol, `grabbing` pendant le drag, `pointer` par défaut
