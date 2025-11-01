@@ -125,17 +125,17 @@ class InfoBoxManager {
                 const previous = this.previousInfoBox;
                 const shouldShowPersonnagesTab = previous.shouldShowPersonnagesTab;
                 this.previousInfoBox = null; // Réinitialiser pour éviter une boucle
-                
+
                 // Créer un événement simulé pour le positionnement
                 const fakeEvent = {
                     clientX: window.innerWidth / 2,
                     clientY: window.innerHeight / 2,
                     type: 'click'
                 };
-                
+
                 // Réafficher l'infobox précédente
                 this.showInfoBox(fakeEvent, previous.item, previous.type);
-                
+
                 // Si demandé, afficher l'onglet Personnages
                 if (shouldShowPersonnagesTab) {
                     setTimeout(() => {
@@ -811,6 +811,12 @@ class InfoBoxManager {
             }
         }
 
+        // Insérer le cercle au début du header, avant le titre
+        const titleContainer = infoBoxHeader.querySelector('.flex.items-center.flex-grow');
+        if (titleContainer) {
+            titleContainer.insertBefore(circle, titleContainer.firstChild);
+        }
+
         // Si une vignette existe, l'afficher
         if (thumbnailUrl) {
             const img = document.createElement('img');
@@ -819,12 +825,6 @@ class InfoBoxManager {
             img.style.height = '100%';
             img.style.objectFit = 'cover';
             circle.appendChild(img);
-        }
-
-        // Insérer le cercle au début du header, avant le titre
-        const titleContainer = infoBoxHeader.querySelector('.flex.items-center.flex-grow');
-        if (titleContainer) {
-            titleContainer.insertBefore(circle, titleContainer.firstChild);
         }
     }
 
@@ -993,7 +993,7 @@ class InfoBoxManager {
             let locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
                 String(loc.id) === String(this.currentItem.id)
             );
-            
+
             // Si le lieu n'existe pas encore, l'ajouter au tableau
             if (locationIndex === -1) {
                 console.log(`ℹ️ [SAVE] Nouveau lieu détecté: ${this.currentItem.id}, ajout au tableau`);
@@ -1766,7 +1766,7 @@ class InfoBoxManager {
                 ${availableCharacters.map(character => {
                     const isAssociated = associatedCharacterIds.includes(character.id);
                     const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-                    
+
                     return `
                         <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
                             <input type="checkbox" 
@@ -2158,6 +2158,130 @@ class InfoBoxManager {
         if (imagesList) {
             imagesList.innerHTML = this.renderEditImagesList();
         }
+    }
+
+    // Fonctions pour la gestion des associations lieu/région-personnage
+    saveAssociatedCharacters() {
+        if (!this.currentEntity || this.currentEntityType !== 'location') {
+            console.warn('Tentative de sauvegarde de personnages pour une entité non-lieu');
+            return;
+        }
+
+        const checkboxes = document.querySelectorAll('.character-checkbox');
+        const selectedCharacterIds = [];
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedCharacterIds.push(checkbox.dataset.characterId);
+            }
+        });
+
+        console.log(`💾 Sauvegarde de ${selectedCharacterIds.length} personnages pour le lieu ${this.currentEntity.name}`);
+
+        // Mettre à jour l'entité actuelle (lieu)
+        this.currentEntity.associatedCharacters = selectedCharacterIds;
+
+        // NOUVEAU : Mise à jour bidirectionnelle - mettre à jour les personnages également
+        if (window.charactersManager) {
+            const locationId = this.currentEntity.id;
+
+            // Pour chaque personnage, vérifier s'il doit être associé ou dissocié de ce lieu
+            window.charactersManager.characters.forEach(character => {
+                const isSelected = selectedCharacterIds.includes(String(character.id));
+
+                // Initialiser associatedLocations si nécessaire
+                if (!character.associatedLocations) {
+                    character.associatedLocations = [];
+                }
+
+                const isAlreadyAssociated = character.associatedLocations.includes(String(locationId));
+
+                if (isSelected && !isAlreadyAssociated) {
+                    // Ajouter le lieu au personnage
+                    character.associatedLocations.push(String(locationId));
+                    console.log(`✅ Personnage ${character.name} associé au lieu ${this.currentEntity.name}`);
+                } else if (!isSelected && isAlreadyAssociated) {
+                    // Retirer le lieu du personnage
+                    character.associatedLocations = character.associatedLocations.filter(
+                        locId => String(locId) !== String(locationId)
+                    );
+                    console.log(`❌ Personnage ${character.name} dissocié du lieu ${this.currentEntity.name}`);
+                }
+            });
+
+            // Sauvegarder les personnages
+            window.charactersManager.saveCharactersToLocal();
+        }
+
+        // Sauvegarder via le DataManager
+        if (window.dataManager) {
+            window.dataManager.saveLocationsToLocal();
+        }
+
+        // Rafraîchir l'affichage
+        this.renderPersonnagesTab();
+    }
+
+
+    saveAssociatedCharactersForRegion() {
+        if (!this.currentEntity || this.currentEntityType !== 'region') {
+            console.warn('Tentative de sauvegarde de personnages pour une entité non-région');
+            return;
+        }
+
+        const checkboxes = document.querySelectorAll('.character-checkbox');
+        const selectedCharacterIds = [];
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedCharacterIds.push(checkbox.dataset.characterId);
+            }
+        });
+
+        console.log(`💾 Sauvegarde de ${selectedCharacterIds.length} personnages pour la région ${this.currentEntity.name}`);
+
+        // Mettre à jour l'entité actuelle (région)
+        this.currentEntity.associatedCharacters = selectedCharacterIds;
+
+        // NOUVEAU : Mise à jour bidirectionnelle - mettre à jour les personnages également
+        if (window.charactersManager) {
+            const regionId = this.currentEntity.id;
+
+            // Pour chaque personnage, vérifier s'il doit être associé ou dissocié de cette région
+            window.charactersManager.characters.forEach(character => {
+                const isSelected = selectedCharacterIds.includes(String(character.id));
+
+                // Initialiser associatedRegions si nécessaire
+                if (!character.associatedRegions) {
+                    character.associatedRegions = [];
+                }
+
+                const isAlreadyAssociated = character.associatedRegions.includes(String(regionId));
+
+                if (isSelected && !isAlreadyAssociated) {
+                    // Ajouter la région au personnage
+                    character.associatedRegions.push(String(regionId));
+                    console.log(`✅ Personnage ${character.name} associé à la région ${this.currentEntity.name}`);
+                } else if (!isSelected && isAlreadyAssociated) {
+                    // Retirer la région du personnage
+                    character.associatedRegions = character.associatedRegions.filter(
+                        regId => String(regId) !== String(regionId)
+                    );
+                    console.log(`❌ Personnage ${character.name} dissocié de la région ${this.currentEntity.name}`);
+                }
+            });
+
+            // Sauvegarder les personnages
+            window.charactersManager.saveCharactersToLocal();
+        }
+
+        // Sauvegarder via le DataManager
+        if (window.dataManager) {
+            window.dataManager.saveRegionsToLocal();
+        }
+
+        // Rafraîchir l'affichage
+        this.renderPersonnagesTabForRegion();
     }
 }
 
