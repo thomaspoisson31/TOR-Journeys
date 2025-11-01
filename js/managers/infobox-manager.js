@@ -171,26 +171,26 @@ class InfoBoxManager {
         if (targetButton) targetButton.classList.add('active');
         if (targetContent) targetContent.classList.add('active');
 
-        // Gérer l'affichage conditionnel des onglets pour les personnages
+        // Gérer l'affichage conditionnel des onglets selon le type d'entité
         const isCharacter = this.currentType === 'character';
         const personnagesTabButton = document.querySelector('.tab-button[data-tab="personnages"]');
         const lieuxRegionsTabButton = document.querySelector('.tab-button[data-tab="lieux-regions"]');
 
-        if (personnagesTabButton) {
-            if (isCharacter) {
-                personnagesTabButton.style.display = 'none'; // Masquer l'onglet Personnages pour les personnages
-                if (lieuxRegionsTabButton) {
-                    lieuxRegionsTabButton.style.display = 'block'; // Afficher l'onglet Lieux/Régions
-                }
-                // Si on est sur un personnage et qu'on clique sur un autre onglet, on passe à l'onglet Lieux/Régions
-                if (tabName !== 'personnages' && !isCharacter) {
-                     this.switchTab('lieux-regions'); // Changer pour l'onglet Lieux/Régions
-                }
-            } else {
-                personnagesTabButton.style.display = 'block'; // Afficher l'onglet Personnages pour les lieux/régions
-                if (lieuxRegionsTabButton) {
-                    lieuxRegionsTabButton.style.display = 'none'; // Masquer l'onglet Lieux/Régions
-                }
+        if (isCharacter) {
+            // Pour les PERSONNAGES : masquer "Personnages", afficher "Lieux/Régions"
+            if (personnagesTabButton) {
+                personnagesTabButton.style.display = 'none';
+            }
+            if (lieuxRegionsTabButton) {
+                lieuxRegionsTabButton.style.display = 'block';
+            }
+        } else {
+            // Pour les LIEUX/RÉGIONS : afficher "Personnages", masquer "Lieux/Régions"
+            if (personnagesTabButton) {
+                personnagesTabButton.style.display = 'block';
+            }
+            if (lieuxRegionsTabButton) {
+                lieuxRegionsTabButton.style.display = 'none';
             }
         }
     }
