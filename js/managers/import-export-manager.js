@@ -81,6 +81,11 @@ class ImportExportManager {
                         exportLocation.Tradition_Ancienne = location.Tradition_Ancienne;
                     }
 
+                    // Ajouter les personnages associés
+                    if (location.associatedCharacters && location.associatedCharacters.length > 0) {
+                        exportLocation.associatedCharacters = location.associatedCharacters;
+                    }
+
                     allLocations.push(exportLocation);
                 });
             }
@@ -116,6 +121,9 @@ class ImportExportManager {
                     if (region.Rumeur) regionAsLocation.Rumeur = region.Rumeur;
                     if (region.Tradition_Ancienne) regionAsLocation.Tradition_Ancienne = region.Tradition_Ancienne;
                     if (region.images) regionAsLocation.images = region.images;
+                    if (region.associatedCharacters && region.associatedCharacters.length > 0) {
+                        regionAsLocation.associatedCharacters = region.associatedCharacters;
+                    }
 
                     allLocations.push(regionAsLocation);
                 });
@@ -345,6 +353,11 @@ class ImportExportManager {
                 region.Tradition_Ancienne = item.Tradition_Ancienne;
             }
 
+            // Ajouter les personnages associés
+            if (item.associatedCharacters && Array.isArray(item.associatedCharacters)) {
+                region.associatedCharacters = item.associatedCharacters;
+            }
+
             result.regions.push(region);
             console.log(`✅ Région importée: ${region.name} (${points.length} points, mapId: ${region.mapId || 'aucun'})`);
         }
@@ -409,6 +422,11 @@ class ImportExportManager {
             // Ajouter la tradition ancienne
             if (item.Tradition_Ancienne && item.Tradition_Ancienne !== "A definir") {
                 location.Tradition_Ancienne = item.Tradition_Ancienne;
+            }
+
+            // Ajouter les personnages associés
+            if (item.associatedCharacters && Array.isArray(item.associatedCharacters)) {
+                location.associatedCharacters = item.associatedCharacters;
             }
 
             result.locations.push(location);

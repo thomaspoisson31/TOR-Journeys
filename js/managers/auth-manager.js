@@ -345,141 +345,32 @@ class AuthManager {
     }
 
     collectCurrentContextData() {
-        const data = {};
+        this.logAuth("📦 Collecte des données du contexte actuel...");
 
-        // IMPORTANT: Stocker l'environnement actuel dans les données
-        data._environment = this._cachedEnvPrefix || 'prod_';
-        data._saved_at = new Date().toISOString();
+        // Collecter les personnages avec leurs relations
+        const charactersData = window.charactersManager?.charactersData || 
+                              JSON.parse(localStorage.getItem('middleEarthCharacters') || '{"characters":[]}');
 
-        // Collecter les données des lieux
-        if (window.locationsData) {
-            data.locations = window.locationsData;
-        }
+        const data = {
+            locations: window.locationsData || { locations: [] },
+            regions: window.regionsData || { regions: [] },
+            characters: charactersData,
+            calendar: {
+                currentDate: localStorage.getItem('currentDate') || null,
+                isCalendarMode: localStorage.getItem('isCalendarMode') === 'true'
+            },
+            settings: {
+                activeMapUrl: window.settingsManager?.activeMapUrl || null,
+                availableMaps: window.settingsManager?.availableMaps || []
+            },
+            journal: JSON.parse(localStorage.getItem('travelJournal') || '{}'),
+            position: JSON.parse(localStorage.getItem('adventurers_position') || 'null'),
+            filtersByMap: JSON.parse(localStorage.getItem('filtersByMap') || '{}')
+        };
 
-        // Collecter les données des régions
-        if (window.regionsData) {
-            data.regions = window.regionsData;
-        }
-
-        // Collecter les données de saison/calendrier
-        this.logAuth("📅 [collectCurrentContextData] CalendarManager existe:", !!window.calendarManager);
-        if (window.calendarManager) {
-            this.logAuth("📅 [collectCurrentContextData] Données calendar AVANT collecte:", {
-                currentSeason: window.calendarManager.currentSeason,
-                currentCalendarDate: window.calendarManager.currentCalendarDate,
-                calendarData: window.calendarManager.calendarData ? `${window.calendarManager.calendarData.length} mois` : null,
-                isCalendarMode: window.calendarManager.isCalendarMode
-            });
-
-            data.calendar = {
-                currentSeason: window.calendarManager.currentSeason,
-                currentCalendarDate: window.calendarManager.currentCalendarDate,
-                calendarData: window.calendarManager.calendarData,
-                isCalendarMode: window.calendarManager.isCalendarMode
-            };
-
-            this.logAuth("📅 [collectCurrentContextData] Données calendar APRÈS collecte:", data.calendar);
-        } else {
-            this.logAuth("⚠️ [collectCurrentContextData] CalendarManager n'existe PAS encore !");
-        }
-
-        // Collecter les paramètres de l'application
-        if (window.settingsManager) {
-            data.settings = window.settingsManager.getAllSettings();
-
-            // S'assurer que les cartes sont incluses
-            if (!data.settings.availableMaps && window.settingsManager.availableMaps) {
-                data.settings.availableMaps = window.settingsManager.availableMaps;
-            }
-            if (!data.settings.activeMapUrl && window.settingsManager.activeMapUrl) {
-                data.settings.activeMapUrl = window.settingsManager.activeMapUrl;
-            }
-            if (!data.settings.activeMapName && window.settingsManager.activeMapName) {
-                data.settings.activeMapName = window.settingsManager.activeMapName;
-            }
-
-            this.logAuth("⚙️ Paramètres collectés avec cartes:", {
-                availableMaps_count: data.settings.availableMaps?.length || 0,
-                activeMapUrl: data.settings.activeMapUrl,
-                activeMapName: data.settings.activeMapName
-            });
-        }
-
-        // Collecter le journal de voyage depuis localStorage
-        const savedJournal = localStorage.getItem('travelJournal');
-        if (savedJournal) {
-            try {
-                data.journal = JSON.parse(savedJournal);
-            } catch (e) {
-                console.error("Erreur lors de la collecte du journal:", e);
-            }
-        }
-
-        // Collecter les personnages
-        const savedCharacters = localStorage.getItem('middleEarthCharacters');
-        if (savedCharacters) {
-            try {
-                data.characters = JSON.parse(savedCharacters);
-                this.logAuth(`👥 ${data.characters.characters?.length || 0} personnages collectés`);
-            } catch (e) {
-                console.error("Erreur lors de la collecte des personnages:", e);
-            }
-        }
-
-        // Collecter les données d'aventure
-        const savedAdventure = localStorage.getItem('adventureData');
-        if (savedAdventure) {
-            try {
-                data.adventure = JSON.parse(savedAdventure);
-                this.logAuth("🎲 Données d'aventure collectées");
-            } catch (e) {
-                console.error("Erreur lors de la collecte de l'aventure:", e);
-            }
-        }
-
-        // Collecter la position du marqueur
-        if (window.positionManager) {
-            data.position = window.positionManager.getPosition();
-            this.logAuth("📍 Position du marqueur collectée:", data.position);
-        }
-
-        // Collecter l'état des filtres par carte
-        if (window.filterManager) {
-            // IMPORTANT: Forcer la sauvegarde des filtres actifs AVANT la collecte
-            const activeMapUrl = window.settingsManager?.activeMapUrl;
-            if (activeMapUrl) {
-                this.logAuth(`🔍 [collectCurrentContextData] Sauvegarde forcée des filtres actifs pour ${activeMapUrl}`);
-                window.filterManager.saveFiltersForCurrentMap();
-            }
-            
-            data.filtersByMap = window.filterManager.getAllFiltersByMap();
-            this.logAuth("🔍 [collectCurrentContextData] Filtres collectés via FilterManager:", data.filtersByMap);
-        } else {
-            // FALLBACK: Si FilterManager n'existe pas encore, lire depuis localStorage
-            this.logAuth("⚠️ [collectCurrentContextData] FilterManager non disponible - lecture depuis localStorage");
-            const savedFiltersByMap = localStorage.getItem('filtersByMap');
-            if (savedFiltersByMap) {
-                try {
-                    data.filtersByMap = JSON.parse(savedFiltersByMap);
-                    this.logAuth("✅ [collectCurrentContextData] Filtres collectés depuis localStorage:", data.filtersByMap);
-                } catch (e) {
-                    this.logAuth("❌ [collectCurrentContextData] Erreur lecture filtersByMap depuis localStorage:", e);
-                    data.filtersByMap = {};
-                }
-            } else {
-                this.logAuth("ℹ️ [collectCurrentContextData] Aucun filtre dans localStorage");
-                data.filtersByMap = {};
-            }
-        }
-        
-        this.logAuth(`🔍 [collectCurrentContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap || {}).length}`);
-        this.logAuth(`🔍 [collectCurrentContextData] Cartes avec filtres:`, Object.keys(data.filtersByMap || {}));
-
-        this.logAuth("📦 Données collectées pour le contexte", Object.keys(data));
-        this.logAuth("📅 [collectCurrentContextData] Calendar dans les données collectées:", data.calendar ? {
-            currentSeason: data.calendar.currentSeason,
-            currentCalendarDate: data.calendar.currentCalendarDate,
-            calendarDataLength: data.calendar.calendarData?.length,
+        this.logAuth(`📦 Données collectées pour le contexte`, Object.keys(data));
+        this.logAuth(`📅 [collectCurrentContextData] Calendar dans les données collectées:`, data.calendar ? {
+            currentDate: data.calendar.currentDate,
             isCalendarMode: data.calendar.isCalendarMode
         } : "NON PRÉSENT");
         return data;
@@ -557,22 +448,10 @@ class AuthManager {
             localStorage.setItem('calendar_from_cloud', 'true');
 
             // Appliquer directement au CalendarManager d'abord
-            if (data.calendar.currentSeason) {
-                window.calendarManager.currentSeason = data.calendar.currentSeason;
-                localStorage.setItem('currentSeason', data.calendar.currentSeason);
-                this.logAuth(`📅 [applyContextData] Saison appliquée: ${data.calendar.currentSeason}`);
-            }
-
-            if (data.calendar.currentCalendarDate) {
-                window.calendarManager.currentCalendarDate = data.calendar.currentCalendarDate;
+            if (data.calendar.currentDate) {
+                window.calendarManager.currentCalendarDate = data.calendar.currentDate; // Utiliser currentCalendarDate pour la cohérence
                 localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
                 this.logAuth(`📅 [applyContextData] Date appliquée:`, data.calendar.currentCalendarDate);
-            }
-
-            if (data.calendar.calendarData) {
-                window.calendarManager.calendarData = data.calendar.calendarData;
-                localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
-                this.logAuth(`📅 [applyContextData] Données calendrier appliquées: ${data.calendar.calendarData.length} mois`);
             }
 
             if (data.calendar.isCalendarMode !== undefined) {
@@ -583,8 +462,8 @@ class AuthManager {
 
             // Forcer la mise à jour complète de l'interface avec les nouvelles données
             this.logAuth("📅 [applyContextData] Mise à jour UI du calendrier");
-            window.calendarManager.updateSeasonDisplay();
-            window.calendarManager.exposeGlobalData();
+            window.calendarManager.updateSeasonDisplay(); // Cette fonction peut être vide si pas de saison
+            window.calendarManager.exposeGlobalData(); // Pour s'assurer que les données globales sont à jour
 
             this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé)");
         }
@@ -630,7 +509,8 @@ class AuthManager {
             this.logAuth(`👥 Application de ${data.characters.characters?.length || 0} personnages depuis le contexte`);
             localStorage.setItem('middleEarthCharacters', JSON.stringify(data.characters));
             if (window.charactersManager) {
-                window.charactersManager.loadCharactersFromLocal();
+                // Assurez-vous que la méthode de chargement correspond à la structure de data.characters
+                window.charactersManager.loadCharacters(data.characters); // Appel supposé de la méthode
                 this.logAuth("✅ Personnages chargés depuis le contexte");
             }
         }
@@ -647,7 +527,7 @@ class AuthManager {
 
         // Restaurer la position du marqueur - PRIORITÉ CLOUD/CONTEXTE
         if (data.position) {
-            const activeMapId = window.settingsManager?.activeMapUrl;
+            const activeMapId = window.settingsManager?.activeMapUrl || localStorage.getItem('activeMapUrl');
             const positionMapId = data.position.mapId;
 
             console.log("📍 [applyContextData] Position reçue du cloud:", data.position);
@@ -823,10 +703,10 @@ class AuthManager {
                 const emptyData = {
                     locations: { locations: [] },
                     regions: { regions: [] },
+                    characters: { characters: [] }, // Initialiser les personnages
                     calendar: {},
                     settings: {},
                     journal: [],
-                    characters: { characters: [] },
                     adventure: {
                         quest: '',
                         rumors: [],
@@ -879,10 +759,10 @@ class AuthManager {
                     const emptyData = {
                         locations: { locations: [] },
                         regions: { regions: [] },
+                        characters: { characters: [] }, // Initialiser les personnages
                         calendar: {},
                         settings: {},
                         journal: [],
-                        characters: { characters: [] },
                         adventure: { quest: '', rumors: [], threats: [] },
                         position: null,
                         filtersByMap: {},
@@ -977,7 +857,7 @@ class AuthManager {
 
         // Afficher le loader immédiatement
         this.showSyncLoader();
-        
+
         this.updateSyncStatus('syncing');
         this.isSyncing = true;
 
@@ -998,7 +878,7 @@ class AuthManager {
         } catch (error) {
             // Masquer le loader en cas d'erreur
             this.hideSyncLoader();
-            
+
             this.updateSyncStatus('error');
             setTimeout(() => this.updateSyncStatus('idle'), 3000);
         } finally {
@@ -1024,7 +904,7 @@ class AuthManager {
         }
         loader.style.display = 'flex';
         loader.style.opacity = '0';
-        
+
         // Animation d'apparition
         setTimeout(() => {
             loader.style.transition = 'opacity 0.3s ease';
@@ -1119,7 +999,7 @@ class AuthManager {
             this.logAuth("📦 Données locales collectées");
 
             // 2. Attribuer le mapId de la carte active aux lieux/régions sans mapId
-            const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl;
+            const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl || localStorage.getItem('activeMapUrl');
             this.logAuth(`🔍 [syncUserData] activeMapId: ${activeMapId}`);
 
             if (activeMapId) {
@@ -1189,6 +1069,7 @@ class AuthManager {
             console.log("📤 [CLOUD] Envoi des données locales (écrasement cloud):", {
                 locations_count: localData.locations?.locations?.length || 0,
                 regions_count: localData.regions?.regions?.length || 0,
+                characters_count: localData.characters?.characters?.length || 0, // Ajout pour les personnages
                 taille_json: JSON.stringify(localData).length
             });
 
@@ -1281,6 +1162,28 @@ class AuthManager {
         merged.regions = { regions: mergedRegions };
         this.logAuth(`🔀 Fusion régions: ${cloudRegions.length} cloud + ${localRegions.length} local = ${mergedRegions.length} total`);
 
+        // Fusion des personnages - PRIORITÉ AUX DONNÉES LOCALES
+        const cloudCharacters = cloudData.characters?.characters || [];
+        const localCharacters = localData.characters?.characters || [];
+
+        const mergedCharacters = [...localCharacters]; // Commencer par les locales
+        cloudCharacters.forEach(cloudChar => {
+            const localExists = mergedCharacters.find(lc => lc.id === cloudChar.id);
+            if (!localExists) {
+                // Personnage uniquement dans le cloud, l'ajouter
+                mergedCharacters.push(cloudChar);
+                this.logAuth(`➕ Ajout personnage cloud: ${cloudChar.name}`);
+            } else {
+                // Le personnage existe localement, on garde la version locale
+                // Ici, on pourrait envisager une fusion plus poussée si nécessaire,
+                // mais pour l'instant, on garde la version locale par défaut.
+                this.logAuth(`🔄 Personnage existe localement: ${cloudChar.name}, conservation version locale`);
+            }
+        });
+
+        merged.characters = { characters: mergedCharacters };
+        this.logAuth(`🔀 Fusion personnages: ${cloudCharacters.length} cloud + ${localCharacters.length} local = ${mergedCharacters.length} total`);
+
         return merged;
     }
 
@@ -1302,7 +1205,7 @@ class AuthManager {
             // Forcer la synchronisation avec un flag
             localData._force_overwrite = true;
 
-            const envPrefix = this.getEnvironmentPrefix();
+            const envPrefix = await this.getEnvironmentPrefix();
             const response = await fetch(`/api/user/data?env=${envPrefix}`, {
                 method: 'PUT',
                 headers: {
@@ -1316,16 +1219,21 @@ class AuthManager {
                 this.lastSyncTimestamp = Date.now();
                 localStorage.setItem('lastCloudSyncTimestamp', this.lastSyncTimestamp);
                 this.updateLastSyncDateDisplay();
-                this.saveToLocalStorage(localData);
+                this.saveToLocalStorage(localData); // Sauvegarder aussi localement
                 this.updateSyncStatus('success');
                 setTimeout(() => this.updateSyncStatus('idle'), 2000);
+            } else {
+                const errorText = await response.text();
+                console.error("❌ [CLOUD CONFLICT] Erreur lors de l'écrasement du cloud:", errorText);
+                this.updateSyncStatus('error');
+                alert("Une erreur s'est produite lors de l'écrasement des données cloud. Vos modifications locales n'ont pas été sauvegardées.");
             }
         } else {
             // L'utilisateur veut charger les données du cloud
             this.logAuth("☁️ Utilisateur choisit: charger cloud, abandonner local");
 
             await this.applyContextData(cloudData);
-            this.saveToLocalStorage(cloudData);
+            this.saveToLocalStorage(cloudData); // Sauvegarder les données cloud chargées localement
 
             // Forcer le rendu
             if (typeof window.renderLocations === 'function') {
@@ -1333,6 +1241,10 @@ class AuthManager {
             }
             if (typeof window.renderRegions === 'function') {
                 window.renderRegions();
+            }
+            // Afficher les personnages chargés
+            if (typeof window.renderCharacters === 'function') { // Assumant qu'une telle fonction existe
+                 window.renderCharacters();
             }
 
             this.lastSyncTimestamp = Date.now(); // Mettre à jour le timestamp après chargement cloud
@@ -1404,17 +1316,15 @@ class AuthManager {
             }
         }
         if (data.calendar) {
-            if (data.calendar.currentSeason) {
-                localStorage.setItem('currentSeason', data.calendar.currentSeason);
-            }
-            if (data.calendar.currentCalendarDate) {
-                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
-            }
-            if (data.calendar.calendarData) {
-                localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
+            if (data.calendar.currentDate) {
+                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentDate)); // Utiliser currentCalendarDate
             }
             if (data.calendar.isCalendarMode !== undefined) {
                 localStorage.setItem('isCalendarMode', data.calendar.isCalendarMode.toString());
+            }
+            // Si calendarData est fourni dans data.calendar
+            if (data.calendar.calendarData) {
+                localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
             }
         }
         if (data.journal) {
@@ -1422,7 +1332,7 @@ class AuthManager {
         }
         if (data.position) {
             localStorage.setItem('adventurers_position', JSON.stringify(data.position));
-            // Le flag 'adventurers_position_from_cloud' est géré par applyContextData et resolveConflict
+            // Le flag 'adventurers_position_from_cloud' est géré par applyContextData et handleSyncConflict
         }
         if (data.filters) {
             // Sauvegarder les filtres actuels dans localStorage
@@ -1436,11 +1346,11 @@ class AuthManager {
             this.logAuth(`  - ${data.characters.characters?.length || 0} personnages sauvegardés dans localStorage.`);
             // Synchroniser immédiatement avec les variables globales si CharactersManager existe
             if (window.charactersManager) {
-                window.charactersManager.characters = data.characters; // Assurez-vous que la structure correspond
-                this.logAuth("✅ CharactersManager.characters mis à jour.");
+                // Assurez-vous que la structure correspond à ce que CharactersManager attend
+                window.charactersManager.charactersData = data.characters; 
+                this.logAuth("✅ CharactersManager.charactersData mis à jour.");
             }
         }
-
 
         // Si ce n'est pas depuis le cloud, marquer comme modifications non sauvegardées
         if (!fromCloud && this.isAuthenticated) {
@@ -1616,6 +1526,7 @@ class AuthManager {
                     <div class="mb-4 text-sm text-gray-300 grid grid-cols-2 gap-2">
                         <div>📍 Lieux: ${debugData.data_summary.locations_count}</div>
                         <div>🗺️ Régions: ${debugData.data_summary.regions_count}</div>
+                        <div>👥 Personnages: ${debugData.data_summary.characters_count || 0}</div>
                         <div>🗾 Cartes: ${mapsCount}</div>
                         <div>📅 Calendrier: ${debugData.data_summary.has_calendar ? 'Oui' : 'Non'}</div>
                         <div>💾 Taille: ${(debugData.raw_json_size / 1024).toFixed(2)} KB</div>
