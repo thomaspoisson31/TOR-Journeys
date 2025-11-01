@@ -1472,11 +1472,23 @@ body {
 }
 
 /* Onglet Personnages - zone scrollable incluant les boutons */
+#personnages-tab .text-view {
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#personnages-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 #personnages-tab .edit-form {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
+    min-height: min-content;
     padding: 1rem;
 }
 
@@ -1489,19 +1501,6 @@ body {
     padding-top: 1rem;
     border-top: 1px solid #e5e7eb;
     background-color: white;
-}
-
-/* Assurer que le conteneur parent respecte les limites */
-#personnages-tab .text-view {
-    height: 100%;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-#personnages-content {
-    flex: 1;
-    overflow: hidden;
 }
 
 /* Info Box - Mode étendu */
