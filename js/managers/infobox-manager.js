@@ -257,7 +257,7 @@ class InfoBoxManager {
             infoBoxTitle.classList.remove('hidden');
         }
 
-        // Mettre à jour l'affichage du cercle de vignette
+        // Mettre à jour l'icône d'affichage du cercle de vignette
         this.updateThumbnailCircle(this.currentItem);
 
         // Mettre à jour l'affichage du MapID
@@ -540,10 +540,6 @@ class InfoBoxManager {
         if (associatedLocations.length > 0) {
             html += `
                 <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif; font-weight: 700;">
-                        <i class="fas fa-map-marker-alt mr-2" style="color: #940000 !important;"></i>
-                        Lieux associés
-                    </h3>
                     <div class="space-y-2">
                         ${associatedLocations.map(location => {
                             const thumbnailImage = location.images?.find(img => img.type === 'vignette');
@@ -577,10 +573,6 @@ class InfoBoxManager {
         if (associatedRegions.length > 0) {
             html += `
                 <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif; font-weight: 700;">
-                        <i class="fas fa-mountain mr-2" style="color: #940000 !important;"></i>
-                        Régions associées
-                    </h3>
                     <div class="space-y-2">
                         ${associatedRegions.map(region => {
                             const thumbnailImage = region.images?.find(img => img.type === 'vignette');
@@ -2225,10 +2217,6 @@ class InfoBoxManager {
         if (associatedLocations.length > 0) {
             html += `
                 <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif; font-weight: 700;">
-                        <i class="fas fa-map-marker-alt mr-2" style="color: #940000 !important;"></i>
-                        Lieux associés
-                    </h3>
                     <div class="space-y-2">
                         ${associatedLocations.map(location => {
                             const thumbnailImage = location.images?.find(img => img.type === 'vignette');
@@ -2262,10 +2250,6 @@ class InfoBoxManager {
         if (associatedRegions.length > 0) {
             html += `
                 <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif; font-weight: 700;">
-                        <i class="fas fa-mountain mr-2" style="color: #940000 !important;"></i>
-                        Régions associées
-                    </h3>
                     <div class="space-y-2">
                         ${associatedRegions.map(region => {
                             const thumbnailImage = region.images?.find(img => img.type === 'vignette');
