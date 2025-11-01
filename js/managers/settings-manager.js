@@ -448,30 +448,57 @@ class SettingsManager {
 
         mapsGrid.innerHTML = this.availableMaps.map((map, index) => {
             const isActive = this.activeMapUrl === map.url;
-
             const mapWidth = map.width || 5103;
             const mapScale = map.scale || 600;
 
+            // Compter les lieux et régions pour cette carte
+            let locationsCount = 0;
+            let regionsCount = 0;
+
+            if (window.locationsData && window.locationsData.locations) {
+                locationsCount = window.locationsData.locations.filter(loc => 
+                    !loc.mapId || loc.mapId === map.url
+                ).length;
+            }
+
+            if (window.regionsData && window.regionsData.regions) {
+                regionsCount = window.regionsData.regions.filter(reg => 
+                    !reg.mapId || reg.mapId === map.url
+                ).length;
+            }
+
             return `
-                <div class="bg-gray-800 rounded-lg p-2 border ${isActive ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 hover:border-gray-600'} transition-all cursor-pointer"
+                <div class="bg-gray-800 rounded-lg p-3 border ${isActive ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 hover:border-gray-600'} transition-all cursor-pointer"
                      onclick="window.settingsManager.setActiveMap(${index})">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-16 h-16 bg-gray-700 rounded overflow-hidden flex-shrink-0">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-[150px] h-[150px] bg-gray-700 rounded overflow-hidden flex-shrink-0">
                             <img src="${map.url}" alt="${map.name}" class="w-full h-full object-cover map-preview-img" data-map-index="${index}"
                                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjc3NDhDIi8+Cjwvc3ZnPg=='">
                         </div>
                         <div class="flex-grow min-w-0">
-                            <div class="text-sm font-medium text-white truncate">${map.name}</div>
-                            <div class="text-xs text-gray-400 mt-0.5" id="map-dims-${index}">${mapWidth}px • ${mapScale} miles</div>
-                            ${isActive ? '<div class="text-xs text-blue-400 mt-1"><i class="fas fa-check-circle mr-1"></i>Carte active</div>' : '<div class="text-xs text-gray-500 mt-1">Cliquer pour activer</div>'}
+                            <div class="text-base font-medium text-white truncate mb-2">${map.name}</div>
+                            <div class="text-xs text-gray-400 mb-1" id="map-dims-${index}">${mapWidth}px • ${mapScale} miles</div>
+                            <div class="text-xs text-gray-400 mb-2">
+                                <i class="fas fa-map-marker-alt mr-1"></i>${locationsCount} lieu${locationsCount > 1 ? 'x' : ''} • 
+                                <i class="fas fa-draw-polygon mr-1"></i>${regionsCount} région${regionsCount > 1 ? 's' : ''}
+                            </div>
+                            ${isActive ? '<div class="text-xs text-blue-400 mb-2"><i class="fas fa-check-circle mr-1"></i>Carte active</div>' : '<div class="text-xs text-gray-500 mb-2">Cliquer pour activer</div>'}
+
+                            ${isActive ? `
+                            <button class="w-full mt-2 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center justify-center space-x-2 text-xs" 
+                                    onclick="event.stopPropagation(); window.settingsManager.deleteAllLocationsAndRegions()">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Supprimer tous les Lieux et Régions</span>
+                            </button>
+                            ` : ''}
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <button class="p-1.5 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 rounded transition-colors" 
+                        <div class="flex flex-col gap-2">
+                            <button class="p-2 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 rounded transition-colors" 
                                     onclick="event.stopPropagation(); window.settingsManager.editMapScale(${index})"
                                     title="Modifier l'échelle">
                                 <i class="fas fa-ruler"></i>
                             </button>
-                            <button class="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors" 
+                            <button class="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors" 
                                     onclick="event.stopPropagation(); window.settingsManager.deleteMap(${index})"
                                     title="Supprimer">
                                 <i class="fas fa-trash"></i>
@@ -481,9 +508,6 @@ class SettingsManager {
                 </div>
             `;
         }).join('');
-
-        // Mettre à jour l'affichage de la carte active
-        this.updateActiveMapDisplay();
 
         // Charger les dimensions réelles pour chaque carte
         this.loadRealMapDimensions();
@@ -1274,7 +1298,7 @@ class SettingsManager {
 
     deleteAllLocationsAndRegions() {
         const activeMapName = this.activeMapName || 'cette carte';
-        
+
         const confirmed = confirm(
             `⚠️ ATTENTION : Cette action va supprimer TOUS les lieux et TOUTES les régions de "${activeMapName}".\n\n` +
             'Les lieux et régions des autres cartes seront conservés.\n\n' +

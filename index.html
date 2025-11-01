@@ -801,38 +801,17 @@
                 <div class="flex-grow overflow-hidden">
                     <!-- Cartes Tab -->
                     <div id="maps-tab" class="settings-tab-content active h-full overflow-y-auto">
-                        <!-- Carte active -->
-                        <div class="mb-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="text-lg font-semibold text-white">Carte active</h4>
-                                <span class="text-xs text-gray-400">5103 × 3296 px recommandé</span>
-                            </div>
-                            <div class="bg-gray-900 rounded-lg p-4 border border-blue-500/50">
-                                <div id="active-map-display" class="aspect-video bg-gray-800 rounded-lg mb-2 overflow-hidden flex items-center justify-center">
-                                    <img id="active-map-preview" src="" alt="Carte active" class="w-full h-full object-cover">
-                                </div>
-                                <div id="active-map-name" class="text-sm font-medium text-white text-center">Aucune carte active</div>
-                            </div>
-                        </div>
-
-                        <!-- Liste des cartes avec bouton d'ajout intégré -->
+                        <!-- Liste des cartes avec bouton d'ajout sur la même ligne -->
                         <div>
-                            <h4 class="text-lg font-semibold text-white mb-3">Toutes les cartes</h4>
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-lg font-semibold text-white">Toutes les cartes</h4>
+                                <button id="add-new-map-btn" class="w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors flex items-center justify-center" title="Ajouter une nouvelle carte">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
                             <div id="maps-grid" class="space-y-2">
                                 <!-- Les cartes seront ajoutées ici dynamiquement -->
                             </div>
-
-                            <!-- Bouton d'ajout de carte -->
-                            <button id="add-new-map-btn" class="w-full mt-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center justify-center space-x-2">
-                                <i class="fas fa-plus"></i>
-                                <span>Ajouter une nouvelle carte</span>
-                            </button>
-
-                            <!-- Bouton de suppression de tous les lieux et régions -->
-                            <button id="delete-all-locations-regions-btn" class="w-full mt-3 px-4 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center justify-center space-x-2">
-                                <i class="fas fa-trash-alt"></i>
-                                <span>Supprimer tous les Lieux et Régions</span>
-                            </button>
                         </div>
                     </div>
 
