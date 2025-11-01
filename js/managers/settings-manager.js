@@ -446,6 +446,9 @@ class SettingsManager {
         const mapsGrid = document.getElementById('maps-grid');
         if (!mapsGrid) return;
 
+        // Appliquer la classe grid pour 2 colonnes
+        mapsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
         mapsGrid.innerHTML = this.availableMaps.map((map, index) => {
             const isActive = this.activeMapUrl === map.url;
             const mapWidth = map.width || 5103;
