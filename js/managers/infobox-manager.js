@@ -1,9 +1,8 @@
-replit_final_file>
-import UploadManager from './upload-manager.js';
-
 /**
  * InfoBoxManager - Gestion des info-boxes avec édition
  */
+import UploadManager from './upload-manager.js';
+
 class InfoBoxManager {
     constructor(domUtils, dataManager, geminiManager) {
         this.domUtils = domUtils;
