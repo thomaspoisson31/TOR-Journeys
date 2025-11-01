@@ -1007,6 +1007,40 @@ class InfoBoxManager {
             // Sauvegarder
             this.dataManager.saveRegionsToLocal();
 
+            // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
+            if (window.charactersManager && this.currentItem.associatedCharacters) {
+                const regionId = String(this.currentItem.id);
+                
+                // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
+                window.charactersManager.characters.forEach(character => {
+                    const charId = String(character.id);
+                    const isAssociated = this.currentItem.associatedCharacters.includes(charId);
+                    
+                    // Initialiser associatedRegions si nécessaire
+                    if (!character.associatedRegions) {
+                        character.associatedRegions = [];
+                    }
+                    
+                    const currentlyAssociated = character.associatedRegions.includes(regionId);
+                    
+                    if (isAssociated && !currentlyAssociated) {
+                        // Ajouter la région au personnage
+                        character.associatedRegions.push(regionId);
+                        console.log(`✅ [SAVE] Personnage ${character.name} associé à la région ${this.currentItem.name}`);
+                    } else if (!isAssociated && currentlyAssociated) {
+                        // Retirer la région du personnage
+                        character.associatedRegions = character.associatedRegions.filter(
+                            regId => String(regId) !== regionId
+                        );
+                        console.log(`❌ [SAVE] Personnage ${character.name} dissocié de la région ${this.currentItem.name}`);
+                    }
+                });
+                
+                // Sauvegarder les personnages
+                window.charactersManager.saveCharactersToLocal();
+                console.log(`💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles`);
+            }
+
             // Log des personnages APRÈS modification bidirectionnelle
             if (window.charactersManager && this.currentItem.associatedCharacters) {
                 console.log(`🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:`);
@@ -1050,6 +1084,40 @@ class InfoBoxManager {
 
             // Sauvegarder
             this.dataManager.saveLocationsToLocal();
+
+            // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
+            if (window.charactersManager && this.currentItem.associatedCharacters) {
+                const locationId = String(this.currentItem.id);
+                
+                // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
+                window.charactersManager.characters.forEach(character => {
+                    const charId = String(character.id);
+                    const isAssociated = this.currentItem.associatedCharacters.includes(charId);
+                    
+                    // Initialiser associatedLocations si nécessaire
+                    if (!character.associatedLocations) {
+                        character.associatedLocations = [];
+                    }
+                    
+                    const currentlyAssociated = character.associatedLocations.includes(locationId);
+                    
+                    if (isAssociated && !currentlyAssociated) {
+                        // Ajouter le lieu au personnage
+                        character.associatedLocations.push(locationId);
+                        console.log(`✅ [SAVE] Personnage ${character.name} associé au lieu ${this.currentItem.name}`);
+                    } else if (!isAssociated && currentlyAssociated) {
+                        // Retirer le lieu du personnage
+                        character.associatedLocations = character.associatedLocations.filter(
+                            locId => String(locId) !== locationId
+                        );
+                        console.log(`❌ [SAVE] Personnage ${character.name} dissocié du lieu ${this.currentItem.name}`);
+                    }
+                });
+                
+                // Sauvegarder les personnages
+                window.charactersManager.saveCharactersToLocal();
+                console.log(`💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles`);
+            }
 
             // Log des personnages APRÈS modification bidirectionnelle
             if (window.charactersManager && this.currentItem.associatedCharacters) {
