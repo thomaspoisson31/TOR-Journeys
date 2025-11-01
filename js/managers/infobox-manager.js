@@ -107,9 +107,6 @@ class InfoBoxManager {
 
         infoBox.style.display = 'block';
 
-        // S'assurer que l'onglet Description est actif par défaut
-        this.switchTab('text');
-
         // Mettre à jour le contenu après avoir configuré l'affichage
         this.updateInfoBoxContent();
 
@@ -173,6 +170,29 @@ class InfoBoxManager {
 
         if (targetButton) targetButton.classList.add('active');
         if (targetContent) targetContent.classList.add('active');
+
+        // Gérer l'affichage conditionnel des onglets pour les personnages
+        const isCharacter = this.currentType === 'character';
+        const personnagesTabButton = document.querySelector('.tab-button[data-tab="personnages"]');
+        const lieuxRegionsTabButton = document.querySelector('.tab-button[data-tab="lieux-regions"]');
+
+        if (personnagesTabButton) {
+            if (isCharacter) {
+                personnagesTabButton.style.display = 'none'; // Masquer l'onglet Personnages pour les personnages
+                if (lieuxRegionsTabButton) {
+                    lieuxRegionsTabButton.style.display = 'block'; // Afficher l'onglet Lieux/Régions
+                }
+                // Si on est sur un personnage et qu'on clique sur un autre onglet, on passe à l'onglet Lieux/Régions
+                if (tabName !== 'personnages' && !isCharacter) {
+                     this.switchTab('lieux-regions'); // Changer pour l'onglet Lieux/Régions
+                }
+            } else {
+                personnagesTabButton.style.display = 'block'; // Afficher l'onglet Personnages pour les lieux/régions
+                if (lieuxRegionsTabButton) {
+                    lieuxRegionsTabButton.style.display = 'none'; // Masquer l'onglet Lieux/Régions
+                }
+            }
+        }
     }
 
     positionInfoBox(event, type) {
@@ -323,10 +343,16 @@ class InfoBoxManager {
             `;
         }
 
-        // Onglet Personnages
+        // Onglet Personnages (uniquement pour les lieux et régions)
         const personnagesTab = document.getElementById('personnages-tab');
         if (personnagesTab && (type === 'location' || type === 'region')) {
             this.renderPersonnagesTabRead();
+        }
+
+        // Onglet Lieux / Régions (pour les personnages)
+        const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
+        if (lieuxRegionsTab && type === 'character') {
+            this.renderLieuxRegionsTabRead();
         }
 
         // Onglet Rumeurs et Traditions
@@ -512,6 +538,12 @@ class InfoBoxManager {
         const personnagesTab = document.getElementById('personnages-tab');
         if (personnagesTab && (type === 'location' || type === 'region')) {
             this.renderPersonnagesTabEdit();
+        }
+
+        // Onglet Lieux / Régions (mode édition pour les personnages)
+        const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
+        if (lieuxRegionsTab && type === 'character') {
+            this.renderLieuxRegionsTabEdit();
         }
 
         // Onglet Rumeurs et Traditions (mode édition)
@@ -956,15 +988,15 @@ class InfoBoxManager {
             const associatedCharacterIds = Array.from(checkboxes)
                 .filter(cb => cb.checked)
                 .map(cb => cb.dataset.characterId);
-            
+
             console.log(`🔍 [SAVE] AVANT update - ${this.currentType} "${this.currentItem.name}" (id: ${this.currentItem.id})`);
             console.log(`🔍 [SAVE] associatedCharacters AVANT:`, this.currentItem.associatedCharacters);
             console.log(`🔍 [SAVE] Nouvelles associations cochées:`, associatedCharacterIds);
-            
+
             this.currentItem.associatedCharacters = associatedCharacterIds;
-            
+
             console.log(`🔍 [SAVE] associatedCharacters APRÈS:`, this.currentItem.associatedCharacters);
-            
+
             // Log des personnages concernés AVANT modification
             if (window.charactersManager) {
                 console.log(`🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:`);
@@ -1010,19 +1042,19 @@ class InfoBoxManager {
             // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
             if (window.charactersManager && this.currentItem.associatedCharacters) {
                 const regionId = String(this.currentItem.id);
-                
+
                 // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
                 window.charactersManager.characters.forEach(character => {
                     const charId = String(character.id);
                     const isAssociated = this.currentItem.associatedCharacters.includes(charId);
-                    
+
                     // Initialiser associatedRegions si nécessaire
                     if (!character.associatedRegions) {
                         character.associatedRegions = [];
                     }
-                    
+
                     const currentlyAssociated = character.associatedRegions.includes(regionId);
-                    
+
                     if (isAssociated && !currentlyAssociated) {
                         // Ajouter la région au personnage
                         character.associatedRegions.push(regionId);
@@ -1035,7 +1067,7 @@ class InfoBoxManager {
                         console.log(`❌ [SAVE] Personnage ${character.name} dissocié de la région ${this.currentItem.name}`);
                     }
                 });
-                
+
                 // Sauvegarder les personnages
                 window.charactersManager.saveCharactersToLocal();
                 console.log(`💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles`);
@@ -1088,19 +1120,19 @@ class InfoBoxManager {
             // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
             if (window.charactersManager && this.currentItem.associatedCharacters) {
                 const locationId = String(this.currentItem.id);
-                
+
                 // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
                 window.charactersManager.characters.forEach(character => {
                     const charId = String(character.id);
                     const isAssociated = this.currentItem.associatedCharacters.includes(charId);
-                    
+
                     // Initialiser associatedLocations si nécessaire
                     if (!character.associatedLocations) {
                         character.associatedLocations = [];
                     }
-                    
+
                     const currentlyAssociated = character.associatedLocations.includes(locationId);
-                    
+
                     if (isAssociated && !currentlyAssociated) {
                         // Ajouter le lieu au personnage
                         character.associatedLocations.push(locationId);
@@ -1113,7 +1145,7 @@ class InfoBoxManager {
                         console.log(`❌ [SAVE] Personnage ${character.name} dissocié du lieu ${this.currentItem.name}`);
                     }
                 });
-                
+
                 // Sauvegarder les personnages
                 window.charactersManager.saveCharactersToLocal();
                 console.log(`💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles`);
@@ -1857,6 +1889,66 @@ class InfoBoxManager {
         personnagesContent.innerHTML = html;
     }
 
+    renderLieuxRegionsTabRead() {
+        const lieuxRegionsContent = document.getElementById('lieux-regions-content');
+        if (!lieuxRegionsContent) return;
+
+        // Récupérer les IDs des lieux/régions associés
+        const associatedLocationRegionIds = this.currentItem.associatedLocations || this.currentItem.associatedRegions || [];
+
+        if (!window.locationsManager && !window.regionsManager) {
+            lieuxRegionsContent.innerHTML = '<p class="text-gray-400 italic text-sm">Gestionnaire de lieux/régions non disponible.</p>';
+            return;
+        }
+
+        // Combiner les lieux et régions pour le filtrage
+        const allLocations = window.locationsManager?.locationsData?.locations || [];
+        const allRegions = window.regionsManager?.regionsData?.regions || [];
+        const combinedItems = [...allLocations, ...allRegions];
+
+        // Filtrer les lieux/régions associés à ce personnage
+        const associatedItems = combinedItems.filter(item =>
+            associatedLocationRegionIds.includes(String(item.id))
+        );
+
+        if (associatedItems.length === 0) {
+            lieuxRegionsContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun lieu ou région associé à ce personnage.</p>';
+            return;
+        }
+
+        const html = associatedItems.map(item => {
+            const isRegion = item.hasOwnProperty('Tradition_Ancienne'); // Heuristic to determine if it's a region
+            const thumbnailImage = item.images?.find(img => img.type === 'vignette');
+            const itemType = isRegion ? 'Région' : 'Lieu';
+
+            return `
+                <div class="location-region-card-infobox bg-gray-700 hover:bg-gray-600 rounded-lg p-3 mb-3 cursor-pointer transition-colors" 
+                     onclick="window.infoBoxManager.showLocationRegionFromCharacter('${item.id}', '${isRegion ? 'region' : 'location'}')">
+                    <div class="flex items-center space-x-3">
+                        ${thumbnailImage ? `
+                            <img src="${thumbnailImage.url}" alt="${item.name}" 
+                                 class="w-12 h-12 rounded-lg object-cover border-2 border-purple-500">
+                        ` : `
+                            <div class="w-12 h-12 rounded-lg bg-gray-600 flex items-center justify-center border-2 border-purple-500">
+                                <i class="fas ${isRegion ? 'fa-map-marked-alt' : 'fa-map-marker-alt'} text-purple-400"></i>
+                            </div>
+                        `}
+                        <div class="flex-1">
+                            <div class="font-semibold text-white">${item.name}</div>
+                            <span class="inline-block px-2 py-0.5 text-xs rounded bg-purple-600 text-white">
+                                ${itemType}
+                            </span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        lieuxRegionsContent.innerHTML = html;
+    }
+
+
     renderPersonnagesTabEdit() {
         const personnagesContent = document.getElementById('personnages-content');
         if (!personnagesContent) return;
@@ -1923,6 +2015,81 @@ class InfoBoxManager {
         personnagesContent.innerHTML = html;
     }
 
+    renderLieuxRegionsTabEdit() {
+        const lieuxRegionsContent = document.getElementById('lieux-regions-content');
+        if (!lieuxRegionsContent) return;
+
+        // Récupérer les IDs des lieux/régions associés
+        const associatedLocationRegionIds = this.currentItem.associatedLocations || this.currentItem.associatedRegions || [];
+
+        if (!window.locationsManager && !window.regionsManager) {
+            lieuxRegionsContent.innerHTML = '<p class="text-gray-400 italic text-sm">Gestionnaire de lieux/régions non disponible.</p>';
+            return;
+        }
+
+        // Combiner les lieux et régions pour le filtrage
+        const allLocations = window.locationsManager?.locationsData?.locations || [];
+        const allRegions = window.regionsManager?.regionsData?.regions || [];
+        const combinedItems = [...allLocations, ...allRegions];
+
+        // Filtrer les lieux/régions de la carte active et trier par ordre alphabétique
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const availableItems = combinedItems
+            .filter(item => !item.mapId || !activeMapId || item.mapId === activeMapId)
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        if (availableItems.length === 0) {
+            lieuxRegionsContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun lieu ou région disponible sur cette carte.</p>';
+            return;
+        }
+
+        const html = `
+            <div class="space-y-2 mb-4">
+                ${availableItems.map(item => {
+                    const isAssociated = associatedLocationRegionIds.includes(String(item.id));
+                    const isRegion = item.hasOwnProperty('Tradition_Ancienne'); // Heuristic to determine if it's a region
+                    const thumbnailImage = item.images?.find(img => img.type === 'vignette');
+                    const itemType = isRegion ? 'Région' : 'Lieu';
+
+                    return `
+                        <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
+                            <input type="checkbox" 
+                                   class="location-region-checkbox h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500" 
+                                   data-item-id="${item.id}"
+                                   data-item-type="${isRegion ? 'region' : 'location'}"
+                                   ${isAssociated ? 'checked' : ''}>
+                            ${thumbnailImage ? `
+                                <img src="${thumbnailImage.url}" alt="${item.name}" 
+                                     class="w-10 h-10 rounded-lg object-cover border-2 border-purple-500">
+                            ` : `
+                                <div class="w-10 h-10 rounded-lg bg-gray-600 flex items-center justify-center border-2 border-purple-500">
+                                    <i class="fas ${isRegion ? 'fa-map-marked-alt' : 'fa-map-marker-alt'} text-sm text-purple-400"></i>
+                                </div>
+                            `}
+                            <div class="flex-1">
+                                <div class="font-medium text-white text-sm">${item.name}</div>
+                                <span class="inline-block px-2 py-0.5 text-xs rounded bg-purple-600 text-white">
+                                    ${itemType}
+                                </span>
+                            </div>
+                        </label>
+                    `;
+                }).join('')}
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="window.infoBoxManager.saveAssociatedCharactersForCharacter()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                    <i class="fas fa-save mr-1"></i>Sauvegarder
+                </button>
+                <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                    <i class="fas fa-times mr-1"></i>Annuler
+                </button>
+            </div>
+        `;
+
+        lieuxRegionsContent.innerHTML = html;
+    }
+
+
     showCharacterFromLocation(characterId) {
         if (!window.charactersManager) return;
 
@@ -1954,6 +2121,48 @@ class InfoBoxManager {
             window.infoBoxManager.showInfoBox(fakeEvent, character, 'character');
         }
     }
+
+    showLocationRegionFromCharacter(itemId, itemType) {
+         if (!window.locationsManager && !window.regionsManager) {
+            console.warn('Gestionnaire de lieux/régions non disponible.');
+            return;
+        }
+
+        let item = null;
+        if (itemType === 'location') {
+            item = window.locationsManager?.locationsData?.locations.find(loc => String(loc.id) === String(itemId));
+        } else if (itemType === 'region') {
+            item = window.regionsManager?.regionsData?.regions.find(reg => String(reg.id) === String(itemId));
+        }
+
+        if (!item) {
+            console.warn(`Lieu/Région non trouvé avec l'ID: ${itemId}, type: ${itemType}`);
+            return;
+        }
+
+        // Sauvegarder l'infobox actuelle avant d'afficher le lieu/région
+        if (this.currentItem && this.currentType) {
+            console.log("💾 Sauvegarde de l'infobox appelante (personnage):", this.currentItem.name);
+            this.previousInfoBox = {
+                item: this.currentItem,
+                type: this.currentType,
+                // On ne veut pas forcer l'onglet "Personnages" au retour ici, mais plutôt l'onglet par défaut
+            };
+        }
+
+        // Créer un événement simulé pour le positionnement
+        const fakeEvent = {
+            clientX: window.innerWidth / 2,
+            clientY: window.innerHeight / 2,
+            type: 'click'
+        };
+
+        // Ouvrir la modale du lieu/région
+        if (window.infoBoxManager) {
+            window.infoBoxManager.showInfoBox(fakeEvent, item, itemType);
+        }
+    }
+
 
     deleteItem() {
         if (!this.currentItem) return;
@@ -2401,6 +2610,91 @@ class InfoBoxManager {
 
         // Rafraîchir l'affichage
         this.renderPersonnagesTabForRegion();
+    }
+
+    saveAssociatedCharactersForCharacter() {
+        if (!this.currentEntity || this.currentEntityType !== 'character') {
+            console.warn('Tentative de sauvegarde de lieux/régions pour une entité non-personnage');
+            return;
+        }
+
+        const checkboxes = document.querySelectorAll('.location-region-checkbox');
+        const associatedLocations = [];
+        const associatedRegions = [];
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const itemId = String(checkbox.dataset.itemId);
+                const itemType = checkbox.dataset.itemType;
+                if (itemType === 'location') {
+                    associatedLocations.push(itemId);
+                } else if (itemType === 'region') {
+                    associatedRegions.push(itemId);
+                }
+            }
+        });
+
+        console.log(`💾 Sauvegarde de ${associatedLocations.length} lieux et ${associatedRegions.length} régions pour le personnage ${this.currentEntity.name}`);
+
+        // Mettre à jour l'entité actuelle (personnage)
+        this.currentEntity.associatedLocations = associatedLocations;
+        this.currentEntity.associatedRegions = associatedRegions;
+
+        // Mettre à jour bidirectionnelle : mettre à jour les lieux et régions également
+        if (window.locationsManager && window.locationsManager.locationsData && window.locationsManager.locationsData.locations) {
+            const characterId = String(this.currentEntity.id);
+            window.locationsManager.locationsData.locations.forEach(location => {
+                const isAssociated = associatedLocations.includes(String(location.id));
+                const characterManager = window.charactersManager; // Ensure charactersManager is available
+
+                if (!location.associatedCharacters) {
+                    location.associatedCharacters = [];
+                }
+
+                const isCurrentlyAssociated = location.associatedCharacters.includes(characterId);
+
+                if (isAssociated && !isCurrentlyAssociated) {
+                    location.associatedCharacters.push(characterId);
+                    console.log(`✅ Lieu ${location.name} associé au personnage ${this.currentEntity.name}`);
+                } else if (!isAssociated && isCurrentlyAssociated) {
+                    location.associatedCharacters = location.associatedCharacters.filter(charId => String(charId) !== characterId);
+                    console.log(`❌ Lieu ${location.name} dissocié du personnage ${this.currentEntity.name}`);
+                }
+            });
+            window.locationsManager.saveLocationsToLocal();
+        }
+
+        if (window.regionsManager && window.regionsManager.regionsData && window.regionsManager.regionsData.regions) {
+            const characterId = String(this.currentEntity.id);
+            window.regionsManager.regionsData.regions.forEach(region => {
+                const isAssociated = associatedRegions.includes(String(region.id));
+                 const characterManager = window.charactersManager; // Ensure charactersManager is available
+
+                if (!region.associatedCharacters) {
+                    region.associatedCharacters = [];
+                }
+
+                const isCurrentlyAssociated = region.associatedCharacters.includes(characterId);
+
+                if (isAssociated && !isCurrentlyAssociated) {
+                    region.associatedCharacters.push(characterId);
+                    console.log(`✅ Région ${region.name} associée au personnage ${this.currentEntity.name}`);
+                } else if (!isAssociated && isCurrentlyAssociated) {
+                    region.associatedCharacters = region.associatedCharacters.filter(charId => String(charId) !== characterId);
+                    console.log(`❌ Région ${region.name} dissociée du personnage ${this.currentEntity.name}`);
+                }
+            });
+             window.regionsManager.saveRegionsToLocal();
+        }
+
+
+        // Sauvegarder le personnage lui-même
+        if (window.charactersManager) {
+            window.charactersManager.updateCharacter(this.currentEntity.id, this.currentEntity);
+        }
+
+        // Rafraîchir l'affichage
+        this.renderLieuxRegionsTabEdit();
     }
 }
 
