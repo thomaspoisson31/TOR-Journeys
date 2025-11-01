@@ -110,6 +110,9 @@ class InfoBoxManager {
         // Mettre à jour le contenu après avoir configuré l'affichage
         this.updateInfoBoxContent();
 
+        // IMPORTANT : Appliquer la logique d'affichage des onglets après l'affichage
+        this.updateTabsVisibility();
+
         console.log("✅ Info box displayed successfully in expanded mode");
     }
 
@@ -157,6 +160,8 @@ class InfoBoxManager {
     }
 
     switchTab(tabName) {
+        console.log(`📋 [switchTab] Changement d'onglet vers: ${tabName}, currentType: ${this.currentType}`);
+        
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
 
@@ -171,26 +176,37 @@ class InfoBoxManager {
         if (targetButton) targetButton.classList.add('active');
         if (targetContent) targetContent.classList.add('active');
 
-        // Gérer l'affichage conditionnel des onglets selon le type d'entité
+        // Appliquer la logique d'affichage conditionnel
+        this.updateTabsVisibility();
+    }
+
+    updateTabsVisibility() {
         const isCharacter = this.currentType === 'character';
         const personnagesTabButton = document.querySelector('.tab-button[data-tab="personnages"]');
         const lieuxRegionsTabButton = document.querySelector('.tab-button[data-tab="lieux-regions"]');
+
+        console.log(`📋 [updateTabsVisibility] Type: ${this.currentType}, isCharacter: ${isCharacter}`);
+        console.log(`📋 [updateTabsVisibility] Boutons trouvés - Personnages: ${!!personnagesTabButton}, Lieux/Régions: ${!!lieuxRegionsTabButton}`);
 
         if (isCharacter) {
             // Pour les PERSONNAGES : masquer "Personnages", afficher "Lieux/Régions"
             if (personnagesTabButton) {
                 personnagesTabButton.style.display = 'none';
+                console.log(`📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character`);
             }
             if (lieuxRegionsTabButton) {
                 lieuxRegionsTabButton.style.display = 'block';
+                console.log(`📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character`);
             }
         } else {
             // Pour les LIEUX/RÉGIONS : afficher "Personnages", masquer "Lieux/Régions"
             if (personnagesTabButton) {
                 personnagesTabButton.style.display = 'block';
+                console.log(`📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region`);
             }
             if (lieuxRegionsTabButton) {
                 lieuxRegionsTabButton.style.display = 'none';
+                console.log(`📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region`);
             }
         }
     }
