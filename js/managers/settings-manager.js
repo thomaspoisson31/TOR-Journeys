@@ -1273,8 +1273,11 @@ class SettingsManager {
     }
 
     deleteAllLocationsAndRegions() {
+        const activeMapName = this.activeMapName || 'cette carte';
+        
         const confirmed = confirm(
-            '⚠️ ATTENTION : Cette action va supprimer TOUS les lieux et TOUTES les régions de la carte.\n\n' +
+            `⚠️ ATTENTION : Cette action va supprimer TOUS les lieux et TOUTES les régions de "${activeMapName}".\n\n` +
+            'Les lieux et régions des autres cartes seront conservés.\n\n' +
             'Cette action est IRRÉVERSIBLE.\n\n' +
             'Êtes-vous absolument sûr de vouloir continuer ?'
         );
@@ -1286,8 +1289,8 @@ class SettingsManager {
         // Double confirmation pour éviter les erreurs
         const doubleConfirm = confirm(
             '🚨 DERNIÈRE CONFIRMATION 🚨\n\n' +
-            'Vous allez supprimer DÉFINITIVEMENT tous les lieux et régions.\n\n' +
-            'Confirmez-vous cette suppression totale ?'
+            `Vous allez supprimer DÉFINITIVEMENT tous les lieux et régions de "${activeMapName}".\n\n` +
+            'Confirmez-vous cette suppression ?'
         );
 
         if (!doubleConfirm) {
@@ -1295,18 +1298,27 @@ class SettingsManager {
         }
 
         try {
-            console.log('🗑️ Suppression de tous les lieux et régions...');
+            const activeMapId = this.activeMapUrl;
+            console.log(`🗑️ Suppression de tous les lieux et régions de la carte active: ${activeMapId}`);
 
-            // Supprimer tous les lieux
+            // Supprimer uniquement les lieux de la carte active
             if (window.locationsData && window.locationsData.locations) {
-                window.locationsData.locations = [];
-                console.log('✅ Lieux supprimés');
+                const initialCount = window.locationsData.locations.length;
+                window.locationsData.locations = window.locationsData.locations.filter(loc => 
+                    loc.mapId && loc.mapId !== activeMapId
+                );
+                const deletedCount = initialCount - window.locationsData.locations.length;
+                console.log(`✅ ${deletedCount} lieu(x) supprimé(s) de la carte active`);
             }
 
-            // Supprimer toutes les régions
+            // Supprimer uniquement les régions de la carte active
             if (window.regionsData && window.regionsData.regions) {
-                window.regionsData.regions = [];
-                console.log('✅ Régions supprimées');
+                const initialCount = window.regionsData.regions.length;
+                window.regionsData.regions = window.regionsData.regions.filter(reg => 
+                    reg.mapId && reg.mapId !== activeMapId
+                );
+                const deletedCount = initialCount - window.regionsData.regions.length;
+                console.log(`✅ ${deletedCount} région(s) supprimée(s) de la carte active`);
             }
 
             // Sauvegarder dans localStorage
@@ -1336,8 +1348,8 @@ class SettingsManager {
                 window.scheduleAutoSync();
             }
 
-            alert('✅ Tous les lieux et régions ont été supprimés avec succès.');
-            console.log('✅ Suppression complète terminée');
+            alert(`✅ Tous les lieux et régions de "${activeMapName}" ont été supprimés avec succès.`);
+            console.log(`✅ Suppression complète terminée pour la carte: ${activeMapId}`);
 
         } catch (error) {
             console.error('❌ Erreur lors de la suppression:', error);
