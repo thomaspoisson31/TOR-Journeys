@@ -132,6 +132,9 @@ body {
     left: auto;
     top: 50%;
     transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 #info-box-scroll-wrapper {
@@ -1518,4 +1521,7 @@ body {
     left: auto;
     top: 50%;
     transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
