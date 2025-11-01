@@ -151,6 +151,14 @@ body {
     padding-right: 1rem;
 }
 
+#info-box.expanded #info-box-content {
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
 /* Forcer le texte noir dans l'InfoBox */
 #info-box,
 #info-box * {
@@ -171,7 +179,10 @@ body {
 }
 
 #info-box.expanded .tab-content {
-    height: 100%;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Scroll pour les sections de contenu - supprimé pour éviter le double ascenseur */
@@ -1473,7 +1484,8 @@ body {
 
 /* Onglet Personnages - zone scrollable incluant les boutons */
 #personnages-tab .text-view {
-    height: 100%;
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -1481,22 +1493,28 @@ body {
 
 #personnages-content {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
 #personnages-tab .edit-form {
+    flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    min-height: min-content;
     padding: 1rem;
 }
 
 #personnages-tab .edit-form .space-y-2 {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     margin-bottom: 1rem;
 }
 
 #personnages-tab .edit-form .flex.space-x-2 {
+    flex-shrink: 0;
     margin-top: 0 !important;
     padding-top: 1rem;
     border-top: 1px solid #e5e7eb;
