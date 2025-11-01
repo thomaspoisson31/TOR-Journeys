@@ -174,15 +174,14 @@ body {
 
 /* Assurer le défilement pour tous les onglets */
 .tab-content {
-    overflow-y: auto;
-    max-height: 100%;
+    display: none;
+    height: 100%;
+    overflow: hidden;
 }
 
 #info-box.expanded .tab-content {
     flex: 1;
     min-height: 0;
-    display: flex;
-    flex-direction: column;
 }
 
 /* Scroll pour les sections de contenu - supprimé pour éviter le double ascenseur */
@@ -366,10 +365,13 @@ body {
 
 .tab-content {
     display: none;
+    height: 100%;
+    overflow: hidden;
 }
 
 .tab-content.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Image tabs for multi-image view */
