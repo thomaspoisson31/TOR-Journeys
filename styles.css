@@ -145,15 +145,15 @@ body {
 }
 
 #info-box.expanded #info-box-scroll-wrapper {
-    max-height: none;
-    height: calc(100% - 3rem);
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     padding-right: 1rem;
 }
 
 #info-box.expanded #info-box-content {
-    height: 100%;
-    max-height: 100%;
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
