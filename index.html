@@ -817,16 +817,22 @@
 
                         <!-- Liste des cartes avec bouton d'ajout intégré -->
                         <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="text-lg font-semibold text-white">Toutes les cartes</h4>
-                                <button id="add-new-map-btn" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-1 text-sm">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Ajouter une carte</span>
-                                </button>
-                            </div>
-                            <div id="maps-grid" class="space-y-3">
+                            <h4 class="text-lg font-semibold text-white mb-3">Toutes les cartes</h4>
+                            <div id="maps-grid" class="space-y-2">
                                 <!-- Les cartes seront ajoutées ici dynamiquement -->
                             </div>
+
+                            <!-- Bouton d'ajout de carte -->
+                            <button id="add-new-map-btn" class="w-full mt-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Ajouter une nouvelle carte</span>
+                            </button>
+
+                            <!-- Bouton de suppression de tous les lieux et régions -->
+                            <button id="delete-all-locations-regions-btn" class="w-full mt-3 px-4 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Supprimer tous les Lieux et Régions</span>
+                            </button>
                         </div>
                     </div>
 
