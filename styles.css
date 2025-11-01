@@ -1474,7 +1474,6 @@ body {
     flex-direction: column;
     height: 100%;
     padding: 1rem;
-    max-height: calc(100vh - 250px);
 }
 
 #personnages-tab .edit-form .space-y-2 {
@@ -1491,8 +1490,19 @@ body {
     padding-top: 1rem;
     border-top: 1px solid #e5e7eb;
     background-color: white;
-    position: sticky;
-    bottom: 0;
+}
+
+/* Assurer que le conteneur parent respecte les limites */
+#personnages-tab .text-view {
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#personnages-content {
+    flex: 1;
+    overflow: hidden;
 }
 
 /* Info Box - Mode étendu */
