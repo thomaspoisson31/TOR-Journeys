@@ -1,4 +1,3 @@
-
 {
   "locations": [
     {
@@ -333,7 +332,7 @@
     {
       "id": 1716584130321,
       "name": "La Première Salle",
-      "description": "La Première Salle de la Moria fut la Salle de Durin, la demeure du Père des Barbes-Longues, creusée aux temps qui précédèrent la création du Soleil et de la Lune : c'était donc pour les Nains un lieu sacré. L'endroit était entretenu par des échevins et des érudits encapuchonnés. Dans le même temps, la Première Salle jouxte la Porte Est, aussi les allées et venues dans la cité passaient-elles par elle. Le Portail de Durin fait la séparation entre ces deux fonctions.",
+      "description": "La Première Salle de la Moria fut la Salle de Durin, la demeure du Père des Barbes-Longues, creusée aux temps qui précédaient la création du Soleil et de la Lune : c'était donc pour les Nains un lieu sacré. L'endroit était entretenu par des échevins et des érudits encapuchonnés. Dans le même temps, la Première Salle jouxte la Porte Est, aussi les allées et venues dans la cité passaient-elles par elle. Le Portail de Durin fait la séparation entre ces deux fonctions.",
       "color": "green",
       "known": true,
       "visited": false,
@@ -509,7 +508,7 @@
     },
     {
       "id": 1716584199321,
-      "name": "Le Village des Gobelins",
+      "name": "Le Village de Gobelins",
       "description": "Tous les Gobelins des Monts Brumeux connaissent cet endroit. C'est ce qui se rapproche le plus d'un terrain neutre dans la Moria - pour les Orques. Situé dans les Profondeurs Inférieures, il occupe une ancienne place de marché des Nains. Les Gobelins ont criblé la zone de galeries menant aux mines et à d'autres tunnels plus profonds vers Gobelinville ou Fangorn. C'est un lieu d'échange de mithril, trésors, esclaves et secrets, dirigé par Mère-Grand.",
       "color": "red",
       "known": true,
