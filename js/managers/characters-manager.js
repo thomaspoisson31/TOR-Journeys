@@ -137,18 +137,6 @@ class CharactersManager {
         }
     }
 
-    renderCharactersList() {
-        const listContainer = document.getElementById('characters-list');
-        if (!listContainer) return;
-
-        // Filtrer les personnages par carte active
-        const activeMapId = window.settingsManager?.activeMapUrl;
-        let filteredCharacters = this.characters.filter(character => {
-            // Afficher les personnages sans mapId OU ceux correspondant à la carte active
-            if (!character.mapId || !activeMapId) return true;
-            return character.mapId === activeMapId;
-
-
     sortCharacters(characters) {
         const sorted = [...characters];
         
@@ -179,6 +167,16 @@ class CharactersManager {
         return sorted;
     }
 
+    renderCharactersList() {
+        const listContainer = document.getElementById('characters-list');
+        if (!listContainer) return;
+
+        // Filtrer les personnages par carte active
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        let filteredCharacters = this.characters.filter(character => {
+            // Afficher les personnages sans mapId OU ceux correspondant à la carte active
+            if (!character.mapId || !activeMapId) return true;
+            return character.mapId === activeMapId;
         });
 
         // Appliquer les filtres de type
