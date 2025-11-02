@@ -60,15 +60,21 @@ class ImportExportManager {
                 return;
             }
 
+            console.log(`📤 [exportUnifiedData] Carte active: ${activeMapUrl}`);
+            console.log(`📤 [exportUnifiedData] Total lieux disponibles: ${this.dataManager.locationsData?.locations?.length || 0}`);
+
             const allLocations = [];
 
             // Ajouter les lieux normaux (filtrés par carte active)
             if (this.dataManager.locationsData?.locations) {
                 this.dataManager.locationsData.locations.forEach(location => {
-                    // Filtrer par carte active
-                    if (location.mapId && location.mapId !== activeMapUrl) {
+                    // Filtrer par carte active - comparer en tant que strings
+                    if (location.mapId && String(location.mapId) !== String(activeMapUrl)) {
+                        console.log(`⏭️ [exportUnifiedData] Lieu "${location.name}" ignoré (mapId: ${location.mapId})`);
                         return; // Ignorer ce lieu
                     }
+                    
+                    console.log(`✅ [exportUnifiedData] Lieu "${location.name}" ajouté (mapId: ${location.mapId})`);
 
                     const exportLocation = {
                         ...location,
@@ -107,10 +113,13 @@ class ImportExportManager {
             // Ajouter les régions comme lieux avec type "region" (filtrées par carte active)
             if (this.dataManager.regionsData?.regions) {
                 this.dataManager.regionsData.regions.forEach(region => {
-                    // Filtrer par carte active
-                    if (region.mapId && region.mapId !== activeMapUrl) {
+                    // Filtrer par carte active - comparer en tant que strings
+                    if (region.mapId && String(region.mapId) !== String(activeMapUrl)) {
+                        console.log(`⏭️ [exportUnifiedData] Région "${region.name}" ignorée (mapId: ${region.mapId})`);
                         return; // Ignorer cette région
                     }
+                    
+                    console.log(`✅ [exportUnifiedData] Région "${region.name}" ajoutée (mapId: ${region.mapId})`);
 
                     // Extraire les points depuis la structure existante
                     let points = [];
@@ -148,6 +157,8 @@ class ImportExportManager {
                 });
             }
 
+            console.log(`📤 [exportUnifiedData] Total éléments à exporter: ${allLocations.length}`);
+
             // Créer la structure finale
             const unifiedData = {
                 locations: allLocations
@@ -156,6 +167,9 @@ class ImportExportManager {
             // Nom de fichier basé sur la carte active
             const sanitizedMapName = activeMapName.replace(/[^a-z0-9]/gi, '_');
             const fileName = `${sanitizedMapName}_Lieux_Regions.json`;
+
+            console.log(`📤 [exportUnifiedData] Nom du fichier: ${fileName}`);
+            console.log(`📤 [exportUnifiedData] Structure finale:`, JSON.stringify(unifiedData).substring(0, 200) + "...");
 
             // Télécharger le fichier
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(unifiedData, null, 2));
