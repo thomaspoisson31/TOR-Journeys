@@ -61,13 +61,18 @@ class ImportExportManager {
             }
 
             console.log(`📤 [exportUnifiedData] Carte active: ${activeMapUrl}`);
-            console.log(`📤 [exportUnifiedData] Total lieux disponibles: ${this.dataManager.locationsData?.locations?.length || 0}`);
+            
+            // IMPORTANT: Utiliser window.locationsData qui est la source de vérité après chargement cloud
+            const locationsData = window.locationsData || this.dataManager.locationsData;
+            const regionsData = window.regionsData || this.dataManager.regionsData;
+            
+            console.log(`📤 [exportUnifiedData] Total lieux disponibles: ${locationsData?.locations?.length || 0}`);
 
             const allLocations = [];
 
             // Ajouter les lieux normaux (filtrés par carte active)
-            if (this.dataManager.locationsData?.locations) {
-                this.dataManager.locationsData.locations.forEach(location => {
+            if (locationsData?.locations) {
+                locationsData.locations.forEach(location => {
                     // Filtrer par carte active - comparer en tant que strings
                     if (location.mapId && String(location.mapId) !== String(activeMapUrl)) {
                         console.log(`⏭️ [exportUnifiedData] Lieu "${location.name}" ignoré (mapId: ${location.mapId})`);
@@ -111,8 +116,8 @@ class ImportExportManager {
             }
 
             // Ajouter les régions comme lieux avec type "region" (filtrées par carte active)
-            if (this.dataManager.regionsData?.regions) {
-                this.dataManager.regionsData.regions.forEach(region => {
+            if (regionsData?.regions) {
+                regionsData.regions.forEach(region => {
                     // Filtrer par carte active - comparer en tant que strings
                     if (region.mapId && String(region.mapId) !== String(activeMapUrl)) {
                         console.log(`⏭️ [exportUnifiedData] Région "${region.name}" ignorée (mapId: ${region.mapId})`);
