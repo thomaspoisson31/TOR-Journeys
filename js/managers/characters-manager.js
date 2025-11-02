@@ -5,6 +5,12 @@ class CharactersManager {
     constructor() {
         this.characters = [];
         this.currentCharacter = null;
+        this.filters = {
+            pj: true,
+            pnj: true,
+            monstre: true
+        };
+        this.sortBy = 'name';
 
         console.log("👥 CharactersManager initialized");
     }
@@ -50,6 +56,41 @@ class CharactersManager {
 
         if (confirmAddBtn) {
             confirmAddBtn.addEventListener('click', () => this.confirmAddCharacter());
+        }
+
+        // Filtres par type
+        const filterPJ = document.getElementById('filter-pj');
+        const filterPNJ = document.getElementById('filter-pnj');
+        const filterMonstre = document.getElementById('filter-monstre');
+
+        if (filterPJ) {
+            filterPJ.addEventListener('change', (e) => {
+                this.filters.pj = e.target.checked;
+                this.renderCharactersList();
+            });
+        }
+
+        if (filterPNJ) {
+            filterPNJ.addEventListener('change', (e) => {
+                this.filters.pnj = e.target.checked;
+                this.renderCharactersList();
+            });
+        }
+
+        if (filterMonstre) {
+            filterMonstre.addEventListener('change', (e) => {
+                this.filters.monstre = e.target.checked;
+                this.renderCharactersList();
+            });
+        }
+
+        // Tri
+        const sortSelect = document.getElementById('sort-characters');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+                this.sortBy = e.target.value;
+                this.renderCharactersList();
+            });
         }
     }
 
@@ -102,11 +143,55 @@ class CharactersManager {
 
         // Filtrer les personnages par carte active
         const activeMapId = window.settingsManager?.activeMapUrl;
-        const filteredCharacters = this.characters.filter(character => {
+        let filteredCharacters = this.characters.filter(character => {
             // Afficher les personnages sans mapId OU ceux correspondant à la carte active
             if (!character.mapId || !activeMapId) return true;
             return character.mapId === activeMapId;
+
+
+    sortCharacters(characters) {
+        const sorted = [...characters];
+        
+        switch(this.sortBy) {
+            case 'name':
+                sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                break;
+            case 'name-desc':
+                sorted.sort((a, b) => (b.name || '').localeCompare(a.name || ''));
+                break;
+            case 'id':
+                sorted.sort((a, b) => String(a.id).localeCompare(String(b.id)));
+                break;
+            case 'id-desc':
+                sorted.sort((a, b) => String(b.id).localeCompare(String(a.id)));
+                break;
+            case 'type':
+                sorted.sort((a, b) => {
+                    const typeA = a.type || 'PNJ';
+                    const typeB = b.type || 'PNJ';
+                    // Ordre: PJ, PNJ, Monstre
+                    const order = { 'PJ': 1, 'PNJ': 2, 'Monstre': 3 };
+                    return (order[typeA] || 99) - (order[typeB] || 99);
+                });
+                break;
+        }
+        
+        return sorted;
+    }
+
         });
+
+        // Appliquer les filtres de type
+        filteredCharacters = filteredCharacters.filter(character => {
+            const type = character.type || 'PNJ';
+            if (type === 'PJ') return this.filters.pj;
+            if (type === 'PNJ') return this.filters.pnj;
+            if (type === 'Monstre') return this.filters.monstre;
+            return true;
+        });
+
+        // Appliquer le tri
+        filteredCharacters = this.sortCharacters(filteredCharacters);
 
         if (filteredCharacters.length === 0) {
             listContainer.innerHTML = `
@@ -127,6 +212,19 @@ class CharactersManager {
             const associatedLocationNames = this.getAssociatedLocationNames(character);
             const associatedRegionNames = this.getAssociatedRegionNames(character);
 
+            // Déterminer la couleur du cartouche selon le type
+            let typeClass = 'bg-green-600';
+            let borderClass = 'border-green-500';
+            const type = character.type || 'PNJ';
+            
+            if (type === 'PJ') {
+                typeClass = 'bg-blue-600';
+                borderClass = 'border-blue-500';
+            } else if (type === 'Monstre') {
+                typeClass = 'bg-red-600';
+                borderClass = 'border-red-500';
+            }
+
             return `
                 <div class="character-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer" 
                      data-character-id="${character.id}"
@@ -134,17 +232,17 @@ class CharactersManager {
                     <div class="flex items-center space-x-4">
                         ${thumbnailImage ? `
                             <img src="${thumbnailImage.url}" alt="${character.name}" 
-                                 class="w-16 h-16 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                                 class="w-16 h-16 rounded-full object-cover border-2 ${borderClass}">
                         ` : `
-                            <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                            <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
                                 <i class="fas fa-user text-2xl text-gray-400"></i>
                             </div>
                         `}
                         <div class="flex-1">
                             <h3 class="text-lg font-bold">${character.name}</h3>
                             <div class="flex flex-wrap gap-2 mt-1">
-                                <span class="inline-block px-2 py-1 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'}">
-                                    ${character.type || 'PNJ'}
+                                <span class="inline-block px-2 py-1 text-xs rounded ${typeClass}">
+                                    ${type}
                                 </span>
                                 ${associatedLocationNames.map(name => `
                                     <span class="inline-block px-2 py-1 text-xs rounded bg-purple-600">

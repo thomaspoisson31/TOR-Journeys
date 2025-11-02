@@ -345,13 +345,45 @@
                     </button>
                 </div>
 
-                <div class="mb-4 flex space-x-3">
-                    <button id="add-character-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-                        <i class="fas fa-plus mr-2"></i>Ajouter un personnage
-                    </button>
-                    <button id="delete-all-characters-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
-                        <i class="fas fa-trash mr-2"></i>Supprimer les personnages
-                    </button>
+                <div class="mb-4 flex flex-col space-y-3">
+                    <div class="flex space-x-3">
+                        <button id="add-character-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-plus mr-2"></i>Ajouter un personnage
+                        </button>
+                        <button id="delete-all-characters-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-trash mr-2"></i>Supprimer les personnages
+                        </button>
+                    </div>
+                    
+                    <!-- Filtres et Tri -->
+                    <div class="bg-gray-700 rounded-lg p-3 flex flex-wrap gap-3 items-center">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm text-gray-300">Filtrer par type:</label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" id="filter-pj" class="mr-1" checked>
+                                <span class="text-white">PJ</span>
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" id="filter-pnj" class="mr-1" checked>
+                                <span class="text-white">PNJ</span>
+                            </label>
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" id="filter-monstre" class="mr-1" checked>
+                                <span class="text-white">Monstres</span>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2 border-l border-gray-600 pl-3">
+                            <label class="text-sm text-gray-300">Trier par:</label>
+                            <select id="sort-characters" class="bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                                <option value="name">Nom (A-Z)</option>
+                                <option value="name-desc">Nom (Z-A)</option>
+                                <option value="id">ID (croissant)</option>
+                                <option value="id-desc">ID (décroissant)</option>
+                                <option value="type">Type</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="characters-list" class="space-y-3">
@@ -383,6 +415,10 @@
                             <label class="flex items-center">
                                 <input type="radio" name="character-type" id="character-type-pnj" value="PNJ" class="mr-2">
                                 <span>PNJ</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="character-type" id="character-type-monstre" value="Monstre" class="mr-2">
+                                <span>Monstre</span>
                             </label>
                         </div>
                     </div>
