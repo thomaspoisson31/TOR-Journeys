@@ -519,18 +519,28 @@ class InfoBoxManager {
 
         // Récupérer les lieux associés
         const locationsData = window.locationsData || { locations: [] };
-        const associatedLocations = (locationsData.locations || []).filter(loc =>
-            associatedLocationIds.includes(String(loc.id))
-        );
+        const associatedLocations = (locationsData.locations || []).filter(loc => {
+            const isAssociated = associatedLocationIds.includes(String(loc.id));
+            if (isAssociated) {
+                console.log(`✅ [renderLieuxRegionsTabRead] Lieu trouvé: ${loc.name} (${loc.id})`);
+            }
+            return isAssociated;
+        });
 
         // Récupérer les régions associées
         const regionsData = window.regionsData || { regions: [] };
-        const associatedRegions = (regionsData.regions || []).filter(reg =>
-            associatedRegionIds.includes(String(reg.id))
-        );
+        const associatedRegions = (regionsData.regions || []).filter(reg => {
+            const isAssociated = associatedRegionIds.includes(String(reg.id));
+            if (isAssociated) {
+                console.log(`✅ [renderLieuxRegionsTabRead] Région trouvée: ${reg.name} (${reg.id})`);
+            }
+            return isAssociated;
+        });
 
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedLocations.length} lieux associés trouvés`);
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedRegions.length} régions associées trouvées`);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Nombre total de lieux disponibles:`, locationsData.locations?.length || 0);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Nombre total de régions disponibles:`, regionsData.regions?.length || 0);
 
         if (associatedLocations.length === 0 && associatedRegions.length === 0) {
             lieuxRegionsTab.innerHTML = '<p class="text-gray-400 p-4 italic" style="color: black !important;">Aucun lieu ou région associé à ce personnage.</p>';
@@ -1156,7 +1166,7 @@ class InfoBoxManager {
 
         const type = item.type || 'PNJ';
         let typeClass = 'bg-green-600';
-        
+
         if (type === 'PJ') {
             typeClass = 'bg-blue-600';
         } else if (type === 'Monstre') {
@@ -2228,11 +2238,11 @@ class InfoBoxManager {
         const html = associatedCharacters.map(character => {
             const thumbnailImage = character.images?.find(img => img.type === 'vignette');
             const type = character.type || 'PNJ';
-            
+
             // Déterminer les classes CSS selon le type
             let borderClass = 'border-green-500';
             let bgClass = 'bg-green-600';
-            
+
             if (type === 'PJ') {
                 borderClass = 'border-blue-500';
                 bgClass = 'bg-blue-600';
@@ -2240,7 +2250,7 @@ class InfoBoxManager {
                 borderClass = 'border-red-500';
                 bgClass = 'bg-red-600';
             }
-            
+
             return `
                 <div class="character-card-infobox bg-gray-700 hover:bg-gray-600 rounded-lg p-3 mb-3 cursor-pointer transition-colors" 
                      onclick="window.infoBoxManager.showCharacterFromLocation('${character.id}')">
@@ -2294,18 +2304,28 @@ class InfoBoxManager {
 
         // Récupérer les lieux associés
         const locationsData = window.locationsData || { locations: [] };
-        const associatedLocations = (locationsData.locations || []).filter(loc =>
-            associatedLocationIds.includes(String(loc.id))
-        );
+        const associatedLocations = (locationsData.locations || []).filter(loc => {
+            const isAssociated = associatedLocationIds.includes(String(loc.id));
+            if (isAssociated) {
+                console.log(`✅ [renderLieuxRegionsTabRead] Lieu trouvé: ${loc.name} (${loc.id})`);
+            }
+            return isAssociated;
+        });
 
         // Récupérer les régions associées
         const regionsData = window.regionsData || { regions: [] };
-        const associatedRegions = (regionsData.regions || []).filter(reg =>
-            associatedRegionIds.includes(String(reg.id))
-        );
+        const associatedRegions = (regionsData.regions || []).filter(reg => {
+            const isAssociated = associatedRegionIds.includes(String(reg.id));
+            if (isAssociated) {
+                console.log(`✅ [renderLieuxRegionsTabRead] Région trouvée: ${reg.name} (${reg.id})`);
+            }
+            return isAssociated;
+        });
 
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedLocations.length} lieux associés trouvés`);
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedRegions.length} régions associées trouvées`);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Nombre total de lieux disponibles:`, locationsData.locations?.length || 0);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Nombre total de régions disponibles:`, regionsData.regions?.length || 0);
 
         if (associatedLocations.length === 0 && associatedRegions.length === 0) {
             lieuxRegionsTab.innerHTML = '<p class="text-gray-400 p-4 italic" style="color: black !important;">Aucun lieu ou région associé à ce personnage.</p>';
