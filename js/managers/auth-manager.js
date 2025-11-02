@@ -998,6 +998,18 @@ class AuthManager {
             const localData = this.collectCurrentContextData();
             this.logAuth("📦 Données locales collectées");
 
+            // 2. NOUVEAU: Vérifier s'il y a des suppressions de lieux
+            const deletionWarning = await this.checkForLocationDeletions(localData, envPrefix);
+            if (deletionWarning.hasDeleted) {
+                const userConfirmed = await this.showDeletionWarning(deletionWarning);
+                if (!userConfirmed) {
+                    this.logAuth("❌ Synchronisation annulée par l'utilisateur suite à détection de suppressions");
+                    this.updateSyncStatus('idle');
+                    this.isSyncing = false;
+                    return;
+                }
+            }
+
             // 2. Attribuer le mapId de la carte active aux lieux/régions sans mapId
             const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl || localStorage.getItem('activeMapUrl');
             this.logAuth(`🔍 [syncUserData] activeMapId: ${activeMapId}`);
@@ -1190,13 +1202,31 @@ class AuthManager {
     async handleSyncConflict(localData, cloudData) {
         this.logAuth("🔄 Gestion du conflit de synchronisation");
 
-        const userChoice = confirm(
-            "⚠️ CONFLIT DE SYNCHRONISATION DÉTECTÉ\n\n" +
-            "Des modifications ont été effectuées sur un autre appareil.\n\n" +
-            "Que souhaitez-vous faire ?\n\n" +
+        // NOUVEAU: Vérifier les suppressions avant de proposer le conflit
+        const cloudLocations = cloudData.locations?.locations || [];
+        const localLocations = localData.locations?.locations || [];
+        const localLocationIds = new Set(localLocations.map(loc => loc.id));
+        const deletedLocations = cloudLocations.filter(cloudLoc => !localLocationIds.has(cloudLoc.id));
+
+        let conflictMessage = "⚠️ CONFLIT DE SYNCHRONISATION DÉTECTÉ\n\n" +
+            "Des modifications ont été effectuées sur un autre appareil.\n\n";
+
+        if (deletedLocations.length > 0) {
+            conflictMessage += `⚠️ ATTENTION: ${deletedLocations.length} lieu(x) seraient supprimé(s) si vous gardez vos données locales:\n`;
+            deletedLocations.slice(0, 5).forEach(loc => {
+                conflictMessage += `  - ${loc.name}\n`;
+            });
+            if (deletedLocations.length > 5) {
+                conflictMessage += `  ... et ${deletedLocations.length - 5} autres\n`;
+            }
+            conflictMessage += "\n";
+        }
+
+        conflictMessage += "Que souhaitez-vous faire ?\n\n" +
             "✅ OK = Garder mes modifications locales (écraser le cloud)\n" +
-            "❌ ANNULER = Charger les données du cloud (perdre mes modifications locales)"
-        );
+            "❌ ANNULER = Charger les données du cloud (perdre mes modifications locales)";
+
+        const userChoice = confirm(conflictMessage);
 
         if (userChoice) {
             // L'utilisateur veut garder ses modifications locales
@@ -1270,6 +1300,141 @@ class AuthManager {
                 this.lastSyncDateDiv.querySelector('span').textContent = 'jamais';
             }
         }
+    }
+
+    async checkForLocationDeletions(localData, envPrefix) {
+        this.logAuth("🔍 Vérification des suppressions de lieux...");
+        
+        try {
+            // Récupérer les données actuelles du cloud
+            const response = await fetch(`/api/user/data?env=${envPrefix}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.status === 404) {
+                // Pas de données cloud, donc pas de suppression
+                this.logAuth("ℹ️ Aucune donnée cloud existante, pas de vérification de suppression");
+                return { hasDeleted: false, deletedLocations: [] };
+            }
+
+            if (!response.ok) {
+                this.logAuth("⚠️ Impossible de vérifier les suppressions (erreur cloud)");
+                return { hasDeleted: false, deletedLocations: [] };
+            }
+
+            const cloudData = await response.json();
+            
+            // Comparer les lieux du cloud avec les lieux locaux
+            const cloudLocations = cloudData.locations?.locations || [];
+            const localLocations = localData.locations?.locations || [];
+            
+            const cloudLocationIds = new Set(cloudLocations.map(loc => loc.id));
+            const localLocationIds = new Set(localLocations.map(loc => loc.id));
+            
+            // Trouver les lieux présents dans le cloud mais absents localement
+            const deletedLocations = cloudLocations.filter(cloudLoc => !localLocationIds.has(cloudLoc.id));
+            
+            if (deletedLocations.length > 0) {
+                this.logAuth(`⚠️ ALERTE: ${deletedLocations.length} lieu(x) seraient supprimé(s) par cette synchronisation!`);
+                deletedLocations.forEach(loc => {
+                    this.logAuth(`   - ${loc.name} (ID: ${loc.id}, Carte: ${loc.mapId || 'global'})`);
+                });
+                
+                return {
+                    hasDeleted: true,
+                    deletedLocations: deletedLocations,
+                    cloudTotal: cloudLocations.length,
+                    localTotal: localLocations.length
+                };
+            } else {
+                this.logAuth(`✅ Aucune suppression détectée (Cloud: ${cloudLocations.length}, Local: ${localLocations.length})`);
+                return { hasDeleted: false, deletedLocations: [] };
+            }
+            
+        } catch (error) {
+            this.logAuth(`⚠️ Erreur lors de la vérification des suppressions: ${error.message}`);
+            return { hasDeleted: false, deletedLocations: [] };
+        }
+    }
+
+    async showDeletionWarning(deletionInfo) {
+        return new Promise((resolve) => {
+            // Créer une modale d'avertissement visible et bloquante
+            const warningModal = document.createElement('div');
+            warningModal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[200]';
+            warningModal.innerHTML = `
+                <div class="bg-red-900 border-4 border-red-500 rounded-lg p-8 max-w-2xl mx-4 shadow-2xl">
+                    <div class="flex items-center mb-6">
+                        <i class="fas fa-exclamation-triangle text-yellow-400 text-5xl mr-4 animate-pulse"></i>
+                        <h2 class="text-3xl font-bold text-white">⚠️ ALERTE DE SUPPRESSION ⚠️</h2>
+                    </div>
+                    
+                    <div class="bg-red-800 border-2 border-red-600 rounded p-4 mb-6">
+                        <p class="text-white text-lg mb-4">
+                            <strong class="text-yellow-300">ATTENTION:</strong> Cette synchronisation va <strong class="underline">SUPPRIMER ${deletionInfo.deletedLocations.length} lieu(x)</strong> de votre sauvegarde cloud !
+                        </p>
+                        <p class="text-gray-200 text-sm mb-2">
+                            Cloud actuel: <strong>${deletionInfo.cloudTotal} lieux</strong> → Après sync: <strong>${deletionInfo.localTotal} lieux</strong>
+                        </p>
+                    </div>
+                    
+                    <div class="bg-gray-800 rounded p-4 mb-6 max-h-60 overflow-y-auto">
+                        <p class="text-white font-bold mb-2">Lieux qui seront supprimés :</p>
+                        <ul class="text-gray-300 space-y-1">
+                            ${deletionInfo.deletedLocations.map(loc => `
+                                <li class="flex items-center">
+                                    <i class="fas fa-times-circle text-red-400 mr-2"></i>
+                                    <strong>${loc.name}</strong>
+                                    <span class="text-xs text-gray-400 ml-2">(ID: ${loc.id})</span>
+                                    ${loc.mapId ? `<span class="text-xs text-gray-500 ml-2">Carte: ${loc.mapId.split('/').pop()}</span>` : ''}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-yellow-900 border-2 border-yellow-600 rounded p-4 mb-6">
+                        <p class="text-yellow-200 text-sm">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Si ces suppressions sont inattendues, cliquez sur <strong>ANNULER</strong> et vérifiez vos données avant de synchroniser.
+                        </p>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-4">
+                        <button id="deletion-cancel-btn" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors text-lg">
+                            <i class="fas fa-ban mr-2"></i>ANNULER
+                        </button>
+                        <button id="deletion-confirm-btn" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors text-lg">
+                            <i class="fas fa-trash mr-2"></i>CONFIRMER LA SUPPRESSION
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(warningModal);
+            
+            const cancelBtn = warningModal.querySelector('#deletion-cancel-btn');
+            const confirmBtn = warningModal.querySelector('#deletion-confirm-btn');
+            
+            cancelBtn.addEventListener('click', () => {
+                this.logAuth("❌ Utilisateur a annulé la synchronisation (suppressions détectées)");
+                document.body.removeChild(warningModal);
+                resolve(false);
+            });
+            
+            confirmBtn.addEventListener('click', () => {
+                this.logAuth("✅ Utilisateur a confirmé la synchronisation malgré les suppressions");
+                document.body.removeChild(warningModal);
+                resolve(true);
+            });
+            
+            // Empêcher la fermeture en cliquant à l'extérieur
+            warningModal.addEventListener('click', (e) => {
+                if (e.target === warningModal) {
+                    e.stopPropagation();
+                }
+            });
+        });
     }
 
     saveToLocalStorage(data, fromCloud = false) {
