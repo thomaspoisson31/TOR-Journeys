@@ -550,6 +550,11 @@ class CharactersManager {
                 return;
             }
 
+            // IMPORTANT: Recharger depuis localStorage pour avoir les données à jour
+            this.loadCharactersFromLocal();
+            
+            console.log(`📤 [exportCharacters] Total personnages disponibles: ${this.characters?.length || 0}`);
+
             // Filtrer les personnages par carte active
             const charactersToExport = this.characters.filter(character => {
                 // Exporter les personnages sans mapId OU ceux correspondant à la carte active
