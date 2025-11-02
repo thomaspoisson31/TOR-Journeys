@@ -362,9 +362,18 @@ class ImportExportManager {
                 region.mapId = item.mapId;
             }
 
-            // Ajouter l'image si présente
+            // Ajouter les images si présentes
             if (item.imageUrl) region.imageUrl = item.imageUrl;
             if (item.images) region.images = item.images;
+            
+            // Mapper image_url vers images si présent (rétrocompatibilité)
+            if (item.image_url && Array.isArray(item.image_url) && item.image_url.length > 0) {
+                // Convertir le tableau image_url en format images
+                region.images = item.image_url.map(url => ({
+                    url: url,
+                    type: null // Type sera défini plus tard si nécessaire
+                }));
+            }
 
             // Pour les régions: une seule rumeur
             if (item.Rumeur && item.Rumeur !== "A definir") {
@@ -422,9 +431,18 @@ class ImportExportManager {
                 location.mapId = item.mapId;
             }
 
-            // Ajouter l'image si présente
+            // Ajouter les images si présentes
             if (item.imageUrl) location.imageUrl = item.imageUrl;
             if (item.images) location.images = item.images;
+            
+            // Mapper image_url vers images si présent (rétrocompatibilité)
+            if (item.image_url && Array.isArray(item.image_url) && item.image_url.length > 0) {
+                // Convertir le tableau image_url en format images
+                location.images = item.image_url.map(url => ({
+                    url: url,
+                    type: null // Type sera défini plus tard si nécessaire
+                }));
+            }
 
             // Gérer les rumeurs - support des formats anciens et nouveaux
             const rumeurs = [];
