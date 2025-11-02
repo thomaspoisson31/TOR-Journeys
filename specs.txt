@@ -119,6 +119,17 @@ CONVENTIONS DE CODAGE JAVASCRIPT
      🗺️  Carte
      🔍 Zoom/Filtres
      📱 Mobile/Touch
+     🗑️  Suppression
+
+7. SUPPRESSIONS EN MASSE:
+   - Toujours filtrer par carte active (mapId) avant suppression
+   - Double confirmation obligatoire avec messages clairs
+   - Afficher le nombre d'éléments à supprimer
+   - Préserver les éléments sans mapId (rétrocompatibilité)
+   - Préserver les éléments d'autres cartes
+   - Marquer comme unsaved après suppression pour sync cloud
+   - Notifications utilisateur (succès/erreur/info)
+   - Pattern: showNotification(title, message, type)
 
 VERSIONING
 ----------
@@ -244,8 +255,10 @@ FONCTIONNALITÉS PRINCIPALES
     - Types: PJ (Personnage Joueur) / PNJ
     - Propriétés: nom, description, images (principale/vignette)
     - InfoBox partagée avec lieux/régions
-    - Création/modification/suppression
+    - Création/modification/suppression individuelle et en masse
     - Vignettes conditionnelles (type)
+    - Filtrage par carte active (mapId)
+    - Suppression groupée avec double confirmation
     - Sync cloud
 
 STRUCTURE DONNÉES
@@ -330,7 +343,8 @@ Format Character:
   type: "PJ" | "PNJ",
   images: [{ url, type }],
   associatedLocations: [locationId1, locationId2, ...],  // IDs des lieux associés
-  associatedRegions: [regionId1, regionId2, ...]         // IDs des régions associées
+  associatedRegions: [regionId1, regionId2, ...],        // IDs des régions associées
+  mapId: string | undefined                              // Carte d'appartenance (filtrage)
 }
 
 API ENDPOINTS
@@ -432,6 +446,15 @@ RÈGLES MÉTIER
    - Import: relations restaurées automatiquement des deux côtés
    - Suppression: si un personnage/lieu est supprimé, nettoyer les références
 
+2. SUPPRESSION EN MASSE DES PERSONNAGES:
+   - Filtrage par carte active (mapId) avant suppression
+   - Double confirmation obligatoire avec messages explicites
+   - Préservation des personnages sans mapId (anciens)
+   - Préservation des personnages d'autres cartes
+   - Comptage et affichage du nombre d'éléments à supprimer
+   - Sauvegarde automatique + marquage unsaved pour sync cloud
+   - Notifications de succès/erreur
+
 2. VERSIONING ET DÉVELOPPEMENT:
    - Incrémenter version.json après chaque modification significative
    - Documenter les changements dans specs.txt (section ÉVOLUTIONS RÉCENTES)
@@ -507,7 +530,17 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Relations Personnages-Lieux/Régions (v1.3.2)
+1. Suppression en masse des personnages (v1.3.3)
+   - Bouton "Supprimer les personnages" dans modale Personnages
+   - Filtrage par carte active avant suppression
+   - Double confirmation avec messages d'avertissement explicites
+   - Comptage et affichage du nombre d'éléments à supprimer
+   - Préservation des personnages d'autres cartes et sans mapId
+   - Méthode deleteAllCharactersForActiveMap() dans CharactersManager
+   - Interface: bouton rouge à droite du bouton "Ajouter un personnage"
+   - Fichiers concernés: index.html, characters-manager.js
+
+2. Relations Personnages-Lieux/Régions (v1.3.2)
    - Sauvegarde cloud des relations bidirectionnelles
    - Export JSON avec relations complètes (associatedCharacters, associatedLocations, associatedRegions)
    - Import automatique des relations depuis JSON
