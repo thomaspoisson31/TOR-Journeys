@@ -2204,11 +2204,21 @@ class InfoBoxManager {
             return;
         }
 
+        console.log(`👥 [renderPersonnagesTabRead] Recherche de ${associatedCharacterIds.length} personnages associés`);
+        console.log(`👥 [renderPersonnagesTabRead] IDs à rechercher:`, associatedCharacterIds);
+
         // Filtrer UNIQUEMENT par association, PAS par carte active
         // Un personnage associé doit toujours être affiché, quelle que soit sa carte d'origine
+        // IMPORTANT: Comparer les IDs en tant que strings pour éviter les problèmes de type
         const associatedCharacters = window.charactersManager.characters.filter(char => {
-            return associatedCharacterIds.includes(char.id);
+            const isAssociated = associatedCharacterIds.includes(String(char.id));
+            if (isAssociated) {
+                console.log(`✅ [renderPersonnagesTabRead] Personnage trouvé: ${char.name} (${char.id})`);
+            }
+            return isAssociated;
         });
+
+        console.log(`👥 [renderPersonnagesTabRead] ${associatedCharacters.length} personnage(s) trouvé(s)`);
 
         if (associatedCharacters.length === 0) {
             personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage associé à ce lieu</p>';
