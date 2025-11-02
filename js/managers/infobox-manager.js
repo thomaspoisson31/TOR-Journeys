@@ -2204,12 +2204,10 @@ class InfoBoxManager {
             return;
         }
 
-        // Filtrer les personnages associés à ce lieu/région
-        const activeMapId = window.settingsManager?.activeMapUrl;
+        // Filtrer UNIQUEMENT par association, PAS par carte active
+        // Un personnage associé doit toujours être affiché, quelle que soit sa carte d'origine
         const associatedCharacters = window.charactersManager.characters.filter(char => {
-            const isAssociated = associatedCharacterIds.includes(char.id);
-            const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
-            return isAssociated && isOnCurrentMap;
+            return associatedCharacterIds.includes(char.id);
         });
 
         if (associatedCharacters.length === 0) {
