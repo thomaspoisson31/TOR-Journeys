@@ -434,7 +434,16 @@ class CharactersManager {
     confirmAddCharacter() {
         const name = document.getElementById('character-name-input').value.trim();
         const description = document.getElementById('character-desc-input').value.trim();
-        const type = document.getElementById('character-type-pj').checked ? 'PJ' : 'PNJ';
+        
+        // Déterminer le type sélectionné
+        let type = 'PNJ'; // Valeur par défaut
+        if (document.getElementById('character-type-pj').checked) {
+            type = 'PJ';
+        } else if (document.getElementById('character-type-pnj').checked) {
+            type = 'PNJ';
+        } else if (document.getElementById('character-type-monstre').checked) {
+            type = 'Monstre';
+        }
 
         if (!name) {
             alert('Le nom du personnage est obligatoire');
@@ -553,7 +562,7 @@ class CharactersManager {
                     id: character.id,
                     name: character.name,
                     description: character.description || "",
-                    type: character.type || "PNJ",
+                    type: character.type || "PNJ", // Exporte PJ, PNJ ou Monstre
                     images: character.images || [],
                     associatedLocations: character.associatedLocations || [],
                     associatedRegions: character.associatedRegions || [],

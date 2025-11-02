@@ -260,6 +260,9 @@ class InfoBoxManager {
         // Mettre à jour l'icône d'affichage du cercle de vignette
         this.updateThumbnailCircle(this.currentItem);
 
+        // Mettre à jour l'affichage du type pour les personnages
+        this.updateCharacterTypeDisplay(this.currentItem);
+
         // Mettre à jour l'affichage du MapID
         this.updateMapIdDisplay(this.currentItem);
 
@@ -764,12 +767,34 @@ class InfoBoxManager {
         const textTab = document.getElementById('text-tab');
         if (textTab) {
             // Nettoyer complètement l'onglet
+            const currentType = item.type || 'PNJ';
+            const typeSelectHtml = type === 'character' ? `
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-2 text-white">Type :</label>
+                    <div class="flex space-x-4">
+                        <label class="flex items-center text-white">
+                            <input type="radio" name="edit-character-type" value="PJ" ${currentType === 'PJ' ? 'checked' : ''} class="mr-2">
+                            <span>PJ</span>
+                        </label>
+                        <label class="flex items-center text-white">
+                            <input type="radio" name="edit-character-type" value="PNJ" ${currentType === 'PNJ' ? 'checked' : ''} class="mr-2">
+                            <span>PNJ</span>
+                        </label>
+                        <label class="flex items-center text-white">
+                            <input type="radio" name="edit-character-type" value="Monstre" ${currentType === 'Monstre' ? 'checked' : ''} class="mr-2">
+                            <span>Monstre</span>
+                        </label>
+                    </div>
+                </div>
+            ` : '';
+
             textTab.innerHTML = `
                 <div class="edit-form p-4">
                     <div class="mb-3">
                         <label class="block text-sm font-medium mb-2 text-white">Nom :</label>
                         <input type="text" id="edit-name" value="${item.name}" class="w-full p-2 border rounded bg-white text-black">
                     </div>
+                    ${typeSelectHtml}
                     <div class="mb-3">
                         <label class="block text-sm font-medium mb-2 text-white">Description (Markdown supporté) :</label>
                         <textarea id="edit-description" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.description || ''}</textarea>
@@ -1116,6 +1141,42 @@ class InfoBoxManager {
         }
     }
 
+    updateCharacterTypeDisplay(item) {
+        const infoBoxHeader = document.getElementById('info-box-header');
+        if (!infoBoxHeader) return;
+
+        // Supprimer l'ancien affichage du type s'il existe
+        const existingTypeDisplay = document.getElementById('info-box-character-type');
+        if (existingTypeDisplay) {
+            existingTypeDisplay.remove();
+        }
+
+        // Afficher le type uniquement pour les personnages
+        if (this.currentType !== 'character') return;
+
+        const type = item.type || 'PNJ';
+        let typeClass = 'bg-green-600';
+        
+        if (type === 'PJ') {
+            typeClass = 'bg-blue-600';
+        } else if (type === 'Monstre') {
+            typeClass = 'bg-red-600';
+        }
+
+        // Créer le cartouche de type
+        const typeDisplay = document.createElement('div');
+        typeDisplay.id = 'info-box-character-type';
+        typeDisplay.className = `inline-block px-3 py-1 text-xs rounded ${typeClass} text-white font-semibold ml-3`;
+        typeDisplay.textContent = type;
+        typeDisplay.style.verticalAlign = 'middle';
+
+        // Insérer après le titre
+        const titleContainer = infoBoxHeader.querySelector('.flex.items-center.flex-grow');
+        if (titleContainer) {
+            titleContainer.appendChild(typeDisplay);
+        }
+    }
+
     updateMapIdDisplay(item) {
         const infoBoxTitle = document.getElementById('info-box-title');
         if (!infoBoxTitle) return;
@@ -1202,6 +1263,16 @@ class InfoBoxManager {
         // Mettre à jour l'objet
         if (nameInput) this.currentItem.name = nameInput.value.trim();
         if (descTextarea) this.currentItem.description = descTextarea.value.trim();
+
+        // Sauvegarder le type pour les personnages
+        if (this.currentType === 'character') {
+            const typeRadios = document.querySelectorAll('input[name="edit-character-type"]');
+            typeRadios.forEach(radio => {
+                if (radio.checked) {
+                    this.currentItem.type = radio.value;
+                }
+            });
+        }
 
         // Gérer les rumeurs - récupérer depuis les textareas individuels
         const rumeurInputs = document.querySelectorAll('.edit-rumeur-input');
