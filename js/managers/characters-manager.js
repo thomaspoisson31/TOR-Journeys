@@ -34,6 +34,12 @@ class CharactersManager {
             addBtn.addEventListener('click', () => this.openAddCharacterModal());
         }
 
+        // Bouton supprimer tous les personnages
+        const deleteAllBtn = document.getElementById('delete-all-characters-btn');
+        if (deleteAllBtn) {
+            deleteAllBtn.addEventListener('click', () => this.deleteAllCharactersForActiveMap());
+        }
+
         // Boutons de la modale d'ajout
         const cancelAddBtn = document.getElementById('cancel-add-character');
         const confirmAddBtn = document.getElementById('confirm-add-character');
@@ -616,6 +622,85 @@ class CharactersManager {
                 notification.parentNode.removeChild(notification);
             }
         }, 5000);
+    }
+
+    deleteAllCharactersForActiveMap() {
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const activeMapName = window.settingsManager?.activeMapName || 'cette carte';
+
+        if (!activeMapId) {
+            this.showNotification("Erreur", "Aucune carte active", "error");
+            return;
+        }
+
+        // Compter les personnages qui seront supprimés
+        const charactersToDelete = this.characters.filter(character => {
+            if (!character.mapId || !activeMapId) return false;
+            return character.mapId === activeMapId;
+        });
+
+        if (charactersToDelete.length === 0) {
+            this.showNotification("Information", "Aucun personnage à supprimer pour cette carte", "info");
+            return;
+        }
+
+        // Double confirmation
+        const firstConfirm = confirm(
+            `⚠️ ATTENTION ⚠️\n\n` +
+            `Vous allez supprimer DÉFINITIVEMENT ${charactersToDelete.length} personnage(s) de "${activeMapName}".\n\n` +
+            `Cette action est irréversible.\n\n` +
+            `Voulez-vous continuer ?`
+        );
+
+        if (!firstConfirm) {
+            return;
+        }
+
+        const doubleConfirm = confirm(
+            `🚨 DERNIÈRE CONFIRMATION 🚨\n\n` +
+            `Vous allez supprimer DÉFINITIVEMENT ${charactersToDelete.length} personnage(s) de "${activeMapName}".\n\n` +
+            `Confirmez-vous cette suppression ?`
+        );
+
+        if (!doubleConfirm) {
+            return;
+        }
+
+        try {
+            console.log(`🗑️ Suppression de tous les personnages de la carte active: ${activeMapId}`);
+
+            // Supprimer uniquement les personnages de la carte active
+            const initialCount = this.characters.length;
+            this.characters = this.characters.filter(character => {
+                if (!character.mapId) return true; // Garder les personnages sans mapId
+                return character.mapId !== activeMapId; // Garder les personnages des autres cartes
+            });
+
+            const deletedCount = initialCount - this.characters.length;
+            console.log(`✅ ${deletedCount} personnage(s) supprimé(s) de la carte active`);
+
+            // Sauvegarder
+            this.saveCharactersToLocal();
+
+            // Rafraîchir la liste
+            this.renderCharactersList();
+
+            // Marquer comme non sauvegardé pour afficher l'icône cloud
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+
+            // Notification de succès
+            this.showNotification(
+                "Suppression réussie", 
+                `${deletedCount} personnage(s) supprimé(s) de "${activeMapName}"`, 
+                "success"
+            );
+
+        } catch (error) {
+            console.error("❌ Erreur lors de la suppression des personnages:", error);
+            this.showNotification("Erreur", "Impossible de supprimer les personnages: " + error.message, "error");
+        }
     }
 
     // Méthode pour récupérer toutes les données (pour synchronisation)
