@@ -1,3 +1,4 @@
+
 {
   "locations": [
     {
@@ -16,7 +17,7 @@
         "Les Nains creusèrent durant des milliers d'années, en quête de mithril. Il en reste des tas, sous la montagne. Si vous êtes assez courageux pour aller la chercher, une fortune vous y attend !"
       ],
       "Tradition_Ancienne": "Certes, les mines de mithril des Nains étaient immenses, car on n'en trouvait que dans de rares veines, et les mineurs devaient suivre ces filons scintillants loin sous les montagnes. Ce métal fut découvert dans une vaste caverne parmi les racines des montagnes; on appelle cet endroit l'Antre des Étoiles Oubliées.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100030",
         "100031"
@@ -38,7 +39,7 @@
         "Les Nains de jadis forgeaient des armes puissantes, qu'ils entreposaient dans une armurerie au plus profond de leur cité."
       ],
       "Tradition_Ancienne": "Les Armureries de la Troisième Profondeur étaient le cœur de l'arsenal nain : elles contenaient assez d'armes et d'armures pour équiper une armée entière. Cottes de mailles, casques, épées, haches et lances s'y trouvaient en quantités innombrables. Les Nains y entreposaient aussi les armes enchantées forgées par les maîtres d'antan : celles façonnées par la main sans égale de Telchar et l'esprit incomparable de Narvi, et les œuvres bénies de Durin lui-même.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100027"
       ]
@@ -59,7 +60,7 @@
         "Ah, la splendeur de la Moria à son apogée ! Les clairières de pierre fleurie ! Les Nains avaient bâti un véritable jardin, sous la montagne !"
       ],
       "Tradition_Ancienne": "Les Jardins Troglodytes du Roi Thrym étaient l'une des merveilles de l'ancien monde. En explorant les tunnels des Monts Brumeux, les Nains découvrirent une grande caverne naturelle; ils en firent un jardin magnifique, à la fois sauvage, humide et lumineux. Y furent semées des herbes et des plantes rares, pour que les Nains blessés puissent trouver du réconfort.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100019"
       ]
@@ -80,7 +81,7 @@
         "Les Nains n'aiment rien tant que des archives bien organisées. Chaque citadelle naine était dotée d'une salle des archives celle de Khazad-dum était particulièrement grande..."
       ],
       "Tradition_Ancienne": "La Chambre de Mazarbul est située aux étages supérieurs de la partie ouest du Cavenain, au nord de la Route. C'est là qu'étaient conservées toutes les archives importantes de la cité.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100020"
       ]
@@ -101,7 +102,7 @@
         "La Moria ? J'en ai entendu parler. Elle se trouve dans les collines qui surplombent la Vallée des Rigoles Sombres, après la Passe de Rubicorne. Les corbeaux nichent dans ses ruines..."
       ],
       "Tradition_Ancienne": "La Porte de Rubicorne est l'ancien nom de la passe qui franchit les montagnes au sud du Mont Rubicorne (Caradhras en sindarin). Cette route dans les hauteurs a toujours été dangereuse, mais elle offrait un précieux raccourci. Elle grimpe parmi les collines de l'ancien Eregion à l'ouest pour franchir les pentes du Caradhras, avant de redescendre l'Escalier des Rigoles Sombres à l'est. Les vestiges de la Citadelle de Barazinbar, qui était jadis la Gardienne de la Porte de Rubicorne, s'y dressent encore.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100014"
       ]
@@ -122,7 +123,7 @@
         "Une grande amitié liait les Elfes d'Eregion et les Nains de la Moria, et maints anneaux furent offerts en gage de cette affection. Certains étaient l'œuvre des Elfes, d'autres des Nains..."
       ],
       "Tradition_Ancienne": "Il est dit que le peuple de Narvi aidait les Elfes à fabriquer des anneaux en leur fournissant des pierres précieuses, du métal et d'autres matériaux. La rumeur veut que les Nains aient continué de créer des anneaux même après la chute d'Eregion, et des récits racontent que certains des Elfes fuyant le Seigneur Ténébreux se réfugièrent sous la Montagne. Mais nulle preuve de ces affirmations n'a jamais été trouvée.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -141,7 +142,7 @@
         "L'abîme qu'enjambe le Pont de Durin est sans fond... On y entend l'écho éternel des cris de ceux qui sont tombés dans le gouffre."
       ],
       "Tradition_Ancienne": "Près de la Deuxième Salle, les rois des Nains avaient établi une prison, où l'on enfermait les ennemis de la cité jusqu'à ce qu'ils se repentent.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100028"
       ]
@@ -162,7 +163,7 @@
         "Dans la Moria, juste au-delà de la Première Salle, il y a un gouffre noir. Il n'a pas de fond, et seul un pont étroit l'enjambe... La seule façon d'entrer dans la cité est de franchir ce pont..."
       ],
       "Tradition_Ancienne": "Les rumeurs sont en grande partie vraies : en effet, le Pont de Durin est le seul moyen de franchir le chasme... mais il existe d'autres routes secrètes, plus haut dans la montagne, qui contournent l'abîme. La connaissance de ces itinéraires cachés a sans doute disparu avec les derniers Nains.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100018"
       ]
@@ -183,7 +184,7 @@
         "Près des ruines de l'ancienne Moria, il y a un col qui traverse les Monts Brumeux. On l'appelle la Passe de Rubicorne. Il est très escarpé, mais en été, il reste souvent plus praticable que le Haut Col-et vous n'avez pas à payer les péages qu'exigent les Beornides. En revanche, il y a des Orques, et même pire, donc restez sur vos gardes. Depuis l'est, l'accès à la passe se fait par la cascade."
       ],
       "Tradition_Ancienne": "L'Escalier des Rigoles Sombres est le nom donné à une série de cascades dévalant les pentes de la montagne pour alimenter le Cours d'Argent. Un étroit chemin grimpe la pente abrupte. Jadis, les Nains taillèrent dans la roche des marches pour atteindre le col; ils le considèrent encore comme un lieu sacré, car c'est l'un des rares ouvrages des maçons de la Moria à avoir échappé aux ténèbres.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100015"
       ]
@@ -202,7 +203,7 @@
       },
       "Rumeurs": [],
       "Tradition_Ancienne": "",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -221,7 +222,7 @@
         "La plupart des Orques des Monts Brumeux ont été tués lors de la Bataille des Cinq Armées. Il y a des chances que la Moria soit encore libre... sauf si les rumeurs indiquant qu'un nouveau seigneur de guerre orque la revendique sont vraies."
       ],
       "Tradition_Ancienne": "Au cœur du Cavenain se trouvait le Palais des Marches, creusé dans la paroi d'une immense caverne. Des escaliers couraient le long des murs et d'immenses galeries donnaient sur la cité en dessous.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100010",
         "100011",
@@ -245,7 +246,7 @@
         "Si le roi des Nains vivait dans les profondeurs de la terre, la reine, elle, résidait dans les hauteurs de la montagne, au-dessus des nuages. C'est pourquoi on ne voit jamais nulle Naine comme les chamois, elles vivent dans les sommets montagneux ; elles n'en descendent qu'au début de l'hiver et y retournent au printemps..."
       ],
       "Tradition_Ancienne": "Les Galeries de la Montagne occupaient les Niveaux supérieurs les plus hauts de Khazad-dum, au sommet de la montagne qui surplombe la Vallée des Rigoles Sombres. On raconte que les Nains les abandonnèrent il y a fort longtemps.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100021",
         "100022"
@@ -267,7 +268,7 @@
         "Le cœur de la montagne est creux... dans une caverne enchantée repose un héros d'autrefois, qui s'éveillera lorsqu'il sera requis."
       ],
       "Tradition_Ancienne": "Plus vaste encore que les Cavernes de Thrym Joues-de-chardon, la Grande Caverne Ouest est l'une des merveilles de la Moria. Bien qu'elle soit un peu à l'écart de la Route, les voyageurs nains faisaient presque toujours un crochet pour contempler sa majesté. C'est ici, dit-on, que furent découvertes les premières veines de mithril.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -286,7 +287,7 @@
         "Les rois des Nains d'antan étaient fabuleusement riches, et les plus riches d'entre eux étaient les Barbes-Longues, le clan de Durin. Le roi des Barbes-Longues se fit construire la salle du trône la plus merveilleuse qu'on puisse imaginer : dans cette salle, si on en croit la légende, les Nains mangeaient de l'or et buvaient des rivières de diamants..."
       ],
       "Tradition_Ancienne": "Ce fut Durin II qui bâtit le Palais Royal, qui abrita la Salle du Trône de sa lignée durant maintes générations, jusqu'à la mort de son héritier Durin VI. Les salles attenantes étaient peut-être encore plus importantes : on comptait parmi elles la Salle des Jugements, où les criminels nains étaient jugés, et la Salle des Sept Trônes, où se réunissaient les Maisons on raconte même que les rois des Nains disposaient d'un moyen de communier avec Aulë lui-même, leur Créateur.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -305,7 +306,7 @@
         "C'est par cette porte qu'entra le roi Thror, car elle était ouverte à son arrivée. Mais il y fut injustement tué par les Orques, qui l'attendaient en embuscade dans l'obscurité."
       ],
       "Tradition_Ancienne": "La Porte Est de la Moria se trouve tout au fond de la Vallée des Rigoles Sombres. Nulle armée ne l'a jamais franchie de l'extérieur, et même le plus puissant des Dragons (ou des Géants !) n'aurait pu espérer s'y engouffrer. Non, Khazad-dùm ne pouvait sombrer que de l'intérieur.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100017"
       ]
@@ -326,7 +327,7 @@
         "La porte ouest de la Moria se trouve près de la source du Sirannon - s'il existe encore. Il est fort probable qu'il ait été enseveli sous la pierre, quand jadis les Nains se détournèrent de l'Eriador."
       ],
       "Tradition_Ancienne": "Il est dit que la porte ouest de la Moria est cachée, et que seuls les Sages peuvent la trouver mais elle existe encore. De l'autre côté, une simple poussée suffit à l'ouvrir.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -345,7 +346,7 @@
         "Par-delà le seuil de la Porte Est se trouve la Salle de Durin, où les Nains gardaient une partie de leurs plus grands trésors. Mais hormis certains jours consacrés, ses portes restaient closes."
       ],
       "Tradition_Ancienne": "La Première Salle est la Salle de Durin. C'est ici qu'il commença son long ouvrage ; il y vécut seul maintes années, à sculpter sur les murs ses souvenirs des Temps Anciens. Cette salle fut conservée telle que Durin la laissa. Ainsi, le Jour de Durin, la lignée royale des Barbes-Longues avait pour coutume d'amener leur tout jeune héritier dans la Première Salle ; si le jeune Nain pouvait interpréter les sculptures, on proclamait qu'il était Durin réincarné.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -364,7 +365,7 @@
         "Les Nains d'antan s'étaient liés d'amitié avec les Elfes de Houssaye, jusqu'au jour où ils s'affrontèrent pour un collier, ou quelque chose dans le genre. Qui se souvient des querelles ancestrales des Peuples Anciens ? Mais dans la section occidentale de la Moria, il y avait une salle des Nains de renom."
       ],
       "Tradition_Ancienne": "Nyi, fille de Nithi, était reine des Nains même après la chute du Cavenain, elle continua de régner sur l'ouest de la Moria. Elle était connue pour son orgueil, et on murmure qu'elle alla jusqu'à défier les ordres du Roi Thrain.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -383,7 +384,7 @@
         "Il y a une route sous la montagne, allant de la Porte Ouest à l'Est : elle est gardée par trois fantômes."
       ],
       "Tradition_Ancienne": "Les rois des Nains avaient nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposait d'une salle. Trouvez-les, et vous saurez que vous êtes sur la bonne voie à travers les mines.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -402,7 +403,7 @@
         "Les Nains avaient entassé toutes leurs fabuleuses richesses en un seul grand trésor, mais ils ne le contemplaient jamais ? Pourquoi ? Tout le monde sait à quel point ils sont cupides et aiment l'or : leur montagne de trésors en contenait tant que si un Nain l'avait regardée, le désir de s'en emparer lui aurait fait perdre la raison..."
       ],
       "Tradition_Ancienne": "Les Salles du Trésor de Khazad-dûm étaient gardées par une famille de Nains formés dès leur plus jeune âge à devenir les Protecteurs du Trésor. Nul cambrioleur, nul Dragon n'a jamais volé la moindre pièce de ce trésor, car un labyrinthe impénétrable le protégeait.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -419,7 +420,7 @@
       },
       "Rumeurs": [],
       "Tradition_Ancienne": "",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100029"
       ]
@@ -440,7 +441,7 @@
         "Des galgals marquent l'endroit où furent inhumés ceux tombés au combat lors de la Bataille de la Vallée des Rigoles Sombres. Mais ils n'y reposent pas en paix..."
       ],
       "Tradition_Ancienne": "Après leur amère victoire, les Nains ayant survécu à la Bataille d'Azanulbizar vêtirent à leurs morts armes et armures, avant de les honorer en brûlant leurs dépouilles. Quant aux cadavres des Orques, ils les entassèrent en d'immenses monticules destinés à pourrir. Devenus par la suite des collines herbeuses, ces grands ossuaires marquent les limites du champ de bataille. Ces tertres sont corrompus et hantés, il n'est pas bon de s'y reposer.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100016"
       ]
@@ -448,7 +449,7 @@
     {
       "id": 1716584176321,
       "name": "Le Trône du Balrog",
-      "description": "Le Balrog s'est approprié ces cavernes artificielles des profondeurs des mines. Nul ne saurait dire si ces ruines existaient avant la venue de la créature, ou s'il a contraint les derniers Nains de la Moria à creuser ce monument à la mémoire de son maître disparu, Morgoth. Ici, l'obscurité est si accablante qu'elle estompe toute lueur. Seule une lumière magique peut repousser ces ombres. Hormis Thu, la Voix de la Flamme, nul n’est jamais revenu vivant de ces salles.",
+      "description": "Le Balrog s'est approprié ces cavernes artificielles des profondeurs des mines. Nul ne saurait dire si ces ruines existaient avant la venue de la créature, ou s'il a contraint les derniers Nains de la Moria à creuser ce monument à la mémoire de son maître disparu, Morgoth. Ici, l'obscurité est si accablante qu'elle estompe toute lueur. Seule une lumière magique peut repousser ces ombres. Hormis Thu, la Voix de la Flamme, nul n'est jamais revenu vivant de ces salles.",
       "color": "red",
       "known": true,
       "visited": false,
@@ -458,10 +459,10 @@
         "y": 2850
       },
       "Rumeurs": [
-        "« Ghâsh, disent les Orques – le feu ! C’est le seul mot qu’ils lâchent. »"
+        "« Ghâsh, disent les Orques – le feu ! C'est le seul mot qu'ils lâchent. »"
       ],
       "Tradition_Ancienne": "« En Terre du Milieu, peu de lieux abritent la tradition des Temps Anciens... Nul récit ne parle jamais de cette forteresse de ténèbres. »",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -480,7 +481,7 @@
         "Des fantômes hantent les profondeurs de la Vallée des Rigoles Sombres. Collez votre oreille au sol, et vous entendrez la montagne gronder loin en dessous ! Ce sont les fantômes des Nains morts au combat durant la chute de la Moria. Jamais ils ne se rendirent."
       ],
       "Tradition_Ancienne": "Durin VI périt, et son fils Náin devint roi mais il ne le fut que peu de temps. Il ordonna la retraite de la cité, et après avoir mis à l'abri ceux de son peuple qu'il pouvait encore sauver, il retourna sous la montagne avec ses plus fidèles compagnons dans le dessein de tuer le Fléau de Durin... mais jamais n'en revint.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": []
     },
     {
@@ -499,7 +500,7 @@
         "Des Hommes vivent en petit nombre dans les collines au nord de la Vallée des Rigoles Sombres. C'est un peuple antipathique, hostile aux étrangers."
       ],
       "Tradition_Ancienne": "Jadis, Tarloch, le premier chef de cette demeure, vivait dans la Forêt Noire. Les Hommes des Bois l'exilèrent pour des crimes innommables, après quoi il rejoignit le Peuple de la Montagne. Par la suite, il découvrit une grande caverne dans les collines et en fit sa forteresse.",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100023",
         "100024",
@@ -522,7 +523,7 @@
         "Dans les profondeurs, les Gobelins ont établi un marché, où ils s'échangent les trésors volés et festoient."
       ],
       "Tradition_Ancienne": "",
-      "mapId": "uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+      "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
       "associatedCharacters": [
         "100026"
       ]
