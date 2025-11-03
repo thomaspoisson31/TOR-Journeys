@@ -1,0 +1,320 @@
+{
+  "locations": [
+    {
+      "id": 4109826374501,
+      "name": "Les Anciennes Mines Naines (Colline-aux-Creux)",
+      "description": "La Colline-aux-Creux se trouve à l'extrémité nord des Montagnes Bleues. En hiver, cette terre glaciale est balayée par de cruelles tempêtes de neige. Arvedui, le dernier roi de l'Arthedain, y trouva refuge avec ses trésors en fuyant le Roi-sorcier. Il y laissa une partie des trésors, dont la Pierre d'Amon Sûl, pour échapper à une Bête tapie dans les mines. Il périt plus tard, et les trésors restèrent enfouis, gardés par la Bête.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2000,
+        "y": 300
+      },
+      "Rumeurs": [
+        "Il y a cette vieille mine naine dans les Montagnes Bleues... cette mine est spéciale... Un jour, un roi de l'ancien temps est venu s'y cacher, avec tous ses bijoux et ses trésors. Alors ce roi, il était poursuivi par une bête terrible... Le reste du trésor est toujours là-bas: suffit de mettre la main dessus!"
+      ],
+      "Tradition_Ancienne": "Arvedui était le dernier roi de l'Arthedain... il trouva refuge dans une mine naine abandonnée nommée la Colline-aux-Creux... le roi Arvedui se délesta de trésors de moindre valeur dans la mine... or il périt et les trésors restèrent enfouis dans la Colline-aux-Creux.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/dolomedia_s_lair.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/the_old_dwarf-mines.jpg"
+        }
+      ]
+    },
+    {
+      "id": 7362901584723,
+      "name": "Les Tours Blanches (Elostirion)",
+      "description": "Les Tours Blanches sont plus que précieuses aux yeux des Elfes du Lindon. Relique d'un âge révolu, le palantír qu'héberge Elostirion, la plus haute des tours, est unique : lui seul leur offre une vision limpide des Terres Immortelles. Círdan, le Charpentier de Nefs, en est le gardien et se méfie des ambitions de ceux qui voudraient utiliser la pierre pour observer la Terre du Milieu.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2200,
+        "y": 1450
+      },
+      "Rumeurs": [
+        "Des collines par-delà les marches occidentales de la Comté s'élèvent trois antiques tours des Elfes; leurs pierres rayonnent au clair de lune... La plus haute était la plus éloignée... il est dit que de son sommet on peut voir la Mer. Aucun Hobbit n'y est jamais monté..."
+      ],
+      "Tradition_Ancienne": "Bâties par le Haut Roi des Elfes Gil-galad pour son ami Elendil... les Tours Blanches sont vieilles de plusieurs milliers d'années. Elostirion... fut choisie par Elendil pour accueillir une des légendaires Pierres de Vision... Le palantir... s'y trouve encore, bien que ses visions ne soient tournées que vers l'Ouest.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/White Towers.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/elostirion_-_the_library.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/elostirion_-_the_seeing_room.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/nadirion_-_ground_floor.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/nadirion_-_sleeping_chamber.jpg"
+        }
+      ]
+    },
+    {
+      "id": 1982736450182,
+      "name": "L'Arbre des Lamentations",
+      "description": "Au cœur de la sombre forêt d'Eryn Vorn, l'Arbre des Lamentations est un lieu de culte pour les Hommes Arbres. C'est un arbre immense et difforme, qui a grandi démesurément, fusion d'arbres plus petits. Il domine une clairière avec un cercle de pierres levées. Les Hommes Arbres y amènent leurs prisonniers pour les sacrifier, nourrissant l'arbre de leur sang.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 1800,
+        "y": 3000
+      },
+      "Rumeurs": [
+        "Au fond des bois d'Eryn Vorn, il y a un arbre sacré que les Hommes Arbres vénèrent. Ils y emmènent les prisonniers qu'ils ont capturés durant leurs razzias pour les sacrifier. Si un de vos proches manque à l'appel... personne n'est jamais revenu vivant des profondeurs de la forêt."
+      ],
+      "Tradition_Ancienne": "Cette forêt primordiale oubliée de tous... est plus ancienne que les Monts Brumeux... Même les Sages ignorent tout d'Eryn Vorn, hormis que son nom est obscur et néfaste, et que la puissance de Númenor... ne parvint pas à percer ses ombres.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/The_Tree_of_Sorrow.jpg"
+        }
+      ]
+    },
+    {
+      "id": 8827364590123,
+      "name": "Les Îles Embrumées",
+      "description": "Au milieu du lac Evendim (Nenuial), ces îles sont recouvertes d'une brume quasi permanente. Jadis lieu de repos pour les nobles d'Annúminas, elles furent abandonnées après l'attaque d'une terrible créature, la 'Ruine de Nenuial'. Récemment, un groupe de Dúnedain du Nord venu enquêter sur ces disparitions s'est à son tour évanoui, piégé par le même monstre.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3000,
+        "y": 1000
+      },
+      "Rumeurs": [
+        "Il y a quelques mois, on a repéré un groupe de Dúnedain en train d'embarquer sur le lac Evendim... On raconte qu'il y aurait de petites îles au milieu du lac, dissimulées par la brume... Qui sait quels trésors perdus... un explorateur pourrait y trouver?"
+      ],
+      "Tradition_Ancienne": "Durant l'âge d'or d'Annúminas, les Hommes d'Arnor vinrent s'installer sur les îles du lac Evendim... Puis, selon les archives, Annúminas cessa d'avoir de leurs nouvelles... les bâtisses furent balayées par l'arrivée d'une effroyable créature invoquée par Sauron...",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/The_Shrouded_Islets.jpg"
+        }
+      ]
+    },
+    {
+      "id": 5302881674921,
+      "name": "Tindailin, un Refuge Elfe",
+      "description": "Près du Gué de Sarn, ce refuge elfe fut établi autour d'un lac scintillant (Tindailin). Il abritait un esprit des eaux, Herunen, ami de l'Elfe Thalion. Lorsque Thalion partit à la guerre, il confia à Herunen un message pour sa compagne, Mirwen. Mais Mirwen, se croyant trahie, ne revint jamais. De chagrin et de colère, Herunen corrompit le lieu, le rendant sombre et hostile, surtout envers les Elfes.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2550,
+        "y": 1700
+      },
+      "Rumeurs": [
+        "Près du Gué de Sarn se trouve une forêt jadis habitée par des Elfes... est devenu un bois hanté. Plus personne ne s'y rend... les Elfes eux-mêmes ne s'en approchent pas. Quel secret abrite donc le lac, pour les effrayer autant?"
+      ],
+      "Tradition_Ancienne": "Au nord-ouest du Gué de Sarn, les vestiges d'un refuge elfe côtoient un petit lac... son origine fut souillée par une terrible bataille menée contre l'Ombre; après quoi, la forêt changea à tout jamais. Au fil du temps, elle fut totalement abandonnée.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/Tindailin.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/herunen_s_lair.jpg"
+        }
+      ]
+    },
+    {
+      "id": 9127463058221,
+      "name": "Le Palais de la Reine (Lond Daer)",
+      "description": "Sur les ruines de l'antique port de Lond Daer, un nouveau petit royaume a émergé, dirigé par la Reine Nimue. Elle a gagné son titre en tuant un serpent de mer qui terrorisait le port. Son 'palais' est une bâtisse rustique, mais il est devenu un symbole d'espoir pour les peuples de la région, attirant des 'chevaliers' (des hommes rudes inspirés par sa bravoure) à son service.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2050,
+        "y": 2850
+      },
+      "Rumeurs": [
+        "Vous ne savez pas ? Il y a une reine à Lond Daer, à présent! On dit qu'elle est venue de l'Ouest... et qu'elle aurait tué un Dragon... Elle appelle les héros à la rejoindre dans son palais, et bientôt elle changera le monde."
+      ],
+      "Tradition_Ancienne": "Le château est trop récent pour que la tradition ancienne soit utile. (L'histoire de Lond Daer est celle de son déclin)... du port númenóréen à la ville d'astrologues fous, puis à son abandon.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/lond_daer.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/the_queens_hall.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/the_queens_hall_-_interior.jpg"
+        }
+      ]
+    },
+    {
+      "id": 3372610582994,
+      "name": "Les Champs du Massacre",
+      "description": "Ces plaines à l'est du lac Evendim furent le théâtre de la Bataille de Fornost, il y a près de mille ans, où les armées du Roi-sorcier furent anéanties par l'alliance des Elfes et des Hommes du Gondor. Le chagrin et la mort imprègnent encore ce lieu. Nalien, une Elfe du Lindon qui a survécu à la bataille, y erre aujourd'hui, hantée par le spectre de son amie Drameth, tombée au combat.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3200,
+        "y": 800
+      },
+      "Rumeurs": [
+        "Il y a des siècles, une bataille effroyable se déroula sur la plaine à l'ouest de la Chaussée des Morts... le champ de bataille est hanté... Récemment, une femme a été aperçue errant seule sur la plaine, comme égarée. Certains disent que c'est un esprit, d'autre une Elfe..."
+      ],
+      "Tradition_Ancienne": "Peu avant que la cité de Fornost Erain ne tombe... Eärnur, le prince du Gondor... arriva trop tard pour sauver Arnor, mais ses troupes affrontèrent le Roi-sorcier d'Angmar sur les plaines à l'ouest de Fornost, et triomphèrent.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/the_fields_of_slaughter.jpg"
+        }
+      ]
+    },
+    {
+      "id": 4501826374002,
+      "name": "Le Mont Venteux (Amon Sûl)",
+      "description": "Jadis, le Mont Venteux abritait la grande tour de guet d'Amon Sûl et la pierre maîtresse des palantíri d'Arnor. La tour fut détruite lors des guerres contre Angmar. Aujourd'hui, ce n'est plus qu'une colline en ruine, que les Rôdeurs colportent comme hantée pour éloigner les curieux. En réalité, ils l'utilisent comme un lieu de rendez-vous essentiel et un poste d'observation stratégique sur la Grande Route de l'Est.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3500,
+        "y": 1350
+      },
+      "Rumeurs": [
+        "A quatre ou cinq jours de marche de Bree... se nomme le Mont Venteux... se dressait ici une grande tour de guet dans laquelle il gardait, dit-on, tous ses joyaux. À présent elle est vide... et qui plus est, hantée, paraît-il.",
+        "Une grande colline couronnée d'une tour brisée. Vous aurez l'impression qu'on vous observe. Avec un peu de chance, ce sera simplement un fantôme."
+      ],
+      "Tradition_Ancienne": "Quand Elendil le Beau vint par la Mer, il bâtit la tour de guet d'Amon Sûl... c'est dans cette forteresse qu'Elendil attendit la venue de Gil-galad... Plus tard... Amon Sûl fut rasée et sa tour abattue... Le Mont Venteux n'est plus qu'une ruine abandonnée aux oiseaux et aux bêtes.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/Weathertop.jpg"
+        }
+      ]
+    },
+    {
+      "id": 2004573819263,
+      "name": "La Colline de l'Assoupie",
+      "description": "Au cœur des Noues des Cygnes se trouve un palais englouti, bâti jadis par les Nains de la Moria pour une Dame Elfe d'Eregion, Nethig. Mordue par Sauron sous la forme d'un serpent, elle utilisa ses talents pour forger un anneau qui la plongea dans un sommeil enchanté, la protégeant du poison et du temps. Elle y dort encore, ignorant les guerres qui ont ravagé le monde.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3100,
+        "y": 2400
+      },
+      "Rumeurs": [
+        "Le cœur des Noues des Cygnes abrite un lieu secret: un palais englouti... une Dame elfe git sur un lit de pierre... Immobile et silencieuse... Les habitants des Noues des Cygnes la considèrent comme un esprit ou une déesse..."
+      ],
+      "Tradition_Ancienne": "Même les Maîtres du savoir ont oublié la légende de Nethig... Un chemin pavé menait jadis du Palais des Murmures de Celebrimbor à ses portes, mais il fut détruit. Peut-être les Femmes-Sages de Medcaute se souviennent-elles de quelque détail à son sujet.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/the_palace.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/the_palace_-_bottom_floor.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/the_palace_-_middle_floor.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/the_palace_-_top_floor.jpg"
+        }
+      ]
+    },
+    {
+      "id": 6739105827364,
+      "name": "Le Mont Gram",
+      "description": "Le Mont Gram est une montagne solitaire, dernier bastion des Gobelins d'Angmar après la chute de leur royaume. C'est la demeure de l'un des plus grands Rois Gobelins du Nord, qui se fait appeler 'le Grand Gobelin' en l'honneur de celui tué à Gobelinville. Sa forteresse est un dédale de tunnels d'où il rançonne les voyageurs et commande à la plupart des Gobelins de la région.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 4300,
+        "y": 900
+      },
+      "Rumeurs": [
+        "Il y a un Roi Gobelin sur le Mont Gram, qui se fait appeler 'le Grand Gobelin', en l'honneur de celui qui fut tué par Gandalf... il compte bien venger sa mort..."
+      ],
+      "Tradition_Ancienne": "Jadis, un mal ancien rongeait les montagnes au nord du Mont Venteux... Le Roi-sorcier d'Angmar réveilla ce mal... Quand Angmar tomba, les Orques s'enfuirent vers le sud... Le Mont Gram est sans doute leur dernière place forte.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/mount_gram.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/mount_gram_-_interior.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/the_caves.jpg"
+        }
+      ]
+    },
+    {
+      "id": 8273019283746,
+      "name": "Le Fort Arlas",
+      "description": "Le Fort Arlas est une ancienne forteresse des Dúnedain de Cardolan, située sur une île à l'embouchure du Brandevin. Il fut bâti pour empêcher les navires ennemis de remonter le fleuve. Abandonné après la Grande Peste, le fort est aujourd'hui gardé par une petite garnison de Rôdeurs. C'est le seul bastion armé permanent que les Dúnedain possèdent au sud des Collines d'Evendim.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2100,
+        "y": 2000
+      },
+      "Rumeurs": [
+        "Sur la côte, au sud des Montagnes Bleues, il y a un vieux château en ruines, le Fort Arlas... On raconte qu'il est gardé par des fantômes, les spectres des derniers soldats d'Arnor..."
+      ],
+      "Tradition_Ancienne": "Le Fort Arlas fut bâti par les Hommes de Cardolan pour protéger le Minhiriath des attaques venues de la mer... Le fort resta aux mains des Dúnedain jusqu'à la Grande Peste, après quoi il fut abandonné.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/fort_arlas.jpg"
+        }
+      ]
+    },
+    {
+      "id": 1109283746502,
+      "name": "Le Refuge des Rôdeurs",
+      "description": "Au cœur du Minhiriath, dans un petit bois de hêtres discret, se trouve un refuge secret des Rôdeurs. Ce n'est pas un lieu permanent, mais un campement bien protégé où les Dúnedain se retrouvent pour échanger des informations, former leurs jeunes et se reposer. Le refuge est protégé par des sentinelles vigilantes et des chemins secrets.",
+      "color": "violet",
+      "known": false,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2900,
+        "y": 2100
+      },
+      "Rumeurs": [
+        "Quelque part dans les Terres Solitaires, il y a un campement caché où vivent les Rôdeurs. C'est là qu'ils enterrent leurs morts et cachent leurs trésors. Si vous parvenez à le trouver, ils vous tueront..."
+      ],
+      "Tradition_Ancienne": "Ceux qui restent du peuple de l'ancien Arnor... errent dans les terres sauvages... Ils ont de nombreux refuges, mais aucun foyer permanent... Ils sont les descendants des Rois, mais ils vivent comme des hors-la-loi...",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Ruines/The_Ranger-Haven.jpg"
+        }
+      ]
+    }
+  ]
+}
