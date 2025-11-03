@@ -22,8 +22,13 @@
     min-height: 44px;
   }
 
-  /* Modales plein écran */
-  #info-box.expanded,
+  /* InfoBox 90% largeur sur mobile */
+  #info-box.expanded {
+    width: 90vw !important;
+    max-width: 90vw !important;
+  }
+
+  /* Autres modales plein écran */
   #voyage-segments-modal > div,
   #add-location-modal > div,
   #add-region-modal > div {
