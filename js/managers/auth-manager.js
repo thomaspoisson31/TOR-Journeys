@@ -348,7 +348,7 @@ class AuthManager {
         this.logAuth("📦 Collecte des données du contexte actuel...");
 
         // Collecter les personnages avec leurs relations
-        const charactersData = window.charactersManager?.charactersData || 
+        const charactersData = window.charactersManager?.charactersData ||
                               JSON.parse(localStorage.getItem('middleEarthCharacters') || '{"characters":[]}');
 
         const data = {
@@ -1304,7 +1304,7 @@ class AuthManager {
 
     async checkForLocationDeletions(localData, envPrefix) {
         this.logAuth("🔍 Vérification des suppressions de lieux...");
-        
+
         try {
             // Récupérer les données actuelles du cloud
             const response = await fetch(`/api/user/data?env=${envPrefix}`, {
@@ -1324,23 +1324,31 @@ class AuthManager {
             }
 
             const cloudData = await response.json();
-            
+
             // Comparer les lieux du cloud avec les lieux locaux
             const cloudLocations = cloudData.locations?.locations || [];
             const localLocations = localData.locations?.locations || [];
-            
+
+            // CORRECTION: Si localStorage contient beaucoup moins de lieux que le cloud,
+            // c'est probablement une erreur de synchronisation, pas une suppression volontaire
+            if (localLocations.length > 0 && localLocations.length < cloudLocations.length * 0.5) {
+                this.logAuth(`⚠️ Incohérence détectée: ${localLocations.length} lieux locaux vs ${cloudLocations.length} cloud - probable erreur de sync, vérification ignorée`);
+                this.logAuth(`ℹ️ Utilisez window.locationsData pour vérifier l'état réel des données`);
+                return { hasDeleted: false, deletedLocations: [] };
+            }
+
             const cloudLocationIds = new Set(cloudLocations.map(loc => loc.id));
             const localLocationIds = new Set(localLocations.map(loc => loc.id));
-            
+
             // Trouver les lieux présents dans le cloud mais absents localement
             const deletedLocations = cloudLocations.filter(cloudLoc => !localLocationIds.has(cloudLoc.id));
-            
+
             if (deletedLocations.length > 0) {
                 this.logAuth(`⚠️ ALERTE: ${deletedLocations.length} lieu(x) seraient supprimé(s) par cette synchronisation!`);
                 deletedLocations.forEach(loc => {
                     this.logAuth(`   - ${loc.name} (ID: ${loc.id}, Carte: ${loc.mapId || 'global'})`);
                 });
-                
+
                 return {
                     hasDeleted: true,
                     deletedLocations: deletedLocations,
@@ -1351,7 +1359,7 @@ class AuthManager {
                 this.logAuth(`✅ Aucune suppression détectée (Cloud: ${cloudLocations.length}, Local: ${localLocations.length})`);
                 return { hasDeleted: false, deletedLocations: [] };
             }
-            
+
         } catch (error) {
             this.logAuth(`⚠️ Erreur lors de la vérification des suppressions: ${error.message}`);
             return { hasDeleted: false, deletedLocations: [] };
@@ -1369,7 +1377,7 @@ class AuthManager {
                         <i class="fas fa-exclamation-triangle text-yellow-400 text-5xl mr-4 animate-pulse"></i>
                         <h2 class="text-3xl font-bold text-white">⚠️ ALERTE DE SUPPRESSION ⚠️</h2>
                     </div>
-                    
+
                     <div class="bg-red-800 border-2 border-red-600 rounded p-4 mb-6">
                         <p class="text-white text-lg mb-4">
                             <strong class="text-yellow-300">ATTENTION:</strong> Cette synchronisation va <strong class="underline">SUPPRIMER ${deletionInfo.deletedLocations.length} lieu(x)</strong> de votre sauvegarde cloud !
@@ -1378,7 +1386,7 @@ class AuthManager {
                             Cloud actuel: <strong>${deletionInfo.cloudTotal} lieux</strong> → Après sync: <strong>${deletionInfo.localTotal} lieux</strong>
                         </p>
                     </div>
-                    
+
                     <div class="bg-gray-800 rounded p-4 mb-6 max-h-60 overflow-y-auto">
                         <p class="text-white font-bold mb-2">Lieux qui seront supprimés :</p>
                         <ul class="text-gray-300 space-y-1">
@@ -1392,14 +1400,14 @@ class AuthManager {
                             `).join('')}
                         </ul>
                     </div>
-                    
+
                     <div class="bg-yellow-900 border-2 border-yellow-600 rounded p-4 mb-6">
                         <p class="text-yellow-200 text-sm">
                             <i class="fas fa-info-circle mr-2"></i>
                             Si ces suppressions sont inattendues, cliquez sur <strong>ANNULER</strong> et vérifiez vos données avant de synchroniser.
                         </p>
                     </div>
-                    
+
                     <div class="flex justify-end space-x-4">
                         <button id="deletion-cancel-btn" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors text-lg">
                             <i class="fas fa-ban mr-2"></i>ANNULER
@@ -1410,24 +1418,24 @@ class AuthManager {
                     </div>
                 </div>
             `;
-            
+
             document.body.appendChild(warningModal);
-            
+
             const cancelBtn = warningModal.querySelector('#deletion-cancel-btn');
             const confirmBtn = warningModal.querySelector('#deletion-confirm-btn');
-            
+
             cancelBtn.addEventListener('click', () => {
                 this.logAuth("❌ Utilisateur a annulé la synchronisation (suppressions détectées)");
                 document.body.removeChild(warningModal);
                 resolve(false);
             });
-            
+
             confirmBtn.addEventListener('click', () => {
                 this.logAuth("✅ Utilisateur a confirmé la synchronisation malgré les suppressions");
                 document.body.removeChild(warningModal);
                 resolve(true);
             });
-            
+
             // Empêcher la fermeture en cliquant à l'extérieur
             warningModal.addEventListener('click', (e) => {
                 if (e.target === warningModal) {
@@ -1512,7 +1520,7 @@ class AuthManager {
             // Synchroniser immédiatement avec les variables globales si CharactersManager existe
             if (window.charactersManager) {
                 // Assurez-vous que la structure correspond à ce que CharactersManager attend
-                window.charactersManager.charactersData = data.characters; 
+                window.charactersManager.charactersData = data.characters;
                 this.logAuth("✅ CharactersManager.charactersData mis à jour.");
             }
         }

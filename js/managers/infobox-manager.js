@@ -1323,85 +1323,20 @@ class InfoBoxManager {
 
         console.log("💾 [SAVE] Objet après modification:", JSON.stringify(this.currentItem).substring(0, 200) + "...");
 
-        // Sauvegarder via DataManager
-        if (this.currentType === 'region') {
-            const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
-                String(reg.id) === String(this.currentItem.id)
-            );
-            if (regionIndex === -1) {
-                console.error(`❌ [SAVE] Région non trouvée dans regionsData: ${this.currentItem.id}`);
-                alert("Erreur : impossible de sauvegarder la région.");
-                return;
+        // Sauvegarder dans locationsData ou regionsData
+        if (this.currentType === 'location') {
+            console.log(`🔍 [SAVE] AVANT update - location "${this.currentItem.name}" (id: ${this.currentItem.id})`);
+
+            // IMPORTANT: S'assurer que dataManager.locationsData est synchronisé avec window.locationsData
+            if (window.locationsData && window.locationsData.locations && 
+                this.dataManager.locationsData.locations.length < window.locationsData.locations.length) {
+                console.log(`⚠️ [SAVE] Désynchronisation détectée! Restauration depuis window.locationsData`);
+                console.log(`📊 [SAVE] DataManager: ${this.dataManager.locationsData.locations.length} lieux, Window: ${window.locationsData.locations.length} lieux`);
+                this.dataManager.locationsData = window.locationsData;
             }
 
-            console.log(`💾 [SAVE] Région AVANT mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
-
-            // Mettre à jour l'objet complet dans le tableau
-            this.dataManager.regionsData.regions[regionIndex] = { ...this.currentItem };
-
-            console.log(`💾 [SAVE] Région APRÈS mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
-            console.log(`🔍 [SAVE] region.associatedCharacters APRÈS sauvegarde:`, this.dataManager.regionsData.regions[regionIndex].associatedCharacters);
-
-            // Synchroniser avec la variable globale
-            window.regionsData = this.dataManager.regionsData;
-
-            // Sauvegarder
-            this.dataManager.saveRegionsToLocal();
-
-            // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
-            if (window.charactersManager && this.currentItem.associatedCharacters) {
-                const regionId = String(this.currentItem.id);
-
-                // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
-                window.charactersManager.characters.forEach(character => {
-                    const charId = String(character.id);
-                    const isAssociated = this.currentItem.associatedCharacters.includes(charId);
-
-                    // Initialiser associatedRegions si nécessaire
-                    if (!character.associatedRegions) {
-                        character.associatedRegions = [];
-                    }
-
-                    const currentlyAssociated = character.associatedRegions.includes(regionId);
-
-                    if (isAssociated && !currentlyAssociated) {
-                        // Ajouter la région au personnage
-                        character.associatedRegions.push(regionId);
-                        console.log(`✅ [SAVE] Personnage ${character.name} associé à la région ${this.currentItem.name}`);
-                    } else if (!isAssociated && currentlyAssociated) {
-                        // Retirer la région du personnage
-                        character.associatedRegions = character.associatedRegions.filter(
-                            regId => String(regId) !== regionId
-                        );
-                        console.log(`❌ [SAVE] Personnage ${character.name} dissocié de la région ${this.currentItem.name}`);
-                    }
-                });
-
-                // Sauvegarder les personnages
-                window.charactersManager.saveCharactersToLocal();
-                console.log(`💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles`);
-            }
-
-            // Log des personnages APRÈS modification bidirectionnelle
-            if (window.charactersManager && this.currentItem.associatedCharacters) {
-                console.log(`🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:`);
-                this.currentItem.associatedCharacters.forEach(charId => {
-                    const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
-                    if (char) {
-                        console.log(`  - ${char.name} (id: ${char.id}):`, {
-                            associatedLocations: char.associatedLocations,
-                            associatedRegions: char.associatedRegions
-                        });
-                    }
-                });
-            }
-
-            // Re-render
-            if (typeof renderRegions === 'function') {
-                renderRegions();
-            }
-        } else if (this.currentType === 'location') {
-            let locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
+            // IMPORTANT: Vérifier que dataManager.locationsData contient bien tous les lieux
+            let locationIndex = this.dataManager.locationsData.locations.findIndex(loc => 
                 String(loc.id) === String(this.currentItem.id)
             );
 
@@ -1432,8 +1367,7 @@ class InfoBoxManager {
 
                 // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
                 window.charactersManager.characters.forEach(character => {
-                    const charId = String(character.id);
-                    const isAssociated = this.currentItem.associatedCharacters.includes(charId);
+                    const isAssociated = this.currentItem.associatedCharacters.includes(String(character.id));
 
                     // Initialiser associatedLocations si nécessaire
                     if (!character.associatedLocations) {
@@ -1477,6 +1411,89 @@ class InfoBoxManager {
             // Re-render
             if (typeof renderLocations === 'function') {
                 renderLocations();
+            }
+        } else if (this.currentType === 'region') {
+             // IMPORTANT: S'assurer que dataManager.regionsData est synchronisé avec window.regionsData
+            if (window.regionsData && window.regionsData.regions && 
+                this.dataManager.regionsData.regions.length < window.regionsData.regions.length) {
+                console.log(`⚠️ [SAVE] Désynchronisation détectée! Restauration depuis window.regionsData`);
+                console.log(`📊 [SAVE] DataManager: ${this.dataManager.regionsData.regions.length} régions, Window: ${window.regionsData.regions.length} régions`);
+                this.dataManager.regionsData = window.regionsData;
+            }
+
+            const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
+                String(reg.id) === String(this.currentItem.id)
+            );
+            if (regionIndex === -1) {
+                console.error(`❌ [SAVE] Région non trouvée dans regionsData: ${this.currentItem.id}`);
+                alert("Erreur : impossible de sauvegarder la région.");
+                return;
+            }
+
+            console.log(`💾 [SAVE] Région AVANT mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
+
+            // Mettre à jour l'objet complet dans le tableau
+            this.dataManager.regionsData.regions[regionIndex] = { ...this.currentItem };
+
+            console.log(`💾 [SAVE] Région APRÈS mise à jour (index ${regionIndex}):`, JSON.stringify(this.dataManager.regionsData.regions[regionIndex]).substring(0, 150));
+            console.log(`🔍 [SAVE] region.associatedCharacters APRÈS sauvegarde:`, this.dataManager.regionsData.regions[regionIndex].associatedCharacters);
+
+            // Synchroniser avec la variable globale
+            window.regionsData = this.dataManager.regionsData;
+
+            // Sauvegarder
+            this.dataManager.saveRegionsToLocal();
+
+            // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
+            if (window.charactersManager && this.currentItem.associatedCharacters) {
+                const regionId = String(this.currentItem.id);
+
+                // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
+                window.charactersManager.characters.forEach(character => {
+                    const isAssociated = this.currentItem.associatedCharacters.includes(String(character.id));
+
+                    // Initialiser associatedRegions si nécessaire
+                    if (!character.associatedRegions) {
+                        character.associatedRegions = [];
+                    }
+
+                    const currentlyAssociated = character.associatedRegions.includes(regionId);
+
+                    if (isAssociated && !currentlyAssociated) {
+                        // Ajouter la région au personnage
+                        character.associatedRegions.push(regionId);
+                        console.log(`✅ [SAVE] Personnage ${character.name} associé à la région ${this.currentItem.name}`);
+                    } else if (!isAssociated && currentlyAssociated) {
+                        // Retirer la région du personnage
+                        character.associatedRegions = character.associatedRegions.filter(
+                            regId => String(regId) !== regionId
+                        );
+                        console.log(`❌ [SAVE] Personnage ${character.name} dissocié de la région ${this.currentItem.name}`);
+                    }
+                });
+
+                // Sauvegarder les personnages
+                window.charactersManager.saveCharactersToLocal();
+                console.log(`💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles`);
+            }
+
+            // Log des personnages APRÈS modification bidirectionnelle
+            if (window.charactersManager && this.currentItem.associatedCharacters) {
+                console.log(`🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:`);
+                this.currentItem.associatedCharacters.forEach(charId => {
+                    const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
+                    if (char) {
+                        console.log(`  - ${char.name} (id: ${char.id}):`, {
+                            associatedLocations: char.associatedLocations,
+                            associatedRegions: char.associatedRegions
+                        });
+                    }
+                });
+            }
+
+            // Re-render
+            if (typeof renderRegions === 'function') {
+                renderRegions();
             }
         } else if (this.currentType === 'character') {
             if (window.charactersManager) {
@@ -2186,11 +2203,6 @@ class InfoBoxManager {
             return;
         }
 
-        console.log(`👥 [renderPersonnagesTabRead] Recherche de ${associatedCharacterIds.length} personnages associés`);
-        console.log(`👥 [renderPersonnagesTabRead] IDs à rechercher:`, associatedCharacterIds);
-
-        // Filtrer UNIQUEMENT par association, PAS par carte active
-        // Un personnage associé doit toujours être affiché, quelle que soit sa carte d'origine
         // IMPORTANT: Comparer les IDs en tant que strings pour éviter les problèmes de type
         const associatedCharacters = window.charactersManager.characters.filter(char => {
             const isAssociated = associatedCharacterIds.includes(String(char.id));
