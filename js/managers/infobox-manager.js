@@ -197,13 +197,13 @@ class InfoBoxManager {
                 console.log(`📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character`);
             }
             if (lieuxRegionsTabButton) {
-                lieuxRegionsTabButton.style.display = 'block';
+                lieuxRegionsTabButton.style.display = 'flex';
                 console.log(`📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character`);
             }
         } else {
             // Pour les LIEUX/RÉGIONS : afficher "Personnages", masquer "Lieux/Régions"
             if (personnagesTabButton) {
-                personnagesTabButton.style.display = 'block';
+                personnagesTabButton.style.display = 'flex';
                 console.log(`📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region`);
             }
             if (lieuxRegionsTabButton) {
