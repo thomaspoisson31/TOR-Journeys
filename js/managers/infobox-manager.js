@@ -1129,8 +1129,9 @@ class InfoBoxManager {
         let thumbnailUrl = null;
         if (item.images && item.images.length > 0) {
             const thumbnailImage = item.images.find(img => img.type === 'vignette');
-            if (thumbnailImage && thumbnailImage.thumbnailUrl) {
-                thumbnailUrl = thumbnailImage.thumbnailUrl;
+            if (thumbnailImage) {
+                // Utiliser thumbnailUrl si elle existe, sinon utiliser l'URL originale
+                thumbnailUrl = thumbnailImage.thumbnailUrl || thumbnailImage.url;
             }
         }
 
