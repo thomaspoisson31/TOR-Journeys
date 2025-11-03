@@ -1009,41 +1009,11 @@ class InfoBoxManager {
             this.currentItem.images.forEach((img, i) => {
                 if (i !== index && img.type === 'vignette') {
                     img.type = null;
-                    img.thumbnailUrl = null;
                 }
             });
-
-            // Créer la vignette si elle n'existe pas déjà
-            if (!image.thumbnailUrl) {
-                try {
-                    const category = this.currentType === 'region' ? 'regions' : 'locations';
-                    const response = await fetch('/api/image/create-thumbnail', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            image_url: image.url,
-                            category: category
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Erreur lors de la création de la vignette');
-                    }
-
-                    const result = await response.json();
-                    image.thumbnailUrl = result.thumbnail_url;
-                    console.log("✅ Vignette créée:", result.thumbnail_url);
-                } catch (error) {
-                    console.error("❌ Erreur création vignette:", error);
-                    alert("Erreur lors de la création de la vignette: " + error.message);
-                    return;
-                }
-            }
         }
 
-        // Définir le nouveau type
+        // Définir le nouveau type (plus besoin de créer une vignette séparée)
         image.type = type;
 
         // Re-render la galerie d'images
@@ -1130,8 +1100,8 @@ class InfoBoxManager {
         if (item.images && item.images.length > 0) {
             const thumbnailImage = item.images.find(img => img.type === 'vignette');
             if (thumbnailImage) {
-                // Utiliser thumbnailUrl si elle existe, sinon utiliser l'URL originale
-                thumbnailUrl = thumbnailImage.thumbnailUrl || thumbnailImage.url;
+                // Utiliser l'URL de l'image marquée comme vignette (pas de règle de nommage spécifique)
+                thumbnailUrl = thumbnailImage.url;
             }
         }
 
