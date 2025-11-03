@@ -197,13 +197,13 @@ class InfoBoxManager {
                 console.log(`📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character`);
             }
             if (lieuxRegionsTabButton) {
-                lieuxRegionsTabButton.style.display = 'flex';
+                lieuxRegionsTabButton.style.display = 'block';
                 console.log(`📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character`);
             }
         } else {
             // Pour les LIEUX/RÉGIONS : afficher "Personnages", masquer "Lieux/Régions"
             if (personnagesTabButton) {
-                personnagesTabButton.style.display = 'flex';
+                personnagesTabButton.style.display = 'block';
                 console.log(`📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region`);
             }
             if (lieuxRegionsTabButton) {
@@ -227,9 +227,8 @@ class InfoBoxManager {
         const viewportWidth = viewport.clientWidth;
         const viewportHeight = viewport.clientHeight;
 
-        // Largeur adaptative : 90% sur mobile (<=600px), 50% sur desktop
-        const isMobile = viewportWidth <= 600;
-        const desiredWidth = Math.floor(viewportWidth * (isMobile ? 0.9 : 0.5));
+        // Style similaire à la modale voyage : 50% de largeur, 95% de hauteur, ancré à droite
+        const desiredWidth = Math.floor(viewportWidth * 0.5);
         const desiredHeight = Math.floor(viewportHeight * 0.95);
 
         // Positionner à droite avec marge (1.25rem = 20px)
@@ -1323,104 +1322,8 @@ class InfoBoxManager {
 
         console.log("💾 [SAVE] Objet après modification:", JSON.stringify(this.currentItem).substring(0, 200) + "...");
 
-        // Sauvegarder dans locationsData ou regionsData
-        if (this.currentType === 'location') {
-            console.log(`🔍 [SAVE] AVANT update - location "${this.currentItem.name}" (id: ${this.currentItem.id})`);
-
-            // IMPORTANT: S'assurer que dataManager.locationsData est synchronisé avec window.locationsData
-            if (window.locationsData && window.locationsData.locations && 
-                this.dataManager.locationsData.locations.length < window.locationsData.locations.length) {
-                console.log(`⚠️ [SAVE] Désynchronisation détectée! Restauration depuis window.locationsData`);
-                console.log(`📊 [SAVE] DataManager: ${this.dataManager.locationsData.locations.length} lieux, Window: ${window.locationsData.locations.length} lieux`);
-                this.dataManager.locationsData = window.locationsData;
-            }
-
-            // IMPORTANT: Vérifier que dataManager.locationsData contient bien tous les lieux
-            let locationIndex = this.dataManager.locationsData.locations.findIndex(loc => 
-                String(loc.id) === String(this.currentItem.id)
-            );
-
-            // Si le lieu n'existe pas encore, l'ajouter au tableau
-            if (locationIndex === -1) {
-                console.log(`ℹ️ [SAVE] Nouveau lieu détecté: ${this.currentItem.id}, ajout au tableau`);
-                this.dataManager.locationsData.locations.push({ ...this.currentItem });
-                locationIndex = this.dataManager.locationsData.locations.length - 1;
-            }
-
-            console.log(`💾 [SAVE] Lieu AVANT mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
-
-            // Mettre à jour l'objet complet dans le tableau
-            this.dataManager.locationsData.locations[locationIndex] = { ...this.currentItem };
-
-            console.log(`💾 [SAVE] Lieu APRÈS mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
-            console.log(`🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde:`, this.dataManager.locationsData.locations[locationIndex].associatedCharacters);
-
-            // Synchroniser avec la variable globale
-            window.locationsData = this.dataManager.locationsData;
-
-            // Sauvegarder
-            this.dataManager.saveLocationsToLocal();
-
-            // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
-            if (window.charactersManager && this.currentItem.associatedCharacters) {
-                const locationId = String(this.currentItem.id);
-
-                // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
-                window.charactersManager.characters.forEach(character => {
-                    const isAssociated = this.currentItem.associatedCharacters.includes(String(character.id));
-
-                    // Initialiser associatedLocations si nécessaire
-                    if (!character.associatedLocations) {
-                        character.associatedLocations = [];
-                    }
-
-                    const currentlyAssociated = character.associatedLocations.includes(locationId);
-
-                    if (isAssociated && !currentlyAssociated) {
-                        // Ajouter le lieu au personnage
-                        character.associatedLocations.push(locationId);
-                        console.log(`✅ [SAVE] Personnage ${character.name} associé au lieu ${this.currentItem.name}`);
-                    } else if (!isAssociated && currentlyAssociated) {
-                        // Retirer le lieu du personnage
-                        character.associatedLocations = character.associatedLocations.filter(
-                            locId => String(locId) !== locationId
-                        );
-                        console.log(`❌ [SAVE] Personnage ${character.name} dissocié du lieu ${this.currentItem.name}`);
-                    }
-                });
-
-                // Sauvegarder les personnages
-                window.charactersManager.saveCharactersToLocal();
-                console.log(`💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles`);
-            }
-
-            // Log des personnages APRÈS modification bidirectionnelle
-            if (window.charactersManager && this.currentItem.associatedCharacters) {
-                console.log(`🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:`);
-                this.currentItem.associatedCharacters.forEach(charId => {
-                    const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
-                    if (char) {
-                        console.log(`  - ${char.name} (id: ${char.id}):`, {
-                            associatedLocations: char.associatedLocations,
-                            associatedRegions: char.associatedRegions
-                        });
-                    }
-                });
-            }
-
-            // Re-render
-            if (typeof renderLocations === 'function') {
-                renderLocations();
-            }
-        } else if (this.currentType === 'region') {
-             // IMPORTANT: S'assurer que dataManager.regionsData est synchronisé avec window.regionsData
-            if (window.regionsData && window.regionsData.regions && 
-                this.dataManager.regionsData.regions.length < window.regionsData.regions.length) {
-                console.log(`⚠️ [SAVE] Désynchronisation détectée! Restauration depuis window.regionsData`);
-                console.log(`📊 [SAVE] DataManager: ${this.dataManager.regionsData.regions.length} régions, Window: ${window.regionsData.regions.length} régions`);
-                this.dataManager.regionsData = window.regionsData;
-            }
-
+        // Sauvegarder via DataManager
+        if (this.currentType === 'region') {
             const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
                 String(reg.id) === String(this.currentItem.id)
             );
@@ -1450,7 +1353,8 @@ class InfoBoxManager {
 
                 // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
                 window.charactersManager.characters.forEach(character => {
-                    const isAssociated = this.currentItem.associatedCharacters.includes(String(character.id));
+                    const charId = String(character.id);
+                    const isAssociated = this.currentItem.associatedCharacters.includes(charId);
 
                     // Initialiser associatedRegions si nécessaire
                     if (!character.associatedRegions) {
@@ -1494,6 +1398,84 @@ class InfoBoxManager {
             // Re-render
             if (typeof renderRegions === 'function') {
                 renderRegions();
+            }
+        } else if (this.currentType === 'location') {
+            let locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
+                String(loc.id) === String(this.currentItem.id)
+            );
+
+            // Si le lieu n'existe pas encore, l'ajouter au tableau
+            if (locationIndex === -1) {
+                console.log(`ℹ️ [SAVE] Nouveau lieu détecté: ${this.currentItem.id}, ajout au tableau`);
+                this.dataManager.locationsData.locations.push({ ...this.currentItem });
+                locationIndex = this.dataManager.locationsData.locations.length - 1;
+            }
+
+            console.log(`💾 [SAVE] Lieu AVANT mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
+
+            // Mettre à jour l'objet complet dans le tableau
+            this.dataManager.locationsData.locations[locationIndex] = { ...this.currentItem };
+
+            console.log(`💾 [SAVE] Lieu APRÈS mise à jour (index ${locationIndex}):`, JSON.stringify(this.dataManager.locationsData.locations[locationIndex]).substring(0, 150));
+            console.log(`🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde:`, this.dataManager.locationsData.locations[locationIndex].associatedCharacters);
+
+            // Synchroniser avec la variable globale
+            window.locationsData = this.dataManager.locationsData;
+
+            // Sauvegarder
+            this.dataManager.saveLocationsToLocal();
+
+            // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
+            if (window.charactersManager && this.currentItem.associatedCharacters) {
+                const locationId = String(this.currentItem.id);
+
+                // Pour chaque personnage, vérifier s'il doit être associé ou dissocié
+                window.charactersManager.characters.forEach(character => {
+                    const charId = String(character.id);
+                    const isAssociated = this.currentItem.associatedCharacters.includes(charId);
+
+                    // Initialiser associatedLocations si nécessaire
+                    if (!character.associatedLocations) {
+                        character.associatedLocations = [];
+                    }
+
+                    const currentlyAssociated = character.associatedLocations.includes(locationId);
+
+                    if (isAssociated && !currentlyAssociated) {
+                        // Ajouter le lieu au personnage
+                        character.associatedLocations.push(locationId);
+                        console.log(`✅ [SAVE] Personnage ${character.name} associé au lieu ${this.currentItem.name}`);
+                    } else if (!isAssociated && currentlyAssociated) {
+                        // Retirer le lieu du personnage
+                        character.associatedLocations = character.associatedLocations.filter(
+                            locId => String(locId) !== locationId
+                        );
+                        console.log(`❌ [SAVE] Personnage ${character.name} dissocié du lieu ${this.currentItem.name}`);
+                    }
+                });
+
+                // Sauvegarder les personnages
+                window.charactersManager.saveCharactersToLocal();
+                console.log(`💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles`);
+            }
+
+            // Log des personnages APRÈS modification bidirectionnelle
+            if (window.charactersManager && this.currentItem.associatedCharacters) {
+                console.log(`🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:`);
+                this.currentItem.associatedCharacters.forEach(charId => {
+                    const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
+                    if (char) {
+                        console.log(`  - ${char.name} (id: ${char.id}):`, {
+                            associatedLocations: char.associatedLocations,
+                            associatedRegions: char.associatedRegions
+                        });
+                    }
+                });
+            }
+
+            // Re-render
+            if (typeof renderLocations === 'function') {
+                renderLocations();
             }
         } else if (this.currentType === 'character') {
             if (window.charactersManager) {
@@ -2203,6 +2185,11 @@ class InfoBoxManager {
             return;
         }
 
+        console.log(`👥 [renderPersonnagesTabRead] Recherche de ${associatedCharacterIds.length} personnages associés`);
+        console.log(`👥 [renderPersonnagesTabRead] IDs à rechercher:`, associatedCharacterIds);
+
+        // Filtrer UNIQUEMENT par association, PAS par carte active
+        // Un personnage associé doit toujours être affiché, quelle que soit sa carte d'origine
         // IMPORTANT: Comparer les IDs en tant que strings pour éviter les problèmes de type
         const associatedCharacters = window.charactersManager.characters.filter(char => {
             const isAssociated = associatedCharacterIds.includes(String(char.id));
