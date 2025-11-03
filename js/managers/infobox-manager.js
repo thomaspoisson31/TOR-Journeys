@@ -227,8 +227,9 @@ class InfoBoxManager {
         const viewportWidth = viewport.clientWidth;
         const viewportHeight = viewport.clientHeight;
 
-        // Style similaire à la modale voyage : 50% de largeur, 95% de hauteur, ancré à droite
-        const desiredWidth = Math.floor(viewportWidth * 0.5);
+        // Largeur adaptative : 90% sur mobile (<=480px), 50% sur desktop
+        const isMobile = viewportWidth <= 480;
+        const desiredWidth = Math.floor(viewportWidth * (isMobile ? 0.9 : 0.5));
         const desiredHeight = Math.floor(viewportHeight * 0.95);
 
         // Positionner à droite avec marge (1.25rem = 20px)
