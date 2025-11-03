@@ -193,20 +193,14 @@
                 </div>
             </div>
             <div id="info-box-tabs">
-                <button class="tab-button active" data-tab="text" title="Description">
-                    <i class="fas fa-file-alt"></i>
-                </button>
-                <button class="tab-button" data-tab="image" title="Image">
+                <button class="tab-button active" data-tab="image" title="Image">
                     <i class="fas fa-image"></i>
+                </button>
+                <button class="tab-button" data-tab="text" title="Texte">
+                    <i class="fas fa-file-alt"></i>
                 </button>
                 <button class="tab-button" data-tab="rumeurs-traditions" title="Rumeurs et Traditions">
                     <i class="fas fa-scroll"></i>
-                </button>
-                <button class="tab-button" data-tab="personnages" title="Personnages">
-                    <i class="fas fa-users"></i>
-                </button>
-                <button class="tab-button" data-tab="lieux-regions" title="Lieux / Régions" style="display: none;">
-                    <i class="fas fa-map-marker-alt"></i>
                 </button>
                 <button class="tab-button" data-tab="evenements-voyage" title="Tables aléatoires">
                     <i class="fas fa-dice"></i>
@@ -214,20 +208,15 @@
             </div>
             <div id="info-box-scroll-wrapper">
                 <div id="info-box-content">
-                    <div id="text-tab" class="tab-content active">
-                        <div class="text-view">
-                            <h3></h3>
-                            <p></p>
-                        </div>
-                    </div>
-                    <div id="image-tab" class="tab-content">
+                    <div id="image-tab" class="tab-content active">
                         <div class="image-view">
                             <div class="image-placeholder">Aucune image disponible</div>
                         </div>
                     </div>
-                    <div id="personnages-tab" class="tab-content">
+                    <div id="text-tab" class="tab-content">
                         <div class="text-view">
-                            <div id="personnages-content"></div>
+                            <h3></h3>
+                            <p></p>
                         </div>
                     </div>
                     <div id="rumeurs-traditions-tab" class="tab-content">
@@ -240,11 +229,6 @@
                                 <h3 class="mb-3">Tradition Ancienne</h3>
                                 <div id="tradition-content"></div>
                             </div>
-                        </div>
-                    </div>
-                    <div id="lieux-regions-tab" class="tab-content">
-                        <div class="text-view">
-                            <div id="lieux-regions-content"></div>
                         </div>
                     </div>
                     <div id="evenements-voyage-tab" class="tab-content">
@@ -345,45 +329,10 @@
                     </button>
                 </div>
 
-                <div class="mb-4 flex flex-col space-y-3">
-                    <div class="flex space-x-3">
-                        <button id="add-character-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-                            <i class="fas fa-plus mr-2"></i>Ajouter un personnage
-                        </button>
-                        <button id="delete-all-characters-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
-                            <i class="fas fa-trash mr-2"></i>Supprimer les personnages
-                        </button>
-                    </div>
-                    
-                    <!-- Filtres et Tri -->
-                    <div class="bg-gray-700 rounded-lg p-3 flex flex-wrap gap-3 items-center">
-                        <div class="flex items-center space-x-2">
-                            <label class="text-sm text-gray-300">Filtrer par type:</label>
-                            <label class="flex items-center text-sm">
-                                <input type="checkbox" id="filter-pj" class="mr-1" checked>
-                                <span class="text-white">PJ</span>
-                            </label>
-                            <label class="flex items-center text-sm">
-                                <input type="checkbox" id="filter-pnj" class="mr-1" checked>
-                                <span class="text-white">PNJ</span>
-                            </label>
-                            <label class="flex items-center text-sm">
-                                <input type="checkbox" id="filter-monstre" class="mr-1" checked>
-                                <span class="text-white">Monstres</span>
-                            </label>
-                        </div>
-                        
-                        <div class="flex items-center space-x-2 border-l border-gray-600 pl-3">
-                            <label class="text-sm text-gray-300">Trier par:</label>
-                            <select id="sort-characters" class="bg-gray-600 text-white px-3 py-1 rounded text-sm">
-                                <option value="name">Nom (A-Z)</option>
-                                <option value="name-desc">Nom (Z-A)</option>
-                                <option value="id">ID (croissant)</option>
-                                <option value="id-desc">ID (décroissant)</option>
-                                <option value="type">Type</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="mb-4">
+                    <button id="add-character-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-plus mr-2"></i>Ajouter un personnage
+                    </button>
                 </div>
 
                 <div id="characters-list" class="space-y-3">
@@ -415,10 +364,6 @@
                             <label class="flex items-center">
                                 <input type="radio" name="character-type" id="character-type-pnj" value="PNJ" class="mr-2">
                                 <span>PNJ</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="radio" name="character-type" id="character-type-monstre" value="Monstre" class="mr-2">
-                                <span>Monstre</span>
                             </label>
                         </div>
                     </div>
@@ -556,8 +501,8 @@
                 </div>
             </div>
             <div class="flex justify-between space-x-2">
-                <button id="delete-color-change" class="p-2 bg-red-600 hover:bg-red-700 rounded text-white flex items-center justify-center" title="Supprimer">
-                    <i class="fas fa-trash"></i>
+                <button id="delete-color-change" class="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-sm text-white flex items-center">
+                    <i class="fas fa-trash mr-1"></i>Supprimer
                 </button>
                 <div class="flex space-x-2">
                     <button id="cancel-color-change" class="px-3 py-1 bg-gray-600 hover:bg-gray-700 rounded text-sm text-white">Annuler</button>
@@ -840,17 +785,38 @@
                 <div class="flex-grow overflow-hidden">
                     <!-- Cartes Tab -->
                     <div id="maps-tab" class="settings-tab-content active h-full overflow-y-auto">
-                        <!-- Liste des cartes avec bouton d'ajout sur la même ligne -->
-                        <div>
+                        <!-- Carte active -->
+                        <div class="mb-6">
                             <div class="flex justify-between items-center mb-3">
-                                <h4 class="text-lg font-semibold text-white">Toutes les cartes</h4>
-                                <button id="add-new-map-btn" class="w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors flex items-center justify-center" title="Ajouter une nouvelle carte">
-                                    <i class="fas fa-plus"></i>
-                                </button>
+                                <h4 class="text-lg font-semibold text-white">Carte active</h4>
+                                <span class="text-xs text-gray-400">5103 × 3296 px recommandé</span>
                             </div>
-                            <div id="maps-grid">
+                            <div class="bg-gray-900 rounded-lg p-4 border border-blue-500/50">
+                                <div id="active-map-display" class="aspect-video bg-gray-800 rounded-lg mb-2 overflow-hidden flex items-center justify-center">
+                                    <img id="active-map-preview" src="" alt="Carte active" class="w-full h-full object-cover">
+                                </div>
+                                <div id="active-map-name" class="text-sm font-medium text-white text-center">Aucune carte active</div>
+                            </div>
+                        </div>
+
+                        <!-- Liste des cartes avec bouton d'ajout intégré -->
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-3">Toutes les cartes</h4>
+                            <div id="maps-grid" class="space-y-2">
                                 <!-- Les cartes seront ajoutées ici dynamiquement -->
                             </div>
+
+                            <!-- Bouton d'ajout de carte -->
+                            <button id="add-new-map-btn" class="w-full mt-3 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                <i class="fas fa-plus"></i>
+                                <span>Ajouter une nouvelle carte</span>
+                            </button>
+
+                            <!-- Bouton de suppression de tous les lieux et régions -->
+                            <button id="delete-all-locations-regions-btn" class="w-full mt-3 px-4 py-3 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Supprimer tous les Lieux et Régions</span>
+                            </button>
                         </div>
                     </div>
 
@@ -1094,15 +1060,15 @@
                         <!-- Section Lieux et Régions -->
                         <div class="bg-gray-800 rounded-lg p-3">
                             <div class="flex items-center mb-2">
-                                <i class="fas fa-map-marked-alt text-blue-400 mr-2"></i>
+                                <i class="fas fa-map-marker-alt text-blue-400 mr-2"></i>
                                 <h4 class="text-sm font-semibold text-white">Lieux et Régions</h4>
                             </div>
 
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between gap-2">
-                                    <span class="text-xs text-gray-300">Export (carte active)</span>
+                                    <span class="text-xs text-gray-300">Export</span>
                                     <button id="export-locations-btn" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-white text-xs font-medium transition-colors flex items-center gap-1">
-                                        <i class="fas fa-download"></i>
+                                        <i class="fas fa-file-export"></i>
                                         <span>Exporter</span>
                                     </button>
                                 </div>
@@ -1110,12 +1076,13 @@
                                 <div class="flex items-center justify-between gap-2">
                                     <span class="text-xs text-gray-300">Import</span>
                                     <button id="import-locations-btn" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-white text-xs font-medium transition-colors flex items-center gap-1">
-                                        <i class="fas fa-upload"></i>
+                                        <i class="fas fa-file-import"></i>
                                         <span>Importer</span>
                                     </button>
-                                    <input type="file" id="import-locations-file-input" accept=".json" class="hidden">
                                 </div>
                             </div>
+
+                            <input type="file" id="import-locations-file-input" class="hidden" accept=".json">
                         </div>
 
                         <!-- Section Personnages -->
@@ -1127,7 +1094,7 @@
 
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between gap-2">
-                                    <span class="text-xs text-gray-300">Export (carte active)</span>
+                                    <span class="text-xs text-gray-300">Export</span>
                                     <button id="export-characters-btn" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-white text-xs font-medium transition-colors flex items-center gap-1">
                                         <i class="fas fa-file-export"></i>
                                         <span>Exporter</span>
@@ -1140,9 +1107,10 @@
                                         <i class="fas fa-file-import"></i>
                                         <span>Importer</span>
                                     </button>
-                                    <input type="file" id="import-characters-file-input" class="hidden" accept=".json">
                                 </div>
                             </div>
+
+                            <input type="file" id="import-characters-file-input" class="hidden" accept=".json">
                         </div>
 
                         <div class="text-xs text-gray-400 italic mt-3 p-2 bg-gray-900 rounded">
