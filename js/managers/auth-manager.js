@@ -1325,18 +1325,28 @@ class AuthManager {
 
             const cloudData = await response.json();
             
-            // Comparer les lieux du cloud avec les lieux locaux
-            const cloudLocations = cloudData.locations?.locations || [];
-            const localLocations = localData.locations?.locations || [];
+            // Récupérer l'ID de la carte active
+            const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl || localStorage.getItem('activeMapUrl');
+            this.logAuth(`🗺️ Carte active pour comparaison: ${activeMapId}`);
+            
+            // IMPORTANT: Filtrer les lieux par carte active uniquement
+            const cloudLocations = (cloudData.locations?.locations || []).filter(loc => 
+                !loc.mapId || loc.mapId === activeMapId
+            );
+            const localLocations = (localData.locations?.locations || []).filter(loc => 
+                !loc.mapId || loc.mapId === activeMapId
+            );
+            
+            this.logAuth(`📊 Comparaison pour carte active: Cloud=${cloudLocations.length} lieux, Local=${localLocations.length} lieux`);
             
             const cloudLocationIds = new Set(cloudLocations.map(loc => loc.id));
             const localLocationIds = new Set(localLocations.map(loc => loc.id));
             
-            // Trouver les lieux présents dans le cloud mais absents localement
+            // Trouver les lieux présents dans le cloud mais absents localement (pour la carte active uniquement)
             const deletedLocations = cloudLocations.filter(cloudLoc => !localLocationIds.has(cloudLoc.id));
             
             if (deletedLocations.length > 0) {
-                this.logAuth(`⚠️ ALERTE: ${deletedLocations.length} lieu(x) seraient supprimé(s) par cette synchronisation!`);
+                this.logAuth(`⚠️ ALERTE: ${deletedLocations.length} lieu(x) de la carte active seraient supprimé(s) par cette synchronisation!`);
                 deletedLocations.forEach(loc => {
                     this.logAuth(`   - ${loc.name} (ID: ${loc.id}, Carte: ${loc.mapId || 'global'})`);
                 });
@@ -1345,10 +1355,11 @@ class AuthManager {
                     hasDeleted: true,
                     deletedLocations: deletedLocations,
                     cloudTotal: cloudLocations.length,
-                    localTotal: localLocations.length
+                    localTotal: localLocations.length,
+                    activeMapId: activeMapId
                 };
             } else {
-                this.logAuth(`✅ Aucune suppression détectée (Cloud: ${cloudLocations.length}, Local: ${localLocations.length})`);
+                this.logAuth(`✅ Aucune suppression détectée pour la carte active (Cloud: ${cloudLocations.length}, Local: ${localLocations.length})`);
                 return { hasDeleted: false, deletedLocations: [] };
             }
             
@@ -1360,6 +1371,9 @@ class AuthManager {
 
     async showDeletionWarning(deletionInfo) {
         return new Promise((resolve) => {
+            // Récupérer le nom de la carte active pour l'affichage
+            const activeMapName = window.settingsManager?.activeMapName || 'la carte active';
+            
             // Créer une modale d'avertissement visible et bloquante
             const warningModal = document.createElement('div');
             warningModal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[200]';
@@ -1372,7 +1386,10 @@ class AuthManager {
                     
                     <div class="bg-red-800 border-2 border-red-600 rounded p-4 mb-6">
                         <p class="text-white text-lg mb-4">
-                            <strong class="text-yellow-300">ATTENTION:</strong> Cette synchronisation va <strong class="underline">SUPPRIMER ${deletionInfo.deletedLocations.length} lieu(x)</strong> de votre sauvegarde cloud !
+                            <strong class="text-yellow-300">ATTENTION:</strong> Cette synchronisation va <strong class="underline">SUPPRIMER ${deletionInfo.deletedLocations.length} lieu(x)</strong> de "${activeMapName}" dans votre sauvegarde cloud !
+                        </p>
+                        <p class="text-gray-200 text-sm mb-2">
+                            <strong>Carte:</strong> ${activeMapName}
                         </p>
                         <p class="text-gray-200 text-sm mb-2">
                             Cloud actuel: <strong>${deletionInfo.cloudTotal} lieux</strong> → Après sync: <strong>${deletionInfo.localTotal} lieux</strong>
