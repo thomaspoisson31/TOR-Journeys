@@ -26,6 +26,9 @@
   #info-box.expanded {
     width: 90vw !important;
     max-width: 90vw !important;
+    left: 5vw !important;
+    right: 5vw !important;
+    margin: 0 auto !important;
   }
 
   /* Autres modales plein écran */
