@@ -1325,26 +1325,55 @@ class AuthManager {
 
             const cloudData = await response.json();
 
+            // Récupérer la carte active pour filtrer les lieux
+            const activeMapId = localData.settings?.activeMapUrl || 
+                              window.settingsManager?.activeMapUrl || 
+                              localStorage.getItem('activeMapUrl');
+
+            this.logAuth(`🗺️ [checkForLocationDeletions] Carte active: ${activeMapId}`);
+
             // Comparer les lieux du cloud avec les lieux locaux
             const cloudLocations = cloudData.locations?.locations || [];
             const localLocations = localData.locations?.locations || [];
 
-            // CORRECTION: Si localStorage contient beaucoup moins de lieux que le cloud,
-            // c'est probablement une erreur de synchronisation, pas une suppression volontaire
-            if (localLocations.length > 0 && localLocations.length < cloudLocations.length * 0.5) {
-                this.logAuth(`⚠️ Incohérence détectée: ${localLocations.length} lieux locaux vs ${cloudLocations.length} cloud - probable erreur de sync, vérification ignorée`);
-                this.logAuth(`ℹ️ Utilisez window.locationsData pour vérifier l'état réel des données`);
-                return { hasDeleted: false, deletedLocations: [] };
+            this.logAuth(`📊 [checkForLocationDeletions] Total Cloud: ${cloudLocations.length} lieux, Total Local: ${localLocations.length} lieux`);
+
+            // FILTRER les lieux par carte active (comparer uniquement les lieux de la carte en cours)
+            const cloudLocationsForActiveMap = activeMapId 
+                ? cloudLocations.filter(loc => !loc.mapId || loc.mapId === activeMapId)
+                : cloudLocations;
+            
+            const localLocationsForActiveMap = activeMapId 
+                ? localLocations.filter(loc => !loc.mapId || loc.mapId === activeMapId)
+                : localLocations;
+
+            this.logAuth(`📊 [checkForLocationDeletions] Carte active - Cloud: ${cloudLocationsForActiveMap.length} lieux, Local: ${localLocationsForActiveMap.length} lieux`);
+
+            // Log détaillé des lieux filtrés
+            if (cloudLocations.length !== cloudLocationsForActiveMap.length) {
+                const otherMaps = cloudLocations.filter(loc => loc.mapId && loc.mapId !== activeMapId);
+                this.logAuth(`📌 [checkForLocationDeletions] ${otherMaps.length} lieu(x) sur d'autres cartes ignoré(s)`);
+                
+                // Grouper par carte pour affichage
+                const byMap = otherMaps.reduce((acc, loc) => {
+                    const map = loc.mapId || 'sans carte';
+                    acc[map] = (acc[map] || 0) + 1;
+                    return acc;
+                }, {});
+                
+                Object.entries(byMap).forEach(([map, count]) => {
+                    this.logAuth(`   📍 ${count} lieu(x) sur: ${map.split('/').pop()}`);
+                });
             }
 
-            const cloudLocationIds = new Set(cloudLocations.map(loc => loc.id));
-            const localLocationIds = new Set(localLocations.map(loc => loc.id));
+            const cloudLocationIds = new Set(cloudLocationsForActiveMap.map(loc => loc.id));
+            const localLocationIds = new Set(localLocationsForActiveMap.map(loc => loc.id));
 
-            // Trouver les lieux présents dans le cloud mais absents localement
-            const deletedLocations = cloudLocations.filter(cloudLoc => !localLocationIds.has(cloudLoc.id));
+            // Trouver les lieux présents dans le cloud mais absents localement (uniquement pour la carte active)
+            const deletedLocations = cloudLocationsForActiveMap.filter(cloudLoc => !localLocationIds.has(cloudLoc.id));
 
             if (deletedLocations.length > 0) {
-                this.logAuth(`⚠️ ALERTE: ${deletedLocations.length} lieu(x) seraient supprimé(s) par cette synchronisation!`);
+                this.logAuth(`⚠️ ALERTE: ${deletedLocations.length} lieu(x) de la carte active seraient supprimé(s) par cette synchronisation!`);
                 deletedLocations.forEach(loc => {
                     this.logAuth(`   - ${loc.name} (ID: ${loc.id}, Carte: ${loc.mapId || 'global'})`);
                 });
@@ -1352,11 +1381,12 @@ class AuthManager {
                 return {
                     hasDeleted: true,
                     deletedLocations: deletedLocations,
-                    cloudTotal: cloudLocations.length,
-                    localTotal: localLocations.length
+                    cloudTotal: cloudLocationsForActiveMap.length,
+                    localTotal: localLocationsForActiveMap.length,
+                    activeMapId: activeMapId
                 };
             } else {
-                this.logAuth(`✅ Aucune suppression détectée (Cloud: ${cloudLocations.length}, Local: ${localLocations.length})`);
+                this.logAuth(`✅ Aucune suppression détectée pour la carte active (Cloud: ${cloudLocationsForActiveMap.length}, Local: ${localLocationsForActiveMap.length})`);
                 return { hasDeleted: false, deletedLocations: [] };
             }
 
@@ -1371,6 +1401,9 @@ class AuthManager {
             // Créer une modale d'avertissement visible et bloquante
             const warningModal = document.createElement('div');
             warningModal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[200]';
+            
+            const activeMapName = deletionInfo.activeMapId ? deletionInfo.activeMapId.split('/').pop() : 'carte actuelle';
+            
             warningModal.innerHTML = `
                 <div class="bg-red-900 border-4 border-red-500 rounded-lg p-8 max-w-2xl mx-4 shadow-2xl">
                     <div class="flex items-center mb-6">
@@ -1380,10 +1413,10 @@ class AuthManager {
 
                     <div class="bg-red-800 border-2 border-red-600 rounded p-4 mb-6">
                         <p class="text-white text-lg mb-4">
-                            <strong class="text-yellow-300">ATTENTION:</strong> Cette synchronisation va <strong class="underline">SUPPRIMER ${deletionInfo.deletedLocations.length} lieu(x)</strong> de votre sauvegarde cloud !
+                            <strong class="text-yellow-300">ATTENTION:</strong> Cette synchronisation va <strong class="underline">SUPPRIMER ${deletionInfo.deletedLocations.length} lieu(x)</strong> de la carte <strong>${activeMapName}</strong> !
                         </p>
                         <p class="text-gray-200 text-sm mb-2">
-                            Cloud actuel: <strong>${deletionInfo.cloudTotal} lieux</strong> → Après sync: <strong>${deletionInfo.localTotal} lieux</strong>
+                            Cloud actuel (${activeMapName}): <strong>${deletionInfo.cloudTotal} lieux</strong> → Après sync: <strong>${deletionInfo.localTotal} lieux</strong>
                         </p>
                     </div>
 
