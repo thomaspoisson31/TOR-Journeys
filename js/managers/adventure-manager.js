@@ -110,26 +110,22 @@ class AdventureManager {
         const editBtn = document.getElementById('adventure-edit');
         if (editBtn) {
             if (this.isEditMode) {
-                editBtn.style.color = '#60a5fa'; // bleu clair
+                editBtn.style.color = '#60a5fa';
             } else {
-                editBtn.style.color = '#ffffff'; // blanc
+                editBtn.style.color = '#ffffff';
             }
         }
     }
 
     renderContent() {
-        console.log("🔧 renderContent() appelé, isEditMode:", this.isEditMode);
         if (this.isEditMode) {
-            console.log("🔧 Rendu en mode ÉDITION");
             this.renderEditMode();
         } else {
-            console.log("🔧 Rendu en mode LECTURE");
             this.renderReadMode();
         }
     }
 
     renderReadMode() {
-        // Onglet Quête - nettoyer et recréer (comme InfoBoxManager)
         const questTab = document.getElementById('quest-tab');
         if (questTab) {
             questTab.innerHTML = '';
@@ -140,7 +136,6 @@ class AdventureManager {
             }
         }
 
-        // Onglet Rumeurs - nettoyer complètement et recréer (comme InfoBoxManager)
         const rumorsTab = document.getElementById('rumors-tab');
         if (rumorsTab) {
             rumorsTab.innerHTML = '';
@@ -164,7 +159,6 @@ class AdventureManager {
             `;
         }
 
-        // Onglet Menaces - nettoyer complètement et recréer (comme InfoBoxManager)
         const threatsTab = document.getElementById('threats-tab');
         if (threatsTab) {
             threatsTab.innerHTML = '';
@@ -188,12 +182,10 @@ class AdventureManager {
             `;
         }
 
-        // Onglet Tables aléatoires
         this.renderRandomTablesTab();
     }
 
     renderEditMode() {
-        // Onglet Quête - nettoyer complètement puis créer (comme InfoBoxManager)
         const questTab = document.getElementById('quest-tab');
         if (questTab) {
             questTab.innerHTML = `
@@ -214,7 +206,6 @@ class AdventureManager {
             `;
         }
 
-        // Onglet Rumeurs - nettoyer complètement puis créer (comme InfoBoxManager)
         const rumorsTab = document.getElementById('rumors-tab');
         if (rumorsTab) {
             rumorsTab.innerHTML = `
@@ -247,7 +238,6 @@ class AdventureManager {
             `;
         }
 
-        // Onglet Menaces - nettoyer complètement puis créer (comme InfoBoxManager)
         const threatsTab = document.getElementById('threats-tab');
         if (threatsTab) {
             threatsTab.innerHTML = `
@@ -288,13 +278,11 @@ class AdventureManager {
     }
 
     saveEdit() {
-        // Sauvegarder tous les onglets (comme saveEdit dans InfoBoxManager)
         const questInput = document.getElementById('edit-quest');
         if (questInput) {
             this.adventureData.quest = questInput.value.trim();
         }
 
-        // Rumeurs
         const rumorInputs = document.querySelectorAll('.edit-rumor-input');
         rumorInputs.forEach((input, index) => {
             if (this.adventureData.rumors[index]) {
@@ -303,7 +291,6 @@ class AdventureManager {
         });
         this.adventureData.rumors = this.adventureData.rumors.filter(r => r.text !== '');
 
-        // Menaces
         const threatInputs = document.querySelectorAll('.edit-threat-input');
         threatInputs.forEach((input, index) => {
             if (this.adventureData.threats[index]) {
@@ -405,7 +392,6 @@ class AdventureManager {
         localStorage.setItem('adventureData', JSON.stringify(this.adventureData));
         console.log("💾 Adventure data saved to localStorage");
         
-        // Marquer comme non sauvegardé
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
@@ -469,7 +455,6 @@ class AdventureManager {
 
         tabContent.innerHTML = html;
 
-        // Ajouter l'écouteur d'événement pour l'upload
         const uploadInput = document.getElementById('upload-random-table');
         if (uploadInput) {
             uploadInput.addEventListener('change', (e) => this.handleRandomTableUpload(e));
@@ -489,7 +474,6 @@ class AdventureManager {
                 return;
             }
 
-            // Extraire le nom du fichier sans l'extension
             const fileName = file.name.replace(/\.json$/i, '');
 
             const newTable = {
@@ -501,7 +485,6 @@ class AdventureManager {
             this.saveToLocalStorage();
             this.renderRandomTablesTab();
 
-            // Reset l'input
             event.target.value = '';
         } catch (error) {
             console.error('Erreur lors de l\'import de la table:', error);
@@ -513,18 +496,15 @@ class AdventureManager {
         const table = this.adventureData.randomTables[tableIndex];
         if (!table || !table.entries || table.entries.length === 0) return;
 
-        // Tirage aléatoire
         const randomIndex = Math.floor(Math.random() * table.entries.length);
         const entry = table.entries[randomIndex];
 
-        // Afficher le résultat
         const resultContainer = document.getElementById(`table-result-${tableIndex}`);
         const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
 
         if (resultContainer && resultContent) {
             let html = '<div class="space-y-2">';
             
-            // Afficher toutes les propriétés de l'entrée
             for (const [key, value] of Object.entries(entry)) {
                 html += `
                     <div>
@@ -538,7 +518,6 @@ class AdventureManager {
             resultContent.innerHTML = html;
             resultContainer.classList.remove('hidden');
 
-            // Masquer après 10 secondes
             setTimeout(() => {
                 resultContainer.classList.add('hidden');
             }, 10000);
@@ -553,7 +532,6 @@ class AdventureManager {
         }
     }
 
-    // Méthode pour récupérer toutes les données (pour synchronisation)
     getAllData() {
         return this.adventureData;
     }
