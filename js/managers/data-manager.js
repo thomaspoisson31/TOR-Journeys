@@ -17,11 +17,16 @@ class DataManager {
 
     saveLocationsToLocal() {
         if (this.locationsData) {
+            // Sauvegarder dans localStorage
             localStorage.setItem('middleEarthLocations', JSON.stringify(this.locationsData));
+
+            // IMPORTANT: Synchroniser avec window.locationsData pour cohérence globale
             window.locationsData = this.locationsData;
-            console.log(`💾 [DataManager] ${this.locationsData.locations?.length || 0} lieux sauvegardés dans localStorage`);
+
+            console.log('💾 [DataManager]', this.locationsData.locations?.length || 0, 'lieux sauvegardés dans localStorage');
+            console.log('✅ [DataManager] window.locationsData synchronisé:', window.locationsData.locations?.length || 0, 'lieux');
         }
-        
+
         // Marquer comme non sauvegardé et déclencher la synchronisation
         if (window.authManager && window.authManager.isAuthenticated) {
             window.authManager.markAsUnsaved();
@@ -33,11 +38,16 @@ class DataManager {
 
     saveRegionsToLocal() {
         if (this.regionsData) {
+            // Sauvegarder dans localStorage
             localStorage.setItem('middleEarthRegions', JSON.stringify(this.regionsData));
+
+            // IMPORTANT: Synchroniser avec window.regionsData pour cohérence globale
             window.regionsData = this.regionsData;
-            console.log(`💾 [DataManager] ${this.regionsData.regions?.length || 0} régions sauvegardées dans localStorage`);
+
+            console.log('💾 [DataManager]', this.regionsData.regions?.length || 0, 'régions sauvegardées dans localStorage');
+            console.log('✅ [DataManager] window.regionsData synchronisé:', this.regionsData.regions?.length || 0, 'régions');
         }
-        
+
         // Marquer comme non sauvegardé et déclencher la synchronisation
         if (window.authManager && window.authManager.isAuthenticated) {
             window.authManager.markAsUnsaved();

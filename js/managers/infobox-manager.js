@@ -2153,11 +2153,11 @@ class InfoBoxManager {
         const html = associatedCharacters.map(character => {
             const thumbnailImage = character.images?.find(img => img.type === 'vignette');
             return `
-                <div class="character-card-infobox bg-gray-700 hover:bg-gray-600 rounded-lg p-3 mb-3 cursor-pointer transition-colors" 
+                <div class="character-card-infobox bg-gray-700 hover:bg-gray-600 rounded-lg p-3 mb-3 cursor-pointer transition-colors"
                      onclick="window.infoBoxManager.showCharacterFromLocation('${character.id}')">
                     <div class="flex items-center space-x-3">
                         ${thumbnailImage ? `
-                            <img src="${thumbnailImage.url}" alt="${character.name}" 
+                            <img src="${thumbnailImage.url}" alt="${character.name}"
                                  class="w-12 h-12 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
                         ` : `
                             <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
@@ -2339,12 +2339,12 @@ class InfoBoxManager {
                     const thumbnailImage = character.images?.find(img => img.type === 'vignette');
                     return `
                         <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
-                            <input type="checkbox" 
-                                   class="character-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                            <input type="checkbox"
+                                   class="character-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                    data-character-id="${character.id}"
                                    ${isAssociated ? 'checked' : ''}>
                             ${thumbnailImage ? `
-                                <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                <img src="${thumbnailImage.url}" alt="${character.name}"
                                      class="w-10 h-10 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
                             ` : `
                                 <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
@@ -2412,13 +2412,13 @@ class InfoBoxManager {
 
                     return `
                         <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
-                            <input type="checkbox" 
-                                   class="location-region-checkbox h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500" 
+                            <input type="checkbox"
+                                   class="location-region-checkbox h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                                    data-item-id="${item.id}"
                                    data-item-type="${isRegion ? 'region' : 'location'}"
                                    ${isAssociated ? 'checked' : ''}>
                             ${thumbnailImage ? `
-                                <img src="${thumbnailImage.url}" alt="${item.name}" 
+                                <img src="${thumbnailImage.url}" alt="${item.name}"
                                      class="w-10 h-10 rounded-lg object-cover border-2 border-purple-500">
                             ` : `
                                 <div class="w-10 h-10 rounded-lg bg-gray-600 flex items-center justify-center border-2 border-purple-500">
