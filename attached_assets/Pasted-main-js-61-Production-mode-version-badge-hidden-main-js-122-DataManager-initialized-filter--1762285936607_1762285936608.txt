@@ -1,0 +1,1049 @@
+main.js:61 🏭 Production mode - version badge hidden
+main.js:122 ✅ DataManager initialized
+filter-manager.js:20 🔍 FilterManager initialized
+main.js:124 ✅ FilterManager initialized
+main.js:134 ✅ VoyageManager initialized
+main.js:141 ✅ PathManager initialized
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: Object
+calendar-manager.js:254 🌱 Affichage saison: Object
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: Object
+calendar-manager.js:254 🌱 Affichage saison: Object
+calendar-manager.js:30 📅 Données calendrier exposées globalement: Object
+main.js:147 ✅ CalendarManager initialized
+settings-manager.js:17 ⚙️ SettingsManager initialized
+settings-manager.js:1087 ⚙️ Configuration des listeners Import/Export...
+settings-manager.js:1094 📍 Boutons Lieux/Régions: Object
+settings-manager.js:1131 👥 Boutons Personnages: Object
+settings-manager.js:1170 ✅ Listeners Import/Export configurés
+main.js:153 ✅ SettingsManager initialized
+auth-manager.js:1806 [AuthManager] 🔑 Initialisation AuthManager null
+auth-manager.js:1806 [AuthManager] 🔍 Vérification du statut d'authentification null
+auth-manager.js:1806 [AuthManager] 👂 Écoute des changements de localStorage activée. null
+main.js:175 ✅ AuthManager initialized
+upload-manager.js:10 📤 UploadManager initialized
+infobox-manager.js:25 📋 InfoBoxManager initialized with UploadManager
+main.js:184 ✅ InfoBoxManager initialized
+import-export-manager.js:17 📤 ImportExportManager initialized
+import-export-manager.js:44 📤 ImportExportManager event listeners configured
+main.js:193 ✅ ImportExportManager initialized
+main.js:196 📍 Initializing data structures...
+data-manager.js:10 📍 loadInitialLocations: Initialisation avec structure vide
+data-manager.js:15 ✅ Structure de données initialisée (vide, en attente du cloud)
+data-manager.js:51 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+data-manager.js:56 ✅ Structure de régions initialisée (vide, en attente du cloud)
+main.js:204 ✅ Data structures initialized (will be populated from cloud)
+main.js:228 ⏳ Waiting for SettingsManager to load active map...
+upload-manager.js:10 📤 UploadManager initialized
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1806 [AuthManager] ✅ Utilisateur authentifié trouvé null
+auth-manager.js:1806 [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1806 [AuthManager] 🌍 Environnement détecté: production (préfixe: prod_) null
+auth-manager.js:1806 [AuthManager] 📥 Chargement des données depuis le cloud (environnement: prod_) null
+auth-manager.js:1806 [AuthManager] ✅ Données cloud récupérées Object
+auth-manager.js:1806 [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+auth-manager.js:1806 [AuthManager] 🔄 Application des données du contexte Array(10)
+auth-manager.js:1806 [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+auth-manager.js:1806 [AuthManager] 💾 27 lieux sauvegardés dans localStorage null
+auth-manager.js:1806 [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+auth-manager.js:1806 [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 27 lieux null
+auth-manager.js:1806 [AuthManager] 📊 Structure locationsData: Object
+auth-manager.js:1806 [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+auth-manager.js:1806 [AuthManager] 📊 Structure regionsData: Object
+auth-manager.js:1806 [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+auth-manager.js:1806 [AuthManager] 📅 [applyContextData] Données calendar reçues: Object
+auth-manager.js:1806 [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+auth-manager.js:1806 [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: Object
+calendar-manager.js:254 🌱 Affichage saison: Object
+calendar-manager.js:30 📅 Données calendrier exposées globalement: Object
+auth-manager.js:1806 [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+auth-manager.js:1806 [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+settings-manager.js:1237 ⚙️ Chargement des paramètres depuis le contexte: Object
+settings-manager.js:1249 ✅ Cartes chargées: 3
+settings-manager.js:1253 ✅ Carte active URL: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+settings-manager.js:1281 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+settings-manager.js:1286 🗺️ Échelle de la carte active: 60 miles
+settings-manager.js:1341 ✅ Paramètres chargés avec succès
+auth-manager.js:1806 [AuthManager] 🗺️ 3 carte(s) restaurée(s) depuis le cloud null
+auth-manager.js:1806 [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+auth-manager.js:1806 [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+auth-manager.js:1806 [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+auth-manager.js:1806 [AuthManager] 👥 Application de 41 personnages depuis le contexte null
+auth-manager.js:533 📍 [applyContextData] Position reçue du cloud: Object
+auth-manager.js:534 📍 [applyContextData] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+auth-manager.js:535 📍 [applyContextData] Carte de la position: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+auth-manager.js:540 📍 [applyContextData] AVANT setItem - position à sauver: Object
+auth-manager.js:546 📍 [applyContextData] APRÈS setItem - position vérif: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":1919.9062171753626,"y":1961.4117774933052}
+auth-manager.js:551 📍 [applyContextData] APRÈS setItem - flag vérif: true
+auth-manager.js:553 [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: Object
+auth-manager.js:1806 [AuthManager] 🔍 [applyContextData] Sauvegarde des filtres pour restauration différée null
+auth-manager.js:1806 [AuthManager] 🔍 [applyContextData] Données filtersByMap reçues: Object
+auth-manager.js:1806 [AuthManager] 🔍 [applyContextData] Nombre de cartes avec filtres: 5 null
+auth-manager.js:1806 [AuthManager] 💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager null
+auth-manager.js:1806 [AuthManager] ⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init null
+auth-manager.js:1806 [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+auth-manager.js:1806 [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+auth-manager.js:1806 [AuthManager] ✅ Contexte appliqué avec succès null
+auth-manager.js:1806 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1806 [AuthManager] 💾 3 carte(s) sauvegardée(s) dans localStorage null
+auth-manager.js:1806 [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+auth-manager.js:1806 [AuthManager]   - 41 personnages sauvegardés dans localStorage. null
+auth-manager.js:1806 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1806 [AuthManager] 🎨 Rendu forcé après chargement cloud null
+main.js:437 ✅ Rendered 27 location markers (thumbnails: true)
+auth-manager.js:1806 [AuthManager] ✅ 27 lieux rendus depuis le cloud null
+main.js:586 ✅ Rendered 0 region polygons
+auth-manager.js:1806 [AuthManager] ✅ 0 régions rendues depuis le cloud null
+auth-manager.js:1806 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+auth-manager.js:1806 [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+settings-manager.js:1290 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1301 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+settings-manager.js:1305 🗺️ Réinitialisation de la carte depuis loadSettings
+main.js:596 🗺️ Initializing map...
+main.js:602 📐 Map dimensions: 5000 x 3229
+main.js:628 ✅ Regions layer configured
+main.js:638 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+main.js:974 🎮 Setting up map navigation...
+main.js:1233 ✅ Map navigation setup complete
+main.js:1238 📋 Setting up info-box listeners...
+main.js:1279 ✅ Info-box listeners setup complete
+main.js:1284 🎨 Setting up region drawing...
+main.js:1306 ✅ Region drawing setup complete
+main.js:1559 📍 Setting up location adding...
+main.js:1582 ✅ Generate description button configured
+main.js:2279 🎨 Setting up color change modal...
+main.js:2307 ✅ Color change modal setup complete
+main.js:1612 ✅ Location adding setup complete
+main.js:656 🔍 Setting up FilterManager...
+filter-manager.js:46 🔍 Setting up filter listeners...
+filter-manager.js:81 ✅ Filter listeners setup complete
+filter-manager.js:26 🔍 [loadFiltersFromStorage] Tentative de chargement - localStorage contient: données présentes
+filter-manager.js:31 ✅ [loadFiltersFromStorage] Filtres chargés depuis localStorage: Object
+filter-manager.js:32 ✅ [loadFiltersFromStorage] 5 carte(s) avec filtres
+filter-manager.js:33 ✅ [loadFiltersFromStorage] Cartes avec filtres: Array(5)
+filter-manager.js:96 🔍 [tryLoadFiltersForActiveMap retry=0] activeMapUrl: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:97 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(5)
+filter-manager.js:100 ✅ Chargement des filtres pour la carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:101 📊 Filtres à charger: Object
+filter-manager.js:634 🔍 [loadFiltersForMap] Tentative de chargement pour carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:635 🔍 [loadFiltersForMap] filtersByMap disponibles: Array(5)
+filter-manager.js:638 📥 [loadFiltersForMap] Filtres trouvés: Object
+filter-manager.js:640 📥 [loadFiltersForMap] activeFilters après copie: Object
+filter-manager.js:643 🎨 [loadFiltersForMap] Mise à jour de l'UI...
+filter-manager.js:645 ✅ [loadFiltersForMap] Appel de applyFilters...
+filter-manager.js:373 🔍 Applying filters... Object
+filter-manager.js:374 🔍 Current filtersByMap: Object
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:392 📊 Filtered: 27/27 locations, 0/0 regions
+filter-manager.js:505 ✅ Display updated - 27 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: Object
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+auth-manager.js:1806 [AuthManager] 🔔 Modifications non sauvegardées détectées null
+main.js:664 ✅ FilterManager setup complete
+main.js:671 🚀 Setting up VoyageManager...
+main.js:673 ✅ VoyageManager setup complete
+main.js:678 🗺️ Setting up PathManager...
+path-manager.js:50 🎨 Canvas configuré : 5000x3229
+path-manager.js:38 🛤️ PathManager initialized
+main.js:680 ✅ PathManager setup complete
+main.js:697 🔍 [initializeMap] Création du ZoomManager
+zoom-manager.js:26 🔍 Initializing ZoomManager... Object
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.320
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.320, ratio=0.056, x=8.5px, sliderWidth=0px
+zoom-manager.js:34 ✅ ZoomManager initialized Object
+main.js:726 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 5000 MAP_HEIGHT: 3229
+main.js:731 📍 [main.js] État localStorage AVANT init PositionManager - position: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":1919.9062171753626,"y":1961.4117774933052} flag: true
+position-manager.js:25 📍 [PositionManager.loadPosition] État du flag cloud: true
+position-manager.js:26 📍 [PositionManager.loadPosition] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+position-manager.js:29 📍 [PositionManager.loadPosition] Position dans localStorage: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":1919.9062171753626,"y":1961.4117774933052}
+position-manager.js:42 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: Object
+position-manager.js:14 📍 Initializing PositionManager...
+position-manager.js:94 📍 [PositionManager] 0 marqueur(s) existant(s) supprimé(s)
+position-manager.js:17 ✅ PositionManager initialized with position: Object
+main.js:748 ✅ PositionManager initialized with position: Object
+main.js:752 📍 [main.js] Nettoyage du flag cloud après initialisation
+journal-manager.js:11 📖 Initialisation du JournalManager
+journal-manager.js:48 📖 undefined voyage(s) chargé(s) depuis le localStorage
+main.js:760 ✅ JournalManager initialized
+adventure-manager.js:413 ✅ Adventure data loaded from localStorage
+adventure-manager.js:20 🎲 Initializing AdventureManager...
+adventure-manager.js:22 ✅ AdventureManager initialized
+main.js:766 ✅ AdventureManager initialized
+characters-manager.js:15 👥 CharactersManager initialized
+characters-manager.js:103 📚 41 personnages chargés depuis localStorage
+characters-manager.js:21 ✅ CharactersManager setup complete
+main.js:772 ✅ CharactersManager initialized
+main.js:2635 🖌️ Setting up drawing events...
+main.js:2639 👂 Adding VoyageManager drawing listeners...
+voyage-manager.js:86 🎨 VoyageManager drawing listeners configured
+main.js:2641 ✅ VoyageManager drawing listeners added
+main.js:2644 ✅ Drawing events setup complete
+main.js:925 🔍 [resetView] Nouveau scale calculé: 0.204 (MAP_WIDTH=5000, MAP_HEIGHT=3229)
+main.js:942 🔍 [resetView] Synchronisation ZoomManager avec scale=0.204
+main.js:783 🔍 [initializeMap] Application finale des filtres après resetView
+main.js:789 ✅ Map initialized successfully
+zoom-manager.js:88 🔍 [ZoomManager] Largeur du slider calculée: 150
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.204
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.204, ratio=0.027, x=4.0px, sliderWidth=150px
+filter-manager.js:373 🔍 Applying filters... Object
+filter-manager.js:374 🔍 Current filtersByMap: Object
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:392 📊 Filtered: 27/27 locations, 0/0 regions
+filter-manager.js:505 ✅ Display updated - 27 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: Object
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.204, zoomFactor=1.100, newScale=0.224
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.224
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.224, ratio=0.032, x=4.8px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.224
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.224, ratio=0.032, x=4.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.224, zoomFactor=1.100, newScale=0.247
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.247
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.247, ratio=0.038, x=5.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-333.33331298828125, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.247, zoomFactor=1.100, newScale=0.271
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.271
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.271, ratio=0.044, x=6.6px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.271
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.271, ratio=0.044, x=6.6px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.271
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.271, ratio=0.044, x=6.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.271, zoomFactor=1.100, newScale=0.298
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.298
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.298, ratio=0.051, x=7.6px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.298
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.298, ratio=0.051, x=7.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.298, zoomFactor=1.100, newScale=0.328
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.328
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.328, ratio=0.058, x=8.8px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.328
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.328, ratio=0.058, x=8.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.328, zoomFactor=0.900, newScale=0.295
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.295
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.295, ratio=0.050, x=7.5px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.295
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.295, ratio=0.050, x=7.5px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.295, zoomFactor=0.900, newScale=0.266
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.266
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.266, ratio=0.043, x=6.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.266
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.266, ratio=0.043, x=6.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.266, zoomFactor=0.900, newScale=0.239
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.239
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.239, ratio=0.036, x=5.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.239, zoomFactor=0.900, newScale=0.215
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.215
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.215, ratio=0.030, x=4.4px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.215
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.215, ratio=0.030, x=4.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=333.33331298828125, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.215, zoomFactor=0.900, newScale=0.194
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.194
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.194, ratio=0.024, x=3.6px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.194
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.194, ratio=0.024, x=3.6px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.194
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.194, ratio=0.024, x=3.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.194, zoomFactor=0.900, newScale=0.174
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.174
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.174, ratio=0.019, x=2.9px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.174
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.174, ratio=0.019, x=2.9px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.174, zoomFactor=0.900, newScale=0.157
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.157
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.157, ratio=0.015, x=2.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.157
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.157, ratio=0.015, x=2.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.157, zoomFactor=0.900, newScale=0.141
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.141
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.141, ratio=0.011, x=1.6px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.141
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.141, ratio=0.011, x=1.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.141, zoomFactor=0.900, newScale=0.127
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.127
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.127, ratio=0.007, x=1.0px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.127
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.127, ratio=0.007, x=1.0px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.127, zoomFactor=0.900, newScale=0.114
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.114
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.114, ratio=0.004, x=0.6px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.114
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.114, ratio=0.004, x=0.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.114, zoomFactor=0.900, newScale=0.103
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.103
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.103, ratio=0.001, x=0.1px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.103, zoomFactor=0.900, newScale=0.100
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.100
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.100, ratio=0.000, x=0.0px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.100
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.100, ratio=0.000, x=0.0px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.100, zoomFactor=0.900, newScale=0.100
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.100
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.100, ratio=0.000, x=0.0px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.100
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.100, ratio=0.000, x=0.0px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.100, zoomFactor=1.100, newScale=0.110
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.110
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.110, ratio=0.003, x=0.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.110
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.110, ratio=0.003, x=0.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.110, zoomFactor=1.100, newScale=0.121
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.121
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.121, ratio=0.005, x=0.8px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.121
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.121, ratio=0.005, x=0.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.121, zoomFactor=1.100, newScale=0.133
+main.js:1075 🔍 [main.js] wheel event: deltaY=-833.333251953125, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.133, zoomFactor=1.100, newScale=0.146
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.146
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.146, ratio=0.012, x=1.8px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.146
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.146, ratio=0.012, x=1.8px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.146
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.146, ratio=0.012, x=1.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.146, zoomFactor=1.100, newScale=0.161
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.161
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.161, ratio=0.016, x=2.3px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.161, zoomFactor=1.100, newScale=0.177
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.177
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.177, ratio=0.020, x=3.0px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.177
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.177, ratio=0.020, x=3.0px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.177
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.177, ratio=0.020, x=3.0px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.177, zoomFactor=1.100, newScale=0.195
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.195
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.195, ratio=0.024, x=3.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-333.33331298828125, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.195, zoomFactor=1.100, newScale=0.214
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.214
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.214, ratio=0.029, x=4.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.214
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.214, ratio=0.029, x=4.4px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.214
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.214, ratio=0.029, x=4.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.214, zoomFactor=1.100, newScale=0.236
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.236
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.236, ratio=0.035, x=5.2px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.236
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.236, ratio=0.035, x=5.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.236, zoomFactor=1.100, newScale=0.259
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.259
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.259, ratio=0.041, x=6.1px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.259
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.259, ratio=0.041, x=6.1px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.259
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.259, ratio=0.041, x=6.1px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.259, zoomFactor=1.100, newScale=0.285
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.285
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.285, ratio=0.048, x=7.1px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.285
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.285, ratio=0.048, x=7.1px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.285, zoomFactor=1.100, newScale=0.314
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.314
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.314, ratio=0.055, x=8.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.314
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.314, ratio=0.055, x=8.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.314, zoomFactor=1.100, newScale=0.345
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.345
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.345, ratio=0.063, x=9.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.345
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.345, ratio=0.063, x=9.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.345, zoomFactor=1.100, newScale=0.380
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.380
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.380, ratio=0.072, x=10.8px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.380
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.380, ratio=0.072, x=10.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-499.9999694824219, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.380, zoomFactor=1.100, newScale=0.418
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.418
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.418, ratio=0.081, x=12.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.418
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.418, ratio=0.081, x=12.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-333.33331298828125, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.418, zoomFactor=1.100, newScale=0.459
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.459
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.459, ratio=0.092, x=13.8px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.459
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.459, ratio=0.092, x=13.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.459, zoomFactor=1.100, newScale=0.505
+main.js:437 ✅ Rendered 27 location markers (thumbnails: true)
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.505
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.505, ratio=0.104, x=15.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.505, zoomFactor=1.100, newScale=0.556
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.556
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.556, ratio=0.117, x=17.5px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.556
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.556, ratio=0.117, x=17.5px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.556, zoomFactor=1.100, newScale=0.612
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.612
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.612, ratio=0.131, x=19.7px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.612
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.612, ratio=0.131, x=19.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.612
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.612, ratio=0.131, x=19.7px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.612, zoomFactor=0.900, newScale=0.550
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.550
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.550, ratio=0.115, x=17.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.550
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.550, ratio=0.115, x=17.3px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.550, zoomFactor=0.900, newScale=0.495
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+main.js:1075 🔍 [main.js] wheel event: deltaY=333.33331298828125, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.495, zoomFactor=0.900, newScale=0.446
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.446
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.446, ratio=0.089, x=13.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.446
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.446, ratio=0.089, x=13.3px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.446
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.446, ratio=0.089, x=13.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.446
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.446, ratio=0.089, x=13.3px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.446, zoomFactor=0.900, newScale=0.401
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.401
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.401, ratio=0.077, x=11.6px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.401
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.401, ratio=0.077, x=11.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=333.33331298828125, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.401, zoomFactor=0.900, newScale=0.361
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.361
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.361, ratio=0.067, x=10.0px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.361
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.361, ratio=0.067, x=10.0px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=333.33331298828125, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.361, zoomFactor=0.900, newScale=0.325
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.325
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.325, ratio=0.058, x=8.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.325
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.325, ratio=0.058, x=8.7px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.325, zoomFactor=0.900, newScale=0.293
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.293
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.293, ratio=0.049, x=7.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.293
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.293, ratio=0.049, x=7.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.293, zoomFactor=0.900, newScale=0.263
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.263
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.263, ratio=0.042, x=6.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.263
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.263, ratio=0.042, x=6.3px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.263, zoomFactor=0.900, newScale=0.237
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.237
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.237, ratio=0.035, x=5.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.237
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.237, ratio=0.035, x=5.3px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.237, zoomFactor=0.900, newScale=0.213
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.213
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.213, ratio=0.029, x=4.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.213
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.213, ratio=0.029, x=4.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.213, zoomFactor=1.100, newScale=0.235
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.235
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.235, ratio=0.035, x=5.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.235
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.235, ratio=0.035, x=5.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.235, zoomFactor=1.100, newScale=0.258
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.258
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.258, ratio=0.041, x=6.1px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.258
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.258, ratio=0.041, x=6.1px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.258, zoomFactor=1.100, newScale=0.284
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.284
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.284, ratio=0.047, x=7.1px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.284
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.284, ratio=0.047, x=7.1px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.284, zoomFactor=1.100, newScale=0.312
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.312
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.312, ratio=0.054, x=8.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.312
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.312, ratio=0.054, x=8.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.312, zoomFactor=1.100, newScale=0.343
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.343
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.343, ratio=0.062, x=9.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.343
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.343, ratio=0.062, x=9.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.343, zoomFactor=1.100, newScale=0.378
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.378
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.378, ratio=0.071, x=10.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.378
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.378, ratio=0.071, x=10.7px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.378, zoomFactor=0.900, newScale=0.340
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.340
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.340, ratio=0.062, x=9.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.340
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.340, ratio=0.062, x=9.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.340, zoomFactor=0.900, newScale=0.306
+main.js:1075 🔍 [main.js] wheel event: deltaY=333.33331298828125, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.306, zoomFactor=0.900, newScale=0.275
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.275
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.275, ratio=0.045, x=6.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.275
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.275, ratio=0.045, x=6.7px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.275, zoomFactor=0.900, newScale=0.248
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.248
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.248, ratio=0.038, x=5.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.248
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.248, ratio=0.038, x=5.7px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.248
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.248, ratio=0.038, x=5.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.248
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.248, ratio=0.038, x=5.7px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.248, zoomFactor=0.900, newScale=0.223
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.223
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.223, ratio=0.032, x=4.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.223
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.223, ratio=0.032, x=4.7px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.223, zoomFactor=0.900, newScale=0.201
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.201
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.201, ratio=0.026, x=3.9px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.201
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.201, ratio=0.026, x=3.9px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.201, zoomFactor=0.900, newScale=0.181
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.181
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.181, ratio=0.021, x=3.1px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.181
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.181, ratio=0.021, x=3.1px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.181, zoomFactor=0.900, newScale=0.163
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.163
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.163, ratio=0.016, x=2.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.163, zoomFactor=0.900, newScale=0.146
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.146
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.146, ratio=0.012, x=1.8px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.146
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.146, ratio=0.012, x=1.8px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.146
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.146, ratio=0.012, x=1.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.146, zoomFactor=1.100, newScale=0.161
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.161
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.161, ratio=0.016, x=2.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.161
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.161, ratio=0.016, x=2.3px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.161, zoomFactor=1.100, newScale=0.177
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.177, zoomFactor=1.100, newScale=0.195
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.195
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.195, ratio=0.024, x=3.6px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.195
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.195, ratio=0.024, x=3.6px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.195
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.195, ratio=0.024, x=3.6px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.195
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.195, ratio=0.024, x=3.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.195, zoomFactor=1.100, newScale=0.214
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.214
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.214, ratio=0.029, x=4.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.214
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.214, ratio=0.029, x=4.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.214, zoomFactor=1.100, newScale=0.236
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.236
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.236, ratio=0.035, x=5.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.236
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.236, ratio=0.035, x=5.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.236, zoomFactor=1.100, newScale=0.259
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.259
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.259, ratio=0.041, x=6.1px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.259, zoomFactor=1.100, newScale=0.285
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.285
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.285, ratio=0.047, x=7.1px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.285
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.285, ratio=0.047, x=7.1px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.285
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.285, ratio=0.047, x=7.1px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.285, zoomFactor=1.100, newScale=0.314
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.314
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.314, ratio=0.055, x=8.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.314
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.314, ratio=0.055, x=8.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.314, zoomFactor=1.100, newScale=0.345
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.345
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.345, ratio=0.063, x=9.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.345
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.345, ratio=0.063, x=9.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.345, zoomFactor=1.100, newScale=0.380
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.380
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.380, ratio=0.072, x=10.8px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.380
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.380, ratio=0.072, x=10.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.380, zoomFactor=1.100, newScale=0.418
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.418
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.418, ratio=0.081, x=12.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.418
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.418, ratio=0.081, x=12.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.418, zoomFactor=1.100, newScale=0.459
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.459
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.459, ratio=0.092, x=13.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.459, zoomFactor=1.100, newScale=0.505
+main.js:437 ✅ Rendered 27 location markers (thumbnails: true)
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.505
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.505, ratio=0.104, x=15.6px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.505
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.505, ratio=0.104, x=15.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.505, zoomFactor=1.100, newScale=0.556
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.556
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.556, ratio=0.117, x=17.5px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.556, zoomFactor=1.100, newScale=0.611
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.611
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.611, ratio=0.131, x=19.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.611
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.611, ratio=0.131, x=19.7px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.611
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.611, ratio=0.131, x=19.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.611
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.611, ratio=0.131, x=19.7px, sliderWidth=150px
+path-manager.js:93 🖱️ Viewport mousedown event fired, isDrawingMode: false
+path-manager.js:93 🖱️ Viewport mousedown event fired, isDrawingMode: false
+path-manager.js:93 🖱️ Viewport mousedown event fired, isDrawingMode: false
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.611, zoomFactor=0.900, newScale=0.550
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.550
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.550, ratio=0.115, x=17.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.550
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.550, ratio=0.115, x=17.3px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.550, zoomFactor=0.900, newScale=0.495
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.495
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.495, ratio=0.101, x=15.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.495
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.495, ratio=0.101, x=15.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=333.33331298828125, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.495, zoomFactor=0.900, newScale=0.446
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.446
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.446, ratio=0.089, x=13.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.446
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.446, ratio=0.089, x=13.3px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=333.33331298828125, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.446, zoomFactor=0.900, newScale=0.401
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.401
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.401, ratio=0.077, x=11.6px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.401
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.401, ratio=0.077, x=11.6px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=333.33331298828125, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.401, zoomFactor=0.900, newScale=0.361
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.361, zoomFactor=0.900, newScale=0.325
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.325
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.325, ratio=0.058, x=8.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.325
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.325, ratio=0.058, x=8.7px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.325
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.325, ratio=0.058, x=8.7px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.325
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.325, ratio=0.058, x=8.7px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.325, zoomFactor=0.900, newScale=0.292
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.292
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.292, ratio=0.049, x=7.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.292
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.292, ratio=0.049, x=7.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.292, zoomFactor=0.900, newScale=0.263
+main.js:1075 🔍 [main.js] wheel event: deltaY=333.33331298828125, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.263, zoomFactor=0.900, newScale=0.237
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.237
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.237, ratio=0.035, x=5.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.237
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.237, ratio=0.035, x=5.3px, sliderWidth=150px
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.237
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.237, ratio=0.035, x=5.3px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.237
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.237, ratio=0.035, x=5.3px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.237, zoomFactor=0.900, newScale=0.213
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.213
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.213, ratio=0.029, x=4.4px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.213
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.213, ratio=0.029, x=4.4px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.213, zoomFactor=0.900, newScale=0.192
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.192
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.192, ratio=0.024, x=3.5px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.192
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.192, ratio=0.024, x=3.5px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=166.66665649414062, zoomFactor=0.9
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.192, zoomFactor=0.900, newScale=0.173
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.173
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.173, ratio=0.019, x=2.8px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.173
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.173, ratio=0.019, x=2.8px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.173, zoomFactor=1.100, newScale=0.190
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.190
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.190, ratio=0.023, x=3.5px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.190
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.190, ratio=0.023, x=3.5px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.190, zoomFactor=1.100, newScale=0.209
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.209
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.209, ratio=0.028, x=4.2px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.209
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.209, ratio=0.028, x=4.2px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.209, zoomFactor=1.100, newScale=0.230
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.230
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.230, ratio=0.033, x=5.0px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.230
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.230, ratio=0.033, x=5.0px, sliderWidth=150px
+main.js:1075 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:876 🔍 [main.js] zoomToPoint: oldScale=0.230, zoomFactor=1.100, newScale=0.253
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.253
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.253, ratio=0.039, x=5.9px, sliderWidth=150px
+main.js:1081 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.253
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.253, ratio=0.039, x=5.9px, sliderWidth=150px
+infobox-manager.js:77 📋 [InfoBoxManager] Showing info box for: L'Antre des Étoiles Oubliées Type: location Object
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:116 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:1141 ✏️ Entering edit mode for: L'Antre des Étoiles Oubliées
+infobox-manager.js:165 📋 [switchTab] Changement d'onglet vers: personnages, currentType: location
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:1141 ✏️ Entering edit mode for: L'Antre des Étoiles Oubliées
+infobox-manager.js:1141 ✏️ Entering edit mode for: L'Antre des Étoiles Oubliées
+infobox-manager.js:1194 💾 Saving edit...
+infobox-manager.js:1252 🔍 [SAVE] AVANT update - location "L'Antre des Étoiles Oubliées" (id: 1716584013579)
+infobox-manager.js:1253 🔍 [SAVE] associatedCharacters AVANT: Array(2)
+infobox-manager.js:1254 🔍 [SAVE] Nouvelles associations cochées: Array(2)
+infobox-manager.js:1258 🔍 [SAVE] associatedCharacters APRÈS: Array(2)
+infobox-manager.js:1262 🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:
+infobox-manager.js:1266   - Shagram, le « Joyeux Luron » (id: 100030): Object
+infobox-manager.js:1266   - Vieille-Griffe (id: 100031): Object
+infobox-manager.js:1275 💾 [SAVE] Objet après modification: {"Tradition_Ancienne":"Certes, les mines de mithril des Nains étaient immenses, car on n'en trouvait que dans de rares veines, et les mineurs devaient suivre ces filons scintillants loin sous les mont...
+infobox-manager.js:1361 ℹ️ [SAVE] Nouveau lieu détecté: 1716584013579, ajout au tableau
+infobox-manager.js:1366 💾 [SAVE] Lieu AVANT mise à jour (index 0): {"Tradition_Ancienne":"Certes, les mines de mithril des Nains étaient immenses, car on n'en trouvait que dans de rares veines, et les mineurs devaient
+infobox-manager.js:1371 💾 [SAVE] Lieu APRÈS mise à jour (index 0): {"Tradition_Ancienne":"Certes, les mines de mithril des Nains étaient immenses, car on n'en trouvait que dans de rares veines, et les mineurs devaient
+infobox-manager.js:1372 🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde: Array(2)
+data-manager.js:22 💾 [DataManager] 1 lieux sauvegardés dans localStorage
+auth-manager.js:1806 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+auth-manager.js:1806 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+infobox-manager.js:1411 💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles
+infobox-manager.js:1416 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1420   - Shagram, le « Joyeux Luron » (id: 100030): Object
+infobox-manager.js:1420   - Vieille-Griffe (id: 100031): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1440 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1444   - Shagram, le « Joyeux Luron » (id: 100030): Object
+infobox-manager.js:1444   - Vieille-Griffe (id: 100031): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1472 ✅ [SAVE] Sauvegarde locale terminée
+infobox-manager.js:1141 ✏️ Entering edit mode for: L'Antre des Étoiles Oubliées
+infobox-manager.js:165 📋 [switchTab] Changement d'onglet vers: image, currentType: location
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:1548 🗑️ Image removed at index: 0
+infobox-manager.js:1714 🔍 selectedLibraryImagesForEdit AVANT initialisation: undefined
+infobox-manager.js:1718 ✅ Initialisation de selectedLibraryImagesForEdit à []
+infobox-manager.js:1725 🔍 État après initialisation: Object
+infobox-manager.js:1746 🔍 Type d'élément: location - Chemin de départ: null
+infobox-manager.js:1839 📁 Structure de bibliothèque construite: Object
+infobox-manager.js:1793 ✅ Structure de bibliothèque complète chargée: 16 dossiers
+infobox-manager.js:1861 📂 [renderLibraryNavigation] Chemin actuel: Array(0)
+infobox-manager.js:1862 📂 Dossiers au niveau actuel: Array(4)
+infobox-manager.js:1863 📂 Images au niveau actuel: 0
+infobox-manager.js:1908 ✅ [renderLibraryNavigation] Contenu HTML généré pour 4 dossier(s) et 0 image(s)
+infobox-manager.js:1953 🔽 [navigateIntoLibraryFolder] Navigation vers: locations
+infobox-manager.js:1958 🔽 Nouveau chemin: Array(2)
+infobox-manager.js:1861 📂 [renderLibraryNavigation] Chemin actuel: Array(2)
+infobox-manager.js:1862 📂 Dossiers au niveau actuel: Array(3)
+infobox-manager.js:1863 📂 Images au niveau actuel: 0
+infobox-manager.js:1908 ✅ [renderLibraryNavigation] Contenu HTML généré pour 3 dossier(s) et 0 image(s)
+infobox-manager.js:1953 🔽 [navigateIntoLibraryFolder] Navigation vers: Moria
+infobox-manager.js:1958 🔽 Nouveau chemin: Array(2)
+infobox-manager.js:1861 📂 [renderLibraryNavigation] Chemin actuel: Array(2)
+infobox-manager.js:1862 📂 Dossiers au niveau actuel: Array(0)
+infobox-manager.js:1863 📂 Images au niveau actuel: 54
+infobox-manager.js:1908 ✅ [renderLibraryNavigation] Contenu HTML généré pour 0 dossier(s) et 54 image(s)
+infobox-manager.js:1975 🔍 [toggleLibraryImageSelectionForEdit] DÉBUT
+infobox-manager.js:1976    url: /uploads/101960341020312309143/locations/Moria/img1108.jpg
+infobox-manager.js:1977    filename: img1108.jpg
+infobox-manager.js:1978    safeId: _uploads_101960341020312309143_locations_Moria_img1108_jpg
+infobox-manager.js:1986 🔍 État actuel: this.selectedLibraryImagesForEdit = []
+infobox-manager.js:1987 🔍 Nombre d'images sélectionnées: 0
+infobox-manager.js:2006 🔍 Index de l'image dans le tableau: -1
+infobox-manager.js:2020 🔼 Image sélectionnée: img1108.jpg. Total: 1
+infobox-manager.js:2023 📋 Images sélectionnées actuellement: Array(1)
+infobox-manager.js:2024 🔍 [toggleLibraryImageSelectionForEdit] FIN
+infobox-manager.js:2028 🔍 ========== DÉBUT confirmLibrarySelectionForEdit ==========
+infobox-manager.js:2029 🔍 this: InfoBoxManager
+infobox-manager.js:2030 🔍 Type de selectedLibraryImagesForEdit: object
+infobox-manager.js:2031 🔍 Est un tableau? true
+infobox-manager.js:2032 🔍 Contenu selectedLibraryImagesForEdit: [
+  {
+    "url": "/uploads/101960341020312309143/locations/Moria/img1108.jpg",
+    "filename": "img1108.jpg"
+  }
+]
+infobox-manager.js:2033 🔍 Longueur: 1
+infobox-manager.js:2037 🔍 Cartes sélectionnées dans le DOM: 1
+infobox-manager.js:2039    Carte 1: /uploads/101960341020312309143/locations/Moria/img1108.jpg img1108.jpg
+infobox-manager.js:2055 ✅ 1 image(s) à ajouter
+infobox-manager.js:2056 🔍 currentItem: Object
+infobox-manager.js:2057 🔍 currentItem.images AVANT: Array(1)
+infobox-manager.js:2067 🔍 Ajout image 1 / 1 : Object
+infobox-manager.js:2073 🔍 Nouvelle image créée: Object
+infobox-manager.js:2075 🔍 currentItem.images après ajout: 1 image(s)
+infobox-manager.js:2078 🖼️ Images ajoutées, total: 1
+infobox-manager.js:2079 🔍 currentItem.images APRÈS: [
+  {
+    "url": "/uploads/101960341020312309143/locations/Moria/img1108.jpg",
+    "type": null,
+    "thumbnailUrl": null
+  }
+]
+infobox-manager.js:2083 🔍 Élément edit-images-gallery trouvé? true
+infobox-manager.js:2085 🔍 Re-render de la galerie d'images...
+infobox-manager.js:2087 ✅ Galerie d'images re-rendue
+infobox-manager.js:2093 🔍 Réinitialisation de selectedLibraryImagesForEdit...
+infobox-manager.js:2095 ✅ selectedLibraryImagesForEdit réinitialisé: Array(0)
+infobox-manager.js:2098 🔍 Fermeture de la modale...
+infobox-manager.js:2101 ✅ Images ajoutées depuis la bibliothèque
+infobox-manager.js:2102 🔍 ========== FIN confirmLibrarySelectionForEdit ==========
+/api/image/create-thumbnail:1  Failed to load resource: the server responded with a status of 405 ()
+infobox-manager.js:1008 ❌ Erreur création vignette: Error: Erreur lors de la création de la vignette
+    at InfoBoxManager.setImageType (infobox-manager.js:1001:31)
+setImageType @ infobox-manager.js:1008
+infobox-manager.js:1194 💾 Saving edit...
+infobox-manager.js:1252 🔍 [SAVE] AVANT update - location "L'Antre des Étoiles Oubliées" (id: 1716584013579)
+infobox-manager.js:1253 🔍 [SAVE] associatedCharacters AVANT: Array(2)
+infobox-manager.js:1254 🔍 [SAVE] Nouvelles associations cochées: Array(2)
+infobox-manager.js:1258 🔍 [SAVE] associatedCharacters APRÈS: Array(2)
+infobox-manager.js:1262 🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:
+infobox-manager.js:1266   - Shagram, le « Joyeux Luron » (id: 100030): Object
+infobox-manager.js:1266   - Vieille-Griffe (id: 100031): Object
+infobox-manager.js:1275 💾 [SAVE] Objet après modification: {"Tradition_Ancienne":"Certes, les mines de mithril des Nains étaient immenses, car on n'en trouvait que dans de rares veines, et les mineurs devaient suivre ces filons scintillants loin sous les mont...
+infobox-manager.js:1366 💾 [SAVE] Lieu AVANT mise à jour (index 0): {"Tradition_Ancienne":"Certes, les mines de mithril des Nains étaient immenses, car on n'en trouvait que dans de rares veines, et les mineurs devaient
+infobox-manager.js:1371 💾 [SAVE] Lieu APRÈS mise à jour (index 0): {"Tradition_Ancienne":"Certes, les mines de mithril des Nains étaient immenses, car on n'en trouvait que dans de rares veines, et les mineurs devaient
+infobox-manager.js:1372 🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde: Array(2)
+data-manager.js:22 💾 [DataManager] 1 lieux sauvegardés dans localStorage
+auth-manager.js:1806 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+auth-manager.js:1806 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+infobox-manager.js:1411 💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles
+infobox-manager.js:1416 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1420   - Shagram, le « Joyeux Luron » (id: 100030): Object
+infobox-manager.js:1420   - Vieille-Griffe (id: 100031): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1440 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1444   - Shagram, le « Joyeux Luron » (id: 100030): Object
+infobox-manager.js:1444   - Vieille-Griffe (id: 100031): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1472 ✅ [SAVE] Sauvegarde locale terminée
+auth-manager.js:1806 [AuthManager] 🔄 Synchronisation manuelle vers cloud (environnement: prod_) null
+auth-manager.js:1806 [AuthManager] 📦 Collecte des données du contexte actuel... null
+auth-manager.js:1806 [AuthManager] 📦 Données collectées pour le contexte (8) ['locations', 'regions', 'characters', 'calendar', 'settings', 'journal', 'position', 'filtersByMap']
+auth-manager.js:1806 [AuthManager] 📅 [collectCurrentContextData] Calendar dans les données collectées: {currentDate: null, isCalendarMode: true}
+auth-manager.js:1806 [AuthManager] 📦 Données locales collectées null
+auth-manager.js:1806 [AuthManager] 🔍 Vérification des suppressions de lieux... null
+auth-manager.js:1806 [AuthManager] 🗺️ Carte active pour comparaison: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+auth-manager.js:1806 [AuthManager] 📊 Comparaison pour carte active: Cloud=27 lieux, Local=1 lieux null
+auth-manager.js:1806 [AuthManager] ⚠️ ALERTE: 26 lieu(x) de la carte active seraient supprimé(s) par cette synchronisation! null
+auth-manager.js:1806 [AuthManager]    - Les Armureries de la Troisième Profondeur (ID: 1716584020111, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Les Cavernes de Thrym Joues-de-chardon (ID: 1716584027453, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Chambre de Mazarbul (ID: 1716584033987, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Citadelle de Barazinbar et La Porte de Rubicorne (ID: 1716584041234, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Citadelle perdue des Forgeurs d'Anneaux (ID: 1716584048765, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Corniche de l'Infortune p.158 (ID: 1716584055432, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Deuxième Salle et le Pont de Durin (ID: 1716584062111, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - L'Escalier des Rigoles Sombres (ID: 1716584069876, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Les Fondements de la Pierre (ID: 1716584077543, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Forteresse de Malech (ID: 1716584084321, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Les Galeries de la Montagne (ID: 1716584091987, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Grande Caverne Ouest (ID: 1716584099654, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Le Palais Royal (ID: 1716584107321, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Porte Est de la Moria (ID: 1716584114987, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Les Portes de Durin (ID: 1716584122654, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Première Salle (ID: 1716584130321, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - La Salle Impérissable (ID: 1716584137987, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Les Salles des Protecteurs de la Route (ID: 1716584145654, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Les Salles du Trésor d'Uruktharbun (ID: 1716584153321, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Le Temple d'Udûn p.161 (ID: 1716584160987, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Les Tertres d'Azanulbizar (ID: 1716584168654, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Le Trône du Balrog (ID: 1716584176321, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - L'Ultime Redoute des Nains (ID: 1716584183987, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Le Village de Tarloch (ID: 1716584191654, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Le Village de Gobelins (ID: 1716584199321, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
+auth-manager.js:1806 [AuthManager]    - Poterne des Rigoles Sombres (ID: location_1762067947919, Carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg) null
