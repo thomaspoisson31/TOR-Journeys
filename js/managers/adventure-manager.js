@@ -427,8 +427,15 @@ class AdventureManager {
         // Use this.adventureData.randomTables to access the tables
         const tables = this.adventureData.randomTables || [];
 
+        // Trier les tables par ordre alphabétique
+        const sortedTables = [...tables].sort((a, b) => {
+            const nameA = (a.name || 'Table sans nom').toLowerCase();
+            const nameB = (b.name || 'Table sans nom').toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+
         let html = `
-            <div class="mb-4">
+            <div class="mb-3">
                 <input type="file" id="upload-random-table" accept=".json" class="hidden">
                 <button onclick="document.getElementById('upload-random-table').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
                     <i class="fas fa-upload mr-2"></i>Importer une table JSON
@@ -436,29 +443,30 @@ class AdventureManager {
             </div>
         `;
 
-        if (tables.length === 0) {
+        if (sortedTables.length === 0) {
             html += '<p class="text-gray-400 italic">Aucune table aléatoire importée.</p>';
         } else {
-            html += '<div class="space-y-4">';
-            tables.forEach((table, index) => {
+            html += '<div class="space-y-2">';
+            sortedTables.forEach((table) => {
+                // Retrouver l'index original de la table
+                const originalIndex = tables.indexOf(table);
                 const tableName = (table.name || 'Table sans nom').replace(/'/g, "\\'");
                 html += `
-                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                        <div class="flex justify-between items-center mb-3">
-                            <h4 class="text-lg font-semibold text-white">${table.name || 'Table sans nom'}</h4>
+                    <div class="bg-gray-800 rounded p-2 border border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
                             <div class="flex space-x-2">
-                                <button onclick="window.adventureManager.rollOnTable(${index})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+                                <button onclick="window.adventureManager.rollOnTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
                                     <i class="fas fa-dice mr-1"></i>Tirer
                                 </button>
-                                <button onclick="window.adventureManager.deleteRandomTable(${index})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                <button onclick="window.adventureManager.deleteRandomTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>
-                        <div class="text-sm text-gray-400 mb-2">${table.entries.length} entrées</div>
-                        <div id="table-result-${index}" class="hidden mt-3 p-3 bg-gray-700 rounded border border-green-500">
-                            <div class="text-green-400 font-semibold mb-2">Résultat du tirage :</div>
-                            <div id="table-result-content-${index}"></div>
+                        <div id="table-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
+                            <div class="text-green-400 font-semibold mb-1 text-xs">Résultat du tirage :</div>
+                            <div id="table-result-content-${originalIndex}" class="text-sm"></div>
                         </div>
                     </div>
                 `;
@@ -470,8 +478,6 @@ class AdventureManager {
 
         const uploadInput = document.getElementById('upload-random-table');
         if (uploadInput) {
-            // It's better to add a new event listener or manage it more robustly if this function is called multiple times.
-            // For simplicity here, we'll just re-assign it. A more robust solution might involve removing the listener first.
             uploadInput.onchange = (e) => this.handleRandomTableUpload(e);
         }
     }
