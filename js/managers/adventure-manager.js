@@ -5,7 +5,8 @@ class AdventureManager {
         this.adventureData = {
             quest: '',
             rumors: [],
-            threats: []
+            threats: [],
+            randomTables: []
         };
         
         this.loadFromLocalStorage();
@@ -186,6 +187,9 @@ class AdventureManager {
                 </div>
             `;
         }
+
+        // Onglet Tables aléatoires
+        this.renderRandomTablesTab();
     }
 
     renderEditMode() {
@@ -416,6 +420,136 @@ class AdventureManager {
             } catch (e) {
                 console.error("❌ Failed to load adventure data:", e);
             }
+        }
+    }
+
+    renderRandomTablesTab() {
+        const tabContent = document.getElementById('random-tables-content');
+        if (!tabContent) return;
+
+        const tables = this.adventureData.randomTables || [];
+
+        let html = `
+            <div class="mb-4">
+                <input type="file" id="upload-random-table" accept=".json" class="hidden">
+                <button onclick="document.getElementById('upload-random-table').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    <i class="fas fa-upload mr-2"></i>Importer une table JSON
+                </button>
+            </div>
+        `;
+
+        if (tables.length === 0) {
+            html += '<p class="text-gray-400 italic">Aucune table aléatoire importée.</p>';
+        } else {
+            html += '<div class="space-y-4">';
+            tables.forEach((table, index) => {
+                html += `
+                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="text-lg font-semibold text-white">${table.name}</h4>
+                            <div class="flex space-x-2">
+                                <button onclick="window.adventureManager.rollOnTable(${index})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-dice mr-1"></i>Tirer
+                                </button>
+                                <button onclick="window.adventureManager.deleteRandomTable(${index})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-400 mb-2">${table.entries.length} entrées</div>
+                        <div id="table-result-${index}" class="hidden mt-3 p-3 bg-gray-700 rounded border border-green-500">
+                            <div class="text-green-400 font-semibold mb-2">Résultat du tirage :</div>
+                            <div id="table-result-content-${index}"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+
+        tabContent.innerHTML = html;
+
+        // Ajouter l'écouteur d'événement pour l'upload
+        const uploadInput = document.getElementById('upload-random-table');
+        if (uploadInput) {
+            uploadInput.addEventListener('change', (e) => this.handleRandomTableUpload(e));
+        }
+    }
+
+    async handleRandomTableUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            const text = await file.text();
+            const entries = JSON.parse(text);
+
+            if (!Array.isArray(entries) || entries.length === 0) {
+                alert('Le fichier JSON doit contenir un tableau d\'entrées.');
+                return;
+            }
+
+            // Extraire le nom du fichier sans l'extension
+            const fileName = file.name.replace(/\.json$/i, '');
+
+            const newTable = {
+                name: fileName,
+                entries: entries
+            };
+
+            this.adventureData.randomTables.push(newTable);
+            this.saveToLocalStorage();
+            this.renderRandomTablesTab();
+
+            // Reset l'input
+            event.target.value = '';
+        } catch (error) {
+            console.error('Erreur lors de l\'import de la table:', error);
+            alert('Erreur lors de l\'import du fichier JSON. Vérifiez le format.');
+        }
+    }
+
+    rollOnTable(tableIndex) {
+        const table = this.adventureData.randomTables[tableIndex];
+        if (!table || !table.entries || table.entries.length === 0) return;
+
+        // Tirage aléatoire
+        const randomIndex = Math.floor(Math.random() * table.entries.length);
+        const entry = table.entries[randomIndex];
+
+        // Afficher le résultat
+        const resultContainer = document.getElementById(`table-result-${tableIndex}`);
+        const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
+
+        if (resultContainer && resultContent) {
+            let html = '<div class="space-y-2">';
+            
+            // Afficher toutes les propriétés de l'entrée
+            for (const [key, value] of Object.entries(entry)) {
+                html += `
+                    <div>
+                        <span class="text-gray-400 font-semibold">${key}:</span>
+                        <span class="text-white ml-2">${value}</span>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            resultContent.innerHTML = html;
+            resultContainer.classList.remove('hidden');
+
+            // Masquer après 10 secondes
+            setTimeout(() => {
+                resultContainer.classList.add('hidden');
+            }, 10000);
+        }
+    }
+
+    deleteRandomTable(index) {
+        if (confirm('Voulez-vous vraiment supprimer cette table aléatoire ?')) {
+            this.adventureData.randomTables.splice(index, 1);
+            this.saveToLocalStorage();
+            this.renderRandomTablesTab();
         }
     }
 
