@@ -1297,7 +1297,11 @@ class InfoBoxManager {
             window.regionsData = this.dataManager.regionsData;
 
             // Sauvegarder
-            this.dataManager.saveRegionsToLocal();
+            // IMPORTANT: Synchroniser dataManager.regionsData AVANT de sauvegarder
+            if (window.dataManager) {
+                window.dataManager.regionsData = window.regionsData;
+                window.dataManager.saveRegionsToLocal();
+            }
 
             // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
             if (window.charactersManager && this.currentItem.associatedCharacters) {
@@ -1375,7 +1379,11 @@ class InfoBoxManager {
             window.locationsData = this.dataManager.locationsData;
 
             // Sauvegarder
-            this.dataManager.saveLocationsToLocal();
+            // IMPORTANT: Synchroniser dataManager.locationsData AVANT de sauvegarder
+            if (window.dataManager) {
+                window.dataManager.locationsData = window.locationsData;
+                window.dataManager.saveLocationsToLocal();
+            }
 
             // MODIFICATION BIDIRECTIONNELLE - Mettre à jour les personnages
             if (window.charactersManager && this.currentItem.associatedCharacters) {
