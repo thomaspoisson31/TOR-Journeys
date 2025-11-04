@@ -1,0 +1,62 @@
+[
+  {
+    "Dé du destin": "RUNE",
+    "Résultat": "Pèlerins Elfes",
+    "Description": "Les héros rencontrent un petit groupe d'Elfes se rendant aux Havres Gris pour prendre la mer. Leur chant est d'une beauté déchirante et leur simple présence apaise les cœurs. Chaque héros recouvre 1 point d'Espoir. Ils peuvent offrir un conseil sibyllin ou une mise en garde sur les temps à venir."
+  },
+  {
+    "Dé du destin": "1",
+    "Résultat": "Le Vent de la Mer",
+    "Description": "Un vent puissant et salé souffle de l'ouest, porteur d'une odeur d'algues et de rivages lointains. Il est vivifiant et semble murmurer des contes d'un autre âge. Le Guide gagne (1d) à son prochain test de VOYAGE."
+  },
+  {
+    "Dé du destin": "2",
+    "Résultat": "Harde de cerfs blancs",
+    "Description": "Le groupe aperçoit une magnifique harde de cerfs entièrement blancs, qui les observe un instant avant de disparaître dans les collines. Un test de CONNAISSANCES réussi rappelle une vieille légende disant que leur vue porte chance pour le voyage à venir."
+  },
+  {
+    "Dé du destin": "3",
+    "Résultat": "Famille de Hobbits en excursion",
+    "Description": "Une famille de Hobbits des Hauts Reculés s'est aventurée plus à l'ouest que de coutume pour un pique-nique. Ils sont surpris mais amicaux, et partagent volontiers leur pain, leur fromage et les dernières nouvelles de la Comté."
+  },
+  {
+    "Dé du destin": "4",
+    "Résultat": "Le Vent de la Mer",
+    "Description": "Un vent puissant et salé souffle de l'ouest, porteur d'une odeur d'algues et de rivages lointains. Il est vivifiant et semble murmurer des contes d'un autre âge. Le Guide gagne (1d) à son prochain test de VOYAGE."
+  },
+  {
+    "Dé du destin": "5",
+    "Résultat": "Marchands Nains des Montagnes Bleues",
+    "Description": "Une petite caravane de Nains robustes se dirige vers l'est. Ils sont méfiants mais peuvent échanger des nouvelles des terres de l'ouest ou vendre quelques objets de leur fabrication si les héros se montrent courtois."
+  },
+  {
+    "Dé du destin": "6",
+    "Résultat": "L'écho d'une bataille",
+    "Description": "En passant près d'un ancien tertre ou d'une pierre levée, les héros entendent distinctement le fracas des épées et les cris de guerriers d'un temps révolu. Le son s'évanouit aussi vite qu'il est apparu, laissant un silence pesant."
+  },
+  {
+    "Dé du destin": "7",
+    "Résultat": "Brouillard soudain",
+    "Description": "Un brouillard dense et humide monte des vallons, rendant toute orientation difficile. Le Guide doit réussir un test d'EXPLORATION ou le groupe perd une demi-journée de voyage à errer dans la brume."
+  },
+  {
+    "Dé du destin": "8",
+    "Résultat": "La Tour Blanche d'Elostirion",
+    "Description": "Au sommet d'une des Collines des Tours, les héros aperçoivent au loin la silhouette élégante et solitaire de la plus haute des tours blanches. Une lumière semble y scintiller un instant. La vision est empreinte d'une grande beauté et d'une profonde nostalgie."
+  },
+  {
+    "Dé du destin": "9",
+    "Résultat": "Piste d'Orque solitaire",
+    "Description": "Le groupe découvre les traces d'un Orque égaré. Un test de CHASSE réussi indique que les traces sont vieilles de plusieurs jours et qu'il fuyait vers le nord. Le danger est passé, mais c'est un rappel inquiétant que l'Ombre s'étend."
+  },
+  {
+    "Dé du destin": "10",
+    "Résultat": "Tombe d'un Dúnadan",
+    "Description": "Les héros découvrent un petit cairn de pierres grises envahi par la végétation. Une inspection révèle une stèle gravée d'une étoile à sept branches, presque effacée. C'est la tombe oubliée d'un homme du vieil Arnor."
+  },
+  {
+    "Dé du destin": "OEIL",
+    "Résultat": "Mélancolie des Terres Solitaires",
+    "Description": "Une tristesse ancienne et profonde s'abat sur la compagnie. Le paysage semble soudainement vide et dénué d'espoir. Chaque héros doit immédiatement réussir un test d'INSPIRATION ou gagner 1 point d'Ombre."
+  }
+]
