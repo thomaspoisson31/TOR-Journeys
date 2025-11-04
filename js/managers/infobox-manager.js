@@ -1,8 +1,8 @@
-import UploadManager from './upload-manager.js';
-
 /**
  * InfoBoxManager - Gestion des info-boxes avec édition
  */
+import UploadManager from './upload-manager.js';
+
 class InfoBoxManager {
     constructor(domUtils, dataManager, geminiManager) {
         this.domUtils = domUtils;
@@ -257,11 +257,8 @@ class InfoBoxManager {
             infoBoxTitle.classList.remove('hidden');
         }
 
-        // Mettre à jour l'icône d'affichage du cercle de vignette
+        // Mettre à jour l'affichage du cercle de vignette
         this.updateThumbnailCircle(this.currentItem);
-
-        // Mettre à jour l'affichage du type pour les personnages
-        this.updateCharacterTypeDisplay(this.currentItem);
 
         // Mettre à jour l'affichage du MapID
         this.updateMapIdDisplay(this.currentItem);
@@ -519,60 +516,56 @@ class InfoBoxManager {
 
         // Récupérer les lieux associés
         const locationsData = window.locationsData || { locations: [] };
-        const associatedLocations = (locationsData.locations || []).filter(loc => {
-            const isAssociated = associatedLocationIds.includes(String(loc.id));
-            if (isAssociated) {
-                console.log(`✅ [renderLieuxRegionsTabRead] Lieu trouvé: ${loc.name} (${loc.id})`);
-            }
-            return isAssociated;
-        });
+        const associatedLocations = (locationsData.locations || []).filter(loc =>
+            associatedLocationIds.includes(String(loc.id))
+        );
 
         // Récupérer les régions associées
         const regionsData = window.regionsData || { regions: [] };
-        const associatedRegions = (regionsData.regions || []).filter(reg => {
-            const isAssociated = associatedRegionIds.includes(String(reg.id));
-            if (isAssociated) {
-                console.log(`✅ [renderLieuxRegionsTabRead] Région trouvée: ${reg.name} (${reg.id})`);
-            }
-            return isAssociated;
-        });
+        const associatedRegions = (regionsData.regions || []).filter(reg =>
+            associatedRegionIds.includes(String(reg.id))
+        );
 
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedLocations.length} lieux associés trouvés`);
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedRegions.length} régions associées trouvées`);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] Nombre total de lieux disponibles:`, locationsData.locations?.length || 0);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] Nombre total de régions disponibles:`, regionsData.regions?.length || 0);
 
         if (associatedLocations.length === 0 && associatedRegions.length === 0) {
-            lieuxRegionsTab.innerHTML = '<p class="text-gray-400 p-4 italic" style="color: black !important;">Aucun lieu ou région associé à ce personnage.</p>';
+            lieuxRegionsTab.innerHTML = '<p class="text-gray-500 p-4 italic" style="color: #6b7280 !important;">Aucun lieu ou région associé à ce personnage.</p>';
             return;
         }
 
-        let html = '<div class="p-4 space-y-4">';
+        let html = '<div class="p-4 space-y-6">';
 
         // Section Lieux
         if (associatedLocations.length > 0) {
             html += `
                 <div>
+                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
+                        <i class="fas fa-map-marker-alt mr-2" style="color: #940000 !important;"></i>
+                        Lieux associés
+                    </h3>
                     <div class="space-y-2">
                         ${associatedLocations.map(location => {
                             const thumbnailImage = location.images?.find(img => img.type === 'vignette');
                             return `
                                 <div class="location-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     style="background-color: white !important;"
-                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')">
+                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')"
+                                     style="background-color: white !important;">
                                     <div class="flex items-center space-x-3">
                                         ${thumbnailImage ? `
                                             <img src="${thumbnailImage.url}" alt="${location.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2 border-purple-500">
+                                                 class="w-10 h-10 rounded-full object-cover border-2"
+                                                 style="border-color: #940000 !important;">
                                         ` : `
-                                            <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center border-2 border-purple-500">
-                                                <i class="fas fa-map-marker-alt text-white text-sm"></i>
+                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
+                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
+                                                <i class="fas fa-map-marker-alt text-sm" style="color: white !important;"></i>
                                             </div>
                                         `}
                                         <div class="flex-1">
                                             <h4 class="font-medium" style="color: black !important;">${location.name}</h4>
                                         </div>
-                                        <i class="fas fa-chevron-right" style="color: #666666 !important;"></i>
+                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
                                     </div>
                                 </div>
                             `;
@@ -586,26 +579,32 @@ class InfoBoxManager {
         if (associatedRegions.length > 0) {
             html += `
                 <div>
+                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
+                        <i class="fas fa-mountain mr-2" style="color: #940000 !important;"></i>
+                        Régions associées
+                    </h3>
                     <div class="space-y-2">
                         ${associatedRegions.map(region => {
                             const thumbnailImage = region.images?.find(img => img.type === 'vignette');
                             return `
                                 <div class="region-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     style="background-color: white !important;"
-                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')">
+                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')"
+                                     style="background-color: white !important;">
                                     <div class="flex items-center space-x-3">
                                         ${thumbnailImage ? `
                                             <img src="${thumbnailImage.url}" alt="${region.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2 border-orange-500">
+                                                 class="w-10 h-10 rounded-full object-cover border-2"
+                                                 style="border-color: #940000 !important;">
                                         ` : `
-                                            <div class="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center border-2 border-orange-500">
-                                                <i class="fas fa-mountain text-white text-sm"></i>
+                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
+                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
+                                                <i class="fas fa-mountain text-sm" style="color: white !important;"></i>
                                             </div>
                                         `}
                                         <div class="flex-1">
                                             <h4 class="font-medium" style="color: black !important;">${region.name}</h4>
                                         </div>
-                                        <i class="fas fa-chevron-right" style="color: #666666 !important;"></i>
+                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
                                     </div>
                                 </div>
                             `;
@@ -705,10 +704,6 @@ class InfoBoxManager {
         };
 
         this.showInfoBox(fakeEvent, location, 'location');
-        // Activer l'onglet "Texte" après l'affichage
-        setTimeout(() => {
-            this.switchTab('text');
-        }, 100);
     }
 
     showRegionFromCharacter(regionId) {
@@ -735,10 +730,6 @@ class InfoBoxManager {
         };
 
         this.showInfoBox(fakeEvent, region, 'region');
-        // Activer l'onglet "Texte" après l'affichage
-        setTimeout(() => {
-            this.switchTab('text');
-        }, 100);
     }
 
     renderEditMode() {
@@ -777,34 +768,12 @@ class InfoBoxManager {
         const textTab = document.getElementById('text-tab');
         if (textTab) {
             // Nettoyer complètement l'onglet
-            const currentType = item.type || 'PNJ';
-            const typeSelectHtml = type === 'character' ? `
-                <div class="mb-3">
-                    <label class="block text-sm font-medium mb-2 text-white">Type :</label>
-                    <div class="flex space-x-4">
-                        <label class="flex items-center text-white">
-                            <input type="radio" name="edit-character-type" value="PJ" ${currentType === 'PJ' ? 'checked' : ''} class="mr-2">
-                            <span>PJ</span>
-                        </label>
-                        <label class="flex items-center text-white">
-                            <input type="radio" name="edit-character-type" value="PNJ" ${currentType === 'PNJ' ? 'checked' : ''} class="mr-2">
-                            <span>PNJ</span>
-                        </label>
-                        <label class="flex items-center text-white">
-                            <input type="radio" name="edit-character-type" value="Monstre" ${currentType === 'Monstre' ? 'checked' : ''} class="mr-2">
-                            <span>Monstre</span>
-                        </label>
-                    </div>
-                </div>
-            ` : '';
-
             textTab.innerHTML = `
                 <div class="edit-form p-4">
                     <div class="mb-3">
                         <label class="block text-sm font-medium mb-2 text-white">Nom :</label>
                         <input type="text" id="edit-name" value="${item.name}" class="w-full p-2 border rounded bg-white text-black">
                     </div>
-                    ${typeSelectHtml}
                     <div class="mb-3">
                         <label class="block text-sm font-medium mb-2 text-white">Description (Markdown supporté) :</label>
                         <textarea id="edit-description" class="w-full p-2 border rounded h-32 bg-white text-black font-mono text-sm" placeholder="Utilisez Markdown: **gras**, *italique*, # Titres, - listes, etc.">${item.description || ''}</textarea>
@@ -1009,11 +978,41 @@ class InfoBoxManager {
             this.currentItem.images.forEach((img, i) => {
                 if (i !== index && img.type === 'vignette') {
                     img.type = null;
+                    img.thumbnailUrl = null;
                 }
             });
+
+            // Créer la vignette si elle n'existe pas déjà
+            if (!image.thumbnailUrl) {
+                try {
+                    const category = this.currentType === 'region' ? 'regions' : 'locations';
+                    const response = await fetch('/api/image/create-thumbnail', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            image_url: image.url,
+                            category: category
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de la création de la vignette');
+                    }
+
+                    const result = await response.json();
+                    image.thumbnailUrl = result.thumbnail_url;
+                    console.log("✅ Vignette créée:", result.thumbnail_url);
+                } catch (error) {
+                    console.error("❌ Erreur création vignette:", error);
+                    alert("Erreur lors de la création de la vignette: " + error.message);
+                    return;
+                }
+            }
         }
 
-        // Définir le nouveau type (plus besoin de créer une vignette séparée)
+        // Définir le nouveau type
         image.type = type;
 
         // Re-render la galerie d'images
@@ -1099,9 +1098,8 @@ class InfoBoxManager {
         let thumbnailUrl = null;
         if (item.images && item.images.length > 0) {
             const thumbnailImage = item.images.find(img => img.type === 'vignette');
-            if (thumbnailImage) {
-                // Utiliser l'URL de l'image marquée comme vignette (pas de règle de nommage spécifique)
-                thumbnailUrl = thumbnailImage.url;
+            if (thumbnailImage && thumbnailImage.thumbnailUrl) {
+                thumbnailUrl = thumbnailImage.thumbnailUrl;
             }
         }
 
@@ -1119,42 +1117,6 @@ class InfoBoxManager {
             img.style.height = '100%';
             img.style.objectFit = 'cover';
             circle.appendChild(img);
-        }
-    }
-
-    updateCharacterTypeDisplay(item) {
-        const infoBoxHeader = document.getElementById('info-box-header');
-        if (!infoBoxHeader) return;
-
-        // Supprimer l'ancien affichage du type s'il existe
-        const existingTypeDisplay = document.getElementById('info-box-character-type');
-        if (existingTypeDisplay) {
-            existingTypeDisplay.remove();
-        }
-
-        // Afficher le type uniquement pour les personnages
-        if (this.currentType !== 'character') return;
-
-        const type = item.type || 'PNJ';
-        let typeClass = 'bg-green-600';
-
-        if (type === 'PJ') {
-            typeClass = 'bg-blue-600';
-        } else if (type === 'Monstre') {
-            typeClass = 'bg-red-600';
-        }
-
-        // Créer le cartouche de type
-        const typeDisplay = document.createElement('div');
-        typeDisplay.id = 'info-box-character-type';
-        typeDisplay.className = `inline-block px-3 py-1 text-xs rounded ${typeClass} text-white font-semibold ml-3`;
-        typeDisplay.textContent = type;
-        typeDisplay.style.verticalAlign = 'middle';
-
-        // Insérer après le titre
-        const titleContainer = infoBoxHeader.querySelector('.flex.items-center.flex-grow');
-        if (titleContainer) {
-            titleContainer.appendChild(typeDisplay);
         }
     }
 
@@ -1244,16 +1206,6 @@ class InfoBoxManager {
         // Mettre à jour l'objet
         if (nameInput) this.currentItem.name = nameInput.value.trim();
         if (descTextarea) this.currentItem.description = descTextarea.value.trim();
-
-        // Sauvegarder le type pour les personnages
-        if (this.currentType === 'character') {
-            const typeRadios = document.querySelectorAll('input[name="edit-character-type"]');
-            typeRadios.forEach(radio => {
-                if (radio.checked) {
-                    this.currentItem.type = radio.value;
-                }
-            });
-        }
 
         // Gérer les rumeurs - récupérer depuis les textareas individuels
         const rumeurInputs = document.querySelectorAll('.edit-rumeur-input');
@@ -2185,21 +2137,13 @@ class InfoBoxManager {
             return;
         }
 
-        console.log(`👥 [renderPersonnagesTabRead] Recherche de ${associatedCharacterIds.length} personnages associés`);
-        console.log(`👥 [renderPersonnagesTabRead] IDs à rechercher:`, associatedCharacterIds);
-
-        // Filtrer UNIQUEMENT par association, PAS par carte active
-        // Un personnage associé doit toujours être affiché, quelle que soit sa carte d'origine
-        // IMPORTANT: Comparer les IDs en tant que strings pour éviter les problèmes de type
+        // Filtrer les personnages associés à ce lieu/région
+        const activeMapId = window.settingsManager?.activeMapUrl;
         const associatedCharacters = window.charactersManager.characters.filter(char => {
-            const isAssociated = associatedCharacterIds.includes(String(char.id));
-            if (isAssociated) {
-                console.log(`✅ [renderPersonnagesTabRead] Personnage trouvé: ${char.name} (${char.id})`);
-            }
-            return isAssociated;
+            const isAssociated = associatedCharacterIds.includes(char.id);
+            const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
+            return isAssociated && isOnCurrentMap;
         });
-
-        console.log(`👥 [renderPersonnagesTabRead] ${associatedCharacters.length} personnage(s) trouvé(s)`);
 
         if (associatedCharacters.length === 0) {
             personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage associé à ce lieu</p>';
@@ -2208,36 +2152,22 @@ class InfoBoxManager {
 
         const html = associatedCharacters.map(character => {
             const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-            const type = character.type || 'PNJ';
-
-            // Déterminer les classes CSS selon le type
-            let borderClass = 'border-green-500';
-            let bgClass = 'bg-green-600';
-
-            if (type === 'PJ') {
-                borderClass = 'border-blue-500';
-                bgClass = 'bg-blue-600';
-            } else if (type === 'Monstre') {
-                borderClass = 'border-red-500';
-                bgClass = 'bg-red-600';
-            }
-
             return `
                 <div class="character-card-infobox bg-gray-700 hover:bg-gray-600 rounded-lg p-3 mb-3 cursor-pointer transition-colors" 
                      onclick="window.infoBoxManager.showCharacterFromLocation('${character.id}')">
                     <div class="flex items-center space-x-3">
                         ${thumbnailImage ? `
                             <img src="${thumbnailImage.url}" alt="${character.name}" 
-                                 class="w-12 h-12 rounded-full object-cover border-2 ${borderClass}">
+                                 class="w-12 h-12 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
                         ` : `
-                            <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
+                            <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
                                 <i class="fas fa-user text-gray-400"></i>
                             </div>
                         `}
                         <div class="flex-1">
                             <div class="font-semibold text-white">${character.name}</div>
-                            <span class="inline-block px-2 py-0.5 text-xs rounded ${bgClass} text-white">
-                                ${type}
+                            <span class="inline-block px-2 py-0.5 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'} text-white">
+                                ${character.type || 'PNJ'}
                             </span>
                         </div>
                         <i class="fas fa-chevron-right text-gray-400"></i>
@@ -2275,60 +2205,56 @@ class InfoBoxManager {
 
         // Récupérer les lieux associés
         const locationsData = window.locationsData || { locations: [] };
-        const associatedLocations = (locationsData.locations || []).filter(loc => {
-            const isAssociated = associatedLocationIds.includes(String(loc.id));
-            if (isAssociated) {
-                console.log(`✅ [renderLieuxRegionsTabRead] Lieu trouvé: ${loc.name} (${loc.id})`);
-            }
-            return isAssociated;
-        });
+        const associatedLocations = (locationsData.locations || []).filter(loc =>
+            associatedLocationIds.includes(String(loc.id))
+        );
 
         // Récupérer les régions associées
         const regionsData = window.regionsData || { regions: [] };
-        const associatedRegions = (regionsData.regions || []).filter(reg => {
-            const isAssociated = associatedRegionIds.includes(String(reg.id));
-            if (isAssociated) {
-                console.log(`✅ [renderLieuxRegionsTabRead] Région trouvée: ${reg.name} (${reg.id})`);
-            }
-            return isAssociated;
-        });
+        const associatedRegions = (regionsData.regions || []).filter(reg =>
+            associatedRegionIds.includes(String(reg.id))
+        );
 
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedLocations.length} lieux associés trouvés`);
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedRegions.length} régions associées trouvées`);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] Nombre total de lieux disponibles:`, locationsData.locations?.length || 0);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] Nombre total de régions disponibles:`, regionsData.regions?.length || 0);
 
         if (associatedLocations.length === 0 && associatedRegions.length === 0) {
-            lieuxRegionsTab.innerHTML = '<p class="text-gray-400 p-4 italic" style="color: black !important;">Aucun lieu ou région associé à ce personnage.</p>';
+            lieuxRegionsTab.innerHTML = '<p class="text-gray-500 p-4 italic" style="color: #6b7280 !important;">Aucun lieu ou région associé à ce personnage.</p>';
             return;
         }
 
-        let html = '<div class="p-4 space-y-4">';
+        let html = '<div class="p-4 space-y-6">';
 
         // Section Lieux
         if (associatedLocations.length > 0) {
             html += `
                 <div>
+                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
+                        <i class="fas fa-map-marker-alt mr-2" style="color: #940000 !important;"></i>
+                        Lieux associés
+                    </h3>
                     <div class="space-y-2">
                         ${associatedLocations.map(location => {
                             const thumbnailImage = location.images?.find(img => img.type === 'vignette');
                             return `
                                 <div class="location-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     style="background-color: white !important;"
-                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')">
+                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')"
+                                     style="background-color: white !important;">
                                     <div class="flex items-center space-x-3">
                                         ${thumbnailImage ? `
                                             <img src="${thumbnailImage.url}" alt="${location.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2 border-purple-500">
+                                                 class="w-10 h-10 rounded-full object-cover border-2"
+                                                 style="border-color: #940000 !important;">
                                         ` : `
-                                            <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center border-2 border-purple-500">
-                                                <i class="fas fa-map-marker-alt text-white text-sm"></i>
+                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
+                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
+                                                <i class="fas fa-map-marker-alt text-sm" style="color: white !important;"></i>
                                             </div>
                                         `}
                                         <div class="flex-1">
                                             <h4 class="font-medium" style="color: black !important;">${location.name}</h4>
                                         </div>
-                                        <i class="fas fa-chevron-right" style="color: #666666 !important;"></i>
+                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
                                     </div>
                                 </div>
                             `;
@@ -2342,26 +2268,32 @@ class InfoBoxManager {
         if (associatedRegions.length > 0) {
             html += `
                 <div>
+                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
+                        <i class="fas fa-mountain mr-2" style="color: #940000 !important;"></i>
+                        Régions associées
+                    </h3>
                     <div class="space-y-2">
                         ${associatedRegions.map(region => {
                             const thumbnailImage = region.images?.find(img => img.type === 'vignette');
                             return `
                                 <div class="region-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     style="background-color: white !important;"
-                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')">
+                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')"
+                                     style="background-color: white !important;">
                                     <div class="flex items-center space-x-3">
                                         ${thumbnailImage ? `
                                             <img src="${thumbnailImage.url}" alt="${region.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2 border-orange-500">
+                                                 class="w-10 h-10 rounded-full object-cover border-2"
+                                                 style="border-color: #940000 !important;">
                                         ` : `
-                                            <div class="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center border-2 border-orange-500">
-                                                <i class="fas fa-mountain text-white text-sm"></i>
+                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
+                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
+                                                <i class="fas fa-mountain text-sm" style="color: white !important;"></i>
                                             </div>
                                         `}
                                         <div class="flex-1">
                                             <h4 class="font-medium" style="color: black !important;">${region.name}</h4>
                                         </div>
-                                        <i class="fas fa-chevron-right" style="color: #666666 !important;"></i>
+                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
                                     </div>
                                 </div>
                             `;
@@ -2547,10 +2479,6 @@ class InfoBoxManager {
         // Ouvrir la modale du personnage en surimpression
         if (window.infoBoxManager) {
             window.infoBoxManager.showInfoBox(fakeEvent, character, 'character');
-            // Activer l'onglet "Texte" après l'affichage
-            setTimeout(() => {
-                this.switchTab('text');
-            }, 100);
         }
     }
 
@@ -2658,8 +2586,8 @@ class InfoBoxManager {
                 this.dataManager.saveRegionsToLocal();
 
                 // Re-render
-                if (typeof window.renderRegions === 'function') {
-                    window.renderRegions();
+                if (typeof renderRegions === 'function') {
+                    renderRegions();
                 }
 
                 console.log(`✅ [DELETE] Région supprimée: ${this.currentItem.name}`);
@@ -3139,3 +3067,4 @@ if (typeof module !== 'undefined' && module.exports) {
 export default InfoBoxManager;
 
 console.log("📋 InfoBoxManager module loaded");
+</replit_final_file>
