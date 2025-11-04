@@ -1,4 +1,3 @@
-
 class AdventureManager {
     constructor() {
         this.isEditMode = false;
@@ -8,7 +7,12 @@ class AdventureManager {
             threats: [],
             randomTables: []
         };
-        
+
+        // Initialize randomTables to an empty array if it's not already loaded
+        if (!this.adventureData.randomTables) {
+            this.adventureData.randomTables = [];
+        }
+
         this.loadFromLocalStorage();
     }
 
@@ -140,7 +144,7 @@ class AdventureManager {
         if (rumorsTab) {
             rumorsTab.innerHTML = '';
             let rumorsContent = '';
-            
+
             if (this.adventureData.rumors.length > 0) {
                 rumorsContent = this.adventureData.rumors.map((rumor, index) => `
                     <div class="rumor-item ${rumor.completed ? 'completed' : ''}" data-index="${index}">
@@ -151,7 +155,7 @@ class AdventureManager {
             } else {
                 rumorsContent = '<p class="text-gray-400 italic">Aucune rumeur enregistrée.</p>';
             }
-            
+
             rumorsTab.innerHTML = `
                 <div class="rumors-view p-4">
                     <div class="space-y-2">${rumorsContent}</div>
@@ -163,7 +167,7 @@ class AdventureManager {
         if (threatsTab) {
             threatsTab.innerHTML = '';
             let threatsContent = '';
-            
+
             if (this.adventureData.threats.length > 0) {
                 threatsContent = this.adventureData.threats.map((threat, index) => `
                     <div class="threat-item ${threat.completed ? 'completed' : ''}" data-index="${index}">
@@ -174,7 +178,7 @@ class AdventureManager {
             } else {
                 threatsContent = '<p class="text-gray-400 italic">Aucune menace enregistrée.</p>';
             }
-            
+
             threatsTab.innerHTML = `
                 <div class="threats-view p-4">
                     <div class="space-y-2">${threatsContent}</div>
@@ -365,7 +369,7 @@ class AdventureManager {
 
     renderMarkdown(text) {
         if (!text) return '';
-        
+
         return text
             .replace(/^# (.*$)/gim, '<h1>$1</h1>')
             .replace(/^## (.*$)/gim, '<h2>$1</h2>')
@@ -391,7 +395,7 @@ class AdventureManager {
     saveToLocalStorage() {
         localStorage.setItem('adventureData', JSON.stringify(this.adventureData));
         console.log("💾 Adventure data saved to localStorage");
-        
+
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
@@ -402,6 +406,10 @@ class AdventureManager {
         if (saved) {
             try {
                 this.adventureData = JSON.parse(saved);
+                // Ensure randomTables is initialized if it was missing from saved data
+                if (!this.adventureData.randomTables) {
+                    this.adventureData.randomTables = [];
+                }
                 console.log("✅ Adventure data loaded from localStorage");
             } catch (e) {
                 console.error("❌ Failed to load adventure data:", e);
@@ -416,6 +424,7 @@ class AdventureManager {
             return;
         }
 
+        // Use this.adventureData.randomTables to access the tables
         const tables = this.adventureData.randomTables || [];
 
         let html = `
@@ -461,8 +470,9 @@ class AdventureManager {
 
         const uploadInput = document.getElementById('upload-random-table');
         if (uploadInput) {
-            uploadInput.removeEventListener('change', this.handleRandomTableUpload);
-            uploadInput.addEventListener('change', (e) => this.handleRandomTableUpload(e));
+            // It's better to add a new event listener or manage it more robustly if this function is called multiple times.
+            // For simplicity here, we'll just re-assign it. A more robust solution might involve removing the listener first.
+            uploadInput.onchange = (e) => this.handleRandomTableUpload(e);
         }
     }
 
@@ -486,6 +496,10 @@ class AdventureManager {
                 entries: entries
             };
 
+            // Ensure randomTables is initialized before pushing
+            if (!this.adventureData.randomTables) {
+                this.adventureData.randomTables = [];
+            }
             this.adventureData.randomTables.push(newTable);
             this.saveToLocalStorage();
             this.renderRandomTablesTab();
@@ -497,7 +511,9 @@ class AdventureManager {
         }
     }
 
+
     rollOnTable(tableIndex) {
+        // Use this.adventureData.randomTables
         const table = this.adventureData.randomTables[tableIndex];
         if (!table || !table.entries || table.entries.length === 0) return;
 
@@ -509,7 +525,7 @@ class AdventureManager {
 
         if (resultContainer && resultContent) {
             let html = '<div class="space-y-2">';
-            
+
             for (const [key, value] of Object.entries(entry)) {
                 html += `
                     <div>
@@ -518,7 +534,7 @@ class AdventureManager {
                     </div>
                 `;
             }
-            
+
             html += '</div>';
             resultContent.innerHTML = html;
             resultContainer.classList.remove('hidden');
@@ -531,6 +547,7 @@ class AdventureManager {
 
     deleteRandomTable(index) {
         if (confirm('Voulez-vous vraiment supprimer cette table aléatoire ?')) {
+            // Use this.adventureData.randomTables
             this.adventureData.randomTables.splice(index, 1);
             this.saveToLocalStorage();
             this.renderRandomTablesTab();
