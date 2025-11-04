@@ -1276,9 +1276,18 @@ class InfoBoxManager {
 
         // Sauvegarder via DataManager
         if (this.currentType === 'region') {
+            // CRITIQUE: TOUJOURS synchroniser avec window.regionsData AVANT toute opération
+            if (window.regionsData && window.regionsData.regions) {
+                console.log(`🔄 [SAVE] Synchronisation AVANT recherche - window: ${window.regionsData.regions.length} régions, dataManager: ${this.dataManager.regionsData.regions.length} régions`);
+                this.dataManager.regionsData = window.regionsData;
+            }
+
             const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
                 String(reg.id) === String(this.currentItem.id)
             );
+
+            console.log(`🔍 [SAVE] Recherche de la région ID ${this.currentItem.id} dans ${this.dataManager.regionsData.regions.length} régions - Index trouvé: ${regionIndex}`);
+
             if (regionIndex === -1) {
                 console.error(`❌ [SAVE] Région non trouvée dans regionsData: ${this.currentItem.id}`);
                 alert("Erreur : impossible de sauvegarder la région.");
@@ -1356,9 +1365,17 @@ class InfoBoxManager {
                 renderRegions();
             }
         } else if (this.currentType === 'location') {
+            // CRITIQUE: TOUJOURS synchroniser avec window.locationsData AVANT toute opération
+            if (window.locationsData && window.locationsData.locations) {
+                console.log(`🔄 [SAVE] Synchronisation AVANT recherche - window: ${window.locationsData.locations.length} lieux, dataManager: ${this.dataManager.locationsData.locations.length} lieux`);
+                this.dataManager.locationsData = window.locationsData;
+            }
+
             let locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
                 String(loc.id) === String(this.currentItem.id)
             );
+
+            console.log(`🔍 [SAVE] Recherche du lieu ID ${this.currentItem.id} dans ${this.dataManager.locationsData.locations.length} lieux - Index trouvé: ${locationIndex}`);
 
             // Si le lieu n'existe pas encore, l'ajouter au tableau
             if (locationIndex === -1) {
