@@ -3067,4 +3067,3 @@ if (typeof module !== 'undefined' && module.exports) {
 export default InfoBoxManager;
 
 console.log("📋 InfoBoxManager module loaded");
-</replit_final_file>

@@ -331,6 +331,11 @@ def serve_static(filename):
     # Pour les uploads, on utilise serve_uploaded_file
     if filename.startswith('uploads/'):
         return send_from_directory('.', filename)
+    
+    # S'assurer que les fichiers JavaScript sont servis avec le bon Content-Type
+    if filename.endswith('.js'):
+        return send_from_directory('.', filename, mimetype='application/javascript')
+    
     return send_from_directory('.', filename)
 
 @app.route('/auth')
