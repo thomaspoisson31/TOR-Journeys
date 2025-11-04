@@ -980,7 +980,7 @@ def upload_image():
 
 @app.route('/api/image/create-thumbnail', methods=['POST'])
 def create_thumbnail():
-    """Créer une vignette à partir d'une URL d'image"""
+    """Retourner l'URL de l'image originale (pas de vignette)"""
     try:
         data = request.get_json()
         image_url = data.get('image_url')
@@ -989,64 +989,27 @@ def create_thumbnail():
         if not image_url:
             return jsonify({'error': 'URL d\'image manquante'}), 400
         
-        # Extraire le chemin de fichier depuis l'URL
-        # Format attendu: /uploads/user_id/category/filename.ext
+        # Vérifier que l'image existe
         if image_url.startswith('/uploads/'):
             file_path = image_url[9:]  # Enlever '/uploads/'
+            source_path = os.path.join('uploads', file_path)
+            
+            if not os.path.exists(source_path):
+                return jsonify({'error': 'Fichier source non trouvé'}), 404
         else:
             return jsonify({'error': 'URL d\'image invalide'}), 400
         
-        # Chemin complet du fichier source
-        source_path = os.path.join('uploads', file_path)
-        
-        if not os.path.exists(source_path):
-            return jsonify({'error': 'Fichier source non trouvé'}), 404
-        
-        # Créer le chemin pour la vignette
-        # Extraire le répertoire et le nom de fichier
-        dir_path = os.path.dirname(file_path)
-        filename = os.path.basename(file_path)
-        name, ext = os.path.splitext(filename)
-        
-        # Créer le dossier thumbs s'il n'existe pas
-        thumbs_dir = os.path.join('uploads', dir_path, 'thumbs')
-        os.makedirs(thumbs_dir, exist_ok=True)
-        
-        # Nom du fichier vignette
-        thumb_filename = f"thumb_{name}.png"
-        thumb_path = os.path.join(thumbs_dir, thumb_filename)
-        
-        # Créer la vignette avec PIL
-        from PIL import Image
-        
-        with Image.open(source_path) as img:
-            # Convertir en RGB si nécessaire
-            if img.mode in ('RGBA', 'LA', 'P'):
-                background = Image.new('RGB', img.size, (255, 255, 255))
-                if img.mode == 'P':
-                    img = img.convert('RGBA')
-                background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
-                img = background
-            
-            # Redimensionner en conservant le ratio (max 200x200)
-            img.thumbnail((200, 200), Image.Resampling.LANCZOS)
-            
-            # Sauvegarder la vignette
-            img.save(thumb_path, 'PNG', optimize=True)
-        
-        # URL de la vignette
-        thumb_url = f"/uploads/{dir_path}/thumbs/{thumb_filename}"
-        
-        print(f"✅ Vignette créée: {thumb_url}")
+        # Retourner directement l'URL de l'image originale
+        print(f"✅ Image utilisée comme vignette: {image_url}")
         
         return jsonify({
             'success': True,
-            'thumbnail_url': thumb_url,
-            'message': 'Vignette créée avec succès'
+            'thumbnail_url': image_url,
+            'message': 'Image originale utilisée comme vignette'
         })
         
     except Exception as e:
-        print(f"❌ Erreur lors de la création de la vignette: {e}")
+        print(f"❌ Erreur lors de la définition de la vignette: {e}")
         import traceback
         traceback.print_exc()
         return jsonify({
