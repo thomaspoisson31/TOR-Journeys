@@ -411,7 +411,10 @@ class AdventureManager {
 
     renderRandomTablesTab() {
         const tabContent = document.getElementById('random-tables-content');
-        if (!tabContent) return;
+        if (!tabContent) {
+            console.error('❌ random-tables-content not found');
+            return;
+        }
 
         const tables = this.adventureData.randomTables || [];
 
@@ -429,10 +432,11 @@ class AdventureManager {
         } else {
             html += '<div class="space-y-4">';
             tables.forEach((table, index) => {
+                const tableName = (table.name || 'Table sans nom').replace(/'/g, "\\'");
                 html += `
                     <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
                         <div class="flex justify-between items-center mb-3">
-                            <h4 class="text-lg font-semibold text-white">${table.name}</h4>
+                            <h4 class="text-lg font-semibold text-white">${table.name || 'Table sans nom'}</h4>
                             <div class="flex space-x-2">
                                 <button onclick="window.adventureManager.rollOnTable(${index})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
                                     <i class="fas fa-dice mr-1"></i>Tirer
@@ -457,6 +461,7 @@ class AdventureManager {
 
         const uploadInput = document.getElementById('upload-random-table');
         if (uploadInput) {
+            uploadInput.removeEventListener('change', this.handleRandomTableUpload);
             uploadInput.addEventListener('change', (e) => this.handleRandomTableUpload(e));
         }
     }
