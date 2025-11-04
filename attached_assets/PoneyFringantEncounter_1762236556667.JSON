@@ -1,0 +1,62 @@
+[
+  {
+    "Dé du destin": "RUNE",
+    "Résultat": "Le Pèlerin Gris",
+    "Description": "Gandalf en personne passe la soirée au Poney, sa seule présence met toute la maisonnée en émoi ! Il est peut-être secrètement en mission, ou vient chercher les Héros pour réclamer leur aide contre une menace invisible."
+  },
+  {
+    "Dé du destin": "1",
+    "Résultat": "Un Rôdeur importun",
+    "Description": "Un Rôdeur du Nord est tranquillement assis dans un coin de la salle commune. Bien que tous ignorent la raison de sa présence, des clients du coin le regardent méchamment ou lui font des remarques désobligeantes."
+  },
+  {
+    "Dé du destin": "2",
+    "Résultat": "Des visiteurs du Pays de Bouc",
+    "Description": "Une petite compagnie de Hobbits du Pays de Bouc passe la soirée au Poney, à échanger avec leurs cousins éloignés ; ils espèrent pouvoir acheter de l'herbe à pipe qu'on fait pousser dans les environs."
+  },
+  {
+    "Dé du destin": "3",
+    "Résultat": "Une expédition de Nains",
+    "Description": "Des Nains, retournant dans leur contrée par la Route Est-Ouest, dégustent une pinte de la Meilleure de Barnabas avant de se lancer dans une chanson tapageuse."
+  },
+  {
+    "Dé du destin": "4",
+    "Résultat": "Des réfugiés du Chemin Vert",
+    "Description": "Une petite famille de fermiers du Chemin vert est venue se réfugier au Poney. Ils sont sur leurs gardes, mais si un Héros leur demande poliment ce qui se passe, il apprend que leur ferme a été saccagée et incendiée la nuit dernière."
+  },
+  {
+    "Dé du destin": "5",
+    "Résultat": "Fitch Grantarbre",
+    "Description": "Le forestier d'Archet s'est rendu ce soir au Poney pour trouver des guerriers courageux prêts à se joindre à lui pour traquer une créature qui sévit au Bois de Chet, car jusqu'à présent ses efforts sont restés vains."
+  },
+  {
+    "Dé du destin": "6",
+    "Résultat": "Une bagarre imminente",
+    "Description": "Jean Fougeron boit une pinte dans la salle commune, quand soudain quelques clients se fâchent avec lui. Ils se disputent en haussant le ton, et sont sur le point d'en venir aux mains."
+  },
+  {
+    "Dé du destin": "7",
+    "Résultat": "Une ballade entraînante",
+    "Description": "La salle commune est pleine de clients rugissant des chansons héroïques. Les Héros qui se joignent à eux et qui réussissent un test de CHANT récupèrent 1 point d'Espoir."
+  },
+  {
+    "Dé du destin": "8",
+    "Résultat": "Une bourse trop voyante",
+    "Description": "Un riche marchand de passage à Bree ce soir a payé une tournée générale. Malheureusement, quelques buveurs moins soûls que les autres semblent plus qu'intéressés par sa bourse."
+  },
+  {
+    "Dé du destin": "9",
+    "Résultat": "Des poneys qui disparaissent du Poney !",
+    "Description": "Le palefrenier du Poney entre en courant dans la salle commune et hurle que les chevaux ont disparu de l'écurie ! Est-ce un accident ou un vol ?"
+  },
+  {
+    "Dé du destin": "10",
+    "Résultat": "Des chasseurs de trésors fanfarons",
+    "Description": "Quelques pilleurs de tombes exaltés sont venus dépenser leurs richesses, qu'ils prétendent avoir récupérées dans un tombeau des Hauts des Galgals. Leurs pièces sont anciennes et portent d'étranges symboles."
+  },
+  {
+    "Dé du destin": "OEIL",
+    "Résultat": "Un Homme du Sud de passage",
+    "Description": "Un Homme du Sud au visage cireux s'attarde dans les recoins de la salle commune ; il rudoie les clients et les harcèle pour obtenir des nouvelles du Pays de Bree."
+  }
+]
