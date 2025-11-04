@@ -1329,15 +1329,17 @@ class AuthManager {
             const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl || localStorage.getItem('activeMapUrl');
             this.logAuth(`🗺️ Carte active pour comparaison: ${activeMapId}`);
             
-            // IMPORTANT: Filtrer les lieux par carte active uniquement
+            // IMPORTANT: Filtrer les lieux par carte active uniquement - CLOUD ET LOCAL
             const cloudLocations = (cloudData.locations?.locations || []).filter(loc => 
-                !loc.mapId || loc.mapId === activeMapId
+                loc.mapId === activeMapId
             );
             const localLocations = (localData.locations?.locations || []).filter(loc => 
-                !loc.mapId || loc.mapId === activeMapId
+                loc.mapId === activeMapId
             );
             
             this.logAuth(`📊 Comparaison pour carte active: Cloud=${cloudLocations.length} lieux, Local=${localLocations.length} lieux`);
+            this.logAuth(`🔍 Détail - Cloud IDs: ${cloudLocations.map(l => l.id).join(', ')}`);
+            this.logAuth(`🔍 Détail - Local IDs: ${localLocations.map(l => l.id).join(', ')}`);
             
             const cloudLocationIds = new Set(cloudLocations.map(loc => loc.id));
             const localLocationIds = new Set(localLocations.map(loc => loc.id));
