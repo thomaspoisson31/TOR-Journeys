@@ -1,0 +1,438 @@
+(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+upload-manager.js:355 📤 UploadManager module loaded
+infobox-manager.js:2591 📋 InfoBoxManager module loaded
+library-manager.js:202 📚 LibraryManager module loaded
+characters-manager.js:862 👥 CharactersManager module loaded
+main.js:34 ✅ Constants loaded successfully
+main.js:97 ✅ Global variables initialized
+main.js:105 ✅ Essential DOM elements: Object
+main.js:2783 📋 Simplified main.js loaded - waiting for DOM ready
+main.js:114 🚀 Starting simplified application...
+main.js:76 🏷️ Version affichée: v1.5.0 (2025-11-04)
+main.js:122 ✅ DataManager initialized
+filter-manager.js:20 🔍 FilterManager initialized
+main.js:124 ✅ FilterManager initialized
+main.js:134 ✅ VoyageManager initialized
+main.js:141 ✅ PathManager initialized
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: Object
+calendar-manager.js:254 🌱 Affichage saison: Object
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: Object
+calendar-manager.js:254 🌱 Affichage saison: Object
+calendar-manager.js:30 📅 Données calendrier exposées globalement: Object
+main.js:147 ✅ CalendarManager initialized
+settings-manager.js:17 ⚙️ SettingsManager initialized
+settings-manager.js:1087 ⚙️ Configuration des listeners Import/Export...
+settings-manager.js:1094 📍 Boutons Lieux/Régions: Object
+settings-manager.js:1131 👥 Boutons Personnages: Object
+settings-manager.js:1170 ✅ Listeners Import/Export configurés
+main.js:153 ✅ SettingsManager initialized
+auth-manager.js:1808 [AuthManager] 🔑 Initialisation AuthManager null
+auth-manager.js:1808 [AuthManager] 🔍 Vérification du statut d'authentification null
+auth-manager.js:1808 [AuthManager] 👂 Écoute des changements de localStorage activée. null
+main.js:175 ✅ AuthManager initialized
+upload-manager.js:10 📤 UploadManager initialized
+infobox-manager.js:25 📋 InfoBoxManager initialized with UploadManager
+main.js:184 ✅ InfoBoxManager initialized
+import-export-manager.js:17 📤 ImportExportManager initialized
+import-export-manager.js:44 📤 ImportExportManager event listeners configured
+main.js:193 ✅ ImportExportManager initialized
+main.js:196 📍 Initializing data structures...
+data-manager.js:10 📍 loadInitialLocations: Initialisation avec structure vide
+data-manager.js:15 ✅ Structure de données initialisée (vide, en attente du cloud)
+data-manager.js:61 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+data-manager.js:66 ✅ Structure de régions initialisée (vide, en attente du cloud)
+main.js:204 ✅ Data structures initialized (will be populated from cloud)
+main.js:228 ⏳ Waiting for SettingsManager to load active map...
+upload-manager.js:10 📤 UploadManager initialized
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1808 [AuthManager] ✅ Utilisateur authentifié trouvé null
+auth-manager.js:1808 [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1808 [AuthManager] 🌍 Environnement détecté: development (préfixe: dev_) null
+auth-manager.js:1808 [AuthManager] 📥 Chargement des données depuis le cloud (environnement: dev_) null
+auth-manager.js:1808 [AuthManager] ✅ Données cloud récupérées Object
+auth-manager.js:1808 [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+auth-manager.js:1808 [AuthManager] 🔄 Application des données du contexte Array(10)
+auth-manager.js:1808 [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+auth-manager.js:1808 [AuthManager] 💾 27 lieux sauvegardés dans localStorage null
+auth-manager.js:1808 [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+auth-manager.js:1808 [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 27 lieux null
+auth-manager.js:1808 [AuthManager] 📊 Structure locationsData: Object
+auth-manager.js:1808 [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+auth-manager.js:1808 [AuthManager] 📊 Structure regionsData: Object
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Données calendar reçues: Object
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: Object
+calendar-manager.js:254 🌱 Affichage saison: Object
+calendar-manager.js:30 📅 Données calendrier exposées globalement: Object
+auth-manager.js:1808 [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+auth-manager.js:1808 [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+settings-manager.js:1237 ⚙️ Chargement des paramètres depuis le contexte: Object
+settings-manager.js:1249 ✅ Cartes chargées: 2
+settings-manager.js:1253 ✅ Carte active URL: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+settings-manager.js:1281 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+settings-manager.js:1286 🗺️ Échelle de la carte active: 60 miles
+settings-manager.js:1341 ✅ Paramètres chargés avec succès
+auth-manager.js:1808 [AuthManager] 🗺️ 2 carte(s) restaurée(s) depuis le cloud null
+auth-manager.js:1808 [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+auth-manager.js:1808 [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+auth-manager.js:1808 [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+auth-manager.js:1808 [AuthManager] 👥 Application de 35 personnages depuis le contexte null
+auth-manager.js:533 📍 [applyContextData] Position reçue du cloud: Object
+auth-manager.js:534 📍 [applyContextData] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+auth-manager.js:535 📍 [applyContextData] Carte de la position: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+auth-manager.js:540 📍 [applyContextData] AVANT setItem - position à sauver: Object
+auth-manager.js:546 📍 [applyContextData] APRÈS setItem - position vérif: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2748.3533095777993,"y":1754.8736097613644}
+auth-manager.js:551 📍 [applyContextData] APRÈS setItem - flag vérif: true
+auth-manager.js:553 [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: Object
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Sauvegarde des filtres pour restauration différée null
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Données filtersByMap reçues: Object
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Nombre de cartes avec filtres: 4 null
+auth-manager.js:1808 [AuthManager] 💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager null
+auth-manager.js:1808 [AuthManager] ⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init null
+auth-manager.js:1808 [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+auth-manager.js:1808 [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+auth-manager.js:1808 [AuthManager] ✅ Contexte appliqué avec succès null
+auth-manager.js:1808 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1808 [AuthManager] 💾 2 carte(s) sauvegardée(s) dans localStorage null
+auth-manager.js:1808 [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+auth-manager.js:1808 [AuthManager]   - 35 personnages sauvegardés dans localStorage. null
+auth-manager.js:1808 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1808 [AuthManager] 🎨 Rendu forcé après chargement cloud null
+main.js:437 ✅ Rendered 27 location markers (thumbnails: true)
+auth-manager.js:1808 [AuthManager] ✅ 27 lieux rendus depuis le cloud null
+main.js:586 ✅ Rendered 0 region polygons
+auth-manager.js:1808 [AuthManager] ✅ 0 régions rendues depuis le cloud null
+auth-manager.js:1808 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+auth-manager.js:1808 [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+settings-manager.js:1290 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1301 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+settings-manager.js:1305 🗺️ Réinitialisation de la carte depuis loadSettings
+main.js:596 🗺️ Initializing map...
+main.js:602 📐 Map dimensions: 5000 x 3229
+main.js:628 ✅ Regions layer configured
+main.js:638 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+main.js:974 🎮 Setting up map navigation...
+main.js:1233 ✅ Map navigation setup complete
+main.js:1238 📋 Setting up info-box listeners...
+main.js:1279 ✅ Info-box listeners setup complete
+main.js:1284 🎨 Setting up region drawing...
+main.js:1306 ✅ Region drawing setup complete
+main.js:1559 📍 Setting up location adding...
+main.js:1582 ✅ Generate description button configured
+main.js:2279 🎨 Setting up color change modal...
+main.js:2307 ✅ Color change modal setup complete
+main.js:1612 ✅ Location adding setup complete
+main.js:656 🔍 Setting up FilterManager...
+filter-manager.js:46 🔍 Setting up filter listeners...
+filter-manager.js:81 ✅ Filter listeners setup complete
+filter-manager.js:26 🔍 [loadFiltersFromStorage] Tentative de chargement - localStorage contient: données présentes
+filter-manager.js:31 ✅ [loadFiltersFromStorage] Filtres chargés depuis localStorage: Object
+filter-manager.js:32 ✅ [loadFiltersFromStorage] 4 carte(s) avec filtres
+filter-manager.js:33 ✅ [loadFiltersFromStorage] Cartes avec filtres: Array(4)
+filter-manager.js:96 🔍 [tryLoadFiltersForActiveMap retry=0] activeMapUrl: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:97 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(4)
+filter-manager.js:100 ✅ Chargement des filtres pour la carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:101 📊 Filtres à charger: Object
+filter-manager.js:634 🔍 [loadFiltersForMap] Tentative de chargement pour carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:635 🔍 [loadFiltersForMap] filtersByMap disponibles: Array(4)
+filter-manager.js:638 📥 [loadFiltersForMap] Filtres trouvés: Object
+filter-manager.js:640 📥 [loadFiltersForMap] activeFilters après copie: Object
+filter-manager.js:643 🎨 [loadFiltersForMap] Mise à jour de l'UI...
+filter-manager.js:645 ✅ [loadFiltersForMap] Appel de applyFilters...
+filter-manager.js:373 🔍 Applying filters... Object
+filter-manager.js:374 🔍 Current filtersByMap: Object
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:392 📊 Filtered: 27/27 locations, 0/0 regions
+filter-manager.js:505 ✅ Display updated - 27 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: Object
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+auth-manager.js:1808 [AuthManager] 🔔 Modifications non sauvegardées détectées null
+main.js:664 ✅ FilterManager setup complete
+main.js:671 🚀 Setting up VoyageManager...
+main.js:673 ✅ VoyageManager setup complete
+main.js:678 🗺️ Setting up PathManager...
+path-manager.js:50 🎨 Canvas configuré : 5000x3229
+path-manager.js:38 🛤️ PathManager initialized
+main.js:680 ✅ PathManager setup complete
+main.js:697 🔍 [initializeMap] Création du ZoomManager
+zoom-manager.js:26 🔍 Initializing ZoomManager... Object
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.320
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.320, ratio=0.056, x=8.5px, sliderWidth=0px
+zoom-manager.js:34 ✅ ZoomManager initialized Object
+main.js:726 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 5000 MAP_HEIGHT: 3229
+main.js:731 📍 [main.js] État localStorage AVANT init PositionManager - position: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2748.3533095777993,"y":1754.8736097613644} flag: true
+position-manager.js:25 📍 [PositionManager.loadPosition] État du flag cloud: true
+position-manager.js:26 📍 [PositionManager.loadPosition] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+position-manager.js:29 📍 [PositionManager.loadPosition] Position dans localStorage: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2748.3533095777993,"y":1754.8736097613644}
+position-manager.js:42 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: Object
+position-manager.js:14 📍 Initializing PositionManager...
+position-manager.js:94 📍 [PositionManager] 0 marqueur(s) existant(s) supprimé(s)
+position-manager.js:17 ✅ PositionManager initialized with position: Object
+main.js:748 ✅ PositionManager initialized with position: Object
+main.js:752 📍 [main.js] Nettoyage du flag cloud après initialisation
+journal-manager.js:11 📖 Initialisation du JournalManager
+journal-manager.js:48 📖 undefined voyage(s) chargé(s) depuis le localStorage
+main.js:760 ✅ JournalManager initialized
+adventure-manager.js:417 ✅ Adventure data loaded from localStorage
+adventure-manager.js:24 🎲 Initializing AdventureManager...
+adventure-manager.js:26 ✅ AdventureManager initialized
+main.js:766 ✅ AdventureManager initialized
+characters-manager.js:15 👥 CharactersManager initialized
+characters-manager.js:112 📚 35 personnages chargés depuis localStorage (IDs normalisés)
+characters-manager.js:21 ✅ CharactersManager setup complete
+main.js:772 ✅ CharactersManager initialized
+main.js:2635 🖌️ Setting up drawing events...
+main.js:2639 👂 Adding VoyageManager drawing listeners...
+voyage-manager.js:86 🎨 VoyageManager drawing listeners configured
+main.js:2641 ✅ VoyageManager drawing listeners added
+main.js:2644 ✅ Drawing events setup complete
+main.js:925 🔍 [resetView] Nouveau scale calculé: 0.204 (MAP_WIDTH=5000, MAP_HEIGHT=3229)
+main.js:942 🔍 [resetView] Synchronisation ZoomManager avec scale=0.204
+main.js:783 🔍 [initializeMap] Application finale des filtres après resetView
+main.js:789 ✅ Map initialized successfully
+zoom-manager.js:88 🔍 [ZoomManager] Largeur du slider calculée: 150
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.204
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.204, ratio=0.027, x=4.0px, sliderWidth=150px
+filter-manager.js:373 🔍 Applying filters... Object
+filter-manager.js:374 🔍 Current filtersByMap: Object
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:392 📊 Filtered: 27/27 locations, 0/0 regions
+filter-manager.js:505 ✅ Display updated - 27 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: Object
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+infobox-manager.js:77 📋 [InfoBoxManager] Showing info box for: Les Salles des Protecteurs de la Route Type: location Object
+infobox-manager.js:1990 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+infobox-manager.js:2005 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+infobox-manager.js:2006 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(0)
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:116 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:899 ✏️ Entering edit mode for: Les Salles des Protecteurs de la Route
+infobox-manager.js:165 📋 [switchTab] Changement d'onglet vers: personnages, currentType: location
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:1002 💾 Saving edit...
+infobox-manager.js:1058 🔍 [SAVE] Analyse de 35 checkbox(es):
+infobox-manager.js:1060   Checkbox 0: Object
+infobox-manager.js:1060   Checkbox 1: Object
+infobox-manager.js:1060   Checkbox 2: Object
+infobox-manager.js:1060   Checkbox 3: Object
+infobox-manager.js:1060   Checkbox 4: Object
+infobox-manager.js:1060   Checkbox 5: Object
+infobox-manager.js:1060   Checkbox 6: Object
+infobox-manager.js:1060   Checkbox 7: Object
+infobox-manager.js:1060   Checkbox 8: Object
+infobox-manager.js:1060   Checkbox 9: Object
+infobox-manager.js:1060   Checkbox 10: Object
+infobox-manager.js:1060   Checkbox 11: Object
+infobox-manager.js:1060   Checkbox 12: Object
+infobox-manager.js:1060   Checkbox 13: Object
+infobox-manager.js:1060   Checkbox 14: Object
+infobox-manager.js:1060   Checkbox 15: Object
+infobox-manager.js:1060   Checkbox 16: Object
+infobox-manager.js:1060   Checkbox 17: Object
+infobox-manager.js:1060   Checkbox 18: Object
+infobox-manager.js:1060   Checkbox 19: Object
+infobox-manager.js:1060   Checkbox 20: Object
+infobox-manager.js:1060   Checkbox 21: Object
+infobox-manager.js:1060   Checkbox 22: Object
+infobox-manager.js:1060   Checkbox 23: Object
+infobox-manager.js:1060   Checkbox 24: Object
+infobox-manager.js:1060   Checkbox 25: Object
+infobox-manager.js:1060   Checkbox 26: Object
+infobox-manager.js:1060   Checkbox 27: Object
+infobox-manager.js:1060   Checkbox 28: Object
+infobox-manager.js:1060   Checkbox 29: Object
+infobox-manager.js:1060   Checkbox 30: Object
+infobox-manager.js:1060   Checkbox 31: Object
+infobox-manager.js:1060   Checkbox 32: Object
+infobox-manager.js:1060   Checkbox 33: Object
+infobox-manager.js:1060   Checkbox 34: Object
+infobox-manager.js:1074     → ID récupéré pour checkbox cochée: 1762325997337 (value: 1762325997337, data: 1762325997337)
+infobox-manager.js:1079 🔍 [SAVE] AVANT update - location "Les Salles des Protecteurs de la Route" (id: 1716584145654)
+infobox-manager.js:1080 🔍 [SAVE] associatedCharacters AVANT: Array(0)
+infobox-manager.js:1081 🔍 [SAVE] Nouvelles associations cochées (1): Array(1)
+infobox-manager.js:1085 🔍 [SAVE] associatedCharacters APRÈS: Array(1)
+infobox-manager.js:1089 🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:
+infobox-manager.js:1093   - AAAAAAA (id: 1762325997337): Object
+infobox-manager.js:1102 💾 [SAVE] Objet après modification: {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposait d'une salle. Trouvez-les, et vous saurez que vo...
+infobox-manager.js:1197 🔄 [SAVE] Synchronisation AVANT recherche - window: 27 lieux, dataManager: 0 lieux
+infobox-manager.js:1205 🔍 [SAVE] Recherche du lieu ID 1716584145654 dans 27 lieux - Index trouvé: 18
+infobox-manager.js:1214 💾 [SAVE] Lieu AVANT mise à jour (index 18): {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposa
+infobox-manager.js:1219 💾 [SAVE] Lieu APRÈS mise à jour (index 18): {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposa
+infobox-manager.js:1220 🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde: Array(1)
+infobox-manager.js:1257 ❌ [SAVE] Personnage Gorlakh le Gardien de la Porte dissocié du lieu Les Salles des Protecteurs de la Route
+infobox-manager.js:1257 ❌ [SAVE] Personnage Vieille-Griffe dissocié du lieu Les Salles des Protecteurs de la Route
+infobox-manager.js:1257 ❌ [SAVE] Personnage sdfsfsdsdfsfdsf dissocié du lieu Les Salles des Protecteurs de la Route
+infobox-manager.js:1251 ✅ [SAVE] Personnage AAAAAAA associé au lieu Les Salles des Protecteurs de la Route
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+infobox-manager.js:1263 💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles
+infobox-manager.js:1268 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1272   - AAAAAAA (id: 1762325997337): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1292 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1296   - AAAAAAA (id: 1762325997337): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:907 ❌ Exiting edit mode
+infobox-manager.js:1990 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+infobox-manager.js:2005 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+infobox-manager.js:2006 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(1)
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+infobox-manager.js:959 ✅ [exitEditMode] Mode lecture activé
+infobox-manager.js:1323 ✅ [SAVE] Sauvegarde locale terminée - retour en mode lecture
+infobox-manager.js:917 🔄 [exitEditMode] Force mode lecture pour Personnages
+infobox-manager.js:1990 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+infobox-manager.js:2005 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+infobox-manager.js:2006 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(1)
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+characters-manager.js:480 ✅ Personnage créé: 111111111 (Monstre) avec mapId: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+infobox-manager.js:77 📋 [InfoBoxManager] Showing info box for: Les Salles des Protecteurs de la Route Type: location Object
+infobox-manager.js:1990 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+infobox-manager.js:2005 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+infobox-manager.js:2006 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(1)
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:116 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:899 ✏️ Entering edit mode for: Les Salles des Protecteurs de la Route
+infobox-manager.js:1002 💾 Saving edit...
+infobox-manager.js:1058 🔍 [SAVE] Analyse de 36 checkbox(es):
+infobox-manager.js:1060   Checkbox 0: Object
+infobox-manager.js:1060   Checkbox 1: Object
+infobox-manager.js:1060   Checkbox 2: Object
+infobox-manager.js:1060   Checkbox 3: Object
+infobox-manager.js:1060   Checkbox 4: Object
+infobox-manager.js:1060   Checkbox 5: Object
+infobox-manager.js:1060   Checkbox 6: Object
+infobox-manager.js:1060   Checkbox 7: Object
+infobox-manager.js:1060   Checkbox 8: Object
+infobox-manager.js:1060   Checkbox 9: Object
+infobox-manager.js:1060   Checkbox 10: Object
+infobox-manager.js:1060   Checkbox 11: Object
+infobox-manager.js:1060   Checkbox 12: Object
+infobox-manager.js:1060   Checkbox 13: Object
+infobox-manager.js:1060   Checkbox 14: Object
+infobox-manager.js:1060   Checkbox 15: Object
+infobox-manager.js:1060   Checkbox 16: Object
+infobox-manager.js:1060   Checkbox 17: Object
+infobox-manager.js:1060   Checkbox 18: Object
+infobox-manager.js:1060   Checkbox 19: Object
+infobox-manager.js:1060   Checkbox 20: Object
+infobox-manager.js:1060   Checkbox 21: Object
+infobox-manager.js:1060   Checkbox 22: Object
+infobox-manager.js:1060   Checkbox 23: Object
+infobox-manager.js:1060   Checkbox 24: Object
+infobox-manager.js:1060   Checkbox 25: Object
+infobox-manager.js:1060   Checkbox 26: Object
+infobox-manager.js:1060   Checkbox 27: Object
+infobox-manager.js:1060   Checkbox 28: Object
+infobox-manager.js:1060   Checkbox 29: Object
+infobox-manager.js:1060   Checkbox 30: Object
+infobox-manager.js:1060   Checkbox 31: Object
+infobox-manager.js:1060   Checkbox 32: Object
+infobox-manager.js:1060   Checkbox 33: Object
+infobox-manager.js:1060   Checkbox 34: Object
+infobox-manager.js:1060   Checkbox 35: Object
+infobox-manager.js:1074     → ID récupéré pour checkbox cochée: 1762341668073 (value: 1762341668073, data: 1762341668073)
+infobox-manager.js:1074     → ID récupéré pour checkbox cochée: 1762325997337 (value: 1762325997337, data: 1762325997337)
+infobox-manager.js:1079 🔍 [SAVE] AVANT update - location "Les Salles des Protecteurs de la Route" (id: 1716584145654)
+infobox-manager.js:1080 🔍 [SAVE] associatedCharacters AVANT: Array(1)
+infobox-manager.js:1081 🔍 [SAVE] Nouvelles associations cochées (2): Array(2)
+infobox-manager.js:1085 🔍 [SAVE] associatedCharacters APRÈS: Array(2)
+infobox-manager.js:1089 🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:
+infobox-manager.js:1093   - 111111111 (id: 1762341668073): Object
+infobox-manager.js:1093   - AAAAAAA (id: 1762325997337): Object
+infobox-manager.js:1102 💾 [SAVE] Objet après modification: {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposait d'une salle. Trouvez-les, et vous saurez que vo...
+infobox-manager.js:1197 🔄 [SAVE] Synchronisation AVANT recherche - window: 27 lieux, dataManager: 27 lieux
+infobox-manager.js:1205 🔍 [SAVE] Recherche du lieu ID 1716584145654 dans 27 lieux - Index trouvé: 18
+infobox-manager.js:1214 💾 [SAVE] Lieu AVANT mise à jour (index 18): {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposa
+infobox-manager.js:1219 💾 [SAVE] Lieu APRÈS mise à jour (index 18): {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposa
+infobox-manager.js:1220 🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde: Array(2)
+infobox-manager.js:1251 ✅ [SAVE] Personnage 111111111 associé au lieu Les Salles des Protecteurs de la Route
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+infobox-manager.js:1263 💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles
+infobox-manager.js:1268 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1272   - 111111111 (id: 1762341668073): Object
+infobox-manager.js:1272   - AAAAAAA (id: 1762325997337): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1292 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1296   - 111111111 (id: 1762341668073): Object
+infobox-manager.js:1296   - AAAAAAA (id: 1762325997337): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:907 ❌ Exiting edit mode
+infobox-manager.js:1990 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+infobox-manager.js:2005 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+infobox-manager.js:2006 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(2)
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage 111111111 (ID: 1762341668073) - associé: true, sur carte: true
+infobox-manager.js:959 ✅ [exitEditMode] Mode lecture activé
+infobox-manager.js:1323 ✅ [SAVE] Sauvegarde locale terminée - retour en mode lecture
+infobox-manager.js:917 🔄 [exitEditMode] Force mode lecture pour Personnages
+infobox-manager.js:1990 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+infobox-manager.js:2005 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+infobox-manager.js:2006 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(2)
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage 111111111 (ID: 1762341668073) - associé: true, sur carte: true
+(index):1 Uncaught TypeError: window.infoBoxManager.showCharacterFromLocation is not a function
+    at HTMLDivElement.onclick ((index):1:23)
+(index):1 Uncaught TypeError: window.infoBoxManager.showCharacterFromLocation is not a function
+    at HTMLDivElement.onclick ((index):1:23)
+(index):1 Uncaught TypeError: window.infoBoxManager.showCharacterFromLocation is not a function
+    at HTMLDivElement.onclick ((index):1:23)
+(index):1 Uncaught TypeError: window.infoBoxManager.showCharacterFromLocation is not a function
+    at HTMLDivElement.onclick ((index):1:23)
+infobox-manager.js:77 📋 [InfoBoxManager] Showing info box for: Les Salles des Protecteurs de la Route Type: location {eventType: 'mouseup', timeStamp: 239714.59999990463, target: 'location-marker', currentItem: undefined, isEditMode: false}
+infobox-manager.js:1990 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+infobox-manager.js:2005 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+infobox-manager.js:2006 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): (2) ['1762341668073', '1762325997337']
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage 111111111 (ID: 1762341668073) - associé: true, sur carte: true
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:116 ✅ Info box displayed successfully in expanded mode
+(index):1 Uncaught TypeError: window.infoBoxManager.showCharacterFromLocation is not a function
+    at HTMLDivElement.onclick ((index):1:23)
+onclick @ (index):1
+infobox-manager.js:899 ✏️ Entering edit mode for: Les Salles des Protecteurs de la Route
+infobox-manager.js:50 Uncaught TypeError: this.deleteItem is not a function
+    at HTMLElement.<anonymous> (infobox-manager.js:50:60)
+(anonymous) @ infobox-manager.js:50
+infobox-manager.js:50 Uncaught TypeError: this.deleteItem is not a function
+    at HTMLElement.<anonymous> (infobox-manager.js:50:60)
+(anonymous) @ infobox-manager.js:50
+infobox-manager.js:50 Uncaught TypeError: this.deleteItem is not a function
+    at HTMLElement.<anonymous> (infobox-manager.js:50:60)
+(anonymous) @ infobox-manager.js:50

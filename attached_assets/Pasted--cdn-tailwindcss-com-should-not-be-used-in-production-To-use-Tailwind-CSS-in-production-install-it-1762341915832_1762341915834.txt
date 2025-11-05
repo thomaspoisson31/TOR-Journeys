@@ -1,0 +1,414 @@
+ cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+ 📤 UploadManager module loaded
+ 📋 InfoBoxManager module loaded
+ 📚 LibraryManager module loaded
+ 👥 CharactersManager module loaded
+ ✅ Constants loaded successfully
+ ✅ Global variables initialized
+ ✅ Essential DOM elements: Object
+ 📋 Simplified main.js loaded - waiting for DOM ready
+ 🚀 Starting simplified application...
+ 🏷️ Version affichée: v1.5.0 (2025-11-04)
+ ✅ DataManager initialized
+ 🔍 FilterManager initialized
+ ✅ FilterManager initialized
+ ✅ VoyageManager initialized
+ ✅ PathManager initialized
+ 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+ 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+ 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+ 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+ 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+ 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+ 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+ 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+ 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+ 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+ 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+ 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 📅 Données calendrier exposées globalement: Object
+ ✅ CalendarManager initialized
+ ⚙️ SettingsManager initialized
+ ⚙️ Configuration des listeners Import/Export...
+ 📍 Boutons Lieux/Régions: Object
+ 👥 Boutons Personnages: Object
+ ✅ Listeners Import/Export configurés
+ ✅ SettingsManager initialized
+ [AuthManager] 🔑 Initialisation AuthManager null
+ [AuthManager] 🔍 Vérification du statut d'authentification null
+ [AuthManager] 👂 Écoute des changements de localStorage activée. null
+ ✅ AuthManager initialized
+ 📤 UploadManager initialized
+ 📋 InfoBoxManager initialized with UploadManager
+ ✅ InfoBoxManager initialized
+ 📤 ImportExportManager initialized
+ 📤 ImportExportManager event listeners configured
+ ✅ ImportExportManager initialized
+ 📍 Initializing data structures...
+ 📍 loadInitialLocations: Initialisation avec structure vide
+ ✅ Structure de données initialisée (vide, en attente du cloud)
+ 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+ ✅ Structure de régions initialisée (vide, en attente du cloud)
+ ✅ Data structures initialized (will be populated from cloud)
+ ⏳ Waiting for SettingsManager to load active map...
+ 📤 UploadManager initialized
+ 🤖 Gemini API disponible: true
+ [AuthManager] ✅ Utilisateur authentifié trouvé null
+ [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+ 🤖 Gemini API disponible: true
+ [AuthManager] 🌍 Environnement détecté: development (préfixe: dev_) null
+ [AuthManager] 📥 Chargement des données depuis le cloud (environnement: dev_) null
+ [AuthManager] ✅ Données cloud récupérées Object
+ [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+ [AuthManager] 🔄 Application des données du contexte Array(10)
+ [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+ [AuthManager] 💾 27 lieux sauvegardés dans localStorage null
+ [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+ [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 27 lieux null
+ [AuthManager] 📊 Structure locationsData: Object
+ [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+ [AuthManager] 📊 Structure regionsData: Object
+ [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+ [AuthManager] 📅 [applyContextData] Données calendar reçues: Object
+ [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+ [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 📅 Données calendrier exposées globalement: Object
+ [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+ [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+ ⚙️ Chargement des paramètres depuis le contexte: Object
+ ✅ Cartes chargées: 2
+ ✅ Carte active URL: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 🗺️ Échelle de la carte active: 60 miles
+ ✅ Paramètres chargés avec succès
+ [AuthManager] 🗺️ 2 carte(s) restaurée(s) depuis le cloud null
+ [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+ [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+ [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+ [AuthManager] 👥 Application de 35 personnages depuis le contexte null
+ 📍 [applyContextData] Position reçue du cloud: Object
+ 📍 [applyContextData] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📍 [applyContextData] Carte de la position: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📍 [applyContextData] AVANT setItem - position à sauver: Object
+ 📍 [applyContextData] APRÈS setItem - position vérif: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2748.3533095777993,"y":1754.8736097613644}
+ 📍 [applyContextData] APRÈS setItem - flag vérif: true
+ [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: Object
+ [AuthManager] 🔍 [applyContextData] Sauvegarde des filtres pour restauration différée null
+ [AuthManager] 🔍 [applyContextData] Données filtersByMap reçues: Object
+ [AuthManager] 🔍 [applyContextData] Nombre de cartes avec filtres: 4 null
+ [AuthManager] 💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager null
+ [AuthManager] ⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init null
+ [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+ [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+ [AuthManager] ✅ Contexte appliqué avec succès null
+ [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+ [AuthManager] 💾 2 carte(s) sauvegardée(s) dans localStorage null
+ [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+ [AuthManager]   - 35 personnages sauvegardés dans localStorage. null
+ [AuthManager]   - Données sauvegardées dans localStorage. null
+ [AuthManager] 🎨 Rendu forcé après chargement cloud null
+ ✅ Rendered 27 location markers (thumbnails: true)
+ [AuthManager] ✅ 27 lieux rendus depuis le cloud null
+ ✅ Rendered 0 region polygons
+ [AuthManager] ✅ 0 régions rendues depuis le cloud null
+ [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+ [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+ ✅ Image de carte chargée, re-initialisation de la carte
+ 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+ 🗺️ Réinitialisation de la carte depuis loadSettings
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 5000 x 3229
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+ 🎨 Setting up color change modal...
+ ✅ Color change modal setup complete
+ ✅ Location adding setup complete
+ 🔍 Setting up FilterManager...
+ 🔍 Setting up filter listeners...
+ ✅ Filter listeners setup complete
+ 🔍 [loadFiltersFromStorage] Tentative de chargement - localStorage contient: données présentes
+ ✅ [loadFiltersFromStorage] Filtres chargés depuis localStorage: Object
+ ✅ [loadFiltersFromStorage] 4 carte(s) avec filtres
+ ✅ [loadFiltersFromStorage] Cartes avec filtres: Array(4)
+ 🔍 [tryLoadFiltersForActiveMap retry=0] activeMapUrl: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(4)
+ ✅ Chargement des filtres pour la carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📊 Filtres à charger: Object
+ 🔍 [loadFiltersForMap] Tentative de chargement pour carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 🔍 [loadFiltersForMap] filtersByMap disponibles: Array(4)
+ 📥 [loadFiltersForMap] Filtres trouvés: Object
+ 📥 [loadFiltersForMap] activeFilters après copie: Object
+ 🎨 [loadFiltersForMap] Mise à jour de l'UI...
+ ✅ [loadFiltersForMap] Appel de applyFilters...
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📊 Filtered: 27/27 locations, 0/0 regions
+ ✅ Display updated - 27 locations, 0 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ [AuthManager] 🔔 Modifications non sauvegardées détectées null
+ ✅ FilterManager setup complete
+ 🚀 Setting up VoyageManager...
+ ✅ VoyageManager setup complete
+ 🗺️ Setting up PathManager...
+ 🎨 Canvas configuré : 5000x3229
+ 🛤️ PathManager initialized
+ ✅ PathManager setup complete
+ 🔍 [initializeMap] Création du ZoomManager
+ 🔍 Initializing ZoomManager... Object
+ 🔍 [ZoomManager] updateDisplay called: scale=0.320
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.320, ratio=0.056, x=8.5px, sliderWidth=0px
+ ✅ ZoomManager initialized Object
+ 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 5000 MAP_HEIGHT: 3229
+ 📍 [main.js] État localStorage AVANT init PositionManager - position: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2748.3533095777993,"y":1754.8736097613644} flag: true
+ 📍 [PositionManager.loadPosition] État du flag cloud: true
+ 📍 [PositionManager.loadPosition] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📍 [PositionManager.loadPosition] Position dans localStorage: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2748.3533095777993,"y":1754.8736097613644}
+ 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: Object
+ 📍 Initializing PositionManager...
+ 📍 [PositionManager] 0 marqueur(s) existant(s) supprimé(s)
+ ✅ PositionManager initialized with position: Object
+ ✅ PositionManager initialized with position: Object
+ 📍 [main.js] Nettoyage du flag cloud après initialisation
+ 📖 Initialisation du JournalManager
+ 📖 undefined voyage(s) chargé(s) depuis le localStorage
+ ✅ JournalManager initialized
+ ✅ Adventure data loaded from localStorage
+ 🎲 Initializing AdventureManager...
+ ✅ AdventureManager initialized
+ ✅ AdventureManager initialized
+ 👥 CharactersManager initialized
+ 📚 35 personnages chargés depuis localStorage (IDs normalisés)
+ ✅ CharactersManager setup complete
+ ✅ CharactersManager initialized
+ 🖌️ Setting up drawing events...
+ 👂 Adding VoyageManager drawing listeners...
+ 🎨 VoyageManager drawing listeners configured
+ ✅ VoyageManager drawing listeners added
+ ✅ Drawing events setup complete
+ 🔍 [resetView] Nouveau scale calculé: 0.204 (MAP_WIDTH=5000, MAP_HEIGHT=3229)
+ 🔍 [resetView] Synchronisation ZoomManager avec scale=0.204
+ 🔍 [initializeMap] Application finale des filtres après resetView
+ ✅ Map initialized successfully
+ 🔍 [ZoomManager] Largeur du slider calculée: 150
+ 🔍 [ZoomManager] updateDisplay called: scale=0.204
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.204, ratio=0.027, x=4.0px, sliderWidth=150px
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📊 Filtered: 27/27 locations, 0/0 regions
+ ✅ Display updated - 27 locations, 0 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [InfoBoxManager] Showing info box for: Les Salles des Protecteurs de la Route Type: location Object
+ 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+ 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+ 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(0)
+ 📋 [updateTabsVisibility] Type: location, isCharacter: false
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+ ✅ Info box displayed successfully in expanded mode
+ ✏️ Entering edit mode for: Les Salles des Protecteurs de la Route
+ 📋 [switchTab] Changement d'onglet vers: personnages, currentType: location
+ 📋 [updateTabsVisibility] Type: location, isCharacter: false
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+ 💾 Saving edit...
+ 🔍 [SAVE] Analyse de 35 checkbox(es):
+   Checkbox 0: Object
+   Checkbox 1: Object
+   Checkbox 2: Object
+   Checkbox 3: Object
+   Checkbox 4: Object
+   Checkbox 5: Object
+   Checkbox 6: Object
+   Checkbox 7: Object
+   Checkbox 8: Object
+   Checkbox 9: Object
+   Checkbox 10: Object
+   Checkbox 11: Object
+   Checkbox 12: Object
+   Checkbox 13: Object
+   Checkbox 14: Object
+   Checkbox 15: Object
+   Checkbox 16: Object
+   Checkbox 17: Object
+   Checkbox 18: Object
+   Checkbox 19: Object
+   Checkbox 20: Object
+   Checkbox 21: Object
+   Checkbox 22: Object
+   Checkbox 23: Object
+   Checkbox 24: Object
+   Checkbox 25: Object
+   Checkbox 26: Object
+   Checkbox 27: Object
+   Checkbox 28: Object
+   Checkbox 29: Object
+   Checkbox 30: Object
+   Checkbox 31: Object
+   Checkbox 32: Object
+   Checkbox 33: Object
+   Checkbox 34: Object
+     → ID récupéré pour checkbox cochée: 1762325997337 (value: 1762325997337, data: 1762325997337)
+ 🔍 [SAVE] AVANT update - location "Les Salles des Protecteurs de la Route" (id: 1716584145654)
+ 🔍 [SAVE] associatedCharacters AVANT: Array(0)
+ 🔍 [SAVE] Nouvelles associations cochées (1): Array(1)
+ 🔍 [SAVE] associatedCharacters APRÈS: Array(1)
+ 🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:
+   - AAAAAAA (id: 1762325997337): Object
+ 💾 [SAVE] Objet après modification: {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposait d'une salle. Trouvez-les, et vous saurez que vo...
+ 🔄 [SAVE] Synchronisation AVANT recherche - window: 27 lieux, dataManager: 0 lieux
+ 🔍 [SAVE] Recherche du lieu ID 1716584145654 dans 27 lieux - Index trouvé: 18
+ 💾 [SAVE] Lieu AVANT mise à jour (index 18): {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposa
+ 💾 [SAVE] Lieu APRÈS mise à jour (index 18): {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposa
+ 🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde: Array(1)
+ ❌ [SAVE] Personnage Gorlakh le Gardien de la Porte dissocié du lieu Les Salles des Protecteurs de la Route
+ ❌ [SAVE] Personnage Vieille-Griffe dissocié du lieu Les Salles des Protecteurs de la Route
+ ❌ [SAVE] Personnage sdfsfsdsdfsfdsf dissocié du lieu Les Salles des Protecteurs de la Route
+ ✅ [SAVE] Personnage AAAAAAA associé au lieu Les Salles des Protecteurs de la Route
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ 💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles
+ 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+   - AAAAAAA (id: 1762325997337): Object
+ ✅ Rendered 27 location markers (thumbnails: false)
+ 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+   - AAAAAAA (id: 1762325997337): Object
+ ✅ Rendered 27 location markers (thumbnails: false)
+ ❌ Exiting edit mode
+ 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+ 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+ 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(1)
+ 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+ ✅ [exitEditMode] Mode lecture activé
+ ✅ [SAVE] Sauvegarde locale terminée - retour en mode lecture
+ 🔄 [exitEditMode] Force mode lecture pour Personnages
+ 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+ 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+ 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(1)
+ 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ Personnage créé: 111111111 (Monstre) avec mapId: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📋 [InfoBoxManager] Showing info box for: Les Salles des Protecteurs de la Route Type: location Object
+ 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+ 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+ 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(1)
+ 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+ 📋 [updateTabsVisibility] Type: location, isCharacter: false
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+ ✅ Info box displayed successfully in expanded mode
+ ✏️ Entering edit mode for: Les Salles des Protecteurs de la Route
+ 💾 Saving edit...
+ 🔍 [SAVE] Analyse de 36 checkbox(es):
+   Checkbox 0: Object
+   Checkbox 1: Object
+   Checkbox 2: Object
+   Checkbox 3: Object
+   Checkbox 4: Object
+   Checkbox 5: Object
+infobox-manager.js:1060   Checkbox 6: Object
+infobox-manager.js:1060   Checkbox 7: Object
+infobox-manager.js:1060   Checkbox 8: Object
+infobox-manager.js:1060   Checkbox 9: Object
+infobox-manager.js:1060   Checkbox 10: Object
+infobox-manager.js:1060   Checkbox 11: Object
+infobox-manager.js:1060   Checkbox 12: Object
+infobox-manager.js:1060   Checkbox 13: Object
+infobox-manager.js:1060   Checkbox 14: Object
+infobox-manager.js:1060   Checkbox 15: Object
+infobox-manager.js:1060   Checkbox 16: Object
+infobox-manager.js:1060   Checkbox 17: Object
+infobox-manager.js:1060   Checkbox 18: Object
+infobox-manager.js:1060   Checkbox 19: Object
+infobox-manager.js:1060   Checkbox 20: Object
+infobox-manager.js:1060   Checkbox 21: Object
+infobox-manager.js:1060   Checkbox 22: Object
+infobox-manager.js:1060   Checkbox 23: Object
+infobox-manager.js:1060   Checkbox 24: Object
+infobox-manager.js:1060   Checkbox 25: Object
+infobox-manager.js:1060   Checkbox 26: Object
+infobox-manager.js:1060   Checkbox 27: Object
+infobox-manager.js:1060   Checkbox 28: Object
+infobox-manager.js:1060   Checkbox 29: Object
+infobox-manager.js:1060   Checkbox 30: Object
+infobox-manager.js:1060   Checkbox 31: Object
+infobox-manager.js:1060   Checkbox 32: Object
+infobox-manager.js:1060   Checkbox 33: Object
+infobox-manager.js:1060   Checkbox 34: Object
+infobox-manager.js:1060   Checkbox 35: Object
+infobox-manager.js:1074     → ID récupéré pour checkbox cochée: 1762341668073 (value: 1762341668073, data: 1762341668073)
+infobox-manager.js:1074     → ID récupéré pour checkbox cochée: 1762325997337 (value: 1762325997337, data: 1762325997337)
+infobox-manager.js:1079 🔍 [SAVE] AVANT update - location "Les Salles des Protecteurs de la Route" (id: 1716584145654)
+infobox-manager.js:1080 🔍 [SAVE] associatedCharacters AVANT: Array(1)
+infobox-manager.js:1081 🔍 [SAVE] Nouvelles associations cochées (2): Array(2)
+infobox-manager.js:1085 🔍 [SAVE] associatedCharacters APRÈS: Array(2)
+infobox-manager.js:1089 🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:
+infobox-manager.js:1093   - 111111111 (id: 1762341668073): Object
+infobox-manager.js:1093   - AAAAAAA (id: 1762325997337): Object
+infobox-manager.js:1102 💾 [SAVE] Objet après modification: {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposait d'une salle. Trouvez-les, et vous saurez que vo...
+infobox-manager.js:1197 🔄 [SAVE] Synchronisation AVANT recherche - window: 27 lieux, dataManager: 27 lieux
+infobox-manager.js:1205 🔍 [SAVE] Recherche du lieu ID 1716584145654 dans 27 lieux - Index trouvé: 18
+infobox-manager.js:1214 💾 [SAVE] Lieu AVANT mise à jour (index 18): {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposa
+infobox-manager.js:1219 💾 [SAVE] Lieu APRÈS mise à jour (index 18): {"Tradition_Ancienne":"Les rois des Nains avait nommé trois Protecteurs pour veiller à l'entretien et à la sécurité de la Route ; chacun d'eux disposa
+infobox-manager.js:1220 🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde: Array(2)
+infobox-manager.js:1251 ✅ [SAVE] Personnage 111111111 associé au lieu Les Salles des Protecteurs de la Route
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+infobox-manager.js:1263 💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles
+infobox-manager.js:1268 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1272   - 111111111 (id: 1762341668073): Object
+infobox-manager.js:1272   - AAAAAAA (id: 1762325997337): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1292 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1296   - 111111111 (id: 1762341668073): Object
+infobox-manager.js:1296   - AAAAAAA (id: 1762325997337): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:907 ❌ Exiting edit mode
+infobox-manager.js:1990 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+infobox-manager.js:2005 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+infobox-manager.js:2006 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(2)
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage 111111111 (ID: 1762341668073) - associé: true, sur carte: true
+infobox-manager.js:959 ✅ [exitEditMode] Mode lecture activé
+infobox-manager.js:1323 ✅ [SAVE] Sauvegarde locale terminée - retour en mode lecture
+infobox-manager.js:917 🔄 [exitEditMode] Force mode lecture pour Personnages
+infobox-manager.js:1990 🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData
+infobox-manager.js:2005 📋 [renderPersonnagesTabRead] Lieu/Région: Les Salles des Protecteurs de la Route
+infobox-manager.js:2006 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(2)
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+infobox-manager.js:2025 📋 [renderPersonnagesTabRead] Personnage 111111111 (ID: 1762341668073) - associé: true, sur carte: true
+(index):1 Uncaught TypeError: window.infoBoxManager.showCharacterFromLocation is not a function
+    at HTMLDivElement.onclick ((index):1:23)
+(index):1 Uncaught TypeError: window.infoBoxManager.showCharacterFromLocation is not a function
+    at HTMLDivElement.onclick ((index):1:23)
+(index):1 Uncaught TypeError: window.infoBoxManager.showCharacterFromLocation is not a function
+    at HTMLDivElement.onclick ((index):1:23)
+(index):1 Uncaught TypeError: window.infoBoxManager.showCharacterFromLocation is not a function
+    at HTMLDivElement.onclick ((index):1:23)
