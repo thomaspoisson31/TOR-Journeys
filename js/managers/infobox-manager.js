@@ -907,15 +907,15 @@ class InfoBoxManager {
         console.log("❌ Exiting edit mode");
         this.isEditMode = false;
         this.updateInfoBoxContent();
-        
+
         // APPROCHE SÉCURISÉE : Forcer le mode lecture sans tout détruire
         setTimeout(() => {
             const personnagesTab = document.getElementById('personnages-tab');
             const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
-            
+
             if (this.currentType === 'location' || this.currentType === 'region') {
                 console.log("🔄 [exitEditMode] Force mode lecture pour Personnages");
-                
+
                 if (personnagesTab) {
                     // 1. Cacher TOUS les formulaires d'édition
                     const editForms = personnagesTab.querySelectorAll('.edit-form');
@@ -923,20 +923,20 @@ class InfoBoxManager {
                         form.style.display = 'none';
                         form.classList.add('hidden');
                     });
-                    
+
                     // 2. Afficher la vue lecture
                     const textView = personnagesTab.querySelector('.text-view');
                     if (textView) {
                         textView.style.display = 'block';
                         textView.classList.remove('hidden');
                     }
-                    
+
                     // 3. Re-render le contenu lecture
                     this.renderPersonnagesTabRead();
                 }
             } else if (this.currentType === 'character') {
                 console.log("🔄 [exitEditMode] Force mode lecture pour Lieux/Régions");
-                
+
                 if (lieuxRegionsTab) {
                     // Même logique pour lieux-régions
                     const editForms = lieuxRegionsTab.querySelectorAll('.edit-form');
@@ -944,18 +944,18 @@ class InfoBoxManager {
                         form.style.display = 'none';
                         form.classList.add('hidden');
                     });
-                    
+
                     const textView = lieuxRegionsTab.querySelector('.text-view');
                     if (textView) {
                         textView.style.display = 'block';
                         textView.classList.remove('hidden');
                     }
-                    
+
                     this.renderLieuxRegionsTabRead();
                 }
             }
         }, 10); // Timeout réduit mais conservé pour sécurité
-        
+
         console.log("✅ [exitEditMode] Mode lecture activé");
     }
 
@@ -1053,7 +1053,7 @@ class InfoBoxManager {
         // Personnages associés (pour lieux et régions uniquement)
         if (this.currentType === 'location' || this.currentType === 'region') {
             const checkboxes = document.querySelectorAll('.character-checkbox');
-            
+
             // Log détaillé de CHAQUE checkbox pour debug
             console.log(`🔍 [SAVE] Analyse de ${checkboxes.length} checkbox(es):`);
             checkboxes.forEach((cb, index) => {
@@ -1064,7 +1064,7 @@ class InfoBoxManager {
                     className: cb.className
                 });
             });
-            
+
             // Récupérer les IDs des personnages cochés (normaliser en String)
             // IMPORTANT: Utiliser value maintenant qu'il est correctement défini
             const associatedCharacterIds = Array.from(checkboxes)
@@ -2577,6 +2577,123 @@ class InfoBoxManager {
 
         // Rafraîchir l'affichage
         this.renderLieuxRegionsTabEdit();
+    }
+
+    showCharacterFromLocation(characterId) {
+        console.log(`🔗 [showCharacterFromLocation] Ouverture personnage ID: ${characterId} depuis l'InfoBox d'un lieu/région`);
+
+        if (!window.charactersManager) {
+            console.error("❌ CharactersManager non disponible");
+            return;
+        }
+
+        // Recharger les données pour avoir les infos à jour
+        window.charactersManager.loadCharactersFromLocal();
+
+        const character = window.charactersManager.characters.find(c => String(c.id) === String(characterId));
+        if (!character) {
+            console.error(`❌ Personnage non trouvé: ${characterId}`);
+            return;
+        }
+
+        // Sauvegarder l'InfoBox actuelle pour pouvoir y revenir
+        this.previousInfoBox = {
+            item: this.currentItem,
+            type: this.currentType,
+            fromInfoBox: true, // Flag pour indiquer qu'on vient d'une InfoBox (pas de la liste)
+            shouldShowPersonnagesTab: true // Flag pour réafficher l'onglet Personnages au retour
+        };
+
+        console.log(`✅ [showCharacterFromLocation] previousInfoBox sauvegardée:`, this.previousInfoBox);
+
+        // Créer un événement simulé pour le positionnement
+        const fakeEvent = {
+            clientX: window.innerWidth / 2,
+            clientY: window.innerHeight / 2,
+            type: 'click'
+        };
+
+        // Afficher l'InfoBox du personnage
+        this.showInfoBox(fakeEvent, character, 'character');
+    }
+
+    deleteItem() {
+        if (!this.currentItem) {
+            console.error("❌ Aucun élément à supprimer");
+            return;
+        }
+
+        const itemName = this.currentItem.name;
+        const itemType = this.currentType;
+
+        const confirmMessage = `Voulez-vous vraiment supprimer ${itemType === 'character' ? 'le personnage' : itemType === 'region' ? 'la région' : 'le lieu'} "${itemName}" ?`;
+
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+
+        console.log(`🗑️ [deleteItem] Suppression de ${itemType}: ${itemName} (ID: ${this.currentItem.id})`);
+
+        if (itemType === 'location') {
+            // Supprimer le lieu
+            if (window.locationsData && window.locationsData.locations) {
+                const index = window.locationsData.locations.findIndex(loc => 
+                    String(loc.id) === String(this.currentItem.id)
+                );
+
+                if (index !== -1) {
+                    window.locationsData.locations.splice(index, 1);
+
+                    // Synchroniser avec dataManager
+                    if (window.dataManager) {
+                        window.dataManager.locationsData = window.locationsData;
+                        window.dataManager.saveLocationsToLocal();
+                    }
+
+                    console.log(`✅ Lieu supprimé: ${itemName}`);
+                } else {
+                    console.error(`❌ Lieu non trouvé dans locationsData: ${this.currentItem.id}`);
+                }
+            }
+        } else if (itemType === 'region') {
+            // Supprimer la région
+            if (window.regionsData && window.regionsData.regions) {
+                const index = window.regionsData.regions.findIndex(reg => 
+                    String(reg.id) === String(this.currentItem.id)
+                );
+
+                if (index !== -1) {
+                    window.regionsData.regions.splice(index, 1);
+
+                    // Synchroniser avec dataManager
+                    if (window.dataManager) {
+                        window.dataManager.regionsData = window.regionsData;
+                        window.dataManager.saveRegionsToLocal();
+                    }
+
+                    console.log(`✅ Région supprimée: ${itemName}`);
+                } else {
+                    console.error(`❌ Région non trouvée dans regionsData: ${this.currentItem.id}`);
+                }
+            }
+        } else if (itemType === 'character') {
+            // Supprimer le personnage via CharactersManager
+            if (window.charactersManager) {
+                window.charactersManager.deleteCharacter(this.currentItem.id);
+                console.log(`✅ Personnage supprimé: ${itemName}`);
+            }
+        }
+
+        // Fermer l'InfoBox
+        this.hideInfoBox();
+
+        // Re-render les éléments
+        if (window.renderLocations) {
+            window.renderLocations();
+        }
+        if (window.renderRegions) {
+            window.renderRegions();
+        }
     }
 }
 
