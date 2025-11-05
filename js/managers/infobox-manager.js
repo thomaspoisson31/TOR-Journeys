@@ -1260,7 +1260,10 @@ class InfoBoxManager {
             this.renderPersonnagesTabRead();
         }
 
-        console.log("✅ [SAVE] Sauvegarde locale terminée");
+        // Sortir du mode édition après la sauvegarde
+        this.exitEditMode();
+
+        console.log("✅ [SAVE] Sauvegarde locale terminée - retour en mode lecture");
 
     }
 
