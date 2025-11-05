@@ -1,0 +1,374 @@
+(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+(anonymous) @ (index):64
+upload-manager.js:355 📤 UploadManager module loaded
+infobox-manager.js:3105 📋 InfoBoxManager module loaded
+library-manager.js:202 📚 LibraryManager module loaded
+characters-manager.js:824 👥 CharactersManager module loaded
+main.js:34 ✅ Constants loaded successfully
+main.js:97 ✅ Global variables initialized
+main.js:105 ✅ Essential DOM elements: {viewport: true, mapContainer: true, mapImage: true, loaderOverlay: true}
+main.js:2783 📋 Simplified main.js loaded - waiting for DOM ready
+main.js:114 🚀 Starting simplified application...
+main.js:61 🏭 Production mode - version badge hidden
+main.js:122 ✅ DataManager initialized
+filter-manager.js:20 🔍 FilterManager initialized
+main.js:124 ✅ FilterManager initialized
+main.js:134 ✅ VoyageManager initialized
+main.js:141 ✅ PathManager initialized
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"month":"Lothron","day":19}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {month: 'Lothron', day: 19}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"month":"Lothron","day":19}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {month: 'Lothron', day: 19}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+main.js:147 ✅ CalendarManager initialized
+settings-manager.js:17 ⚙️ SettingsManager initialized
+settings-manager.js:1087 ⚙️ Configuration des listeners Import/Export...
+settings-manager.js:1094 📍 Boutons Lieux/Régions: {exportBtn: true, importBtn: true, fileInput: true}
+settings-manager.js:1131 👥 Boutons Personnages: {exportBtn: true, importBtn: true, fileInput: true}
+settings-manager.js:1170 ✅ Listeners Import/Export configurés
+main.js:153 ✅ SettingsManager initialized
+auth-manager.js:1808 [AuthManager] 🔑 Initialisation AuthManager null
+auth-manager.js:1808 [AuthManager] 🔍 Vérification du statut d'authentification null
+auth-manager.js:1808 [AuthManager] 👂 Écoute des changements de localStorage activée. null
+main.js:175 ✅ AuthManager initialized
+upload-manager.js:10 📤 UploadManager initialized
+infobox-manager.js:25 📋 InfoBoxManager initialized with UploadManager
+main.js:184 ✅ InfoBoxManager initialized
+import-export-manager.js:17 📤 ImportExportManager initialized
+import-export-manager.js:44 📤 ImportExportManager event listeners configured
+main.js:193 ✅ ImportExportManager initialized
+main.js:196 📍 Initializing data structures...
+data-manager.js:10 📍 loadInitialLocations: Initialisation avec structure vide
+data-manager.js:15 ✅ Structure de données initialisée (vide, en attente du cloud)
+data-manager.js:61 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+data-manager.js:66 ✅ Structure de régions initialisée (vide, en attente du cloud)
+main.js:204 ✅ Data structures initialized (will be populated from cloud)
+main.js:228 ⏳ Waiting for SettingsManager to load active map...
+upload-manager.js:10 📤 UploadManager initialized
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1808 [AuthManager] ✅ Utilisateur authentifié trouvé null
+auth-manager.js:1808 [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1808 [AuthManager] 🌍 Environnement détecté: production (préfixe: prod_) null
+auth-manager.js:1808 [AuthManager] 📥 Chargement des données depuis le cloud (environnement: prod_) null
+auth-manager.js:1808 [AuthManager] ✅ Données cloud récupérées {_saved_at: '2025-11-05T06:29:01.003514', _sync_timestamp: 1762324141.003527, calendar: {…}, characters: {…}, filtersByMap: {…}, …}
+auth-manager.js:1808 [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+auth-manager.js:1808 [AuthManager] 🔄 Application des données du contexte (10) ['_saved_at', '_sync_timestamp', 'calendar', 'characters', 'filtersByMap', 'journal', 'locations', 'position', 'regions', 'settings']
+auth-manager.js:1808 [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+auth-manager.js:1808 [AuthManager] 💾 27 lieux sauvegardés dans localStorage null
+auth-manager.js:1808 [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+auth-manager.js:1808 [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 27 lieux null
+auth-manager.js:1808 [AuthManager] 📊 Structure locationsData: {locations: Array(27)}
+auth-manager.js:1808 [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+auth-manager.js:1808 [AuthManager] 📊 Structure regionsData: {regions: Array(0)}
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Données calendar reçues: {currentDate: null, isCalendarMode: true}
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 19, symbol: '🌧️', weather: "Des flaques d'eau miroitent sur le sol, reflétant …cit. L'eau est partout, la nature a bu à sa soif."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-fin', seasonMainName: 'printemps', symbol: '🌧️', fullName: 'Printemps-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-fin'}
+auth-manager.js:1808 [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+auth-manager.js:1808 [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+settings-manager.js:1237 ⚙️ Chargement des paramètres depuis le contexte: {activeMapUrl: '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', availableMaps: Array(3)}
+settings-manager.js:1249 ✅ Cartes chargées: 3
+settings-manager.js:1253 ✅ Carte active URL: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+settings-manager.js:1281 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+settings-manager.js:1286 🗺️ Échelle de la carte active: 60 miles
+settings-manager.js:1341 ✅ Paramètres chargés avec succès
+auth-manager.js:1808 [AuthManager] 🗺️ 3 carte(s) restaurée(s) depuis le cloud null
+auth-manager.js:1808 [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+auth-manager.js:1808 [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+auth-manager.js:1808 [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+auth-manager.js:1808 [AuthManager] 👥 Application de 41 personnages depuis le contexte null
+auth-manager.js:533 📍 [applyContextData] Position reçue du cloud: {mapId: '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', x: 2060.279826936727, y: 1907.4219275850883}
+auth-manager.js:534 📍 [applyContextData] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+auth-manager.js:535 📍 [applyContextData] Carte de la position: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+auth-manager.js:540 📍 [applyContextData] AVANT setItem - position à sauver: {mapId: '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', x: 2060.279826936727, y: 1907.4219275850883}
+auth-manager.js:546 📍 [applyContextData] APRÈS setItem - position vérif: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2060.279826936727,"y":1907.4219275850883}
+auth-manager.js:551 📍 [applyContextData] APRÈS setItem - flag vérif: true
+auth-manager.js:553 [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: {mapId: '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', x: 2060.279826936727, y: 1907.4219275850883}
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Sauvegarde des filtres pour restauration différée null
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Données filtersByMap reçues: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp: {…}, /uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg: {…}, /uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg: {…}}
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Nombre de cartes avec filtres: 5 null
+auth-manager.js:1808 [AuthManager] 💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager null
+auth-manager.js:1808 [AuthManager] ⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init null
+auth-manager.js:1808 [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+auth-manager.js:1808 [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+auth-manager.js:1808 [AuthManager] ✅ Contexte appliqué avec succès null
+auth-manager.js:1808 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1808 [AuthManager] 💾 3 carte(s) sauvegardée(s) dans localStorage null
+auth-manager.js:1808 [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+auth-manager.js:1808 [AuthManager]   - 41 personnages sauvegardés dans localStorage. null
+auth-manager.js:1808 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1808 [AuthManager] 🎨 Rendu forcé après chargement cloud null
+main.js:437 ✅ Rendered 27 location markers (thumbnails: true)
+auth-manager.js:1808 [AuthManager] ✅ 27 lieux rendus depuis le cloud null
+main.js:586 ✅ Rendered 0 region polygons
+auth-manager.js:1808 [AuthManager] ✅ 0 régions rendues depuis le cloud null
+auth-manager.js:1808 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+auth-manager.js:1808 [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+settings-manager.js:1290 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1301 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+settings-manager.js:1305 🗺️ Réinitialisation de la carte depuis loadSettings
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 5000 x 3229
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.206 (viewportWidth=1029, MAP_WIDTH=5000)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+ 🎨 Setting up color change modal...
+ ✅ Color change modal setup complete
+ ✅ Location adding setup complete
+ 🔍 Setting up FilterManager...
+ 🔍 Setting up filter listeners...
+filter-manager.js:81 ✅ Filter listeners setup complete
+filter-manager.js:26 🔍 [loadFiltersFromStorage] Tentative de chargement - localStorage contient: données présentes
+filter-manager.js:31 ✅ [loadFiltersFromStorage] Filtres chargés depuis localStorage: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp: {…}, /uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg: {…}, /uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg: {…}}
+filter-manager.js:32 ✅ [loadFiltersFromStorage] 5 carte(s) avec filtres
+filter-manager.js:33 ✅ [loadFiltersFromStorage] Cartes avec filtres: (5) ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', '/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp', '/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg', '/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg']
+filter-manager.js:96 🔍 [tryLoadFiltersForActiveMap retry=0] activeMapUrl: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:97 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: (5) ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', '/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp', '/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg', '/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg']
+filter-manager.js:100 ✅ Chargement des filtres pour la carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:101 📊 Filtres à charger: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:634 🔍 [loadFiltersForMap] Tentative de chargement pour carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:635 🔍 [loadFiltersForMap] filtersByMap disponibles: (5) ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', '/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp', '/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg', '/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg']
+filter-manager.js:638 📥 [loadFiltersForMap] Filtres trouvés: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:640 📥 [loadFiltersForMap] activeFilters après copie: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:643 🎨 [loadFiltersForMap] Mise à jour de l'UI...
+filter-manager.js:645 ✅ [loadFiltersForMap] Appel de applyFilters...
+filter-manager.js:373 🔍 Applying filters... {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:374 🔍 Current filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp: {…}, /uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg: {…}, /uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg: {…}}
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:392 📊 Filtered: 27/27 locations, 0/0 regions
+filter-manager.js:505 ✅ Display updated - 27 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp: {…}, /uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg: {…}, /uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg: {…}}
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+auth-manager.js:1808 [AuthManager] 🔔 Modifications non sauvegardées détectées null
+main.js:664 ✅ FilterManager setup complete
+main.js:671 🚀 Setting up VoyageManager...
+main.js:673 ✅ VoyageManager setup complete
+main.js:678 🗺️ Setting up PathManager...
+path-manager.js:50 🎨 Canvas configuré : 5000x3229
+path-manager.js:38 🛤️ PathManager initialized
+main.js:680 ✅ PathManager setup complete
+main.js:697 🔍 [initializeMap] Création du ZoomManager
+zoom-manager.js:26 🔍 Initializing ZoomManager... {scale: 0.2058, MAP_WIDTH: 0, MAP_HEIGHT: 0}
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.206
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.206, ratio=0.027, x=4.1px, sliderWidth=0px
+zoom-manager.js:34 ✅ ZoomManager initialized {scale: 0.2058, sliderWidth: 0, controlExists: true}
+main.js:726 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 5000 MAP_HEIGHT: 3229
+main.js:731 📍 [main.js] État localStorage AVANT init PositionManager - position: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2060.279826936727,"y":1907.4219275850883} flag: true
+position-manager.js:25 📍 [PositionManager.loadPosition] État du flag cloud: true
+position-manager.js:26 📍 [PositionManager.loadPosition] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+position-manager.js:29 📍 [PositionManager.loadPosition] Position dans localStorage: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2060.279826936727,"y":1907.4219275850883}
+position-manager.js:42 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: {mapId: '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', x: 2060.279826936727, y: 1907.4219275850883}
+position-manager.js:14 📍 Initializing PositionManager...
+position-manager.js:94 📍 [PositionManager] 0 marqueur(s) existant(s) supprimé(s)
+position-manager.js:17 ✅ PositionManager initialized with position: {mapId: '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', x: 2060.279826936727, y: 1907.4219275850883}
+main.js:748 ✅ PositionManager initialized with position: {mapId: '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', x: 2060.279826936727, y: 1907.4219275850883}
+main.js:752 📍 [main.js] Nettoyage du flag cloud après initialisation
+journal-manager.js:11 📖 Initialisation du JournalManager
+journal-manager.js:48 📖 undefined voyage(s) chargé(s) depuis le localStorage
+main.js:760 ✅ JournalManager initialized
+adventure-manager.js:417 ✅ Adventure data loaded from localStorage
+adventure-manager.js:24 🎲 Initializing AdventureManager...
+adventure-manager.js:26 ✅ AdventureManager initialized
+main.js:766 ✅ AdventureManager initialized
+characters-manager.js:15 👥 CharactersManager initialized
+characters-manager.js:103 📚 41 personnages chargés depuis localStorage
+characters-manager.js:21 ✅ CharactersManager setup complete
+main.js:772 ✅ CharactersManager initialized
+main.js:2635 🖌️ Setting up drawing events...
+main.js:2639 👂 Adding VoyageManager drawing listeners...
+voyage-manager.js:86 🎨 VoyageManager drawing listeners configured
+main.js:2641 ✅ VoyageManager drawing listeners added
+main.js:2644 ✅ Drawing events setup complete
+main.js:925 🔍 [resetView] Nouveau scale calculé: 0.185 (MAP_WIDTH=5000, MAP_HEIGHT=3229)
+main.js:942 🔍 [resetView] Synchronisation ZoomManager avec scale=0.185
+main.js:783 🔍 [initializeMap] Application finale des filtres après resetView
+main.js:789 ✅ Map initialized successfully
+zoom-manager.js:88 🔍 [ZoomManager] Largeur du slider calculée: 150
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.185
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.185, ratio=0.022, x=3.3px, sliderWidth=150px
+filter-manager.js:373 🔍 Applying filters... {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:374 🔍 Current filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp: {…}, /uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg: {…}, /uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg: {…}}
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:392 📊 Filtered: 27/27 locations, 0/0 regions
+filter-manager.js:505 ✅ Display updated - 27 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp: {…}, /uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg: {…}, /uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg: {…}}
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251028_211900_ab31eb33-01d2-4395-89d9-1055f6f9d0c1.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/Tharbad-Map-Colour_page-0001.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+infobox-manager.js:77 📋 [InfoBoxManager] Showing info box for: Le Trône du Balrog p.170 Type: location {eventType: 'mouseup', timeStamp: 4500.700000047684, target: 'location-marker', currentItem: undefined, isEditMode: false}
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:116 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:165 📋 [switchTab] Changement d'onglet vers: personnages, currentType: location
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+auth-manager.js:1808 [AuthManager] 🔄 Synchronisation manuelle vers cloud (environnement: prod_) null
+auth-manager.js:1808 [AuthManager] 📦 Collecte des données du contexte actuel... null
+auth-manager.js:1808 [AuthManager] 📦 Données collectées pour le contexte (8) ['locations', 'regions', 'characters', 'calendar', 'settings', 'journal', 'position', 'filtersByMap']
+auth-manager.js:1808 [AuthManager] 📅 [collectCurrentContextData] Calendar dans les données collectées: {currentDate: null, isCalendarMode: true}
+auth-manager.js:1808 [AuthManager] 📦 Données locales collectées null
+auth-manager.js:1808 [AuthManager] 🔍 Vérification des suppressions de lieux... null
+auth-manager.js:1808 [AuthManager] 🗺️ Carte active pour comparaison: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+auth-manager.js:1808 [AuthManager] 📊 Comparaison pour carte active: Cloud=27 lieux, Local=27 lieux null
+auth-manager.js:1808 [AuthManager] 🔍 Détail - Cloud IDs: 1716584013579, 1716584020111, 1716584027453, 1716584033987, 1716584041234, 1716584048765, 1716584055432, 1716584062111, 1716584069876, 1716584077543, 1716584084321, 1716584091987, 1716584099654, 1716584107321, 1716584114987, 1716584122654, 1716584130321, 1716584137987, 1716584145654, 1716584153321, 1716584160987, 1716584168654, 1716584176321, 1716584183987, 1716584191654, 1716584199321, location_1762067947919 null
+auth-manager.js:1808 [AuthManager] 🔍 Détail - Local IDs: 1716584013579, 1716584020111, 1716584027453, 1716584033987, 1716584041234, 1716584048765, 1716584055432, 1716584062111, 1716584069876, 1716584077543, 1716584084321, 1716584091987, 1716584099654, 1716584107321, 1716584114987, 1716584122654, 1716584130321, 1716584137987, 1716584145654, 1716584153321, 1716584160987, 1716584168654, 1716584176321, 1716584183987, 1716584191654, 1716584199321, location_1762067947919 null
+auth-manager.js:1808 [AuthManager] ✅ Aucune suppression détectée pour la carte active (Cloud: 27, Local: 27) null
+auth-manager.js:1808 [AuthManager] 🔍 [syncUserData] activeMapId: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+auth-manager.js:1808 [AuthManager] ℹ️ Aucun lieu/région sans mapId à mettre à jour null
+auth-manager.js:1081 📤 [CLOUD] Envoi des données locales (écrasement cloud): {locations_count: 27, regions_count: 0, characters_count: 41, taille_json: 66613}
+auth-manager.js:1089 📤 [CLOUD] Envoi vers serveur...
+auth-manager.js:1090 📤 [CLOUD] PAYLOAD COMPLET: {
+  "locations": {
+    "locations": [
+      {
+        "Rumeur": "Les Nains creusèrent durant des milliers d'années, en quête de mithril. Il en reste des tas, sous la montagne. Si vous êtes assez courageux pour aller la chercher, une fortune vous y attend !",
+        "Tradition_Ancienne": "Certes, les mines de mithril des Nains étaient immenses, car on n'en trouvait que dans de rares veines, et les mineurs devaient suivre ces filons scintillants loin sous les montagnes. Ce métal fut découvert dans une vaste caverne parmi les racines des montagnes; on appelle cet endroit l'Antre des Étoiles Oubliées.",
+        "associatedCharacters": [
+          "100030",
+          "100031"
+        ],
+        "color": "red",
+        "coordinates": {
+          "x": 3051,
+          "y": 2708
+        },
+        "description": "Cette immense caverne était jadis le cœur de la mine de mithril. Elle fut creusée à mesure que le mithril était extrait; puis les Nains la remplirent de machines qui tamisaient et rinçaient le minerai avant qu'il ne soit expédié par les Marches Gémissantes jusqu'aux raffineries et aux fonderies de la cité, loin au-dessus. La fureur du Balrog anéantit toute cette machinerie désormais, la grotte est utilisée comme enclos pour les esclaves travaillant dans les mines. Les Orques n'osent pas chercher du mithril, mais de riches gisements de fer et d'or peuvent encore être découverts.",
+        "id": 1716584013579,
+        "images": [
+          {
+            "thumbnailUrl": null,
+            "type": null,
+            "url": "/uploads/101960341020312309143/locations/Moria/img1108.jpg"
+          }
+        ],
+        "known": false,
+        "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+        "name": "L'Antre des Étoiles Oubliées p.166",
+        "type": "custom",
+        "visited": false
+      },
+      {
+        "Rumeur": "Les Nains de jadis forgeaient des armes puissantes, qu'ils entreposaient dans une armurerie au plus profond de leur cité.",
+        "Tradition_Ancienne": "Les Armureries de la Troisième Profondeur étaient le cœur de l'arsenal nain : elles contenaient assez d'armes et d'armures pour équiper une armée entière. Cottes de mailles, casques, épées, haches et lances s'y trouvaient en quantités innombrables. Les Nains y entreposaient aussi les armes enchantées forgées par les maîtres d'antan : celles façonnées par la main sans égale de Telchar et l'esprit incomparable de Narvi, et les œuvres bénies de Durin lui-même.",
+        "associatedCharacters": [
+          "100027"
+        ],
+        "color": "blue",
+        "coordinates": {
+          "x": 3697,
+          "y": 2659
+        },
+        "description": "Les Armureries n'étaient pas de simples entrepôts : y stationnaient aussi les Gardiens des Tunnels. Le rôle de ces combattants nains était de repousser les attaques venant des profondeurs de la cité; bien que les défenses extérieures de la Moria fussent impénétrables, les Nains craignaient que les Gobelins ne s'immiscent par des tunnels inconnus ou n'ébranlent les fondations des portes de la cité. Lorsque le Balrog s'éveilla, les Gardiens des Tunnels furent envoyés défendre leur cité, et ils donnèrent bravement leur vie lors de la Bataille des Salles Empoisonnées. Les Armureries, elles, restèrent quasiment intactes, protégées par le poison même qui tua les Gardiens.",
+        "id": 1716584020111,
+        "images": [
+          {
+            "type": "vignette",
+            "url": "/uploads/101960341020312309143/locations/Moria/img1847.jpg"
+          }
+        ],
+        "known": true,
+        "mapId": "/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg",
+        "name": "Les Armureries de la Troisième Profondeur",
+        "type": "custom",
+        "visited": false
+      },
+      {
+        "Rumeur": "Ah, la splendeur de la Moria à son apogée ! Les clairières de pierre fleurie ! Les Nains avaient bâti un véritable jardin, sous la montagne !",
+        "Tradition_Ancienne": "Les Jardins Troglodytes du Roi Thrym étaient l'une des merveilles de l'ancien monde. En explorant les tunnels des Monts Brumeux, les Nains découvrirent une grande caverne naturelle; ils en firent un jardin magnifique, à la fois sauvage, humide et lumineux. Y furent semées des herbes et des plantes rares, pour que les Nains blessés puissent trouver du réconfort.",
+        "associatedCharacters": [
+          "100019",
+          "1762092976601"
+        ],
+        "color": "green",
+        "coordinates": {
+          "x": 4084,
+          "y": 2640
+        },
+        "description": "Ce fut l'un des premiers rois de Khazad-dûm qui découvrit sous les Monts Brumeux ce dédale d'immenses cavernes naturelles. Les Nains les transformèrent en un grand parc, où des champignons de la taille de grands arbres et de luxuriantes étendues de mousse s'étiraient sous un ciel rocheux. Au milieu des jardins, ils bâtirent des tours, des places, des monuments et tan
+auth-manager.js:1101 📥 [CLOUD] Réponse serveur - Status: 200 
+auth-manager.js:1110 📥 [CLOUD] Résultat serveur: {conflict_detected: false, success: true}
+auth-manager.js:1119 ✅ [CLOUD] === SYNCHRONISATION RÉUSSIE ===
+auth-manager.js:1808 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+auth-manager.js:1808 [AuthManager] 🔍 Ouverture du debug des données cloud null
+auth-manager.js:1651 === DEBUG DONNÉES CLOUD ===
+auth-manager.js:1652 Environnement actuel: PRODUCTION (prod_)
+auth-manager.js:1653 Environnement des données: non spécifié
+auth-manager.js:1654 Status: ok
+auth-manager.js:1655 User ID: undefined
+auth-manager.js:1656 Record ID: undefined
+auth-manager.js:1657 Created: 2025-11-05T06:30:50.813866
+auth-manager.js:1658 Updated: 2025-11-05T06:30:50.813866
+auth-manager.js:1659 Summary: {filtersByMap_count: 5, has_calendar: true, has_filtersByMap: true, has_journal: true, has_position: true, …}
+auth-manager.js:1660 Full Data: {_saved_at: '2025-11-05T06:30:50.813866', _sync_timestamp: 1762324250.813879, calendar: {…}, characters: {…}, filtersByMap: {…}, …}
+auth-manager.js:1661 Raw JSON Size: 73608 bytes
+auth-manager.js:1662 =========================
+infobox-manager.js:77 📋 [InfoBoxManager] Showing info box for: Le Trône du Balrog p.170 Type: location {eventType: 'mouseup', timeStamp: 184791.10000014305, target: 'location-marker', currentItem: undefined, isEditMode: false}
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:116 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:1141 ✏️ Entering edit mode for: Le Trône du Balrog p.170
+infobox-manager.js:1194 💾 Saving edit...
+infobox-manager.js:1252 🔍 [SAVE] AVANT update - location "Le Trône du Balrog p.170" (id: 1716584176321)
+infobox-manager.js:1253 🔍 [SAVE] associatedCharacters AVANT: ['1762117985099']
+infobox-manager.js:1254 🔍 [SAVE] Nouvelles associations cochées: ['1762117985099']
+infobox-manager.js:1258 🔍 [SAVE] associatedCharacters APRÈS: ['1762117985099']
+infobox-manager.js:1262 🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:
+infobox-manager.js:1266   - Angolath la Scolopendre (id: 1762117985099): {associatedLocations: Array(2), associatedRegions: undefined}
+infobox-manager.js:1275 💾 [SAVE] Objet après modification: {"Rumeur":"« Ghâsh, disent les Orques – le feu ! C’est le seul mot qu’ils lâchent. »","Tradition_Ancienne":"« En Terre du Milieu, peu de lieux abritent la tradition des Temps Anciens... Nul récit ne p...
+infobox-manager.js:1370 🔄 [SAVE] Synchronisation AVANT recherche - window: 27 lieux, dataManager: 0 lieux
+infobox-manager.js:1378 🔍 [SAVE] Recherche du lieu ID 1716584176321 dans 27 lieux - Index trouvé: 22
+infobox-manager.js:1387 💾 [SAVE] Lieu AVANT mise à jour (index 22): {"Rumeur":"« Ghâsh, disent les Orques – le feu ! C’est le seul mot qu’ils lâchent. »","Tradition_Ancienne":"« En Terre du Milieu, peu de lieux abriten
+infobox-manager.js:1392 💾 [SAVE] Lieu APRÈS mise à jour (index 22): {"Rumeur":"« Ghâsh, disent les Orques – le feu ! C’est le seul mot qu’ils lâchent. »","Tradition_Ancienne":"« En Terre du Milieu, peu de lieux abriten
+infobox-manager.js:1393 🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde: ['1762117985099']
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+auth-manager.js:1808 [AuthManager] 🔔 Modifications non sauvegardées détectées null
+infobox-manager.js:1436 💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles
+infobox-manager.js:1441 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1445   - Angolath la Scolopendre (id: 1762117985099): {associatedLocations: Array(2), associatedRegions: undefined}
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1465 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1469   - Angolath la Scolopendre (id: 1762117985099): {associatedLocations: Array(2), associatedRegions: undefined}
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1499 🔄 [SAVE] Re-render de l'onglet personnages après sauvegarde
+infobox-manager.js:165 📋 [switchTab] Changement d'onglet vers: personnages, currentType: location
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:1508 ✅ [SAVE] Sauvegarde locale terminée
