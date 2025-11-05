@@ -908,53 +908,37 @@ class InfoBoxManager {
         this.isEditMode = false;
         this.updateInfoBoxContent();
         
-        // APPROCHE SÉCURISÉE : Forcer le mode lecture sans tout détruire
+        // SOLUTION SIMPLE : Re-render l'onglet actif après stabilisation du DOM
         setTimeout(() => {
-            const personnagesTab = document.getElementById('personnages-tab');
-            const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
+            console.log("🔄 [exitEditMode] Re-render de l'onglet actif après sauvegarde");
             
-            if (this.currentType === 'location' || this.currentType === 'region') {
-                console.log("🔄 [exitEditMode] Force mode lecture pour Personnages");
-                
-                if (personnagesTab) {
-                    // 1. Cacher TOUS les formulaires d'édition
-                    const editForms = personnagesTab.querySelectorAll('.edit-form');
-                    editForms.forEach(form => {
-                        form.style.display = 'none';
-                        form.classList.add('hidden');
-                    });
-                    
-                    // 2. Afficher la vue lecture
-                    const textView = personnagesTab.querySelector('.text-view');
-                    if (textView) {
-                        textView.style.display = 'block';
-                        textView.classList.remove('hidden');
-                    }
-                    
-                    // 3. Re-render le contenu lecture
-                    this.renderPersonnagesTabRead();
-                }
-            } else if (this.currentType === 'character') {
-                console.log("🔄 [exitEditMode] Force mode lecture pour Lieux/Régions");
-                
-                if (lieuxRegionsTab) {
-                    // Même logique pour lieux-régions
-                    const editForms = lieuxRegionsTab.querySelectorAll('.edit-form');
-                    editForms.forEach(form => {
-                        form.style.display = 'none';
-                        form.classList.add('hidden');
-                    });
-                    
-                    const textView = lieuxRegionsTab.querySelector('.text-view');
-                    if (textView) {
-                        textView.style.display = 'block';
-                        textView.classList.remove('hidden');
-                    }
-                    
-                    this.renderLieuxRegionsTabRead();
-                }
+            // Identifier l'onglet actif
+            const activeTab = document.querySelector('.tab-content.active');
+            if (!activeTab) {
+                console.warn("⚠️ [exitEditMode] Aucun onglet actif trouvé");
+                return;
             }
-        }, 10); // Timeout réduit mais conservé pour sécurité
+            
+            const tabId = activeTab.id;
+            console.log(`🔄 [exitEditMode] Onglet actif: ${tabId}`);
+            
+            // Re-render selon l'onglet actif
+            if (tabId === 'personnages-tab' && (this.currentType === 'location' || this.currentType === 'region')) {
+                console.log("🔄 [exitEditMode] Re-render onglet Personnages");
+                this.renderPersonnagesTabRead();
+            } else if (tabId === 'lieux-regions-tab' && this.currentType === 'character') {
+                console.log("🔄 [exitEditMode] Re-render onglet Lieux/Régions");
+                this.renderLieuxRegionsTabRead();
+            } else if (tabId === 'text-tab') {
+                console.log("🔄 [exitEditMode] Re-render onglet Texte");
+                // Déjà géré par updateInfoBoxContent
+            } else if (tabId === 'rumeurs-traditions-tab') {
+                console.log("🔄 [exitEditMode] Re-render onglet Rumeurs");
+                // Déjà géré par updateInfoBoxContent
+            }
+            
+            console.log("✅ [exitEditMode] Re-render terminé");
+        }, 50); // Délai légèrement augmenté pour stabilité DOM
         
         console.log("✅ [exitEditMode] Mode lecture activé");
     }
