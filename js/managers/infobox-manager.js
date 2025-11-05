@@ -907,6 +907,16 @@ class InfoBoxManager {
         console.log("❌ Exiting edit mode");
         this.isEditMode = false;
         this.updateInfoBoxContent();
+        
+        // Forcer le re-render de l'onglet Personnages en mode lecture
+        if (this.currentType === 'location' || this.currentType === 'region') {
+            this.renderPersonnagesTabRead();
+        }
+        
+        // Forcer le re-render de l'onglet Lieux/Régions en mode lecture pour les personnages
+        if (this.currentType === 'character') {
+            this.renderLieuxRegionsTabRead();
+        }
     }
 
     addRumeurInEdit() {
