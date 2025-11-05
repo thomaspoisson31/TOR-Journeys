@@ -178,6 +178,17 @@ class InfoBoxManager {
         if (targetButton) targetButton.classList.add('active');
         if (targetContent) targetContent.classList.add('active');
 
+        // Re-render les onglets relationnels pour garantir que les données sont à jour
+        if (!this.isEditMode) {
+            if (tabName === 'personnages' && (this.currentType === 'location' || this.currentType === 'region')) {
+                console.log("🔄 [switchTab] Re-render onglet Personnages au clic");
+                this.renderPersonnagesTabRead();
+            } else if (tabName === 'lieux-regions' && this.currentType === 'character') {
+                console.log("🔄 [switchTab] Re-render onglet Lieux/Régions au clic");
+                this.renderLieuxRegionsTabRead();
+            }
+        }
+
         // Appliquer la logique d'affichage conditionnel
         this.updateTabsVisibility();
     }
@@ -907,39 +918,6 @@ class InfoBoxManager {
         console.log("❌ Exiting edit mode");
         this.isEditMode = false;
         this.updateInfoBoxContent();
-        
-        // SOLUTION SIMPLE : Re-render l'onglet actif après stabilisation du DOM
-        setTimeout(() => {
-            console.log("🔄 [exitEditMode] Re-render de l'onglet actif après sauvegarde");
-            
-            // Identifier l'onglet actif
-            const activeTab = document.querySelector('.tab-content.active');
-            if (!activeTab) {
-                console.warn("⚠️ [exitEditMode] Aucun onglet actif trouvé");
-                return;
-            }
-            
-            const tabId = activeTab.id;
-            console.log(`🔄 [exitEditMode] Onglet actif: ${tabId}`);
-            
-            // Re-render selon l'onglet actif
-            if (tabId === 'personnages-tab' && (this.currentType === 'location' || this.currentType === 'region')) {
-                console.log("🔄 [exitEditMode] Re-render onglet Personnages");
-                this.renderPersonnagesTabRead();
-            } else if (tabId === 'lieux-regions-tab' && this.currentType === 'character') {
-                console.log("🔄 [exitEditMode] Re-render onglet Lieux/Régions");
-                this.renderLieuxRegionsTabRead();
-            } else if (tabId === 'text-tab') {
-                console.log("🔄 [exitEditMode] Re-render onglet Texte");
-                // Déjà géré par updateInfoBoxContent
-            } else if (tabId === 'rumeurs-traditions-tab') {
-                console.log("🔄 [exitEditMode] Re-render onglet Rumeurs");
-                // Déjà géré par updateInfoBoxContent
-            }
-            
-            console.log("✅ [exitEditMode] Re-render terminé");
-        }, 50); // Délai légèrement augmenté pour stabilité DOM
-        
         console.log("✅ [exitEditMode] Mode lecture activé");
     }
 
