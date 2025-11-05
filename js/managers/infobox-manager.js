@@ -1003,9 +1003,10 @@ class InfoBoxManager {
         // Personnages associés (pour lieux et régions uniquement)
         if (this.currentType === 'location' || this.currentType === 'region') {
             const checkboxes = document.querySelectorAll('.character-checkbox');
+            // Récupérer les IDs des personnages cochés (forcer String pour cohérence)
             const associatedCharacterIds = Array.from(checkboxes)
                 .filter(cb => cb.checked)
-                .map(cb => cb.dataset.characterId);
+                .map(cb => String(cb.value));
 
             console.log(`🔍 [SAVE] AVANT update - ${this.currentType} "${this.currentItem.name}" (id: ${this.currentItem.id})`);
             console.log(`🔍 [SAVE] associatedCharacters AVANT:`, this.currentItem.associatedCharacters);
@@ -1934,7 +1935,7 @@ class InfoBoxManager {
         // Filtrer les personnages associés à ce lieu/région
         const activeMapId = window.settingsManager?.activeMapUrl;
         const associatedCharacters = window.charactersManager.characters.filter(char => {
-            const isAssociated = associatedCharacterIds.includes(char.id);
+            const isAssociated = associatedCharacterIds.includes(String(char.id));
             const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
             return isAssociated && isOnCurrentMap;
         });
@@ -2129,28 +2130,20 @@ class InfoBoxManager {
         const html = `
             <div class="space-y-2 mb-4">
                 ${availableCharacters.map(character => {
-                    const isAssociated = associatedCharacterIds.includes(character.id);
+                    const isAssociated = associatedCharacterIds.includes(String(character.id));
                     const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+                    const type = character.type === 'PJ' ? 'Joueur' : (character.type === 'PNJ' ? 'PNJ' : 'Autre');
                     return `
                         <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
                             <input type="checkbox"
-                                   class="character-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                   data-character-id="${character.id}"
-                                   ${isAssociated ? 'checked' : ''}>
-                            ${thumbnailImage ? `
-                                <img src="${thumbnailImage.url}" alt="${character.name}"
-                                     class="w-10 h-10 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
-                            ` : `
-                                <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
-                                    <i class="fas fa-user text-sm text-gray-400"></i>
-                                </div>
-                            `}
-                            <div class="flex-1">
-                                <div class="font-medium text-white text-sm">${character.name}</div>
-                                <span class="inline-block px-2 py-0.5 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'} text-white">
-                                    ${character.type || 'PNJ'}
-                                </span>
-                            </div>
+                                   id="character-${String(character.id)}"
+                                   value="${String(character.id)}"
+                                   ${isAssociated ? 'checked' : ''}
+                                   class="mr-2"
+                                   onchange="window.infoBoxManager.handleCharacterAssociationChange(this)">
+                            <label for="character-${String(character.id)}" class="cursor-pointer">
+                                ${character.name} <span class="text-xs text-gray-400">(${type})</span>
+                            </label>
                         </label>
                     `;
                 }).join('')}
