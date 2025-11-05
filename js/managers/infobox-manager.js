@@ -908,15 +908,20 @@ class InfoBoxManager {
         this.isEditMode = false;
         this.updateInfoBoxContent();
         
-        // Forcer le re-render de l'onglet Personnages en mode lecture
-        if (this.currentType === 'location' || this.currentType === 'region') {
-            this.renderPersonnagesTabRead();
-        }
-        
-        // Forcer le re-render de l'onglet Lieux/Régions en mode lecture pour les personnages
-        if (this.currentType === 'character') {
-            this.renderLieuxRegionsTabRead();
-        }
+        // Forcer le re-render de l'onglet après la mise à jour du contenu
+        setTimeout(() => {
+            // Forcer le re-render de l'onglet Personnages en mode lecture
+            if (this.currentType === 'location' || this.currentType === 'region') {
+                console.log("🔄 [exitEditMode] Force re-render Personnages tab");
+                this.renderPersonnagesTabRead();
+            }
+            
+            // Forcer le re-render de l'onglet Lieux/Régions en mode lecture pour les personnages
+            if (this.currentType === 'character') {
+                console.log("🔄 [exitEditMode] Force re-render Lieux/Régions tab");
+                this.renderLieuxRegionsTabRead();
+            }
+        }, 100);
     }
 
     addRumeurInEdit() {
