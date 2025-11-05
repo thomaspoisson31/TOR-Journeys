@@ -178,17 +178,6 @@ class InfoBoxManager {
         if (targetButton) targetButton.classList.add('active');
         if (targetContent) targetContent.classList.add('active');
 
-        // Re-render les onglets relationnels pour garantir que les données sont à jour
-        if (!this.isEditMode) {
-            if (tabName === 'personnages' && (this.currentType === 'location' || this.currentType === 'region')) {
-                console.log("🔄 [switchTab] Re-render onglet Personnages au clic");
-                this.renderPersonnagesTabRead();
-            } else if (tabName === 'lieux-regions' && this.currentType === 'character') {
-                console.log("🔄 [switchTab] Re-render onglet Lieux/Régions au clic");
-                this.renderLieuxRegionsTabRead();
-            }
-        }
-
         // Appliquer la logique d'affichage conditionnel
         this.updateTabsVisibility();
     }
@@ -918,6 +907,55 @@ class InfoBoxManager {
         console.log("❌ Exiting edit mode");
         this.isEditMode = false;
         this.updateInfoBoxContent();
+        
+        // APPROCHE SÉCURISÉE : Forcer le mode lecture sans tout détruire
+        setTimeout(() => {
+            const personnagesTab = document.getElementById('personnages-tab');
+            const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
+            
+            if (this.currentType === 'location' || this.currentType === 'region') {
+                console.log("🔄 [exitEditMode] Force mode lecture pour Personnages");
+                
+                if (personnagesTab) {
+                    // 1. Cacher TOUS les formulaires d'édition
+                    const editForms = personnagesTab.querySelectorAll('.edit-form');
+                    editForms.forEach(form => {
+                        form.style.display = 'none';
+                        form.classList.add('hidden');
+                    });
+                    
+                    // 2. Afficher la vue lecture
+                    const textView = personnagesTab.querySelector('.text-view');
+                    if (textView) {
+                        textView.style.display = 'block';
+                        textView.classList.remove('hidden');
+                    }
+                    
+                    // 3. Re-render le contenu lecture
+                    this.renderPersonnagesTabRead();
+                }
+            } else if (this.currentType === 'character') {
+                console.log("🔄 [exitEditMode] Force mode lecture pour Lieux/Régions");
+                
+                if (lieuxRegionsTab) {
+                    // Même logique pour lieux-régions
+                    const editForms = lieuxRegionsTab.querySelectorAll('.edit-form');
+                    editForms.forEach(form => {
+                        form.style.display = 'none';
+                        form.classList.add('hidden');
+                    });
+                    
+                    const textView = lieuxRegionsTab.querySelector('.text-view');
+                    if (textView) {
+                        textView.style.display = 'block';
+                        textView.classList.remove('hidden');
+                    }
+                    
+                    this.renderLieuxRegionsTabRead();
+                }
+            }
+        }, 10); // Timeout réduit mais conservé pour sécurité
+        
         console.log("✅ [exitEditMode] Mode lecture activé");
     }
 
