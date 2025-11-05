@@ -1494,6 +1494,12 @@ class InfoBoxManager {
         this.isEditMode = false;
         this.updateInfoBoxContent();
 
+        // IMPORTANT: Forcer le re-render de l'onglet personnages si on est sur un lieu/région
+        if (this.currentType === 'location' || this.currentType === 'region') {
+            console.log('🔄 [SAVE] Re-render de l\'onglet personnages après sauvegarde');
+            this.renderPersonnagesTabRead();
+        }
+
         console.log("✅ [SAVE] Sauvegarde locale terminée");
 
     }
