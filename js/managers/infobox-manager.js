@@ -908,20 +908,9 @@ class InfoBoxManager {
         this.isEditMode = false;
         this.updateInfoBoxContent();
         
-        // Forcer le re-render de l'onglet après la mise à jour du contenu
-        setTimeout(() => {
-            // Forcer le re-render de l'onglet Personnages en mode lecture
-            if (this.currentType === 'location' || this.currentType === 'region') {
-                console.log("🔄 [exitEditMode] Force re-render Personnages tab");
-                this.renderPersonnagesTabRead();
-            }
-            
-            // Forcer le re-render de l'onglet Lieux/Régions en mode lecture pour les personnages
-            if (this.currentType === 'character') {
-                console.log("🔄 [exitEditMode] Force re-render Lieux/Régions tab");
-                this.renderLieuxRegionsTabRead();
-            }
-        }, 100);
+        // Le re-render se fait automatiquement via updateInfoBoxContent() -> renderReadMode()
+        // qui appelle renderPersonnagesTabRead() ou renderLieuxRegionsTabRead() selon le type
+        console.log("✅ [exitEditMode] Mode lecture activé, contenu mis à jour");
     }
 
     addRumeurInEdit() {
@@ -1282,18 +1271,7 @@ class InfoBoxManager {
             window.renderLocations();
         }
 
-        // IMPORTANT: Forcer le re-render de l'onglet personnages si on est sur un lieu/région
-        if (this.currentType === 'location' || this.currentType === 'region') {
-            console.log('🔄 [SAVE] Re-render de l\'onglet personnages après sauvegarde');
-
-            // Basculer vers l'onglet personnages pour montrer les changements
-            this.switchTab('personnages');
-
-            // Re-render immédiatement après le switch
-            this.renderPersonnagesTabRead();
-        }
-
-        // Sortir du mode édition après la sauvegarde
+        // Sortir du mode édition AVANT tout re-render
         this.exitEditMode();
 
         console.log("✅ [SAVE] Sauvegarde locale terminée - retour en mode lecture");
