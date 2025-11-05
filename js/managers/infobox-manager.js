@@ -1977,8 +1977,8 @@ class InfoBoxManager {
     }
 
     renderPersonnagesTabRead() {
-        const personnagesContent = document.getElementById('personnages-content');
-        if (!personnagesContent) return;
+        const personnagesTab = document.getElementById('personnages-tab');
+        if (!personnagesTab) return;
 
         // IMPORTANT: Recharger l'objet depuis window.locationsData/regionsData pour avoir les associations à jour
         if (this.currentType === 'location' && window.locationsData?.locations) {
@@ -2006,7 +2006,11 @@ class InfoBoxManager {
         console.log(`📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés):`, associatedCharacterIds);
 
         if (!window.charactersManager || !window.charactersManager.characters) {
-            personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>';
+            personnagesTab.innerHTML = `
+                <div class="text-view p-4">
+                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>
+                </div>
+            `;
             return;
         }
 
@@ -2025,37 +2029,45 @@ class InfoBoxManager {
         });
 
         if (associatedCharacters.length === 0) {
-            personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage associé à ce lieu</p>';
+            personnagesTab.innerHTML = `
+                <div class="text-view p-4">
+                    <p class="text-gray-400 italic text-sm">Aucun personnage associé à ce lieu</p>
+                </div>
+            `;
             return;
         }
 
-        const html = associatedCharacters.map(character => {
-            const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-            return `
-                <div class="character-card-infobox bg-gray-700 hover:bg-gray-600 rounded-lg p-3 mb-3 cursor-pointer transition-colors"
-                     onclick="window.infoBoxManager.showCharacterFromLocation('${character.id}')">
-                    <div class="flex items-center space-x-3">
-                        ${thumbnailImage ? `
-                            <img src="${thumbnailImage.url}" alt="${character.name}"
-                                 class="w-12 h-12 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
-                        ` : `
-                            <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
-                                <i class="fas fa-user text-gray-400"></i>
+        const html = `
+            <div class="text-view p-4">
+                ${associatedCharacters.map(character => {
+                    const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+                    return `
+                        <div class="character-card-infobox bg-gray-700 hover:bg-gray-600 rounded-lg p-3 mb-3 cursor-pointer transition-colors"
+                             onclick="window.infoBoxManager.showCharacterFromLocation('${character.id}')">
+                            <div class="flex items-center space-x-3">
+                                ${thumbnailImage ? `
+                                    <img src="${thumbnailImage.url}" alt="${character.name}"
+                                         class="w-12 h-12 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                                ` : `
+                                    <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                                        <i class="fas fa-user text-gray-400"></i>
+                                    </div>
+                                `}
+                                <div class="flex-1">
+                                    <div class="font-semibold text-white">${character.name}</div>
+                                    <span class="inline-block px-2 py-0.5 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'} text-white">
+                                        ${character.type || 'PNJ'}
+                                    </span>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
                             </div>
-                        `}
-                        <div class="flex-1">
-                            <div class="font-semibold text-white">${character.name}</div>
-                            <span class="inline-block px-2 py-0.5 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'} text-white">
-                                ${character.type || 'PNJ'}
-                            </span>
                         </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </div>
-                </div>
-            `;
-        }).join('');
+                    `;
+                }).join('')}
+            </div>
+        `;
 
-        personnagesContent.innerHTML = html;
+        personnagesTab.innerHTML = html;
     }
 
     renderLieuxRegionsTabRead() {
