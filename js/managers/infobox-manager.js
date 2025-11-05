@@ -1249,10 +1249,6 @@ class InfoBoxManager {
             window.renderLocations();
         }
 
-        // Passer en mode lecture
-        this.isEditMode = false;
-        this.updateInfoBoxContent();
-
         // IMPORTANT: Forcer le re-render de l'onglet personnages si on est sur un lieu/région
         if (this.currentType === 'location' || this.currentType === 'region') {
             console.log('🔄 [SAVE] Re-render de l\'onglet personnages après sauvegarde');
@@ -1941,11 +1937,11 @@ class InfoBoxManager {
             const charIdString = String(char.id);
             const isAssociated = associatedCharacterIds.includes(charIdString);
             const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
-            
+
             if (isAssociated) {
                 console.log(`📋 [renderPersonnagesTabRead] Personnage ${char.name} (ID: ${charIdString}) - associé: ${isAssociated}, sur carte: ${isOnCurrentMap}`);
             }
-            
+
             return isAssociated && isOnCurrentMap;
         });
 
@@ -2142,28 +2138,32 @@ class InfoBoxManager {
                     const isAssociated = associatedCharacterIds.includes(String(character.id));
                     const thumbnailImage = character.images?.find(img => img.type === 'vignette');
                     const type = character.type === 'PJ' ? 'Joueur' : (character.type === 'PNJ' ? 'PNJ' : 'Autre');
+                    const typeClass = character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600';
+                    const borderClass = character.type === 'PJ' ? 'border-blue-500' : 'border-green-500';
+
                     return `
-                        <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
+                        <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors group">
                             <input type="checkbox"
-                                   id="character-${String(character.id)}"
-                                   value="${String(character.id)}"
+                                   data-character-id="${character.id}"
                                    ${isAssociated ? 'checked' : ''}
-                                   class="character-checkbox"
-                                   data-character-id="${String(character.id)}">
-                            <label for="character-${String(character.id)}" class="cursor-pointer">
-                                ${character.name} <span class="text-xs text-gray-400">(${type})</span>
-                            </label>
+                                   class="form-checkbox h-5 w-5 text-blue-600">
+                            ${thumbnailImage ? `
+                                <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                     class="w-12 h-12 rounded-full object-cover border-2 ${borderClass}">
+                            ` : `
+                                <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
+                                    <i class="fas fa-user text-xl text-gray-400"></i>
+                                </div>
+                            `}
+                            <div class="flex-1">
+                                <div class="font-medium text-white">${character.name}</div>
+                                <span class="inline-block px-2 py-0.5 text-xs rounded ${typeClass} mt-1">
+                                    ${type}
+                                </span>
+                            </div>
                         </label>
                     `;
                 }).join('')}
-            </div>
-            <div class="flex space-x-2">
-                <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                    <i class="fas fa-save mr-1"></i>Sauvegarder
-                </button>
-                <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
-                    <i class="fas fa-times mr-1"></i>Annuler
-                </button>
             </div>
         `;
 
@@ -2245,406 +2245,6 @@ class InfoBoxManager {
     }
 
 
-    showCharacterFromLocation(characterId) {
-        if (!window.charactersManager) return;
-
-        const character = window.charactersManager.characters.find(c => String(c.id) === String(characterId));
-        if (!character) {
-            console.warn(`Personnage non trouvé avec l'ID: ${characterId}`);
-            return;
-        }
-
-        // Sauvegarder l'infobox actuelle avant d'afficher le personnage
-        if (this.currentItem && this.currentType) {
-            console.log("💾 Sauvegarde de l'infobox appelante:", this.currentItem.name, this.currentType);
-            this.previousInfoBox = {
-                item: this.currentItem,
-                type: this.currentType,
-                shouldShowPersonnagesTab: true, // Flag pour afficher l'onglet Personnages au retour
-                fromInfoBox: true // Flag indiquant que l'appel vient d'une InfoBox
-            };
-        }
-
-        // Créer un événement simulé pour le positionnement
-        const fakeEvent = {
-            clientX: window.innerWidth / 2,
-            clientY: window.innerHeight / 2,
-            type: 'click'
-        };
-
-        // Ouvrir la modale du personnage en surimpression
-        if (window.infoBoxManager) {
-            window.infoBoxManager.showInfoBox(fakeEvent, character, 'character');
-        }
-    }
-
-    showLocationRegionFromCharacter(itemId, itemType) {
-         if (!window.locationsManager && !window.regionsManager) {
-            console.warn('Gestionnaire de lieux/régions non disponible.');
-            return;
-        }
-
-        let item = null;
-        if (itemType === 'location') {
-            item = window.locationsManager?.locationsData?.locations.find(loc => String(loc.id) === String(itemId));
-        } else if (itemType === 'region') {
-            item = window.regionsManager?.regionsData?.regions.find(reg => String(reg.id) === String(itemId));
-        }
-
-        if (!item) {
-            console.warn(`Lieu/Région non trouvé avec l'ID: ${itemId}, type: ${itemType}`);
-            return;
-        }
-
-        // Sauvegarder l'infobox actuelle avant d'afficher le lieu/région
-        if (this.currentItem && this.currentType) {
-            console.log("💾 Sauvegarde de l'infobox appelante (personnage):", this.currentItem.name);
-            this.previousInfoBox = {
-                item: this.currentItem,
-                type: this.currentType,
-                // On ne veut pas forcer l'onglet "Personnages" au retour ici, mais plutôt l'onglet par défaut
-            };
-        }
-
-        // Créer un événement simulé pour le positionnement
-        const fakeEvent = {
-            clientX: window.innerWidth / 2,
-            clientY: window.innerHeight / 2,
-            type: 'click'
-        };
-
-        // Ouvrir la modale du lieu/région
-        if (window.infoBoxManager) {
-            window.infoBoxManager.showInfoBox(fakeEvent, item, itemType);
-        }
-    }
-
-
-    deleteItem() {
-        if (!this.currentItem) return;
-
-        const itemType = this.currentType === 'region' ? 'région' :
-                        (this.currentType === 'character' ? 'personnage' : 'lieu');
-
-        if (!confirm(`Êtes-vous sûr de vouloir supprimer ce ${itemType} ?`)) {
-            return;
-        }
-
-        console.log(`🗑️ [DELETE] Début suppression de ${itemType}: ${this.currentItem.name}`);
-
-        if (this.currentType === 'location') {
-            const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
-                String(loc.id) === String(this.currentItem.id)
-            );
-
-            if (locationIndex !== -1) {
-                console.log(`🗑️ [DELETE] Lieu trouvé à l'index ${locationIndex}, suppression...`);
-                console.log(`🗑️ [DELETE] Nombre de lieux AVANT suppression: ${this.dataManager.locationsData.locations.length}`);
-
-                // Supprimer le lieu
-                this.dataManager.locationsData.locations.splice(locationIndex, 1);
-
-                console.log(`🗑️ [DELETE] Nombre de lieux APRÈS suppression: ${this.dataManager.locationsData.locations.length}`);
-
-                // Synchroniser avec la variable globale
-                window.locationsData = this.dataManager.locationsData;
-
-                // Sauvegarder localement (déclenchera aussi markAsUnsaved et scheduleAutoSync via DataManager)
-                this.dataManager.saveLocationsToLocal();
-
-                // Re-render
-                if (typeof window.renderLocations === 'function') {
-                    window.renderLocations();
-                }
-
-                console.log(`✅ [DELETE] Lieu supprimé: ${this.currentItem.name}`);
-            } else {
-                console.error(`❌ [DELETE] Lieu non trouvé pour suppression: ${this.currentItem.id}`);
-            }
-        } else if (this.currentType === 'region') {
-            const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
-                String(reg.id) === String(this.currentItem.id)
-            );
-
-            if (regionIndex !== -1) {
-                console.log(`🗑️ [DELETE] Région trouvée à l'index ${regionIndex}, suppression...`);
-                console.log(`🗑️ [DELETE] Nombre de régions AVANT suppression: ${this.dataManager.regionsData.regions.length}`);
-
-                // Supprimer la région
-                this.dataManager.regionsData.regions.splice(regionIndex, 1);
-
-                console.log(`🗑️ [DELETE] Nombre de régions APRÈS suppression: ${this.dataManager.regionsData.regions.length}`);
-
-                // Synchroniser avec la variable globale
-                window.regionsData = this.dataManager.regionsData;
-
-                // Sauvegarder localement (déclenchera aussi markAsUnsaved et scheduleAutoSync via DataManager)
-                this.dataManager.saveRegionsToLocal();
-
-                // Re-render
-                if (typeof renderRegions === 'function') {
-                    renderRegions();
-                }
-
-                console.log(`✅ [DELETE] Région supprimée: ${this.currentItem.name}`);
-            } else {
-                console.error(`❌ [DELETE] Région non trouvée pour suppression: ${this.currentItem.id}`);
-            }
-        } else if (this.currentType === 'character') {
-            if (window.charactersManager) {
-                window.charactersManager.deleteCharacter(this.currentItem.id);
-                console.log(`✅ [DELETE] Personnage supprimé: ${this.currentItem.name}`);
-            }
-        }
-
-        this.hideInfoBox();
-    }
-
-    // Méthodes pour la gestion spécifique des éditions
-    saveLocationEdit() {
-        const location = this.dataManager.locationsData.locations.find(loc => loc.id === this.currentItem.id);
-        if (!location) {
-            console.error(`❌ Lieu non trouvé pour sauvegarde: ${this.currentItem.id}`);
-            return;
-        }
-
-        location.name = document.getElementById('edit-name').value.trim();
-        location.description = document.getElementById('edit-description').value.trim();
-        // Récupérer la couleur du sélecteur (si existant)
-        const colorPicker = document.querySelector('#edit-color-picker .color-swatch.selected');
-        if (colorPicker) {
-            location.color = colorPicker.dataset.color;
-        }
-
-        // Handle images - Assurez-vous que 'images' est géré correctement
-        const imagesListElement = document.getElementById('edit-images-list');
-        if (imagesListElement) {
-            // Reconstruire l'array 'images' à partir du DOM ou de l'état actuel de this.currentItem.images
-            // Ici, on suppose que this.currentItem.images a déjà été mis à jour par les méthodes addImage/removeImage
-            if (this.currentItem.images && this.currentItem.images.length > 0) {
-                location.images = this.currentItem.images;
-            } else {
-                delete location.images; // Supprimer la propriété si vide
-            }
-        }
-
-
-        // IMPORTANT: Mettre à jour l'objet dans locationsData.locations
-        const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
-            String(loc.id) === String(this.currentItem.id)
-        );
-
-        if (locationIndex !== -1) {
-            this.dataManager.locationsData.locations[locationIndex] = location;
-            console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}`);
-        } else {
-            console.error(`❌ Lieu non trouvé dans locationsData pour mise à jour directe: ${this.currentItem.id}`);
-            // Optionnellement, ajouter le lieu s'il n'est pas trouvé (si c'est un nouvel ajout)
-            // this.dataManager.locationsData.locations.push(location);
-        }
-
-        // Synchroniser avec window.locationsData
-        window.locationsData = this.dataManager.locationsData;
-
-        // Sauvegarder et re-render
-        this.dataManager.saveLocationsToLocal();
-        this.exitEditMode();
-        if (typeof renderLocations === 'function') {
-            renderLocations();
-        }
-    }
-
-    saveRegionEdit() {
-        const region = this.dataManager.regionsData.regions.find(reg => reg.id === this.currentItem.id);
-        if (!region) {
-            console.error(`❌ Région non trouvée pour sauvegarde: ${this.currentItem.id}`);
-            return;
-        }
-
-        region.name = document.getElementById('edit-name').value.trim();
-        region.description = document.getElementById('edit-description').value.trim();
-        const rumeursText = document.getElementById('edit-rumeurs')?.value.trim();
-        const traditionText = document.getElementById('edit-tradition')?.value.trim();
-
-        if (rumeursText) {
-            region.Rumeurs = rumeursText.split('\n').map(r => r.trim()).filter(r => r !== '');
-            region.Rumeur = region.Rumeurs.join('\n\n---\n\n'); // Pour compatibilité
-        } else {
-            region.Rumeurs = [];
-            region.Rumeur = '';
-        }
-        region.Tradition_Ancienne = traditionText;
-
-        // Récupérer la couleur du sélecteur (si existant)
-        const colorPicker = document.querySelector('#edit-color-picker .color-swatch.selected');
-        if (colorPicker) {
-            region.color = colorPicker.dataset.color;
-        }
-
-        // Handle images - Assurez-vous que 'images' est géré correctement
-        const imagesListElement = document.getElementById('edit-images-list');
-         if (imagesListElement) {
-            if (this.currentItem.images && this.currentItem.images.length > 0) {
-                region.images = this.currentItem.images;
-            } else {
-                delete region.images;
-            }
-        }
-
-        // IMPORTANT: Mettre à jour l'objet dans regionsData.regions
-        const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
-            String(reg.id) === String(this.currentItem.id)
-        );
-
-        if (regionIndex !== -1) {
-            this.dataManager.regionsData.regions[regionIndex] = region;
-            console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}`);
-        } else {
-            console.error(`❌ Région non trouvée dans regionsData pour mise à jour directe: ${this.currentItem.id}`);
-        }
-
-        // Synchroniser avec window.regionsData
-        window.regionsData = this.dataManager.regionsData;
-
-        // Sauvegarder et re-render
-        this.dataManager.saveRegionsToLocal();
-        this.exitEditMode();
-        if (typeof renderRegions === 'function') {
-            renderRegions();
-        }
-    }
-
-    handleImageUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        console.log("📤 Uploading image...");
-
-        if (window.uploadManager) {
-            window.uploadManager.uploadImage(file, 'locations')
-                .then(result => {
-                    if (result.success) {
-                        const location = this.dataManager.locationsData.locations.find(loc => loc.id === this.currentItem.id);
-                        if (!location) {
-                             console.error(`❌ Lieu non trouvé pour ajout d'image: ${this.currentItem.id}`);
-                            return;
-                        }
-
-                        if (!location.images) {
-                            location.images = [];
-                        }
-
-                        location.images.push({
-                            url: result.url,
-                            type: location.images.length === 0 ? 'principale' : null, // Définir comme principale si c'est la première
-                            thumbnailUrl: null
-                        });
-
-                        // IMPORTANT: Mettre à jour l'objet dans locationsData.locations
-                        const locationIndex = this.dataManager.locationsData.locations.findIndex(loc =>
-                            String(loc.id) === String(this.currentItem.id)
-                        );
-
-                        if (locationIndex !== -1) {
-                            this.dataManager.locationsData.locations[locationIndex] = location;
-                            console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}`);
-                        }
-
-                        // Synchroniser avec window.locationsData
-                        window.locationsData = this.dataManager.locationsData;
-
-                        this.dataManager.saveLocationsToLocal();
-                        // Re-render la liste des images dans l'onglet d'édition
-                        const imagesList = document.getElementById('edit-images-list');
-                        if(imagesList) {
-                            imagesList.innerHTML = this.renderEditImagesList();
-                        }
-                        console.log("✅ Image added successfully");
-                    }
-                })
-                .catch(error => {
-                    console.error("❌ Image upload failed:", error);
-                    alert("Erreur lors de l'upload de l'image");
-                });
-        }
-    }
-
-    handleRegionImageUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        console.log("📤 Uploading region image...");
-
-        if (window.uploadManager) {
-            window.uploadManager.uploadImage(file, 'regions')
-                .then(result => {
-                    if (result.success) {
-                        const region = this.dataManager.regionsData.regions.find(reg => reg.id === this.currentItem.id);
-                        if (!region) {
-                            console.error(`❌ Région non trouvée pour ajout d'image: ${this.currentItem.id}`);
-                            return;
-                        }
-
-                        if (!region.images) {
-                            region.images = [];
-                        }
-
-                        region.images.push({
-                            url: result.url,
-                            type: region.images.length === 0 ? 'principale' : null, // Définir comme principale si c'est la première
-                            thumbnailUrl: null
-                        });
-
-                        // IMPORTANT: Mettre à jour l'objet dans regionsData.regions
-                        const regionIndex = this.dataManager.regionsData.regions.findIndex(reg =>
-                            String(reg.id) === String(this.currentItem.id)
-                        );
-
-                        if (regionIndex !== -1) {
-                            this.dataManager.regionsData.regions[regionIndex] = region;
-                            console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}`);
-                        }
-
-                        // Synchroniser avec window.regionsData
-                        window.regionsData = this.dataManager.regionsData;
-
-                        this.dataManager.saveRegionsToLocal();
-                        // Re-render la liste des images dans l'onglet d'édition
-                        const imagesList = document.getElementById('edit-images-list');
-                        if(imagesList) {
-                            imagesList.innerHTML = this.renderEditImagesList();
-                        }
-                        console.log("✅ Region image added successfully");
-                    }
-                })
-                .catch(error => {
-                    console.error("❌ Region image upload failed:", error);
-                    alert("Erreur lors de l'upload de l'image");
-                });
-        }
-    }
-
-    // Méthode placeholder pour updateImageTabForLocationEdit (à implémenter si nécessaire)
-    updateImageTabForLocationEdit(location) {
-        console.log("Placeholder: updateImageTabForLocationEdit called for", location.name);
-        // Logique pour mettre à jour l'affichage de l'onglet image dans le mode édition
-        const imagesList = document.getElementById('edit-images-list');
-        if (imagesList) {
-            imagesList.innerHTML = this.renderEditImagesList();
-        }
-    }
-
-    // Méthode placeholder pour updateImageTabForRegionEdit (à implémenter si nécessaire)
-    updateImageTabForRegionEdit(region) {
-        console.log("Placeholder: updateImageTabForRegionEdit called for", region.name);
-         // Logique pour mettre à jour l'affichage de l'onglet image dans le mode édition
-        const imagesList = document.getElementById('edit-images-list');
-        if (imagesList) {
-            imagesList.innerHTML = this.renderEditImagesList();
-        }
-    }
-
-    // Fonctions pour la gestion des associations lieu/région-personnage
     saveAssociatedCharacters() {
         if (!this.currentEntity || this.currentEntityType !== 'location') {
             console.warn('Tentative de sauvegarde de personnages pour une entité non-lieu');
