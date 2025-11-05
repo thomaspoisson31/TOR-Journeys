@@ -908,8 +908,18 @@ class InfoBoxManager {
         this.isEditMode = false;
         this.updateInfoBoxContent();
         
-        // Le re-render se fait automatiquement via updateInfoBoxContent() -> renderReadMode()
-        // qui appelle renderPersonnagesTabRead() ou renderLieuxRegionsTabRead() selon le type
+        // IMPORTANT: Forcer explicitement le re-render de l'onglet Personnages/Lieux-Régions
+        // après la mise à jour du contenu pour garantir le passage en mode lecture
+        setTimeout(() => {
+            if (this.currentType === 'location' || this.currentType === 'region') {
+                console.log("🔄 [exitEditMode] Force re-render onglet Personnages en mode lecture");
+                this.renderPersonnagesTabRead();
+            } else if (this.currentType === 'character') {
+                console.log("🔄 [exitEditMode] Force re-render onglet Lieux/Régions en mode lecture");
+                this.renderLieuxRegionsTabRead();
+            }
+        }, 50);
+        
         console.log("✅ [exitEditMode] Mode lecture activé, contenu mis à jour");
     }
 
