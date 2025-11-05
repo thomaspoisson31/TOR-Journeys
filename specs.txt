@@ -434,6 +434,81 @@ Principe de double stockage:
    - _saved_at: timestamp ISO format
    - _sync_timestamp: milliseconds epoch pour conflits
 
+PRINCIPES D'AFFICHAGE ET RENDERING
+----------------------------------
+
+1. RENDERING ONGLETS RELATIONNELS (PERSONNAGES/LIEUX-RÉGIONS):
+   
+   Contexte:
+   - Les onglets "Personnages" (pour lieux/régions) et "Lieux/Régions" (pour personnages)
+     affichent des listes dynamiques basées sur les relations bidirectionnelles
+   - Ces onglets doivent toujours afficher les données les plus récentes
+   
+   Problématique résolue:
+   - Après sauvegarde en mode édition, l'onglet relationnel restait vide
+   - Cause: le re-render était tenté pendant exitEditMode(), créant un conflit avec updateInfoBoxContent()
+   
+   Solution finale (v1.3.4):
+   a) Re-render au clic sur l'onglet (switchTab):
+      - Détection de l'onglet activé (personnages/lieux-regions)
+      - Vérification du mode (isEditMode = false)
+      - Appel conditionnel aux fonctions de rendering:
+        * renderPersonnagesTabRead() pour onglet Personnages
+        * renderLieuxRegionsTabRead() pour onglet Lieux/Régions
+   
+   b) Rechargement des données fraîches:
+      - Chaque fonction de rendering recharge l'objet depuis window.locationsData/regionsData
+      - Garantit l'affichage des associations les plus récentes
+      - Normalisation systématique des IDs en String pour comparaisons
+   
+   c) Nettoyage après sauvegarde (exitEditMode):
+      - Masquage explicite des formulaires d'édition
+      - Affichage de la div .text-view
+      - Re-render immédiat de l'onglet actif avec timeout minimal (10ms)
+      - Pas de re-render multiple ni de conflits
+   
+   Code concerné:
+   - infobox-manager.js: switchTab(), exitEditMode()
+   - renderPersonnagesTabRead(), renderLieuxRegionsTabRead()
+
+2. SYNCHRONISATION DES DONNÉES AVANT RENDERING:
+   
+   Ordre de synchronisation critique:
+   a) Modification de l'objet dans le tableau local
+   b) Synchronisation avec window.locationsData/window.regionsData
+   c) Synchronisation avec dataManager.locationsData/dataManager.regionsData
+   d) Sauvegarde localStorage via saveToLocal()
+   e) Marquer comme unsaved pour sync cloud
+   
+   Fichiers concernés: main.js, infobox-manager.js
+
+3. RE-RENDER CONDITIONNEL DES VIGNETTES:
+   
+   Conditions d'affichage:
+   - Vignettes 64x64px: affichées si zoom > 50%
+   - Cercles colorés: affichés si zoom < 50%
+   - Images principales: toujours disponibles dans InfoBox
+   
+   Code: main.js (renderLocations)
+
+4. FILTRAGE PAR CARTE ACTIVE:
+   
+   Principe:
+   - Chaque élément (location, region, character) possède un mapId
+   - Filtrage systématique par mapId avant affichage ou suppression
+   - Préservation des éléments sans mapId (rétrocompatibilité)
+   
+   Code: filter-manager.js, characters-manager.js
+
+5. GESTION DES ÉVÉNEMENTS DRAG & DROP:
+   
+   Distinction clic vs drag:
+   - Seuil de détection: 3 pixels minimum de déplacement
+   - Flag hasDraggedLocation pour éviter l'ouverture de l'InfoBox après drag
+   - Curseurs adaptatifs: move (survol), grabbing (drag), pointer (défaut)
+   
+   Code: main.js (handleLocationDragEnd, event listeners)
+
 RÈGLES MÉTIER
 -------------
 
@@ -530,7 +605,15 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Suppression en masse des personnages (v1.3.3)
+1. Correction rendering onglets relationnels (v1.3.4)
+   - Fix onglet Personnages vide après sauvegarde
+   - Re-render au clic sur l'onglet plutôt que pendant exitEditMode
+   - Rechargement systématique des données depuis window.locationsData/regionsData
+   - Nettoyage explicite DOM (masquage formulaires, affichage .text-view)
+   - Solution robuste sans conflits de timing
+   - Fichiers concernés: infobox-manager.js (switchTab, exitEditMode, renderPersonnagesTabRead, renderLieuxRegionsTabRead)
+
+2. Suppression en masse des personnages (v1.3.3)
    - Bouton "Supprimer les personnages" dans modale Personnages
    - Filtrage par carte active avant suppression
    - Double confirmation avec messages d'avertissement explicites
@@ -647,7 +730,18 @@ Backup: export JSON régulier
 PROBLÈMES RÉSOLUS
 -----------------
 
-1. Conflits entre clic et glisser-déposer (v1.3.1):
+1. Onglet Personnages vide après sauvegarde (v1.3.4):
+   - Problème: L'onglet "Personnages" restait vide en mode Lecture après une sauvegarde
+   - Cause: renderPersonnagesTabRead() jamais appelée lors de exitEditMode(), DOM conservait la structure du mode édition
+   - Solutions tentées (échecs):
+     * Forcer renderPersonnagesTabRead() dans updateInfoBoxContent() → appelée trop tôt
+     * Appeler dans exitEditMode() directement → timing incorrect
+     * Multiples appels avec timeouts → fragile et incohérent
+   - Solution finale: Re-render au clic sur l'onglet (switchTab) + nettoyage explicite dans exitEditMode()
+   - Bénéfices: Données toujours fraîches, pas de conflits, performance optimale
+   - Fichier concerné: infobox-manager.js
+
+2. Conflits entre clic et glisser-déposer (v1.3.1):
    - Problème: Lieux devenaient déplaçables au simple clic pour ouvrir l'infobox
    - Cause: Pas de distinction entre mousedown prolongé (drag) et simple clic
    - Solution: Seuil de 3px + flag hasDraggedLocation pour détecter l'intention de l'utilisateur
