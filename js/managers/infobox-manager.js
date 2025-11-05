@@ -1018,16 +1018,32 @@ class InfoBoxManager {
         // Personnages associés (pour lieux et régions uniquement)
         if (this.currentType === 'location' || this.currentType === 'region') {
             const checkboxes = document.querySelectorAll('.character-checkbox');
+            
+            // Log détaillé de CHAQUE checkbox pour debug
+            console.log(`🔍 [SAVE] Analyse de ${checkboxes.length} checkbox(es):`);
+            checkboxes.forEach((cb, index) => {
+                console.log(`  Checkbox ${index}:`, {
+                    checked: cb.checked,
+                    value: cb.value,
+                    dataCharacterId: cb.dataset.characterId,
+                    className: cb.className
+                });
+            });
+            
             // Récupérer les IDs des personnages cochés (normaliser en String)
-            // IMPORTANT: Utiliser prioritairement dataset.characterId car value peut être "on"
+            // IMPORTANT: Utiliser value maintenant qu'il est correctement défini
             const associatedCharacterIds = Array.from(checkboxes)
                 .filter(cb => cb.checked)
-                .map(cb => String(cb.dataset.characterId))
-                .filter(id => id && id !== 'undefined'); // Filtrer les IDs invalides
+                .map(cb => {
+                    const id = String(cb.value || cb.dataset.characterId);
+                    console.log(`    → ID récupéré pour checkbox cochée:`, id, `(value: ${cb.value}, data: ${cb.dataset.characterId})`);
+                    return id;
+                })
+                .filter(id => id && id !== 'undefined' && id !== 'on'); // Filtrer les IDs invalides
 
             console.log(`🔍 [SAVE] AVANT update - ${this.currentType} "${this.currentItem.name}" (id: ${this.currentItem.id})`);
             console.log(`🔍 [SAVE] associatedCharacters AVANT:`, this.currentItem.associatedCharacters);
-            console.log(`🔍 [SAVE] Nouvelles associations cochées:`, associatedCharacterIds);
+            console.log(`🔍 [SAVE] Nouvelles associations cochées (${associatedCharacterIds.length}):`, associatedCharacterIds);
 
             this.currentItem.associatedCharacters = associatedCharacterIds;
 
@@ -2189,6 +2205,7 @@ class InfoBoxManager {
                         return `
                             <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors group">
                                 <input type="checkbox"
+                                       value="${character.id}"
                                        data-character-id="${character.id}"
                                        ${isAssociated ? 'checked' : ''}
                                        class="form-checkbox h-5 w-5 text-blue-600 character-checkbox">
