@@ -1,0 +1,279 @@
+ cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+ 📤 UploadManager module loaded
+ 📋 InfoBoxManager module loaded
+ 📚 LibraryManager module loaded
+ 👥 CharactersManager module loaded
+ ✅ Constants loaded successfully
+ ✅ Global variables initialized
+ ✅ Essential DOM elements: Object
+ 📋 Simplified main.js loaded - waiting for DOM ready
+ 🚀 Starting simplified application...
+ 🏷️ Version affichée: v1.5.0 (2025-11-04)
+ ✅ DataManager initialized
+ 🔍 FilterManager initialized
+ ✅ FilterManager initialized
+ ✅ VoyageManager initialized
+ ✅ PathManager initialized
+ 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+ 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+ 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+ 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+ 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+ 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+ 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+ 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: Object
+ 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+ 📅 [loadCalendarFromLocal] currentCalendarDate chargé: Object
+ 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+ 📅 [loadCalendarFromLocal] État final CalendarManager: Object
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 📅 Données calendrier exposées globalement: Object
+ ✅ CalendarManager initialized
+ ⚙️ SettingsManager initialized
+ ⚙️ Configuration des listeners Import/Export...
+ 📍 Boutons Lieux/Régions: Object
+ 👥 Boutons Personnages: Object
+ ✅ Listeners Import/Export configurés
+ ✅ SettingsManager initialized
+ [AuthManager] 🔑 Initialisation AuthManager null
+ [AuthManager] 🔍 Vérification du statut d'authentification null
+ [AuthManager] 👂 Écoute des changements de localStorage activée. null
+ ✅ AuthManager initialized
+ 📤 UploadManager initialized
+ 📋 InfoBoxManager initialized with UploadManager
+ ✅ InfoBoxManager initialized
+ 📤 ImportExportManager initialized
+ 📤 ImportExportManager event listeners configured
+ ✅ ImportExportManager initialized
+ 📍 Initializing data structures...
+ 📍 loadInitialLocations: Initialisation avec structure vide
+ ✅ Structure de données initialisée (vide, en attente du cloud)
+ 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+ ✅ Structure de régions initialisée (vide, en attente du cloud)
+ ✅ Data structures initialized (will be populated from cloud)
+ ⏳ Waiting for SettingsManager to load active map...
+ 📤 UploadManager initialized
+ 🤖 Gemini API disponible: true
+ [AuthManager] ✅ Utilisateur authentifié trouvé null
+ [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+ 🤖 Gemini API disponible: true
+ [AuthManager] 🌍 Environnement détecté: development (préfixe: dev_) null
+ [AuthManager] 📥 Chargement des données depuis le cloud (environnement: dev_) null
+ [AuthManager] ✅ Données cloud récupérées Object
+ [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+ [AuthManager] 🔄 Application des données du contexte Array(10)
+ [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+ [AuthManager] 💾 27 lieux sauvegardés dans localStorage null
+ [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+ [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 27 lieux null
+ [AuthManager] 📊 Structure locationsData: Object
+ [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+ [AuthManager] 📊 Structure regionsData: Object
+ [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+ [AuthManager] 📅 [applyContextData] Données calendar reçues: Object
+ [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+ [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+ 🌤️ Données météo du jour récupérées: Object
+ 🌱 Affichage saison: Object
+ 📅 Données calendrier exposées globalement: Object
+ [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+ [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+ ⚙️ Chargement des paramètres depuis le contexte: Object
+ ✅ Cartes chargées: 2
+ ✅ Carte active URL: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 🗺️ Échelle de la carte active: 60 miles
+ ✅ Paramètres chargés avec succès
+ [AuthManager] 🗺️ 2 carte(s) restaurée(s) depuis le cloud null
+ [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+ [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+ [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+ [AuthManager] 👥 Application de 35 personnages depuis le contexte null
+ 📍 [applyContextData] Position reçue du cloud: Object
+ 📍 [applyContextData] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📍 [applyContextData] Carte de la position: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📍 [applyContextData] AVANT setItem - position à sauver: Object
+ 📍 [applyContextData] APRÈS setItem - position vérif: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2748.3533095777993,"y":1754.8736097613644}
+ 📍 [applyContextData] APRÈS setItem - flag vérif: true
+ [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: Object
+ [AuthManager] 🔍 [applyContextData] Sauvegarde des filtres pour restauration différée null
+ [AuthManager] 🔍 [applyContextData] Données filtersByMap reçues: Object
+ [AuthManager] 🔍 [applyContextData] Nombre de cartes avec filtres: 4 null
+ [AuthManager] 💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager null
+ [AuthManager] ⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init null
+ [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+ [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+ [AuthManager] ✅ Contexte appliqué avec succès null
+ [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+ [AuthManager] 💾 2 carte(s) sauvegardée(s) dans localStorage null
+ [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg null
+ [AuthManager]   - 35 personnages sauvegardés dans localStorage. null
+ [AuthManager]   - Données sauvegardées dans localStorage. null
+ [AuthManager] 🎨 Rendu forcé après chargement cloud null
+ ✅ Rendered 27 location markers (thumbnails: true)
+ [AuthManager] ✅ 27 lieux rendus depuis le cloud null
+ ✅ Rendered 0 region polygons
+ [AuthManager] ✅ 0 régions rendues depuis le cloud null
+ [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+ [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+ ✅ Image de carte chargée, re-initialisation de la carte
+ 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+ 🗺️ Réinitialisation de la carte depuis loadSettings
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 5000 x 3229
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.320 (viewportWidth=1600, MAP_WIDTH=5000)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+ 🎨 Setting up color change modal...
+ ✅ Color change modal setup complete
+ ✅ Location adding setup complete
+ 🔍 Setting up FilterManager...
+ 🔍 Setting up filter listeners...
+ ✅ Filter listeners setup complete
+ 🔍 [loadFiltersFromStorage] Tentative de chargement - localStorage contient: données présentes
+ ✅ [loadFiltersFromStorage] Filtres chargés depuis localStorage: Object
+ ✅ [loadFiltersFromStorage] 4 carte(s) avec filtres
+ ✅ [loadFiltersFromStorage] Cartes avec filtres: Array(4)
+ 🔍 [tryLoadFiltersForActiveMap retry=0] activeMapUrl: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: Array(4)
+ ✅ Chargement des filtres pour la carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📊 Filtres à charger: Object
+ 🔍 [loadFiltersForMap] Tentative de chargement pour carte: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 🔍 [loadFiltersForMap] filtersByMap disponibles: Array(4)
+ 📥 [loadFiltersForMap] Filtres trouvés: Object
+ 📥 [loadFiltersForMap] activeFilters après copie: Object
+ 🎨 [loadFiltersForMap] Mise à jour de l'UI...
+ ✅ [loadFiltersForMap] Appel de applyFilters...
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📊 Filtered: 27/27 locations, 0/0 regions
+ ✅ Display updated - 27 locations, 0 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ [AuthManager] 🔔 Modifications non sauvegardées détectées null
+ ✅ FilterManager setup complete
+ 🚀 Setting up VoyageManager...
+ ✅ VoyageManager setup complete
+ 🗺️ Setting up PathManager...
+ 🎨 Canvas configuré : 5000x3229
+ 🛤️ PathManager initialized
+ ✅ PathManager setup complete
+ 🔍 [initializeMap] Création du ZoomManager
+ 🔍 Initializing ZoomManager... Object
+ 🔍 [ZoomManager] updateDisplay called: scale=0.320
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.320, ratio=0.056, x=8.5px, sliderWidth=0px
+ ✅ ZoomManager initialized Object
+ 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 5000 MAP_HEIGHT: 3229
+ 📍 [main.js] État localStorage AVANT init PositionManager - position: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2748.3533095777993,"y":1754.8736097613644} flag: true
+ 📍 [PositionManager.loadPosition] État du flag cloud: true
+ 📍 [PositionManager.loadPosition] Carte active: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+ 📍 [PositionManager.loadPosition] Position dans localStorage: {"mapId":"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg","x":2748.3533095777993,"y":1754.8736097613644}
+ 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: Object
+ 📍 Initializing PositionManager...
+ 📍 [PositionManager] 0 marqueur(s) existant(s) supprimé(s)
+ ✅ PositionManager initialized with position: Object
+ ✅ PositionManager initialized with position: Object
+ 📍 [main.js] Nettoyage du flag cloud après initialisation
+ 📖 Initialisation du JournalManager
+ 📖 undefined voyage(s) chargé(s) depuis le localStorage
+ ✅ JournalManager initialized
+ ✅ Adventure data loaded from localStorage
+ 🎲 Initializing AdventureManager...
+ ✅ AdventureManager initialized
+ ✅ AdventureManager initialized
+ 👥 CharactersManager initialized
+ 📚 35 personnages chargés depuis localStorage (IDs normalisés)
+ ✅ CharactersManager setup complete
+ ✅ CharactersManager initialized
+ 🖌️ Setting up drawing events...
+ 👂 Adding VoyageManager drawing listeners...
+ 🎨 VoyageManager drawing listeners configured
+main.js:2641 ✅ VoyageManager drawing listeners added
+main.js:2644 ✅ Drawing events setup complete
+main.js:925 🔍 [resetView] Nouveau scale calculé: 0.204 (MAP_WIDTH=5000, MAP_HEIGHT=3229)
+main.js:942 🔍 [resetView] Synchronisation ZoomManager avec scale=0.204
+main.js:783 🔍 [initializeMap] Application finale des filtres après resetView
+main.js:789 ✅ Map initialized successfully
+zoom-manager.js:88 🔍 [ZoomManager] Largeur du slider calculée: 150
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.204
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.204, ratio=0.027, x=4.0px, sliderWidth=150px
+filter-manager.js:373 🔍 Applying filters... Object
+filter-manager.js:374 🔍 Current filtersByMap: Object
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg
+filter-manager.js:392 📊 Filtered: 27/27 locations, 0/0 regions
+filter-manager.js:505 ✅ Display updated - 27 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: Object
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+infobox-manager.js:77 📋 [InfoBoxManager] Showing info box for: Les Armureries de la Troisième Profondeur Type: location Object
+infobox-manager.js:1946 📋 [renderPersonnagesTabRead] Lieu/Région: Les Armureries de la Troisième Profondeur
+infobox-manager.js:1947 📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés): Array(2)
+infobox-manager.js:1962 📋 [renderPersonnagesTabRead] Personnage Le Marteau-de-forge (ID: 100027) - associé: true, sur carte: true
+infobox-manager.js:1962 📋 [renderPersonnagesTabRead] Personnage AAAAAAA (ID: 1762325997337) - associé: true, sur carte: true
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:116 ✅ Info box displayed successfully in expanded mode
+infobox-manager.js:899 ✏️ Entering edit mode for: Les Armureries de la Troisième Profondeur
+infobox-manager.js:165 📋 [switchTab] Changement d'onglet vers: personnages, currentType: location
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:967 💾 Saving edit...
+infobox-manager.js:1028 🔍 [SAVE] AVANT update - location "Les Armureries de la Troisième Profondeur" (id: 1716584020111)
+infobox-manager.js:1029 🔍 [SAVE] associatedCharacters AVANT: Array(2)
+infobox-manager.js:1030 🔍 [SAVE] Nouvelles associations cochées: Array(3)
+infobox-manager.js:1034 🔍 [SAVE] associatedCharacters APRÈS: Array(3)
+infobox-manager.js:1038 🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:
+infobox-manager.js:1042   - AAAAAAA (id: 1762325997337): Object
+infobox-manager.js:1042   - Le Marteau-de-forge (id: 100027): Object
+infobox-manager.js:1042   - Yagul l'Esclavagiste (id: 100011): Object
+infobox-manager.js:1051 💾 [SAVE] Objet après modification: {"Rumeur":"Les Nains de jadis forgeaient des armes puissantes, qu'ils entreposaient dans une armurerie au plus profond de leur cité.","Tradition_Ancienne":"Les Armureries de la Troisième Profondeur ét...
+infobox-manager.js:1146 🔄 [SAVE] Synchronisation AVANT recherche - window: 27 lieux, dataManager: 0 lieux
+infobox-manager.js:1154 🔍 [SAVE] Recherche du lieu ID 1716584020111 dans 27 lieux - Index trouvé: 1
+infobox-manager.js:1163 💾 [SAVE] Lieu AVANT mise à jour (index 1): {"Rumeur":"Les Nains de jadis forgeaient des armes puissantes, qu'ils entreposaient dans une armurerie au plus profond de leur cité.","Tradition_Ancie
+infobox-manager.js:1168 💾 [SAVE] Lieu APRÈS mise à jour (index 1): {"Rumeur":"Les Nains de jadis forgeaient des armes puissantes, qu'ils entreposaient dans une armurerie au plus profond de leur cité.","Tradition_Ancie
+infobox-manager.js:1169 🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde: Array(3)
+infobox-manager.js:1200 ✅ [SAVE] Personnage Yagul l'Esclavagiste associé au lieu Les Armureries de la Troisième Profondeur
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+infobox-manager.js:1212 💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles
+infobox-manager.js:1217 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1221   - AAAAAAA (id: 1762325997337): Object
+infobox-manager.js:1221   - Le Marteau-de-forge (id: 100027): Object
+infobox-manager.js:1221   - Yagul l'Esclavagiste (id: 100011): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1241 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+infobox-manager.js:1245   - AAAAAAA (id: 1762325997337): Object
+infobox-manager.js:1245   - Le Marteau-de-forge (id: 100027): Object
+infobox-manager.js:1245   - Yagul l'Esclavagiste (id: 100011): Object
+main.js:437 ✅ Rendered 27 location markers (thumbnails: false)
+infobox-manager.js:1271 🔄 [SAVE] Re-render de l'onglet personnages après sauvegarde
+infobox-manager.js:165 📋 [switchTab] Changement d'onglet vers: personnages, currentType: location
+infobox-manager.js:190 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:191 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:207 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:211 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:907 ❌ Exiting edit mode
+infobox-manager.js:1283 ✅ [SAVE] Sauvegarde locale terminée - retour en mode lecture
+infobox-manager.js:915 🔄 [exitEditMode] Force re-render Personnages tab
