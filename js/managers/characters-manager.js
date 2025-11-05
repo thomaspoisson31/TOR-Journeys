@@ -95,17 +95,26 @@ class CharactersManager {
     }
 
     loadCharactersFromLocal() {
-        const stored = localStorage.getItem('middleEarthCharacters');
-        if (stored) {
-            try {
+        try {
+            const stored = localStorage.getItem('middleEarthCharacters');
+            if (stored) {
                 const data = JSON.parse(stored);
                 this.characters = data.characters || [];
-                console.log(`📚 ${this.characters.length} personnages chargés depuis localStorage`);
-            } catch (e) {
-                console.error("❌ Erreur parsing characters:", e);
+
+                // Normaliser les IDs en String pour tous les personnages
+                this.characters = this.characters.map(char => ({
+                    ...char,
+                    id: String(char.id),
+                    associatedLocations: (char.associatedLocations || []).map(id => String(id)),
+                    associatedRegions: (char.associatedRegions || []).map(id => String(id))
+                }));
+
+                console.log(`📚 ${this.characters.length} personnages chargés depuis localStorage (IDs normalisés)`);
+            } else {
                 this.characters = [];
             }
-        } else {
+        } catch (e) {
+            console.error("❌ Erreur parsing characters:", e);
             this.characters = [];
         }
     }
@@ -139,7 +148,7 @@ class CharactersManager {
 
     sortCharacters(characters) {
         const sorted = [...characters];
-        
+
         switch(this.sortBy) {
             case 'name':
                 sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
@@ -163,7 +172,7 @@ class CharactersManager {
                 });
                 break;
         }
-        
+
         return sorted;
     }
 
@@ -214,7 +223,7 @@ class CharactersManager {
             let typeClass = 'bg-green-600';
             let borderClass = 'border-green-500';
             const type = character.type || 'PNJ';
-            
+
             if (type === 'PJ') {
                 typeClass = 'bg-blue-600';
                 borderClass = 'border-blue-500';
@@ -434,7 +443,7 @@ class CharactersManager {
     confirmAddCharacter() {
         const name = document.getElementById('character-name-input').value.trim();
         const description = document.getElementById('character-desc-input').value.trim();
-        
+
         // Déterminer le type sélectionné
         let type = 'PNJ'; // Valeur par défaut
         if (document.getElementById('character-type-pj').checked) {
@@ -474,7 +483,7 @@ class CharactersManager {
     showCharacterInfoBox(characterId) {
         // Recharger les données depuis localStorage pour avoir les associations à jour
         this.loadCharactersFromLocal();
-        
+
         const character = this.characters.find(c => String(c.id) === String(characterId));
         if (!character) {
             console.warn(`Personnage non trouvé avec l'ID: ${characterId}`);
@@ -544,7 +553,7 @@ class CharactersManager {
 
             const activeMapUrl = window.settingsManager?.activeMapUrl;
             const activeMapName = window.settingsManager?.activeMapName || 'Carte';
-            
+
             if (!activeMapUrl) {
                 this.showNotification("Erreur d'export", "Aucune carte active", "error");
                 return;
@@ -552,7 +561,7 @@ class CharactersManager {
 
             // IMPORTANT: Recharger depuis localStorage pour avoir les données à jour
             this.loadCharactersFromLocal();
-            
+
             console.log(`📤 [exportCharacters] Total personnages disponibles: ${this.characters?.length || 0}`);
 
             // Filtrer les personnages par carte active
@@ -655,45 +664,53 @@ class CharactersManager {
             if (mode === 'replace') {
                 console.log("📥 Mode REPLACE - Remplacement de tous les personnages");
                 this.characters = importedCharacters.map(char => ({
-                    id: char.id || Date.now() + Math.random(),
+                    id: String(char.id || Date.now() + Math.random()),
                     name: char.name || 'Personnage sans nom',
                     description: char.description || '',
                     type: char.type || 'PNJ',
                     images: char.images || [],
-                    associatedLocations: char.associatedLocations || [],
-                    associatedRegions: char.associatedRegions || [],
+                    associatedLocations: (char.associatedLocations || []).map(id => String(id)),
+                    associatedRegions: (char.associatedRegions || []).map(id => String(id)),
                     mapId: char.mapId || activeMapId
                 }));
             } else {
                 console.log("📥 Mode MERGE - Fusion des personnages");
                 importedCharacters.forEach(importedChar => {
-                    const existingChar = this.characters.find(c => c.name === importedChar.name);
+                    // Normaliser les IDs de l'import avant la comparaison
+                    const normalizedImportedChar = {
+                        ...importedChar,
+                        id: String(importedChar.id || Date.now() + Math.random()),
+                        associatedLocations: (importedChar.associatedLocations || []).map(id => String(id)),
+                        associatedRegions: (importedChar.associatedRegions || []).map(id => String(id)),
+                    };
+
+                    const existingChar = this.characters.find(c => String(c.id) === normalizedImportedChar.id);
 
                     if (existingChar) {
                         // Mettre à jour le personnage existant
                         Object.assign(existingChar, {
-                            description: importedChar.description || existingChar.description,
-                            type: importedChar.type || existingChar.type,
-                            images: importedChar.images || existingChar.images,
-                            associatedLocations: importedChar.associatedLocations || existingChar.associatedLocations,
-                            associatedRegions: importedChar.associatedRegions || existingChar.associatedRegions,
-                            mapId: importedChar.mapId || existingChar.mapId || activeMapId
+                            description: normalizedImportedChar.description || existingChar.description,
+                            type: normalizedImportedChar.type || existingChar.type,
+                            images: normalizedImportedChar.images || existingChar.images,
+                            associatedLocations: normalizedImportedChar.associatedLocations || existingChar.associatedLocations,
+                            associatedRegions: normalizedImportedChar.associatedRegions || existingChar.associatedRegions,
+                            mapId: normalizedImportedChar.mapId || existingChar.mapId || activeMapId
                         });
-                        console.log(`🔄 Personnage mis à jour: ${importedChar.name}`);
+                        console.log(`🔄 Personnage mis à jour: ${normalizedImportedChar.name} (ID: ${normalizedImportedChar.id})`);
                     } else {
                         // Ajouter le nouveau personnage avec un ID unique et le mapId
                         const newChar = {
-                            id: importedChar.id || Date.now() + Math.random(),
-                            name: importedChar.name || 'Personnage sans nom',
-                            description: importedChar.description || '',
-                            type: importedChar.type || 'PNJ',
-                            images: importedChar.images || [],
-                            associatedLocations: importedChar.associatedLocations || [],
-                            associatedRegions: importedChar.associatedRegions || [],
-                            mapId: importedChar.mapId || activeMapId
+                            id: normalizedImportedChar.id,
+                            name: normalizedImportedChar.name || 'Personnage sans nom',
+                            description: normalizedImportedChar.description || '',
+                            type: normalizedImportedChar.type || 'PNJ',
+                            images: normalizedImportedChar.images || [],
+                            associatedLocations: normalizedImportedChar.associatedLocations,
+                            associatedRegions: normalizedImportedChar.associatedRegions,
+                            mapId: normalizedImportedChar.mapId || activeMapId
                         };
                         this.characters.push(newChar);
-                        console.log(`➕ Nouveau personnage ajouté: ${importedChar.name} avec mapId: ${newChar.mapId}`);
+                        console.log(`➕ Nouveau personnage ajouté: ${normalizedImportedChar.name} avec mapId: ${newChar.mapId}`);
                     }
                 });
             }
@@ -816,6 +833,27 @@ class CharactersManager {
     // Méthode pour récupérer toutes les données (pour synchronisation)
     getAllData() {
         return { characters: this.characters };
+    }
+
+    // Ajout de la méthode addCharacter pour normaliser les IDs
+    addCharacter(characterData) {
+        const newCharacter = {
+            id: String(Date.now() + Math.random()),
+            name: characterData.name || 'Nouveau personnage',
+            description: characterData.description || '',
+            type: characterData.type || 'PNJ',
+            images: characterData.images || [],
+            associatedLocations: (characterData.associatedLocations || []).map(id => String(id)),
+            associatedRegions: (characterData.associatedRegions || []).map(id => String(id)),
+            mapId: window.settingsManager?.activeMapUrl || null
+        };
+
+        this.characters.push(newCharacter);
+        this.saveCharactersToLocal();
+        this.renderCharactersList();
+
+        console.log("✅ Personnage ajouté:", newCharacter.name, "ID:", newCharacter.id);
+        return newCharacter;
     }
 }
 

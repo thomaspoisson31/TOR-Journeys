@@ -1003,10 +1003,10 @@ class InfoBoxManager {
         // Personnages associés (pour lieux et régions uniquement)
         if (this.currentType === 'location' || this.currentType === 'region') {
             const checkboxes = document.querySelectorAll('.character-checkbox');
-            // Récupérer les IDs des personnages cochés (forcer String pour cohérence)
+            // Récupérer les IDs des personnages cochés (normaliser en String)
             const associatedCharacterIds = Array.from(checkboxes)
                 .filter(cb => cb.checked)
-                .map(cb => String(cb.value));
+                .map(cb => String(cb.value || cb.dataset.characterId));
 
             console.log(`🔍 [SAVE] AVANT update - ${this.currentType} "${this.currentItem.name}" (id: ${this.currentItem.id})`);
             console.log(`🔍 [SAVE] associatedCharacters AVANT:`, this.currentItem.associatedCharacters);
@@ -1924,8 +1924,11 @@ class InfoBoxManager {
         const personnagesContent = document.getElementById('personnages-content');
         if (!personnagesContent) return;
 
-        // Récupérer les IDs des personnages associés
-        const associatedCharacterIds = this.currentItem.associatedCharacters || [];
+        // Récupérer les IDs des personnages associés et les normaliser en String
+        const associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
+
+        console.log(`📋 [renderPersonnagesTabRead] Lieu/Région: ${this.currentItem.name}`);
+        console.log(`📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés):`, associatedCharacterIds);
 
         if (!window.charactersManager || !window.charactersManager.characters) {
             personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>';
@@ -1935,8 +1938,14 @@ class InfoBoxManager {
         // Filtrer les personnages associés à ce lieu/région
         const activeMapId = window.settingsManager?.activeMapUrl;
         const associatedCharacters = window.charactersManager.characters.filter(char => {
-            const isAssociated = associatedCharacterIds.includes(String(char.id));
+            const charIdString = String(char.id);
+            const isAssociated = associatedCharacterIds.includes(charIdString);
             const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
+            
+            if (isAssociated) {
+                console.log(`📋 [renderPersonnagesTabRead] Personnage ${char.name} (ID: ${charIdString}) - associé: ${isAssociated}, sur carte: ${isOnCurrentMap}`);
+            }
+            
             return isAssociated && isOnCurrentMap;
         });
 
@@ -2108,8 +2117,8 @@ class InfoBoxManager {
         const personnagesContent = document.getElementById('personnages-content');
         if (!personnagesContent) return;
 
-        // Récupérer les IDs des personnages associés
-        const associatedCharacterIds = this.currentItem.associatedCharacters || [];
+        // Récupérer les IDs des personnages associés et les normaliser en String
+        const associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
 
         if (!window.charactersManager || !window.charactersManager.characters) {
             personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>';
@@ -2139,8 +2148,8 @@ class InfoBoxManager {
                                    id="character-${String(character.id)}"
                                    value="${String(character.id)}"
                                    ${isAssociated ? 'checked' : ''}
-                                   class="mr-2"
-                                   onchange="window.infoBoxManager.handleCharacterAssociationChange(this)">
+                                   class="character-checkbox"
+                                   data-character-id="${String(character.id)}">
                             <label for="character-${String(character.id)}" class="cursor-pointer">
                                 ${character.name} <span class="text-xs text-gray-400">(${type})</span>
                             </label>
