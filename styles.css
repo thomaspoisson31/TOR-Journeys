@@ -1476,6 +1476,24 @@ body {
     background-color: #f3f4f6 !important;
 }
 
+/* Thumbnail inline controls */
+#info-box-thumbnail-circle {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+#info-box-thumbnail-circle img {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    pointer-events: none;
+}
+
+.thumbnail-edit-indicator {
+    transition: opacity 0.2s ease;
+}
+
 /* Onglet Personnages en mode édition - fond blanc */
 #personnages-tab .space-y-2 label {
     background-color: white !important;

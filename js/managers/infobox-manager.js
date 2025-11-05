@@ -851,13 +851,15 @@ class InfoBoxManager {
         circle.style.marginRight = '12px';
         circle.style.overflow = 'hidden';
         circle.style.backgroundColor = 'transparent';
+        circle.style.position = 'relative';
 
         // Chercher la vignette dans les images
+        let thumbnailImage = null;
         let thumbnailUrl = null;
         if (item.images && item.images.length > 0) {
-            const thumbnailImage = item.images.find(img => img.type === 'vignette');
-            if (thumbnailImage && thumbnailImage.thumbnailUrl) {
-                thumbnailUrl = thumbnailImage.thumbnailUrl;
+            thumbnailImage = item.images.find(img => img.type === 'vignette');
+            if (thumbnailImage) {
+                thumbnailUrl = thumbnailImage.url; // Utiliser l'URL originale
             }
         }
 
@@ -867,15 +869,162 @@ class InfoBoxManager {
             titleContainer.insertBefore(circle, titleContainer.firstChild);
         }
 
-        // Si une vignette existe, l'afficher
-        if (thumbnailUrl) {
+        // Si une vignette existe, l'afficher avec les métadonnées de cadrage
+        if (thumbnailUrl && thumbnailImage) {
             const img = document.createElement('img');
             img.src = thumbnailUrl;
             img.style.width = '100%';
             img.style.height = '100%';
             img.style.objectFit = 'cover';
+            img.style.transformOrigin = 'center';
+            img.style.transition = 'transform 0.1s ease-out';
+            
+            // Appliquer les métadonnées de cadrage si elles existent
+            const crop = thumbnailImage.thumbnailCrop || { zoom: 1, offsetX: 0, offsetY: 0 };
+            this.applyThumbnailTransform(img, crop);
+
             circle.appendChild(img);
+
+            // Activer le mode inline seulement en mode édition
+            if (this.isEditMode) {
+                this.setupInlineThumbnailControls(circle, img, thumbnailImage);
+            }
         }
+    }
+
+    applyThumbnailTransform(img, crop) {
+        const zoom = crop.zoom || 1;
+        const offsetX = crop.offsetX || 0;
+        const offsetY = crop.offsetY || 0;
+        img.style.transform = `scale(${zoom}) translate(${offsetX}%, ${offsetY}%)`;
+    }
+
+    setupInlineThumbnailControls(circle, img, thumbnailImage) {
+        // Variables pour le drag
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let currentCrop = thumbnailImage.thumbnailCrop || { zoom: 1, offsetX: 0, offsetY: 0 };
+
+        // Indicateur de mode édition
+        const editIndicator = document.createElement('div');
+        editIndicator.className = 'thumbnail-edit-indicator';
+        editIndicator.innerHTML = '<i class="fas fa-expand-arrows-alt"></i>';
+        editIndicator.style.cssText = `
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 10;
+        `;
+        circle.appendChild(editIndicator);
+
+        // Afficher l'indicateur au survol
+        circle.addEventListener('mouseenter', () => {
+            editIndicator.style.opacity = '1';
+            circle.style.cursor = 'move';
+        });
+
+        circle.addEventListener('mouseleave', () => {
+            if (!isDragging) {
+                editIndicator.style.opacity = '0';
+                circle.style.cursor = 'default';
+            }
+        });
+
+        // Zoom avec la molette
+        circle.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            currentCrop.zoom = Math.max(0.5, Math.min(3, currentCrop.zoom + delta));
+            
+            this.applyThumbnailTransform(img, currentCrop);
+            this.saveThumbnailCrop(thumbnailImage, currentCrop);
+        });
+
+        // Pan avec clic + drag
+        circle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            circle.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            const deltaX = (e.clientX - startX) * 0.5; // Facteur de sensibilité
+            const deltaY = (e.clientY - startY) * 0.5;
+
+            currentCrop.offsetX = Math.max(-50, Math.min(50, currentCrop.offsetX + deltaX / 2));
+            currentCrop.offsetY = Math.max(-50, Math.min(50, currentCrop.offsetY + deltaY / 2));
+
+            startX = e.clientX;
+            startY = e.clientY;
+
+            this.applyThumbnailTransform(img, currentCrop);
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                circle.style.cursor = 'move';
+                this.saveThumbnailCrop(thumbnailImage, currentCrop);
+            }
+        });
+
+        // Double-clic pour reset
+        circle.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            currentCrop = { zoom: 1, offsetX: 0, offsetY: 0 };
+            this.applyThumbnailTransform(img, currentCrop);
+            this.saveThumbnailCrop(thumbnailImage, currentCrop);
+        });
+    }
+
+    saveThumbnailCrop(thumbnailImage, crop) {
+        // Mettre à jour l'objet image avec les nouvelles métadonnées
+        thumbnailImage.thumbnailCrop = { ...crop };
+
+        // Sauvegarder automatiquement
+        if (this.currentType === 'location') {
+            if (window.dataManager) {
+                window.dataManager.saveLocationsToLocal();
+            }
+        } else if (this.currentType === 'region') {
+            if (window.dataManager) {
+                window.dataManager.saveRegionsToLocal();
+            }
+        } else if (this.currentType === 'character') {
+            if (window.charactersManager) {
+                window.charactersManager.saveCharactersToLocal();
+            }
+        }
+
+        // Marquer comme non sauvegardé pour le cloud
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        console.log('📸 Thumbnail crop saved:', crop);
     }
 
     updateMapIdDisplay(item) {
