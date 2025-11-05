@@ -1980,6 +1980,25 @@ class InfoBoxManager {
         const personnagesContent = document.getElementById('personnages-content');
         if (!personnagesContent) return;
 
+        // IMPORTANT: Recharger l'objet depuis window.locationsData/regionsData pour avoir les associations à jour
+        if (this.currentType === 'location' && window.locationsData?.locations) {
+            const updatedLocation = window.locationsData.locations.find(
+                loc => String(loc.id) === String(this.currentItem.id)
+            );
+            if (updatedLocation) {
+                this.currentItem = updatedLocation;
+                console.log(`🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData`);
+            }
+        } else if (this.currentType === 'region' && window.regionsData?.regions) {
+            const updatedRegion = window.regionsData.regions.find(
+                reg => String(reg.id) === String(this.currentItem.id)
+            );
+            if (updatedRegion) {
+                this.currentItem = updatedRegion;
+                console.log(`🔄 [renderPersonnagesTabRead] Objet région rechargé depuis window.regionsData`);
+            }
+        }
+
         // Récupérer les IDs des personnages associés et les normaliser en String
         const associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
 
