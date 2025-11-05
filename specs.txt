@@ -605,7 +605,16 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Correction rendering onglets relationnels (v1.3.4)
+1. Correction sauvegarde associations personnages (v1.3.5)
+   - Fix associations personnages non sauvegardées lors de l'édition d'un lieu/région
+   - Problème: les checkboxes n'avaient ni attribut `name` ni `data-character-id`
+   - Cause: génération HTML incorrecte dans renderPersonnagesTabEdit()
+   - Solution: ajout de `data-character-id="${character.id}"` sur chaque checkbox
+   - Impact: récupération fiable des IDs via `checkbox.dataset.characterId`
+   - Sauvegarde bidirectionnelle maintenant fonctionnelle (location↔character)
+   - Fichiers concernés: infobox-manager.js (renderPersonnagesTabEdit, saveEdit)
+
+2. Correction rendering onglets relationnels (v1.3.4)
    - Fix onglet Personnages vide après sauvegarde
    - Re-render au clic sur l'onglet plutôt que pendant exitEditMode
    - Rechargement systématique des données depuis window.locationsData/regionsData
@@ -730,7 +739,16 @@ Backup: export JSON régulier
 PROBLÈMES RÉSOLUS
 -----------------
 
-1. Onglet Personnages vide après sauvegarde (v1.3.4):
+1. Associations personnages non sauvegardées (v1.3.5):
+   - Problème: Impossible d'associer/dissocier des personnages à un lieu/région en mode édition
+   - Cause: Les checkboxes générées dans renderPersonnagesTabEdit() n'avaient ni attribut `name` ni `data-character-id`
+   - Impact: saveEdit() ne pouvait pas récupérer les IDs des personnages sélectionnés
+   - Solution: Ajout de l'attribut `data-character-id="${character.id}"` sur chaque checkbox
+   - Méthode de récupération: utilisation de `checkbox.dataset.characterId` au lieu de `checkbox.value`
+   - Résultat: Les relations bidirectionnelles location↔character fonctionnent correctement
+   - Fichier concerné: infobox-manager.js (ligne ~1920 dans renderPersonnagesTabEdit)
+
+2. Onglet Personnages vide après sauvegarde (v1.3.4):
    - Problème: L'onglet "Personnages" restait vide en mode Lecture après une sauvegarde
    - Cause: renderPersonnagesTabRead() jamais appelée lors de exitEditMode(), DOM conservait la structure du mode édition
    - Solutions tentées (échecs):
