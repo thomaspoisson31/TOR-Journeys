@@ -2110,14 +2110,26 @@ class InfoBoxManager {
 
 
     renderPersonnagesTabEdit() {
-        const personnagesContent = document.getElementById('personnages-content');
-        if (!personnagesContent) return;
+        const personnagesTab = document.getElementById('personnages-tab');
+        if (!personnagesTab) return;
 
         // Récupérer les IDs des personnages associés et les normaliser en String
         const associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
 
         if (!window.charactersManager || !window.charactersManager.characters) {
-            personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>';
+            personnagesTab.innerHTML = `
+                <div class="edit-form p-4">
+                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>
+                    <div class="flex space-x-2 mt-4">
+                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-save mr-1"></i>Sauvegarder
+                        </button>
+                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-times mr-1"></i>Annuler
+                        </button>
+                    </div>
+                </div>
+            `;
             return;
         }
 
@@ -2128,46 +2140,68 @@ class InfoBoxManager {
             .sort((a, b) => a.name.localeCompare(b.name));
 
         if (availableCharacters.length === 0) {
-            personnagesContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun personnage disponible sur cette carte</p>';
+            personnagesTab.innerHTML = `
+                <div class="edit-form p-4">
+                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible sur cette carte</p>
+                    <div class="flex space-x-2 mt-4">
+                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-save mr-1"></i>Sauvegarder
+                        </button>
+                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-times mr-1"></i>Annuler
+                        </button>
+                    </div>
+                </div>
+            `;
             return;
         }
 
         const html = `
-            <div class="space-y-2 mb-4">
-                ${availableCharacters.map(character => {
-                    const isAssociated = associatedCharacterIds.includes(String(character.id));
-                    const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-                    const type = character.type === 'PJ' ? 'Joueur' : (character.type === 'PNJ' ? 'PNJ' : 'Autre');
-                    const typeClass = character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600';
-                    const borderClass = character.type === 'PJ' ? 'border-blue-500' : 'border-green-500';
+            <div class="edit-form p-4">
+                <div class="space-y-2 mb-4">
+                    ${availableCharacters.map(character => {
+                        const isAssociated = associatedCharacterIds.includes(String(character.id));
+                        const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+                        const type = character.type === 'PJ' ? 'Joueur' : (character.type === 'PNJ' ? 'PNJ' : 'Autre');
+                        const typeClass = character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600';
+                        const borderClass = character.type === 'PJ' ? 'border-blue-500' : 'border-green-500';
 
-                    return `
-                        <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors group">
-                            <input type="checkbox"
-                                   data-character-id="${character.id}"
-                                   ${isAssociated ? 'checked' : ''}
-                                   class="form-checkbox h-5 w-5 text-blue-600">
-                            ${thumbnailImage ? `
-                                <img src="${thumbnailImage.url}" alt="${character.name}" 
-                                     class="w-12 h-12 rounded-full object-cover border-2 ${borderClass}">
-                            ` : `
-                                <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
-                                    <i class="fas fa-user text-xl text-gray-400"></i>
+                        return `
+                            <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors group">
+                                <input type="checkbox"
+                                       data-character-id="${character.id}"
+                                       ${isAssociated ? 'checked' : ''}
+                                       class="form-checkbox h-5 w-5 text-blue-600 character-checkbox">
+                                ${thumbnailImage ? `
+                                    <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                         class="w-12 h-12 rounded-full object-cover border-2 ${borderClass}">
+                                ` : `
+                                    <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
+                                        <i class="fas fa-user text-xl text-gray-400"></i>
+                                    </div>
+                                `}
+                                <div class="flex-1">
+                                    <div class="font-medium text-white">${character.name}</div>
+                                    <span class="inline-block px-2 py-0.5 text-xs rounded ${typeClass} mt-1">
+                                        ${type}
+                                    </span>
                                 </div>
-                            `}
-                            <div class="flex-1">
-                                <div class="font-medium text-white">${character.name}</div>
-                                <span class="inline-block px-2 py-0.5 text-xs rounded ${typeClass} mt-1">
-                                    ${type}
-                                </span>
-                            </div>
-                        </label>
-                    `;
-                }).join('')}
+                            </label>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-save mr-1"></i>Sauvegarder
+                    </button>
+                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-times mr-1"></i>Annuler
+                    </button>
+                </div>
             </div>
         `;
 
-        personnagesContent.innerHTML = html;
+        personnagesTab.innerHTML = html;
     }
 
     renderLieuxRegionsTabEdit() {
