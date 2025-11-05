@@ -1019,9 +1019,11 @@ class InfoBoxManager {
         if (this.currentType === 'location' || this.currentType === 'region') {
             const checkboxes = document.querySelectorAll('.character-checkbox');
             // Récupérer les IDs des personnages cochés (normaliser en String)
+            // IMPORTANT: Utiliser prioritairement dataset.characterId car value peut être "on"
             const associatedCharacterIds = Array.from(checkboxes)
                 .filter(cb => cb.checked)
-                .map(cb => String(cb.value || cb.dataset.characterId));
+                .map(cb => String(cb.dataset.characterId))
+                .filter(id => id && id !== 'undefined'); // Filtrer les IDs invalides
 
             console.log(`🔍 [SAVE] AVANT update - ${this.currentType} "${this.currentItem.name}" (id: ${this.currentItem.id})`);
             console.log(`🔍 [SAVE] associatedCharacters AVANT:`, this.currentItem.associatedCharacters);
