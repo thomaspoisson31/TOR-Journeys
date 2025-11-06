@@ -342,11 +342,20 @@ function renderLocations() {
             ? location.images.find(img => img.type === 'vignette')
             : null;
 
+        // Stocker les données de vignette dans le marqueur pour affichage au survol
+        if (thumbnailImage) {
+            marker.dataset.thumbnailUrl = thumbnailImage.url;
+            if (thumbnailImage.thumbnailCrop) {
+                marker.dataset.thumbnailCrop = JSON.stringify(thumbnailImage.thumbnailCrop);
+            }
+        }
+
         // Afficher l'image vignette si zoom > 50% ET si elle existe
         if (showThumbnails && thumbnailImage) {
             const imgElement = document.createElement('img');
             imgElement.src = thumbnailImage.url;
             imgElement.alt = location.name;
+            imgElement.className = 'thumbnail-image';
 
             // Appliquer les métadonnées de cadrage si elles existent
             if (thumbnailImage.thumbnailCrop) {
@@ -370,6 +379,45 @@ function renderLocations() {
             // Ajouter l'image au marqueur
             marker.appendChild(imgElement);
         }
+
+        // Gérer l'affichage de la vignette au survol
+        marker.addEventListener('mouseenter', () => {
+            if (!showThumbnails && marker.dataset.thumbnailUrl) {
+                // Créer et afficher la vignette dynamiquement
+                const imgElement = document.createElement('img');
+                imgElement.src = marker.dataset.thumbnailUrl;
+                imgElement.alt = location.name;
+                imgElement.className = 'thumbnail-image hover-thumbnail';
+
+                if (marker.dataset.thumbnailCrop) {
+                    const crop = JSON.parse(marker.dataset.thumbnailCrop);
+                    const zoom = crop.zoom || 1;
+                    const offsetX = crop.offsetX || 0;
+                    const offsetY = crop.offsetY || 0;
+                    imgElement.style.transform = `scale(${zoom}) translate(${offsetX}%, ${offsetY}%)`;
+                    imgElement.style.transformOrigin = 'center';
+                } else {
+                    imgElement.style.width = '100%';
+                    imgElement.style.height = '100%';
+                    imgElement.style.objectFit = 'cover';
+                }
+
+                imgElement.style.width = '100%';
+                imgElement.style.height = '100%';
+                imgElement.style.objectFit = 'cover';
+                marker.appendChild(imgElement);
+            }
+        });
+
+        marker.addEventListener('mouseleave', () => {
+            if (!showThumbnails) {
+                // Retirer la vignette temporaire
+                const hoverThumbnail = marker.querySelector('.hover-thumbnail');
+                if (hoverThumbnail) {
+                    hoverThumbnail.remove();
+                }
+            }
+        });
 
         // Événements de souris pour le glisser-déplacer
         marker.addEventListener('mousedown', (e) => {
