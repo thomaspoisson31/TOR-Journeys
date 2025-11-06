@@ -232,14 +232,26 @@ class CharactersManager {
                 borderClass = 'border-red-500';
             }
 
+            // Calculer le transform CSS pour la vignette
+            let thumbnailStyle = '';
+            if (thumbnailImage?.thumbnailCrop) {
+                const crop = thumbnailImage.thumbnailCrop;
+                const zoom = crop.zoom || 1;
+                const offsetX = crop.offsetX || 0;
+                const offsetY = crop.offsetY || 0;
+                thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
+            }
+
             return `
                 <div class="character-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer" 
                      data-character-id="${character.id}"
                      onclick="window.charactersManager.showCharacterInfoBox('${character.id}')">
                     <div class="flex items-center space-x-4">
                         ${thumbnailImage ? `
-                            <img src="${thumbnailImage.url}" alt="${character.name}" 
-                                 class="w-16 h-16 rounded-full object-cover border-2 ${borderClass}">
+                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass}">
+                                <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                     class="w-full h-full object-cover" ${thumbnailStyle}>
+                            </div>
                         ` : `
                             <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
                                 <i class="fas fa-user text-2xl text-gray-400"></i>

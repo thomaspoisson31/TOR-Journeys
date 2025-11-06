@@ -878,7 +878,7 @@ class InfoBoxManager {
             img.style.objectFit = 'cover';
             img.style.transformOrigin = 'center';
             img.style.transition = 'transform 0.1s ease-out';
-            
+
             // Appliquer les métadonnées de cadrage si elles existent
             const crop = thumbnailImage.thumbnailCrop || { zoom: 1, offsetX: 0, offsetY: 0 };
             this.applyThumbnailTransform(img, crop);
@@ -950,7 +950,7 @@ class InfoBoxManager {
 
             const delta = e.deltaY > 0 ? -0.1 : 0.1;
             currentCrop.zoom = Math.max(0.5, Math.min(3, currentCrop.zoom + delta));
-            
+
             this.applyThumbnailTransform(img, currentCrop);
             this.saveThumbnailCrop(thumbnailImage, currentCrop);
         });
@@ -959,7 +959,7 @@ class InfoBoxManager {
         circle.addEventListener('mousedown', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
+
             isDragging = true;
             startX = e.clientX;
             startY = e.clientY;
@@ -993,7 +993,7 @@ class InfoBoxManager {
         circle.addEventListener('dblclick', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
+
             currentCrop = { zoom: 1, offsetX: 0, offsetY: 0 };
             this.applyThumbnailTransform(img, currentCrop);
             this.saveThumbnailCrop(thumbnailImage, currentCrop);
@@ -1428,7 +1428,7 @@ class InfoBoxManager {
 
             // Re-render
             if (typeof renderLocations === 'function') {
-                renderLocations();
+                window.renderLocations(); // Appel explicite à la fonction globale
             }
         } else if (this.currentType === 'character') {
             if (window.charactersManager) {
@@ -2423,7 +2423,7 @@ class InfoBoxManager {
                                 `}
                                 <div class="flex-1">
                                     <div class="font-medium text-white">${character.name}</div>
-                                    <span class="inline-block px-2 py-0.5 text-xs rounded ${typeClass} mt-1">
+                                    <span class="inline-block px-2 py-0.5 text-xs rounded ${typeClass} text-white">
                                         ${type}
                                     </span>
                                 </div>

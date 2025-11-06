@@ -311,7 +311,7 @@ function renderLocations() {
 
         // Appliquer l'opacité selon le statut connu
         const opacity = location.known === false ? '0.5' : '1';
-        
+
         if (thumbnailUrl) {
             // Afficher la vignette avec effets visuels améliorés
             marker.style.backgroundColor = 'transparent';
@@ -337,19 +337,53 @@ function renderLocations() {
             marker.style.opacity = opacity;
         }
 
+        // Chercher une image de type vignette
+        const thumbnailImage = location.images && Array.isArray(location.images)
+            ? location.images.find(img => img.type === 'vignette')
+            : null;
+
+        // Afficher l'image vignette si zoom > 50% ET si elle existe
+        if (showThumbnails && thumbnailImage) {
+            const imgElement = document.createElement('img');
+            imgElement.src = thumbnailImage.url;
+            imgElement.alt = location.name;
+
+            // Appliquer les métadonnées de cadrage si elles existent
+            if (thumbnailImage.thumbnailCrop) {
+                const crop = thumbnailImage.thumbnailCrop;
+                const zoom = crop.zoom || 1;
+                const offsetX = crop.offsetX || 0;
+                const offsetY = crop.offsetY || 0;
+                // Appliquer le zoom et le décalage pour le cadrage
+                imgElement.style.transform = `scale(${zoom}) translate(${offsetX}%, ${offsetY}%)`;
+                imgElement.style.transformOrigin = 'center';
+                imgElement.style.width = '100%'; // S'assurer que l'image couvre le conteneur
+                imgElement.style.height = '100%';
+                imgElement.style.objectFit = 'cover'; // Assurer que l'image couvre le conteneur
+            } else {
+                // Styles par défaut si pas de crop
+                imgElement.style.width = '100%';
+                imgElement.style.height = '100%';
+                imgElement.style.objectFit = 'cover';
+            }
+
+            // Ajouter l'image au marqueur
+            marker.appendChild(imgElement);
+        }
+
         // Événements de souris pour le glisser-déplacer
         marker.addEventListener('mousedown', (e) => {
             if (e.button === 0) { // Clic gauche seulement
                 e.stopPropagation();
                 e.preventDefault();
-                
+
                 // Initialiser le drag potentiel
                 draggedLocationMarker = marker;
                 draggedLocation = location;
                 dragStartX = e.clientX;
                 dragStartY = e.clientY;
                 hasDraggedLocation = false;
-                
+
                 // Changer le curseur pour indiquer qu'on peut déplacer
                 marker.style.cursor = 'grab';
             }
@@ -1092,7 +1126,7 @@ function setupMapNavigation() {
         if (draggedLocationMarker && !isDraggingLocation) {
             const deltaX = Math.abs(e.clientX - dragStartX);
             const deltaY = Math.abs(e.clientY - dragStartY);
-            
+
             // Si on dépasse le seuil, on commence le drag
             if (deltaX > dragThreshold || deltaY > dragThreshold) {
                 isDraggingLocation = true;
@@ -1101,7 +1135,7 @@ function setupMapNavigation() {
                 draggedLocationMarker.style.cursor = 'grabbing';
             }
         }
-        
+
         if (isPanning && !window.isDrawingMode && !isDraggingLocation) {
             const deltaX = e.clientX - lastMouseX;
             const deltaY = e.clientY - lastMouseY;
@@ -1132,7 +1166,7 @@ function setupMapNavigation() {
                     // Fin du drag : sauvegarder
                     handleLocationDragEnd(e);
                 }
-                
+
                 // Réinitialiser
                 if (draggedLocationMarker) {
                     draggedLocationMarker.style.cursor = 'grab';
@@ -2703,7 +2737,7 @@ function handleLocationDragEnd(event) {
 
         // Sauvegarder les modifications
         dataManager.saveLocationsToLocal();
-        
+
         // Marquer comme non sauvegardé pour sync cloud
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
