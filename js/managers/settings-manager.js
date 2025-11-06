@@ -219,6 +219,263 @@ class SettingsManager {
         }
     }
 
+    editMap(index) {
+        const map = this.availableMaps[index];
+        if (!map) return;
+
+        // Créer une modale pour éditer la carte
+        const modal = document.createElement('div');
+        modal.id = 'edit-map-modal-temp';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]';
+
+        modal.innerHTML = `
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-md mx-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-white">Modifier la carte</h3>
+                    <button id="close-edit-map-modal" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nom de la carte</label>
+                        <input type="text" id="edit-map-name-input" value="${map.name}" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Ex: Eriador - Ma carte personnalisée">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Image actuelle</label>
+                        <div class="w-full h-32 bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden mb-2">
+                            <img src="${map.url}" alt="${map.name}" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <div id="edit-map-upload-container" class="hidden">
+                        <!-- Le composant d'upload sera inséré ici (masqué) -->
+                    </div>
+
+                    <button type="button" id="choose-edit-map-from-library-btn" class="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center space-x-2">
+                        <i class="fas fa-images"></i>
+                        <span>Changer l'image depuis la bibliothèque</span>
+                    </button>
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button id="cancel-edit-map" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg">Annuler</button>
+                    <button id="save-edit-map" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg">Enregistrer</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Setup du composant d'upload dans la modale (toujours créé mais masqué)
+        const uploadContainer = document.getElementById('edit-map-upload-container');
+        if (uploadContainer && this.uploadManager) {
+            this.uploadManager.createUploadComponent(uploadContainer, 'maps', (result) => {
+                const nameInput = document.getElementById('edit-map-name-input');
+                const mapName = nameInput.value.trim() || map.name;
+
+                this.handleMapEdited(index, { ...result, name: mapName });
+
+                // Fermer la modale
+                modal.remove();
+            });
+        }
+
+        // Gestionnaires d'événements
+        document.getElementById('close-edit-map-modal').addEventListener('click', () => {
+            modal.remove();
+        });
+
+        document.getElementById('cancel-edit-map').addEventListener('click', () => {
+            modal.remove();
+        });
+
+        document.getElementById('save-edit-map').addEventListener('click', () => {
+            const nameInput = document.getElementById('edit-map-name-input');
+            const mapName = nameInput.value.trim();
+
+            if (!mapName) {
+                alert('Veuillez entrer un nom pour la carte.');
+                return;
+            }
+
+            // Mettre à jour le nom uniquement (l'image n'a pas changé)
+            this.availableMaps[index].name = mapName;
+            this.saveMapsData();
+            this.renderMapsGrid();
+
+            // Fermer la modale
+            modal.remove();
+        });
+
+        // Bouton pour choisir depuis la bibliothèque
+        document.getElementById('choose-edit-map-from-library-btn').addEventListener('click', () => {
+            this.openLibraryForMapEdit(modal, index);
+        });
+    }
+
+    handleMapEdited(index, uploadResult) {
+        const map = this.availableMaps[index];
+        const mapName = uploadResult.name || map.name;
+
+        // Mettre à jour la carte existante
+        this.availableMaps[index] = {
+            ...map,
+            name: mapName,
+            url: uploadResult.url,
+            width: uploadResult.width || 5000,
+            height: uploadResult.height || 3230
+        };
+
+        this.saveMapsData();
+        this.renderMapsGrid();
+
+        console.log(`✅ Carte modifiée: ${mapName} (${this.availableMaps[index].width}x${this.availableMaps[index].height}px)`);
+    }
+
+    async openLibraryForMapEdit(mapModal, mapIndex) {
+        // Vérifier que l'utilisateur est authentifié
+        if (!window.authManager || !window.authManager.isAuthenticated) {
+            alert('Vous devez être connecté avec Google pour accéder à la bibliothèque d\'images.');
+            return;
+        }
+
+        // Créer la modale de sélection de bibliothèque
+        const libraryModal = document.createElement('div');
+        libraryModal.id = 'library-map-edit-modal';
+        libraryModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[80]';
+
+        libraryModal.innerHTML = `
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[80vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-white">
+                        <i class="fas fa-images mr-2"></i>Bibliothèque d'images
+                    </h2>
+                    <button id="close-library-map-edit" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+
+                <div id="library-map-edit-content" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <!-- Les images seront générées ici -->
+                </div>
+
+                <div id="library-map-edit-loading" class="text-center py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p class="text-gray-400">Chargement des images...</p>
+                </div>
+
+                <div id="library-map-edit-empty" class="hidden text-center py-12 text-gray-500">
+                    <i class="fas fa-images fa-3x mb-4"></i>
+                    <p class="text-lg">Aucune image disponible</p>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(libraryModal);
+
+        // Charger les images
+        try {
+            const response = await fetch('/api/images/library', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            const loadingDiv = document.getElementById('library-map-edit-loading');
+            const contentDiv = document.getElementById('library-map-edit-content');
+            const emptyDiv = document.getElementById('library-map-edit-empty');
+
+            loadingDiv.classList.add('hidden');
+
+            // L'API retourne maintenant {folders: {category: [images]}}
+            if (data.success && data.folders && Object.keys(data.folders).length > 0) {
+                // Récupérer uniquement les images du dossier "maps"
+                const mapsImages = data.folders['maps'] || [];
+
+                if (mapsImages.length > 0) {
+                    contentDiv.innerHTML = mapsImages.map(image => `
+                        <div class="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all"
+                             onclick="window.settingsManager.selectLibraryImageForMapEdit('${image.url}', '${encodeURIComponent(image.filename)}', ${mapIndex})">
+                            <img src="${image.url}" alt="${image.filename}" class="w-full h-24 object-cover">
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity flex items-center justify-center">
+                                <div class="opacity-0 group-hover:opacity-100 transition-opacity text-white text-center p-2">
+                                    <p class="text-xs truncate">${image.filename}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    emptyDiv.classList.remove('hidden');
+                }
+            } else {
+                emptyDiv.classList.remove('hidden');
+            }
+
+        } catch (error) {
+            console.error('❌ Erreur lors du chargement de la bibliothèque:', error);
+            alert('Erreur lors du chargement de la bibliothèque: ' + error.message);
+            libraryModal.remove();
+            return;
+        }
+
+        // Gestionnaire de fermeture
+        document.getElementById('close-library-map-edit').addEventListener('click', () => {
+            libraryModal.remove();
+        });
+
+        // Stocker les références pour la fermeture après sélection
+        this.currentEditMapModal = mapModal;
+        this.currentEditLibraryModal = libraryModal;
+    }
+
+    selectLibraryImageForMapEdit(imageUrl, encodedFilename, mapIndex) {
+        const filename = decodeURIComponent(encodedFilename);
+        const map = this.availableMaps[mapIndex];
+
+        // Récupérer le nom de la carte depuis l'input ou garder l'ancien
+        const nameInput = document.getElementById('edit-map-name-input');
+        const mapName = nameInput ? nameInput.value.trim() : map.name;
+
+        // Mettre à jour la carte
+        this.availableMaps[mapIndex] = {
+            ...map,
+            name: mapName || filename.replace(/\.[^/.]+$/, ''),
+            url: imageUrl
+        };
+
+        this.saveMapsData();
+        this.renderMapsGrid();
+
+        // Fermer les deux modales
+        if (this.currentEditLibraryModal) {
+            this.currentEditLibraryModal.remove();
+        }
+        if (this.currentEditMapModal) {
+            this.currentEditMapModal.remove();
+        }
+
+        // Afficher une notification de succès
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
+        notification.innerHTML = `
+            <i class="fas fa-check mr-2"></i>
+            Carte modifiée avec succès
+        `;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 2000);
+    }
+
     showAddMapModal() {
         // Créer une modale pour ajouter une carte
         const modal = document.createElement('div');
@@ -505,6 +762,11 @@ class SettingsManager {
                             ` : ''}
                         </div>
                         <div class="flex flex-col gap-2">
+                            <button class="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 rounded transition-colors" 
+                                    onclick="event.stopPropagation(); window.settingsManager.editMap(${index})"
+                                    title="Modifier la carte">
+                                <i class="fas fa-edit"></i>
+                            </button>
                             <button class="p-2 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 rounded transition-colors" 
                                     onclick="event.stopPropagation(); window.settingsManager.editMapScale(${index})"
                                     title="Modifier l'échelle">
