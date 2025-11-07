@@ -45,6 +45,28 @@ class SettingsManager {
         if (savedActiveMapName) {
             this.activeMapName = savedActiveMapName;
         }
+    }
+
+    loadSettingsFromContext(settings) {
+        console.log("⚙️ [loadSettingsFromContext] Chargement des paramètres depuis le contexte:", settings);
+        
+        if (settings.availableMaps) {
+            this.availableMaps = settings.availableMaps;
+            console.log(`🗺️ ${this.availableMaps.length} carte(s) chargée(s) depuis le contexte`);
+        }
+        
+        if (settings.activeMapUrl) {
+            this.activeMapUrl = settings.activeMapUrl;
+            console.log(`🗺️ Carte active: ${this.activeMapUrl}`);
+        }
+        
+        if (settings.activeMapName) {
+            this.activeMapName = settings.activeMapName;
+        }
+        
+        // Sauvegarder dans localStorage
+        this.saveMapsData();
+    }
 
         // Ajouter carte par défaut si la liste est vide (UNE SEULE carte)
         if (this.availableMaps.length === 0) {
