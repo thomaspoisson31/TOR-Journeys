@@ -283,24 +283,12 @@ function renderLocations() {
             return;
         }
 
-        // Filtrer les lieux : utiliser logicalMapId en priorité, sinon mapId (ancien système)
-        const activeMap = window.settingsManager?.availableMaps?.find(m => m.url === window.settingsManager?.activeMapUrl);
-        const activeLogicalId = activeMap?.logicalId;
-        
-        // Si le lieu a un logicalMapId, vérifier la correspondance avec la carte active
-        if (location.logicalMapId) {
-            if (activeLogicalId && location.logicalMapId !== activeLogicalId) {
-                return; // Ne pas afficher si logicalMapId ne correspond pas
-            }
+        // Filtrer les lieux : afficher ceux sans mapId OU ceux correspondant à la carte active
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        if (location.mapId && activeMapId && location.mapId !== activeMapId) {
+            // Ne pas afficher uniquement si un mapId existe ET qu'il ne correspond pas à la carte active
+            return;
         }
-        // Sinon, utiliser l'ancien système avec mapId (compatibilité)
-        else if (location.mapId) {
-            const activeMapId = window.settingsManager?.activeMapUrl;
-            if (activeMapId && location.mapId !== activeMapId) {
-                return; // Ne pas afficher si mapId ne correspond pas
-            }
-        }
-        // Si ni logicalMapId ni mapId, afficher sur toutes les cartes (ancien comportement)
 
         // Créer le marqueur
         const marker = document.createElement('div');
@@ -567,23 +555,11 @@ function renderRegions() {
     regionsData.regions.forEach(region => {
         // console.log('🔍 Processing region:', region.name, region);
 
-        // Filtrer les régions : utiliser logicalMapId en priorité, sinon mapId (ancien système)
-        const activeMap = window.settingsManager?.availableMaps?.find(m => m.url === activeMapId);
-        const activeLogicalId = activeMap?.logicalId;
-        
-        // Si la région a un logicalMapId, vérifier la correspondance avec la carte active
-        if (region.logicalMapId) {
-            if (activeLogicalId && region.logicalMapId !== activeLogicalId) {
-                return; // Ne pas afficher si logicalMapId ne correspond pas
-            }
+        // Filtrer les régions : afficher celles sans mapId OU celles correspondant à la carte active
+        if (region.mapId && activeMapId && region.mapId !== activeMapId) {
+            // Ne pas afficher uniquement si un mapId existe ET qu'il ne correspond pas à la carte active
+            return;
         }
-        // Sinon, utiliser l'ancien système avec mapId (compatibilité)
-        else if (region.mapId) {
-            if (activeMapId && region.mapId !== activeMapId) {
-                return; // Ne pas afficher si mapId ne correspond pas
-            }
-        }
-        // Si ni logicalMapId ni mapId, afficher sur toutes les cartes (ancien comportement)
 
         // Extraire les points depuis différentes structures possibles
         let points = [];

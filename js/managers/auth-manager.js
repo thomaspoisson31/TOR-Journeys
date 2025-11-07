@@ -348,7 +348,7 @@ class AuthManager {
         this.logAuth("📦 Collecte des données du contexte actuel...");
 
         // Collecter les personnages avec leurs relations
-        const charactersData = window.charactersManager?.charactersData ||
+        const charactersData = window.charactersManager?.charactersData || 
                               JSON.parse(localStorage.getItem('middleEarthCharacters') || '{"characters":[]}');
 
         const data = {
@@ -468,75 +468,124 @@ class AuthManager {
             this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé)");
         }
 
-        // Appliquer les settings (cartes)
-        if (data.settings) {
+        if (data.settings && window.settingsManager) {
             this.logAuth("⚙️ Application des paramètres depuis le cloud");
-            window.settingsManager.loadSettingsFromContext(data.settings);
-            this.logAuth(`🗺️ ${window.settingsManager.availableMaps?.length || 0} carte(s) restaurée(s) depuis le cloud`);
-            this.logAuth(`🗺️ Carte active restaurée: ${window.settingsManager.activeMapUrl}`);
+
+            // Restaurer TOUTES les données de settings
+            window.settingsManager.loadSettings(data.settings);
+
+            // S'assurer que les cartes sont bien restaurées
+            if (data.settings.availableMaps) {
+                window.settingsManager.availableMaps = data.settings.availableMaps;
+                localStorage.setItem('availableMaps', JSON.stringify(data.settings.availableMaps));
+                this.logAuth(`🗺️ ${data.settings.availableMaps.length} carte(s) restaurée(s) depuis le cloud`);
+            }
+
+            if (data.settings.activeMapUrl) {
+                window.settingsManager.activeMapUrl = data.settings.activeMapUrl;
+                localStorage.setItem('activeMapUrl', data.settings.activeMapUrl);
+                this.logAuth(`🗺️ Carte active restaurée: ${data.settings.activeMapUrl}`);
+            }
+
+            if (data.settings.activeMapName) {
+                window.settingsManager.activeMapName = data.settings.activeMapName;
+                localStorage.setItem('activeMapName', data.settings.activeMapName);
+            }
+
             this.logAuth("✅ Paramètres et cartes appliqués depuis le cloud");
         }
 
-        // Appliquer le journal
         if (data.journal) {
-            this.logAuth(`📖 Application de ${data.journal?.voyages?.length} entrées de journal depuis le contexte`);
-            localStorage.setItem('journal', JSON.stringify(data.journal));
-        }
-
-        // Appliquer les personnages
-        if (data.characters) {
-            this.logAuth(`👥 Application de ${data.characters?.characters?.length} personnages depuis le contexte`);
-            localStorage.setItem('characters', JSON.stringify(data.characters));
-        }
-
-        // Appliquer la position des aventuriers
-        if (data.position) {
-            this.applyPositionFromContext(data.position);
-        }
-
-        // Sauvegarder les filtres pour restauration différée
-        if (data.filtersByMap) {
-            this.logAuth("🔍 [applyContextData] Sauvegarde des filtres pour restauration différée");
-            this.logAuth("🔍 [applyContextData] Données filtersByMap reçues:", data.filtersByMap);
-            this.logAuth(`🔍 [applyContextData] Nombre de cartes avec filtres: ${Object.keys(data.filtersByMap).length}`);
-
-            localStorage.setItem('filtersByMap', JSON.stringify(data.filtersByMap));
-            this.logAuth("💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager");
-
-            if (!window.filterManager) {
-                this.logAuth("⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init");
+            this.logAuth(`📖 Application de ${data.journal.length} entrées de journal depuis le contexte`);
+            localStorage.setItem('travelJournal', JSON.stringify(data.journal));
+            if (window.journalManager) {
+                window.journalManager.loadJournal();
+                this.logAuth("✅ Journal chargé depuis le contexte");
             }
         }
 
+        // Restaurer les personnages
+        if (data.characters) {
+            this.logAuth(`👥 Application de ${data.characters.characters?.length || 0} personnages depuis le contexte`);
+            localStorage.setItem('middleEarthCharacters', JSON.stringify(data.characters));
+            if (window.charactersManager) {
+                // Assurez-vous que la méthode de chargement correspond à la structure de data.characters
+                window.charactersManager.loadCharacters(data.characters); // Appel supposé de la méthode
+                this.logAuth("✅ Personnages chargés depuis le contexte");
+            }
+        }
+
+        // Restaurer les données d'aventure
+        if (data.adventure) {
+            this.logAuth("🎲 Application des données d'aventure depuis le contexte");
+            localStorage.setItem('adventureData', JSON.stringify(data.adventure));
+            if (window.adventureManager) {
+                window.adventureManager.loadFromLocalStorage();
+                this.logAuth("✅ Aventure chargée depuis le contexte");
+            }
+        }
+
+        // Restaurer la position du marqueur - PRIORITÉ CLOUD/CONTEXTE
+        if (data.position) {
+            const activeMapId = window.settingsManager?.activeMapUrl || localStorage.getItem('activeMapUrl');
+            const positionMapId = data.position.mapId;
+
+            console.log("📍 [applyContextData] Position reçue du cloud:", data.position);
+            console.log("📍 [applyContextData] Carte active:", activeMapId);
+            console.log("📍 [applyContextData] Carte de la position:", positionMapId);
+
+            // Restaurer la position uniquement si elle correspond à la carte active
+            // ou si elle n'a pas de mapId (ancienne version)
+            if (!positionMapId || positionMapId === activeMapId) {
+                console.log("📍 [applyContextData] AVANT setItem - position à sauver:", data.position);
+
+                localStorage.setItem('adventurers_position', JSON.stringify(data.position));
+
+                // Vérification immédiate
+                const verif = localStorage.getItem('adventurers_position');
+                console.log("📍 [applyContextData] APRÈS setItem - position vérif:", verif);
+
+                // Ajouter le flag pour signaler que la position vient du cloud
+                localStorage.setItem('adventurers_position_from_cloud', 'true');
+                const flagVerif = localStorage.getItem('adventurers_position_from_cloud');
+                console.log("📍 [applyContextData] APRÈS setItem - flag vérif:", flagVerif);
+
+                console.log("[AuthManager] ✅ Position du contexte forcée dans localStorage avec flag:", data.position);
+            } else {
+                console.log("[AuthManager] ⚠️ Position ignorée car elle correspond à une autre carte");
+            }
+        } else {
+            console.log("[AuthManager] ⚠️ [applyContextData] Aucune position dans le contexte");
+        }
+
+        // Sauvegarder les filtres pour restauration après initialisation complète
+        // IMPORTANT: Toujours traiter filtersByMap, même s'il est vide ou undefined
+        const filtersByMap = data.filtersByMap || {};
+        this.logAuth("🔍 [applyContextData] Sauvegarde des filtres pour restauration différée");
+        this.logAuth("🔍 [applyContextData] Données filtersByMap reçues:", filtersByMap);
+        this.logAuth(`🔍 [applyContextData] Nombre de cartes avec filtres: ${Object.keys(filtersByMap).length}`);
+
+        // Sauvegarder dans localStorage pour que FilterManager les charge à son init
+        localStorage.setItem('filtersByMap', JSON.stringify(filtersByMap));
+        this.logAuth("💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager");
+
+        // Appeler setAllFiltersByMap sur le FilterManager s'il existe
+        if (window.filterManager) {
+            this.logAuth("📤 [applyContextData] Application des filtres via FilterManager.setAllFiltersByMap");
+            window.filterManager.setAllFiltersByMap(filtersByMap);
+        } else {
+            this.logAuth("⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init");
+        }
+
+        // 5. Le rendu sera fait dans loadUserData() après l'application complète
         this.logAuth("✅ Données du contexte synchronisées (rendu différé)");
 
-        // Nettoyer le flag de restauration du calendrier
-        localStorage.removeItem('calendar_from_cloud');
-        this.logAuth("🧹 Flag calendar_from_cloud nettoyé");
-
-        this.logAuth("✅ Contexte appliqué avec succès");
-
-        // Sauvegarder immédiatement dans localStorage
-        this.logAuth("💾 Sauvegarde des données actuelles dans localStorage.");
-
-        // Sauvegarder les cartes
-        if (window.settingsManager) {
-            window.settingsManager.saveMapsData();
-            this.logAuth(`💾 ${window.settingsManager.availableMaps?.length || 0} carte(s) sauvegardée(s) dans localStorage`);
-            this.logAuth(`💾 Carte active sauvegardée: ${window.settingsManager.activeMapUrl}`);
+        // Nettoyer le flag calendar MAINTENANT, après toutes les opérations UI
+        const calendarFlag = localStorage.getItem('calendar_from_cloud');
+        if (calendarFlag === 'true') {
+            localStorage.removeItem('calendar_from_cloud');
+            this.logAuth("🧹 Flag calendar_from_cloud nettoyé");
         }
-
-        // Sauvegarder les personnages
-        if (window.charactersManager) {
-            window.charactersManager.saveCharactersToLocal();
-            this.logAuth(`  - ${window.charactersManager.characters?.length || 0} personnages sauvegardés dans localStorage.`);
-        }
-
-        this.logAuth("  - Données sauvegardées dans localStorage.");
-
-        // IMPORTANT: Migrer APRÈS que SettingsManager ait ajouté les logicalId
-        // Cela garantit que la map URL→logicalId sera correctement construite
-        this.migrateMapIdsToLogicalIds();
 
         // RÉACTIVER l'authentification après l'application complète du contexte
         this.isAuthenticated = wasAuthenticated;
@@ -578,91 +627,6 @@ class AuthManager {
         this._cachedEnvPrefix = fallbackPrefix;
         this.logAuth(`⚠️ Utilisation du fallback pour l'environnement: ${fallbackPrefix}`);
         return fallbackPrefix;
-    }
-
-    /**
-     * Migre les mapId (URL) des lieux et régions vers logicalId
-     * Cette fonction est appelée après le chargement des données cloud
-     */
-    migrateMapIdsToLogicalIds() {
-        this.logAuth("🔄 Début de la migration mapId → logicalId");
-
-        if (!window.settingsManager || !window.settingsManager.availableMaps) {
-            this.logAuth("⚠️ SettingsManager non disponible, migration impossible");
-            return false;
-        }
-
-        // Créer une map URL → logicalId pour faciliter la migration
-        const urlToLogicalIdMap = new Map();
-        window.settingsManager.availableMaps.forEach(map => {
-            if (map.logicalId) {
-                // Mapper l'URL actuelle
-                urlToLogicalIdMap.set(map.url, map.logicalId);
-
-                // Mapper aussi le legacyMapId si présent
-                if (map.legacyMapId && map.legacyMapId !== map.url) {
-                    urlToLogicalIdMap.set(map.legacyMapId, map.logicalId);
-                }
-            }
-        });
-
-        this.logAuth(`📋 Map de migration créée: ${urlToLogicalIdMap.size} URLs → logicalIds`);
-
-        let locationsUpdated = 0;
-        let regionsUpdated = 0;
-        let needsSave = false;
-
-        // Migrer les lieux
-        if (window.locationsData && window.locationsData.locations) {
-            window.locationsData.locations.forEach(location => {
-                if (location.mapId && !location.logicalMapId) {
-                    const logicalId = urlToLogicalIdMap.get(location.mapId);
-                    if (logicalId) {
-                        location.logicalMapId = logicalId;
-                        location.legacyMapId = location.mapId; // Sauvegarder l'ancien mapId
-                        // NE PAS supprimer location.mapId pour compatibilité
-                        locationsUpdated++;
-                        needsSave = true;
-                        this.logAuth(`  ✅ Lieu "${location.name}": mapId → logicalId (${logicalId})`);
-                    }
-                }
-            });
-        }
-
-        // Migrer les régions
-        if (window.regionsData && window.regionsData.regions) {
-            window.regionsData.regions.forEach(region => {
-                if (region.mapId && !region.logicalMapId) {
-                    const logicalId = urlToLogicalIdMap.get(region.mapId);
-                    if (logicalId) {
-                        region.logicalMapId = logicalId;
-                        region.legacyMapId = region.mapId; // Sauvegarder l'ancien mapId
-                        // NE PAS supprimer region.mapId pour compatibilité
-                        regionsUpdated++;
-                        needsSave = true;
-                        this.logAuth(`  ✅ Région "${region.name}": mapId → logicalId (${logicalId})`);
-                    }
-                }
-            });
-        }
-
-        if (needsSave) {
-            this.logAuth(`✅ Migration terminée: ${locationsUpdated} lieux, ${regionsUpdated} régions`);
-
-            // Sauvegarder les modifications
-            if (window.dataManager) {
-                window.dataManager.saveLocationsToLocal();
-                window.dataManager.saveRegionsToLocal();
-            } else {
-                localStorage.setItem('middleEarthLocations', JSON.stringify(window.locationsData));
-                localStorage.setItem('middleEarthRegions', JSON.stringify(window.regionsData));
-            }
-
-            return true;
-        } else {
-            this.logAuth("ℹ️ Aucune migration nécessaire");
-            return false;
-        }
     }
 
     async loadUserData() {
@@ -833,14 +797,6 @@ class AuthManager {
 
             // Sauvegarder dans localStorage (comme cache uniquement)
             this.saveToLocalStorage(cloudData, true); // true = depuis le cloud
-
-            // MIGRATION: Mettre à jour les mapId vers logicalId
-            const migrationDone = this.migrateMapIdsToLogicalIds();
-            if (migrationDone) {
-                this.logAuth("🔄 Migration effectuée, synchronisation vers le cloud...");
-                // Sauvegarder immédiatement les données migrées vers le cloud
-                await this.syncUserData();
-            }
 
             // FORCER un rendu immédiat après chargement cloud
             this.logAuth("🎨 Rendu forcé après chargement cloud");
@@ -1348,7 +1304,7 @@ class AuthManager {
 
     async checkForLocationDeletions(localData, envPrefix) {
         this.logAuth("🔍 Vérification des suppressions de lieux...");
-
+        
         try {
             // Récupérer les données actuelles du cloud
             const response = await fetch(`/api/user/data?env=${envPrefix}`, {
@@ -1368,35 +1324,35 @@ class AuthManager {
             }
 
             const cloudData = await response.json();
-
+            
             // Récupérer l'ID de la carte active
             const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl || localStorage.getItem('activeMapUrl');
             this.logAuth(`🗺️ Carte active pour comparaison: ${activeMapId}`);
-
+            
             // IMPORTANT: Filtrer les lieux par carte active uniquement - CLOUD ET LOCAL
-            const cloudLocations = (cloudData.locations?.locations || []).filter(loc =>
+            const cloudLocations = (cloudData.locations?.locations || []).filter(loc => 
                 loc.mapId === activeMapId
             );
-            const localLocations = (localData.locations?.locations || []).filter(loc =>
+            const localLocations = (localData.locations?.locations || []).filter(loc => 
                 loc.mapId === activeMapId
             );
-
+            
             this.logAuth(`📊 Comparaison pour carte active: Cloud=${cloudLocations.length} lieux, Local=${localLocations.length} lieux`);
             this.logAuth(`🔍 Détail - Cloud IDs: ${cloudLocations.map(l => l.id).join(', ')}`);
             this.logAuth(`🔍 Détail - Local IDs: ${localLocations.map(l => l.id).join(', ')}`);
-
+            
             const cloudLocationIds = new Set(cloudLocations.map(loc => loc.id));
             const localLocationIds = new Set(localLocations.map(loc => loc.id));
-
+            
             // Trouver les lieux présents dans le cloud mais absents localement (pour la carte active uniquement)
             const deletedLocations = cloudLocations.filter(cloudLoc => !localLocationIds.has(cloudLoc.id));
-
+            
             if (deletedLocations.length > 0) {
                 this.logAuth(`⚠️ ALERTE: ${deletedLocations.length} lieu(x) de la carte active seraient supprimé(s) par cette synchronisation!`);
                 deletedLocations.forEach(loc => {
                     this.logAuth(`   - ${loc.name} (ID: ${loc.id}, Carte: ${loc.mapId || 'global'})`);
                 });
-
+                
                 return {
                     hasDeleted: true,
                     deletedLocations: deletedLocations,
@@ -1408,7 +1364,7 @@ class AuthManager {
                 this.logAuth(`✅ Aucune suppression détectée pour la carte active (Cloud: ${cloudLocations.length}, Local: ${localLocations.length})`);
                 return { hasDeleted: false, deletedLocations: [] };
             }
-
+            
         } catch (error) {
             this.logAuth(`⚠️ Erreur lors de la vérification des suppressions: ${error.message}`);
             return { hasDeleted: false, deletedLocations: [] };
@@ -1419,7 +1375,7 @@ class AuthManager {
         return new Promise((resolve) => {
             // Récupérer le nom de la carte active pour l'affichage
             const activeMapName = window.settingsManager?.activeMapName || 'la carte active';
-
+            
             // Créer une modale d'avertissement visible et bloquante
             const warningModal = document.createElement('div');
             warningModal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[200]';
@@ -1429,7 +1385,7 @@ class AuthManager {
                         <i class="fas fa-exclamation-triangle text-yellow-400 text-5xl mr-4 animate-pulse"></i>
                         <h2 class="text-3xl font-bold text-white">⚠️ ALERTE DE SUPPRESSION ⚠️</h2>
                     </div>
-
+                    
                     <div class="bg-red-800 border-2 border-red-600 rounded p-4 mb-6">
                         <p class="text-white text-lg mb-4">
                             <strong class="text-yellow-300">ATTENTION:</strong> Cette synchronisation va <strong class="underline">SUPPRIMER ${deletionInfo.deletedLocations.length} lieu(x)</strong> de "${activeMapName}" dans votre sauvegarde cloud !
@@ -1441,7 +1397,7 @@ class AuthManager {
                             Cloud actuel: <strong>${deletionInfo.cloudTotal} lieux</strong> → Après sync: <strong>${deletionInfo.localTotal} lieux</strong>
                         </p>
                     </div>
-
+                    
                     <div class="bg-gray-800 rounded p-4 mb-6 max-h-60 overflow-y-auto">
                         <p class="text-white font-bold mb-2">Lieux qui seront supprimés :</p>
                         <ul class="text-gray-300 space-y-1">
@@ -1455,14 +1411,14 @@ class AuthManager {
                             `).join('')}
                         </ul>
                     </div>
-
+                    
                     <div class="bg-yellow-900 border-2 border-yellow-600 rounded p-4 mb-6">
                         <p class="text-yellow-200 text-sm">
                             <i class="fas fa-info-circle mr-2"></i>
                             Si ces suppressions sont inattendues, cliquez sur <strong>ANNULER</strong> et vérifiez vos données avant de synchroniser.
                         </p>
                     </div>
-
+                    
                     <div class="flex justify-end space-x-4">
                         <button id="deletion-cancel-btn" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors text-lg">
                             <i class="fas fa-ban mr-2"></i>ANNULER
@@ -1473,24 +1429,24 @@ class AuthManager {
                     </div>
                 </div>
             `;
-
+            
             document.body.appendChild(warningModal);
-
+            
             const cancelBtn = warningModal.querySelector('#deletion-cancel-btn');
             const confirmBtn = warningModal.querySelector('#deletion-confirm-btn');
-
+            
             cancelBtn.addEventListener('click', () => {
                 this.logAuth("❌ Utilisateur a annulé la synchronisation (suppressions détectées)");
                 document.body.removeChild(warningModal);
                 resolve(false);
             });
-
+            
             confirmBtn.addEventListener('click', () => {
                 this.logAuth("✅ Utilisateur a confirmé la synchronisation malgré les suppressions");
                 document.body.removeChild(warningModal);
                 resolve(true);
             });
-
+            
             // Empêcher la fermeture en cliquant à l'extérieur
             warningModal.addEventListener('click', (e) => {
                 if (e.target === warningModal) {
@@ -1575,7 +1531,7 @@ class AuthManager {
             // Synchroniser immédiatement avec les variables globales si CharactersManager existe
             if (window.charactersManager) {
                 // Assurez-vous que la structure correspond à ce que CharactersManager attend
-                window.charactersManager.charactersData = data.characters;
+                window.charactersManager.charactersData = data.characters; 
                 this.logAuth("✅ CharactersManager.charactersData mis à jour.");
             }
         }
