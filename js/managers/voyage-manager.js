@@ -233,16 +233,20 @@ class VoyageManager {
                     const location = locationsData.locations.find(loc => loc.name === discovery.name);
                     
                     // Si le lieu n'a pas de mapId, l'afficher (compatible avec toutes les cartes)
-                    if (!location || !location.mapId) {
+                    if (!location || !location.mapId || location.mapId === null || location.mapId === undefined) {
                         console.log(`✅ [buildAbsoluteTimeline] Lieu "${discovery.name}" sans mapId - affiché sur toutes les cartes`);
                         return true;
                     }
                     
-                    // Si le lieu a un mapId différent de la carte active, le filtrer
-                    if (String(location.mapId) !== String(activeMapUrl)) {
-                        console.log(`⏭️ [buildAbsoluteTimeline] Lieu "${discovery.name}" ignoré (mapId: ${location.mapId} ≠ ${activeMapUrl})`);
-                        return false;
+                    // Si le lieu a un mapId correspondant à la carte active, l'afficher
+                    if (String(location.mapId) === String(activeMapUrl)) {
+                        console.log(`✅ [buildAbsoluteTimeline] Lieu "${discovery.name}" avec mapId correspondant - affiché`);
+                        return true;
                     }
+                    
+                    // Sinon, le filtrer
+                    console.log(`⏭️ [buildAbsoluteTimeline] Lieu "${discovery.name}" ignoré (mapId: ${location.mapId} ≠ ${activeMapUrl})`);
+                    return false;
                 }
                 
                 // Vérifier le mapId pour les régions
@@ -250,16 +254,20 @@ class VoyageManager {
                     const region = regionsData.regions.find(reg => reg.name === discovery.name);
                     
                     // Si la région n'a pas de mapId, l'afficher (compatible avec toutes les cartes)
-                    if (!region || !region.mapId) {
+                    if (!region || !region.mapId || region.mapId === null || region.mapId === undefined) {
                         console.log(`✅ [buildAbsoluteTimeline] Région "${discovery.name}" sans mapId - affichée sur toutes les cartes`);
                         return true;
                     }
                     
-                    // Si la région a un mapId différent de la carte active, la filtrer
-                    if (String(region.mapId) !== String(activeMapUrl)) {
-                        console.log(`⏭️ [buildAbsoluteTimeline] Région "${discovery.name}" ignorée (mapId: ${region.mapId} ≠ ${activeMapUrl})`);
-                        return false;
+                    // Si la région a un mapId correspondant à la carte active, l'afficher
+                    if (String(region.mapId) === String(activeMapUrl)) {
+                        console.log(`✅ [buildAbsoluteTimeline] Région "${discovery.name}" avec mapId correspondant - affichée`);
+                        return true;
                     }
+                    
+                    // Sinon, la filtrer
+                    console.log(`⏭️ [buildAbsoluteTimeline] Région "${discovery.name}" ignorée (mapId: ${region.mapId} ≠ ${activeMapUrl})`);
+                    return false;
                 }
                 
                 return true;

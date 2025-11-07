@@ -506,7 +506,8 @@ class PathManager {
                     name: location.name,
                     discoveryIndex: closestIndex,
                     distance: minDistance,
-                    proximityType: minDistance <= 20 ? 'traversed' : 'nearby'
+                    proximityType: minDistance <= 20 ? 'traversed' : 'nearby',
+                    mapId: location.mapId || null
                 });
             }
         });
@@ -546,7 +547,8 @@ class PathManager {
                     type: 'region',
                     name: region.name,
                     discoveryIndex: entryIndex,
-                    proximityType: 'traversed'
+                    proximityType: 'traversed',
+                    mapId: region.mapId || null
                 });
             }
         });
@@ -583,11 +585,11 @@ class PathManager {
         // Récupérer les dimensions réelles de la carte active
         const mapImage = document.getElementById('map-image');
         const actualMapWidth = mapImage?.naturalWidth || window.MAP_WIDTH || 5103;
-        
+
         // Récupérer l'échelle ET la vitesse de la carte active depuis le SettingsManager
         let MAP_DISTANCE_MILES = 600; // Valeur par défaut
         let milesPerDay = 20; // Valeur par défaut
-        
+
         if (window.settingsManager && window.settingsManager.availableMaps) {
             const activeMap = window.settingsManager.availableMaps.find(
                 m => m.url === window.settingsManager.activeMapUrl
@@ -601,7 +603,7 @@ class PathManager {
                 }
             }
         }
-        
+
         // Convertir pixels en miles (basé sur les constantes de la carte)
         const miles = this.totalDistance * (MAP_DISTANCE_MILES / actualMapWidth);
         const days = Math.ceil(miles / milesPerDay);
