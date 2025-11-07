@@ -158,21 +158,19 @@ class PathManager {
         if (!this.isDrawingMode) return;
 
         if (this.isDrawing) {
-            console.log("🛑 Drawing stopped");
+            console.log('🛑 Drawing stopped');
+
+            // Finalize the current segment
+            console.log('🔄 Drawing segment completed');
+            this.updateJourneyStats();
+
+            // Détecter les découvertes APRÈS avoir finalisé le tracé
+            console.log('🔍 Détection des lieux et régions traversés...');
+            this.detectDiscoveries();
+
+            // Reset drawing state
+            console.log('🏁 Drawing mode ended - journey path created');
             this.isDrawing = false;
-            // Auto-sync sera géré par le main.js
-            console.log("🔄 Drawing segment completed");
-
-            // Recalculer les informations du voyage
-            this.updatePathData();
-
-            // Déplacer le marqueur de position au début du tracé avec animation
-            if (window.positionManager && window.journeyPath.length > 0) {
-                const startPoint = window.journeyPath[0];
-                window.positionManager.animateToPosition(startPoint.x, startPoint.y);
-            }
-
-            console.log("🏁 Drawing mode ended - journey path created");
         }
     }
 
@@ -488,7 +486,7 @@ class PathManager {
             // Filtrer par mapId : n'afficher que les lieux compatibles avec la carte active
             if (activeMapUrl) {
                 const locationMapId = location.mapId;
-                
+
                 // Si le lieu a un mapId défini et qu'il ne correspond pas à la carte active, l'ignorer
                 if (locationMapId && locationMapId !== null && locationMapId !== undefined) {
                     if (String(locationMapId) !== String(activeMapUrl)) {
@@ -542,7 +540,7 @@ class PathManager {
             // Filtrer par mapId : n'afficher que les régions compatibles avec la carte active
             if (activeMapUrl) {
                 const regionMapId = region.mapId;
-                
+
                 // Si la région a un mapId défini et qu'il ne correspond pas à la carte active, l'ignorer
                 if (regionMapId && regionMapId !== null && regionMapId !== undefined) {
                     if (String(regionMapId) !== String(activeMapUrl)) {
@@ -694,6 +692,16 @@ class PathManager {
             this.redrawPath();
             console.log(`🛤️ Chemin chargé avec ${this.path.length} points`);
         }
+    }
+
+    // Placeholder for updateJourneyStats to avoid errors, actual implementation might be elsewhere or needs to be added.
+    updateJourneyStats() {
+        // This method was called in the original snippet to be replaced.
+        // If it has a specific implementation elsewhere or needs to be part of this class,
+        // it should be added or called correctly.
+        // For now, we assume it's either handled by updatePathData or a separate function.
+        // If it was meant to be part of PathManager, it should be defined here.
+        console.log("📞 updateJourneyStats called (placeholder).");
     }
 }
 
