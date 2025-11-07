@@ -480,9 +480,24 @@ class PathManager {
         if (!this.dataManager.locationsData?.locations) return;
 
         const PROXIMITY_THRESHOLD = 80; // pixels
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
 
         this.dataManager.locationsData.locations.forEach(location => {
             if (!location.coordinates) return;
+
+            // Filtrer par mapId : n'afficher que les lieux compatibles avec la carte active
+            if (activeMapUrl) {
+                const locationMapId = location.mapId;
+                
+                // Si le lieu a un mapId défini et qu'il ne correspond pas à la carte active, l'ignorer
+                if (locationMapId && locationMapId !== null && locationMapId !== undefined) {
+                    if (String(locationMapId) !== String(activeMapUrl)) {
+                        console.log(`⏭️ [PathManager] Lieu "${location.name}" ignoré (mapId: ${locationMapId} ≠ ${activeMapUrl})`);
+                        return; // Ignorer ce lieu
+                    }
+                }
+                // Si le lieu n'a pas de mapId, il est compatible avec toutes les cartes
+            }
 
             let minDistance = Infinity;
             let closestIndex = -1;
@@ -501,6 +516,7 @@ class PathManager {
             });
 
             if (minDistance <= PROXIMITY_THRESHOLD) {
+                console.log(`✅ [PathManager] Lieu "${location.name}" détecté et ajouté aux découvertes`);
                 this.discoveries.push({
                     type: 'location',
                     name: location.name,
@@ -516,10 +532,26 @@ class PathManager {
     detectTraversedRegions() {
         if (!this.dataManager.regionsData?.regions) return;
 
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+
         this.dataManager.regionsData.regions.forEach(region => {
             // Utiliser 'coordinates' au lieu de 'points' pour le nouveau format
             const regionCoords = region.coordinates || region.points;
             if (!regionCoords || regionCoords.length < 3) return;
+
+            // Filtrer par mapId : n'afficher que les régions compatibles avec la carte active
+            if (activeMapUrl) {
+                const regionMapId = region.mapId;
+                
+                // Si la région a un mapId défini et qu'il ne correspond pas à la carte active, l'ignorer
+                if (regionMapId && regionMapId !== null && regionMapId !== undefined) {
+                    if (String(regionMapId) !== String(activeMapUrl)) {
+                        console.log(`⏭️ [PathManager] Région "${region.name}" ignorée (mapId: ${regionMapId} ≠ ${activeMapUrl})`);
+                        return; // Ignorer cette région
+                    }
+                }
+                // Si la région n'a pas de mapId, elle est compatible avec toutes les cartes
+            }
 
             const intersections = [];
 
@@ -535,6 +567,8 @@ class PathManager {
             if (intersections.length > 0) {
                 const entryIndex = Math.min(...intersections);
                 const exitIndex = Math.max(...intersections);
+
+                console.log(`✅ [PathManager] Région "${region.name}" traversée et ajoutée aux découvertes`);
 
                 // Stocker le segment de région
                 this.regionSegments.set(region.name, {
