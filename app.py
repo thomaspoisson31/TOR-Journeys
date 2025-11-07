@@ -745,16 +745,9 @@ def generate_with_gemini():
 
             generated_content = result['candidates'][0]['content']['parts'][0]['text']
 
-            # Enregistrer l'usage API si l'utilisateur est connecté
-            if 'user_id' in session:
-                conn = get_db_connection()
-                cursor = conn.cursor()
-                cursor.execute(
-                    'INSERT INTO api_usage (user_id, endpoint, tokens_used) VALUES (?, ?, ?)',
-                    (session['user_id'], 'gemini/generate', len(prompt))
-                )
-                conn.commit()
-                conn.close()
+            # Note: L'enregistrement de l'usage API n'est plus nécessaire 
+            # car nous utilisons Replit Database au lieu de SQLite
+            # La table api_usage n'existe plus dans ce nouveau système
 
             return jsonify({
                 'success': True,
