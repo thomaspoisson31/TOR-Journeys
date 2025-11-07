@@ -303,7 +303,7 @@ function renderLocations() {
         // Chercher une image de type vignette
         let thumbnailUrl = null;
         let hasThumbnail = false;
-        if (showThumbnails && location.images && Array.isArray(location.images)) {
+        if (location.images && Array.isArray(location.images)) {
             const thumbnailImg = location.images.find(img => img.type === 'vignette');
             if (thumbnailImg) {
                 thumbnailUrl = thumbnailImg.url;
@@ -311,12 +311,16 @@ function renderLocations() {
             }
         }
 
+        // Ajouter la classe has-thumbnail si une vignette existe (indépendamment du zoom)
+        if (hasThumbnail) {
+            marker.classList.add('has-thumbnail');
+        }
+
         // Appliquer l'opacité selon le statut connu
         const opacity = location.known === false ? '0.5' : '1';
 
-        if (thumbnailUrl) {
+        if (showThumbnails && thumbnailUrl) {
             // Afficher la vignette avec effets visuels améliorés
-            marker.classList.add('has-thumbnail');
             marker.style.backgroundColor = 'transparent';
             marker.style.border = 'none';
             marker.style.width = '64px';

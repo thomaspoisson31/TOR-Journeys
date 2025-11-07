@@ -92,6 +92,7 @@ body {
 .location-marker.has-thumbnail:hover {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7), 0 6px 15px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 255, 255, 0.4);
     transform: translate(-50%, -50%) scale(4.2);
+    z-index: 100;
 }
 
 /* Override cursor when in drawing mode */
