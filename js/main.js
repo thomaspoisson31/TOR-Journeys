@@ -297,44 +297,39 @@ function renderLocations() {
         marker.style.top = `${location.coordinates.y}px`;
 
         // Chercher une image de type vignette
-        let thumbnailUrl = null;
         let hasThumbnail = false;
         if (location.images && Array.isArray(location.images)) {
             const thumbnailImg = location.images.find(img => img.type === 'vignette');
             if (thumbnailImg) {
-                thumbnailUrl = thumbnailImg.url;
                 hasThumbnail = true;
             }
-        }
-
-        // Ajouter la classe has-thumbnail si une vignette existe (pour l'effet de zoom au survol)
-        if (hasThumbnail) {
-            marker.classList.add('has-thumbnail');
         }
 
         // Appliquer l'opacité selon le statut connu
         const opacity = location.known === false ? '0.5' : '1';
 
-        // Toujours afficher le cercle coloré (plus de vignette affichée par défaut)
+        // Toujours afficher le cercle coloré
         const color = colorMap[location.color] || colorMap.blue;
         marker.style.backgroundColor = color;
         marker.style.backgroundImage = 'none';
-        marker.style.width = '64px';
-        marker.style.height = '64px';
+        marker.style.width = '32px';
+        marker.style.height = '32px';
         marker.style.border = 'none';
         marker.style.borderRadius = '50%';
         marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
         marker.style.opacity = opacity;
 
-        // Stocker les données de vignette dans le marqueur pour affichage au survol
-        const thumbnailImage = location.images && Array.isArray(location.images)
-            ? location.images.find(img => img.type === 'vignette')
-            : null;
-
-        if (thumbnailImage) {
-            marker.dataset.thumbnailUrl = thumbnailImage.url;
-            if (thumbnailImage.thumbnailCrop) {
-                marker.dataset.thumbnailCrop = JSON.stringify(thumbnailImage.thumbnailCrop);
+        // Ajouter la classe has-thumbnail si une vignette existe (pour l'effet de zoom au survol)
+        if (hasThumbnail) {
+            marker.classList.add('has-thumbnail');
+            
+            // Stocker les données de vignette dans le marqueur pour affichage au survol
+            const thumbnailImage = location.images.find(img => img.type === 'vignette');
+            if (thumbnailImage) {
+                marker.dataset.thumbnailUrl = thumbnailImage.url;
+                if (thumbnailImage.thumbnailCrop) {
+                    marker.dataset.thumbnailCrop = JSON.stringify(thumbnailImage.thumbnailCrop);
+                }
             }
         }
 
