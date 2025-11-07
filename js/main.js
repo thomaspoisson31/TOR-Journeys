@@ -272,10 +272,6 @@ function renderLocations() {
     }
 
     let renderedCount = 0;
-    const currentScale = window.scale || 1;
-    const showThumbnails = currentScale > 0.5; // Afficher les vignettes si zoom > 50%
-
-    // console.log(`📱 [renderLocations] currentScale=${currentScale.toFixed(3)}, showThumbnails=${showThumbnails}`);
 
     locationsData.locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
@@ -311,7 +307,7 @@ function renderLocations() {
             }
         }
 
-        // Ajouter la classe has-thumbnail si une vignette existe (indépendamment du zoom)
+        // Ajouter la classe has-thumbnail si une vignette existe (pour l'effet de zoom au survol)
         if (hasThumbnail) {
             marker.classList.add('has-thumbnail');
         }
@@ -319,37 +315,22 @@ function renderLocations() {
         // Appliquer l'opacité selon le statut connu
         const opacity = location.known === false ? '0.5' : '1';
 
-        if (showThumbnails && thumbnailUrl) {
-            // Afficher la vignette avec effets visuels améliorés
-            marker.style.backgroundColor = 'transparent';
-            marker.style.border = 'none';
-            marker.style.width = '64px';
-            marker.style.height = '64px';
-            marker.style.backgroundImage = `url('${thumbnailUrl}')`;
-            marker.style.backgroundSize = 'cover';
-            marker.style.backgroundPosition = 'center';
-            marker.style.borderRadius = '50%';
-            marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
-            marker.style.opacity = opacity;
-        } else {
-            // Afficher le cercle coloré
-            const color = colorMap[location.color] || colorMap.blue;
-            marker.style.backgroundColor = color;
-            marker.style.backgroundImage = 'none';
-            marker.style.width = '64px';
-            marker.style.height = '64px';
-            marker.style.border = 'none';
-            marker.style.borderRadius = '50%';
-            marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
-            marker.style.opacity = opacity;
-        }
+        // Toujours afficher le cercle coloré (plus de vignette affichée par défaut)
+        const color = colorMap[location.color] || colorMap.blue;
+        marker.style.backgroundColor = color;
+        marker.style.backgroundImage = 'none';
+        marker.style.width = '64px';
+        marker.style.height = '64px';
+        marker.style.border = 'none';
+        marker.style.borderRadius = '50%';
+        marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
+        marker.style.opacity = opacity;
 
-        // Chercher une image de type vignette
+        // Stocker les données de vignette dans le marqueur pour affichage au survol
         const thumbnailImage = location.images && Array.isArray(location.images)
             ? location.images.find(img => img.type === 'vignette')
             : null;
 
-        // Stocker les données de vignette dans le marqueur pour affichage au survol
         if (thumbnailImage) {
             marker.dataset.thumbnailUrl = thumbnailImage.url;
             if (thumbnailImage.thumbnailCrop) {
@@ -357,40 +338,10 @@ function renderLocations() {
             }
         }
 
-        // Afficher l'image vignette si zoom > 50% ET si elle existe
-        if (showThumbnails && thumbnailImage) {
-            const imgElement = document.createElement('img');
-            imgElement.src = thumbnailImage.url;
-            imgElement.alt = location.name;
-            imgElement.className = 'thumbnail-image';
-
-            // Appliquer les métadonnées de cadrage si elles existent
-            if (thumbnailImage.thumbnailCrop) {
-                const crop = thumbnailImage.thumbnailCrop;
-                const zoom = crop.zoom || 1;
-                const offsetX = crop.offsetX || 0;
-                const offsetY = crop.offsetY || 0;
-                // Appliquer le zoom et le décalage pour le cadrage
-                imgElement.style.transform = `scale(${zoom}) translate(${offsetX}%, ${offsetY}%)`;
-                imgElement.style.transformOrigin = 'center';
-                imgElement.style.width = '100%'; // S'assurer que l'image couvre le conteneur
-                imgElement.style.height = '100%';
-                imgElement.style.objectFit = 'cover'; // Assurer que l'image couvre le conteneur
-            } else {
-                // Styles par défaut si pas de crop
-                imgElement.style.width = '100%';
-                imgElement.style.height = '100%';
-                imgElement.style.objectFit = 'cover';
-            }
-
-            // Ajouter l'image au marqueur
-            marker.appendChild(imgElement);
-        }
-
-        // Gérer l'affichage de la vignette au survol
+        // Gérer l'affichage de la vignette au survol (seulement si vignette existe)
         marker.addEventListener('mouseenter', () => {
-            if (!showThumbnails && marker.dataset.thumbnailUrl) {
-                // Créer et afficher la vignette dynamiquement
+            if (marker.dataset.thumbnailUrl) {
+                // Créer et afficher la vignette dynamiquement au survol
                 const imgElement = document.createElement('img');
                 imgElement.src = marker.dataset.thumbnailUrl;
                 imgElement.alt = location.name;
@@ -403,10 +354,6 @@ function renderLocations() {
                     const offsetY = crop.offsetY || 0;
                     imgElement.style.transform = `scale(${zoom}) translate(${offsetX}%, ${offsetY}%)`;
                     imgElement.style.transformOrigin = 'center';
-                } else {
-                    imgElement.style.width = '100%';
-                    imgElement.style.height = '100%';
-                    imgElement.style.objectFit = 'cover';
                 }
 
                 imgElement.style.width = '100%';
@@ -417,12 +364,10 @@ function renderLocations() {
         });
 
         marker.addEventListener('mouseleave', () => {
-            if (!showThumbnails) {
-                // Retirer la vignette temporaire
-                const hoverThumbnail = marker.querySelector('.hover-thumbnail');
-                if (hoverThumbnail) {
-                    hoverThumbnail.remove();
-                }
+            // Retirer la vignette temporaire
+            const hoverThumbnail = marker.querySelector('.hover-thumbnail');
+            if (hoverThumbnail) {
+                hoverThumbnail.remove();
             }
         });
 
@@ -974,13 +919,6 @@ function zoomToPoint(zoomFactor, clientX, clientY) {
         constrainPan();
         updateMapTransform();
 
-        // Rafraîchir les marqueurs si on passe le seuil de 50%
-        const shouldShowThumbnails = newScale > 0.5;
-        const wasShowingThumbnails = oldScale > 0.5;
-        if (shouldShowThumbnails !== wasShowingThumbnails) {
-            renderLocations();
-        }
-
         // Mettre à jour la taille du marqueur de position
         if (positionManager) {
             positionManager.updateMarkerSize();
@@ -1018,13 +956,6 @@ function resetView() {
         panY = (viewportHeight - MAP_HEIGHT * newScale) / 2;
 
         updateMapTransform();
-
-        // Rafraîchir les marqueurs si on passe le seuil de 50%
-        const shouldShowThumbnails = newScale > 0.5;
-        const wasShowingThumbnails = oldScale > 0.5;
-        if (shouldShowThumbnails !== wasShowingThumbnails) {
-            renderLocations();
-        }
 
         // Synchroniser le ZoomManager APRÈS avoir mis à jour scale et window.scale
         if (zoomManager) {
@@ -1130,14 +1061,6 @@ function setupMapNavigation() {
 
                     touchStartX = currentCenterX;
                     touchStartY = currentCenterY;
-
-                    // Rafraîchir les marqueurs si on passe le seuil de 50%
-                    const shouldShowThumbnails = scale > 0.5;
-                    const wasShowingThumbnails = oldScale > 0.5;
-                    if (shouldShowThumbnails !== wasShowingThumbnails) {
-                        console.log(`📱 [MOBILE] Basculement vignettes: ${shouldShowThumbnails ? 'OUI' : 'NON'} (scale=${scale.toFixed(3)})`);
-                        renderLocations();
-                    }
                 }
 
                 // Mettre à jour le ZoomManager
