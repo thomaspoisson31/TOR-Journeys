@@ -354,25 +354,26 @@ class SettingsManager {
     }
 
     handleMapEdited(index, uploadResult) {
-        const map = this.availableMaps[index];
-        const mapName = uploadResult.name || map.name;
-        const oldUrl = map.url;
+        const oldMap = this.availableMaps[index];
+        const mapName = uploadResult.name || oldMap.name;
+        const oldUrl = oldMap.url;
+        const oldLogicalId = oldMap.logicalId;
 
         // Mettre à jour la carte existante SANS changer le logicalId
         this.availableMaps[index] = {
-            ...map,
+            ...oldMap,
             name: mapName,
             url: uploadResult.url,
             width: uploadResult.width || 5000,
             height: uploadResult.height || 3230,
             // IMPORTANT: Conserver le logicalId existant
-            logicalId: map.logicalId,
+            logicalId: oldLogicalId,
             // Ajouter la nouvelle URL comme legacyMapId pour compatibilité
-            legacyMapId: map.legacyMapId || oldUrl
+            legacyMapId: oldMap.legacyMapId || oldUrl
         };
 
         console.log(`🔄 Carte modifiée: ${mapName}`);
-        console.log(`   - logicalId préservé: ${map.logicalId}`);
+        console.log(`   - logicalId préservé: ${oldLogicalId}`);
         console.log(`   - ancienne URL: ${oldUrl}`);
         console.log(`   - nouvelle URL: ${uploadResult.url}`);
         console.log(`   - Dimensions: ${this.availableMaps[index].width}x${this.availableMaps[index].height}px`);
@@ -484,26 +485,27 @@ class SettingsManager {
 
     selectLibraryImageForMapEdit(imageUrl, encodedFilename, mapIndex) {
         const filename = decodeURIComponent(encodedFilename);
-        const map = this.availableMaps[mapIndex];
-        const oldUrl = map.url;
+        const oldMap = this.availableMaps[mapIndex];
+        const oldUrl = oldMap.url;
+        const oldLogicalId = oldMap.logicalId;
 
         // Récupérer le nom de la carte depuis l'input ou garder l'ancien
         const nameInput = document.getElementById('edit-map-name-input');
-        const mapName = nameInput ? nameInput.value.trim() : map.name;
+        const mapName = nameInput ? nameInput.value.trim() : oldMap.name;
 
         // Mettre à jour la carte SANS changer le logicalId
         this.availableMaps[mapIndex] = {
-            ...map,
+            ...oldMap,
             name: mapName || filename.replace(/\.[^/.]+$/, ''),
             url: imageUrl,
             // IMPORTANT: Conserver le logicalId existant
-            logicalId: map.logicalId,
+            logicalId: oldLogicalId,
             // Ajouter l'ancienne URL comme legacyMapId pour compatibilité
-            legacyMapId: map.legacyMapId || oldUrl
+            legacyMapId: oldMap.legacyMapId || oldUrl
         };
 
         console.log(`🔄 Carte modifiée depuis bibliothèque: ${mapName}`);
-        console.log(`   - logicalId préservé: ${map.logicalId}`);
+        console.log(`   - logicalId préservé: ${oldLogicalId}`);
         console.log(`   - ancienne URL: ${oldUrl}`);
         console.log(`   - nouvelle URL: ${imageUrl}`);
 
