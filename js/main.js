@@ -302,10 +302,12 @@ function renderLocations() {
 
         // Chercher une image de type vignette
         let thumbnailUrl = null;
+        let hasThumbnail = false;
         if (showThumbnails && location.images && Array.isArray(location.images)) {
             const thumbnailImg = location.images.find(img => img.type === 'vignette');
             if (thumbnailImg) {
                 thumbnailUrl = thumbnailImg.url;
+                hasThumbnail = true;
             }
         }
 
@@ -314,6 +316,7 @@ function renderLocations() {
 
         if (thumbnailUrl) {
             // Afficher la vignette avec effets visuels améliorés
+            marker.classList.add('has-thumbnail');
             marker.style.backgroundColor = 'transparent';
             marker.style.border = 'none';
             marker.style.width = '64px';
