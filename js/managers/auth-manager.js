@@ -629,6 +629,91 @@ class AuthManager {
         return fallbackPrefix;
     }
 
+    /**
+     * Migre les mapId (URL) des lieux et régions vers logicalId
+     * Cette fonction est appelée après le chargement des données cloud
+     */
+    migrateMapIdsToLogicalIds() {
+        this.logAuth("🔄 Début de la migration mapId → logicalId");
+        
+        if (!window.settingsManager || !window.settingsManager.availableMaps) {
+            this.logAuth("⚠️ SettingsManager non disponible, migration impossible");
+            return false;
+        }
+
+        // Créer une map URL → logicalId pour faciliter la migration
+        const urlToLogicalIdMap = new Map();
+        window.settingsManager.availableMaps.forEach(map => {
+            if (map.logicalId) {
+                // Mapper l'URL actuelle
+                urlToLogicalIdMap.set(map.url, map.logicalId);
+                
+                // Mapper aussi le legacyMapId si présent
+                if (map.legacyMapId && map.legacyMapId !== map.url) {
+                    urlToLogicalIdMap.set(map.legacyMapId, map.logicalId);
+                }
+            }
+        });
+
+        this.logAuth(`📋 Map de migration créée: ${urlToLogicalIdMap.size} URLs → logicalIds`);
+
+        let locationsUpdated = 0;
+        let regionsUpdated = 0;
+        let needsSave = false;
+
+        // Migrer les lieux
+        if (window.locationsData && window.locationsData.locations) {
+            window.locationsData.locations.forEach(location => {
+                if (location.mapId && !location.logicalMapId) {
+                    const logicalId = urlToLogicalIdMap.get(location.mapId);
+                    if (logicalId) {
+                        location.logicalMapId = logicalId;
+                        location.legacyMapId = location.mapId; // Sauvegarder l'ancien mapId
+                        // NE PAS supprimer location.mapId pour compatibilité
+                        locationsUpdated++;
+                        needsSave = true;
+                        this.logAuth(`  ✅ Lieu "${location.name}": mapId → logicalId (${logicalId})`);
+                    }
+                }
+            });
+        }
+
+        // Migrer les régions
+        if (window.regionsData && window.regionsData.regions) {
+            window.regionsData.regions.forEach(region => {
+                if (region.mapId && !region.logicalMapId) {
+                    const logicalId = urlToLogicalIdMap.get(region.mapId);
+                    if (logicalId) {
+                        region.logicalMapId = logicalId;
+                        region.legacyMapId = region.mapId; // Sauvegarder l'ancien mapId
+                        // NE PAS supprimer region.mapId pour compatibilité
+                        regionsUpdated++;
+                        needsSave = true;
+                        this.logAuth(`  ✅ Région "${region.name}": mapId → logicalId (${logicalId})`);
+                    }
+                }
+            });
+        }
+
+        if (needsSave) {
+            this.logAuth(`✅ Migration terminée: ${locationsUpdated} lieux, ${regionsUpdated} régions`);
+            
+            // Sauvegarder les modifications
+            if (window.dataManager) {
+                window.dataManager.saveLocationsToLocal();
+                window.dataManager.saveRegionsToLocal();
+            } else {
+                localStorage.setItem('middleEarthLocations', JSON.stringify(window.locationsData));
+                localStorage.setItem('middleEarthRegions', JSON.stringify(window.regionsData));
+            }
+            
+            return true;
+        } else {
+            this.logAuth("ℹ️ Aucune migration nécessaire");
+            return false;
+        }
+    }
+
     async loadUserData() {
         if (!this.isAuthenticated) {
             this.logAuth("❌ Tentative de chargement sans authentification");
@@ -797,6 +882,14 @@ class AuthManager {
 
             // Sauvegarder dans localStorage (comme cache uniquement)
             this.saveToLocalStorage(cloudData, true); // true = depuis le cloud
+
+            // MIGRATION: Mettre à jour les mapId vers logicalId
+            const migrationDone = this.migrateMapIdsToLogicalIds();
+            if (migrationDone) {
+                this.logAuth("🔄 Migration effectuée, synchronisation vers le cloud...");
+                // Sauvegarder immédiatement les données migrées vers le cloud
+                await this.syncUserData();
+            }
 
             // FORCER un rendu immédiat après chargement cloud
             this.logAuth("🎨 Rendu forcé après chargement cloud");
