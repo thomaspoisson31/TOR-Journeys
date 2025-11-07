@@ -1765,11 +1765,15 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             maxY = Math.max(maxY, point.y);
         });
 
+        // Dimensions du tracé
+        const pathWidth = maxX - minX;
+        const pathHeight = maxY - minY;
+
         // Centre du tracé
         const centerX = (minX + maxX) / 2;
         const centerY = (minY + maxY) / 2;
 
-        console.log(`🎯 Centrage de la carte sur le voyage - Centre: (${centerX.toFixed(0)}, ${centerY.toFixed(0)})`);
+        console.log(`🎯 Centrage de la carte sur le voyage - Centre: (${centerX.toFixed(0)}, ${centerY.toFixed(0)}), Dimensions: ${pathWidth.toFixed(0)}x${pathHeight.toFixed(0)}`);
 
         // Accéder aux variables globales de pan et scale
         const viewport = document.getElementById('viewport');
@@ -1780,23 +1784,34 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             return;
         }
 
-        // Forcer le zoom à 50%
-        const targetScale = 0.5;
-        window.scale = targetScale;
-
         // Calculer la largeur effective du viewport (50% de l'écran avec la modale ouverte)
         const viewportWidth = viewport.clientWidth * 0.5; // Moitié gauche pour la carte
         const viewportHeight = viewport.clientHeight;
 
+        // Calculer le zoom optimal pour faire rentrer tout le tracé dans la moitié gauche
+        // avec une marge de 10% pour que le tracé ne soit pas collé aux bords
+        const scaleX = (viewportWidth * 0.9) / pathWidth;
+        const scaleY = (viewportHeight * 0.9) / pathHeight;
+        const targetScale = Math.min(scaleX, scaleY);
+
+        // Contraindre le scale dans les limites autorisées
+        const minScale = window.zoomManager?.mapConstants?.minScale || 0.1;
+        const maxScale = window.zoomManager?.mapConstants?.maxScale || 4.0;
+        const constrainedScale = Math.max(minScale, Math.min(maxScale, targetScale));
+
+        window.scale = constrainedScale;
+
+        console.log(`🔍 Zoom calculé: scaleX=${scaleX.toFixed(3)}, scaleY=${scaleY.toFixed(3)}, targetScale=${targetScale.toFixed(3)}, constrainedScale=${constrainedScale.toFixed(3)}`);
+
         // Calculer le nouveau pan pour centrer le tracé dans la moitié gauche
-        const newPanX = (viewportWidth / 2) - (centerX * targetScale);
-        const newPanY = (viewportHeight / 2) - (centerY * targetScale);
+        const newPanX = (viewportWidth / 2) - (centerX * constrainedScale);
+        const newPanY = (viewportHeight / 2) - (centerY * constrainedScale);
 
         // Activer la transition CSS pour un effet fluide
         mapContainer.style.transition = 'transform 0.8s ease-in-out';
 
         // Appliquer la transformation
-        mapContainer.style.transform = `translate(${newPanX}px, ${newPanY}px) scale(${targetScale})`;
+        mapContainer.style.transform = `translate(${newPanX}px, ${newPanY}px) scale(${constrainedScale})`;
 
         // Mettre à jour les variables globales
         if (typeof window.panX !== 'undefined') {
@@ -1818,7 +1833,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             mapContainer.style.transition = 'transform 0.1s ease-out';
         }, 800);
 
-        console.log(`✅ Carte centrée sur le voyage avec zoom ${(targetScale * 100).toFixed(0)}%`);
+        console.log(`✅ Carte centrée sur le voyage avec zoom ${(constrainedScale * 100).toFixed(0)}%`);
     }
 
     getDiscoveryImage(discovery) {
