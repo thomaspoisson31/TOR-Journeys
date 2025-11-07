@@ -475,6 +475,12 @@ class PathManager {
 
     detectDiscoveries() {
         console.log('🔍 [detectDiscoveries] DÉBUT de la détection');
+        
+        // IMPORTANT: Synchroniser avec les données globales avant détection
+        if (this.dataManager && typeof this.dataManager.syncFromGlobalData === 'function') {
+            this.dataManager.syncFromGlobalData();
+        }
+        
         console.log('🔍 [detectDiscoveries] dataManager.locationsData:', this.dataManager.locationsData);
         console.log('🔍 [detectDiscoveries] dataManager.regionsData:', this.dataManager.regionsData);
         console.log('🔍 [detectDiscoveries] path.length:', this.path.length);

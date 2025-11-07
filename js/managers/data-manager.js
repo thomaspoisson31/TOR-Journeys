@@ -16,6 +16,9 @@ class DataManager {
     }
 
     saveLocationsToLocal() {
+        // IMPORTANT: Toujours synchroniser depuis window.locationsData qui est la source de vérité
+        this.locationsData = window.locationsData || this.locationsData;
+        
         if (this.locationsData) {
             // Sauvegarder dans localStorage
             localStorage.setItem('middleEarthLocations', JSON.stringify(this.locationsData));
@@ -37,6 +40,9 @@ class DataManager {
     }
 
     saveRegionsToLocal() {
+        // IMPORTANT: Toujours synchroniser depuis window.regionsData qui est la source de vérité
+        this.regionsData = window.regionsData || this.regionsData;
+        
         if (this.regionsData) {
             // Sauvegarder dans localStorage
             localStorage.setItem('middleEarthRegions', JSON.stringify(this.regionsData));
@@ -64,6 +70,18 @@ class DataManager {
         this.regionsData = { regions: [] };
         window.regionsData = this.regionsData;
         console.log("✅ Structure de régions initialisée (vide, en attente du cloud)");
+    }
+
+    // Méthode pour synchroniser les données depuis window (appelée après chargement cloud)
+    syncFromGlobalData() {
+        if (window.locationsData) {
+            this.locationsData = window.locationsData;
+            console.log('🔄 [DataManager] locationsData synchronisé depuis window:', this.locationsData.locations?.length || 0, 'lieux');
+        }
+        if (window.regionsData) {
+            this.regionsData = window.regionsData;
+            console.log('🔄 [DataManager] regionsData synchronisé depuis window:', this.regionsData.regions?.length || 0, 'régions');
+        }
     }
 
     // Les méthodes d'export/import ont été déplacées vers ImportExportManager
