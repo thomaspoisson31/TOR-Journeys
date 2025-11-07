@@ -1,0 +1,1081 @@
+(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+(anonymous) @ (index):64
+upload-manager.js:355 📤 UploadManager module loaded
+infobox-manager.js:2866 📋 InfoBoxManager module loaded
+library-manager.js:202 📚 LibraryManager module loaded
+characters-manager.js:874 👥 CharactersManager module loaded
+main.js:34 ✅ Constants loaded successfully
+main.js:97 ✅ Global variables initialized
+main.js:105 ✅ Essential DOM elements: {viewport: true, mapContainer: true, mapImage: true, loaderOverlay: true}
+main.js:2790 📋 Simplified main.js loaded - waiting for DOM ready
+main.js:114 🚀 Starting simplified application...
+main.js:76 🏷️ Version affichée: v1.5.0 (2025-11-04)
+main.js:122 ✅ DataManager initialized
+filter-manager.js:20 🔍 FilterManager initialized
+main.js:124 ✅ FilterManager initialized
+main.js:134 ✅ VoyageManager initialized
+main.js:141 ✅ PathManager initialized
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"month":"Hithui","day":22}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {month: 'Hithui', day: 22}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"month":"Hithui","day":22}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {month: 'Hithui', day: 22}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 22, symbol: '❄️', weather: 'Le verglas matinal est fréquent et dangereux. La p…s déplacements matinaux, à pied comme en voiture.'}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'automne-fin', seasonMainName: 'automne', symbol: '❄️', fullName: 'Automne-fin', isCalendarMode: true, …}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 22, symbol: '❄️', weather: 'Le verglas matinal est fréquent et dangereux. La p…s déplacements matinaux, à pied comme en voiture.'}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'automne-fin', seasonMainName: 'automne', symbol: '❄️', fullName: 'Automne-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+main.js:147 ✅ CalendarManager initialized
+settings-manager.js:17 ⚙️ SettingsManager initialized
+settings-manager.js:1111 ⚙️ Configuration des listeners Import/Export...
+settings-manager.js:1118 📍 Boutons Lieux/Régions: {exportBtn: true, importBtn: true, fileInput: true}
+settings-manager.js:1155 👥 Boutons Personnages: {exportBtn: true, importBtn: true, fileInput: true}
+settings-manager.js:1194 ✅ Listeners Import/Export configurés
+main.js:153 ✅ SettingsManager initialized
+auth-manager.js:1808 [AuthManager] 🔑 Initialisation AuthManager null
+auth-manager.js:1808 [AuthManager] 🔍 Vérification du statut d'authentification null
+auth-manager.js:1808 [AuthManager] 👂 Écoute des changements de localStorage activée. null
+main.js:175 ✅ AuthManager initialized
+upload-manager.js:10 📤 UploadManager initialized
+infobox-manager.js:25 📋 InfoBoxManager initialized with UploadManager
+main.js:184 ✅ InfoBoxManager initialized
+import-export-manager.js:17 📤 ImportExportManager initialized
+import-export-manager.js:44 📤 ImportExportManager event listeners configured
+main.js:193 ✅ ImportExportManager initialized
+main.js:196 📍 Initializing data structures...
+data-manager.js:10 📍 loadInitialLocations: Initialisation avec structure vide
+data-manager.js:15 ✅ Structure de données initialisée (vide, en attente du cloud)
+data-manager.js:61 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+data-manager.js:66 ✅ Structure de régions initialisée (vide, en attente du cloud)
+main.js:204 ✅ Data structures initialized (will be populated from cloud)
+main.js:228 ⏳ Waiting for SettingsManager to load active map...
+upload-manager.js:10 📤 UploadManager initialized
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1808 [AuthManager] ✅ Utilisateur authentifié trouvé null
+auth-manager.js:1808 [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+auth-manager.js:1808 [AuthManager] 🌍 Environnement détecté: development (préfixe: dev_) null
+auth-manager.js:1808 [AuthManager] 📥 Chargement des données depuis le cloud (environnement: dev_) null
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1808 [AuthManager] ✅ Données cloud récupérées {_saved_at: '2025-11-07T16:03:47.740830', _sync_timestamp: 1762531427.740845, calendar: {…}, characters: {…}, filtersByMap: {…}, …}
+auth-manager.js:1808 [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+auth-manager.js:1808 [AuthManager] 🔄 Application des données du contexte (10) ['_saved_at', '_sync_timestamp', 'calendar', 'characters', 'filtersByMap', 'journal', 'locations', 'position', 'regions', 'settings']
+auth-manager.js:1808 [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+auth-manager.js:1808 [AuthManager] 💾 31 lieux sauvegardés dans localStorage null
+auth-manager.js:1808 [AuthManager] 💾 1 régions sauvegardées dans localStorage null
+auth-manager.js:1808 [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 31 lieux null
+auth-manager.js:1808 [AuthManager] 📊 Structure locationsData: {locations: Array(31)}
+auth-manager.js:1808 [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 1 régions null
+auth-manager.js:1808 [AuthManager] 📊 Structure regionsData: {regions: Array(1)}
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Données calendar reçues: {currentDate: null, isCalendarMode: true}
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 22, symbol: '❄️', weather: 'Le verglas matinal est fréquent et dangereux. La p…s déplacements matinaux, à pied comme en voiture.'}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'automne-fin', seasonMainName: 'automne', symbol: '❄️', fullName: 'Automne-fin', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+auth-manager.js:1808 [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+auth-manager.js:1808 [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+settings-manager.js:1261 ⚙️ Chargement des paramètres depuis le contexte: {activeMapUrl: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', availableMaps: Array(2)}
+settings-manager.js:1273 ✅ Cartes chargées: 2
+settings-manager.js:1277 ✅ Carte active URL: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+settings-manager.js:1305 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+settings-manager.js:1310 🗺️ Échelle de la carte active: 600 miles
+settings-manager.js:1365 ✅ Paramètres chargés avec succès
+auth-manager.js:1808 [AuthManager] 🗺️ 2 carte(s) restaurée(s) depuis le cloud null
+auth-manager.js:1808 [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp null
+auth-manager.js:1808 [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+auth-manager.js:1808 [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+auth-manager.js:1808 [AuthManager] 👥 Application de 35 personnages depuis le contexte null
+auth-manager.js:533 📍 [applyContextData] Position reçue du cloud: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1772.7075267840153, y: 1644.7556137134584}
+auth-manager.js:534 📍 [applyContextData] Carte active: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+auth-manager.js:535 📍 [applyContextData] Carte de la position: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+auth-manager.js:540 📍 [applyContextData] AVANT setItem - position à sauver: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1772.7075267840153, y: 1644.7556137134584}
+auth-manager.js:546 📍 [applyContextData] APRÈS setItem - position vérif: {"mapId":"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp","x":1772.7075267840153,"y":1644.7556137134584}
+auth-manager.js:551 📍 [applyContextData] APRÈS setItem - flag vérif: true
+auth-manager.js:553 [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1772.7075267840153, y: 1644.7556137134584}
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Sauvegarde des filtres pour restauration différée null
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Données filtersByMap reçues: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Nombre de cartes avec filtres: 4 null
+auth-manager.js:1808 [AuthManager] 💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager null
+auth-manager.js:1808 [AuthManager] ⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init null
+auth-manager.js:1808 [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+auth-manager.js:1808 [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+auth-manager.js:1808 [AuthManager] ✅ Contexte appliqué avec succès null
+auth-manager.js:1808 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1808 [AuthManager] 💾 2 carte(s) sauvegardée(s) dans localStorage null
+auth-manager.js:1808 [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp null
+auth-manager.js:1808 [AuthManager]   - 35 personnages sauvegardés dans localStorage. null
+auth-manager.js:1808 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1808 [AuthManager] 🎨 Rendu forcé après chargement cloud null
+main.js:466 ✅ Rendered 2 location markers
+auth-manager.js:1808 [AuthManager] ✅ 31 lieux rendus depuis le cloud null
+main.js:612 ✅ Rendered region: dfdsdfsfsdsdf with 8 points
+main.js:615 ✅ Rendered 1 region polygons
+auth-manager.js:1808 [AuthManager] ✅ 1 régions rendues depuis le cloud null
+auth-manager.js:1808 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+auth-manager.js:1808 [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+settings-manager.js:1314 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1325 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+settings-manager.js:1329 🗺️ Réinitialisation de la carte depuis loadSettings
+ 🗺️ Initializing map...
+ 📐 Map dimensions: 5000 x 3875
+ ✅ Regions layer configured
+ 🗺️ [initializeMap] Scale initial: 0.206 (viewportWidth=1029, MAP_WIDTH=5000)
+ 🎮 Setting up map navigation...
+ ✅ Map navigation setup complete
+ 📋 Setting up info-box listeners...
+ ✅ Info-box listeners setup complete
+ 🎨 Setting up region drawing...
+ ✅ Region drawing setup complete
+ 📍 Setting up location adding...
+ ✅ Generate description button configured
+ 🎨 Setting up color change modal...
+ ✅ Color change modal setup complete
+ ✅ Location adding setup complete
+ 🔍 Setting up FilterManager...
+ 🔍 Setting up filter listeners...
+ ✅ Filter listeners setup complete
+ 🔍 [loadFiltersFromStorage] Tentative de chargement - localStorage contient: données présentes
+ ✅ [loadFiltersFromStorage] Filtres chargés depuis localStorage: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:32 ✅ [loadFiltersFromStorage] 4 carte(s) avec filtres
+filter-manager.js:33 ✅ [loadFiltersFromStorage] Cartes avec filtres: (4) ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', '/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg']
+filter-manager.js:96 🔍 [tryLoadFiltersForActiveMap retry=0] activeMapUrl: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:97 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: (4) ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', '/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg']
+filter-manager.js:100 ✅ Chargement des filtres pour la carte active: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:101 📊 Filtres à charger: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:634 🔍 [loadFiltersForMap] Tentative de chargement pour carte: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:635 🔍 [loadFiltersForMap] filtersByMap disponibles: (4) ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', '/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg']
+filter-manager.js:638 📥 [loadFiltersForMap] Filtres trouvés: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:640 📥 [loadFiltersForMap] activeFilters après copie: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:643 🎨 [loadFiltersForMap] Mise à jour de l'UI...
+filter-manager.js:645 ✅ [loadFiltersForMap] Appel de applyFilters...
+filter-manager.js:373 🔍 Applying filters... {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:374 🔍 Current filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:392 📊 Filtered: 31/31 locations, 1/1 regions
+filter-manager.js:505 ✅ Display updated - 31 locations, 1 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+auth-manager.js:1808 [AuthManager] 🔔 Modifications non sauvegardées détectées null
+main.js:693 ✅ FilterManager setup complete
+main.js:700 🚀 Setting up VoyageManager...
+main.js:702 ✅ VoyageManager setup complete
+main.js:707 🗺️ Setting up PathManager...
+path-manager.js:50 🎨 Canvas configuré : 5000x3875
+path-manager.js:38 🛤️ PathManager initialized
+main.js:709 ✅ PathManager setup complete
+main.js:726 🔍 [initializeMap] Création du ZoomManager
+zoom-manager.js:26 🔍 Initializing ZoomManager... {scale: 0.2058, MAP_WIDTH: 0, MAP_HEIGHT: 0}
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.206
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.206, ratio=0.027, x=4.1px, sliderWidth=0px
+zoom-manager.js:34 ✅ ZoomManager initialized {scale: 0.2058, sliderWidth: 0, controlExists: true}
+main.js:755 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 5000 MAP_HEIGHT: 3875
+main.js:760 📍 [main.js] État localStorage AVANT init PositionManager - position: {"mapId":"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp","x":1772.7075267840153,"y":1644.7556137134584} flag: true
+position-manager.js:25 📍 [PositionManager.loadPosition] État du flag cloud: true
+position-manager.js:26 📍 [PositionManager.loadPosition] Carte active: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+position-manager.js:29 📍 [PositionManager.loadPosition] Position dans localStorage: {"mapId":"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp","x":1772.7075267840153,"y":1644.7556137134584}
+position-manager.js:42 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1772.7075267840153, y: 1644.7556137134584}
+position-manager.js:14 📍 Initializing PositionManager...
+position-manager.js:94 📍 [PositionManager] 0 marqueur(s) existant(s) supprimé(s)
+position-manager.js:17 ✅ PositionManager initialized with position: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1772.7075267840153, y: 1644.7556137134584}
+main.js:777 ✅ PositionManager initialized with position: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1772.7075267840153, y: 1644.7556137134584}
+main.js:781 📍 [main.js] Nettoyage du flag cloud après initialisation
+journal-manager.js:11 📖 Initialisation du JournalManager
+journal-manager.js:50 📖 0 voyage(s) chargé(s) depuis le localStorage
+main.js:789 ✅ JournalManager initialized
+adventure-manager.js:417 ✅ Adventure data loaded from localStorage
+adventure-manager.js:24 🎲 Initializing AdventureManager...
+adventure-manager.js:26 ✅ AdventureManager initialized
+main.js:795 ✅ AdventureManager initialized
+characters-manager.js:15 👥 CharactersManager initialized
+characters-manager.js:112 📚 35 personnages chargés depuis localStorage (IDs normalisés)
+characters-manager.js:21 ✅ CharactersManager setup complete
+main.js:801 ✅ CharactersManager initialized
+main.js:2642 🖌️ Setting up drawing events...
+main.js:2646 👂 Adding VoyageManager drawing listeners...
+voyage-manager.js:86 🎨 VoyageManager drawing listeners configured
+main.js:2648 ✅ VoyageManager drawing listeners added
+main.js:2651 ✅ Drawing events setup complete
+main.js:947 🔍 [resetView] Nouveau scale calculé: 0.170 (MAP_WIDTH=5000, MAP_HEIGHT=3875)
+main.js:957 🔍 [resetView] Synchronisation ZoomManager avec scale=0.170
+main.js:812 🔍 [initializeMap] Application finale des filtres après resetView
+main.js:818 ✅ Map initialized successfully
+zoom-manager.js:88 🔍 [ZoomManager] Largeur du slider calculée: 150
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.170
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.170, ratio=0.018, x=2.7px, sliderWidth=150px
+filter-manager.js:373 🔍 Applying filters... {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:374 🔍 Current filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:392 📊 Filtered: 31/31 locations, 1/1 regions
+filter-manager.js:505 ✅ Display updated - 31 locations, 1 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+main.js:1082 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:905 🔍 [main.js] zoomToPoint: oldScale=0.170, zoomFactor=1.100, newScale=0.187
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.187
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.187, ratio=0.022, x=3.3px, sliderWidth=150px
+main.js:1088 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.187
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.187, ratio=0.022, x=3.3px, sliderWidth=150px
+main.js:1082 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:905 🔍 [main.js] zoomToPoint: oldScale=0.187, zoomFactor=1.100, newScale=0.205
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.205
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.205, ratio=0.027, x=4.1px, sliderWidth=150px
+main.js:1088 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.205
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.205, ratio=0.027, x=4.1px, sliderWidth=150px
+main.js:1082 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:905 🔍 [main.js] zoomToPoint: oldScale=0.205, zoomFactor=1.100, newScale=0.226
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.226
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.226, ratio=0.032, x=4.8px, sliderWidth=150px
+main.js:1088 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.226
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.226, ratio=0.032, x=4.8px, sliderWidth=150px
+main.js:1082 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:905 🔍 [main.js] zoomToPoint: oldScale=0.226, zoomFactor=1.100, newScale=0.249
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.249
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.249, ratio=0.038, x=5.7px, sliderWidth=150px
+main.js:1088 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.249
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.249, ratio=0.038, x=5.7px, sliderWidth=150px
+main.js:1082 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:905 🔍 [main.js] zoomToPoint: oldScale=0.249, zoomFactor=1.100, newScale=0.273
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.273
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.273, ratio=0.044, x=6.7px, sliderWidth=150px
+main.js:1088 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.273
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.273, ratio=0.044, x=6.7px, sliderWidth=150px
+main.js:1082 🔍 [main.js] wheel event: deltaY=-166.66665649414062, zoomFactor=1.1
+main.js:905 🔍 [main.js] zoomToPoint: oldScale=0.273, zoomFactor=1.100, newScale=0.301
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.301
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.301, ratio=0.051, x=7.7px, sliderWidth=150px
+main.js:1088 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.301
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.301, ratio=0.051, x=7.7px, sliderWidth=150px
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1769.3828019337973, y: 1897.4347023300236, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+path-manager.js:314 🎨 Drawing mode is now: true
+path-manager.js:328 ✅ Canvas pointer events enabled
+path-manager.js:389 🚫 Gestionnaires de pan désactivés
+path-manager.js:334 ✏️ Mode dessin activé - pan désactivé
+main.js:466 ✅ Rendered 2 location markers
+path-manager.js:93 🖱️ Viewport mousedown event fired, isDrawingMode: true
+path-manager.js:103 🎨 Starting drawing...
+path-manager.js:123 📍 Start point: {x: 1766, y: 1933}
+path-manager.js:645 📏 Calcul distance: 0px × (600 miles / 5000px) = 0 miles ÷ 20 mi/j
+path-manager.js:128 ✅ Drawing initialized
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 3px × (600 miles / 5000px) = 0 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 3.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 7px × (600 miles / 5000px) = 1 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 7.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 10px × (600 miles / 5000px) = 1 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 10.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 21px × (600 miles / 5000px) = 2 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 20.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 28px × (600 miles / 5000px) = 3 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 27.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 34px × (600 miles / 5000px) = 4 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 34.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 39px × (600 miles / 5000px) = 5 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 39.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 50px × (600 miles / 5000px) = 6 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 50.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 62px × (600 miles / 5000px) = 7 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 61.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 70px × (600 miles / 5000px) = 8 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 69.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 82px × (600 miles / 5000px) = 10 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 81.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 96px × (600 miles / 5000px) = 12 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 96.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 103px × (600 miles / 5000px) = 12 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 103.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 128px × (600 miles / 5000px) = 15 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 128.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 135px × (600 miles / 5000px) = 16 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 134.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 143px × (600 miles / 5000px) = 17 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 142.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 150px × (600 miles / 5000px) = 18 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 150.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 156px × (600 miles / 5000px) = 19 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 156.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 167px × (600 miles / 5000px) = 20 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 166.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 177px × (600 miles / 5000px) = 21 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 177.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 188px × (600 miles / 5000px) = 23 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 187.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 198px × (600 miles / 5000px) = 24 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 197.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 212px × (600 miles / 5000px) = 25 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 211.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 222px × (600 miles / 5000px) = 27 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 221.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 232px × (600 miles / 5000px) = 28 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 231.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 239px × (600 miles / 5000px) = 29 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 239.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 246px × (600 miles / 5000px) = 30 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 246.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 252px × (600 miles / 5000px) = 30 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 252.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 259px × (600 miles / 5000px) = 31 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 259.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 262px × (600 miles / 5000px) = 31 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 262.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 266px × (600 miles / 5000px) = 32 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 266.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 269px × (600 miles / 5000px) = 32 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 269.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 276px × (600 miles / 5000px) = 33 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 276.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 283px × (600 miles / 5000px) = 34 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 283.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 291px × (600 miles / 5000px) = 35 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 290.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 298px × (600 miles / 5000px) = 36 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 298.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 309px × (600 miles / 5000px) = 37 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 309.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 316px × (600 miles / 5000px) = 38 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 315.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 325px × (600 miles / 5000px) = 39 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 325.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 335px × (600 miles / 5000px) = 40 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 335.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 347px × (600 miles / 5000px) = 42 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 347.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 351px × (600 miles / 5000px) = 42 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 351.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 356px × (600 miles / 5000px) = 43 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 355.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 361px × (600 miles / 5000px) = 43 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 361.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 364px × (600 miles / 5000px) = 44 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 364.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 369px × (600 miles / 5000px) = 44 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 368.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 372px × (600 miles / 5000px) = 45 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 371.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 376px × (600 miles / 5000px) = 45 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 375.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 380px × (600 miles / 5000px) = 46 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 379.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 383px × (600 miles / 5000px) = 46 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 382.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 386px × (600 miles / 5000px) = 46 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 385.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 389px × (600 miles / 5000px) = 47 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 388.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 393px × (600 miles / 5000px) = 47 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 392.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 401px × (600 miles / 5000px) = 48 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 400.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 404px × (600 miles / 5000px) = 48 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 403.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 409px × (600 miles / 5000px) = 49 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 408.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 416px × (600 miles / 5000px) = 50 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 415.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 437px × (600 miles / 5000px) = 52 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 436.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 444px × (600 miles / 5000px) = 53 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 444.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 462px × (600 miles / 5000px) = 55 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 461.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 465px × (600 miles / 5000px) = 56 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 464.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 468px × (600 miles / 5000px) = 56 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 467.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 478px × (600 miles / 5000px) = 57 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 477.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 485px × (600 miles / 5000px) = 58 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 484.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 491px × (600 miles / 5000px) = 59 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 490.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 498px × (600 miles / 5000px) = 60 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 497.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 510px × (600 miles / 5000px) = 61 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 509.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 515px × (600 miles / 5000px) = 62 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 514.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 519px × (600 miles / 5000px) = 62 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 518.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 523px × (600 miles / 5000px) = 63 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 522.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 526px × (600 miles / 5000px) = 63 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 525.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 531px × (600 miles / 5000px) = 64 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 530.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 538px × (600 miles / 5000px) = 65 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 538.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 548px × (600 miles / 5000px) = 66 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 548.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 579px × (600 miles / 5000px) = 70 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 579.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 607px × (600 miles / 5000px) = 73 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 606.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 636px × (600 miles / 5000px) = 76 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 636.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 668px × (600 miles / 5000px) = 80 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 668.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 690px × (600 miles / 5000px) = 83 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 690.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 706px × (600 miles / 5000px) = 85 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 705.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 716px × (600 miles / 5000px) = 86 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 715.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 726px × (600 miles / 5000px) = 87 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 726.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 731px × (600 miles / 5000px) = 88 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 730.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 734px × (600 miles / 5000px) = 88 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 733.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 741px × (600 miles / 5000px) = 89 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 740.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 761px × (600 miles / 5000px) = 91 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 760.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 784px × (600 miles / 5000px) = 94 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 783.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 807px × (600 miles / 5000px) = 97 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 806.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 824px × (600 miles / 5000px) = 99 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 824.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 842px × (600 miles / 5000px) = 101 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 842.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 855px × (600 miles / 5000px) = 103 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 854.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 872px × (600 miles / 5000px) = 105 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 872.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 884px × (600 miles / 5000px) = 106 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 883.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 892px × (600 miles / 5000px) = 107 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 891.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 899px × (600 miles / 5000px) = 108 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 899.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 902px × (600 miles / 5000px) = 108 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 902.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 916px × (600 miles / 5000px) = 110 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 915.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 924px × (600 miles / 5000px) = 111 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 923.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 934px × (600 miles / 5000px) = 112 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 933.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 946px × (600 miles / 5000px) = 114 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 946.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 958px × (600 miles / 5000px) = 115 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 957.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 975px × (600 miles / 5000px) = 117 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 975.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 991px × (600 miles / 5000px) = 119 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 991.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1006px × (600 miles / 5000px) = 121 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1005.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1023px × (600 miles / 5000px) = 123 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1022.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1037px × (600 miles / 5000px) = 124 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1037.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1071px × (600 miles / 5000px) = 129 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1071.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1082px × (600 miles / 5000px) = 130 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1081.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1088px × (600 miles / 5000px) = 131 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1088.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1096px × (600 miles / 5000px) = 132 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1096.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1135px × (600 miles / 5000px) = 136 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1135.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1149px × (600 miles / 5000px) = 138 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1149.3
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1161px × (600 miles / 5000px) = 139 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1161.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1171px × (600 miles / 5000px) = 140 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1170.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1183px × (600 miles / 5000px) = 142 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1182.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1192px × (600 miles / 5000px) = 143 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1192.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1200px × (600 miles / 5000px) = 144 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1199.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1212px × (600 miles / 5000px) = 145 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1212.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1224px × (600 miles / 5000px) = 147 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1224.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1231px × (600 miles / 5000px) = 148 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1230.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1243px × (600 miles / 5000px) = 149 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1243.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1251px × (600 miles / 5000px) = 150 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1250.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1263px × (600 miles / 5000px) = 152 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1262.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1271px × (600 miles / 5000px) = 152 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1270.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1275px × (600 miles / 5000px) = 153 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1274.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1289px × (600 miles / 5000px) = 155 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1288.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1295px × (600 miles / 5000px) = 155 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1295.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1305px × (600 miles / 5000px) = 157 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1305.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1317px × (600 miles / 5000px) = 158 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1316.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1332px × (600 miles / 5000px) = 160 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1332.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1346px × (600 miles / 5000px) = 162 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1346.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1359px × (600 miles / 5000px) = 163 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1358.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1373px × (600 miles / 5000px) = 165 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1372.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1384px × (600 miles / 5000px) = 166 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1384.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1394px × (600 miles / 5000px) = 167 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1393.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1406px × (600 miles / 5000px) = 169 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1405.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1413px × (600 miles / 5000px) = 170 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1413.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1437px × (600 miles / 5000px) = 172 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1437.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1442px × (600 miles / 5000px) = 173 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1442.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1448px × (600 miles / 5000px) = 174 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1448.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1459px × (600 miles / 5000px) = 175 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1458.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1469px × (600 miles / 5000px) = 176 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1468.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1475px × (600 miles / 5000px) = 177 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1474.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1485px × (600 miles / 5000px) = 178 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1484.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1495px × (600 miles / 5000px) = 179 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1495.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1503px × (600 miles / 5000px) = 180 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1502.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1507px × (600 miles / 5000px) = 181 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1506.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1511px × (600 miles / 5000px) = 181 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1510.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1514px × (600 miles / 5000px) = 182 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1513.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1518px × (600 miles / 5000px) = 182 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1517.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1521px × (600 miles / 5000px) = 183 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1520.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1524px × (600 miles / 5000px) = 183 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1523.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1529px × (600 miles / 5000px) = 183 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1528.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1538px × (600 miles / 5000px) = 185 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1538.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1546px × (600 miles / 5000px) = 186 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1546.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1563px × (600 miles / 5000px) = 188 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1562.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1573px × (600 miles / 5000px) = 189 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1573.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1585px × (600 miles / 5000px) = 190 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1585.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1603px × (600 miles / 5000px) = 192 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1603.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1618px × (600 miles / 5000px) = 194 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1618.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1625px × (600 miles / 5000px) = 195 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1624.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1636px × (600 miles / 5000px) = 196 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1635.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1648px × (600 miles / 5000px) = 198 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1647.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1657px × (600 miles / 5000px) = 199 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1657.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1666px × (600 miles / 5000px) = 200 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1666.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1704px × (600 miles / 5000px) = 204 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1703.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1720px × (600 miles / 5000px) = 206 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1720.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1732px × (600 miles / 5000px) = 208 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1732.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1742px × (600 miles / 5000px) = 209 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1742.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1753px × (600 miles / 5000px) = 210 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1752.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1760px × (600 miles / 5000px) = 211 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1760.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:645 📏 Calcul distance: 1764px × (600 miles / 5000px) = 212 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1764.2
+path-manager.js:161 🛑 Drawing stopped
+path-manager.js:164 🔄 Drawing segment completed
+path-manager.js:645 📏 Calcul distance: 1764px × (600 miles / 5000px) = 212 miles ÷ 20 mi/j
+path-manager.js:175 🏁 Drawing mode ended - journey path created
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1766, y: 1933, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1766, 1933)
+voyage-manager.js:1826 🎯 Centrage de la carte sur le voyage - Centre: (2242, 1802), Dimensions: 1171x569
+voyage-manager.js:1848 📏 Dimensions - Toolbar: 58px, Modal: 514.5px, Disponible pour carte: 456.5px
+voyage-manager.js:1863 🔍 Zoom calculé: scaleX=0.351, scaleY=1.156, targetScale=0.351, constrainedScale=0.351
+voyage-manager.js:1897 ✅ Carte centrée sur le voyage avec zoom 35%
+voyage-manager.js:131 🗺️ VoyageManager calcul: 1764px × (600 miles / 5000px) = 212 miles ÷ 20 mi/j = 11 jours
+voyage-manager.js:381 📅 Date de début du voyage sauvegardée : 22 Hithui
+voyage-manager.js:222 🗺️ [buildAbsoluteTimeline] Carte active: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+voyage-manager.js:223 🗺️ [buildAbsoluteTimeline] journeyDiscoveries total: 0
+voyage-manager.js:277 🗺️ [buildAbsoluteTimeline] Découvertes après filtrage: 0
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(1): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=22
+voyage-manager.js:423 📅 Résultat final: "22 Hithui"
+voyage-manager.js:143 📅 Jour 1: date calendrier = "22 Hithui"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(2): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=23
+voyage-manager.js:423 📅 Résultat final: "23 Hithui"
+voyage-manager.js:143 📅 Jour 2: date calendrier = "23 Hithui"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(3): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=24
+voyage-manager.js:423 📅 Résultat final: "24 Hithui"
+voyage-manager.js:143 📅 Jour 3: date calendrier = "24 Hithui"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(4): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=25
+voyage-manager.js:423 📅 Résultat final: "25 Hithui"
+voyage-manager.js:143 📅 Jour 4: date calendrier = "25 Hithui"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(5): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=26
+voyage-manager.js:423 📅 Résultat final: "26 Hithui"
+voyage-manager.js:143 📅 Jour 5: date calendrier = "26 Hithui"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(6): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=27
+voyage-manager.js:423 📅 Résultat final: "27 Hithui"
+voyage-manager.js:143 📅 Jour 6: date calendrier = "27 Hithui"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(7): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=28
+voyage-manager.js:423 📅 Résultat final: "28 Hithui"
+voyage-manager.js:143 📅 Jour 7: date calendrier = "28 Hithui"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(8): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=29
+voyage-manager.js:423 📅 Résultat final: "29 Hithui"
+voyage-manager.js:143 📅 Jour 8: date calendrier = "29 Hithui"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(9): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=30
+voyage-manager.js:423 📅 Résultat final: "30 Hithui"
+voyage-manager.js:143 📅 Jour 9: date calendrier = "30 Hithui"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(10): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=31
+voyage-manager.js:419 📅 Navigation mois: nouveau monthIndex=11, nouveau calendarDay=1
+voyage-manager.js:423 📅 Résultat final: "1 Girithron"
+voyage-manager.js:143 📅 Jour 10: date calendrier = "1 Girithron"
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(11): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=32
+voyage-manager.js:419 📅 Navigation mois: nouveau monthIndex=11, nouveau calendarDay=2
+voyage-manager.js:423 📅 Résultat final: "2 Girithron"
+voyage-manager.js:143 📅 Jour 11: date calendrier = "2 Girithron"
+voyage-manager.js:1505 📭 Aucune description sauvegardée pour cette carte/tracé
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(1): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=22
+voyage-manager.js:423 📅 Résultat final: "22 Hithui"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 1: date="22 Hithui"
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.351
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.351, ratio=0.064, x=9.6px, sliderWidth=150px
+voyage-manager.js:685 📍 Jour 2 - Coordonnées de début: {x: 1676, y: 1850}
+voyage-manager.js:686 📍 Jour 2 - Coordonnées de fin: {x: 1656, y: 1723}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(2): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=23
+voyage-manager.js:423 📅 Résultat final: "23 Hithui"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 2: date="23 Hithui"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 1, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 2, monthIndex initial: 10, newDay initial: 23
+voyage-manager.js:733 📅 Après navigation: monthIndex: 10, newDay: 23, mois: Hithui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 23 Hithui
+voyage-manager.js:787 📅 Header saison mise à jour: 🍂 (Automne-fin)
+voyage-manager.js:764 📅 Date principale mise à jour : 23 Hithui (automne-fin)
+voyage-manager.js:685 📍 Jour 3 - Coordonnées de début: {x: 1656, y: 1723}
+voyage-manager.js:686 📍 Jour 3 - Coordonnées de fin: {x: 1706, y: 1637}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(3): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=24
+voyage-manager.js:423 📅 Résultat final: "24 Hithui"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 3: date="24 Hithui"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 2, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 3, monthIndex initial: 10, newDay initial: 24
+voyage-manager.js:733 📅 Après navigation: monthIndex: 10, newDay: 24, mois: Hithui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 24 Hithui
+voyage-manager.js:787 📅 Header saison mise à jour: 🍂 (Automne-fin)
+voyage-manager.js:764 📅 Date principale mise à jour : 24 Hithui (automne-fin)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1676, y: 1850, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1676, 1850)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1656, y: 1723, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1656, 1723)
+voyage-manager.js:685 📍 Jour 4 - Coordonnées de début: {x: 1706, y: 1637}
+voyage-manager.js:686 📍 Jour 4 - Coordonnées de fin: {x: 1789, y: 1600}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(4): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=25
+voyage-manager.js:423 📅 Résultat final: "25 Hithui"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 4: date="25 Hithui"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 3, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 4, monthIndex initial: 10, newDay initial: 25
+voyage-manager.js:733 📅 Après navigation: monthIndex: 10, newDay: 25, mois: Hithui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 25 Hithui
+voyage-manager.js:787 📅 Header saison mise à jour: 🍂 (Automne-fin)
+voyage-manager.js:764 📅 Date principale mise à jour : 25 Hithui (automne-fin)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1706, y: 1637, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1706, 1637)
+voyage-manager.js:685 📍 Jour 5 - Coordonnées de début: {x: 1789, y: 1600}
+voyage-manager.js:686 📍 Jour 5 - Coordonnées de fin: {x: 1975, y: 1540}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(5): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=26
+voyage-manager.js:423 📅 Résultat final: "26 Hithui"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 5: date="26 Hithui"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 4, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 5, monthIndex initial: 10, newDay initial: 26
+voyage-manager.js:733 📅 Après navigation: monthIndex: 10, newDay: 26, mois: Hithui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 26 Hithui
+voyage-manager.js:787 📅 Header saison mise à jour: 🍂 (Automne-fin)
+voyage-manager.js:764 📅 Date principale mise à jour : 26 Hithui (automne-fin)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1789, y: 1600, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1789, 1600)
+voyage-manager.js:685 📍 Jour 6 - Coordonnées de début: {x: 1975, y: 1540}
+voyage-manager.js:686 📍 Jour 6 - Coordonnées de fin: {x: 2178, y: 1550}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(6): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=27
+voyage-manager.js:423 📅 Résultat final: "27 Hithui"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 6: date="27 Hithui"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 5, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 6, monthIndex initial: 10, newDay initial: 27
+voyage-manager.js:733 📅 Après navigation: monthIndex: 10, newDay: 27, mois: Hithui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 27 Hithui
+voyage-manager.js:787 📅 Header saison mise à jour: 🍂 (Automne-fin)
+voyage-manager.js:764 📅 Date principale mise à jour : 27 Hithui (automne-fin)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1975, y: 1540, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1975, 1540)
+voyage-manager.js:685 📍 Jour 7 - Coordonnées de début: {x: 2178, y: 1550}
+voyage-manager.js:686 📍 Jour 7 - Coordonnées de fin: {x: 2311, y: 1693}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(7): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=28
+voyage-manager.js:423 📅 Résultat final: "28 Hithui"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 7: date="28 Hithui"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 6, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 7, monthIndex initial: 10, newDay initial: 28
+voyage-manager.js:733 📅 Après navigation: monthIndex: 10, newDay: 28, mois: Hithui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 28 Hithui
+voyage-manager.js:787 📅 Header saison mise à jour: 🍂 (Automne-fin)
+voyage-manager.js:764 📅 Date principale mise à jour : 28 Hithui (automne-fin)
+voyage-manager.js:685 📍 Jour 8 - Coordonnées de début: {x: 2311, y: 1693}
+voyage-manager.js:686 📍 Jour 8 - Coordonnées de fin: {x: 2438, y: 1820}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(8): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=29
+voyage-manager.js:423 📅 Résultat final: "29 Hithui"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 8: date="29 Hithui"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 7, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 8, monthIndex initial: 10, newDay initial: 29
+voyage-manager.js:733 📅 Après navigation: monthIndex: 10, newDay: 29, mois: Hithui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 29 Hithui
+voyage-manager.js:787 📅 Header saison mise à jour: 🍂 (Automne-fin)
+voyage-manager.js:764 📅 Date principale mise à jour : 29 Hithui (automne-fin)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 2178, y: 1550, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (2178, 1550)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 2311, y: 1693, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (2311, 1693)
+voyage-manager.js:685 📍 Jour 9 - Coordonnées de début: {x: 2438, y: 1820}
+voyage-manager.js:686 📍 Jour 9 - Coordonnées de fin: {x: 2577, y: 1916}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(9): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=30
+voyage-manager.js:423 📅 Résultat final: "30 Hithui"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 9: date="30 Hithui"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 8, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 9, monthIndex initial: 10, newDay initial: 30
+voyage-manager.js:733 📅 Après navigation: monthIndex: 10, newDay: 30, mois: Hithui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'automne-fin'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 30 Hithui
+voyage-manager.js:787 📅 Header saison mise à jour: 🍂 (Automne-fin)
+voyage-manager.js:764 📅 Date principale mise à jour : 30 Hithui (automne-fin)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 2438, y: 1820, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (2438, 1820)
+voyage-manager.js:685 📍 Jour 10 - Coordonnées de début: {x: 2577, y: 1916}
+voyage-manager.js:686 📍 Jour 10 - Coordonnées de fin: {x: 2667, y: 1973}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(10): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=31
+voyage-manager.js:419 📅 Navigation mois: nouveau monthIndex=11, nouveau calendarDay=1
+voyage-manager.js:423 📅 Résultat final: "1 Girithron"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 10: date="1 Girithron"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 9, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 10, monthIndex initial: 10, newDay initial: 31
+voyage-manager.js:733 📅 Après navigation: monthIndex: 11, newDay: 1, mois: Girithron
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'hiver-début'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'hiver-début'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 1 Girithron
+voyage-manager.js:787 📅 Header saison mise à jour: ❄️ (hiver-début)
+voyage-manager.js:764 📅 Date principale mise à jour : 1 Girithron (hiver-début)
+voyage-manager.js:685 📍 Jour 11 - Coordonnées de début: {x: 2667, y: 1973}
+voyage-manager.js:686 📍 Jour 11 - Coordonnées de fin: {x: 2827, y: 2086}
+voyage-manager.js:400 📅 DEBUG getCalendarDateForDay(11): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:413 📅 Calcul initial: monthIndex=10, calendarDay=32
+voyage-manager.js:419 📅 Navigation mois: nouveau monthIndex=11, nouveau calendarDay=2
+voyage-manager.js:423 📅 Résultat final: "2 Girithron"
+voyage-manager.js:525 📅 updateDayTitle pour le jour 11: date="2 Girithron"
+voyage-manager.js:713 📅 updateMainCalendarDate appelée - index: 10, isCalendarMode: true
+voyage-manager.js:725 📅 Calcul: jour 11, monthIndex initial: 10, newDay initial: 32
+voyage-manager.js:733 📅 Après navigation: monthIndex: 11, newDay: 2, mois: Girithron
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'hiver-début'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'hiver-début'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:776 📅 Header date mise à jour: 2 Girithron
+voyage-manager.js:787 📅 Header saison mise à jour: ❄️ (hiver-début)
+voyage-manager.js:764 📅 Date principale mise à jour : 2 Girithron (hiver-début)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 2577, y: 1916, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (2577, 1916)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 2667, y: 1973, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (2667, 1973)
