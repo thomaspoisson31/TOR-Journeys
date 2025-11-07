@@ -29,7 +29,6 @@ import JournalManager from './managers/journal-manager.js';
 import AdventureManager from './managers/adventure-manager.js';
 import LibraryManager from './managers/library-manager.js';
 import CharactersManager from './managers/characters-manager.js'; // Import du CharactersManager
-import MigrationManager from './managers/migration-manager.js'; // Import du MigrationManager
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -118,10 +117,6 @@ async function initializeApp() {
     await loadVersionInfo();
 
     try {
-        // Exécuter la migration si nécessaire (AVANT tout le reste)
-        const migrationManager = new MigrationManager();
-        await migrationManager.performMigration();
-        
         // Initialiser les managers
         dataManager = new DataManager();
         console.log("✅ DataManager initialized");
