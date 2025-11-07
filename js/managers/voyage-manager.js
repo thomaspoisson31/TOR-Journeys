@@ -1778,19 +1778,28 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         // Accéder aux variables globales de pan et scale
         const viewport = document.getElementById('viewport');
         const mapContainer = document.getElementById('map-container');
+        const toolbar = document.getElementById('toolbar');
 
         if (!viewport || !mapContainer) {
             console.error("❌ Viewport ou map-container introuvable");
             return;
         }
 
-        // Calculer la largeur effective du viewport (50% de l'écran avec la modale ouverte)
-        const viewportWidth = viewport.clientWidth * 0.5; // Moitié gauche pour la carte
+        // Calculer la largeur du menu de gauche
+        const toolbarWidth = toolbar ? toolbar.offsetWidth : 80; // Fallback à 80px si non trouvé
+
+        // Calculer la largeur de la modale de voyage (50% de l'écran)
+        const modalWidth = viewport.clientWidth * 0.5;
+
+        // La zone disponible pour la carte est entre le menu de gauche et la modale
+        const availableWidth = viewport.clientWidth - toolbarWidth - modalWidth;
         const viewportHeight = viewport.clientHeight;
 
-        // Calculer le zoom optimal pour faire rentrer tout le tracé dans la moitié gauche
+        console.log(`📏 Dimensions - Toolbar: ${toolbarWidth}px, Modal: ${modalWidth}px, Disponible pour carte: ${availableWidth}px`);
+
+        // Calculer le zoom optimal pour faire rentrer tout le tracé dans la zone disponible
         // avec une marge de 10% pour que le tracé ne soit pas collé aux bords
-        const scaleX = (viewportWidth * 0.9) / pathWidth;
+        const scaleX = (availableWidth * 0.9) / pathWidth;
         const scaleY = (viewportHeight * 0.9) / pathHeight;
         const targetScale = Math.min(scaleX, scaleY);
 
@@ -1803,8 +1812,10 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         console.log(`🔍 Zoom calculé: scaleX=${scaleX.toFixed(3)}, scaleY=${scaleY.toFixed(3)}, targetScale=${targetScale.toFixed(3)}, constrainedScale=${constrainedScale.toFixed(3)}`);
 
-        // Calculer le nouveau pan pour centrer le tracé dans la moitié gauche
-        const newPanX = (viewportWidth / 2) - (centerX * constrainedScale);
+        // Calculer le nouveau pan pour centrer le tracé dans la zone disponible
+        // Le centre de la zone disponible est à: toolbarWidth + (availableWidth / 2)
+        const centerAvailableZoneX = toolbarWidth + (availableWidth / 2);
+        const newPanX = centerAvailableZoneX - (centerX * constrainedScale);
         const newPanY = (viewportHeight / 2) - (centerY * constrainedScale);
 
         // Activer la transition CSS pour un effet fluide
