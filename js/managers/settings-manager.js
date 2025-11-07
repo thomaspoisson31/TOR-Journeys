@@ -48,11 +48,16 @@ class SettingsManager {
 
         // Ajouter carte par défaut si la liste est vide (UNE SEULE carte)
         if (this.availableMaps.length === 0) {
+            const defaultLogicalId = this.generateLogicalId();
+            console.log(`🆔 [Migration] Carte par défaut créée avec logicalId: ${defaultLogicalId}`);
+            
             this.availableMaps = [
                 {
                     id: Date.now(),
+                    logicalId: defaultLogicalId,
                     name: 'Carte Eriador par défaut',
                     url: 'fr_tor_2nd_eriadors_map_page-0001.webp',
+                    legacyMapId: 'fr_tor_2nd_eriadors_map_page-0001.webp', // Ancien identifiant
                     isDefault: true,
                     isActive: true,
                     milesPerDay: 20
@@ -63,12 +68,34 @@ class SettingsManager {
             this.saveMapsData();
         }
 
-        // Migrer les cartes existantes pour ajouter milesPerDay si manquant
+        // Migrer les cartes existantes pour ajouter logicalId, milesPerDay et legacyMapId si manquants
+        let needsSave = false;
         this.availableMaps.forEach(map => {
+            // Ajouter logicalId si manquant
+            if (!map.logicalId) {
+                map.logicalId = this.generateLogicalId();
+                console.log(`🆔 [Migration] Carte "${map.name}" - Nouveau logicalId: ${map.logicalId}, ancien mapId (URL): ${map.url}`);
+                needsSave = true;
+            }
+            
+            // Sauvegarder l'ancien mapId (URL) comme legacyMapId pour compatibilité
+            if (!map.legacyMapId) {
+                map.legacyMapId = map.url;
+                console.log(`🔗 [Migration] Carte "${map.name}" - legacyMapId sauvegardé: ${map.legacyMapId}`);
+                needsSave = true;
+            }
+            
+            // Ajouter milesPerDay si manquant
             if (!map.milesPerDay) {
                 map.milesPerDay = 20; // Valeur par défaut
+                needsSave = true;
             }
         });
+        
+        if (needsSave) {
+            console.log('💾 [Migration] Sauvegarde des cartes avec nouveaux identifiants logiques');
+            this.saveMapsData();
+        }
 
         // Charger les descriptions
         this.partyDescription = localStorage.getItem('partyDescription') || '';
@@ -106,6 +133,16 @@ class SettingsManager {
         if (typeof window.scheduleAutoSync === 'function') {
             window.scheduleAutoSync();
         }
+    }
+
+    /**
+     * Génère un identifiant logique unique pour une carte
+     * Format: map_[timestamp]_[random]
+     */
+    generateLogicalId() {
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(2, 8);
+        return `map_${timestamp}_${random}`;
     }
 
     setupEventListeners() {
@@ -546,12 +583,15 @@ class SettingsManager {
 
     handleMapUploaded(uploadResult) {
         const mapName = uploadResult.name || `Carte ${Date.now()}`;
+        const logicalId = this.generateLogicalId();
 
         // Utiliser les dimensions retournées par l'API (image déjà redimensionnée à 5000px)
         const newMap = {
             id: Date.now(),
+            logicalId: logicalId,
             name: mapName,
             url: uploadResult.url,
+            legacyMapId: uploadResult.url, // Pour compatibilité
             isDefault: false,
             width: uploadResult.width || 5000,
             height: uploadResult.height || 3230,
@@ -564,6 +604,7 @@ class SettingsManager {
         this.renderMapsGrid();
 
         console.log(`✅ Carte ajoutée: ${mapName} (${newMap.width}x${newMap.height}px)`);
+        console.log(`🆔 [Nouvelle carte] logicalId: ${logicalId}, URL: ${uploadResult.url}`);
     }
 
     async openLibraryForMapSelection(mapModal) {
@@ -673,18 +714,23 @@ class SettingsManager {
         // Récupérer le nom de la carte ou utiliser le nom de fichier
         const nameInput = document.getElementById('temp-map-name-input');
         const mapName = nameInput.value.trim() || filename.replace(/\.[^/.]+$/, ''); // Enlever l'extension
+        const logicalId = this.generateLogicalId();
 
         // Créer la nouvelle carte
         const newMap = {
             id: Date.now(),
+            logicalId: logicalId,
             name: mapName,
             url: imageUrl,
+            legacyMapId: imageUrl, // Pour compatibilité
             isDefault: false
         };
 
         this.availableMaps.push(newMap);
         this.saveMapsData();
         this.renderMapsGrid();
+        
+        console.log(`🆔 [Nouvelle carte bibliothèque] logicalId: ${logicalId}, URL: ${imageUrl}`);
 
         // Fermer les deux modales
         if (this.currentLibraryModal) {
