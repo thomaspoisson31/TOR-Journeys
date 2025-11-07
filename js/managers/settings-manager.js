@@ -681,12 +681,8 @@ class SettingsManager {
             console.log('✅ [switchMap] Bouton de voyage masqué');
         }
 
-        // Masquer le conteneur de distance s'il est visible
-        const distanceContainer = document.getElementById('distance-container');
-        if (distanceContainer) {
-            distanceContainer.classList.add('hidden');
-            console.log('✅ [switchMap] Conteneur de distance masqué');
-        }
+        // Le conteneur de distance (date) doit rester visible
+        console.log('📅 [switchMap] Le pavé date reste affiché');
 
         // IMPORTANT: Le ZoomManager sera mis à jour automatiquement par initializeMap()
         // qui est appelé après le chargement de la nouvelle carte

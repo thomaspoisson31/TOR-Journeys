@@ -107,10 +107,10 @@ class VoyageManager {
         // Récupérer les dimensions réelles de la carte active
         const mapImage = document.getElementById('map-image');
         const actualMapWidth = mapImage?.naturalWidth || window.MAP_WIDTH || 5103;
-        
+
         // Mettre à jour l'échelle depuis la carte active
         this.updateMapScale();
-        
+
         // Récupérer milesPerDay depuis la carte active
         let milesPerDay = 20; // Valeur par défaut
         const activeMap = window.settingsManager?.availableMaps?.find(m => m.url === window.settingsManager.activeMapUrl);
@@ -118,12 +118,12 @@ class VoyageManager {
             milesPerDay = activeMap.milesPerDay;
             console.log(`🗺️ VoyageManager: vitesse mise à jour à ${milesPerDay} miles/jour`);
         }
-        
+
         // Calculate total journey duration using global variables
         const miles = totalPathPixels * (this.MAP_DISTANCE_MILES / actualMapWidth);
         const days = Math.ceil(miles / milesPerDay);
         this.totalJourneyDays = Math.max(1, days);
-        
+
         console.log(`🗺️ VoyageManager calcul: ${totalPathPixels.toFixed(0)}px × (${this.MAP_DISTANCE_MILES} miles / ${actualMapWidth}px) = ${miles.toFixed(0)} miles ÷ ${milesPerDay} mi/j = ${days} jours`);
 
         // Récupérer ou définir la date de début du voyage
@@ -876,7 +876,7 @@ class VoyageManager {
 
     openDiscoveryModal(discoveryName, discoveryType) {
         console.log(`🗺️ [VoyageManager] Ouverture modale pour ${discoveryType}: ${discoveryName}`);
-        
+
         // Ne PAS fermer la modale de voyage - laisser l'utilisateur naviguer
         // this.dom.hideModal(this.dom.voyageSegmentsModal);
 
@@ -886,14 +886,14 @@ class VoyageManager {
                 const location = window.locationsData.locations.find(loc => loc.name === discoveryName);
                 if (location) {
                     console.log(`📍 [VoyageManager] Lieu trouvé:`, location);
-                    
+
                     // Utiliser InfoBoxManager pour afficher le lieu
                     if (window.infoBoxManager) {
                         const fakeEvent = {
                             stopPropagation: () => {},
                             preventDefault: () => {}
                         };
-                        
+
                         window.infoBoxManager.showInfoBox(fakeEvent, location, 'location');
                         console.log(`✅ [VoyageManager] InfoBox affichée pour le lieu`);
                     } else {
@@ -907,14 +907,14 @@ class VoyageManager {
                 const region = window.regionsData.regions.find(reg => reg.name === discoveryName);
                 if (region) {
                     console.log(`🗺️ [VoyageManager] Région trouvée:`, region);
-                    
+
                     // Utiliser InfoBoxManager pour afficher la région
                     if (window.infoBoxManager) {
                         const fakeEvent = {
                             stopPropagation: () => {},
                             preventDefault: () => {}
                         };
-                        
+
                         window.infoBoxManager.showInfoBox(fakeEvent, region, 'region');
                         console.log(`✅ [VoyageManager] InfoBox affichée pour la région`);
                     } else {
@@ -1289,42 +1289,99 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     }
 
     parseAndDisplayAllJourneyDescriptions(response) {
+        console.log("📖 Réponse brute de Gemini:", response);
+
         try {
-            // Nettoyer la réponse pour extraire le JSON
-            let cleanResponse = response.trim();
+            // Essayer de parser la réponse comme JSON
+            const parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
+            console.log("📖 Réponse parsée:", parsedResponse);
 
-            // Enlever les balises de code si présentes
-            if (cleanResponse.startsWith('```json')) {
-                cleanResponse = cleanResponse.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-            } else if (cleanResponse.startsWith('```')) {
-                cleanResponse = cleanResponse.replace(/^```\s*/, '').replace(/\s*```$/, '');
+            // Vérifier le format de la réponse
+            if (parsedResponse && typeof parsedResponse === 'object') {
+                // Le JSON peut être soit un objet direct avec les jours, soit avoir une clé 'days'
+                const daysData = parsedResponse.days || parsedResponse;
+
+                // Réinitialiser les descriptions
+                this.journeyDescriptions = {};
+
+                // Parser chaque jour
+                Object.keys(daysData).forEach(dayKey => {
+                    const dayNumber = parseInt(dayKey.replace('day', ''));
+                    if (!isNaN(dayNumber)) {
+                        this.journeyDescriptions[dayNumber] = daysData[dayKey];
+                        console.log(`📖 Description du jour ${dayNumber} ajoutée`);
+                    }
+                });
+
+                console.log(`✅ ${Object.keys(this.journeyDescriptions).length} description(s) de voyage générée(s)`);
+
+                // Sauvegarder les descriptions pour cette carte
+                this.saveDescriptionsForMap();
+
+                // Rafraîchir l'affichage
+                this.renderCurrentDay();
+
+            } else {
+                console.error("❌ Format de réponse JSON invalide:", parsedResponse);
+                alert("Erreur: La réponse de Gemini n'est pas au format attendu.");
             }
-
-            const jsonData = JSON.parse(cleanResponse);
-
-            if (!jsonData.descriptions || !Array.isArray(jsonData.descriptions)) {
-                throw new Error('Format de réponse invalide');
-            }
-
-            // Stocker les descriptions pour chaque journée
-            this.journeyDescriptions = {};
-            jsonData.descriptions.forEach(dayDesc => {
-                this.journeyDescriptions[dayDesc.day] = dayDesc.description;
-            });
-
-            // Sauvegarder le voyage dans le journal
-            this.saveJourneyToJournal();
-
-            // Rafraîchir l'affichage du jour courant pour montrer la description
-            this.renderCurrentDay();
 
         } catch (error) {
-            console.error('Erreur lors du parsing JSON:', error);
-            console.log('Réponse reçue:', response);
-            
-            // En cas d'erreur, afficher un message dans la console mais ne pas ouvrir de modale
-            alert('Erreur lors de la génération des descriptions de voyage. Veuillez réessayer.');
+            console.error("❌ Erreur lors du parsing de la réponse:", error);
+            console.log("📖 Réponse reçue:", response);
+            alert("Erreur lors de l'analyse de la description du voyage. Voir la console pour plus de détails.");
         }
+    }
+
+    saveDescriptionsForMap() {
+        // Obtenir l'URL de la carte active
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        if (!activeMapUrl) {
+            console.warn("⚠️ Impossible de sauvegarder les descriptions: URL de carte active non trouvée.");
+            return;
+        }
+
+        // Créer une clé unique pour cette carte et ce tracé
+        const pathSignature = this.createPathSignature(journeyPath);
+        const mapStorageKey = `journeyDescriptions_${activeMapUrl}_${pathSignature}`;
+
+        // Sauvegarder les descriptions (une copie pour éviter les modifications ultérieures)
+        const dataToSave = {
+            descriptions: { ...this.journeyDescriptions },
+            generatedAt: new Date().toISOString()
+        };
+
+        try {
+            localStorage.setItem(mapStorageKey, JSON.stringify(dataToSave));
+            console.log(`💾 Descriptions de voyage sauvegardées pour la carte: ${activeMapUrl} (signature: ${pathSignature})`);
+        } catch (error) {
+            console.error("❌ Erreur lors de la sauvegarde des descriptions:", error);
+        }
+    }
+
+    loadDescriptionsForMap() {
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        if (!activeMapUrl) {
+            console.warn("⚠️ Impossible de charger les descriptions: URL de carte active non trouvée.");
+            return null;
+        }
+
+        const pathSignature = this.createPathSignature(journeyPath);
+        const mapStorageKey = `journeyDescriptions_${activeMapUrl}_${pathSignature}`;
+
+        try {
+            const savedData = localStorage.getItem(mapStorageKey);
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                console.log(`💾 Descriptions de voyage chargées pour la carte: ${activeMapUrl} (signature: ${pathSignature})`);
+                // Mettre à jour les descriptions actuelles du voyageur
+                this.journeyDescriptions = { ...parsedData.descriptions };
+                return parsedData.descriptions;
+            }
+        } catch (error) {
+            console.error("❌ Erreur lors du chargement des descriptions:", error);
+        }
+        return null;
     }
 
     saveJourneyToJournal() {
