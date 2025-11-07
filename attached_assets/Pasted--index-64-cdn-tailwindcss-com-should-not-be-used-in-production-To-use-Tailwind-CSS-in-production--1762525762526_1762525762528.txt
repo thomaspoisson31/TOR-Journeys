@@ -1,0 +1,1974 @@
+(index):64 cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+(anonymous) @ (index):64
+(anonymous) @ (index):64
+upload-manager.js:355 📤 UploadManager module loaded
+infobox-manager.js:2857 📋 InfoBoxManager module loaded
+library-manager.js:202 📚 LibraryManager module loaded
+characters-manager.js:874 👥 CharactersManager module loaded
+main.js:34 ✅ Constants loaded successfully
+main.js:97 ✅ Global variables initialized
+main.js:105 ✅ Essential DOM elements: {viewport: true, mapContainer: true, mapImage: true, loaderOverlay: true}
+main.js:2865 📋 Simplified main.js loaded - waiting for DOM ready
+main.js:114 🚀 Starting simplified application...
+main.js:76 🏷️ Version affichée: v1.5.0 (2025-11-04)
+main.js:122 ✅ DataManager initialized
+filter-manager.js:20 🔍 FilterManager initialized
+main.js:124 ✅ FilterManager initialized
+main.js:134 ✅ VoyageManager initialized
+main.js:141 ✅ PathManager initialized
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"month":"Nórui","day":14}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {month: 'Nórui', day: 14}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:177 📅 [loadCalendarFromLocal] Début du chargement depuis localStorage
+calendar-manager.js:184 📅 [loadCalendarFromLocal] Valeurs brutes localStorage: {savedCalendarData: 'présent', savedCurrentCalendarDate: '{"month":"Nórui","day":14}', savedIsCalendarMode: 'true', fromCloud: null}
+calendar-manager.js:194 📅 [loadCalendarFromLocal] calendarData chargé: 12 mois
+calendar-manager.js:203 📅 [loadCalendarFromLocal] currentCalendarDate chargé: {month: 'Nórui', day: 14}
+calendar-manager.js:211 📅 [loadCalendarFromLocal] isCalendarMode chargé: true
+calendar-manager.js:214 📅 [loadCalendarFromLocal] État final CalendarManager: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 14, symbol: '༄', weather: "La brise, quand elle se lève, est chaude et sèche,…comme le souffle d'un four qui passe sur la peau."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-debut', seasonMainName: 'printemps', symbol: '༄', fullName: 'Printemps-début', isCalendarMode: true, …}
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 14, symbol: '༄', weather: "La brise, quand elle se lève, est chaude et sèche,…comme le souffle d'un four qui passe sur la peau."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-debut', seasonMainName: 'printemps', symbol: '༄', fullName: 'Printemps-début', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+main.js:147 ✅ CalendarManager initialized
+settings-manager.js:17 ⚙️ SettingsManager initialized
+settings-manager.js:1104 ⚙️ Configuration des listeners Import/Export...
+settings-manager.js:1111 📍 Boutons Lieux/Régions: {exportBtn: true, importBtn: true, fileInput: true}
+settings-manager.js:1148 👥 Boutons Personnages: {exportBtn: true, importBtn: true, fileInput: true}
+settings-manager.js:1187 ✅ Listeners Import/Export configurés
+main.js:153 ✅ SettingsManager initialized
+auth-manager.js:1808 [AuthManager] 🔑 Initialisation AuthManager null
+auth-manager.js:1808 [AuthManager] 🔍 Vérification du statut d'authentification null
+auth-manager.js:1808 [AuthManager] 👂 Écoute des changements de localStorage activée. null
+main.js:175 ✅ AuthManager initialized
+upload-manager.js:10 📤 UploadManager initialized
+infobox-manager.js:25 📋 InfoBoxManager initialized with UploadManager
+main.js:184 ✅ InfoBoxManager initialized
+import-export-manager.js:17 📤 ImportExportManager initialized
+import-export-manager.js:44 📤 ImportExportManager event listeners configured
+main.js:193 ✅ ImportExportManager initialized
+main.js:196 📍 Initializing data structures...
+data-manager.js:10 📍 loadInitialLocations: Initialisation avec structure vide
+data-manager.js:15 ✅ Structure de données initialisée (vide, en attente du cloud)
+data-manager.js:61 🌍 loadRegionsFromLocal: Initialisation avec structure vide
+data-manager.js:66 ✅ Structure de régions initialisée (vide, en attente du cloud)
+main.js:204 ✅ Data structures initialized (will be populated from cloud)
+main.js:228 ⏳ Waiting for SettingsManager to load active map...
+upload-manager.js:10 📤 UploadManager initialized
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1808 [AuthManager] ✅ Utilisateur authentifié trouvé null
+auth-manager.js:1808 [AuthManager] 🎨 Mise à jour UI pour utilisateur authentifié null
+gemini-manager.js:13 🤖 Gemini API disponible: true
+auth-manager.js:1808 [AuthManager] 🌍 Environnement détecté: development (préfixe: dev_) null
+auth-manager.js:1808 [AuthManager] 📥 Chargement des données depuis le cloud (environnement: dev_) null
+auth-manager.js:1808 [AuthManager] ✅ Données cloud récupérées {_saved_at: '2025-11-07T12:54:58.643997', _sync_timestamp: 1762520098.644007, calendar: {…}, characters: {…}, filtersByMap: {…}, …}
+auth-manager.js:1808 [AuthManager] 🧹 localStorage nettoyé - cloud est la source unique de vérité null
+auth-manager.js:1808 [AuthManager] 🔄 Application des données du contexte (10) ['_saved_at', '_sync_timestamp', 'calendar', 'characters', 'filtersByMap', 'journal', 'locations', 'position', 'regions', 'settings']
+auth-manager.js:1808 [AuthManager] 🚫 Auto-sync temporairement désactivée pendant l'application du contexte null
+auth-manager.js:1808 [AuthManager] 💾 31 lieux sauvegardés dans localStorage null
+auth-manager.js:1808 [AuthManager] 💾 0 régions sauvegardées dans localStorage null
+auth-manager.js:1808 [AuthManager] ✅ Référence globale 'locationsData' mise à jour avec 31 lieux null
+auth-manager.js:1808 [AuthManager] 📊 Structure locationsData: {locations: Array(31)}
+auth-manager.js:1808 [AuthManager] ✅ Référence globale 'regionsData' mise à jour avec 0 régions null
+auth-manager.js:1808 [AuthManager] 📊 Structure regionsData: {regions: Array(0)}
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Application des données de calendrier depuis le cloud null
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Données calendar reçues: {currentDate: null, isCalendarMode: true}
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Mode calendrier appliqué: true null
+auth-manager.js:1808 [AuthManager] 📅 [applyContextData] Mise à jour UI du calendrier null
+calendar-manager.js:245 🌤️ Données météo du jour récupérées: {day: 14, symbol: '༄', weather: "La brise, quand elle se lève, est chaude et sèche,…comme le souffle d'un four qui passe sur la peau."}
+calendar-manager.js:254 🌱 Affichage saison: {currentSeason: 'printemps-debut', seasonMainName: 'printemps', symbol: '༄', fullName: 'Printemps-début', isCalendarMode: true, …}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'printemps-debut'}
+auth-manager.js:1808 [AuthManager] ✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé) null
+auth-manager.js:1808 [AuthManager] ⚙️ Application des paramètres depuis le cloud null
+settings-manager.js:1254 ⚙️ Chargement des paramètres depuis le contexte: {activeMapUrl: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', availableMaps: Array(2)}
+settings-manager.js:1266 ✅ Cartes chargées: 2
+settings-manager.js:1270 ✅ Carte active URL: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+settings-manager.js:1298 🗺️ Mise à jour de l'image de la carte: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+settings-manager.js:1303 🗺️ Échelle de la carte active: 600 miles
+settings-manager.js:1358 ✅ Paramètres chargés avec succès
+auth-manager.js:1808 [AuthManager] 🗺️ 2 carte(s) restaurée(s) depuis le cloud null
+auth-manager.js:1808 [AuthManager] 🗺️ Carte active restaurée: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp null
+auth-manager.js:1808 [AuthManager] ✅ Paramètres et cartes appliqués depuis le cloud null
+auth-manager.js:1808 [AuthManager] 📖 Application de undefined entrées de journal depuis le contexte null
+auth-manager.js:1808 [AuthManager] 👥 Application de 35 personnages depuis le contexte null
+auth-manager.js:533 📍 [applyContextData] Position reçue du cloud: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1836.341379900702, y: 1807.658277692176}
+auth-manager.js:534 📍 [applyContextData] Carte active: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+auth-manager.js:535 📍 [applyContextData] Carte de la position: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+auth-manager.js:540 📍 [applyContextData] AVANT setItem - position à sauver: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1836.341379900702, y: 1807.658277692176}
+auth-manager.js:546 📍 [applyContextData] APRÈS setItem - position vérif: {"mapId":"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp","x":1836.341379900702,"y":1807.658277692176}
+auth-manager.js:551 📍 [applyContextData] APRÈS setItem - flag vérif: true
+auth-manager.js:553 [AuthManager] ✅ Position du contexte forcée dans localStorage avec flag: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1836.341379900702, y: 1807.658277692176}
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Sauvegarde des filtres pour restauration différée null
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Données filtersByMap reçues: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+auth-manager.js:1808 [AuthManager] 🔍 [applyContextData] Nombre de cartes avec filtres: 4 null
+auth-manager.js:1808 [AuthManager] 💾 [applyContextData] Filtres sauvegardés dans localStorage pour init FilterManager null
+auth-manager.js:1808 [AuthManager] ⚠️ [applyContextData] FilterManager pas encore initialisé, les filtres seront chargés à son init null
+auth-manager.js:1808 [AuthManager] ✅ Données du contexte synchronisées (rendu différé) null
+auth-manager.js:1808 [AuthManager] 🧹 Flag calendar_from_cloud nettoyé null
+auth-manager.js:1808 [AuthManager] ✅ Contexte appliqué avec succès null
+auth-manager.js:1808 [AuthManager] 💾 Sauvegarde des données actuelles dans localStorage. null
+auth-manager.js:1808 [AuthManager] 💾 2 carte(s) sauvegardée(s) dans localStorage null
+auth-manager.js:1808 [AuthManager] 💾 Carte active sauvegardée: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp null
+auth-manager.js:1808 [AuthManager]   - 35 personnages sauvegardés dans localStorage. null
+auth-manager.js:1808 [AuthManager]   - Données sauvegardées dans localStorage. null
+auth-manager.js:1808 [AuthManager] 🎨 Rendu forcé après chargement cloud null
+main.js:519 ✅ Rendered 2 location markers (thumbnails: true)
+auth-manager.js:1808 [AuthManager] ✅ 31 lieux rendus depuis le cloud null
+main.js:668 ✅ Rendered 0 region polygons
+auth-manager.js:1808 [AuthManager] ✅ 0 régions rendues depuis le cloud null
+auth-manager.js:1808 [AuthManager] ✅ Toutes les modifications sont sauvegardées null
+auth-manager.js:1808 [AuthManager] ✅ Données cloud chargées et appliquées avec succès null
+settings-manager.js:1307 ✅ Image de carte chargée, re-initialisation de la carte
+settings-manager.js:1318 🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation
+settings-manager.js:1322 🗺️ Réinitialisation de la carte depuis loadSettings
+main.js:678 🗺️ Initializing map...
+main.js:684 📐 Map dimensions: 5000 x 3875
+main.js:710 ✅ Regions layer configured
+main.js:720 🗺️ [initializeMap] Scale initial: 0.206 (viewportWidth=1029, MAP_WIDTH=5000)
+main.js:1056 🎮 Setting up map navigation...
+main.js:1315 ✅ Map navigation setup complete
+main.js:1320 📋 Setting up info-box listeners...
+main.js:1361 ✅ Info-box listeners setup complete
+main.js:1366 🎨 Setting up region drawing...
+main.js:1388 ✅ Region drawing setup complete
+main.js:1641 📍 Setting up location adding...
+main.js:1664 ✅ Generate description button configured
+main.js:2361 🎨 Setting up color change modal...
+main.js:2389 ✅ Color change modal setup complete
+main.js:1694 ✅ Location adding setup complete
+main.js:738 🔍 Setting up FilterManager...
+filter-manager.js:46 🔍 Setting up filter listeners...
+filter-manager.js:81 ✅ Filter listeners setup complete
+filter-manager.js:26 🔍 [loadFiltersFromStorage] Tentative de chargement - localStorage contient: données présentes
+filter-manager.js:31 ✅ [loadFiltersFromStorage] Filtres chargés depuis localStorage: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:32 ✅ [loadFiltersFromStorage] 4 carte(s) avec filtres
+filter-manager.js:33 ✅ [loadFiltersFromStorage] Cartes avec filtres: (4) ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', '/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg']
+filter-manager.js:96 🔍 [tryLoadFiltersForActiveMap retry=0] activeMapUrl: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:97 🔍 [tryLoadFiltersForActiveMap] filtersByMap keys: (4) ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', '/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg']
+filter-manager.js:100 ✅ Chargement des filtres pour la carte active: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:101 📊 Filtres à charger: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:634 🔍 [loadFiltersForMap] Tentative de chargement pour carte: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:635 🔍 [loadFiltersForMap] filtersByMap disponibles: (4) ['/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg', '/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg', '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', '/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg']
+filter-manager.js:638 📥 [loadFiltersForMap] Filtres trouvés: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:640 📥 [loadFiltersForMap] activeFilters après copie: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:643 🎨 [loadFiltersForMap] Mise à jour de l'UI...
+filter-manager.js:645 ✅ [loadFiltersForMap] Appel de applyFilters...
+filter-manager.js:373 🔍 Applying filters... {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:374 🔍 Current filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:392 📊 Filtered: 31/31 locations, 0/0 regions
+filter-manager.js:505 ✅ Display updated - 31 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+auth-manager.js:1808 [AuthManager] 🔔 Modifications non sauvegardées détectées null
+main.js:746 ✅ FilterManager setup complete
+main.js:753 🚀 Setting up VoyageManager...
+main.js:755 ✅ VoyageManager setup complete
+main.js:760 🗺️ Setting up PathManager...
+path-manager.js:50 🎨 Canvas configuré : 5000x3875
+path-manager.js:38 🛤️ PathManager initialized
+main.js:762 ✅ PathManager setup complete
+main.js:779 🔍 [initializeMap] Création du ZoomManager
+zoom-manager.js:26 🔍 Initializing ZoomManager... {scale: 0.2058, MAP_WIDTH: 0, MAP_HEIGHT: 0}
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.206
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.206, ratio=0.027, x=4.1px, sliderWidth=0px
+zoom-manager.js:34 ✅ ZoomManager initialized {scale: 0.2058, sliderWidth: 0, controlExists: true}
+main.js:808 📍 [main.js] Création du PositionManager avec MAP_WIDTH: 5000 MAP_HEIGHT: 3875
+main.js:813 📍 [main.js] État localStorage AVANT init PositionManager - position: {"mapId":"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp","x":1836.341379900702,"y":1807.658277692176} flag: true
+position-manager.js:25 📍 [PositionManager.loadPosition] État du flag cloud: true
+position-manager.js:26 📍 [PositionManager.loadPosition] Carte active: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+position-manager.js:29 📍 [PositionManager.loadPosition] Position dans localStorage: {"mapId":"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp","x":1836.341379900702,"y":1807.658277692176}
+position-manager.js:42 📍 [PositionManager] Position chargée depuis CLOUD via localStorage: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1836.341379900702, y: 1807.658277692176}
+position-manager.js:14 📍 Initializing PositionManager...
+position-manager.js:94 📍 [PositionManager] 0 marqueur(s) existant(s) supprimé(s)
+position-manager.js:17 ✅ PositionManager initialized with position: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1836.341379900702, y: 1807.658277692176}
+main.js:830 ✅ PositionManager initialized with position: {mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp', x: 1836.341379900702, y: 1807.658277692176}
+main.js:834 📍 [main.js] Nettoyage du flag cloud après initialisation
+journal-manager.js:11 📖 Initialisation du JournalManager
+journal-manager.js:48 📖 undefined voyage(s) chargé(s) depuis le localStorage
+main.js:842 ✅ JournalManager initialized
+adventure-manager.js:417 ✅ Adventure data loaded from localStorage
+adventure-manager.js:24 🎲 Initializing AdventureManager...
+adventure-manager.js:26 ✅ AdventureManager initialized
+main.js:848 ✅ AdventureManager initialized
+characters-manager.js:15 👥 CharactersManager initialized
+characters-manager.js:112 📚 35 personnages chargés depuis localStorage (IDs normalisés)
+characters-manager.js:21 ✅ CharactersManager setup complete
+main.js:854 ✅ CharactersManager initialized
+main.js:2717 🖌️ Setting up drawing events...
+main.js:2721 👂 Adding VoyageManager drawing listeners...
+voyage-manager.js:86 🎨 VoyageManager drawing listeners configured
+main.js:2723 ✅ VoyageManager drawing listeners added
+main.js:2726 ✅ Drawing events setup complete
+main.js:1007 🔍 [resetView] Nouveau scale calculé: 0.170 (MAP_WIDTH=5000, MAP_HEIGHT=3875)
+main.js:1024 🔍 [resetView] Synchronisation ZoomManager avec scale=0.170
+main.js:865 🔍 [initializeMap] Application finale des filtres après resetView
+main.js:871 ✅ Map initialized successfully
+zoom-manager.js:88 🔍 [ZoomManager] Largeur du slider calculée: 150
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.170
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.170, ratio=0.018, x=2.7px, sliderWidth=150px
+filter-manager.js:373 🔍 Applying filters... {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:374 🔍 Current filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:375 🔍 Active map: /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp
+filter-manager.js:392 📊 Filtered: 31/31 locations, 0/0 regions
+filter-manager.js:505 ✅ Display updated - 31 locations, 0 regions visible
+filter-manager.js:607 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {colors: Array(0), known: Array(0), regionsOpacity: 0.5, showLocations: true, showRegions: true, …}
+filter-manager.js:608 💾 [saveFiltersForCurrentMap] Total filtersByMap: {/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg: {…}, /uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg: {…}, /uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp: {…}, /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: {…}}
+filter-manager.js:609 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 4
+filter-manager.js:614 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:618 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]}}
+filter-manager.js:625 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+path-manager.js:314 🎨 Drawing mode is now: true
+path-manager.js:328 ✅ Canvas pointer events enabled
+path-manager.js:389 🚫 Gestionnaires de pan désactivés
+path-manager.js:334 ✏️ Mode dessin activé - pan désactivé
+main.js:519 ✅ Rendered 2 location markers (thumbnails: false)
+path-manager.js:93 🖱️ Viewport mousedown event fired, isDrawingMode: true
+path-manager.js:103 🎨 Starting drawing...
+path-manager.js:123 📍 Start point: {x: 1790, y: 1611}
+path-manager.js:609 📏 Calcul distance: 0px × (600 miles / 5000px) = 0 miles ÷ 20 mi/j
+path-manager.js:128 ✅ Drawing initialized
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 18px × (600 miles / 5000px) = 2 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 18.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 30px × (600 miles / 5000px) = 4 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 30.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 42px × (600 miles / 5000px) = 5 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 42.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 54px × (600 miles / 5000px) = 6 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 54.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 60px × (600 miles / 5000px) = 7 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 60.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 71px × (600 miles / 5000px) = 9 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 71.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 89px × (600 miles / 5000px) = 11 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 89.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 95px × (600 miles / 5000px) = 11 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 95.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 107px × (600 miles / 5000px) = 13 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 107.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 113px × (600 miles / 5000px) = 14 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 113.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 118px × (600 miles / 5000px) = 14 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 118.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 130px × (600 miles / 5000px) = 16 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 130.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 136px × (600 miles / 5000px) = 16 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 136.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 142px × (600 miles / 5000px) = 17 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 142.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 169px × (600 miles / 5000px) = 20 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 168.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 175px × (600 miles / 5000px) = 21 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 174.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 187px × (600 miles / 5000px) = 22 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 187.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 196px × (600 miles / 5000px) = 24 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 195.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 202px × (600 miles / 5000px) = 24 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 201.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 207px × (600 miles / 5000px) = 25 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 206.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 215px × (600 miles / 5000px) = 26 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 215.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 221px × (600 miles / 5000px) = 27 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 221.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 230px × (600 miles / 5000px) = 28 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 229.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 236px × (600 miles / 5000px) = 28 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 235.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 242px × (600 miles / 5000px) = 29 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 241.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 250px × (600 miles / 5000px) = 30 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 250.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 259px × (600 miles / 5000px) = 31 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 258.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 267px × (600 miles / 5000px) = 32 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 266.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 273px × (600 miles / 5000px) = 33 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 272.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 286px × (600 miles / 5000px) = 34 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 285.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 299px × (600 miles / 5000px) = 36 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 299.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 316px × (600 miles / 5000px) = 38 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 316.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 329px × (600 miles / 5000px) = 40 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 329.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 351px × (600 miles / 5000px) = 42 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 350.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 372px × (600 miles / 5000px) = 45 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 372.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 380px × (600 miles / 5000px) = 46 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 380.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 393px × (600 miles / 5000px) = 47 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 393.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 407px × (600 miles / 5000px) = 49 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 406.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 413px × (600 miles / 5000px) = 50 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 412.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 418px × (600 miles / 5000px) = 50 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 417.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 435px × (600 miles / 5000px) = 52 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 434.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 475px × (600 miles / 5000px) = 57 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 474.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 491px × (600 miles / 5000px) = 59 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 490.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 508px × (600 miles / 5000px) = 61 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 507.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 525px × (600 miles / 5000px) = 63 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 524.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 542px × (600 miles / 5000px) = 65 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 541.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 553px × (600 miles / 5000px) = 66 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 552.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 559px × (600 miles / 5000px) = 67 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 558.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 572px × (600 miles / 5000px) = 69 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 571.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 580px × (600 miles / 5000px) = 70 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 580.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 589px × (600 miles / 5000px) = 71 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 588.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 602px × (600 miles / 5000px) = 72 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 602.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 613px × (600 miles / 5000px) = 74 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 613.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 627px × (600 miles / 5000px) = 75 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 626.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 645px × (600 miles / 5000px) = 77 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 644.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 663px × (600 miles / 5000px) = 80 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 662.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 680px × (600 miles / 5000px) = 82 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 679.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 692px × (600 miles / 5000px) = 83 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 691.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 721px × (600 miles / 5000px) = 86 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 720.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 729px × (600 miles / 5000px) = 87 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 729.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 738px × (600 miles / 5000px) = 89 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 737.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 744px × (600 miles / 5000px) = 89 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 743.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 750px × (600 miles / 5000px) = 90 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 749.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 756px × (600 miles / 5000px) = 91 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 755.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 768px × (600 miles / 5000px) = 92 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 767.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 774px × (600 miles / 5000px) = 93 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 773.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 785px × (600 miles / 5000px) = 94 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 784.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 803px × (600 miles / 5000px) = 96 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 802.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 821px × (600 miles / 5000px) = 98 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 820.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 838px × (600 miles / 5000px) = 101 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 837.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 962px × (600 miles / 5000px) = 115 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 961.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 980px × (600 miles / 5000px) = 118 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 979.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 997px × (600 miles / 5000px) = 120 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 996.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1015px × (600 miles / 5000px) = 122 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1014.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1021px × (600 miles / 5000px) = 122 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1020.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1027px × (600 miles / 5000px) = 123 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1026.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1033px × (600 miles / 5000px) = 124 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1032.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1039px × (600 miles / 5000px) = 125 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1038.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1044px × (600 miles / 5000px) = 125 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1043.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1050px × (600 miles / 5000px) = 126 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1049.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1074px × (600 miles / 5000px) = 129 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1073.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1092px × (600 miles / 5000px) = 131 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1091.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1109px × (600 miles / 5000px) = 133 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1108.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1127px × (600 miles / 5000px) = 135 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1126.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1139px × (600 miles / 5000px) = 137 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1138.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1156px × (600 miles / 5000px) = 139 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1155.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1168px × (600 miles / 5000px) = 140 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1167.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1180px × (600 miles / 5000px) = 142 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1179.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1186px × (600 miles / 5000px) = 142 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1185.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1192px × (600 miles / 5000px) = 143 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1191.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1198px × (600 miles / 5000px) = 144 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1197.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1227px × (600 miles / 5000px) = 147 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1227.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1233px × (600 miles / 5000px) = 148 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1233.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1239px × (600 miles / 5000px) = 149 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1239.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1250px × (600 miles / 5000px) = 150 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1250.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1256px × (600 miles / 5000px) = 151 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1256.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1262px × (600 miles / 5000px) = 151 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1262.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1271px × (600 miles / 5000px) = 152 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1270.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1277px × (600 miles / 5000px) = 153 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1276.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1283px × (600 miles / 5000px) = 154 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1282.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1291px × (600 miles / 5000px) = 155 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1291.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1296px × (600 miles / 5000px) = 156 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1296.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1302px × (600 miles / 5000px) = 156 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1302.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1308px × (600 miles / 5000px) = 157 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1308.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1317px × (600 miles / 5000px) = 158 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1316.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1328px × (600 miles / 5000px) = 159 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1327.6
+path-manager.js:161 🛑 Drawing stopped
+path-manager.js:164 🔄 Drawing segment completed
+path-manager.js:609 📏 Calcul distance: 1328px × (600 miles / 5000px) = 159 miles ÷ 20 mi/j
+path-manager.js:175 🏁 Drawing mode ended - journey path created
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1790, y: 1611, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1790, 1611)
+voyage-manager.js:1690 🎯 Centrage de la carte sur le voyage - Centre: (2253, 1841)
+voyage-manager.js:1739 ✅ Carte centrée sur le voyage avec zoom 50%
+voyage-manager.js:127 🗺️ VoyageManager calcul: 1328px × (600 miles / 5000px) = 159 miles ÷ 20 mi/j = 8 jours
+voyage-manager.js:319 📅 Date de début du voyage sauvegardée : 14 Nórui
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(1): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=14
+voyage-manager.js:361 📅 Résultat final: "14 Nórui"
+voyage-manager.js:139 📅 Jour 1: date calendrier = "14 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(2): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=15
+voyage-manager.js:361 📅 Résultat final: "15 Nórui"
+voyage-manager.js:139 📅 Jour 2: date calendrier = "15 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(3): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=16
+voyage-manager.js:361 📅 Résultat final: "16 Nórui"
+voyage-manager.js:139 📅 Jour 3: date calendrier = "16 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(4): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=17
+voyage-manager.js:361 📅 Résultat final: "17 Nórui"
+voyage-manager.js:139 📅 Jour 4: date calendrier = "17 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(5): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=18
+voyage-manager.js:361 📅 Résultat final: "18 Nórui"
+voyage-manager.js:139 📅 Jour 5: date calendrier = "18 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(6): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=19
+voyage-manager.js:361 📅 Résultat final: "19 Nórui"
+voyage-manager.js:139 📅 Jour 6: date calendrier = "19 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(7): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=20
+voyage-manager.js:361 📅 Résultat final: "20 Nórui"
+voyage-manager.js:139 📅 Jour 7: date calendrier = "20 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(8): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=21
+voyage-manager.js:361 📅 Résultat final: "21 Nórui"
+voyage-manager.js:139 📅 Jour 8: date calendrier = "21 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(1): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=14
+voyage-manager.js:361 📅 Résultat final: "14 Nórui"
+voyage-manager.js:463 📅 updateDayTitle pour le jour 1: date="14 Nórui"
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.500
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.500, ratio=0.103, x=15.4px, sliderWidth=150px
+voyage-manager.js:652 📍 Jour 2 - Coordonnées de début: {x: 1796, y: 1746}
+voyage-manager.js:653 📍 Jour 2 - Coordonnées de fin: {x: 1861, y: 1823}
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(2): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=15
+voyage-manager.js:361 📅 Résultat final: "15 Nórui"
+voyage-manager.js:463 📅 updateDayTitle pour le jour 2: date="15 Nórui"
+voyage-manager.js:680 📅 updateMainCalendarDate appelée - index: 1, isCalendarMode: true
+voyage-manager.js:692 📅 Calcul: jour 2, monthIndex initial: 5, newDay initial: 15
+voyage-manager.js:700 📅 Après navigation: monthIndex: 5, newDay: 15, mois: Nórui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'eté-début'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'eté-début'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:743 📅 Header date mise à jour: 15 Nórui
+voyage-manager.js:754 📅 Header saison mise à jour: 🌱 (eté-début)
+voyage-manager.js:731 📅 Date principale mise à jour : 15 Nórui (eté-début)
+voyage-manager.js:652 📍 Jour 3 - Coordonnées de début: {x: 1861, y: 1823}
+voyage-manager.js:653 📍 Jour 3 - Coordonnées de fin: {x: 1967, y: 1935}
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(3): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=16
+voyage-manager.js:361 📅 Résultat final: "16 Nórui"
+voyage-manager.js:463 📅 updateDayTitle pour le jour 3: date="16 Nórui"
+voyage-manager.js:680 📅 updateMainCalendarDate appelée - index: 2, isCalendarMode: true
+voyage-manager.js:692 📅 Calcul: jour 3, monthIndex initial: 5, newDay initial: 16
+voyage-manager.js:700 📅 Après navigation: monthIndex: 5, newDay: 16, mois: Nórui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'eté-début'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'eté-début'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:743 📅 Header date mise à jour: 16 Nórui
+voyage-manager.js:754 📅 Header saison mise à jour: 🌱 (eté-début)
+voyage-manager.js:731 📅 Date principale mise à jour : 16 Nórui (eté-début)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1796, y: 1746, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1796, 1746)
+voyage-manager.js:652 📍 Jour 4 - Coordonnées de début: {x: 1967, y: 1935}
+voyage-manager.js:653 📍 Jour 4 - Coordonnées de fin: {x: 2102, y: 2064}
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(4): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=17
+voyage-manager.js:361 📅 Résultat final: "17 Nórui"
+voyage-manager.js:463 📅 updateDayTitle pour le jour 4: date="17 Nórui"
+voyage-manager.js:680 📅 updateMainCalendarDate appelée - index: 3, isCalendarMode: true
+voyage-manager.js:692 📅 Calcul: jour 4, monthIndex initial: 5, newDay initial: 17
+voyage-manager.js:700 📅 Après navigation: monthIndex: 5, newDay: 17, mois: Nórui
+calendar-manager.js:121 📅 [saveCalendarToLocal] Début sauvegarde, skipAutoSync: false
+calendar-manager.js:145 📅 [saveCalendarToLocal] Données à sauvegarder: {calendarData: '12 mois', currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'eté-début'}
+calendar-manager.js:30 📅 Données calendrier exposées globalement: {calendarData: true, currentCalendarDate: {…}, isCalendarMode: true, currentSeason: 'eté-début'}
+calendar-manager.js:170 📅 [saveCalendarToLocal] Déclenchement auto-sync
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+voyage-manager.js:743 📅 Header date mise à jour: 17 Nórui
+voyage-manager.js:754 📅 Header saison mise à jour: 🌱 (eté-début)
+voyage-manager.js:731 📅 Date principale mise à jour : 17 Nórui (eté-début)
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1861, y: 1823, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1861, 1823)
+voyage-manager.js:1166 📖 Style de narration pour le voyage complet: brief
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 1967, y: 1935, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (1967, 1935)
+gemini-manager.js:50 ✅ Contenu généré avec succès
+voyage-manager.js:1292 📖 Réponse brute de Gemini: ```json
+{
+  "descriptions": [
+    {
+      "day": 1,
+      "description": "Vous vous enfoncez dans le paysage aride, la chaleur vous frappe dès le premier pas. La brise, au lieu de vous rafraîchir, vous apporte une bouffée de chaleur suffocante. Le soleil tape fort, et l'horizon se perd dans un voile de réverbération. Votre périple commence sous un soleil de plomb, l'espoir de trouver de l'ombre se transforme en une attente silencieuse. La fatigue commence déjà à se faire sentir."
+    },
+    {
+      "day": 2,
+      "description": "La chaleur s'intensifie, et les mirages dansent sur les chemins devant vous. Ces visions illusoires d'oasis lointaines vous rappellent sans cesse votre soif. Le paysage, monotone et rocailleux, semble s'étendre à l'infini. Vous serrez les gourdes avec espoir, mais la chaleur implacable continue de vous accabler à chaque pas."
+    },
+    {
+      "day": 3,
+      "description": "Le soleil brûlant mord votre peau, et vous devez vous couvrir pour éviter de succomber. La soif vous tenaille, et l'air est lourd et immobile. Le moral de certains commence à faiblir face à cette chaleur implacable. Vous avancez avec détermination, mais chaque pas semble plus lourd que le précédent, sous ce ciel impitoyable."
+    },
+    {
+      "day": 4,
+      "description": "Chaque goutte d'eau devient une précieuse offrande, économisée avec soin. Vous rêvez de ruisseaux frais et de fontaines ombragées. La chaleur déforme les rochers à l'horizon et la fatigue commence à se lire sur les visages. Vous partagez vos réserves, conscients de la nécessité de rester unis face à cette épreuve."
+    },
+    {
+      "day": 5,
+      "description": "Le paysage est immobile, comme plongé dans une torpeur accablante. La chaleur omniprésente semble avoir étouffé toute vie. Le silence est assourdissant, ponctué seulement par le crissement de vos pas sur le sol sec. Vous vous demandez si le monde entier n'a pas été abandonné à ce fournaise."
+    },
+    {
+      "day": 6,
+      "description": "Un voile de poussière trouble la lumière du soleil, donnant au paysage une teinte ocre et irréelle. L'air est épais et difficile à respirer. Vos vêtements sont couverts d'une fine couche de poussière, témoin de votre progression dans cet environnement hostile. Vous toussez, les gorges sèches, en espérant apercevoir un signe de changement."
+    },
+    {
+      "day": 7,
+      "description": "Le soir, le soleil couchant embrase l'horizon de teintes rougeoyantes, filtrées par la poussière en suspension. Ce spectacle grandiose offre un court répit à la dureté du jour. Vous trouvez un endroit abrité pour la nuit, mais la chaleur persiste, rendant le sommeil difficile. Demain apportera-t-il un soulagement ?"
+    },
+    {
+      "day": 8,
+      "description": "La chaleur atteint son paroxysme, et l'air vibre comme une fournaise. Le paysage se fond dans la réverbération, et l'horizon semble reculer à mesure que vous avancez. Vous sentez la force du soleil sur vos épaules, implacable et insatiable. Chaque mouvement est un effort, chaque respiration une victoire. Le voyage continue, éprouvant votre endurance à chaque instant."
+    }
+  ]
+}
+```
+voyage-manager.js:1330 ❌ Erreur lors du parsing de la réponse: SyntaxError: Unexpected token '`', "```json
+{
+"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at VoyageManager.parseAndDisplayAllJourneyDescriptions (voyage-manager.js:1296:72)
+    at VoyageManager.generateJourneyDescription (voyage-manager.js:1000:18)
+parseAndDisplayAllJourneyDescriptions @ voyage-manager.js:1330
+generateJourneyDescription @ voyage-manager.js:1000
+await in generateJourneyDescription
+(anonymous) @ voyage-manager.js:627
+voyage-manager.js:1331 📖 Réponse reçue: ```json
+{
+  "descriptions": [
+    {
+      "day": 1,
+      "description": "Vous vous enfoncez dans le paysage aride, la chaleur vous frappe dès le premier pas. La brise, au lieu de vous rafraîchir, vous apporte une bouffée de chaleur suffocante. Le soleil tape fort, et l'horizon se perd dans un voile de réverbération. Votre périple commence sous un soleil de plomb, l'espoir de trouver de l'ombre se transforme en une attente silencieuse. La fatigue commence déjà à se faire sentir."
+    },
+    {
+      "day": 2,
+      "description": "La chaleur s'intensifie, et les mirages dansent sur les chemins devant vous. Ces visions illusoires d'oasis lointaines vous rappellent sans cesse votre soif. Le paysage, monotone et rocailleux, semble s'étendre à l'infini. Vous serrez les gourdes avec espoir, mais la chaleur implacable continue de vous accabler à chaque pas."
+    },
+    {
+      "day": 3,
+      "description": "Le soleil brûlant mord votre peau, et vous devez vous couvrir pour éviter de succomber. La soif vous tenaille, et l'air est lourd et immobile. Le moral de certains commence à faiblir face à cette chaleur implacable. Vous avancez avec détermination, mais chaque pas semble plus lourd que le précédent, sous ce ciel impitoyable."
+    },
+    {
+      "day": 4,
+      "description": "Chaque goutte d'eau devient une précieuse offrande, économisée avec soin. Vous rêvez de ruisseaux frais et de fontaines ombragées. La chaleur déforme les rochers à l'horizon et la fatigue commence à se lire sur les visages. Vous partagez vos réserves, conscients de la nécessité de rester unis face à cette épreuve."
+    },
+    {
+      "day": 5,
+      "description": "Le paysage est immobile, comme plongé dans une torpeur accablante. La chaleur omniprésente semble avoir étouffé toute vie. Le silence est assourdissant, ponctué seulement par le crissement de vos pas sur le sol sec. Vous vous demandez si le monde entier n'a pas été abandonné à ce fournaise."
+    },
+    {
+      "day": 6,
+      "description": "Un voile de poussière trouble la lumière du soleil, donnant au paysage une teinte ocre et irréelle. L'air est épais et difficile à respirer. Vos vêtements sont couverts d'une fine couche de poussière, témoin de votre progression dans cet environnement hostile. Vous toussez, les gorges sèches, en espérant apercevoir un signe de changement."
+    },
+    {
+      "day": 7,
+      "description": "Le soir, le soleil couchant embrase l'horizon de teintes rougeoyantes, filtrées par la poussière en suspension. Ce spectacle grandiose offre un court répit à la dureté du jour. Vous trouvez un endroit abrité pour la nuit, mais la chaleur persiste, rendant le sommeil difficile. Demain apportera-t-il un soulagement ?"
+    },
+    {
+      "day": 8,
+      "description": "La chaleur atteint son paroxysme, et l'air vibre comme une fournaise. Le paysage se fond dans la réverbération, et l'horizon semble reculer à mesure que vous avancez. Vous sentez la force du soleil sur vos épaules, implacable et insatiable. Chaque mouvement est un effort, chaque respiration une victoire. Le voyage continue, éprouvant votre endurance à chaque instant."
+    }
+  ]
+}
+```
+voyage-manager.js:1166 📖 Style de narration pour le voyage complet: brief
+gemini-manager.js:50 ✅ Contenu généré avec succès
+voyage-manager.js:1292 📖 Réponse brute de Gemini: ```json
+{
+  "descriptions": [
+    {
+      "day": 1,
+      "description": "Vous vous mettez en route, la chaleur de l'été déjà bien installée. Le soleil darde ses rayons impitoyables et la brise, lorsqu'elle daigne souffler, apporte une vague illusion de fraîcheur, vite dissipée. Le paysage défile lentement, monotone, et l'horizon semble toujours aussi lointain. Le chemin s'étire devant vous, sans promesse de répit."
+    },
+    {
+      "day": 2,
+      "description": "La chaleur s'intensifie. Vous voyez des mirages dansant au loin, des flaques d'eau imaginaires qui se dérobent à mesure que vous approchez. La soif se fait sentir, lancinante. Certains d'entre vous commencent à râler, la patience s'effrite sous le soleil de plomb. Vos yeux scrutent l'horizon, espérant l'ombre d'un rocher ou la promesse d'un point d'eau."
+    },
+    {
+      "day": 3,
+      "description": "Le soleil vous brûle la peau, malgré vos efforts pour vous protéger. La fatigue commence à peser sur vos épaules. Chaque pas est plus difficile que le précédent. Vous cherchez instinctivement l'ombre, mais le paysage offre peu de répit. L'air vibre de chaleur, et le silence est presque assourdissant."
+    },
+    {
+      "day": 4,
+      "description": "L'eau devient une obsession. Vous rationnez vos réserves avec une attention scrupuleuse. Chacun surveille l'autre, craignant qu'un geste inconsidéré ne compromette la survie du groupe. La tension monte, palpable, exacerbée par la chaleur et la soif. Vous rêvez d'une source fraîche, d'une cascade rafraîchissante."
+    },
+    {
+      "day": 5,
+      "description": "Le monde semble retenir son souffle. La chaleur accable tout, immobilise la vie. Même les oiseaux se sont tus. Vous avancez dans un silence pesant, comme si vous étiez entrés dans un rêve fiévreux. Le paysage s'estompe, se fond dans une brume de chaleur. Le temps lui-même semble suspendu."
+    },
+    {
+      "day": 6,
+      "description": "Un voile de poussière ocre flotte dans l'air, atténuant la lumière du soleil et donnant au paysage une teinte étrange, presque irréelle. Vous toussez, la gorge sèche et irritée. Le soleil devient un disque flou dans le ciel, et les ombres s'allongent, fantomatiques. La route est un ruban de terre poussiéreuse qui se perd à l'horizon."
+    },
+    {
+      "day": 7,
+      "description": "Le soleil se couche dans un embrasement de couleurs rougeoyantes. La poussière dans l'atmosphère diffuse la lumière, créant un spectacle grandiose mais éphémère. Vous vous arrêtez pour admirer le crépuscule, un moment de répit dans la monotonie du voyage. Mais la nuit qui s'annonce promet peu de fraîcheur."
+    },
+    {
+      "day": 8,
+      "description": "La chaleur est insoutenable. L'air vibre, palpable, et le soleil tape comme un marteau. Vous sentez vos forces décliner, et la simple idée de continuer à marcher devient un défi. Le paysage vous nargue, vide et impitoyable. C'est le paroxysme de l'été, et vous vous demandez combien de temps vous pourrez encore tenir."
+    }
+  ]
+}
+```
+voyage-manager.js:1330 ❌ Erreur lors du parsing de la réponse: SyntaxError: Unexpected token '`', "```json
+{
+"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at VoyageManager.parseAndDisplayAllJourneyDescriptions (voyage-manager.js:1296:72)
+    at VoyageManager.generateJourneyDescription (voyage-manager.js:1000:18)
+parseAndDisplayAllJourneyDescriptions @ voyage-manager.js:1330
+generateJourneyDescription @ voyage-manager.js:1000
+await in generateJourneyDescription
+(anonymous) @ voyage-manager.js:627
+voyage-manager.js:1331 📖 Réponse reçue: ```json
+{
+  "descriptions": [
+    {
+      "day": 1,
+      "description": "Vous vous mettez en route, la chaleur de l'été déjà bien installée. Le soleil darde ses rayons impitoyables et la brise, lorsqu'elle daigne souffler, apporte une vague illusion de fraîcheur, vite dissipée. Le paysage défile lentement, monotone, et l'horizon semble toujours aussi lointain. Le chemin s'étire devant vous, sans promesse de répit."
+    },
+    {
+      "day": 2,
+      "description": "La chaleur s'intensifie. Vous voyez des mirages dansant au loin, des flaques d'eau imaginaires qui se dérobent à mesure que vous approchez. La soif se fait sentir, lancinante. Certains d'entre vous commencent à râler, la patience s'effrite sous le soleil de plomb. Vos yeux scrutent l'horizon, espérant l'ombre d'un rocher ou la promesse d'un point d'eau."
+    },
+    {
+      "day": 3,
+      "description": "Le soleil vous brûle la peau, malgré vos efforts pour vous protéger. La fatigue commence à peser sur vos épaules. Chaque pas est plus difficile que le précédent. Vous cherchez instinctivement l'ombre, mais le paysage offre peu de répit. L'air vibre de chaleur, et le silence est presque assourdissant."
+    },
+    {
+      "day": 4,
+      "description": "L'eau devient une obsession. Vous rationnez vos réserves avec une attention scrupuleuse. Chacun surveille l'autre, craignant qu'un geste inconsidéré ne compromette la survie du groupe. La tension monte, palpable, exacerbée par la chaleur et la soif. Vous rêvez d'une source fraîche, d'une cascade rafraîchissante."
+    },
+    {
+      "day": 5,
+      "description": "Le monde semble retenir son souffle. La chaleur accable tout, immobilise la vie. Même les oiseaux se sont tus. Vous avancez dans un silence pesant, comme si vous étiez entrés dans un rêve fiévreux. Le paysage s'estompe, se fond dans une brume de chaleur. Le temps lui-même semble suspendu."
+    },
+    {
+      "day": 6,
+      "description": "Un voile de poussière ocre flotte dans l'air, atténuant la lumière du soleil et donnant au paysage une teinte étrange, presque irréelle. Vous toussez, la gorge sèche et irritée. Le soleil devient un disque flou dans le ciel, et les ombres s'allongent, fantomatiques. La route est un ruban de terre poussiéreuse qui se perd à l'horizon."
+    },
+    {
+      "day": 7,
+      "description": "Le soleil se couche dans un embrasement de couleurs rougeoyantes. La poussière dans l'atmosphère diffuse la lumière, créant un spectacle grandiose mais éphémère. Vous vous arrêtez pour admirer le crépuscule, un moment de répit dans la monotonie du voyage. Mais la nuit qui s'annonce promet peu de fraîcheur."
+    },
+    {
+      "day": 8,
+      "description": "La chaleur est insoutenable. L'air vibre, palpable, et le soleil tape comme un marteau. Vous sentez vos forces décliner, et la simple idée de continuer à marcher devient un défi. Le paysage vous nargue, vide et impitoyable. C'est le paroxysme de l'été, et vous vous demandez combien de temps vous pourrez encore tenir."
+    }
+  ]
+}
+```
+path-manager.js:314 🎨 Drawing mode is now: false
+path-manager.js:350 ❌ Canvas pointer events disabled
+path-manager.js:405 ✅ Gestionnaires de pan réactivés
+path-manager.js:356 ✏️ Mode dessin désactivé - pan réactivé
+main.js:519 ✅ Rendered 2 location markers (thumbnails: false)
+path-manager.js:314 🎨 Drawing mode is now: true
+path-manager.js:328 ✅ Canvas pointer events enabled
+path-manager.js:389 🚫 Gestionnaires de pan désactivés
+path-manager.js:334 ✏️ Mode dessin activé - pan désactivé
+main.js:519 ✅ Rendered 2 location markers (thumbnails: false)
+path-manager.js:93 🖱️ Viewport mousedown event fired, isDrawingMode: true
+path-manager.js:103 🎨 Starting drawing...
+path-manager.js:123 📍 Start point: {x: 2418, y: 1554}
+path-manager.js:609 📏 Calcul distance: 0px × (600 miles / 5000px) = 0 miles ÷ 20 mi/j
+path-manager.js:128 ✅ Drawing initialized
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 12px × (600 miles / 5000px) = 1 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 12.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 61px × (600 miles / 5000px) = 7 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 60.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 69px × (600 miles / 5000px) = 8 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 68.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 75px × (600 miles / 5000px) = 9 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 74.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 83px × (600 miles / 5000px) = 10 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 82.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 93px × (600 miles / 5000px) = 11 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 93.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 103px × (600 miles / 5000px) = 12 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 103.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 107px × (600 miles / 5000px) = 13 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 107.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 119px × (600 miles / 5000px) = 14 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 119.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 129px × (600 miles / 5000px) = 16 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 129.3
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 141px × (600 miles / 5000px) = 17 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 141.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 154px × (600 miles / 5000px) = 18 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 153.6
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 164px × (600 miles / 5000px) = 20 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 163.8
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 176px × (600 miles / 5000px) = 21 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 176.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 180px × (600 miles / 5000px) = 22 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 180.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 186px × (600 miles / 5000px) = 22 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 186.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 203px × (600 miles / 5000px) = 24 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 203.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 212px × (600 miles / 5000px) = 25 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 211.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 225px × (600 miles / 5000px) = 27 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 224.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 236px × (600 miles / 5000px) = 28 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 236.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 244px × (600 miles / 5000px) = 29 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 244.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 254px × (600 miles / 5000px) = 31 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 254.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 264px × (600 miles / 5000px) = 32 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 264.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 273px × (600 miles / 5000px) = 33 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 273.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 281px × (600 miles / 5000px) = 34 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 280.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 286px × (600 miles / 5000px) = 34 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 286.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 296px × (600 miles / 5000px) = 36 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 296.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 303px × (600 miles / 5000px) = 36 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 303.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 312px × (600 miles / 5000px) = 37 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 312.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 318px × (600 miles / 5000px) = 38 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 317.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 330px × (600 miles / 5000px) = 40 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 330.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 338px × (600 miles / 5000px) = 41 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 337.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 390px × (600 miles / 5000px) = 47 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 390.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 399px × (600 miles / 5000px) = 48 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 398.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 409px × (600 miles / 5000px) = 49 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 408.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 413px × (600 miles / 5000px) = 50 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 413.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 419px × (600 miles / 5000px) = 50 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 418.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 430px × (600 miles / 5000px) = 52 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 429.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 434px × (600 miles / 5000px) = 52 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 434.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 438px × (600 miles / 5000px) = 53 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 438.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 446px × (600 miles / 5000px) = 53 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 445.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 451px × (600 miles / 5000px) = 54 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 451.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 456px × (600 miles / 5000px) = 55 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 455.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 460px × (600 miles / 5000px) = 55 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 460.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 466px × (600 miles / 5000px) = 56 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 465.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 473px × (600 miles / 5000px) = 57 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 473.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 480px × (600 miles / 5000px) = 58 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 480.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 485px × (600 miles / 5000px) = 58 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 484.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 494px × (600 miles / 5000px) = 59 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 493.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 503px × (600 miles / 5000px) = 60 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 502.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 519px × (600 miles / 5000px) = 62 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 519.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 527px × (600 miles / 5000px) = 63 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 527.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 538px × (600 miles / 5000px) = 65 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 538.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 550px × (600 miles / 5000px) = 66 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 550.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 563px × (600 miles / 5000px) = 68 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 562.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 573px × (600 miles / 5000px) = 69 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 572.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 582px × (600 miles / 5000px) = 70 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 581.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 588px × (600 miles / 5000px) = 71 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 587.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 594px × (600 miles / 5000px) = 71 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 594.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 599px × (600 miles / 5000px) = 72 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 598.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 603px × (600 miles / 5000px) = 72 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 603.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 607px × (600 miles / 5000px) = 73 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 607.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 627px × (600 miles / 5000px) = 75 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 627.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 633px × (600 miles / 5000px) = 76 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 632.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 643px × (600 miles / 5000px) = 77 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 642.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 657px × (600 miles / 5000px) = 79 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 657.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 672px × (600 miles / 5000px) = 81 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 671.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 689px × (600 miles / 5000px) = 83 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 688.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 703px × (600 miles / 5000px) = 84 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 703.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 720px × (600 miles / 5000px) = 86 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 720.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 735px × (600 miles / 5000px) = 88 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 734.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 746px × (600 miles / 5000px) = 90 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 746.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 760px × (600 miles / 5000px) = 91 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 759.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 773px × (600 miles / 5000px) = 93 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 773.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 779px × (600 miles / 5000px) = 94 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 779.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 786px × (600 miles / 5000px) = 94 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 785.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 792px × (600 miles / 5000px) = 95 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 792.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 800px × (600 miles / 5000px) = 96 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 800.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 807px × (600 miles / 5000px) = 97 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 806.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 814px × (600 miles / 5000px) = 98 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 813.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 820px × (600 miles / 5000px) = 98 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 820.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 826px × (600 miles / 5000px) = 99 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 826.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 833px × (600 miles / 5000px) = 100 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 832.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 837px × (600 miles / 5000px) = 100 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 837.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 843px × (600 miles / 5000px) = 101 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 843.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 851px × (600 miles / 5000px) = 102 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 851.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 858px × (600 miles / 5000px) = 103 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 857.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 864px × (600 miles / 5000px) = 104 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 864.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 872px × (600 miles / 5000px) = 105 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 872.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 884px × (600 miles / 5000px) = 106 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 884.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 910px × (600 miles / 5000px) = 109 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 910.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 922px × (600 miles / 5000px) = 111 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 922.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 938px × (600 miles / 5000px) = 113 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 938.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 968px × (600 miles / 5000px) = 116 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 968.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 978px × (600 miles / 5000px) = 117 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 978.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 992px × (600 miles / 5000px) = 119 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 992.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1002px × (600 miles / 5000px) = 120 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1002.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1014px × (600 miles / 5000px) = 122 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1014.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1025px × (600 miles / 5000px) = 123 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1024.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1037px × (600 miles / 5000px) = 124 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1036.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1049px × (600 miles / 5000px) = 126 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1048.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1057px × (600 miles / 5000px) = 127 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1056.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1067px × (600 miles / 5000px) = 128 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1066.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1077px × (600 miles / 5000px) = 129 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1076.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1085px × (600 miles / 5000px) = 130 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1084.9
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1093px × (600 miles / 5000px) = 131 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1093.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1100px × (600 miles / 5000px) = 132 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1099.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1112px × (600 miles / 5000px) = 133 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1112.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1118px × (600 miles / 5000px) = 134 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1118.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1128px × (600 miles / 5000px) = 135 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1128.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1135px × (600 miles / 5000px) = 136 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1134.8
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1145px × (600 miles / 5000px) = 137 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1145.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1151px × (600 miles / 5000px) = 138 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1151.3
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1158px × (600 miles / 5000px) = 139 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1157.6
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1167px × (600 miles / 5000px) = 140 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1166.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1171px × (600 miles / 5000px) = 141 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1171.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1176px × (600 miles / 5000px) = 141 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1175.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1184px × (600 miles / 5000px) = 142 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1184.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1192px × (600 miles / 5000px) = 143 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1191.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1196px × (600 miles / 5000px) = 144 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1196.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1205px × (600 miles / 5000px) = 145 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1204.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1214px × (600 miles / 5000px) = 146 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1213.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1222px × (600 miles / 5000px) = 147 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1222.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1232px × (600 miles / 5000px) = 148 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1232.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1239px × (600 miles / 5000px) = 149 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1239.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1247px × (600 miles / 5000px) = 150 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1246.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1254px × (600 miles / 5000px) = 150 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1253.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1258px × (600 miles / 5000px) = 151 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1258.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1265px × (600 miles / 5000px) = 152 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1265.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1273px × (600 miles / 5000px) = 153 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1272.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1277px × (600 miles / 5000px) = 153 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1277.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1283px × (600 miles / 5000px) = 154 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1282.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1290px × (600 miles / 5000px) = 155 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1289.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1296px × (600 miles / 5000px) = 155 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1295.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1301px × (600 miles / 5000px) = 156 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1301.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1310px × (600 miles / 5000px) = 157 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1309.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1317px × (600 miles / 5000px) = 158 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1317.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1323px × (600 miles / 5000px) = 159 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1322.6
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1330px × (600 miles / 5000px) = 160 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1329.8
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1350px × (600 miles / 5000px) = 162 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1349.6
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1356px × (600 miles / 5000px) = 163 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1355.9
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1360px × (600 miles / 5000px) = 163 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1359.9
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1366px × (600 miles / 5000px) = 164 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1366.3
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1371px × (600 miles / 5000px) = 164 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1370.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1375px × (600 miles / 5000px) = 165 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1375.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1379px × (600 miles / 5000px) = 166 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1379.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1384px × (600 miles / 5000px) = 166 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1383.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1388px × (600 miles / 5000px) = 167 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1388.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1394px × (600 miles / 5000px) = 167 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1394.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1399px × (600 miles / 5000px) = 168 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1398.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1405px × (600 miles / 5000px) = 169 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1405.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1411px × (600 miles / 5000px) = 169 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1411.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1415px × (600 miles / 5000px) = 170 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1415.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1427px × (600 miles / 5000px) = 171 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1426.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1431px × (600 miles / 5000px) = 172 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1430.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1435px × (600 miles / 5000px) = 172 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1435.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1438px × (600 miles / 5000px) = 173 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1438.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1441px × (600 miles / 5000px) = 173 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1441.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1444px × (600 miles / 5000px) = 173 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1443.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1446px × (600 miles / 5000px) = 174 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1445.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1450px × (600 miles / 5000px) = 174 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1450.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1459px × (600 miles / 5000px) = 175 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1459.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1466px × (600 miles / 5000px) = 176 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1465.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1472px × (600 miles / 5000px) = 177 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1472.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1484px × (600 miles / 5000px) = 178 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1484.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1490px × (600 miles / 5000px) = 179 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1490.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1499px × (600 miles / 5000px) = 180 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1498.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1505px × (600 miles / 5000px) = 181 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1504.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1511px × (600 miles / 5000px) = 181 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1511.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1519px × (600 miles / 5000px) = 182 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1519.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1528px × (600 miles / 5000px) = 183 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1527.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1536px × (600 miles / 5000px) = 184 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1535.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1544px × (600 miles / 5000px) = 185 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1543.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1564px × (600 miles / 5000px) = 188 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1563.9
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1578px × (600 miles / 5000px) = 189 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1578.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1595px × (600 miles / 5000px) = 191 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1594.6
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1623px × (600 miles / 5000px) = 195 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1623.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1635px × (600 miles / 5000px) = 196 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1635.4
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1648px × (600 miles / 5000px) = 198 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1647.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1656px × (600 miles / 5000px) = 199 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1655.8
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1664px × (600 miles / 5000px) = 200 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1664.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1673px × (600 miles / 5000px) = 201 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1673.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1679px × (600 miles / 5000px) = 202 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1679.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1685px × (600 miles / 5000px) = 202 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1684.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1695px × (600 miles / 5000px) = 203 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1694.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1705px × (600 miles / 5000px) = 205 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1704.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1717px × (600 miles / 5000px) = 206 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1716.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1724px × (600 miles / 5000px) = 207 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1723.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1742px × (600 miles / 5000px) = 209 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1741.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1756px × (600 miles / 5000px) = 211 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1756.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1770px × (600 miles / 5000px) = 212 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1769.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1780px × (600 miles / 5000px) = 214 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1779.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1791px × (600 miles / 5000px) = 215 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1790.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1799px × (600 miles / 5000px) = 216 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1799.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1809px × (600 miles / 5000px) = 217 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1809.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1819px × (600 miles / 5000px) = 218 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1819.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1828px × (600 miles / 5000px) = 219 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1827.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1838px × (600 miles / 5000px) = 221 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1837.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1853px × (600 miles / 5000px) = 222 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1853.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1862px × (600 miles / 5000px) = 223 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1862.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1874px × (600 miles / 5000px) = 225 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1873.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1884px × (600 miles / 5000px) = 226 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1883.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1894px × (600 miles / 5000px) = 227 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1893.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1901px × (600 miles / 5000px) = 228 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1900.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1911px × (600 miles / 5000px) = 229 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1910.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 1919px × (600 miles / 5000px) = 230 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 1919.4
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1927px × (600 miles / 5000px) = 231 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1926.6
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1963px × (600 miles / 5000px) = 236 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1963.3
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1971px × (600 miles / 5000px) = 236 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1970.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1977px × (600 miles / 5000px) = 237 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1976.9
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1983px × (600 miles / 5000px) = 238 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1983.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1992px × (600 miles / 5000px) = 239 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1992.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 1998px × (600 miles / 5000px) = 240 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 1998.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2003px × (600 miles / 5000px) = 240 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2002.6
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2007px × (600 miles / 5000px) = 241 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2007.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2012px × (600 miles / 5000px) = 241 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2011.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2016px × (600 miles / 5000px) = 242 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2016.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2020px × (600 miles / 5000px) = 242 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2020.5
+ ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2025px × (600 miles / 5000px) = 243 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2025.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2031px × (600 miles / 5000px) = 244 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2030.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2037px × (600 miles / 5000px) = 244 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2036.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2045px × (600 miles / 5000px) = 245 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2045.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2053px × (600 miles / 5000px) = 246 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2052.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2064px × (600 miles / 5000px) = 248 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2064.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2072px × (600 miles / 5000px) = 249 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2072.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2082px × (600 miles / 5000px) = 250 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2082.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2094px × (600 miles / 5000px) = 251 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2093.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2104px × (600 miles / 5000px) = 252 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2103.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2110px × (600 miles / 5000px) = 253 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2110.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2120px × (600 miles / 5000px) = 254 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2120.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2125px × (600 miles / 5000px) = 255 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2124.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2132px × (600 miles / 5000px) = 256 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2131.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2141px × (600 miles / 5000px) = 257 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2140.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2147px × (600 miles / 5000px) = 258 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2147.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2154px × (600 miles / 5000px) = 259 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2154.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2163px × (600 miles / 5000px) = 260 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2163.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2169px × (600 miles / 5000px) = 260 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2169.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2211px × (600 miles / 5000px) = 265 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2211.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2227px × (600 miles / 5000px) = 267 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2227.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2241px × (600 miles / 5000px) = 269 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2241.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2253px × (600 miles / 5000px) = 270 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2253.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2269px × (600 miles / 5000px) = 272 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2269.4
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2285px × (600 miles / 5000px) = 274 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2285.4
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2302px × (600 miles / 5000px) = 276 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2301.9
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2318px × (600 miles / 5000px) = 278 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2318.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2332px × (600 miles / 5000px) = 280 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2332.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2389px × (600 miles / 5000px) = 287 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2389.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2399px × (600 miles / 5000px) = 288 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2399.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2407px × (600 miles / 5000px) = 289 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2407.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2414px × (600 miles / 5000px) = 290 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2413.8
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2421px × (600 miles / 5000px) = 291 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2421.0
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2431px × (600 miles / 5000px) = 292 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2431.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2441px × (600 miles / 5000px) = 293 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2441.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2448px × (600 miles / 5000px) = 294 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2448.4
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2455px × (600 miles / 5000px) = 295 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2454.7
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2463px × (600 miles / 5000px) = 296 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2463.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2472px × (600 miles / 5000px) = 297 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2472.2
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2478px × (600 miles / 5000px) = 297 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2477.8
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2489px × (600 miles / 5000px) = 299 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2489.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2498px × (600 miles / 5000px) = 300 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2498.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2505px × (600 miles / 5000px) = 301 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2505.3
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2512px × (600 miles / 5000px) = 301 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2512.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2521px × (600 miles / 5000px) = 303 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2521.4
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2527px × (600 miles / 5000px) = 303 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2527.1
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2532px × (600 miles / 5000px) = 304 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2531.6
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2541px × (600 miles / 5000px) = 305 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2540.5
+ ✏️ Mouse move during drawing
+ 📏 Calcul distance: 2548px × (600 miles / 5000px) = 306 miles ÷ 20 mi/j
+ ✏️ Drawing segment, total pixels: 2547.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2554px × (600 miles / 5000px) = 306 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2554.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2559px × (600 miles / 5000px) = 307 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2558.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2565px × (600 miles / 5000px) = 308 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2564.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2582px × (600 miles / 5000px) = 310 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2582.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2588px × (600 miles / 5000px) = 311 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2588.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2611px × (600 miles / 5000px) = 313 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2610.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2622px × (600 miles / 5000px) = 315 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2621.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2632px × (600 miles / 5000px) = 316 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2632.3
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2641px × (600 miles / 5000px) = 317 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2641.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2651px × (600 miles / 5000px) = 318 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2651.4
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2660px × (600 miles / 5000px) = 319 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2659.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2671px × (600 miles / 5000px) = 320 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2670.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2678px × (600 miles / 5000px) = 321 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2677.9
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2687px × (600 miles / 5000px) = 322 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2686.8
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2694px × (600 miles / 5000px) = 323 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2694.0
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2700px × (600 miles / 5000px) = 324 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2699.7
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2704px × (600 miles / 5000px) = 325 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2704.2
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2709px × (600 miles / 5000px) = 325 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2708.6
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2711px × (600 miles / 5000px) = 325 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2711.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2713px × (600 miles / 5000px) = 326 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2713.5
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2719px × (600 miles / 5000px) = 326 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2719.1
+path-manager.js:139 ✏️ Mouse move during drawing
+path-manager.js:609 📏 Calcul distance: 2722px × (600 miles / 5000px) = 327 miles ÷ 20 mi/j
+path-manager.js:154 ✏️ Drawing segment, total pixels: 2722.0
+path-manager.js:161 🛑 Drawing stopped
+path-manager.js:164 🔄 Drawing segment completed
+path-manager.js:609 📏 Calcul distance: 2722px × (600 miles / 5000px) = 327 miles ÷ 20 mi/j
+path-manager.js:175 🏁 Drawing mode ended - journey path created
+position-manager.js:76 💾 [PositionManager.savePosition] Sauvegarde position: {x: 2418, y: 1554, mapId: '/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp'}
+position-manager.js:81 💾 [PositionManager.savePosition] Flag cloud après save: null
+auth-manager.js:1808 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+position-manager.js:587 📍 Marqueur de position déplacé au début du tracé: (2418, 1554)
+voyage-manager.js:1690 🎯 Centrage de la carte sur le voyage - Centre: (2952, 1721)
+ ✅ Carte centrée sur le voyage avec zoom 50%
+ 🗺️ VoyageManager calcul: 2722px × (600 miles / 5000px) = 327 miles ÷ 20 mi/j = 17 jours
+ 📅 Date de début du voyage sauvegardée : 17 Nórui
+ 📅 DEBUG getCalendarDateForDay(1): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+ 📅 Calcul initial: monthIndex=5, calendarDay=17
+ 📅 Résultat final: "17 Nórui"
+ 📅 Jour 1: date calendrier = "17 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(2): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=18
+voyage-manager.js:361 📅 Résultat final: "18 Nórui"
+voyage-manager.js:139 📅 Jour 2: date calendrier = "18 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(3): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=19
+voyage-manager.js:361 📅 Résultat final: "19 Nórui"
+voyage-manager.js:139 📅 Jour 3: date calendrier = "19 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(4): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=20
+voyage-manager.js:361 📅 Résultat final: "20 Nórui"
+voyage-manager.js:139 📅 Jour 4: date calendrier = "20 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(5): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=21
+voyage-manager.js:361 📅 Résultat final: "21 Nórui"
+voyage-manager.js:139 📅 Jour 5: date calendrier = "21 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(6): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=22
+voyage-manager.js:361 📅 Résultat final: "22 Nórui"
+voyage-manager.js:139 📅 Jour 6: date calendrier = "22 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(7): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=23
+voyage-manager.js:361 📅 Résultat final: "23 Nórui"
+voyage-manager.js:139 📅 Jour 7: date calendrier = "23 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(8): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=24
+voyage-manager.js:361 📅 Résultat final: "24 Nórui"
+voyage-manager.js:139 📅 Jour 8: date calendrier = "24 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(9): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=25
+voyage-manager.js:361 📅 Résultat final: "25 Nórui"
+voyage-manager.js:139 📅 Jour 9: date calendrier = "25 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(10): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=26
+voyage-manager.js:361 📅 Résultat final: "26 Nórui"
+voyage-manager.js:139 📅 Jour 10: date calendrier = "26 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(11): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=27
+voyage-manager.js:361 📅 Résultat final: "27 Nórui"
+voyage-manager.js:139 📅 Jour 11: date calendrier = "27 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(12): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=28
+voyage-manager.js:361 📅 Résultat final: "28 Nórui"
+voyage-manager.js:139 📅 Jour 12: date calendrier = "28 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(13): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=29
+voyage-manager.js:361 📅 Résultat final: "29 Nórui"
+voyage-manager.js:139 📅 Jour 13: date calendrier = "29 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(14): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=30
+voyage-manager.js:361 📅 Résultat final: "30 Nórui"
+voyage-manager.js:139 📅 Jour 14: date calendrier = "30 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(15): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=31
+voyage-manager.js:361 📅 Résultat final: "31 Nórui"
+voyage-manager.js:139 📅 Jour 15: date calendrier = "31 Nórui"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(16): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=32
+voyage-manager.js:357 📅 Navigation mois: nouveau monthIndex=6, nouveau calendarDay=1
+voyage-manager.js:361 📅 Résultat final: "1 Cerveth"
+voyage-manager.js:139 📅 Jour 16: date calendrier = "1 Cerveth"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(17): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=33
+voyage-manager.js:357 📅 Navigation mois: nouveau monthIndex=6, nouveau calendarDay=2
+voyage-manager.js:361 📅 Résultat final: "2 Cerveth"
+voyage-manager.js:139 📅 Jour 17: date calendrier = "2 Cerveth"
+voyage-manager.js:338 📅 DEBUG getCalendarDateForDay(4): {hasJourneyStartDate: true, journeyStartDate: {…}, hasCalendarData: true, calendarDataLength: 12, isCalendarMode: true}
+voyage-manager.js:351 📅 Calcul initial: monthIndex=5, calendarDay=20
+voyage-manager.js:361 📅 Résultat final: "20 Nórui"
+voyage-manager.js:463 📅 updateDayTitle pour le jour 4: date="20 Nórui"
+zoom-manager.js:248 🔍 [ZoomManager] updateDisplay called: scale=0.500
+zoom-manager.js:233 🔍 [ZoomManager] updateSliderPosition: scale=0.500, ratio=0.103, x=15.4px, sliderWidth=150px
+voyage-manager.js:1166 📖 Style de narration pour le voyage complet: brief
+gemini-manager.js:50 ✅ Contenu généré avec succès
+voyage-manager.js:1292 📖 Réponse brute de Gemini: ```json
+{
+  "descriptions": [
+    {
+      "day": 1,
+      "description": "Vous vous mettez en route sous un soleil de plomb. La chaleur vous frappe dès le matin, et vous sentez déjà la soif vous tirailler. La terre craquelle sous vos pas, et la poussière vole à chaque mouvement. Vous gardez espoir de trouver un point d'eau pour vous rafraîchir, mais l'horizon reste désespérément sec."
+    },
+    {
+      "day": 2,
+      "description": "Le soleil est une enclume qui écrase le paysage. La chaleur est accablante et l'air vibre autour de vous. Le monde semble retenir son souffle, attendant un signe de changement. Vous avancez, le moral entamé par cette immobilité suffocante. La fatigue commence à se faire sentir."
+    },
+    {
+      "day": 3,
+      "description": "Vous vous enfoncez dans un voile jaune, une brume de poussière soulevée par des vents invisibles. Le soleil n'est plus qu'une tache floue dans le ciel. Vos gorges s'assèchent et vos yeux piquent. Le paysage prend une teinte irréelle, comme un rêve fiévreux."
+    },
+    {
+      "day": 4,
+      "description": "La journée a été aussi éprouvante que les précédentes. Ce soir, vous êtes récompensés par un coucher de soleil flamboyant. Le ciel s'embrase de teintes rouges et orangées, un spectacle grandiose, bien que teinté de la poussière omniprésente. Vous vous reposez en contemplant ce paysage unique."
+    },
+    {
+      "day": 5,
+      "description": "La chaleur atteint son paroxysme. Chaque pas est un effort. L'air est brûlant et vous assèche la gorge. Vous cherchez désespérément de l'ombre, même éphémère. Le moral est au plus bas, chacun se replie sur lui-même, économisant son énergie pour survivre à cette fournaise."
+    },
+    {
+      "day": 6,
+      "description": "Les journées s'étirent interminablement sous ce soleil impitoyable. Vous marchez, la tête basse, en quête d'un peu de répit. La nuit, trop courte, offre un soulagement insuffisant. L'épuisement se lit sur les visages, mais la détermination reste présente."
+    },
+    {
+      "day": 7,
+      "description": "Les nuits sont tièdes, presque aussi inconfortables que les journées. La chaleur vous oppresse, vous empêchant de trouver un sommeil réparateur. Vous vous réveillez fatigués, prêts à affronter une nouvelle journée dans cette fournaise persistante."
+    },
+    {
+      "day": 8,
+      "description": "Le ciel nocturne est d'une clarté exceptionnelle. Des étoiles filantes zèbrent l'obscurité, une myriade d'étincelles dans l'immensité. Certains d'entre vous chuchotent des vœux, tandis que d'autres admirent simplement la beauté du firmament, trouvant un bref répit à la dureté du voyage."
+    },
+    {
+      "day": 9,
+      "description": "Un parfum de foin coupé et d'herbes sèches emplit l'air. C'est l'odeur de l'été, de la terre desséchée. Ce parfum vous rappelle les récoltes passées et la dureté du labeur. Il apporte une touche de nostalgie, mais aussi un regain d'énergie."
+    },
+    {
+      "day": 10,
+      "description": "Même après le coucher du soleil, la chaleur persiste, emprisonnée dans la terre et les pierres. Trouver le sommeil relève du défi, tant la chaleur est étouffante. Vous vous retournez, cherchant un coin plus frais, mais la fournaise vous tenaille."
+    },
+    {
+      "day": 11,
+      "description": "La lune est pleine et resplendissante. Sa lumière argentée baigne le paysage d'une clarté spectrale. Les ombres dansent autour de vous, créant des formes étranges et poétiques. Vous marchez sous ce halo lunaire, bercés par une mélancolie douce."
+    },
+    {
+      "day": 12,
+      "description": "Un calme estival s'est installé, une trêve silencieuse sous le soleil implacable. Le rythme de votre voyage se fait plus lent, plus mesuré. Vous avancez, économisant vos forces, en harmonie avec la torpeur ambiante."
+    },
+    {
+      "day": 13,
+      "description": "Le soleil vous agresse dès l'aube. Il n'y a pas de transition douce, pas de fraîcheur matinale. La chaleur est immédiate et accablante. Vos pas sont lourds, le moral à rude épreuve, mais vous continuez d'avancer."
+    },
+    {
+      "day": 14,
+      "description": "La nature semble retenir son souffle, attendant la pluie. La terre est craquelée, la végétation flétrie. Chaque plante, chaque créature aspire à une goutte d'eau. Vous ressentez vous aussi ce besoin impérieux, cette soif insatiable."
+    },
+    {
+      "day": 15,
+      "description": "L'air est lourd et étouffant, presque irrespirable. La chaleur vous oppresse la poitrine, vous donnant l'impression de manquer d'air. Vous ralentissez le pas, luttant contre la suffocation."
+    },
+    {
+      "day": 16,
+      "description": "La chaleur est devenue insupportable, une prison invisible qui vous enserre. Le silence est assourdissant, seulement brisé par le crissement des insectes. Vous n'échangez plus que des regards, les mots étant devenus trop coûteux en énergie."
+    },
+    {
+      "day": 17,
+      "description": "Le ciel est voilé d'une brume laiteuse. Le soleil n'est plus qu'un disque pâle et indistinct. La chaleur est toujours présente, mais moins agressive. L'horizon est flou, incertain, mais vous sentez que quelque chose change, que le voyage touche peut-être à sa fin."
+    }
+  ]
+}
+```
+voyage-manager.js:1330 ❌ Erreur lors du parsing de la réponse: SyntaxError: Unexpected token '`', "```json
+{
+"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at VoyageManager.parseAndDisplayAllJourneyDescriptions (voyage-manager.js:1296:72)
+    at VoyageManager.generateJourneyDescription (voyage-manager.js:1000:18)
+parseAndDisplayAllJourneyDescriptions @ voyage-manager.js:1330
+generateJourneyDescription @ voyage-manager.js:1000
+await in generateJourneyDescription
+(anonymous) @ voyage-manager.js:627
+voyage-manager.js:1331 📖 Réponse reçue: ```json
+{
+  "descriptions": [
+    {
+      "day": 1,
+      "description": "Vous vous mettez en route sous un soleil de plomb. La chaleur vous frappe dès le matin, et vous sentez déjà la soif vous tirailler. La terre craquelle sous vos pas, et la poussière vole à chaque mouvement. Vous gardez espoir de trouver un point d'eau pour vous rafraîchir, mais l'horizon reste désespérément sec."
+    },
+    {
+      "day": 2,
+      "description": "Le soleil est une enclume qui écrase le paysage. La chaleur est accablante et l'air vibre autour de vous. Le monde semble retenir son souffle, attendant un signe de changement. Vous avancez, le moral entamé par cette immobilité suffocante. La fatigue commence à se faire sentir."
+    },
+    {
+      "day": 3,
+      "description": "Vous vous enfoncez dans un voile jaune, une brume de poussière soulevée par des vents invisibles. Le soleil n'est plus qu'une tache floue dans le ciel. Vos gorges s'assèchent et vos yeux piquent. Le paysage prend une teinte irréelle, comme un rêve fiévreux."
+    },
+    {
+      "day": 4,
+      "description": "La journée a été aussi éprouvante que les précédentes. Ce soir, vous êtes récompensés par un coucher de soleil flamboyant. Le ciel s'embrase de teintes rouges et orangées, un spectacle grandiose, bien que teinté de la poussière omniprésente. Vous vous reposez en contemplant ce paysage unique."
+    },
+    {
+      "day": 5,
+      "description": "La chaleur atteint son paroxysme. Chaque pas est un effort. L'air est brûlant et vous assèche la gorge. Vous cherchez désespérément de l'ombre, même éphémère. Le moral est au plus bas, chacun se replie sur lui-même, économisant son énergie pour survivre à cette fournaise."
+    },
+    {
+      "day": 6,
+      "description": "Les journées s'étirent interminablement sous ce soleil impitoyable. Vous marchez, la tête basse, en quête d'un peu de répit. La nuit, trop courte, offre un soulagement insuffisant. L'épuisement se lit sur les visages, mais la détermination reste présente."
+    },
+    {
+      "day": 7,
+      "description": "Les nuits sont tièdes, presque aussi inconfortables que les journées. La chaleur vous oppresse, vous empêchant de trouver un sommeil réparateur. Vous vous réveillez fatigués, prêts à affronter une nouvelle journée dans cette fournaise persistante."
+    },
+    {
+      "day": 8,
+      "description": "Le ciel nocturne est d'une clarté exceptionnelle. Des étoiles filantes zèbrent l'obscurité, une myriade d'étincelles dans l'immensité. Certains d'entre vous chuchotent des vœux, tandis que d'autres admirent simplement la beauté du firmament, trouvant un bref répit à la dureté du voyage."
+    },
+    {
+      "day": 9,
+      "description": "Un parfum de foin coupé et d'herbes sèches emplit l'air. C'est l'odeur de l'été, de la terre desséchée. Ce parfum vous rappelle les récoltes passées et la dureté du labeur. Il apporte une touche de nostalgie, mais aussi un regain d'énergie."
+    },
+    {
+      "day": 10,
+      "description": "Même après le coucher du soleil, la chaleur persiste, emprisonnée dans la terre et les pierres. Trouver le sommeil relève du défi, tant la chaleur est étouffante. Vous vous retournez, cherchant un coin plus frais, mais la fournaise vous tenaille."
+    },
+    {
+      "day": 11,
+      "description": "La lune est pleine et resplendissante. Sa lumière argentée baigne le paysage d'une clarté spectrale. Les ombres dansent autour de vous, créant des formes étranges et poétiques. Vous marchez sous ce halo lunaire, bercés par une mélancolie douce."
+    },
+    {
+      "day": 12,
+      "description": "Un calme estival s'est installé, une trêve silencieuse sous le soleil implacable. Le rythme de votre voyage se fait plus lent, plus mesuré. Vous avancez, économisant vos forces, en harmonie avec la torpeur ambiante."
+    },
+    {
+      "day": 13,
+      "description": "Le soleil vous agresse dès l'aube. Il n'y a pas de transition douce, pas de fraîcheur matinale. La chaleur est immédiate et accablante. Vos pas sont lourds, le moral à rude épreuve, mais vous continuez d'avancer."
+    },
+    {
+      "day": 14,
+      "description": "La nature semble retenir son souffle, attendant la pluie. La terre est craquelée, la végétation flétrie. Chaque plante, chaque créature aspire à une goutte d'eau. Vous ressentez vous aussi ce besoin impérieux, cette soif insatiable."
+    },
+    {
+      "day": 15,
+      "description": "L'air est lourd et étouffant, presque irrespirable. La chaleur vous oppresse la poitrine, vous donnant l'impression de manquer d'air. Vous ralentissez le pas, luttant contre la suffocation."
+    },
+    {
+      "day": 16,
+      "description": "La chaleur est devenue insupportable, une prison invisible qui vous enserre. Le silence est assourdissant, seulement brisé par le crissement des insectes. Vous n'échangez plus que des regards, les mots étant devenus trop coûteux en énergie."
+    },
+    {
+      "day": 17,
+      "description": "Le ciel est voilé d'une brume laiteuse. Le soleil n'est plus qu'un disque pâle et indistinct. La chaleur est toujours présente, mais moins agressive. L'horizon est flou, incertain, mais vous sentez que quelque chose change, que le voyage touche peut-être à sa fin."
+    }
+  ]
+}
+```
