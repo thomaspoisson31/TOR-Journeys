@@ -681,6 +681,13 @@ class SettingsManager {
             console.log('✅ [switchMap] Bouton de voyage masqué');
         }
 
+        // Réinitialiser l'affichage du nombre de jours dans le pavé de distance
+        const distanceDisplay = document.getElementById('distance-display');
+        if (distanceDisplay) {
+            distanceDisplay.innerHTML = '';
+            console.log('✅ [switchMap] Affichage du nombre de jours réinitialisé');
+        }
+
         // Le conteneur de distance (date) doit rester visible
         console.log('📅 [switchMap] Le pavé date reste affiché');
 
