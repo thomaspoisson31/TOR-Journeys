@@ -94,11 +94,15 @@ class VoyageManager {
         if (typeof journeyPath === 'undefined' || journeyPath.length === 0) {
             noVoyageMessage.classList.remove('hidden');
             currentSegmentDisplay.classList.add('hidden');
+            // Nettoyer les descriptions s'il n'y a pas de tracé
+            this.clearDescriptions();
         } else {
             noVoyageMessage.classList.add('hidden');
             currentSegmentDisplay.classList.remove('hidden');
             this.updateMapScale(); // Mettre à jour l'échelle avant de générer les données du voyage
             this.generateJourneyData();
+            // Charger les descriptions pour cette carte/tracé
+            this.loadDescriptionsForMap();
             this.renderCurrentDay();
         }
     }
@@ -1382,6 +1386,15 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         const activeMapUrl = window.settingsManager?.activeMapUrl;
         if (!activeMapUrl) {
             console.warn("⚠️ Impossible de charger les descriptions: URL de carte active non trouvée.");
+            // Réinitialiser les descriptions si pas de carte active
+            this.journeyDescriptions = {};
+            return null;
+        }
+
+        // Vérifier s'il y a un tracé
+        if (!journeyPath || journeyPath.length === 0) {
+            console.log("⚠️ Pas de tracé, réinitialisation des descriptions");
+            this.journeyDescriptions = {};
             return null;
         }
 
@@ -1396,11 +1409,21 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 // Mettre à jour les descriptions actuelles du voyageur
                 this.journeyDescriptions = { ...parsedData.descriptions };
                 return parsedData.descriptions;
+            } else {
+                console.log(`📭 Aucune description sauvegardée pour cette carte/tracé`);
+                this.journeyDescriptions = {};
             }
         } catch (error) {
             console.error("❌ Erreur lors du chargement des descriptions:", error);
+            this.journeyDescriptions = {};
         }
         return null;
+    }
+
+    clearDescriptions() {
+        // Nettoyer les descriptions lors d'un changement de carte ou de tracé
+        this.journeyDescriptions = {};
+        console.log("🧹 Descriptions de voyage nettoyées");
     }
 
     saveJourneyToJournal() {

@@ -485,7 +485,7 @@ class SettingsManager {
                     <div class="flex items-start space-x-4">
                         <div class="w-[150px] h-[150px] bg-gray-700 rounded overflow-hidden flex-shrink-0">
                             <img src="${map.url}" alt="${map.name}" class="w-full h-full object-cover map-preview-img" data-map-index="${index}"
-                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjc3NDhDIi8+Cjwvc3ZnPg=='">
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiHEhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjc3NDhDIi8+Cjwvc3ZnPg=='">
                         </div>
                         <div class="flex-grow min-w-0">
                             <div class="text-base font-medium text-white truncate mb-2">${map.name}</div>
@@ -1441,6 +1441,36 @@ class SettingsManager {
             console.error('❌ Erreur lors de la suppression:', error);
             alert('❌ Erreur lors de la suppression : ' + error.message);
         }
+    }
+
+    // Function to switch map, added based on the user's request
+    switchMap(mapUrl) {
+        console.log(`🗺️ Changement de carte vers: ${mapUrl}`);
+
+        this.activeMapUrl = mapUrl;
+        localStorage.setItem('activeMapUrl', mapUrl);
+
+        // Nettoyer les descriptions de voyage lors du changement de carte
+        if (window.voyageManager) {
+            window.voyageManager.clearDescriptions();
+            console.log("🧹 Descriptions de voyage nettoyées lors du changement de carte");
+        }
+
+        // Charger la nouvelle carte
+        const mapImage = document.getElementById('map-image');
+        if (mapImage) {
+            mapImage.src = mapUrl;
+        }
+
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        // Fermer la modal de paramètres
+        this.closeSettings();
+
+        console.log(`✅ Carte changée: ${mapUrl}`);
     }
 }
 
