@@ -853,6 +853,15 @@ class InfoBoxManager {
         circle.style.backgroundColor = 'transparent';
         circle.style.position = 'relative';
 
+        // Ajouter le tooltip avec le mapID au survol
+        if (item.mapId) {
+            circle.title = `MapID: ${item.mapId}`;
+            circle.style.cursor = 'help';
+        } else {
+            circle.title = 'Aucun mapID défini (compatible toutes cartes)';
+            circle.style.cursor = 'help';
+        }
+
         // Chercher la vignette dans les images
         let thumbnailImage = null;
         let thumbnailUrl = null;
