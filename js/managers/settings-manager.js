@@ -68,6 +68,29 @@ class SettingsManager {
         this.saveMapsData();
     }
 
+    loadSettingsData() {
+        // Charger les cartes
+        const savedMaps = localStorage.getItem('availableMaps');
+        const savedActiveMap = localStorage.getItem('activeMapUrl');
+        const savedActiveMapName = localStorage.getItem('activeMapName');
+
+        if (savedMaps) {
+            try {
+                this.availableMaps = JSON.parse(savedMaps);
+            } catch (e) {
+                console.error('Error loading maps data:', e);
+                this.availableMaps = [];
+            }
+        }
+
+        if (savedActiveMap) {
+            this.activeMapUrl = savedActiveMap;
+        }
+
+        if (savedActiveMapName) {
+            this.activeMapName = savedActiveMapName;
+        }
+
         // Ajouter carte par défaut si la liste est vide (UNE SEULE carte)
         if (this.availableMaps.length === 0) {
             const defaultLogicalId = this.generateLogicalId();
