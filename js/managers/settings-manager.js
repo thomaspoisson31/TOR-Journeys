@@ -667,6 +667,27 @@ class SettingsManager {
             window.renderRegions();
         }
 
+        // IMPORTANT: Réinitialiser le voyage en cours lors du changement de carte
+        console.log('🧹 [switchMap] Réinitialisation du voyage en cours');
+        if (window.pathManager) {
+            window.pathManager.clearPath();
+            console.log('✅ [switchMap] Tracé du voyage effacé');
+        }
+
+        // Masquer le bouton de voyage s'il est visible
+        const voyageBtn = document.getElementById('voyage-segments-btn');
+        if (voyageBtn) {
+            voyageBtn.classList.add('hidden');
+            console.log('✅ [switchMap] Bouton de voyage masqué');
+        }
+
+        // Masquer le conteneur de distance s'il est visible
+        const distanceContainer = document.getElementById('distance-container');
+        if (distanceContainer) {
+            distanceContainer.classList.add('hidden');
+            console.log('✅ [switchMap] Conteneur de distance masqué');
+        }
+
         // IMPORTANT: Le ZoomManager sera mis à jour automatiquement par initializeMap()
         // qui est appelé après le chargement de la nouvelle carte
         console.log('🔍 [switchMap] Le ZoomManager sera mis à jour par initializeMap()');
