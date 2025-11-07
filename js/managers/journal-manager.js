@@ -50,6 +50,10 @@ class JournalManager {
                 console.error("Erreur lors du chargement du journal:", e);
                 this.journal = [];
             }
+        } else {
+            // Initialiser avec un tableau vide si rien n'est sauvegardé
+            this.journal = [];
+            console.log("📖 Aucun voyage trouvé dans le localStorage");
         }
     }
 
