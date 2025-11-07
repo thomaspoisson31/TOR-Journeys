@@ -23,10 +23,18 @@ class SettingsManager {
         this.updateNarrationStyleDisplay();
     }
 
+    generateLogicalId() {
+        // Générer un ID unique : map_timestamp_random
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(2, 9);
+        return `map_${timestamp}_${random}`;
+    }
+
     loadSettingsData() {
         // Charger les cartes
         const savedMaps = localStorage.getItem('availableMaps');
-        const savedActiveMap = localStorage.getItem('activeMapUrl');
+        const savedActiveMap = localStorage.getItem('activeMapUrl'); // Ancien format pour compatibilité
+        const savedActiveLogicalId = localStorage.getItem('activeMapLogicalId'); // Nouveau format
         const savedActiveMapName = localStorage.getItem('activeMapName');
 
         if (savedMaps) {
@@ -48,9 +56,12 @@ class SettingsManager {
 
         // Ajouter carte par défaut si la liste est vide (UNE SEULE carte)
         if (this.availableMaps.length === 0) {
+            const defaultLogicalId = this.generateLogicalId();
+            console.log(`🆔 [SettingsManager] Création carte par défaut avec logicalId: ${defaultLogicalId}`);
             this.availableMaps = [
                 {
                     id: Date.now(),
+                    logicalId: defaultLogicalId,
                     name: 'Carte Eriador par défaut',
                     url: 'fr_tor_2nd_eriadors_map_page-0001.webp',
                     isDefault: true,
@@ -63,12 +74,25 @@ class SettingsManager {
             this.saveMapsData();
         }
 
-        // Migrer les cartes existantes pour ajouter milesPerDay si manquant
+        // Migrer les cartes existantes pour ajouter logicalId et milesPerDay si manquants
+        let needsSave = false;
         this.availableMaps.forEach(map => {
             if (!map.milesPerDay) {
                 map.milesPerDay = 20; // Valeur par défaut
+                needsSave = true;
+            }
+            if (!map.logicalId) {
+                map.logicalId = this.generateLogicalId();
+                console.log(`🆔 [SettingsManager] Carte "${map.name}" - Génération logicalId: ${map.logicalId}, ancien URL: ${map.url}`);
+                needsSave = true;
+            } else {
+                console.log(`🆔 [SettingsManager] Carte "${map.name}" - logicalId existant: ${map.logicalId}, URL: ${map.url}`);
             }
         });
+        
+        if (needsSave) {
+            this.saveMapsData();
+        }
 
         // Charger les descriptions
         this.partyDescription = localStorage.getItem('partyDescription') || '';
@@ -78,8 +102,15 @@ class SettingsManager {
 
     saveMapsData() {
         localStorage.setItem('availableMaps', JSON.stringify(this.availableMaps));
-        localStorage.setItem('activeMapUrl', this.activeMapUrl);
+        localStorage.setItem('activeMapUrl', this.activeMapUrl); // Conservé pour compatibilité
         localStorage.setItem('activeMapName', this.activeMapName);
+        
+        // Sauvegarder aussi le logicalId de la carte active
+        const activeMap = this.availableMaps.find(m => m.url === this.activeMapUrl);
+        if (activeMap && activeMap.logicalId) {
+            localStorage.setItem('activeMapLogicalId', activeMap.logicalId);
+            console.log(`🆔 [SettingsManager] Carte active - logicalId: ${activeMap.logicalId}, URL: ${this.activeMapUrl}`);
+        }
 
         // Marquer comme non sauvegardé
         if (typeof window.markAsUnsaved === 'function') {
@@ -546,10 +577,12 @@ class SettingsManager {
 
     handleMapUploaded(uploadResult) {
         const mapName = uploadResult.name || `Carte ${Date.now()}`;
+        const logicalId = this.generateLogicalId();
 
         // Utiliser les dimensions retournées par l'API (image déjà redimensionnée à 5000px)
         const newMap = {
             id: Date.now(),
+            logicalId: logicalId,
             name: mapName,
             url: uploadResult.url,
             isDefault: false,
@@ -564,6 +597,7 @@ class SettingsManager {
         this.renderMapsGrid();
 
         console.log(`✅ Carte ajoutée: ${mapName} (${newMap.width}x${newMap.height}px)`);
+        console.log(`🆔 [SettingsManager] Nouvelle carte - logicalId: ${logicalId}, URL: ${uploadResult.url}`);
     }
 
     async openLibraryForMapSelection(mapModal) {
