@@ -429,16 +429,26 @@ class PathManager {
     }
 
     updatePathData() {
+        console.log('🔄 [updatePathData] DÉBUT');
+        console.log('🔄 [updatePathData] path.length:', this.path.length);
+        
         // Calculer la distance totale
         this.calculateTotalDistance();
+        console.log('🔄 [updatePathData] totalDistance:', this.totalDistance);
 
         // Détecter les découvertes
         this.detectDiscoveries();
+        console.log('🔄 [updatePathData] discoveries après détection:', this.discoveries);
 
         // Mettre à jour les variables globales
         window.journeyPath = this.path;
         window.journeyDiscoveries = this.discoveries;
         window.totalPathPixels = this.totalDistance;
+        
+        console.log('🔄 [updatePathData] Variables globales mises à jour:');
+        console.log('🔄 [updatePathData] - window.journeyPath.length:', window.journeyPath.length);
+        console.log('🔄 [updatePathData] - window.journeyDiscoveries.length:', window.journeyDiscoveries.length);
+        console.log('🔄 [updatePathData] - window.totalPathPixels:', window.totalPathPixels);
 
         // Mettre à jour l'affichage
         this.updateDistanceDisplay();
@@ -447,6 +457,8 @@ class PathManager {
         if (this.path.length > 10) {
             this.showVoyageButton();
         }
+        
+        console.log('🔄 [updatePathData] FIN');
     }
 
     calculateTotalDistance() {
@@ -462,26 +474,64 @@ class PathManager {
     }
 
     detectDiscoveries() {
-        if (!this.dataManager.locationsData && !this.dataManager.regionsData) return;
+        console.log('🔍 [detectDiscoveries] DÉBUT de la détection');
+        console.log('🔍 [detectDiscoveries] dataManager.locationsData:', this.dataManager.locationsData);
+        console.log('🔍 [detectDiscoveries] dataManager.regionsData:', this.dataManager.regionsData);
+        console.log('🔍 [detectDiscoveries] path.length:', this.path.length);
+        
+        if (!this.dataManager.locationsData && !this.dataManager.regionsData) {
+            console.log('❌ [detectDiscoveries] Pas de données - ABANDON');
+            return;
+        }
 
         this.discoveries = [];
         this.regionSegments.clear();
 
+        console.log('🔍 [detectDiscoveries] Appel de detectNearbyLocations...');
         // Détecter les lieux proches du tracé
         this.detectNearbyLocations();
+        console.log('🔍 [detectDiscoveries] Après detectNearbyLocations - discoveries.length:', this.discoveries.length);
 
+        console.log('🔍 [detectDiscoveries] Appel de detectTraversedRegions...');
         // Détecter les régions traversées
         this.detectTraversedRegions();
+        console.log('🔍 [detectDiscoveries] Après detectTraversedRegions - discoveries.length:', this.discoveries.length);
+        console.log('🔍 [detectDiscoveries] FIN - Total découvertes:', this.discoveries.length);
     }
 
     detectNearbyLocations() {
-        if (!this.dataManager.locationsData?.locations) return;
+        console.log('📍 [detectNearbyLocations] DÉBUT');
+        console.log('📍 [detectNearbyLocations] locationsData:', this.dataManager.locationsData);
+        console.log('📍 [detectNearbyLocations] locations array:', this.dataManager.locationsData?.locations);
+        
+        if (!this.dataManager.locationsData?.locations) {
+            console.log('❌ [detectNearbyLocations] Pas de données de lieux - ABANDON');
+            return;
+        }
 
         const PROXIMITY_THRESHOLD = 80; // pixels
         const activeMapUrl = window.settingsManager?.activeMapUrl;
+        
+        console.log('📍 [detectNearbyLocations] activeMapUrl:', activeMapUrl);
+        console.log('📍 [detectNearbyLocations] PROXIMITY_THRESHOLD:', PROXIMITY_THRESHOLD);
+        console.log('📍 [detectNearbyLocations] Nombre total de lieux:', this.dataManager.locationsData.locations.length);
+        console.log('📍 [detectNearbyLocations] Nombre de points du tracé:', this.path.length);
 
-        this.dataManager.locationsData.locations.forEach(location => {
-            if (!location.coordinates) return;
+        let processedCount = 0;
+        let skippedNoCoords = 0;
+        let skippedMapId = 0;
+        let skippedTooFar = 0;
+
+        this.dataManager.locationsData.locations.forEach((location, index) => {
+            console.log(`📍 [detectNearbyLocations] Traitement lieu ${index + 1}/${this.dataManager.locationsData.locations.length}: "${location.name}"`);
+            console.log(`📍 [detectNearbyLocations] - coordinates:`, location.coordinates);
+            console.log(`📍 [detectNearbyLocations] - mapId:`, location.mapId);
+            
+            if (!location.coordinates) {
+                console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" ignoré: pas de coordonnées`);
+                skippedNoCoords++;
+                return;
+            }
 
             // Filtrer par mapId : n'afficher que les lieux compatibles avec la carte active
             if (activeMapUrl) {
@@ -490,11 +540,15 @@ class PathManager {
                 // Si le lieu a un mapId défini et qu'il ne correspond pas à la carte active, l'ignorer
                 if (locationMapId && locationMapId !== null && locationMapId !== undefined) {
                     if (String(locationMapId) !== String(activeMapUrl)) {
-                        console.log(`⏭️ [PathManager] Lieu "${location.name}" ignoré (mapId: ${locationMapId} ≠ ${activeMapUrl})`);
+                        console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" ignoré (mapId: ${locationMapId} ≠ ${activeMapUrl})`);
+                        skippedMapId++;
                         return; // Ignorer ce lieu
+                    } else {
+                        console.log(`✅ [detectNearbyLocations] - Lieu "${location.name}" mapId compatible: ${locationMapId}`);
                     }
+                } else {
+                    console.log(`✅ [detectNearbyLocations] - Lieu "${location.name}" sans mapId (compatible avec toutes cartes)`);
                 }
-                // Si le lieu n'a pas de mapId, il est compatible avec toutes les cartes
             }
 
             let minDistance = Infinity;
@@ -513,29 +567,67 @@ class PathManager {
                 }
             });
 
+            console.log(`📍 [detectNearbyLocations] - Distance minimale pour "${location.name}": ${minDistance.toFixed(2)}px (seuil: ${PROXIMITY_THRESHOLD}px)`);
+
             if (minDistance <= PROXIMITY_THRESHOLD) {
-                console.log(`✅ [PathManager] Lieu "${location.name}" détecté et ajouté aux découvertes`);
-                this.discoveries.push({
+                const discovery = {
                     type: 'location',
                     name: location.name,
                     discoveryIndex: closestIndex,
                     distance: minDistance,
                     proximityType: minDistance <= 20 ? 'traversed' : 'nearby',
                     mapId: location.mapId || null
-                });
+                };
+                console.log(`✅ [detectNearbyLocations] - Lieu "${location.name}" DÉTECTÉ et AJOUTÉ aux découvertes:`, discovery);
+                this.discoveries.push(discovery);
+                processedCount++;
+            } else {
+                console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" trop éloigné (${minDistance.toFixed(2)}px > ${PROXIMITY_THRESHOLD}px)`);
+                skippedTooFar++;
             }
         });
+        
+        console.log('📍 [detectNearbyLocations] FIN - Statistiques:');
+        console.log('📍 [detectNearbyLocations] - Lieux ajoutés:', processedCount);
+        console.log('📍 [detectNearbyLocations] - Ignorés (pas de coords):', skippedNoCoords);
+        console.log('📍 [detectNearbyLocations] - Ignorés (mapId):', skippedMapId);
+        console.log('📍 [detectNearbyLocations] - Ignorés (trop loin):', skippedTooFar);
     }
 
     detectTraversedRegions() {
-        if (!this.dataManager.regionsData?.regions) return;
+        console.log('🗺️ [detectTraversedRegions] DÉBUT');
+        console.log('🗺️ [detectTraversedRegions] regionsData:', this.dataManager.regionsData);
+        console.log('🗺️ [detectTraversedRegions] regions array:', this.dataManager.regionsData?.regions);
+        
+        if (!this.dataManager.regionsData?.regions) {
+            console.log('❌ [detectTraversedRegions] Pas de données de régions - ABANDON');
+            return;
+        }
 
         const activeMapUrl = window.settingsManager?.activeMapUrl;
+        
+        console.log('🗺️ [detectTraversedRegions] activeMapUrl:', activeMapUrl);
+        console.log('🗺️ [detectTraversedRegions] Nombre total de régions:', this.dataManager.regionsData.regions.length);
+        console.log('🗺️ [detectTraversedRegions] Nombre de points du tracé:', this.path.length);
 
-        this.dataManager.regionsData.regions.forEach(region => {
+        let processedCount = 0;
+        let skippedNoCoords = 0;
+        let skippedMapId = 0;
+        let skippedNoIntersection = 0;
+
+        this.dataManager.regionsData.regions.forEach((region, index) => {
+            console.log(`🗺️ [detectTraversedRegions] Traitement région ${index + 1}/${this.dataManager.regionsData.regions.length}: "${region.name}"`);
+            
             // Utiliser 'coordinates' au lieu de 'points' pour le nouveau format
             const regionCoords = region.coordinates || region.points;
-            if (!regionCoords || regionCoords.length < 3) return;
+            console.log(`🗺️ [detectTraversedRegions] - regionCoords:`, regionCoords);
+            console.log(`🗺️ [detectTraversedRegions] - mapId:`, region.mapId);
+            
+            if (!regionCoords || regionCoords.length < 3) {
+                console.log(`⏭️ [detectTraversedRegions] - Région "${region.name}" ignorée: pas assez de coordonnées (${regionCoords?.length || 0} points)`);
+                skippedNoCoords++;
+                return;
+            }
 
             // Filtrer par mapId : n'afficher que les régions compatibles avec la carte active
             if (activeMapUrl) {
@@ -544,11 +636,15 @@ class PathManager {
                 // Si la région a un mapId défini et qu'il ne correspond pas à la carte active, l'ignorer
                 if (regionMapId && regionMapId !== null && regionMapId !== undefined) {
                     if (String(regionMapId) !== String(activeMapUrl)) {
-                        console.log(`⏭️ [PathManager] Région "${region.name}" ignorée (mapId: ${regionMapId} ≠ ${activeMapUrl})`);
+                        console.log(`⏭️ [detectTraversedRegions] - Région "${region.name}" ignorée (mapId: ${regionMapId} ≠ ${activeMapUrl})`);
+                        skippedMapId++;
                         return; // Ignorer cette région
+                    } else {
+                        console.log(`✅ [detectTraversedRegions] - Région "${region.name}" mapId compatible: ${regionMapId}`);
                     }
+                } else {
+                    console.log(`✅ [detectTraversedRegions] - Région "${region.name}" sans mapId (compatible avec toutes cartes)`);
                 }
-                // Si la région n'a pas de mapId, elle est compatible avec toutes les cartes
             }
 
             const intersections = [];
@@ -562,11 +658,22 @@ class PathManager {
                 }
             }
 
+            console.log(`🗺️ [detectTraversedRegions] - Nombre d'intersections pour "${region.name}": ${intersections.length}`);
+
             if (intersections.length > 0) {
                 const entryIndex = Math.min(...intersections);
                 const exitIndex = Math.max(...intersections);
 
-                console.log(`✅ [PathManager] Région "${region.name}" traversée et ajoutée aux découvertes`);
+                const discovery = {
+                    type: 'region',
+                    name: region.name,
+                    discoveryIndex: entryIndex,
+                    proximityType: 'traversed',
+                    mapId: region.mapId || null
+                };
+
+                console.log(`✅ [detectTraversedRegions] - Région "${region.name}" TRAVERSÉE et AJOUTÉE aux découvertes:`, discovery);
+                console.log(`✅ [detectTraversedRegions] - Entry index: ${entryIndex}, Exit index: ${exitIndex}`);
 
                 // Stocker le segment de région
                 this.regionSegments.set(region.name, {
@@ -575,15 +682,19 @@ class PathManager {
                     region: region
                 });
 
-                this.discoveries.push({
-                    type: 'region',
-                    name: region.name,
-                    discoveryIndex: entryIndex,
-                    proximityType: 'traversed',
-                    mapId: region.mapId || null
-                });
+                this.discoveries.push(discovery);
+                processedCount++;
+            } else {
+                console.log(`⏭️ [detectTraversedRegions] - Région "${region.name}" non traversée (0 intersections)`);
+                skippedNoIntersection++;
             }
         });
+        
+        console.log('🗺️ [detectTraversedRegions] FIN - Statistiques:');
+        console.log('🗺️ [detectTraversedRegions] - Régions ajoutées:', processedCount);
+        console.log('🗺️ [detectTraversedRegions] - Ignorées (pas de coords):', skippedNoCoords);
+        console.log('🗺️ [detectTraversedRegions] - Ignorées (mapId):', skippedMapId);
+        console.log('🗺️ [detectTraversedRegions] - Ignorées (pas d\'intersection):', skippedNoIntersection);
     }
 
     isPointInPolygon(point, polygon) {
