@@ -8,7 +8,7 @@ class VoyageManager {
         this.totalJourneyDays = 0;
         this.dayByDayData = [];
         this.journeyDescriptions = {}; // Pour stocker les descriptions générées
-        this.currentDescriptionDay = 1; // Pour suivre le jour affiché dans la modal de description
+        this.currentDescriptionDay = 1; // Pour suivre le jour affiché dans la modale de description
         this.randomEvents = {}; // Pour stocker les événements aléatoires générés par jour
 
         // Stocker les constantes passées en paramètre
@@ -218,64 +218,64 @@ class VoyageManager {
     buildAbsoluteTimeline() {
         // Récupérer le mapId de la carte active
         const activeMapUrl = window.settingsManager?.activeMapUrl;
-        
+
         console.log(`🗺️ [buildAbsoluteTimeline] Carte active: ${activeMapUrl}`);
         console.log(`🗺️ [buildAbsoluteTimeline] journeyDiscoveries total: ${journeyDiscoveries?.length || 0}`);
-        
+
         // Utiliser les variables globales journeyDiscoveries et filtrer par mapId
         const discoveries = journeyDiscoveries
             .filter(discovery => {
                 // Si pas de carte active, afficher toutes les découvertes
                 if (!activeMapUrl) return true;
-                
+
                 // Vérifier le mapId pour les lieux
                 if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
                     const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                    
+
                     // Si le lieu n'a pas de mapId, l'afficher (compatible avec toutes les cartes)
                     if (!location || !location.mapId || location.mapId === null || location.mapId === undefined) {
                         console.log(`✅ [buildAbsoluteTimeline] Lieu "${discovery.name}" sans mapId - affiché sur toutes les cartes`);
                         return true;
                     }
-                    
+
                     // Si le lieu a un mapId correspondant à la carte active, l'afficher
                     if (String(location.mapId) === String(activeMapUrl)) {
                         console.log(`✅ [buildAbsoluteTimeline] Lieu "${discovery.name}" avec mapId correspondant - affiché`);
                         return true;
                     }
-                    
+
                     // Sinon, le filtrer
                     console.log(`⏭️ [buildAbsoluteTimeline] Lieu "${discovery.name}" ignoré (mapId: ${location.mapId} ≠ ${activeMapUrl})`);
                     return false;
                 }
-                
+
                 // Vérifier le mapId pour les régions
                 if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
                     const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                    
+
                     // Si la région n'a pas de mapId, l'afficher (compatible avec toutes les cartes)
                     if (!region || !region.mapId || region.mapId === null || region.mapId === undefined) {
                         console.log(`✅ [buildAbsoluteTimeline] Région "${discovery.name}" sans mapId - affichée sur toutes les cartes`);
                         return true;
                     }
-                    
+
                     // Si la région a un mapId correspondant à la carte active, l'afficher
                     if (String(region.mapId) === String(activeMapUrl)) {
                         console.log(`✅ [buildAbsoluteTimeline] Région "${discovery.name}" avec mapId correspondant - affichée`);
                         return true;
                     }
-                    
+
                     // Sinon, la filtrer
                     console.log(`⏭️ [buildAbsoluteTimeline] Région "${discovery.name}" ignorée (mapId: ${region.mapId} ≠ ${activeMapUrl})`);
                     return false;
                 }
-                
+
                 return true;
             })
             .sort((a, b) => a.discoveryIndex - b.discoveryIndex);
-        
+
         console.log(`🗺️ [buildAbsoluteTimeline] Découvertes après filtrage: ${discoveries.length}`);
-        
+
         const totalMiles = totalPathPixels * (this.MAP_DISTANCE_MILES / this.MAP_WIDTH);
         const totalPathPoints = journeyPath.length;
 
@@ -617,7 +617,7 @@ class VoyageManager {
                 }
 
                 // Obtenir l'image pour la miniature
-                const imageUrl = this.getDiscoveryImage(discovery);
+                const imageUrl = this._getDiscoveryImageForDisplay(discovery);
 
                 return `
                     <div class="inline-block m-2 p-3 rounded-lg cursor-pointer transition-colors discovery-item text-center" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" style="width: 180px; vertical-align: top; background-color: white;">
@@ -654,7 +654,7 @@ class VoyageManager {
         if (describeBtn) {
             describeBtn.classList.remove('hidden');
             describeBtn.onclick = () => this.generateJourneyDescription();
-            
+
             // Mettre à jour le tooltip
             const hasDescriptions = Object.keys(this.journeyDescriptions).length > 0;
             describeBtn.title = hasDescriptions ? 'Régénérer les descriptions' : 'Générer les descriptions';
@@ -1031,7 +1031,7 @@ class VoyageManager {
         if (!button) return;
 
         const originalContent = button.innerHTML;
-        
+
         // Afficher le loader
         button.disabled = true;
         button.innerHTML = '<i class="fas fa-spinner fa-spin text-white"></i>';
@@ -1900,60 +1900,61 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     getDiscoveryImage(discovery) {
         if (discovery.type === 'location') {
             // Chercher dans les données de lieux
-            if (typeof locationsData !== 'undefined' && locationsData.locations) {
-                const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                if (location) {
-                    // Support du nouveau format avec array d'images
-                    if (location.images && Array.isArray(location.images) && location.images.length > 0) {
-                        // Prioriser l'image de type "vignette"
-                        const thumbnailImg = location.images.find(img => img.type === 'vignette');
-                        if (thumbnailImg) {
-                            return thumbnailImg.url;
-                        }
-                        // Sinon, prendre l'image par défaut
-                        const defaultImg = location.images.find(img => img.isDefault);
-                        if (defaultImg) {
-                            return defaultImg.url;
-                        }
-                        // En dernier recours, la première image
-                        return location.images[0].url;
+            if (typeof window.locationsData !== 'undefined' && window.locationsData.locations) {
+                const location = window.locationsData.locations.find(loc => loc.name === discovery.name);
+                if (location && location.images && Array.isArray(location.images) && location.images.length > 0) {
+                    // Prioriser l'image de type "vignette"
+                    const thumbnailImg = location.images.find(img => img.type === 'vignette');
+                    if (thumbnailImg) {
+                        return thumbnailImg.url;
                     }
-                    // Support de l'ancien format avec imageUrl
-                    else if (location.imageUrl) {
-                        return location.imageUrl;
+                    // Sinon, prendre l'image par défaut
+                    const defaultImg = location.images.find(img => img.isDefault);
+                    if (defaultImg) {
+                        return defaultImg.url;
                     }
+                    // En dernier recours, la première image
+                    return location.images[0].url;
+                }
+                // Support de l'ancien format avec imageUrl
+                else if (location && location.imageUrl) {
+                    return location.imageUrl;
                 }
             }
         } else if (discovery.type === 'region') {
             // Chercher dans les données de régions
-            if (typeof regionsData !== 'undefined' && regionsData.regions) {
-                const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                if (region) {
-                    // Support du nouveau format avec array d'images
-                    if (region.images && Array.isArray(region.images) && region.images.length > 0) {
-                        // Prioriser l'image de type "vignette"
-                        const thumbnailImg = region.images.find(img => img.type === 'vignette');
-                        if (thumbnailImg) {
-                            return thumbnailImg.url;
-                        }
-                        // Sinon, prendre l'image par défaut
-                        const defaultImg = region.images.find(img => img.isDefault);
-                        if (defaultImg) {
-                            return defaultImg.url;
-                        }
-                        // En dernier recours, la première image
-                        return region.images[0].url;
+            if (typeof window.regionsData !== 'undefined' && window.regionsData.regions) {
+                const region = window.regionsData.regions.find(reg => reg.name === discovery.name);
+                if (region && region.images && Array.isArray(region.images) && region.images.length > 0) {
+                    // Prioriser l'image de type "vignette"
+                    const thumbnailImg = region.images.find(img => img.type === 'vignette');
+                    if (thumbnailImg) {
+                        return thumbnailImg.url;
                     }
-                    // Support de l'ancien format avec imageUrl (si applicable)
-                    else if (region.imageUrl) {
-                        return region.imageUrl;
+                    // Sinon, prendre l'image par défaut
+                    const defaultImg = region.images.find(img => img.isDefault);
+                    if (defaultImg) {
+                        return defaultImg.url;
                     }
+                    // En dernier recours, la première image
+                    return region.images[0].url;
+                }
+                // Support de l'ancien format avec imageUrl (si applicable)
+                else if (region && region.imageUrl) {
+                    return region.imageUrl;
                 }
             }
         }
 
         return null;
     }
+
+    _getDiscoveryImageForDisplay(discovery) {
+        // Obtenir l'image pour la miniature
+        const imageUrl = this.getDiscoveryImage(discovery);
+        return imageUrl;
+    }
+
 
     checkForRandomEvents(dayData) {
         // Check if any discovery has random events in the original data
