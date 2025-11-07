@@ -216,8 +216,39 @@ class VoyageManager {
     }
 
     buildAbsoluteTimeline() {
-        // Utiliser les variables globales journeyDiscoveries
-        const discoveries = journeyDiscoveries.sort((a, b) => a.discoveryIndex - b.discoveryIndex);
+        // Récupérer le mapId de la carte active
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        
+        // Utiliser les variables globales journeyDiscoveries et filtrer par mapId
+        const discoveries = journeyDiscoveries
+            .filter(discovery => {
+                // Si pas de carte active, afficher toutes les découvertes
+                if (!activeMapUrl) return true;
+                
+                // Vérifier le mapId pour les lieux
+                if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
+                    const location = locationsData.locations.find(loc => loc.name === discovery.name);
+                    // Filtrer seulement si le lieu a un mapId différent de la carte active
+                    if (location && location.mapId && String(location.mapId) !== String(activeMapUrl)) {
+                        console.log(`⏭️ [buildAbsoluteTimeline] Lieu "${discovery.name}" ignoré (mapId: ${location.mapId} ≠ ${activeMapUrl})`);
+                        return false;
+                    }
+                }
+                
+                // Vérifier le mapId pour les régions
+                if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
+                    const region = regionsData.regions.find(reg => reg.name === discovery.name);
+                    // Filtrer seulement si la région a un mapId différent de la carte active
+                    if (region && region.mapId && String(region.mapId) !== String(activeMapUrl)) {
+                        console.log(`⏭️ [buildAbsoluteTimeline] Région "${discovery.name}" ignorée (mapId: ${region.mapId} ≠ ${activeMapUrl})`);
+                        return false;
+                    }
+                }
+                
+                return true;
+            })
+            .sort((a, b) => a.discoveryIndex - b.discoveryIndex);
+        
         const totalMiles = totalPathPixels * (this.MAP_DISTANCE_MILES / this.MAP_WIDTH);
         const totalPathPoints = journeyPath.length;
 
