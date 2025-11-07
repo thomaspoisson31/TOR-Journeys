@@ -736,10 +736,77 @@ Testing: manuel via console browser
 Debugging: Chrome DevTools + console.log
 Backup: export JSON régulier
 
+PRINCIPES DE RENDERING DESCRIPTIONS VOYAGE
+-------------------------------------------
+
+1. SAUVEGARDE DANS LE JOURNAL:
+   
+   Problématique:
+   - Les descriptions de voyage générées par Gemini doivent être sauvegardées dans le journal
+   - Le journal (JournalManager) doit pouvoir afficher ces descriptions même après fermeture de l'app
+   - Les descriptions sont liées à un tracé spécifique (pathSignature)
+   
+   Solution implémentée:
+   - Sauvegarde automatique dans localStorage via saveJourneyToJournal() après génération
+   - Structure des données: journal[] contient des objets voyage avec pathSignature unique
+   - Chaque jour du voyage contient: dayNumber, calendarDate, weatherSymbol, discoveries[], description, eventResult
+   - Le journal peut contenir plusieurs voyages (array), triés par date de génération
+   
+   Règles à respecter:
+   - Toujours appeler saveJourneyToJournal() après parseAndDisplayAllJourneyDescriptions()
+   - Vérifier l'existence de pathSignature pour éviter les doublons (mise à jour si existe)
+   - Synchroniser avec le cloud via markAsUnsaved() et scheduleAutoSync()
+   - Rafraîchir JournalManager après sauvegarde: window.journalManager.loadJournal()
+   
+   Code concerné:
+   - voyage-manager.js: saveJourneyToJournal(), parseAndDisplayAllJourneyDescriptions()
+   - journal-manager.js: loadJournal(), renderJournal()
+
+2. RENDERING MODAL JOURNAL:
+   
+   Structure d'affichage:
+   - Liste dépliable de voyages (titre, date de génération, nombre de jours)
+   - Chaque voyage peut être déplié pour voir les détails jour par jour
+   - Pour chaque jour: sous-titre avec jour/date/météo/première découverte, événement (si présent), description
+   - Bouton suppression par voyage avec confirmation
+   - Message "journal vide" si aucun voyage sauvegardé
+   
+   Gestion de l'état:
+   - Vérification Array.isArray() pour la rétrocompatibilité (anciennes sauvegardes)
+   - Filtre des valeurs null/undefined dans localStorage
+   - Collapse/expand par voyage avec icône chevron dynamique
+   - Export markdown disponible pour sauvegarde externe
+   
+   Code concerné:
+   - journal-manager.js: renderJournal(), toggleJourney(), deleteJourney()
+
+3. WORKFLOW GÉNÉRATION → SAUVEGARDE → AFFICHAGE:
+   
+   Ordre d'exécution critique:
+   a) Génération Gemini via generateJourneyDescription()
+   b) Parsing JSON et stockage dans this.journeyDescriptions via parseAndDisplayAllJourneyDescriptions()
+   c) Sauvegarde dans localStorage (descriptions + journal complet) via saveJourneyToJournal()
+   d) Marquage unsaved pour sync cloud
+   e) Rafraîchissement JournalManager pour affichage immédiat
+   
+   Points de vigilance:
+   - Ne pas confondre journeyDescriptions (cache local VoyageManager) et journal (persistance JournalManager)
+   - journeyDescriptions est lié à un tracé + carte via pathSignature
+   - journal stocke l'historique complet de tous les voyages générés
+   - Synchronisation bidirectionnelle: localStorage ↔ cloud
+
 PROBLÈMES RÉSOLUS
 -----------------
 
-1. Associations personnages non sauvegardées (v1.3.5):
+1. Descriptions voyage non sauvegardées dans le journal (v1.3.6):
+   - Problème: Les descriptions générées n'apparaissaient pas dans la modale Journal
+   - Cause: saveJourneyToJournal() appelée deux fois mais la seconde écrasait sans les descriptions
+   - Impact: Journal vide malgré génération réussie des descriptions
+   - Solution: Appel unique de saveJourneyToJournal() APRÈS parseAndDisplayAllJourneyDescriptions()
+   - Ordre correct: génération Gemini → parsing → stockage descriptions → sauvegarde journal → refresh UI
+   - Fichier concerné: voyage-manager.js (parseAndDisplayAllJourneyDescriptions)
+
+2. Associations personnages non sauvegardées (v1.3.5):
    - Problème: Impossible d'associer/dissocier des personnages à un lieu/région en mode édition
    - Cause: Les checkboxes générées dans renderPersonnagesTabEdit() n'avaient ni attribut `name` ni `data-character-id`
    - Impact: saveEdit() ne pouvait pas récupérer les IDs des personnages sélectionnés
