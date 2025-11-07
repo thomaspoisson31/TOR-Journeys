@@ -42,9 +42,11 @@ class JournalManager {
 
     loadJournal() {
         const savedJournal = localStorage.getItem('travelJournal');
-        if (savedJournal) {
+        if (savedJournal && savedJournal !== 'null' && savedJournal !== 'undefined') {
             try {
-                this.journal = JSON.parse(savedJournal);
+                const parsed = JSON.parse(savedJournal);
+                // S'assurer que c'est bien un tableau
+                this.journal = Array.isArray(parsed) ? parsed : [];
                 console.log(`📖 ${this.journal.length} voyage(s) chargé(s) depuis le localStorage`);
             } catch (e) {
                 console.error("Erreur lors du chargement du journal:", e);
