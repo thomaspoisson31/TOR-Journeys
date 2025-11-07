@@ -69,8 +69,8 @@ body {
 /* Style for location markers */
 .location-marker {
     position: absolute;
-    width: 32px;
-    height: 32px;
+    width: 64px;
+    height: 64px;
     border: none;
     border-radius: 50%;
     cursor: pointer;
