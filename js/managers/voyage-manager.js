@@ -1289,27 +1289,73 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     }
 
     parseAndDisplayAllJourneyDescriptions(response) {
-        console.log("📖 Réponse brute de Gemini:", response);
+        console.log('📖 Parsing de la réponse Gemini pour toutes les journées');
+        console.log('📥 Réponse brute reçue:', response);
 
         try {
-            // Essayer de parser la réponse comme JSON
-            const parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
-            console.log("📖 Réponse parsée:", parsedResponse);
+            // Nettoyer la réponse pour extraire le JSON
+            let cleanedResponse = response.trim();
+
+            // Supprimer les blocs markdown si présents (```json ... ```)
+            const jsonBlockMatch = cleanedResponse.match(/```json\s*([\s\S]*?)\s*```/);
+            if (jsonBlockMatch) {
+                cleanedResponse = jsonBlockMatch[1].trim();
+                console.log('📋 JSON extrait du bloc markdown');
+            }
+
+            // Supprimer les blocs de code génériques si présents (``` ... ```)
+            const codeBlockMatch = cleanedResponse.match(/```\s*([\s\S]*?)\s*```/);
+            if (codeBlockMatch) {
+                cleanedResponse = codeBlockMatch[1].trim();
+                console.log('📋 Texte extrait du bloc de code');
+            }
+
+            console.log('🧹 Réponse nettoyée:', cleanedResponse);
+
+            // Parser la réponse JSON
+            const journeyData = JSON.parse(cleanedResponse);
 
             // Vérifier le format de la réponse
-            if (parsedResponse && typeof parsedResponse === 'object') {
+            if (journeyData && typeof journeyData === 'object') {
                 // Le JSON peut être soit un objet direct avec les jours, soit avoir une clé 'days'
-                const daysData = parsedResponse.days || parsedResponse;
+                // La structure attendue est un objet où les clés sont les numéros de jour (ex: "1", "2")
+                // ou un objet avec une clé "descriptions" contenant un tableau d'objets {"day": N, "description": "..."}
+                let descriptionsArray = [];
 
-                // Réinitialiser les descriptions
+                if (Array.isArray(journeyData.descriptions)) {
+                    // Cas où la réponse est {"descriptions": [{"day": 1, "description": "..."}]}
+                    descriptionsArray = journeyData.descriptions;
+                    console.log('📖 Format détecté: Objet avec clé "descriptions" contenant un tableau.');
+                } else if (typeof journeyData === 'object' && !Array.isArray(journeyData)) {
+                    // Cas où la réponse est un objet avec les jours comme clés, ex: {"1": "Description...", "2": "..."}
+                    // Ou si l'objet n'a pas la clé "descriptions" mais contient directement les descriptions par jour
+                    console.log('📖 Format détecté: Objet avec jours comme clés ou directement les descriptions.');
+                    Object.keys(journeyData).forEach(dayKey => {
+                        // On s'attend à ce que la clé soit un nombre ou une chaîne représentant un jour
+                        if (!isNaN(dayKey) || dayKey.startsWith('day')) { // Vérification plus large pour les cas comme "day1"
+                            const dayNumber = parseInt(dayKey.replace('day', ''));
+                            if (!isNaN(dayNumber)) {
+                                descriptionsArray.push({
+                                    day: dayNumber,
+                                    description: journeyData[dayKey]
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    console.error("❌ Format de réponse JSON inattendu:", journeyData);
+                    alert("Erreur: Le format de la réponse de Gemini n'est pas celui attendu.");
+                    return;
+                }
+
+                // Réinitialiser les descriptions actuelles
                 this.journeyDescriptions = {};
 
-                // Parser chaque jour
-                Object.keys(daysData).forEach(dayKey => {
-                    const dayNumber = parseInt(dayKey.replace('day', ''));
-                    if (!isNaN(dayNumber)) {
-                        this.journeyDescriptions[dayNumber] = daysData[dayKey];
-                        console.log(`📖 Description du jour ${dayNumber} ajoutée`);
+                // Parser et stocker chaque description
+                descriptionsArray.forEach(item => {
+                    if (item.day && item.description) {
+                        this.journeyDescriptions[item.day] = item.description;
+                        console.log(`📖 Description du jour ${item.day} ajoutée`);
                     }
                 });
 
@@ -1318,18 +1364,31 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 // Sauvegarder les descriptions pour cette carte
                 this.saveDescriptionsForMap();
 
-                // Rafraîchir l'affichage
+                // Rafraîchir l'affichage pour montrer les descriptions générées
                 this.renderCurrentDay();
 
             } else {
-                console.error("❌ Format de réponse JSON invalide:", parsedResponse);
+                console.error("❌ Format de réponse JSON invalide:", journeyData);
                 alert("Erreur: La réponse de Gemini n'est pas au format attendu.");
             }
 
         } catch (error) {
-            console.error("❌ Erreur lors du parsing de la réponse:", error);
-            console.log("📖 Réponse reçue:", response);
-            alert("Erreur lors de l'analyse de la description du voyage. Voir la console pour plus de détails.");
+            console.error('❌ Erreur lors du parsing de la description du voyage:', error);
+            console.error('📄 Réponse qui a causé l\'erreur:', response);
+            console.error('📊 Type de l\'erreur:', error.constructor.name);
+            console.error('💬 Message d\'erreur:', error.message);
+
+            // Message d'erreur plus informatif
+            let errorMsg = 'Erreur lors de l\'analyse de la description du voyage.\n\n';
+            if (error instanceof SyntaxError) {
+                errorMsg += 'Le format de la réponse n\'est pas un JSON valide.\n';
+                errorMsg += 'Vérifiez la console pour voir la réponse complète.';
+            } else {
+                errorMsg += `Erreur: ${error.message}\n`;
+                errorMsg += 'Consultez la console pour plus de détails.';
+            }
+
+            alert(errorMsg);
         }
     }
 
@@ -1565,7 +1624,6 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     updateDescriptionModal(description, showNavigation = false) {
         const title = document.getElementById('journey-description-title');
         const content = document.getElementById('journey-description-content');
-        const navigationControls = document.getElementById('day-navigation-controls'); // Ce div n'existe pas dans le HTML généré, à corriger si besoin
         const copyButton = document.getElementById('copy-journey-description');
 
         // Mettre à jour le titre
@@ -1579,10 +1637,9 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         // Gérer la navigation si on a plusieurs descriptions
         if (showNavigation && this.journeyDescriptions) {
-            // Assurez-vous que navigationControls existe et est visible si besoin
-            // Pour l'instant, on le suppose caché par défaut et on le rend visible
+            // Assurez-vous que le conteneur de navigation est visible
             const navContainer = document.querySelector('.mb-4'); // Cible le conteneur de navigation
-            if (navContainer) navContainer.style.display = 'block'; // Ou une autre méthode pour le rendre visible
+            if (navContainer) navContainer.style.display = 'block';
 
             this.setupDescriptionNavigation();
         } else {
