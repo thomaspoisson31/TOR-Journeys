@@ -1397,9 +1397,12 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         const savedJournal = localStorage.getItem('travelJournal');
         if (savedJournal) {
             try {
-                journal = JSON.parse(savedJournal);
+                const parsed = JSON.parse(savedJournal);
+                // S'assurer que c'est bien un tableau
+                journal = Array.isArray(parsed) ? parsed : [];
             } catch (e) {
                 console.error("Erreur lors du parsing du journal:", e);
+                journal = [];
             }
         }
 
