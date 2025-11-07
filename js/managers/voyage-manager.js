@@ -999,20 +999,35 @@ class VoyageManager {
             return;
         }
 
-        // Collecter les données pour toutes les journées
-        const allJourneyData = this.collectAllJourneyDataForPrompt();
+        // Récupérer le bouton et sauvegarder son contenu original
+        const button = this.dom.getElementById('describe-journey-header-btn');
+        if (!button) return;
 
-        // Créer le prompt pour Gemini
-        const prompt = this.createAllJourneyDescriptionPrompt(allJourneyData);
+        const originalContent = button.innerHTML;
+        
+        // Afficher le loader
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin text-white"></i>';
+        button.style.cursor = 'not-allowed';
 
-        // Appeler Gemini
-        const button = this.dom.getElementById('describe-journey-btn');
         try {
+            // Collecter les données pour toutes les journées
+            const allJourneyData = this.collectAllJourneyDataForPrompt();
+
+            // Créer le prompt pour Gemini
+            const prompt = this.createAllJourneyDescriptionPrompt(allJourneyData);
+
+            // Appeler Gemini
             const response = await this.geminiManager.generateContent(prompt, button, 'journey');
             this.parseAndDisplayAllJourneyDescriptions(response);
         } catch (error) {
             console.error('Erreur lors de la génération de la description:', error);
             alert(`Erreur lors de la génération de la description de voyage: ${error.message}`);
+        } finally {
+            // Restaurer le bouton à son état original
+            button.disabled = false;
+            button.innerHTML = originalContent;
+            button.style.cursor = 'pointer';
         }
     }
 
