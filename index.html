@@ -707,17 +707,23 @@
                 <div class="flex justify-between items-center p-4 border-b border-gray-700">
                     <div class="flex items-center space-x-4">
                         <h3 id="segment-title" class="text-xl font-bold text-white">17 Ninui</h3>
-                        <span id="day-counter" class="text-sm text-gray-400">(Jour 1 sur 9)</span>
+                        <span id="day-counter" class="text-sm text-gray-400">(sur 9 jours de voyage)</span>
                     </div>
                     <div class="flex items-center space-x-3">
-                        <button id="random-event-btn" class="hidden text-2xl text-blue-400 hover:text-blue-300 transition-colors" title="Générer un événement aléatoire">
-                            🎲
+                        <button id="describe-journey-header-btn" class="hidden w-8 h-8 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition-colors" title="Générer/Régénérer les descriptions">
+                            <span class="gemini-icon text-white text-lg">✨</span>
+                        </button>
+                        <button id="finish-journey-header-btn" class="hidden w-8 h-8 bg-green-600 hover:bg-green-700 rounded-full flex items-center justify-center transition-colors" title="Terminer le voyage">
+                            <i class="fas fa-flag-checkered text-white"></i>
+                        </button>
+                        <button id="random-event-btn" class="hidden w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition-colors" title="Générer un événement aléatoire">
+                            <i class="fas fa-dice text-white"></i>
                         </button>
                         <button id="close-voyage-segments" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
                     </div>
                 </div>
 
-                <div class="flex-grow overflow-hidden flex flex-col">
+                <div class="flex-grow overflow-hidden flex flex-col" style="min-height: 0;">
                     <!-- Message d'accueil ou contenu du segment -->
                     <div id="no-voyage-message" class="hidden p-8 text-center text-gray-400">
                         <h3 class="text-xl mb-4">Aucun voyage en cours</h3>
@@ -725,7 +731,7 @@
                     </div>
 
                     <!-- Contenu principal du segment -->
-                    <div id="current-segment-display" class="flex-grow flex flex-col">
+                    <div id="current-segment-display" class="flex-grow flex flex-col" style="min-height: 0;">
                         <!-- Barre de progression avec navigation -->
                         <div class="p-4">
                             <div id="voyage-progress-bar" class="hidden">

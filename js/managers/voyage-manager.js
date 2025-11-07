@@ -610,66 +610,37 @@ class VoyageManager {
             `;
         }
 
-        // Récupérer le style de narration pour l'affichage
-        const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
-        let styleText = '';
-        switch (narrationStyle) {
-            case 'detailed':
-                styleText = ' (Détaillée)';
-                break;
-            case 'brief':
-                styleText = ' (Brève)';
-                break;
-            case 'keywords':
-                styleText = ' (Points clés)';
-                break;
-            default:
-                styleText = ' (Brève)';
-        }
-
-        // Ajouter les boutons en bas
-        let buttonsHtml = `
-            <div class="mt-3 pt-3 border-t border-gray-600 space-y-3">
-                <button id="describe-journey-btn" class="w-full py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors" style="background-color: white; color: #940000; border: 1px solid #940000;">
-                    <span class="gemini-icon">✨</span>
-                    <span>${dayDescription ? 'Régénérer les descriptions' : 'Décrire le voyage'}${styleText}</span>
-                </button>
-        `;
-
-        // Ajouter le bouton "Terminer le voyage" si on est au dernier jour
-        const isLastDay = this.currentDayIndex === (this.totalJourneyDays - 1);
-        if (isLastDay) {
-            buttonsHtml += `
-                <button id="finish-journey-btn" class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium flex items-center justify-center space-x-2 transition-colors">
-                    <i class="fas fa-flag-checkered"></i>
-                    <span>Terminer le voyage</span>
-                </button>
-            `;
-        }
-
-        buttonsHtml += `</div>`;
-        contentHtml += buttonsHtml;
-
         segmentContent.innerHTML = contentHtml;
 
         // Setup event listeners for discoveries
         this.setupDiscoveryInteractions();
 
-        // Setup event listener for describe journey button
-        const describeBtn = this.dom.getElementById('describe-journey-btn');
+        // Gérer les boutons dans l'en-tête
+        this.updateHeaderButtons();
+    }
+
+    updateHeaderButtons() {
+        const describeBtn = this.dom.getElementById('describe-journey-header-btn');
+        const finishBtn = this.dom.getElementById('finish-journey-header-btn');
+
+        // Afficher le bouton de description
         if (describeBtn) {
-            describeBtn.addEventListener('click', () => {
-                this.generateJourneyDescription();
-            });
+            describeBtn.classList.remove('hidden');
+            describeBtn.onclick = () => this.generateJourneyDescription();
+            
+            // Mettre à jour le tooltip
+            const hasDescriptions = Object.keys(this.journeyDescriptions).length > 0;
+            describeBtn.title = hasDescriptions ? 'Régénérer les descriptions' : 'Générer les descriptions';
         }
 
-        // Setup event listener for finish journey button if it exists
-        if (isLastDay) {
-            const finishBtn = this.dom.getElementById('finish-journey-btn');
-            if (finishBtn) {
-                finishBtn.addEventListener('click', () => {
-                    this.finishJourney();
-                });
+        // Afficher le bouton "Terminer le voyage" seulement au dernier jour
+        const isLastDay = this.currentDayIndex === (this.totalJourneyDays - 1);
+        if (finishBtn) {
+            if (isLastDay) {
+                finishBtn.classList.remove('hidden');
+                finishBtn.onclick = () => this.finishJourney();
+            } else {
+                finishBtn.classList.add('hidden');
             }
         }
     }
@@ -870,6 +841,12 @@ class VoyageManager {
         if (progressBar) {
             progressBar.classList.add('hidden');
         }
+
+        // Masquer les boutons de l'en-tête
+        const describeBtn = this.dom.getElementById('describe-journey-header-btn');
+        const finishBtn = this.dom.getElementById('finish-journey-header-btn');
+        if (describeBtn) describeBtn.classList.add('hidden');
+        if (finishBtn) finishBtn.classList.add('hidden');
     }
 
     setupDiscoveryInteractions() {
