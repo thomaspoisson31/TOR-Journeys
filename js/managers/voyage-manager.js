@@ -1175,7 +1175,7 @@ Génère des descriptions courtes (2-3 phrases max) pour chaque jour d'un voyage
 Le voyage commence à "${journeyData.adventurersGroup}" et se termine à "${journeyData.adventurersQuest}".
 Distance totale: ${journeyData.totalDays} miles.
 
-${journeyData.allDays && journeyData.allDays.length > 0 ? 
+${journeyData.allDays && journeyData.allDays.length > 0 ?
 `Détail des journées:
 ${journeyData.allDays.map(d => `- Jour ${d.dayNumber} (${d.calendarDate}) - Saison: ${d.season} - Météo: ${d.weatherSymbol || ''} ${d.weather || 'Non spécifiée'}`).join('\n')}` : ''}
 
@@ -1322,39 +1322,81 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                     }
                 });
 
-                console.log(`✅ ${Object.keys(this.journeyDescriptions).length} description(s) de voyage générée(s)`);
-
-                // Sauvegarder les descriptions pour cette carte
+                // Sauvegarder les descriptions pour cette carte/tracé
                 this.saveDescriptionsForMap();
 
-                // Rafraîchir l'affichage pour montrer les descriptions générées
-                this.renderCurrentDay();
+                // Sauvegarder le voyage dans le journal
+                this.saveJourneyToJournal();
 
+                console.log('✅ Toutes les descriptions ont été parsées et sauvegardées');
             } else {
-                console.error("❌ Format de réponse JSON invalide:", journeyData);
-                alert("Erreur: La réponse de Gemini n'est pas au format attendu.");
+                console.error("❌ Format de réponse JSON inattendu:", journeyData);
+                alert("Erreur: Le format de la réponse de Gemini n'est pas celui attendu (objet avec clé 'descriptions').");
+                return;
             }
 
-        } catch (error) {
-            console.error('❌ Erreur lors du parsing de la description du voyage:', error);
-            console.error('📄 Réponse qui a causé l\'erreur:', response);
-            console.error('📊 Type de l\'erreur:', error.constructor.name);
-            console.error('💬 Message d\'erreur:', error.message);
-
-            // Message d'erreur plus informatif
-            let errorMsg = 'Erreur lors de l\'analyse de la description du voyage.\n\n';
-            if (error instanceof SyntaxError) {
-                errorMsg += 'Le format de la réponse n\'est pas un JSON valide.\n';
-                errorMsg += 'Veuillez vérifier que Gemini retourne un objet JSON conforme avec une clé "descriptions" contenant un tableau d\'objets {"day": N, "description": "..."}.\n';
-                errorMsg += 'Consultez la console pour voir la réponse complète et les détails de l\'erreur.';
-            } else {
-                errorMsg += `Erreur: ${error.message}\n`;
-                errorMsg += 'Consultez la console pour plus de détails.';
-            }
-
-            alert(errorMsg);
+        } catch (e) {
+            console.error('❌ Erreur lors du parsing de la réponse:', e);
+            alert('Erreur lors de la génération des descriptions. La réponse de Gemini n\'est pas au format JSON attendu.');
         }
     }
+
+    saveJourneyToJournal() {
+        // Créer l'objet voyage pour le journal
+        const journeyData = {
+            title: `Voyage de ${this.totalJourneyDays} jours`,
+            totalDays: this.totalJourneyDays,
+            generatedAt: new Date().toISOString(),
+            days: this.dayByDayData.map((dayData, index) => {
+                const dayNumber = index + 1;
+                const weatherData = this.getWeatherForDay(dayNumber);
+
+                return {
+                    dayNumber: dayNumber,
+                    calendarDate: dayData.calendarDate,
+                    weatherSymbol: weatherData?.symbol || null,
+                    discoveries: dayData.discoveries || [],
+                    description: this.journeyDescriptions[dayNumber] || null,
+                    eventResult: this.randomEvents[dayNumber] || null
+                };
+            })
+        };
+
+        // Charger le journal existant
+        let journal = [];
+        const savedJournal = localStorage.getItem('travelJournal');
+        if (savedJournal && savedJournal !== 'null' && savedJournal !== 'undefined') {
+            try {
+                const parsed = JSON.parse(savedJournal);
+                journal = Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                console.error("Erreur lors du chargement du journal:", e);
+            }
+        }
+
+        // Ajouter le nouveau voyage
+        journal.push(journeyData);
+
+        // Sauvegarder dans localStorage
+        localStorage.setItem('travelJournal', JSON.stringify(journal));
+        console.log(`📖 Voyage ajouté au journal (${journal.length} voyage(s) au total)`);
+
+        // Marquer comme non sauvegardé pour sync cloud
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        // Synchroniser avec le cloud
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+
+        // Rafraîchir le JournalManager si disponible
+        if (window.journalManager) {
+            window.journalManager.loadJournal();
+        }
+    }
+
 
     saveDescriptionsForMap() {
         // Obtenir l'URL de la carte active
