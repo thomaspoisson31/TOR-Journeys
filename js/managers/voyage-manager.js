@@ -1321,9 +1321,9 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         } catch (error) {
             console.error('Erreur lors du parsing JSON:', error);
             console.log('Réponse reçue:', response);
-
-            // Fallback : afficher la réponse brute
-            this.displayJourneyDescription(response, false);
+            
+            // En cas d'erreur, afficher un message dans la console mais ne pas ouvrir de modale
+            alert('Erreur lors de la génération des descriptions de voyage. Veuillez réessayer.');
         }
     }
 
