@@ -1165,47 +1165,38 @@ class VoyageManager {
         const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
         console.log('📖 Style de narration pour le voyage complet:', narrationStyle);
 
-        let prompt = `Rédige des descriptions évocatrices pour toutes les journées d'un voyage en Terre du Milieu dont le détail est présenté ci-après.
+        let prompt = `Tu es un narrateur pour un jeu de rôle dans l'univers du Seigneur des Anneaux.
+Génère des descriptions courtes (2-3 phrases max) pour chaque jour d'un voyage de ${journeyData.totalDays} jours.
 
-Ces descriptions sont destinées à un meneur de jeu qui va les lire à ses joueurs pour les immerger dans l'ambiance du voyage.
+Le voyage commence à "${journeyData.adventurersGroup}" et se termine à "${journeyData.adventurersQuest}".
+Distance totale: ${journeyData.totalDays} miles.
 
-**Contexte du groupe :**
-${journeyData.adventurersGroup || 'Groupe d\'aventuriers non défini'}
+${journeyData.allDays && journeyData.allDays.length > 0 ? 
+`Détail des journées:
+${journeyData.allDays.map(d => `- Jour ${d.dayNumber} (${d.calendarDate}) - Saison: ${d.season} - Météo: ${d.weatherSymbol || ''} ${d.weather || 'Non spécifiée'}`).join('\n')}` : ''}
 
-**Nature de la quête :**
-${journeyData.adventurersQuest || 'Quête non définie'}
+INSTRUCTIONS CRITIQUES - RESPECTE CE FORMAT STRICTEMENT:
+1. Retourne UNIQUEMENT un objet JSON valide
+2. Ne mets AUCUN texte avant ou après le JSON
+3. N'utilise PAS de balises markdown comme \`\`\`json
+4. Le JSON doit être directement parsable
+5. Génère exactement ${journeyData.totalDays} descriptions
 
-**Durée totale du voyage :** ${journeyData.totalDays} jours
+Format EXACT à respecter:
+{
+  "descriptions": [
+    {
+      "day": 1,
+      "description": "Description du jour 1..."
+    },
+    {
+      "day": 2,
+      "description": "Description du jour 2..."
+    }
+  ]
+}
 
-**Détail des journées :**
-`;
-
-        journeyData.allDays.forEach(dayData => {
-            prompt += `\n**Jour ${dayData.dayNumber} (${dayData.calendarDate}) :**`;
-
-            // Ajouter la saison spécifique du jour
-            if (dayData.season) {
-                prompt += `\n- Saison : ${dayData.season}`;
-            }
-
-            // Ajouter la météo si disponible
-            if (dayData.weather) {
-                prompt += `\n- Météo : ${dayData.weatherSymbol || ''} ${dayData.weather}`;
-            }
-
-            if (dayData.discoveries.length > 0) {
-                prompt += `\n- Lieux et régions (dans l'ordre) :`;
-                dayData.discoveries.forEach(discovery => {
-                    prompt += `\n  • ${discovery.type} : ${discovery.name} (${discovery.action})`;
-                    if (discovery.description) {
-                        prompt += `\n    Description : ${discovery.description}`;
-                    }
-                });
-            } else {
-                prompt += `\n- Voyage tranquille sans découverte particulière`;
-            }
-            prompt += '\n';
-        });
+Ta réponse doit commencer par { et se terminer par } sans rien d'autre.`;
 
         // Ajouter les instructions spécifiques selon le style de narration
         let styleInstructions = '';
@@ -1247,19 +1238,13 @@ ${journeyData.adventurersQuest || 'Quête non définie'}
 
         prompt += `
 **Instructions importantes :**
-- Répondez UNIQUEMENT avec un objet JSON valide de cette structure :
-{
-  "descriptions": [
-    {
-      "day": 1,
-      "description": "Description de la journée 1..."
-    },
-    {
-      "day": 2,
-      "description": "Description de la journée 2..."
-    }
-  ]
-}
+- Assure-toi que chaque description intègre subtilement la météo et la saison, en les traduisant en sensations et détails atmosphériques.
+- Ne répète pas littéralement le texte météo fourni.
+- Adapte la description des paysages selon la saison (couleurs, végétation, ambiance).
+- Montre l'impact de la météo sur le voyage sans la mentionner explicitement.
+- Le ton doit être immersif et narratif, adapté à une lecture en jeu de rôle.
+- Évite les redondances entre les descriptions des différentes journées.
+- Assure-toi que chaque description soit unique et apporte sa propre atmosphère.
 
 ${styleInstructions}
 
@@ -1274,14 +1259,6 @@ ${styleInstructions}
 - Rédigez au présent de la 2ème personne du pluriel ("Vous traversez...")
 - Faites appel à plusieurs sens (vue, ouïe, odorat, toucher) pour une immersion totale
 - Évoquez l'état physique et mental des personnages en tenant compte du nombre de jours de voyage accumulés
-- **INTÉGREZ SUBTILEMENT la météo et la saison dans vos descriptions** :
-  • Ne répétez pas littéralement le texte météo fourni
-  • Traduisez la météo en sensations et détails atmosphériques (vent sur le visage, boue sous les pieds, etc.)
-  • Adaptez la description des paysages selon la saison (couleurs, végétation, ambiance)
-  • Montrez l'impact de la météo sur le voyage sans la mentionner explicitement
-- Le ton doit être immersif et narratif, adapté à une lecture en jeu de rôle
-- Évitez les redondances entre les descriptions des différentes journées
-- Assurez-vous que chaque description soit unique et apporte sa propre atmosphère
 
 Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
@@ -1317,34 +1294,16 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
             // Vérifier le format de la réponse
             if (journeyData && typeof journeyData === 'object') {
-                // Le JSON peut être soit un objet direct avec les jours, soit avoir une clé 'days'
-                // La structure attendue est un objet où les clés sont les numéros de jour (ex: "1", "2")
-                // ou un objet avec une clé "descriptions" contenant un tableau d'objets {"day": N, "description": "..."}
+                // La structure attendue est un objet avec une clé "descriptions" contenant un tableau d'objets {"day": N, "description": "..."}
                 let descriptionsArray = [];
 
                 if (Array.isArray(journeyData.descriptions)) {
                     // Cas où la réponse est {"descriptions": [{"day": 1, "description": "..."}]}
                     descriptionsArray = journeyData.descriptions;
                     console.log('📖 Format détecté: Objet avec clé "descriptions" contenant un tableau.');
-                } else if (typeof journeyData === 'object' && !Array.isArray(journeyData)) {
-                    // Cas où la réponse est un objet avec les jours comme clés, ex: {"1": "Description...", "2": "..."}
-                    // Ou si l'objet n'a pas la clé "descriptions" mais contient directement les descriptions par jour
-                    console.log('📖 Format détecté: Objet avec jours comme clés ou directement les descriptions.');
-                    Object.keys(journeyData).forEach(dayKey => {
-                        // On s'attend à ce que la clé soit un nombre ou une chaîne représentant un jour
-                        if (!isNaN(dayKey) || dayKey.startsWith('day')) { // Vérification plus large pour les cas comme "day1"
-                            const dayNumber = parseInt(dayKey.replace('day', ''));
-                            if (!isNaN(dayNumber)) {
-                                descriptionsArray.push({
-                                    day: dayNumber,
-                                    description: journeyData[dayKey]
-                                });
-                            }
-                        }
-                    });
                 } else {
                     console.error("❌ Format de réponse JSON inattendu:", journeyData);
-                    alert("Erreur: Le format de la réponse de Gemini n'est pas celui attendu.");
+                    alert("Erreur: Le format de la réponse de Gemini n'est pas celui attendu (objet avec clé 'descriptions').");
                     return;
                 }
 
@@ -1382,7 +1341,8 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             let errorMsg = 'Erreur lors de l\'analyse de la description du voyage.\n\n';
             if (error instanceof SyntaxError) {
                 errorMsg += 'Le format de la réponse n\'est pas un JSON valide.\n';
-                errorMsg += 'Vérifiez la console pour voir la réponse complète.';
+                errorMsg += 'Veuillez vérifier que Gemini retourne un objet JSON conforme avec une clé "descriptions" contenant un tableau d\'objets {"day": N, "description": "..."}.\n';
+                errorMsg += 'Consultez la console pour voir la réponse complète et les détails de l\'erreur.';
             } else {
                 errorMsg += `Erreur: ${error.message}\n`;
                 errorMsg += 'Consultez la console pour plus de détails.';
