@@ -463,7 +463,7 @@ function renderLocations() {
         renderedCount++;
     });
 
-    console.log(`✅ Rendered ${renderedCount} location markers (thumbnails: ${showThumbnails})`);
+    console.log(`✅ Rendered ${renderedCount} location markers`);
 }
 
 // --- Fonction d'affichage des régions ---
