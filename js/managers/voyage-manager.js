@@ -875,55 +875,50 @@ class VoyageManager {
     }
 
     openDiscoveryModal(discoveryName, discoveryType) {
-        // Fermer la modal des segments de voyage
-        this.dom.hideModal(this.dom.voyageSegmentsModal);
+        console.log(`🗺️ [VoyageManager] Ouverture modale pour ${discoveryType}: ${discoveryName}`);
+        
+        // Ne PAS fermer la modale de voyage - laisser l'utilisateur naviguer
+        // this.dom.hideModal(this.dom.voyageSegmentsModal);
 
         if (discoveryType === 'location') {
             // Trouver le lieu et ouvrir sa modal
-            if (typeof locationsData !== 'undefined' && locationsData.locations) {
-                const location = locationsData.locations.find(loc => loc.name === discoveryName);
+            if (typeof window.locationsData !== 'undefined' && window.locationsData.locations) {
+                const location = window.locationsData.locations.find(loc => loc.name === discoveryName);
                 if (location) {
-                    // Simuler un événement de clic sur le marqueur
-                    const fakeEvent = {
-                        currentTarget: { dataset: { id: location.id.toString() } },
-                        stopPropagation: () => {},
-                        preventDefault: () => {}
-                    };
-
-                    if (typeof showInfoBox === 'function') {
-                        showInfoBox(fakeEvent);
-
-                        // Forcer l'expansion de la info box
-                        const infoBox = document.getElementById('info-box');
-                        if (infoBox && !infoBox.classList.contains('expanded')) {
-                            if (typeof toggleInfoBoxExpand === 'function') {
-                                toggleInfoBoxExpand();
-                            }
-                        }
+                    console.log(`📍 [VoyageManager] Lieu trouvé:`, location);
+                    
+                    // Utiliser InfoBoxManager pour afficher le lieu
+                    if (window.infoBoxManager) {
+                        const fakeEvent = {
+                            stopPropagation: () => {},
+                            preventDefault: () => {}
+                        };
+                        
+                        window.infoBoxManager.showInfoBox(fakeEvent, location, 'location');
+                        console.log(`✅ [VoyageManager] InfoBox affichée pour le lieu`);
+                    } else {
+                        console.error(`❌ [VoyageManager] InfoBoxManager non disponible`);
                     }
                 }
             }
         } else if (discoveryType === 'region') {
             // Trouver la région et ouvrir sa modal
-            if (typeof regionsData !== 'undefined' && regionsData.regions) {
-                const region = regionsData.regions.find(reg => reg.name === discoveryName);
+            if (typeof window.regionsData !== 'undefined' && window.regionsData.regions) {
+                const region = window.regionsData.regions.find(reg => reg.name === discoveryName);
                 if (region) {
-                    // Simuler un événement de clic sur la région
-                    const fakeEvent = {
-                        stopPropagation: () => {},
-                        preventDefault: () => {}
-                    };
-
-                    if (typeof showRegionInfo === 'function') {
-                        showRegionInfo(fakeEvent, region);
-
-                        // Forcer l'expansion de la info box
-                        const infoBox = document.getElementById('info-box');
-                        if (infoBox && !infoBox.classList.contains('expanded')) {
-                            if (typeof toggleInfoBoxExpand === 'function') {
-                                toggleInfoBoxExpand();
-                            }
-                        }
+                    console.log(`🗺️ [VoyageManager] Région trouvée:`, region);
+                    
+                    // Utiliser InfoBoxManager pour afficher la région
+                    if (window.infoBoxManager) {
+                        const fakeEvent = {
+                            stopPropagation: () => {},
+                            preventDefault: () => {}
+                        };
+                        
+                        window.infoBoxManager.showInfoBox(fakeEvent, region, 'region');
+                        console.log(`✅ [VoyageManager] InfoBox affichée pour la région`);
+                    } else {
+                        console.error(`❌ [VoyageManager] InfoBoxManager non disponible`);
                     }
                 }
             }
