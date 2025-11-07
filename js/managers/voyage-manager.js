@@ -219,6 +219,9 @@ class VoyageManager {
         // Récupérer le mapId de la carte active
         const activeMapUrl = window.settingsManager?.activeMapUrl;
         
+        console.log(`🗺️ [buildAbsoluteTimeline] Carte active: ${activeMapUrl}`);
+        console.log(`🗺️ [buildAbsoluteTimeline] journeyDiscoveries total: ${journeyDiscoveries?.length || 0}`);
+        
         // Utiliser les variables globales journeyDiscoveries et filtrer par mapId
         const discoveries = journeyDiscoveries
             .filter(discovery => {
@@ -228,8 +231,15 @@ class VoyageManager {
                 // Vérifier le mapId pour les lieux
                 if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
                     const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                    // Filtrer seulement si le lieu a un mapId différent de la carte active
-                    if (location && location.mapId && String(location.mapId) !== String(activeMapUrl)) {
+                    
+                    // Si le lieu n'a pas de mapId, l'afficher (compatible avec toutes les cartes)
+                    if (!location || !location.mapId) {
+                        console.log(`✅ [buildAbsoluteTimeline] Lieu "${discovery.name}" sans mapId - affiché sur toutes les cartes`);
+                        return true;
+                    }
+                    
+                    // Si le lieu a un mapId différent de la carte active, le filtrer
+                    if (String(location.mapId) !== String(activeMapUrl)) {
                         console.log(`⏭️ [buildAbsoluteTimeline] Lieu "${discovery.name}" ignoré (mapId: ${location.mapId} ≠ ${activeMapUrl})`);
                         return false;
                     }
@@ -238,8 +248,15 @@ class VoyageManager {
                 // Vérifier le mapId pour les régions
                 if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
                     const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                    // Filtrer seulement si la région a un mapId différent de la carte active
-                    if (region && region.mapId && String(region.mapId) !== String(activeMapUrl)) {
+                    
+                    // Si la région n'a pas de mapId, l'afficher (compatible avec toutes les cartes)
+                    if (!region || !region.mapId) {
+                        console.log(`✅ [buildAbsoluteTimeline] Région "${discovery.name}" sans mapId - affichée sur toutes les cartes`);
+                        return true;
+                    }
+                    
+                    // Si la région a un mapId différent de la carte active, la filtrer
+                    if (String(region.mapId) !== String(activeMapUrl)) {
                         console.log(`⏭️ [buildAbsoluteTimeline] Région "${discovery.name}" ignorée (mapId: ${region.mapId} ≠ ${activeMapUrl})`);
                         return false;
                     }
@@ -248,6 +265,8 @@ class VoyageManager {
                 return true;
             })
             .sort((a, b) => a.discoveryIndex - b.discoveryIndex);
+        
+        console.log(`🗺️ [buildAbsoluteTimeline] Découvertes après filtrage: ${discoveries.length}`);
         
         const totalMiles = totalPathPixels * (this.MAP_DISTANCE_MILES / this.MAP_WIDTH);
         const totalPathPoints = journeyPath.length;
