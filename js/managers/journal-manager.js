@@ -109,33 +109,64 @@ class JournalManager {
         this.journalContent.classList.remove('hidden');
         this.journalEmpty.classList.add('hidden');
 
+        // Trier le journal par date ascendante
+        const sortedJournal = [...this.journal].sort((a, b) => {
+            const dateA = a.days && a.days.length > 0 && a.days[0].calendarDate 
+                ? a.days[0].calendarDate 
+                : a.generatedAt;
+            const dateB = b.days && b.days.length > 0 && b.days[0].calendarDate 
+                ? b.days[0].calendarDate 
+                : b.generatedAt;
+            
+            // Si les deux ont des dates calendrier, comparer par celles-ci
+            if (typeof dateA === 'string' && typeof dateB === 'string') {
+                return dateA.localeCompare(dateB);
+            }
+            
+            // Sinon, comparer par generatedAt
+            return new Date(a.generatedAt) - new Date(b.generatedAt);
+        });
+
         // Générer le HTML pour chaque voyage (version simplifiée pour la liste)
-        const journalHTML = this.journal.map((journey, journeyIndex) => {
-            // Déterminer la date à afficher
-            let displayDate = '';
+        const journalHTML = sortedJournal.map((journey, sortedIndex) => {
+            // Trouver l'index original pour la suppression
+            const originalIndex = this.journal.indexOf(journey);
+            
+            // Déterminer les dates à afficher
+            let displayStartDate = '';
+            let displayEndDate = '';
             
             // Si c'est un voyage avec des jours et une date calendrier
             if (journey.days && journey.days.length > 0 && journey.days[0].calendarDate) {
-                displayDate = journey.days[0].calendarDate;
+                displayStartDate = journey.days[0].calendarDate;
+                // Date de fin = dernier jour
+                if (journey.days[journey.days.length - 1].calendarDate) {
+                    displayEndDate = journey.days[journey.days.length - 1].calendarDate;
+                }
             } else {
                 // Sinon utiliser la date de génération classique
                 const generatedDate = new Date(journey.generatedAt);
-                displayDate = generatedDate.toLocaleDateString('fr-FR', {
+                displayStartDate = generatedDate.toLocaleDateString('fr-FR', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                 });
             }
 
+            // Construire la chaîne de dates
+            const dateDisplay = displayEndDate && displayEndDate !== displayStartDate
+                ? `${displayStartDate} → ${displayEndDate}`
+                : displayStartDate;
+
             return `
-                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.journalManager.openJourneyInVoyageModal(${journeyIndex})">
+                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.journalManager.openJourneyInVoyageModal(${originalIndex})">
                     <div class="p-4">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <h3 class="text-xl font-bold mb-1" style="color: #940000;">${journey.title}</h3>
-                                <p class="text-sm text-gray-600">${displayDate} • ${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}</p>
+                                <p class="text-sm text-gray-600">${dateDisplay} • ${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}</p>
                             </div>
-                            <button onclick="event.stopPropagation(); window.journalManager.deleteJourney(${journeyIndex})" 
+                            <button onclick="event.stopPropagation(); window.journalManager.deleteJourney(${originalIndex})" 
                                     class="text-red-500 hover:text-red-700 p-2" 
                                     title="Supprimer ce voyage">
                                 <i class="fas fa-trash"></i>
@@ -213,12 +244,12 @@ class JournalManager {
             if (day.eventResult) {
                 const eventHtml = this.simpleMarkdown(day.eventResult);
                 contentHtml += `
-                    <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-3 mb-3">
-                        <div class="flex items-center text-xs text-yellow-700 mb-2">
+                    <div class="bg-gray-800 border border-yellow-500 rounded-lg p-3 mb-3">
+                        <div class="flex items-center text-xs text-yellow-400 mb-2">
                             <i class="fas fa-dice mr-1"></i>
                             <span class="font-semibold">Événement aléatoire</span>
                         </div>
-                        <div class="text-sm text-gray-800 prose prose-sm max-w-none">${eventHtml}</div>
+                        <div class="text-sm text-gray-100 prose prose-sm max-w-none">${eventHtml}</div>
                     </div>
                 `;
             }
