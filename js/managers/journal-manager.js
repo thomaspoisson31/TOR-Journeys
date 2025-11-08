@@ -216,6 +216,56 @@ class JournalManager {
 
         voyageDaysContent.innerHTML = daysHTML;
 
+        // Ajouter les event listeners sur chaque en-tête de jour
+        const dayHeaders = voyageDaysContent.querySelectorAll('.day-header');
+        dayHeaders.forEach((header, index) => {
+            header.style.cursor = 'pointer';
+            header.addEventListener('click', () => {
+                console.log(`📅 Clic sur jour ${index + 1}`);
+                
+                const day = journey.days[index];
+                if (!day) {
+                    console.warn(`⚠️ Données du jour ${index + 1} non disponibles`);
+                    return;
+                }
+
+                // Mettre à jour la date du calendrier si elle existe
+                if (day.calendarDate && window.calendarManager) {
+                    console.log(`📅 Mise à jour de la date du calendrier: ${day.calendarDate}`);
+                    
+                    // Parser la date du calendrier (format "15 Nórui")
+                    const [dayNumber, monthName] = day.calendarDate.split(' ');
+                    const parsedDay = parseInt(dayNumber);
+                    
+                    if (parsedDay && monthName && window.calendarManager.calendarData) {
+                        const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
+                        if (monthIndex >= 0) {
+                            window.calendarManager.currentCalendarDate = {
+                                month: monthName,
+                                day: parsedDay
+                            };
+                            window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
+                            window.calendarManager.updateSeasonDisplay();
+                            window.calendarManager.saveCalendarToLocal();
+                        }
+                    }
+                }
+
+                // Déplacer le marqueur de position si les coordonnées existent
+                if (day.startCoordinates && window.positionManager) {
+                    console.log(`📍 Déplacement du marqueur vers le jour ${day.dayNumber}:`, day.startCoordinates);
+                    
+                    window.positionManager.animateToPosition(
+                        day.startCoordinates.x,
+                        day.startCoordinates.y,
+                        800
+                    );
+                } else {
+                    console.warn(`⚠️ Pas de coordonnées de début pour le jour ${day.dayNumber}`);
+                }
+            });
+        });
+
         // Masquer les boutons d'actions (car c'est un voyage du passé)
         const describeBtn = document.getElementById('describe-journey-header-btn');
         const finishBtn = document.getElementById('finish-journey-header-btn');
