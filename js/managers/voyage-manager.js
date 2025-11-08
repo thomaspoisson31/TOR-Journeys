@@ -1370,6 +1370,10 @@ class VoyageManager {
         const lastDayData = this.dayByDayData[this.totalJourneyDays - 1];
         if (!lastDayData) return;
 
+        // Sauvegarder le voyage dans le journal (avec ou sans descriptions)
+        this.saveJourneyToJournal();
+        console.log(`📖 Voyage sauvegardé dans le journal`);
+
         // Accéder aux variables globales via window
         const isCalendarMode = window.isCalendarMode;
         const calendarData = window.calendarData;
