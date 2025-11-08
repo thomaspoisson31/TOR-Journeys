@@ -99,7 +99,7 @@ class VoyageManager {
                         currentDayIndex = index;
                     }
                 });
-                
+
                 if (this.dayByDayData && this.dayByDayData[currentDayIndex]) {
                     this.triggerRandomEvent(this.dayByDayData[currentDayIndex]);
                 }
@@ -563,17 +563,17 @@ class VoyageManager {
             const dayData = this.dayByDayData[i];
             const dayNumber = dayData.day;
             const calendarDate = dayData.calendarDate;
-            
+
             // Récupérer météo et saison
             const weatherData = this.getWeatherForDay(dayNumber);
             let weatherSymbol = '';
             let weatherTooltip = '';
-            
+
             if (weatherData && weatherData.symbol) {
                 weatherSymbol = weatherData.symbol;
                 weatherTooltip = weatherData.weather || '';
             }
-            
+
             // Vérifier si ce jour a des événements aléatoires disponibles
             let hasRandomEvents = false;
             if (dayData.discoveries && dayData.discoveries.length > 0) {
@@ -588,11 +588,11 @@ class VoyageManager {
                     return false;
                 });
             }
-            
+
             // Carte du jour avec en-tête cliquable
             allDaysHtml += `
                 <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden" data-day-index="${i}">
-                    <div class="day-header bg-gray-50 p-4 cursor-pointer hover:bg-gray-100 transition-colors" onclick="window.voyageManager.highlightDay(${i})">
+                    <div class="day-header bg-gray-50 p-4 cursor-pointer hover:bg-gray-100 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
                                 <span class="text-lg font-bold" style="color: #940000;">Jour ${dayNumber}</span>
@@ -614,10 +614,10 @@ class VoyageManager {
         }
 
         voyageDaysContent.innerHTML = allDaysHtml;
-        
+
         // Setup event listeners pour les découvertes
         this.setupDiscoveryInteractions();
-        
+
         // Setup event listeners pour les boutons d'événements aléatoires
         this.setupDayRandomEventButtons();
     }
@@ -655,13 +655,13 @@ class VoyageManager {
             contentHtml += '<p class="text-gray-400 text-sm italic text-center py-2">Voyage tranquille...</p>';
         } else {
             contentHtml += '<div class="flex flex-wrap gap-2">';
-            
+
             dayData.discoveries.forEach(discovery => {
                 const typeText = discovery.type === 'region' ? 'Région' : 'Lieu';
                 let actionText = discovery.type === 'region' ? 'traversée' : 'découvert';
-                
+
                 const imageUrl = this._getDiscoveryImageForDisplay(discovery);
-                
+
                 contentHtml += `
                     <div class="discovery-item inline-flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}">
                         ${imageUrl ? `<img src="${imageUrl}" alt="${discovery.name}" class="w-8 h-8 rounded object-cover">` : ''}
@@ -672,7 +672,7 @@ class VoyageManager {
                     </div>
                 `;
             });
-            
+
             contentHtml += '</div>';
         }
 
@@ -681,7 +681,7 @@ class VoyageManager {
 
     highlightDay(dayIndex) {
         console.log(`🎯 highlightDay appelé avec index: ${dayIndex}`);
-        
+
         // Validation de l'index
         if (typeof dayIndex !== 'number' || isNaN(dayIndex) || dayIndex < 0) {
             console.error(`❌ Index de jour invalide: ${dayIndex}`);
@@ -698,7 +698,7 @@ class VoyageManager {
         const clickedCard = document.querySelector(`.day-card[data-day-index="${dayIndex}"]`);
         if (clickedCard) {
             clickedCard.classList.add('ring-2', 'ring-blue-500');
-            
+
             // Scroller vers la carte du jour si elle n'est pas visible
             clickedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
@@ -717,7 +717,7 @@ class VoyageManager {
         }
 
         const dayData = this.dayByDayData[dayIndex];
-        
+
         if (!dayData) {
             console.error(`❌ Données du jour ${dayIndex} sont null ou undefined`);
             return;
@@ -728,18 +728,18 @@ class VoyageManager {
             hasStartCoordinates: !!dayData.startCoordinates,
             startCoordinates: dayData.startCoordinates
         });
-        
+
         // Mettre à jour la date du calendrier si elle existe
         if (dayData.calendarDate && window.calendarManager) {
             console.log(`📅 Mise à jour de la date du calendrier depuis highlightDay: ${dayData.calendarDate}`);
-            
+
             // Parser la date du calendrier (format "15 Nórui")
             const dateParts = dayData.calendarDate.split(' ');
             if (dateParts.length >= 2) {
                 const dayNumber = dateParts[0];
                 const monthName = dateParts[1];
                 const parsedDay = parseInt(dayNumber);
-                
+
                 if (parsedDay && monthName && window.calendarManager.calendarData) {
                     const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
                     if (monthIndex >= 0) {
@@ -759,16 +759,16 @@ class VoyageManager {
                 console.warn(`⚠️ Format de date invalide: "${dayData.calendarDate}"`);
             }
         }
-        
+
         // Validation robuste des coordonnées
         if (!dayData.startCoordinates) {
             console.warn(`⚠️ Pas de coordonnées de départ pour le jour ${dayData.day}`);
             return;
         }
 
-        if (typeof dayData.startCoordinates.x !== 'number' || 
+        if (typeof dayData.startCoordinates.x !== 'number' ||
             typeof dayData.startCoordinates.y !== 'number' ||
-            isNaN(dayData.startCoordinates.x) || 
+            isNaN(dayData.startCoordinates.x) ||
             isNaN(dayData.startCoordinates.y)) {
             console.error(`❌ Coordonnées invalides pour le jour ${dayData.day}:`, dayData.startCoordinates);
             return;
@@ -779,10 +779,10 @@ class VoyageManager {
             console.error(`❌ PositionManager non disponible`);
             return;
         }
-        
+
         // Déplacer le marqueur de position au début de cette journée
         console.log(`📍 Déplacement du marqueur vers le jour ${dayData.day}:`, dayData.startCoordinates);
-        
+
         try {
             window.positionManager.animateToPosition(
                 dayData.startCoordinates.x,
@@ -1206,11 +1206,11 @@ class VoyageManager {
                 e.stopPropagation();
                 const discoveryName = btn.dataset.discoveryName;
                 const discoveryType = btn.dataset.discoveryType;
-                
+
                 // Créer un objet dayData avec cette découverte spécifique
                 const dayData = this.dayByDayData[this.currentDayIndex];
                 const specificDiscovery = dayData.discoveries.find(d => d.name === discoveryName && d.type === discoveryType);
-                
+
                 if (specificDiscovery) {
                     // Créer un dayData temporaire avec uniquement cette découverte
                     const tempDayData = {
@@ -1226,20 +1226,20 @@ class VoyageManager {
     setupDayRandomEventButtons() {
         const dayRandomEventBtns = document.querySelectorAll('.day-random-event-btn');
         console.log(`🎲 Configuration de ${dayRandomEventBtns.length} boutons d'événements aléatoires`);
-        
+
         dayRandomEventBtns.forEach(btn => {
             // Retirer les anciens listeners
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
-            
+
             newBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('🎲 Bouton événement aléatoire du jour cliqué');
-                
+
                 const dayIndex = parseInt(newBtn.dataset.dayIndex);
                 console.log(`🎲 Index du jour: ${dayIndex}`);
-                
+
                 if (this.dayByDayData && this.dayByDayData[dayIndex]) {
                     this.triggerRandomEvent(this.dayByDayData[dayIndex]);
                 } else {
@@ -2360,20 +2360,20 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         // Déterminer le numéro du jour concerné
         const dayNumber = dayData.day;
-        
+
         // Stocker l'événement complet pour ce jour (avec Dé du destin, Résultat et Description)
         const eventText = `
             <div class="mb-2"><strong>Dé du destin :</strong> ${randomEvent['Dé du destin'] || '-'}</div>
             <div class="mb-2"><strong>Résultat :</strong> ${randomEvent['Résultat'] || '-'}</div>
             ${randomEvent['Description'] ? `<div><strong>Description :</strong> ${randomEvent['Description']}</div>` : ''}
         `;
-        
+
         this.randomEvents[dayNumber] = eventText;
         console.log(`📖 Événement aléatoire généré pour le jour ${dayNumber}:`, this.randomEvents[dayNumber]);
 
         // Rafraîchir l'affichage de la modale pour montrer le nouvel événement
         this.renderAllDays();
-        
+
         // Faire défiler jusqu'à la carte du jour concerné
         setTimeout(() => {
             const dayCard = document.querySelector(`.day-card[data-day-index="${dayNumber - 1}"]`);

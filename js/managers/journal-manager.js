@@ -302,9 +302,11 @@ class JournalManager {
             }
         };
 
-        // Attacher le listener avec event delegation
+        // IMPORTANT: Attacher le listener au conteneur APRÈS l'avoir créé
         voyageDaysContent.addEventListener('click', dayHeaderClickListener);
         voyageDaysContent._dayHeaderClickListener = dayHeaderClickListener;
+        
+        console.log('✅ Event delegation configurée pour les en-têtes de jour');
 
         // Ajouter le curseur pointer via CSS
         const style = document.createElement('style');
