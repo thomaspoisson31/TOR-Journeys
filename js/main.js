@@ -2734,6 +2734,9 @@ function scheduleAutoSync() {
 // Exposer les fonctions nécessaires globalement
 window.scheduleAutoSync = scheduleAutoSync;
 
+// Exposer voyageManager globalement pour accès dans les onclick
+window.voyageManager = voyageManager;
+
 // Fonctions utilitaires pour la compatibilité avec l'ancien code
 window.updateDistanceDisplay = function() {
     if (pathManager) {

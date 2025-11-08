@@ -703,6 +703,28 @@ class VoyageManager {
 
         const dayData = this.dayByDayData[dayIndex];
         
+        // Mettre à jour la date du calendrier si elle existe
+        if (dayData.calendarDate && window.calendarManager) {
+            console.log(`📅 Mise à jour de la date du calendrier depuis highlightDay: ${dayData.calendarDate}`);
+            
+            // Parser la date du calendrier (format "15 Nórui")
+            const [dayNumber, monthName] = dayData.calendarDate.split(' ');
+            const parsedDay = parseInt(dayNumber);
+            
+            if (parsedDay && monthName && window.calendarManager.calendarData) {
+                const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
+                if (monthIndex >= 0) {
+                    window.calendarManager.currentCalendarDate = {
+                        month: monthName,
+                        day: parsedDay
+                    };
+                    window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
+                    window.calendarManager.updateSeasonDisplay();
+                    window.calendarManager.saveCalendarToLocal();
+                }
+            }
+        }
+        
         // Déplacer le marqueur de position au début de cette journée
         if (dayData && dayData.startCoordinates && window.positionManager) {
             console.log(`📍 Déplacement du marqueur vers le jour ${dayData.day}:`, dayData.startCoordinates);
