@@ -712,22 +712,25 @@
         <div id="voyage-segments-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center p-4">
             <div class="bg-gray-900 border border-gray-700 rounded-lg shadow-xl flex flex-col ml-20" style="font-family: 'Merriweather', serif; width: 50%; height: 95%;">
                 <!-- Header avec date et bouton fermer -->
-                <div class="flex justify-between items-center p-4 border-b border-gray-700">
-                    <div class="flex items-center space-x-4">
-                        <h3 id="segment-title" class="text-xl font-bold text-white">17 Ninui</h3>
-                        <span id="day-counter" class="text-sm text-gray-400">(sur 9 jours de voyage)</span>
+                <div class="flex justify-between items-center p-4 border-b border-gray-300">
+                    <div class="flex-1">
+                        <h3 class="text-2xl font-bold" style="color: #940000;">Voyage de Point de départ à Point d'arrivée</h3>
+                        <p class="text-sm text-gray-600 mt-1">Généré le <span id="voyage-generated-date"></span> • <span id="voyage-total-days"></span> jours</p>
                     </div>
                     <div class="flex items-center space-x-3">
-                        <button id="describe-journey-header-btn" class="hidden w-8 h-8 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition-colors" title="Générer/Régénérer les descriptions">
-                            <span class="gemini-icon text-white text-lg">✨</span>
+                        <button id="describe-journey-header-btn" class="hidden px-3 py-1.5 bg-purple-600 hover:bg-purple-700 rounded-lg flex items-center space-x-2 text-white transition-colors" title="Générer/Régénérer les descriptions">
+                            <span class="gemini-icon">✨</span>
+                            <span class="text-sm">Descriptions</span>
                         </button>
-                        <button id="finish-journey-header-btn" class="hidden w-8 h-8 bg-green-600 hover:bg-green-700 rounded-full flex items-center justify-center transition-colors" title="Terminer le voyage">
-                            <i class="fas fa-flag-checkered text-white"></i>
+                        <button id="random-event-btn" class="hidden px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center space-x-2 text-white transition-colors" title="Générer un événement aléatoire">
+                            <i class="fas fa-dice"></i>
+                            <span class="text-sm">Événement</span>
                         </button>
-                        <button id="random-event-btn" class="hidden w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition-colors" title="Générer un événement aléatoire">
-                            <i class="fas fa-dice text-white"></i>
+                        <button id="finish-journey-header-btn" class="hidden px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded-lg flex items-center space-x-2 text-white transition-colors" title="Terminer le voyage">
+                            <i class="fas fa-flag-checkered"></i>
+                            <span class="text-sm">Terminer</span>
                         </button>
-                        <button id="close-voyage-segments" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+                        <button id="close-voyage-segments" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times fa-lg"></i></button>
                     </div>
                 </div>
 
