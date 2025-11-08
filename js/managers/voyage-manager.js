@@ -38,6 +38,7 @@ class VoyageManager {
         const closeBtn = this.dom.getElementById('close-voyage-segments');
         const describeBtn = this.dom.getElementById('describe-journey-header-btn');
         const finishBtn = this.dom.getElementById('finish-journey-header-btn');
+        const randomEventBtn = this.dom.getElementById('random-event-btn');
 
         if (voyageBtn) {
             voyageBtn.addEventListener('click', () => {
@@ -68,14 +69,40 @@ class VoyageManager {
         }
 
         if (describeBtn) {
-            describeBtn.addEventListener('click', () => {
+            describeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🎨 Bouton Descriptions cliqué');
                 this.generateJourneyDescription();
             });
         }
 
         if (finishBtn) {
-            finishBtn.addEventListener('click', () => {
+            finishBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🏁 Bouton Terminer cliqué');
                 this.finishJourney();
+            });
+        }
+
+        if (randomEventBtn) {
+            randomEventBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🎲 Bouton Événement aléatoire cliqué');
+                // Trouver le jour actuellement affiché
+                const allCards = document.querySelectorAll('.day-card');
+                let currentDayIndex = 0;
+                allCards.forEach((card, index) => {
+                    if (card.classList.contains('ring-2')) {
+                        currentDayIndex = index;
+                    }
+                });
+                
+                if (this.dayByDayData && this.dayByDayData[currentDayIndex]) {
+                    this.triggerRandomEvent(this.dayByDayData[currentDayIndex]);
+                }
             });
         }
     }
@@ -1106,14 +1133,25 @@ class VoyageManager {
 
     setupDayRandomEventButtons() {
         const dayRandomEventBtns = document.querySelectorAll('.day-random-event-btn');
+        console.log(`🎲 Configuration de ${dayRandomEventBtns.length} boutons d'événements aléatoires`);
+        
         dayRandomEventBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            // Retirer les anciens listeners
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                const dayIndex = parseInt(btn.dataset.dayIndex);
-                const dayData = this.dayByDayData[dayIndex];
+                console.log('🎲 Bouton événement aléatoire du jour cliqué');
                 
-                if (dayData) {
-                    this.triggerRandomEvent(dayData);
+                const dayIndex = parseInt(newBtn.dataset.dayIndex);
+                console.log(`🎲 Index du jour: ${dayIndex}`);
+                
+                if (this.dayByDayData && this.dayByDayData[dayIndex]) {
+                    this.triggerRandomEvent(this.dayByDayData[dayIndex]);
+                } else {
+                    console.warn(`⚠️ Données du jour ${dayIndex} non disponibles`);
                 }
             });
         });
