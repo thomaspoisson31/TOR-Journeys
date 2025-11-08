@@ -437,7 +437,62 @@ Principe de double stockage:
 PRINCIPES D'AFFICHAGE ET RENDERING
 ----------------------------------
 
-1. RENDERING ONGLETS RELATIONNELS (PERSONNAGES/LIEUX-RÉGIONS):
+1. DÉTECTION DES LIEUX ET RÉGIONS À PROXIMITÉ DU TRACÉ:
+   
+   Contexte:
+   - Lors du tracé d'un voyage, l'application doit détecter automatiquement les lieux et régions
+     proches ou traversés par le tracé
+   - Cette détection est essentielle pour générer les descriptions de voyage via Gemini
+   
+   Problématique résolue:
+   - Les lieux et régions n'étaient plus détectés après le refactoring du PathManager
+   - Cause: dataManager.locationsData et dataManager.regionsData n'étaient pas synchronisés
+     avec les variables globales window.locationsData et window.regionsData
+   
+   Solution finale:
+   a) Synchronisation avant détection (PathManager.detectDiscoveries):
+      - Appel systématique de dataManager.syncFromGlobalData() avant toute détection
+      - Garantit que le PathManager travaille avec les données les plus récentes
+      - Code: if (this.dataManager && typeof this.dataManager.syncFromGlobalData === 'function') {
+                  this.dataManager.syncFromGlobalData();
+              }
+   
+   b) Méthode de synchronisation (DataManager.syncFromGlobalData):
+      - Copie window.locationsData vers dataManager.locationsData
+      - Copie window.regionsData vers dataManager.regionsData
+      - Logs détaillés pour traçabilité: nombre de lieux/régions synchronisés
+   
+   c) Détection des lieux proches (PathManager.detectNearbyLocations):
+      - Seuil de proximité: 80 pixels
+      - Filtrage par mapId (seuls les lieux de la carte active)
+      - Calcul de distance minimale entre chaque lieu et tous les points du tracé
+      - Distinction "traversed" (≤20px) vs "nearby" (≤80px)
+      - Logs détaillés: statistiques de détection (ajoutés, ignorés par mapId, trop loin, etc.)
+   
+   d) Détection des régions traversées (PathManager.detectTraversedRegions):
+      - Algorithme "point in polygon" pour chaque point du tracé
+      - Filtrage par mapId (seules les régions de la carte active)
+      - Stockage des segments (entryIndex, exitIndex) pour chaque région
+      - Support du format legacy (region.points) et nouveau format (region.coordinates)
+      - Logs détaillés: nombre d'intersections, statistiques de traitement
+   
+   e) Variables globales pour compatibilité:
+      - window.journeyPath synchronisé avec PathManager.path
+      - window.journeyDiscoveries synchronisé avec PathManager.discoveries
+      - window.regionSegments synchronisé avec PathManager.regionSegments
+      - Mise à jour systématique après chaque modification
+   
+   Code concerné:
+   - path-manager.js: detectDiscoveries(), detectNearbyLocations(), detectTraversedRegions()
+   - data-manager.js: syncFromGlobalData()
+   
+   Règle impérative:
+   - TOUJOURS synchroniser dataManager depuis window avant détection
+   - NE JAMAIS supposer que dataManager.locationsData/regionsData sont à jour
+   - TOUJOURS vérifier l'existence des données avant traitement
+   - TOUJOURS filtrer par mapId pour respecter la carte active
+
+2. RENDERING ONGLETS RELATIONNELS (PERSONNAGES/LIEUX-RÉGIONS):
    
    Contexte:
    - Les onglets "Personnages" (pour lieux/régions) et "Lieux/Régions" (pour personnages)
@@ -605,7 +660,17 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Correction sauvegarde associations personnages (v1.3.5)
+1. Correction détection lieux/régions à proximité du tracé (v1.3.7)
+   - Fix détection des lieux et régions lors du tracé d'un voyage
+   - Problème: dataManager.locationsData/regionsData non synchronisés avec window.locationsData/regionsData
+   - Cause: PathManager utilisait des données obsolètes après chargement cloud
+   - Solution: Appel systématique de dataManager.syncFromGlobalData() avant detectDiscoveries()
+   - Impact: Les lieux et régions sont maintenant correctement détectés et apparaissent dans les descriptions Gemini
+   - Ajout de logs détaillés pour traçabilité (nombre de lieux/régions traités, ignorés, détectés)
+   - Fichiers concernés: path-manager.js (detectDiscoveries, detectNearbyLocations, detectTraversedRegions)
+   - Documentation ajoutée dans specs.txt (section PRINCIPES D'AFFICHAGE ET RENDERING)
+
+2. Correction sauvegarde associations personnages (v1.3.5)
    - Fix associations personnages non sauvegardées lors de l'édition d'un lieu/région
    - Problème: les checkboxes n'avaient ni attribut `name` ni `data-character-id`
    - Cause: génération HTML incorrecte dans renderPersonnagesTabEdit()
