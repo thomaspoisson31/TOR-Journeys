@@ -1283,8 +1283,35 @@ class VoyageManager {
     }
 
     openDiscoveryFromHeader(discoveryName, discoveryType) {
-        console.log(`🗺️ [VoyageManager] Ouverture depuis header pour ${discoveryType}: ${discoveryName}`);
-        this.openDiscoveryModal(discoveryName, discoveryType);
+        console.log(`📍 Ouverture de la découverte depuis le header: ${discoveryName} (${discoveryType})`);
+
+        // Récupérer les données de la découverte
+        let discoveryData = null;
+
+        if (discoveryType === 'location' && typeof locationsData !== 'undefined') {
+            discoveryData = locationsData.locations.find(loc => loc.name === discoveryName);
+        } else if (discoveryType === 'region' && typeof regionsData !== 'undefined') {
+            discoveryData = regionsData.regions.find(reg => reg.name === discoveryName);
+        }
+
+        if (!discoveryData) {
+            console.warn(`⚠️ Découverte non trouvée: ${discoveryName} (${discoveryType})`);
+            return;
+        }
+
+        // Ouvrir l'infobox avec ces données
+        if (window.infoBoxManager) {
+            // Créer un événement factice pour l'infobox
+            const fakeEvent = {
+                stopPropagation: () => {},
+                preventDefault: () => {}
+            };
+
+            window.infoBoxManager.showInfoBox(fakeEvent, discoveryData, discoveryType);
+            console.log(`✅ Infobox ouverte pour ${discoveryName}`);
+        } else {
+            console.warn(`⚠️ InfoBoxManager non disponible`);
+        }
     }
 
     openDiscoveryModal(discoveryName, discoveryType) {
