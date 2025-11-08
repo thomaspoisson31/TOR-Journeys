@@ -1957,14 +1957,14 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
 
     checkForRandomEvents(dayData) {
-        // Check if any discovery has random events in the original data
+        // Vérifier si les découvertes du jour ont des tables d'événements de voyage
         return dayData.discoveries.some(discovery => {
             if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
                 const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                return location && location.Evenements_Voyage && location.Evenements_Voyage.length > 0;
+                return location && location.Evenements_Voyage && Array.isArray(location.Evenements_Voyage) && location.Evenements_Voyage.length > 0;
             } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
                 const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                return region && region.Evenements_Voyage && region.Evenements_Voyage.length > 0;
+                return region && region.Evenements_Voyage && Array.isArray(region.Evenements_Voyage) && region.Evenements_Voyage.length > 0;
             }
             return false;
         });
