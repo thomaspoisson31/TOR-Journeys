@@ -641,7 +641,7 @@ class VoyageManager {
         if (randomEvent) {
             contentHtml += `
                 <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-3 mb-3">
-                    <div class="flex items-center text-xs text-yellow-700 mb-1">
+                    <div class="flex items-center text-xs text-yellow-700 mb-2">
                         <i class="fas fa-dice mr-1"></i>
                         <span class="font-semibold">Événement aléatoire</span>
                     </div>
@@ -2252,7 +2252,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 const location = locationsData.locations.find(loc => loc.name === discovery.name);
                 return location && location.Evenements_Voyage && location.Evenements_Voyage.length > 0;
             } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
-                const region = regionsData.regions.find(reg => reg.name === selectedDiscovery.name);
+                const region = regionsData.regions.find(reg => reg.name === discovery.name);
                 return region && region.Evenements_Voyage && region.Evenements_Voyage.length > 0;
             }
             return false;
@@ -2283,8 +2283,14 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         // Déterminer le numéro du jour concerné
         const dayNumber = dayData.day;
         
-        // Stocker l'événement pour ce jour
-        this.randomEvents[dayNumber] = randomEvent['Résultat'] || '';
+        // Stocker l'événement complet pour ce jour (avec Dé du destin, Résultat et Description)
+        const eventText = `
+            <div class="mb-2"><strong>Dé du destin :</strong> ${randomEvent['Dé du destin'] || '-'}</div>
+            <div class="mb-2"><strong>Résultat :</strong> ${randomEvent['Résultat'] || '-'}</div>
+            ${randomEvent['Description'] ? `<div><strong>Description :</strong> ${randomEvent['Description']}</div>` : ''}
+        `;
+        
+        this.randomEvents[dayNumber] = eventText;
         console.log(`📖 Événement aléatoire généré pour le jour ${dayNumber}:`, this.randomEvents[dayNumber]);
 
         // Rafraîchir l'affichage de la modale pour montrer le nouvel événement
