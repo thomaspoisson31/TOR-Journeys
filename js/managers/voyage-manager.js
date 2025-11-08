@@ -465,22 +465,6 @@ class VoyageManager {
                 weatherTooltip = weatherData.weather || '';
             }
             
-            // Symbole de saison
-            let seasonSymbol = '🌱';
-            if (window.calendarManager && window.calendarData && this.journeyStartDate) {
-                let monthIndex = this.journeyStartDate.monthIndex;
-                let calendarDay = this.journeyStartDate.day + dayNumber - 1;
-
-                while (calendarDay > window.calendarData[monthIndex].days.length) {
-                    calendarDay -= window.calendarData[monthIndex].days.length;
-                    monthIndex = (monthIndex + 1) % window.calendarData.length;
-                }
-
-                const monthSeason = window.calendarData[monthIndex].season.toLowerCase();
-                const seasonMainName = monthSeason ? monthSeason.split('-')[0] : 'printemps';
-                seasonSymbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
-            }
-
             // Carte du jour avec en-tête cliquable
             allDaysHtml += `
                 <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden" data-day-index="${i}">
@@ -490,7 +474,6 @@ class VoyageManager {
                                 <span class="text-lg font-bold" style="color: #940000;">Jour ${dayNumber}</span>
                                 <span class="text-sm text-gray-600">${calendarDate}</span>
                                 ${weatherSymbol ? `<span class="text-2xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
-                                <span class="text-xl">${seasonSymbol}</span>
                             </div>
                         </div>
                     </div>
@@ -509,15 +492,6 @@ class VoyageManager {
 
     renderDayContent(dayData, weatherData) {
         let contentHtml = '';
-
-        // Méteo du jour
-        if (weatherData && weatherData.weather) {
-            contentHtml += `
-                <div class="bg-blue-50 rounded-lg p-3 mb-3 text-sm">
-                    <span class="font-semibold text-blue-700">Météo :</span> ${weatherData.weather}
-                </div>
-            `;
-        }
 
         // Description du jour si elle existe
         const dayDescription = this.journeyDescriptions[dayData.day];
