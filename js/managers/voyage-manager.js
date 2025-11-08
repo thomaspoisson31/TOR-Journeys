@@ -652,7 +652,7 @@ class VoyageManager {
         // Attacher le listener au conteneur
         voyageDaysContent.addEventListener('click', dayHeaderClickListener);
         voyageDaysContent._dayHeaderClickListener = dayHeaderClickListener;
-        
+
         console.log('✅ Event delegation configurée pour les en-têtes de jour');
 
         // Setup event listeners pour les découvertes
@@ -1244,7 +1244,7 @@ class VoyageManager {
 
     setupDayRandomEventButtons() {
         const dayRandomEventBtns = document.querySelectorAll('.day-random-event-btn');
-        console.log(`🎲 Configuration de ${dayRandomEventBtns.length} boutons d'événements aléatoires`);
+        console.log(`🎲 Configuration de ${dayRandomEventBtns.length} boutons d\'événements aléatoires`);
 
         dayRandomEventBtns.forEach(btn => {
             // Retirer les anciens listeners
