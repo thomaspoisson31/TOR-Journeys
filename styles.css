@@ -1049,6 +1049,10 @@ body {
     background-color: #7a0000 !important;
 }
 
+#random-event-btn i {
+    color: white !important;
+}
+
 /* Défilement vertical uniquement pour le contenu de la modale de voyage */
 #current-segment-display {
     flex: 1;

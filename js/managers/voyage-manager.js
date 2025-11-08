@@ -1901,7 +1901,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         if (discovery.type === 'location') {
             // Chercher dans les données de lieux
             if (typeof window.locationsData !== 'undefined' && window.locationsData.locations) {
-                const location = window.locationsData.locations.find(loc => loc.name === discovery.name);
+                const location = locationsData.locations.find(loc => loc.name === discovery.name);
                 if (location && location.images && Array.isArray(location.images) && location.images.length > 0) {
                     // Prioriser l'image de type "vignette"
                     const thumbnailImg = location.images.find(img => img.type === 'vignette');
@@ -1924,7 +1924,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         } else if (discovery.type === 'region') {
             // Chercher dans les données de régions
             if (typeof window.regionsData !== 'undefined' && window.regionsData.regions) {
-                const region = window.regionsData.regions.find(reg => reg.name === discovery.name);
+                const region = regionsData.regions.find(reg => reg.name === discovery.name);
                 if (region && region.images && Array.isArray(region.images) && region.images.length > 0) {
                     // Prioriser l'image de type "vignette"
                     const thumbnailImg = region.images.find(img => img.type === 'vignette');
