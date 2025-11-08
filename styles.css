@@ -1040,6 +1040,15 @@ body {
     margin-left: 0 !important;
 }
 
+/* Style du bouton d'événement aléatoire */
+#random-event-btn {
+    background-color: #940000 !important;
+}
+
+#random-event-btn:hover {
+    background-color: #7a0000 !important;
+}
+
 /* Défilement vertical uniquement pour le contenu de la modale de voyage */
 #current-segment-display {
     flex: 1;
