@@ -1596,5 +1596,6 @@ body {
 }
 
 /* Voyage Segments Modal */
-        <div id="voyage-segments-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-10 flex items-center justify-center p-4">
-</div>
+#voyage-segments-modal {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
