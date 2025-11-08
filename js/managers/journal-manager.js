@@ -249,7 +249,9 @@ class JournalManager {
                             <i class="fas fa-dice mr-1"></i>
                             <span class="font-semibold">Événement aléatoire</span>
                         </div>
-                        <div class="text-sm text-gray-100 prose prose-sm max-w-none">${eventHtml}</div>
+                        <div class="text-sm prose prose-sm max-w-none" style="color: #f3f4f6 !important;">
+                            <div style="color: #f3f4f6 !important;">${eventHtml}</div>
+                        </div>
                     </div>
                 `;
             }
