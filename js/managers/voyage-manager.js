@@ -616,6 +616,16 @@ class VoyageManager {
                     actionText = 'découvert';
                 }
 
+                // Vérifier si cette découverte a des événements aléatoires
+                let hasRandomEvents = false;
+                if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
+                    const location = locationsData.locations.find(loc => loc.name === discovery.name);
+                    hasRandomEvents = location && location.Evenements_Voyage && Array.isArray(location.Evenements_Voyage) && location.Evenements_Voyage.length > 0;
+                } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
+                    const region = regionsData.regions.find(reg => reg.name === discovery.name);
+                    hasRandomEvents = region && region.Evenements_Voyage && Array.isArray(region.Evenements_Voyage) && region.Evenements_Voyage.length > 0;
+                }
+
                 // Obtenir l'image pour la miniature
                 const imageUrl = this._getDiscoveryImageForDisplay(discovery);
 
@@ -624,7 +634,10 @@ class VoyageManager {
                         <div class="w-[150px] h-[150px] mx-auto mb-2 rounded-lg overflow-hidden" style="background-color: white;">
                             ${imageUrl ? `<img src="${imageUrl}" alt="${discovery.name}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-400 text-sm">Aucune image</div>'}
                         </div>
-                        <div class="font-medium text-sm mb-1" style="color: black;">${discovery.name}</div>
+                        <div class="font-medium text-sm mb-1 flex items-center justify-center gap-1" style="color: black;">
+                            ${discovery.name}
+                            ${hasRandomEvents ? '<button class="random-event-icon-btn w-6 h-6 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="Événement aléatoire disponible" data-discovery-name="' + discovery.name + '" data-discovery-type="' + discovery.type + '"><i class="fas fa-dice text-white text-xs"></i></button>' : ''}
+                        </div>
                         <div class="text-xs" style="color: #666666;">${typeText} - ${actionText}</div>
                     </div>
                 `;
@@ -893,8 +906,35 @@ class VoyageManager {
             });
 
             // Clic - ouvrir la modal
-            item.addEventListener('click', () => {
+            item.addEventListener('click', (e) => {
+                // Ne pas ouvrir la modal si on clique sur l'icône de dé
+                if (e.target.closest('.random-event-icon-btn')) {
+                    return;
+                }
                 this.openDiscoveryModal(discoveryName, discoveryType);
+            });
+        });
+
+        // Gestionnaire pour les icônes de dé individuelles
+        const randomEventIconBtns = document.querySelectorAll('.random-event-icon-btn');
+        randomEventIconBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const discoveryName = btn.dataset.discoveryName;
+                const discoveryType = btn.dataset.discoveryType;
+                
+                // Créer un objet dayData avec cette découverte spécifique
+                const dayData = this.dayByDayData[this.currentDayIndex];
+                const specificDiscovery = dayData.discoveries.find(d => d.name === discoveryName && d.type === discoveryType);
+                
+                if (specificDiscovery) {
+                    // Créer un dayData temporaire avec uniquement cette découverte
+                    const tempDayData = {
+                        ...dayData,
+                        discoveries: [specificDiscovery]
+                    };
+                    this.triggerRandomEvent(tempDayData);
+                }
             });
         });
     }
