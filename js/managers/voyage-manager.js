@@ -636,6 +636,20 @@ class VoyageManager {
             `;
         }
 
+        // Événement aléatoire s'il existe pour ce jour
+        const randomEvent = this.randomEvents[dayData.day];
+        if (randomEvent) {
+            contentHtml += `
+                <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-3 mb-3">
+                    <div class="flex items-center text-xs text-yellow-700 mb-1">
+                        <i class="fas fa-dice mr-1"></i>
+                        <span class="font-semibold">Événement aléatoire</span>
+                    </div>
+                    <div class="text-sm text-gray-800">${randomEvent}</div>
+                </div>
+            `;
+        }
+
         // Découvertes
         if (dayData.discoveries.length === 0) {
             contentHtml += '<p class="text-gray-400 text-sm italic text-center py-2">Voyage tranquille...</p>';
@@ -1637,6 +1651,9 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 this.saveJourneyToJournal();
 
                 console.log('✅ Toutes les descriptions ont été parsées et sauvegardées');
+
+                // Rafraîchir l'affichage de la modale pour montrer les nouvelles descriptions
+                this.renderAllDays();
             } else {
                 console.error("❌ Format de réponse JSON inattendu:", journeyData);
                 alert("Erreur: Le format de la réponse de Gemini n'est pas celui attendu (objet avec clé 'descriptions').");
@@ -2235,7 +2252,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 const location = locationsData.locations.find(loc => loc.name === discovery.name);
                 return location && location.Evenements_Voyage && location.Evenements_Voyage.length > 0;
             } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
-                const region = regionsData.regions.find(reg => reg.name === discovery.name);
+                const region = regionsData.regions.find(reg => reg.name === selectedDiscovery.name);
                 return region && region.Evenements_Voyage && region.Evenements_Voyage.length > 0;
             }
             return false;
@@ -2243,6 +2260,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         if (possibleEventLocations.length === 0) {
             console.warn("Aucun événement aléatoire disponible pour ce jour.");
+            alert("Aucun événement aléatoire disponible pour ce jour.");
             return;
         }
 
@@ -2262,57 +2280,28 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         // Choose a random event from the selected location's events
         const randomEvent = eventsList[Math.floor(Math.random() * eventsList.length)];
 
-        // Stocker l'événement pour ce jour (index + 1 car les jours commencent à 1)
-        const currentDayNumber = this.currentDayIndex + 1;
-        this.randomEvents[currentDayNumber] = randomEvent['Résultat'] || '';
-        console.log(`📖 Événement aléatoire sauvegardé pour le jour ${currentDayNumber}:`, this.randomEvents[currentDayNumber]);
+        // Déterminer le numéro du jour concerné
+        const dayNumber = dayData.day;
+        
+        // Stocker l'événement pour ce jour
+        this.randomEvents[dayNumber] = randomEvent['Résultat'] || '';
+        console.log(`📖 Événement aléatoire généré pour le jour ${dayNumber}:`, this.randomEvents[dayNumber]);
 
-        // Format the event display similar to "Événement de voyage" in infobox
-        const eventHtml = `
-            <div id="random-event-display" class="bg-yellow-800 bg-opacity-30 rounded-lg p-4 mb-4" style="font-family: 'Merriweather', serif;">
-                <h4 class="text-lg font-bold mb-3 text-yellow-300" style="font-family: 'Merriweather', serif; font-size: 1.25rem;">
-                    <i class="fas fa-dice mr-2"></i>Événement aléatoire
-                </h4>
-                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
-                    <span class="font-semibold text-yellow-200">Dé du destin :</span>
-                    <span class="ml-2 text-white">${randomEvent['Dé du destin'] || '-'}</span>
-                </div>
-                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
-                    <span class="font-semibold text-yellow-200">Résultat :</span>
-                    <span class="ml-2 text-white">${randomEvent['Résultat'] || '-'}</span>
-                </div>
-                <div style="font-family: 'Merriweather', serif; font-size: 1rem;">
-                    <span class="font-semibold text-yellow-200">Description :</span>
-                    <p class="mt-1 text-gray-200 leading-relaxed">${randomEvent['Description'] || '-'}</p>
-                </div>
-            </div>
-        `;
-
-        // Check if there's already a random event displayed
-        const segmentContent = document.getElementById('segment-content');
-        const existingEvent = segmentContent.querySelector('#random-event-display');
-
-        if (existingEvent) {
-            // Replace the existing event
-            existingEvent.outerHTML = eventHtml;
-        } else {
-            // Insert the event display below the weather info
-            const weatherDiv = segmentContent.querySelector('.bg-blue-900');
-
-            if (weatherDiv) {
-                // Insert after the weather div
-                weatherDiv.insertAdjacentHTML('afterend', eventHtml);
-            } else {
-                // If no weather div, insert at the beginning of the content (after description if any)
-                const descriptionDiv = segmentContent.querySelector('.bg-gray-800');
-                if (descriptionDiv) {
-                    descriptionDiv.insertAdjacentHTML('afterend', eventHtml);
-                } else {
-                    // If no description either, insert at the very beginning
-                    segmentContent.insertAdjacentHTML('afterbegin', eventHtml);
-                }
+        // Rafraîchir l'affichage de la modale pour montrer le nouvel événement
+        this.renderAllDays();
+        
+        // Faire défiler jusqu'à la carte du jour concerné
+        setTimeout(() => {
+            const dayCard = document.querySelector(`.day-card[data-day-index="${dayNumber - 1}"]`);
+            if (dayCard) {
+                dayCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Ajouter temporairement un effet visuel
+                dayCard.classList.add('ring-2', 'ring-yellow-500');
+                setTimeout(() => {
+                    dayCard.classList.remove('ring-2', 'ring-yellow-500');
+                }, 2000);
             }
-        }
+        }, 100);
     }
 }
 
