@@ -860,10 +860,98 @@ PRINCIPES DE RENDERING DESCRIPTIONS VOYAGE
    - journal stocke l'historique complet de tous les voyages générés
    - Synchronisation bidirectionnelle: localStorage ↔ cloud
 
+PRINCIPES EVENT DELEGATION POUR ÉLÉMENTS DYNAMIQUES
+----------------------------------------------------
+
+1. PROBLÉMATIQUE:
+   - Les event listeners attachés via addEventListener sont perdus lorsque innerHTML remplace le DOM
+   - Les éléments générés dynamiquement (ex: cartes de jours de voyage) ne répondent pas aux clics
+   - Solution naïve: réattacher les listeners après chaque rendu → fragile et inefficace
+
+2. SOLUTION: EVENT DELEGATION
+   
+   Principe:
+   - Attacher UN SEUL listener sur le CONTENEUR PARENT (qui n'est jamais recréé)
+   - Utiliser event.target.closest() pour détecter l'élément cliqué
+   - Le listener capture les événements de tous les enfants (présents et futurs)
+   
+   Avantages:
+   - Fonctionne même après innerHTML (le parent reste intact)
+   - Plus performant (un seul listener au lieu de N)
+   - Code plus maintenable et robuste
+   - Support automatique des éléments ajoutés dynamiquement
+
+3. IMPLÉMENTATION TYPE:
+   
+   ```javascript
+   // ❌ MAUVAISE APPROCHE (listeners perdus après innerHTML)
+   document.querySelectorAll('.day-header').forEach(header => {
+       header.addEventListener('click', handleClick);
+   });
+   voyageDaysContent.innerHTML = newHTML; // Listeners perdus !
+   
+   // ✅ BONNE APPROCHE (event delegation)
+   const container = document.getElementById('voyage-days-content');
+   
+   // Nettoyer les anciens listeners
+   if (container._dayHeaderClickListener) {
+       container.removeEventListener('click', container._dayHeaderClickListener);
+   }
+   
+   // Créer et stocker le listener
+   const dayHeaderClickListener = (e) => {
+       const dayHeader = e.target.closest('.day-header');
+       if (!dayHeader) return;
+       
+       const dayCard = dayHeader.closest('.day-card');
+       const dayIndex = parseInt(dayCard.dataset.dayIndex);
+       
+       // Traitement...
+   };
+   
+   container.addEventListener('click', dayHeaderClickListener);
+   container._dayHeaderClickListener = dayHeaderClickListener;
+   ```
+
+4. VALIDATION ROBUSTE AVANT ACTIONS:
+   
+   Avant toute action suite à un clic (déplacer marqueur, changer date):
+   - Vérifier l'existence des données (dayData, coordinates)
+   - Valider les types (typeof === 'number', !isNaN())
+   - Logger les erreurs avec contexte détaillé
+   - Afficher des messages utilisateur si échec
+   - Ne jamais supposer que les données existent
+
+5. GESTION DU DOM APRÈS MODIFICATIONS:
+   
+   - Marquer visuellement l'élément actif (classe CSS, ring, highlight)
+   - Scroller vers l'élément si nécessaire (scrollIntoView)
+   - Mettre à jour les indicateurs globaux (date calendrier, position marqueur)
+   - Synchroniser avec localStorage et cloud
+
+6. CAS D'USAGE DANS L'APPLICATION:
+   
+   Fichiers concernés:
+   - voyage-manager.js: renderAllDays() avec event delegation sur .day-header
+   - journal-manager.js: openJourneyInVoyageModal() avec event delegation pour voyages archivés
+   
+   Éléments concernés:
+   - Cartes de jours (.day-card, .day-header)
+   - Boutons d'événements aléatoires (.day-random-event-btn)
+   - Éléments de découverte (.discovery-item)
+
 PROBLÈMES RÉSOLUS
 -----------------
 
-1. Descriptions voyage non sauvegardées dans le journal (v1.3.6):
+1. Clics sur en-têtes de jours non détectés (v1.3.8):
+   - Problème: Cliquer sur l'en-tête d'un jour (Jour X, date) ne déplaçait pas le marqueur ni ne changeait la date
+   - Cause: Event listeners attachés AVANT innerHTML, puis écrasés lors du rendu
+   - Impact: Navigation impossible dans le voyage, utilisateur bloqué
+   - Solution: Event delegation sur le conteneur parent + validation robuste des données
+   - Bénéfices: Fonctionne après tout rendu, plus performant, code plus maintenable
+   - Fichiers concernés: voyage-manager.js (renderAllDays), journal-manager.js (openJourneyInVoyageModal)
+
+2. Descriptions voyage non sauvegardées dans le journal (v1.3.6):
    - Problème: Les descriptions générées n'apparaissaient pas dans la modale Journal
    - Cause: saveJourneyToJournal() appelée deux fois mais la seconde écrasait sans les descriptions
    - Impact: Journal vide malgré génération réussie des descriptions
