@@ -216,55 +216,103 @@ class JournalManager {
 
         voyageDaysContent.innerHTML = daysHTML;
 
-        // Ajouter les event listeners sur chaque en-tête de jour
-        const dayHeaders = voyageDaysContent.querySelectorAll('.day-header');
-        dayHeaders.forEach((header, index) => {
-            header.style.cursor = 'pointer';
-            header.addEventListener('click', () => {
-                console.log(`📅 Clic sur jour ${index + 1}`);
-                
-                const day = journey.days[index];
-                if (!day) {
-                    console.warn(`⚠️ Données du jour ${index + 1} non disponibles`);
-                    return;
-                }
+        // Utiliser event delegation pour gérer les clics sur les en-têtes
+        // Retirer tout listener précédent pour éviter les doublons
+        const oldListener = voyageDaysContent._dayHeaderClickListener;
+        if (oldListener) {
+            voyageDaysContent.removeEventListener('click', oldListener);
+        }
 
-                // Mettre à jour la date du calendrier si elle existe
-                if (day.calendarDate && window.calendarManager) {
-                    console.log(`📅 Mise à jour de la date du calendrier: ${day.calendarDate}`);
-                    
-                    // Parser la date du calendrier (format "15 Nórui")
-                    const [dayNumber, monthName] = day.calendarDate.split(' ');
-                    const parsedDay = parseInt(dayNumber);
-                    
-                    if (parsedDay && monthName && window.calendarManager.calendarData) {
-                        const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                        if (monthIndex >= 0) {
-                            window.calendarManager.currentCalendarDate = {
-                                month: monthName,
-                                day: parsedDay
-                            };
-                            window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
-                            window.calendarManager.updateSeasonDisplay();
-                            window.calendarManager.saveCalendarToLocal();
-                        }
+        // Créer et stocker le nouveau listener
+        const dayHeaderClickListener = (e) => {
+            // Trouver l'en-tête de jour cliqué
+            const dayHeader = e.target.closest('.day-header');
+            if (!dayHeader) return;
+
+            const dayCard = dayHeader.closest('.day-card');
+            if (!dayCard) return;
+
+            const dayIndex = parseInt(dayCard.dataset.dayIndex);
+            if (isNaN(dayIndex)) {
+                console.warn('⚠️ Index de jour invalide');
+                return;
+            }
+
+            console.log(`📅 Clic sur jour ${dayIndex + 1} (event delegation)`);
+            
+            const day = journey.days[dayIndex];
+            if (!day) {
+                console.warn(`⚠️ Données du jour ${dayIndex + 1} non disponibles`);
+                return;
+            }
+
+            // Validation des coordonnées avant déplacement
+            if (!day.startCoordinates || 
+                typeof day.startCoordinates.x !== 'number' || 
+                typeof day.startCoordinates.y !== 'number') {
+                console.warn(`⚠️ Coordonnées invalides pour le jour ${day.dayNumber}:`, day.startCoordinates);
+                
+                // Message utilisateur si pas de coordonnées
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                notification.textContent = `Pas de coordonnées disponibles pour le jour ${day.dayNumber}`;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+                
+                return;
+            }
+
+            // Mettre à jour la date du calendrier si elle existe
+            if (day.calendarDate && window.calendarManager) {
+                console.log(`📅 Mise à jour de la date du calendrier: ${day.calendarDate}`);
+                
+                // Parser la date du calendrier (format "15 Nórui")
+                const [dayNumber, monthName] = day.calendarDate.split(' ');
+                const parsedDay = parseInt(dayNumber);
+                
+                if (parsedDay && monthName && window.calendarManager.calendarData) {
+                    const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
+                    if (monthIndex >= 0) {
+                        window.calendarManager.currentCalendarDate = {
+                            month: monthName,
+                            day: parsedDay
+                        };
+                        window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
+                        window.calendarManager.updateSeasonDisplay();
+                        window.calendarManager.saveCalendarToLocal();
                     }
                 }
+            }
 
-                // Déplacer le marqueur de position si les coordonnées existent
-                if (day.startCoordinates && window.positionManager) {
-                    console.log(`📍 Déplacement du marqueur vers le jour ${day.dayNumber}:`, day.startCoordinates);
-                    
+            // Déplacer le marqueur de position avec validation
+            if (window.positionManager) {
+                console.log(`📍 Déplacement du marqueur vers le jour ${day.dayNumber}:`, day.startCoordinates);
+                
+                try {
                     window.positionManager.animateToPosition(
                         day.startCoordinates.x,
                         day.startCoordinates.y,
                         800
                     );
-                } else {
-                    console.warn(`⚠️ Pas de coordonnées de début pour le jour ${day.dayNumber}`);
+                } catch (error) {
+                    console.error(`❌ Erreur lors du déplacement du marqueur:`, error);
                 }
-            });
-        });
+            } else {
+                console.warn(`⚠️ PositionManager non disponible`);
+            }
+        };
+
+        // Attacher le listener avec event delegation
+        voyageDaysContent.addEventListener('click', dayHeaderClickListener);
+        voyageDaysContent._dayHeaderClickListener = dayHeaderClickListener;
+
+        // Ajouter le curseur pointer via CSS
+        const style = document.createElement('style');
+        style.textContent = '.day-header { cursor: pointer; }';
+        if (!document.getElementById('journal-day-header-style')) {
+            style.id = 'journal-day-header-style';
+            document.head.appendChild(style);
+        }
 
         // Masquer les boutons d'actions (car c'est un voyage du passé)
         const describeBtn = document.getElementById('describe-journey-header-btn');

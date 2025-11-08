@@ -680,6 +680,14 @@ class VoyageManager {
     }
 
     highlightDay(dayIndex) {
+        console.log(`🎯 highlightDay appelé avec index: ${dayIndex}`);
+        
+        // Validation de l'index
+        if (typeof dayIndex !== 'number' || isNaN(dayIndex) || dayIndex < 0) {
+            console.error(`❌ Index de jour invalide: ${dayIndex}`);
+            return;
+        }
+
         // Retirer la surbrillance précédente
         const allCards = document.querySelectorAll('.day-card');
         allCards.forEach(card => {
@@ -693,49 +701,97 @@ class VoyageManager {
             
             // Scroller vers la carte du jour si elle n'est pas visible
             clickedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            console.warn(`⚠️ Carte du jour avec index ${dayIndex} non trouvée dans le DOM`);
         }
 
         // Vérifier que les données du jour existent
-        if (!this.dayByDayData || dayIndex >= this.dayByDayData.length) {
-            console.warn(`⚠️ Données du jour ${dayIndex} non disponibles`);
+        if (!this.dayByDayData || !Array.isArray(this.dayByDayData)) {
+            console.error(`❌ dayByDayData non disponible ou invalide`);
+            return;
+        }
+
+        if (dayIndex >= this.dayByDayData.length) {
+            console.warn(`⚠️ Index ${dayIndex} hors limites (total: ${this.dayByDayData.length} jours)`);
             return;
         }
 
         const dayData = this.dayByDayData[dayIndex];
+        
+        if (!dayData) {
+            console.error(`❌ Données du jour ${dayIndex} sont null ou undefined`);
+            return;
+        }
+
+        console.log(`✅ Données du jour ${dayData.day} trouvées:`, {
+            calendarDate: dayData.calendarDate,
+            hasStartCoordinates: !!dayData.startCoordinates,
+            startCoordinates: dayData.startCoordinates
+        });
         
         // Mettre à jour la date du calendrier si elle existe
         if (dayData.calendarDate && window.calendarManager) {
             console.log(`📅 Mise à jour de la date du calendrier depuis highlightDay: ${dayData.calendarDate}`);
             
             // Parser la date du calendrier (format "15 Nórui")
-            const [dayNumber, monthName] = dayData.calendarDate.split(' ');
-            const parsedDay = parseInt(dayNumber);
-            
-            if (parsedDay && monthName && window.calendarManager.calendarData) {
-                const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                if (monthIndex >= 0) {
-                    window.calendarManager.currentCalendarDate = {
-                        month: monthName,
-                        day: parsedDay
-                    };
-                    window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
-                    window.calendarManager.updateSeasonDisplay();
-                    window.calendarManager.saveCalendarToLocal();
+            const dateParts = dayData.calendarDate.split(' ');
+            if (dateParts.length >= 2) {
+                const dayNumber = dateParts[0];
+                const monthName = dateParts[1];
+                const parsedDay = parseInt(dayNumber);
+                
+                if (parsedDay && monthName && window.calendarManager.calendarData) {
+                    const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
+                    if (monthIndex >= 0) {
+                        window.calendarManager.currentCalendarDate = {
+                            month: monthName,
+                            day: parsedDay
+                        };
+                        window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
+                        window.calendarManager.updateSeasonDisplay();
+                        window.calendarManager.saveCalendarToLocal();
+                        console.log(`✅ Date du calendrier mise à jour: ${parsedDay} ${monthName}`);
+                    } else {
+                        console.warn(`⚠️ Mois "${monthName}" non trouvé dans calendarData`);
+                    }
                 }
+            } else {
+                console.warn(`⚠️ Format de date invalide: "${dayData.calendarDate}"`);
             }
         }
         
+        // Validation robuste des coordonnées
+        if (!dayData.startCoordinates) {
+            console.warn(`⚠️ Pas de coordonnées de départ pour le jour ${dayData.day}`);
+            return;
+        }
+
+        if (typeof dayData.startCoordinates.x !== 'number' || 
+            typeof dayData.startCoordinates.y !== 'number' ||
+            isNaN(dayData.startCoordinates.x) || 
+            isNaN(dayData.startCoordinates.y)) {
+            console.error(`❌ Coordonnées invalides pour le jour ${dayData.day}:`, dayData.startCoordinates);
+            return;
+        }
+
+        // Vérifier que PositionManager est disponible
+        if (!window.positionManager) {
+            console.error(`❌ PositionManager non disponible`);
+            return;
+        }
+        
         // Déplacer le marqueur de position au début de cette journée
-        if (dayData && dayData.startCoordinates && window.positionManager) {
-            console.log(`📍 Déplacement du marqueur vers le jour ${dayData.day}:`, dayData.startCoordinates);
-            
+        console.log(`📍 Déplacement du marqueur vers le jour ${dayData.day}:`, dayData.startCoordinates);
+        
+        try {
             window.positionManager.animateToPosition(
                 dayData.startCoordinates.x,
                 dayData.startCoordinates.y,
                 800
             );
-        } else {
-            console.warn(`⚠️ Pas de coordonnées de départ pour le jour ${dayIndex + 1}`);
+            console.log(`✅ Animation du marqueur lancée avec succès`);
+        } catch (error) {
+            console.error(`❌ Erreur lors de l'animation du marqueur:`, error);
         }
     }
 
