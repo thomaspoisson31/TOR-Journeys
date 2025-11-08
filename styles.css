@@ -973,6 +973,23 @@ body {
     font-family: 'Merriweather', serif !important;
 }
 
+/* Styles pour les cartes de jours */
+.day-card {
+    transition: all 0.2s ease;
+}
+
+.day-card.ring-2 {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.day-header {
+    transition: background-color 0.2s ease;
+}
+
+.discovery-item {
+    transition: all 0.2s ease;
+}
+
 .voyage-modal-white * {
     color: black !important;
     font-family: 'Merriweather', serif !important;

@@ -39,42 +39,26 @@ class VoyageManager {
 
         if (voyageBtn) {
             voyageBtn.addEventListener('click', () => {
-                this.dom.showModal(this.dom.voyageSegmentsModal);
-                // Appliquer le style fond blanc
-                const modalContent = this.dom.voyageSegmentsModal.querySelector('.bg-gray-900');
-                if (modalContent) {
-                    modalContent.classList.add('voyage-modal-white');
+                const modal = this.dom.getElementById('voyage-segments-modal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    this.centerMapOnJourney();
+                    this.updateDisplay();
                 }
-                // Centrer la carte sur le tracé du voyage
-                this.centerMapOnJourney();
-                this.updateDisplay();
             });
         }
 
         if (closeBtn) {
             closeBtn.addEventListener('click', () => {
-                this.dom.hideModal(this.dom.voyageSegmentsModal);
+                const modal = this.dom.getElementById('voyage-segments-modal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
                 // Restaurer l'opacité normale de la carte
                 const viewport = document.getElementById('viewport');
                 if (viewport) {
                     viewport.style.opacity = '1';
                 }
-            });
-        }
-
-        // Navigation buttons (now for day navigation)
-        const prevBtn = this.dom.getElementById('prev-segment-btn');
-        const nextBtn = this.dom.getElementById('next-segment-btn');
-
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                this.navigateToDay(this.currentDayIndex - 1);
-            });
-        }
-
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                this.navigateToDay(this.currentDayIndex + 1);
             });
         }
     }
@@ -87,23 +71,18 @@ class VoyageManager {
     }
 
     updateDisplay() {
-        const noVoyageMessage = this.dom.getElementById('no-voyage-message');
-        const currentSegmentDisplay = this.dom.getElementById('current-segment-display');
-
         // Utiliser les variables globales existantes
         if (typeof journeyPath === 'undefined' || journeyPath.length === 0) {
-            noVoyageMessage.classList.remove('hidden');
-            currentSegmentDisplay.classList.add('hidden');
-            // Nettoyer les descriptions s'il n'y a pas de tracé
-            this.clearDescriptions();
+            // Pas de voyage à afficher
+            const voyageDaysContent = this.dom.getElementById('voyage-days-content');
+            if (voyageDaysContent) {
+                voyageDaysContent.innerHTML = '<p class="text-center text-gray-500 py-12">Aucun voyage tracé</p>';
+            }
         } else {
-            noVoyageMessage.classList.add('hidden');
-            currentSegmentDisplay.classList.remove('hidden');
-            this.updateMapScale(); // Mettre à jour l'échelle avant de générer les données du voyage
+            this.updateMapScale();
             this.generateJourneyData();
-            // Charger les descriptions pour cette carte/tracé
             this.loadDescriptionsForMap();
-            this.renderCurrentDay();
+            this.renderAllDays();
         }
     }
 
@@ -464,51 +443,144 @@ class VoyageManager {
         return dayData || null;
     }
 
-    renderCurrentDay() {
-        const segmentTitle = this.dom.getElementById('segment-title');
-        const dayCounter = this.dom.getElementById('day-counter');
-        const segmentContent = this.dom.getElementById('segment-content');
-        const progressBar = this.dom.getElementById('voyage-progress-bar');
-        const voyageEndMessage = this.dom.getElementById('voyage-end-message');
-        const randomEventBtn = this.dom.getElementById('random-event-btn');
+    renderAllDays() {
+        const voyageDaysContent = this.dom.getElementById('voyage-days-content');
+        if (!voyageDaysContent) return;
 
-        if (this.currentDayIndex >= this.totalJourneyDays) {
-            voyageEndMessage.classList.remove('hidden');
-            segmentContent.innerHTML = '';
-            progressBar.classList.add('hidden');
-            if (randomEventBtn) randomEventBtn.classList.add('hidden');
-            return;
-        }
+        let allDaysHtml = '';
 
-        voyageEndMessage.classList.add('hidden');
-        progressBar.classList.remove('hidden');
-
-        const dayData = this.dayByDayData[this.currentDayIndex];
-        if (!dayData) return;
-
-        // Update header avec la méthode dédiée qui gère la saison
-        this.updateDayTitle(dayData);
-
-        // Vérifier s'il y a des événements aléatoires disponibles
-        const hasRandomEvents = this.checkForRandomEvents(dayData);
-        if (randomEventBtn) {
-            if (hasRandomEvents) {
-                randomEventBtn.classList.remove('hidden');
-                // Add click listener for random event button
-                randomEventBtn.addEventListener('click', () => this.triggerRandomEvent(dayData));
-            } else {
-                randomEventBtn.classList.add('hidden');
+        // Générer le HTML pour chaque jour
+        for (let i = 0; i < this.dayByDayData.length; i++) {
+            const dayData = this.dayByDayData[i];
+            const dayNumber = dayData.day;
+            const calendarDate = dayData.calendarDate;
+            
+            // Récupérer météo et saison
+            const weatherData = this.getWeatherForDay(dayNumber);
+            let weatherSymbol = '';
+            let weatherTooltip = '';
+            
+            if (weatherData && weatherData.symbol) {
+                weatherSymbol = weatherData.symbol;
+                weatherTooltip = weatherData.weather || '';
             }
+            
+            // Symbole de saison
+            let seasonSymbol = '🌱';
+            if (window.calendarManager && window.calendarData && this.journeyStartDate) {
+                let monthIndex = this.journeyStartDate.monthIndex;
+                let calendarDay = this.journeyStartDate.day + dayNumber - 1;
+
+                while (calendarDay > window.calendarData[monthIndex].days.length) {
+                    calendarDay -= window.calendarData[monthIndex].days.length;
+                    monthIndex = (monthIndex + 1) % window.calendarData.length;
+                }
+
+                const monthSeason = window.calendarData[monthIndex].season.toLowerCase();
+                const seasonMainName = monthSeason ? monthSeason.split('-')[0] : 'printemps';
+                seasonSymbol = window.calendarManager.seasonSymbols[seasonMainName] || '🌱';
+            }
+
+            // Carte du jour avec en-tête cliquable
+            allDaysHtml += `
+                <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden" data-day-index="${i}">
+                    <div class="day-header bg-gray-50 p-4 cursor-pointer hover:bg-gray-100 transition-colors" onclick="window.voyageManager.highlightDay(${i})">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg font-bold" style="color: #940000;">Jour ${dayNumber}</span>
+                                <span class="text-sm text-gray-600">${calendarDate}</span>
+                                ${weatherSymbol ? `<span class="text-2xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
+                                <span class="text-xl">${seasonSymbol}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="day-content p-4 bg-white">
+                        ${this.renderDayContent(dayData, weatherData)}
+                    </div>
+                </div>
+            `;
         }
 
-        // Update content
-        this.updateDayContent(dayData);
+        voyageDaysContent.innerHTML = allDaysHtml;
+        
+        // Setup event listeners pour les découvertes
+        this.setupDiscoveryInteractions();
+    }
 
-        // Update navigation buttons
-        this.updateNavigationButtons();
+    renderDayContent(dayData, weatherData) {
+        let contentHtml = '';
 
-        // Update progress bar
-        this.updateProgressBar();
+        // Méteo du jour
+        if (weatherData && weatherData.weather) {
+            contentHtml += `
+                <div class="bg-blue-50 rounded-lg p-3 mb-3 text-sm">
+                    <span class="font-semibold text-blue-700">Météo :</span> ${weatherData.weather}
+                </div>
+            `;
+        }
+
+        // Description du jour si elle existe
+        const dayDescription = this.journeyDescriptions[dayData.day];
+        if (dayDescription) {
+            contentHtml += `
+                <div class="bg-gray-50 rounded-lg p-3 mb-3">
+                    <div class="text-xs text-gray-500 mb-1">📖 Description :</div>
+                    <div class="text-sm text-gray-800 leading-relaxed">${dayDescription.replace(/\n/g, '<br>')}</div>
+                </div>
+            `;
+        }
+
+        // Découvertes
+        if (dayData.discoveries.length === 0) {
+            contentHtml += '<p class="text-gray-400 text-sm italic text-center py-2">Voyage tranquille...</p>';
+        } else {
+            contentHtml += '<div class="flex flex-wrap gap-2">';
+            
+            dayData.discoveries.forEach(discovery => {
+                const typeText = discovery.type === 'region' ? 'Région' : 'Lieu';
+                let actionText = discovery.type === 'region' ? 'traversée' : 'découvert';
+                
+                const imageUrl = this._getDiscoveryImageForDisplay(discovery);
+                
+                contentHtml += `
+                    <div class="discovery-item inline-flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}">
+                        ${imageUrl ? `<img src="${imageUrl}" alt="${discovery.name}" class="w-8 h-8 rounded object-cover">` : ''}
+                        <div class="text-sm">
+                            <div class="font-medium text-gray-800">${discovery.name}</div>
+                            <div class="text-xs text-gray-500">${typeText} - ${actionText}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            contentHtml += '</div>';
+        }
+
+        return contentHtml;
+    }
+
+    highlightDay(dayIndex) {
+        // Retirer la surbrillance précédente
+        const allCards = document.querySelectorAll('.day-card');
+        allCards.forEach(card => {
+            card.classList.remove('ring-2', 'ring-blue-500');
+        });
+
+        // Ajouter la surbrillance au jour cliqué
+        const clickedCard = document.querySelector(`.day-card[data-day-index="${dayIndex}"]`);
+        if (clickedCard) {
+            clickedCard.classList.add('ring-2', 'ring-blue-500');
+        }
+
+        // Déplacer le marqueur de position au début de cette journée
+        const dayData = this.dayByDayData[dayIndex];
+        if (dayData && dayData.startCoordinates && window.positionManager) {
+            window.positionManager.animateToPosition(
+                dayData.startCoordinates.x,
+                dayData.startCoordinates.y,
+                800
+            );
+        }
     }
 
     updateDayTitle(dayData) {
