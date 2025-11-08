@@ -85,7 +85,7 @@ class JournalManager {
         this.journalContent.classList.remove('hidden');
         this.journalEmpty.classList.add('hidden');
 
-        // Générer le HTML pour chaque voyage
+        // Générer le HTML pour chaque voyage (version simplifiée pour la liste)
         const journalHTML = this.journal.map((journey, journeyIndex) => {
             const generatedDate = new Date(journey.generatedAt);
             const formattedDate = generatedDate.toLocaleDateString('fr-FR', {
@@ -94,67 +94,20 @@ class JournalManager {
                 day: 'numeric'
             });
 
-            const daysHTML = journey.days.map(day => {
-                let dayContent = '';
-
-                // Trouver le premier lieu ou région de la journée
-                let firstDiscovery = null;
-                if (day.discoveries && day.discoveries.length > 0) {
-                    // Prioriser les lieux, sinon prendre la première région
-                    firstDiscovery = day.discoveries.find(d => d.type === 'location') || day.discoveries[0];
-                }
-
-                // Sous-titre avec jour, date, météo et première découverte
-                dayContent += `<h3 class="text-lg font-semibold text-gray-900 mt-4 mb-2">`;
-                dayContent += `Jour ${day.dayNumber} / ${journey.totalDays} - ${day.calendarDate}`;
-                if (day.weatherSymbol) {
-                    dayContent += ` ${day.weatherSymbol}`;
-                }
-                if (firstDiscovery) {
-                    dayContent += ` (${firstDiscovery.name})`;
-                }
-                dayContent += `</h3>`;
-
-                // Événement du jour (si présent)
-                if (day.eventResult) {
-                    dayContent += `<div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-3">`;
-                    dayContent += `<p class="text-sm text-gray-800"><strong>Événement :</strong> ${day.eventResult}</p>`;
-                    dayContent += `</div>`;
-                }
-
-                // Description du jour (si présente)
-                if (day.description) {
-                    dayContent += `<div class="text-gray-700 leading-relaxed mb-4">`;
-                    dayContent += day.description.replace(/\n/g, '<br>');
-                    dayContent += `</div>`;
-                }
-
-                return dayContent;
-            }).join('');
-
             return `
-                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-6">
-                    <div class="p-6 pb-4">
+                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.journalManager.openJourneyInVoyageModal(${journeyIndex})">
+                    <div class="p-4">
                         <div class="flex justify-between items-start">
-                            <div class="flex-1 cursor-pointer" onclick="window.journalManager.toggleJourney(${journeyIndex})">
-                                <div class="flex items-center">
-                                    <i id="journey-icon-${journeyIndex}" class="fas fa-chevron-right text-gray-500 mr-3 transition-transform"></i>
-                                    <div>
-                                        <h2 class="text-2xl font-bold text-gray-900 mb-1 hover:text-blue-600 transition-colors">${journey.title}</h2>
-                                        <p class="text-sm text-gray-500">Généré le ${formattedDate} • ${journey.totalDays} jours</p>
-                                    </div>
-                                </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-1" style="color: #940000;">${journey.title}</h3>
+                                <p class="text-sm text-gray-600">Généré le ${formattedDate} • ${journey.totalDays} jours</p>
                             </div>
-                            <button onclick="window.journalManager.deleteJourney(${journeyIndex})" 
-                                    class="text-red-500 hover:text-red-700 p-2 ml-4" 
+                            <button onclick="event.stopPropagation(); window.journalManager.deleteJourney(${journeyIndex})" 
+                                    class="text-red-500 hover:text-red-700 p-2" 
                                     title="Supprimer ce voyage">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
-                    </div>
-                    <div id="journey-content-${journeyIndex}" class="hidden px-6 pb-6">
-                        <hr class="border-gray-200 mb-4">
-                        ${daysHTML}
                     </div>
                 </div>
             `;
@@ -163,23 +116,115 @@ class JournalManager {
         this.journalContent.innerHTML = journalHTML;
     }
 
-    toggleJourney(journeyIndex) {
-        const content = document.getElementById(`journey-content-${journeyIndex}`);
-        const icon = document.getElementById(`journey-icon-${journeyIndex}`);
-        
-        if (!content || !icon) return;
-        
-        if (content.classList.contains('hidden')) {
-            // Expand
-            content.classList.remove('hidden');
-            icon.classList.remove('fa-chevron-right');
-            icon.classList.add('fa-chevron-down');
-        } else {
-            // Collapse
-            content.classList.add('hidden');
-            icon.classList.remove('fa-chevron-down');
-            icon.classList.add('fa-chevron-right');
+    openJourneyInVoyageModal(journeyIndex) {
+        const journey = this.journal[journeyIndex];
+        if (!journey) {
+            console.error("Voyage non trouvé:", journeyIndex);
+            return;
         }
+
+        // Fermer la modale du journal
+        this.closeJournal();
+
+        // Ouvrir la modale de voyage et afficher les données du journal
+        const voyageModal = document.getElementById('voyage-segments-modal');
+        const voyageDaysContent = document.getElementById('voyage-days-content');
+        const voyageTitle = voyageModal?.querySelector('h3');
+        const voyageSubtitle = voyageModal?.querySelector('p.text-sm');
+
+        if (!voyageModal || !voyageDaysContent) {
+            console.error("Modale de voyage non trouvée");
+            return;
+        }
+
+        // Mettre à jour le titre et sous-titre
+        if (voyageTitle) {
+            voyageTitle.textContent = journey.title;
+        }
+        if (voyageSubtitle) {
+            const generatedDate = new Date(journey.generatedAt);
+            const formattedDate = generatedDate.toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            voyageSubtitle.innerHTML = `Généré le ${formattedDate} • <span id="voyage-total-days">${journey.totalDays}</span> jours`;
+        }
+
+        // Générer le HTML des jours
+        const daysHTML = journey.days.map((day, index) => {
+            let contentHtml = '';
+
+            // Description du jour
+            if (day.description) {
+                contentHtml += `
+                    <div class="bg-gray-50 rounded-lg p-3 mb-3">
+                        <div class="text-xs text-gray-500 mb-1">📖 Description :</div>
+                        <div class="text-sm text-gray-800 leading-relaxed">${day.description.replace(/\n/g, '<br>')}</div>
+                    </div>
+                `;
+            }
+
+            // Événement aléatoire
+            if (day.eventResult) {
+                contentHtml += `
+                    <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-3 mb-3">
+                        <div class="flex items-center text-xs text-yellow-700 mb-2">
+                            <i class="fas fa-dice mr-1"></i>
+                            <span class="font-semibold">Événement aléatoire</span>
+                        </div>
+                        <div class="text-sm text-gray-800">${day.eventResult}</div>
+                    </div>
+                `;
+            }
+
+            // Découvertes
+            if (!day.discoveries || day.discoveries.length === 0) {
+                contentHtml += '<p class="text-gray-400 text-sm italic text-center py-2">Voyage tranquille...</p>';
+            } else {
+                contentHtml += '<div class="flex flex-wrap gap-2">';
+                day.discoveries.forEach(discovery => {
+                    const typeText = discovery.type === 'region' ? 'Région' : 'Lieu';
+                    contentHtml += `
+                        <div class="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
+                            <div class="text-sm">
+                                <div class="font-medium text-gray-800">${discovery.name}</div>
+                                <div class="text-xs text-gray-500">${typeText}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                contentHtml += '</div>';
+            }
+
+            return `
+                <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden" data-day-index="${index}">
+                    <div class="day-header bg-gray-50 p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-lg font-bold" style="color: #940000;">Jour ${day.dayNumber}</span>
+                                <span class="text-sm text-gray-600">${day.calendarDate}</span>
+                                ${day.weatherSymbol ? `<span class="text-2xl" title="${day.weatherText || ''}">${day.weatherSymbol}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="day-content p-4 bg-white">
+                        ${contentHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        voyageDaysContent.innerHTML = daysHTML;
+
+        // Masquer les boutons d'actions (car c'est un voyage du passé)
+        const describeBtn = document.getElementById('describe-journey-header-btn');
+        const finishBtn = document.getElementById('finish-journey-header-btn');
+        if (describeBtn) describeBtn.classList.add('hidden');
+        if (finishBtn) finishBtn.classList.add('hidden');
+
+        // Afficher la modale
+        voyageModal.classList.remove('hidden');
     }
 
     deleteJourney(index) {
