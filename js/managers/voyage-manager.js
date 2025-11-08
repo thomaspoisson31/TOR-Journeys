@@ -36,6 +36,8 @@ class VoyageManager {
         // Bouton principal des paramètres
         const voyageBtn = this.dom.getElementById('voyage-segments-btn');
         const closeBtn = this.dom.getElementById('close-voyage-segments');
+        const describeBtn = this.dom.getElementById('describe-journey-header-btn');
+        const finishBtn = this.dom.getElementById('finish-journey-header-btn');
 
         if (voyageBtn) {
             voyageBtn.addEventListener('click', () => {
@@ -62,6 +64,18 @@ class VoyageManager {
                 if (viewport) {
                     viewport.style.opacity = '1';
                 }
+            });
+        }
+
+        if (describeBtn) {
+            describeBtn.addEventListener('click', () => {
+                this.generateJourneyDescription();
+            });
+        }
+
+        if (finishBtn) {
+            finishBtn.addEventListener('click', () => {
+                this.finishJourney();
             });
         }
     }
@@ -533,6 +547,21 @@ class VoyageManager {
                 weatherTooltip = weatherData.weather || '';
             }
             
+            // Vérifier si ce jour a des événements aléatoires disponibles
+            let hasRandomEvents = false;
+            if (dayData.discoveries && dayData.discoveries.length > 0) {
+                hasRandomEvents = dayData.discoveries.some(discovery => {
+                    if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
+                        const location = locationsData.locations.find(loc => loc.name === discovery.name);
+                        return location && location.Evenements_Voyage && Array.isArray(location.Evenements_Voyage) && location.Evenements_Voyage.length > 0;
+                    } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
+                        const region = regionsData.regions.find(reg => reg.name === discovery.name);
+                        return region && region.Evenements_Voyage && Array.isArray(region.Evenements_Voyage) && region.Evenements_Voyage.length > 0;
+                    }
+                    return false;
+                });
+            }
+            
             // Carte du jour avec en-tête cliquable
             allDaysHtml += `
                 <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden" data-day-index="${i}">
@@ -543,6 +572,11 @@ class VoyageManager {
                                 <span class="text-sm text-gray-600">${calendarDate}</span>
                                 ${weatherSymbol ? `<span class="text-2xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
                             </div>
+                            ${hasRandomEvents ? `
+                                <button class="day-random-event-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="Événement aléatoire disponible" data-day-index="${i}">
+                                    <i class="fas fa-dice text-sm" style="color: white !important;"></i>
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                     <div class="day-content p-4 bg-white">
@@ -556,6 +590,9 @@ class VoyageManager {
         
         // Setup event listeners pour les découvertes
         this.setupDiscoveryInteractions();
+        
+        // Setup event listeners pour les boutons d'événements aléatoires
+        this.setupDayRandomEventButtons();
     }
 
     renderDayContent(dayData, weatherData) {
@@ -1062,6 +1099,21 @@ class VoyageManager {
                         discoveries: [specificDiscovery]
                     };
                     this.triggerRandomEvent(tempDayData);
+                }
+            });
+        });
+    }
+
+    setupDayRandomEventButtons() {
+        const dayRandomEventBtns = document.querySelectorAll('.day-random-event-btn');
+        dayRandomEventBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const dayIndex = parseInt(btn.dataset.dayIndex);
+                const dayData = this.dayByDayData[dayIndex];
+                
+                if (dayData) {
+                    this.triggerRandomEvent(dayData);
                 }
             });
         });
