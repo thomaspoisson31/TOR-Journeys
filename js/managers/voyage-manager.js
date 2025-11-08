@@ -593,7 +593,7 @@ class VoyageManager {
             const headerDiscoveries = dayData.discoveries.slice(0, 2);
             const discoveriesHtml = headerDiscoveries.map(discovery => {
                 const name = discovery.name.length > 15 ? discovery.name.substring(0, 12) + '...' : discovery.name;
-                return `<span class="text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}">${name}</span>`;
+                return `<span class="discovery-badge text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" onclick="event.stopPropagation(); window.voyageManager.openDiscoveryFromHeader('${discovery.name}', '${discovery.type}')">${name}</span>`;
             }).join('');
 
             // Carte du jour avec en-tête cliquable
@@ -1280,6 +1280,11 @@ class VoyageManager {
                 highlightDiscoveryOnMap(discoveryName, discoveryType, highlight);
             }
         }
+    }
+
+    openDiscoveryFromHeader(discoveryName, discoveryType) {
+        console.log(`🗺️ [VoyageManager] Ouverture depuis header pour ${discoveryType}: ${discoveryName}`);
+        this.openDiscoveryModal(discoveryName, discoveryType);
     }
 
     openDiscoveryModal(discoveryName, discoveryType) {

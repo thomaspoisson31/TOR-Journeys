@@ -1599,3 +1599,16 @@ body {
 #voyage-segments-modal {
     background-color: rgba(0, 0, 0, 0.1) !important;
 }
+
+/* Effet hover sur les découvertes dans le header des journées */
+.day-header .discovery-badge {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.day-header .discovery-badge:hover {
+    background-color: #3b82f6 !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
