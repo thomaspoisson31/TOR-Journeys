@@ -636,7 +636,7 @@ class VoyageManager {
                         </div>
                         <div class="font-medium text-sm mb-1 flex items-center justify-center gap-1" style="color: black;">
                             ${discovery.name}
-                            ${hasRandomEvents ? '<button class="random-event-icon-btn w-6 h-6 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="Événement aléatoire disponible" data-discovery-name="' + discovery.name + '" data-discovery-type="' + discovery.type + '"><i class="fas fa-dice text-white text-xs"></i></button>' : ''}
+                            ${hasRandomEvents ? '<button class="random-event-icon-btn w-6 h-6 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="Événement aléatoire disponible" data-discovery-name="' + discovery.name + '" data-discovery-type="' + discovery.type + '"><i class="fas fa-dice text-xs" style="color: white;"></i></button>' : ''}
                         </div>
                         <div class="text-xs" style="color: #666666;">${typeText} - ${actionText}</div>
                     </div>
