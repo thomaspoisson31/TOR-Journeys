@@ -615,6 +615,38 @@ class VoyageManager {
 
         voyageDaysContent.innerHTML = allDaysHtml;
 
+        // Utiliser event delegation pour gérer les clics sur les en-têtes
+        // Retirer tout listener précédent pour éviter les doublons
+        const oldListener = voyageDaysContent._dayHeaderClickListener;
+        if (oldListener) {
+            voyageDaysContent.removeEventListener('click', oldListener);
+        }
+
+        // Créer et stocker le nouveau listener
+        const dayHeaderClickListener = (e) => {
+            // Trouver l'en-tête de jour cliqué
+            const dayHeader = e.target.closest('.day-header');
+            if (!dayHeader) return;
+
+            const dayCard = dayHeader.closest('.day-card');
+            if (!dayCard) return;
+
+            const dayIndex = parseInt(dayCard.dataset.dayIndex);
+            if (isNaN(dayIndex)) {
+                console.warn('⚠️ Index de jour invalide');
+                return;
+            }
+
+            console.log(`📅 Clic sur en-tête du jour ${dayIndex + 1} (event delegation)`);
+            this.highlightDay(dayIndex);
+        };
+
+        // Attacher le listener au conteneur
+        voyageDaysContent.addEventListener('click', dayHeaderClickListener);
+        voyageDaysContent._dayHeaderClickListener = dayHeaderClickListener;
+        
+        console.log('✅ Event delegation configurée pour les en-têtes de jour');
+
         // Setup event listeners pour les découvertes
         this.setupDiscoveryInteractions();
 

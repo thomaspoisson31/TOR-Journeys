@@ -238,7 +238,7 @@ class JournalManager {
                 return;
             }
 
-            console.log(`📅 Clic sur jour ${dayIndex + 1} (event delegation)`);
+            console.log(`📅 Clic sur en-tête du jour ${dayIndex + 1} depuis le journal (event delegation)`);
             
             const day = journey.days[dayIndex];
             if (!day) {
@@ -262,31 +262,48 @@ class JournalManager {
                 return;
             }
 
+            // Surbrillance visuelle du jour cliqué
+            const allCards = voyageDaysContent.querySelectorAll('.day-card');
+            allCards.forEach(card => {
+                card.classList.remove('ring-2', 'ring-blue-500');
+            });
+            dayCard.classList.add('ring-2', 'ring-blue-500');
+            dayCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
             // Mettre à jour la date du calendrier si elle existe
             if (day.calendarDate && window.calendarManager) {
-                console.log(`📅 Mise à jour de la date du calendrier: ${day.calendarDate}`);
+                console.log(`📅 Mise à jour de la date du calendrier depuis le journal: ${day.calendarDate}`);
                 
                 // Parser la date du calendrier (format "15 Nórui")
-                const [dayNumber, monthName] = day.calendarDate.split(' ');
-                const parsedDay = parseInt(dayNumber);
-                
-                if (parsedDay && monthName && window.calendarManager.calendarData) {
-                    const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                    if (monthIndex >= 0) {
-                        window.calendarManager.currentCalendarDate = {
-                            month: monthName,
-                            day: parsedDay
-                        };
-                        window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
-                        window.calendarManager.updateSeasonDisplay();
-                        window.calendarManager.saveCalendarToLocal();
+                const dateParts = day.calendarDate.split(' ');
+                if (dateParts.length >= 2) {
+                    const dayNumber = dateParts[0];
+                    const monthName = dateParts[1];
+                    const parsedDay = parseInt(dayNumber);
+                    
+                    if (parsedDay && monthName && window.calendarManager.calendarData) {
+                        const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
+                        if (monthIndex >= 0) {
+                            window.calendarManager.currentCalendarDate = {
+                                month: monthName,
+                                day: parsedDay
+                            };
+                            window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
+                            window.calendarManager.updateSeasonDisplay();
+                            window.calendarManager.saveCalendarToLocal();
+                            console.log(`✅ Date du calendrier mise à jour: ${parsedDay} ${monthName}`);
+                        } else {
+                            console.warn(`⚠️ Mois "${monthName}" non trouvé dans calendarData`);
+                        }
                     }
+                } else {
+                    console.warn(`⚠️ Format de date invalide: "${day.calendarDate}"`);
                 }
             }
 
             // Déplacer le marqueur de position avec validation
             if (window.positionManager) {
-                console.log(`📍 Déplacement du marqueur vers le jour ${day.dayNumber}:`, day.startCoordinates);
+                console.log(`📍 Déplacement du marqueur depuis le journal vers le jour ${day.dayNumber}:`, day.startCoordinates);
                 
                 try {
                     window.positionManager.animateToPosition(
@@ -294,8 +311,9 @@ class JournalManager {
                         day.startCoordinates.y,
                         800
                     );
+                    console.log(`✅ Animation du marqueur lancée avec succès depuis le journal`);
                 } catch (error) {
-                    console.error(`❌ Erreur lors du déplacement du marqueur:`, error);
+                    console.error(`❌ Erreur lors du déplacement du marqueur depuis le journal:`, error);
                 }
             } else {
                 console.warn(`⚠️ PositionManager non disponible`);
