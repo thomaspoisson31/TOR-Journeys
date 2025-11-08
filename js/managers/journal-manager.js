@@ -1,4 +1,3 @@
-
 class JournalManager {
     constructor() {
         this.journal = [];
@@ -206,7 +205,7 @@ class JournalManager {
                                 <span class="text-sm text-gray-600">${day.calendarDate}</span>
                                 ${day.weatherSymbol ? `<span class="text-2xl" title="${day.weatherText || ''}">${day.weatherSymbol}</span>` : ''}
                             </div>
-                        </div>
+                            </div>
                     </div>
                     <div class="day-content p-4 bg-white">
                         ${contentHtml}
@@ -231,17 +230,17 @@ class JournalManager {
         if (confirm("Êtes-vous sûr de vouloir supprimer ce voyage du journal ?")) {
             this.journal.splice(index, 1);
             localStorage.setItem('travelJournal', JSON.stringify(this.journal));
-            
+
             // Marquer comme non sauvegardé
             if (typeof window.markAsUnsaved === 'function') {
                 window.markAsUnsaved();
             }
-            
+
             // Synchroniser avec le cloud si authentifié
             if (typeof window.scheduleAutoSync === 'function') {
                 window.scheduleAutoSync();
             }
-            
+
             this.renderJournal();
             console.log("📖 Voyage supprimé du journal");
         }
