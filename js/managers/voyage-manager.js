@@ -42,8 +42,11 @@ class VoyageManager {
                 const modal = this.dom.getElementById('voyage-segments-modal');
                 if (modal) {
                     modal.classList.remove('hidden');
-                    this.centerMapOnJourney();
                     this.updateDisplay();
+                    // Centrer la carte sur le voyage après un court délai pour que la modale soit affichée
+                    setTimeout(() => {
+                        this.centerMapOnJourney();
+                    }, 100);
                 }
             });
         }
@@ -61,6 +64,71 @@ class VoyageManager {
                 }
             });
         }
+    }
+
+    centerMapOnJourney() {
+        // Vérifier qu'il y a un tracé
+        if (!window.journeyPath || window.journeyPath.length === 0) {
+            console.log("⚠️ Pas de tracé de voyage à centrer");
+            return;
+        }
+
+        const viewport = document.getElementById('viewport');
+        const mapContainer = document.getElementById('map-container');
+        if (!viewport || !mapContainer) return;
+
+        // Calculer les limites du tracé
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+
+        window.journeyPath.forEach(point => {
+            minX = Math.min(minX, point.x);
+            maxX = Math.max(maxX, point.x);
+            minY = Math.min(minY, point.y);
+            maxY = Math.max(maxY, point.y);
+        });
+
+        // Ajouter une marge de 10%
+        const marginX = (maxX - minX) * 0.1;
+        const marginY = (maxY - minY) * 0.1;
+        minX -= marginX;
+        maxX += marginX;
+        minY -= marginY;
+        maxY += marginY;
+
+        // Calculer le centre du tracé
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
+
+        // Calculer le zoom nécessaire pour faire rentrer le tracé
+        const viewportWidth = viewport.clientWidth;
+        const viewportHeight = viewport.clientHeight;
+        const pathWidth = maxX - minX;
+        const pathHeight = maxY - minY;
+
+        const scaleX = viewportWidth / pathWidth;
+        const scaleY = viewportHeight / pathHeight;
+        const newScale = Math.min(scaleX, scaleY) * 0.9; // 90% pour laisser de la marge
+
+        // Appliquer le zoom et le centrage
+        window.scale = Math.max(0.1, Math.min(4.0, newScale));
+        window.panX = viewportWidth / 2 - centerX * window.scale;
+        window.panY = viewportHeight / 2 - centerY * window.scale;
+
+        // Mettre à jour la transformation
+        mapContainer.style.transform = `translate(${window.panX}px, ${window.panY}px) scale(${window.scale})`;
+
+        // Mettre à jour le ZoomManager
+        if (window.zoomManager) {
+            window.zoomManager.updateDisplay();
+        }
+
+        // Mettre à jour la taille du marqueur de position
+        if (window.positionManager) {
+            window.positionManager.updateMarkerSize();
+        }
+
+        console.log(`🗺️ Carte centrée sur le voyage - zoom: ${(window.scale * 100).toFixed(0)}%`);
     }
 
     setupDrawingListeners() {
@@ -544,16 +612,30 @@ class VoyageManager {
         const clickedCard = document.querySelector(`.day-card[data-day-index="${dayIndex}"]`);
         if (clickedCard) {
             clickedCard.classList.add('ring-2', 'ring-blue-500');
+            
+            // Scroller vers la carte du jour si elle n'est pas visible
+            clickedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        // Déplacer le marqueur de position au début de cette journée
+        // Vérifier que les données du jour existent
+        if (!this.dayByDayData || dayIndex >= this.dayByDayData.length) {
+            console.warn(`⚠️ Données du jour ${dayIndex} non disponibles`);
+            return;
+        }
+
         const dayData = this.dayByDayData[dayIndex];
+        
+        // Déplacer le marqueur de position au début de cette journée
         if (dayData && dayData.startCoordinates && window.positionManager) {
+            console.log(`📍 Déplacement du marqueur vers le jour ${dayData.day}:`, dayData.startCoordinates);
+            
             window.positionManager.animateToPosition(
                 dayData.startCoordinates.x,
                 dayData.startCoordinates.y,
                 800
             );
+        } else {
+            console.warn(`⚠️ Pas de coordonnées de départ pour le jour ${dayIndex + 1}`);
         }
     }
 
