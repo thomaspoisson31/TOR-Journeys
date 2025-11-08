@@ -588,12 +588,23 @@ class AdventureManager {
             }
 
             html += '</div>';
+            
+            // Ajouter les boutons d'action
+            html += `
+                <div class="flex justify-end space-x-2 mt-3 pt-3 border-t border-gray-600">
+                    <button onclick="window.adventureManager.addResultToJournal(${tableIndex}, ${JSON.stringify(entry).replace(/"/g, '&quot;')}, '${table.name.replace(/'/g, "\\'")}'); event.stopPropagation();" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs flex items-center space-x-1" title="Ajouter au journal">
+                        <i class="fas fa-book"></i>
+                        <span>Journal</span>
+                    </button>
+                    <button onclick="window.adventureManager.clearTableResult(${tableIndex}); event.stopPropagation();" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs flex items-center space-x-1" title="Annuler">
+                        <i class="fas fa-times"></i>
+                        <span>Annuler</span>
+                    </button>
+                </div>
+            `;
+            
             resultContent.innerHTML = html;
             resultContainer.classList.remove('hidden');
-
-            setTimeout(() => {
-                resultContainer.classList.add('hidden');
-            }, 10000);
         }
     }
 
@@ -745,6 +756,7 @@ class AdventureManager {
 
         if (resultContainer && resultContent) {
             let html = '<div class="space-y-3">';
+            let allResults = [];
 
             compositeTable.tables.forEach(tableRef => {
                 const table = this.adventureData.randomTables[tableRef.tableIndex];
@@ -752,6 +764,11 @@ class AdventureManager {
 
                 const randomIndex = Math.floor(Math.random() * table.entries.length);
                 const entry = table.entries[randomIndex];
+
+                allResults.push({
+                    tableName: table.name,
+                    entry: entry
+                });
 
                 html += `
                     <div class="bg-gray-800 p-2 rounded">
@@ -775,12 +792,23 @@ class AdventureManager {
             });
 
             html += '</div>';
+            
+            // Ajouter les boutons d'action
+            html += `
+                <div class="flex justify-end space-x-2 mt-3 pt-3 border-t border-gray-600">
+                    <button onclick="window.adventureManager.addCompositeResultToJournal(${compositeIndex}, ${JSON.stringify(allResults).replace(/"/g, '&quot;')}, '${compositeTable.name.replace(/'/g, "\\'")}'); event.stopPropagation();" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs flex items-center space-x-1" title="Ajouter au journal">
+                        <i class="fas fa-book"></i>
+                        <span>Journal</span>
+                    </button>
+                    <button onclick="window.adventureManager.clearCompositeResult(${compositeIndex}); event.stopPropagation();" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs flex items-center space-x-1" title="Annuler">
+                        <i class="fas fa-times"></i>
+                        <span>Annuler</span>
+                    </button>
+                </div>
+            `;
+            
             resultContent.innerHTML = html;
             resultContainer.classList.remove('hidden');
-
-            setTimeout(() => {
-                resultContainer.classList.add('hidden');
-            }, 15000);
         }
     }
 
@@ -790,6 +818,141 @@ class AdventureManager {
             this.saveToLocalStorage();
             this.renderRandomTablesTab();
         }
+    }
+
+    clearTableResult(tableIndex) {
+        const resultContainer = document.getElementById(`table-result-${tableIndex}`);
+        if (resultContainer) {
+            resultContainer.classList.add('hidden');
+        }
+    }
+
+    clearCompositeResult(compositeIndex) {
+        const resultContainer = document.getElementById(`composite-result-${compositeIndex}`);
+        if (resultContainer) {
+            resultContainer.classList.add('hidden');
+        }
+    }
+
+    addResultToJournal(tableIndex, entry, tableName) {
+        // Récupérer la date du calendrier
+        let dateStr = '';
+        if (window.calendarManager && window.calendarManager.isCalendarMode && window.calendarManager.currentCalendarDate) {
+            dateStr = `${window.calendarManager.currentCalendarDate.day} ${window.calendarManager.currentCalendarDate.month}`;
+        } else {
+            dateStr = new Date().toLocaleDateString('fr-FR');
+        }
+
+        // Formater le contenu du tirage
+        let content = `**Table : ${tableName}**\n\n`;
+        for (const [key, value] of Object.entries(entry)) {
+            content += `**${key}:** ${value}\n`;
+        }
+
+        // Ajouter au journal
+        if (window.journalManager) {
+            // Charger le journal existant
+            window.journalManager.loadJournal();
+            
+            // Créer une nouvelle entrée
+            const newEntry = {
+                title: `Tirage - ${tableName}`,
+                totalDays: 1,
+                generatedAt: new Date().toISOString(),
+                days: [{
+                    dayNumber: 1,
+                    calendarDate: dateStr,
+                    weatherSymbol: null,
+                    discoveries: [],
+                    description: content,
+                    eventResult: null,
+                    startCoordinates: null
+                }]
+            };
+            
+            window.journalManager.journal.unshift(newEntry);
+            localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
+            
+            // Marquer comme non sauvegardé
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+            
+            console.log('✅ Résultat ajouté au journal');
+            
+            // Notification visuelle
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            notification.innerHTML = '<i class="fas fa-check mr-2"></i>Ajouté au journal';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+        
+        // Effacer le résultat
+        this.clearTableResult(tableIndex);
+    }
+
+    addCompositeResultToJournal(compositeIndex, allResults, tableName) {
+        // Récupérer la date du calendrier
+        let dateStr = '';
+        if (window.calendarManager && window.calendarManager.isCalendarMode && window.calendarManager.currentCalendarDate) {
+            dateStr = `${window.calendarManager.currentCalendarDate.day} ${window.calendarManager.currentCalendarDate.month}`;
+        } else {
+            dateStr = new Date().toLocaleDateString('fr-FR');
+        }
+
+        // Formater le contenu du tirage composite
+        let content = `**Table composite : ${tableName}**\n\n`;
+        
+        allResults.forEach(result => {
+            content += `**${result.tableName}:**\n`;
+            for (const [key, value] of Object.entries(result.entry)) {
+                content += `- **${key}:** ${value}\n`;
+            }
+            content += '\n';
+        });
+
+        // Ajouter au journal
+        if (window.journalManager) {
+            // Charger le journal existant
+            window.journalManager.loadJournal();
+            
+            // Créer une nouvelle entrée
+            const newEntry = {
+                title: `Tirage composite - ${tableName}`,
+                totalDays: 1,
+                generatedAt: new Date().toISOString(),
+                days: [{
+                    dayNumber: 1,
+                    calendarDate: dateStr,
+                    weatherSymbol: null,
+                    discoveries: [],
+                    description: content,
+                    eventResult: null,
+                    startCoordinates: null
+                }]
+            };
+            
+            window.journalManager.journal.unshift(newEntry);
+            localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
+            
+            // Marquer comme non sauvegardé
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+            
+            console.log('✅ Résultat composite ajouté au journal');
+            
+            // Notification visuelle
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            notification.innerHTML = '<i class="fas fa-check mr-2"></i>Ajouté au journal';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+        
+        // Effacer le résultat
+        this.clearCompositeResult(compositeIndex);
     }
 
     getAllData() {
