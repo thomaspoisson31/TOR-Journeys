@@ -699,7 +699,8 @@ function initializeMap() {
     if (voyageManager) {
         console.log("🚀 Setting up VoyageManager...");
         voyageManager.init();
-        console.log("✅ VoyageManager setup complete");
+        window.voyageManager = voyageManager; // Exposer globalement pour les onclick
+        console.log("✅ VoyageManager setup complete and exposed globally");
     } else {
         console.error("❌ VoyageManager not initialized");
     }
