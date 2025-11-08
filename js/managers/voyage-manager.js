@@ -589,19 +589,27 @@ class VoyageManager {
                 });
             }
 
+            // Préparer les découvertes pour le header (max 2)
+            const headerDiscoveries = dayData.discoveries.slice(0, 2);
+            const discoveriesHtml = headerDiscoveries.map(discovery => {
+                const name = discovery.name.length > 15 ? discovery.name.substring(0, 12) + '...' : discovery.name;
+                return `<span class="text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}">${name}</span>`;
+            }).join('');
+
             // Carte du jour avec en-tête cliquable
             allDaysHtml += `
                 <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden" data-day-index="${i}">
-                    <div class="day-header bg-gray-50 p-4 cursor-pointer hover:bg-gray-100 transition-colors">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <span class="text-lg font-bold" style="color: #940000;">Jour ${dayNumber}</span>
-                                <span class="text-sm text-gray-600">${calendarDate}</span>
-                                ${weatherSymbol ? `<span class="text-2xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
+                    <div class="day-header bg-gray-50 p-3 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-base font-bold whitespace-nowrap" style="color: #940000;">Jour ${dayNumber}</span>
+                                <span class="text-xs text-gray-600 whitespace-nowrap">${calendarDate}</span>
+                                ${weatherSymbol ? `<span class="text-xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
+                                ${discoveriesHtml}
                             </div>
                             ${hasRandomEvents ? `
-                                <button class="day-random-event-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="Événement aléatoire disponible" data-day-index="${i}">
-                                    <i class="fas fa-dice text-sm" style="color: white !important;"></i>
+                                <button class="day-random-event-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors flex-shrink-0" style="background-color: #940000;" title="Événement aléatoire disponible" data-day-index="${i}">
+                                    <i class="fas fa-dice text-xs" style="color: white !important;"></i>
                                 </button>
                             ` : ''}
                         </div>
@@ -682,30 +690,9 @@ class VoyageManager {
             `;
         }
 
-        // Découvertes
-        if (dayData.discoveries.length === 0) {
+        // Message si pas de contenu
+        if (!dayDescription && !randomEvent) {
             contentHtml += '<p class="text-gray-400 text-sm italic text-center py-2">Voyage tranquille...</p>';
-        } else {
-            contentHtml += '<div class="flex flex-wrap gap-2">';
-
-            dayData.discoveries.forEach(discovery => {
-                const typeText = discovery.type === 'region' ? 'Région' : 'Lieu';
-                let actionText = discovery.type === 'region' ? 'traversée' : 'découvert';
-
-                const imageUrl = this._getDiscoveryImageForDisplay(discovery);
-
-                contentHtml += `
-                    <div class="discovery-item inline-flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}">
-                        ${imageUrl ? `<img src="${imageUrl}" alt="${discovery.name}" class="w-8 h-8 rounded object-cover">` : ''}
-                        <div class="text-sm">
-                            <div class="font-medium text-gray-800">${discovery.name}</div>
-                            <div class="text-xs text-gray-500">${typeText} - ${actionText}</div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            contentHtml += '</div>';
         }
 
         return contentHtml;

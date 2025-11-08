@@ -177,35 +177,30 @@ class JournalManager {
                 `;
             }
 
-            // Découvertes
-            if (!day.discoveries || day.discoveries.length === 0) {
+            // Message si pas de contenu
+            if (!day.description && !day.eventResult) {
                 contentHtml += '<p class="text-gray-400 text-sm italic text-center py-2">Voyage tranquille...</p>';
-            } else {
-                contentHtml += '<div class="flex flex-wrap gap-2">';
-                day.discoveries.forEach(discovery => {
-                    const typeText = discovery.type === 'region' ? 'Région' : 'Lieu';
-                    contentHtml += `
-                        <div class="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
-                            <div class="text-sm">
-                                <div class="font-medium text-gray-800">${discovery.name}</div>
-                                <div class="text-xs text-gray-500">${typeText}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-                contentHtml += '</div>';
             }
+
+            // Préparer les découvertes pour le header (max 2)
+            const discoveries = day.discoveries || [];
+            const headerDiscoveries = discoveries.slice(0, 2);
+            const discoveriesHtml = headerDiscoveries.map(discovery => {
+                const name = discovery.name.length > 15 ? discovery.name.substring(0, 12) + '...' : discovery.name;
+                return `<span class="text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}">${name}</span>`;
+            }).join('');
 
             return `
                 <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden" data-day-index="${index}">
-                    <div class="day-header bg-gray-50 p-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <span class="text-lg font-bold" style="color: #940000;">Jour ${day.dayNumber}</span>
-                                <span class="text-sm text-gray-600">${day.calendarDate}</span>
-                                ${day.weatherSymbol ? `<span class="text-2xl" title="${day.weatherText || ''}">${day.weatherSymbol}</span>` : ''}
+                    <div class="day-header bg-gray-50 p-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-base font-bold whitespace-nowrap" style="color: #940000;">Jour ${day.dayNumber}</span>
+                                <span class="text-xs text-gray-600 whitespace-nowrap">${day.calendarDate}</span>
+                                ${day.weatherSymbol ? `<span class="text-xl" title="${day.weatherText || ''}">${day.weatherSymbol}</span>` : ''}
+                                ${discoveriesHtml}
                             </div>
-                            </div>
+                        </div>
                     </div>
                     <div class="day-content p-4 bg-white">
                         ${contentHtml}
