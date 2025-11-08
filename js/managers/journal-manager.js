@@ -72,6 +72,31 @@ class JournalManager {
         }
     }
 
+    simpleMarkdown(text) {
+        if (!text) return '';
+
+        return text
+            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/^\- (.*$)/gim, '<li>$1</li>')
+            .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/^(.*)$/gim, function(match) {
+                if (match.startsWith('<h') || match.startsWith('<ul') || match.startsWith('<li') || match.startsWith('</')) {
+                    return match;
+                }
+                return match.trim() ? `<p>${match}</p>` : '';
+            })
+            .replace(/<p><\/p>/g, '')
+            .replace(/<p>(<h[1-6]>)/g, '$1')
+            .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
+            .replace(/<p>(<ul>)/g, '$1')
+            .replace(/(<\/ul>)<\/p>/g, '$1');
+    }
+
     renderJournal() {
         if (!this.journalContent || !this.journalEmpty) return;
 
@@ -86,12 +111,21 @@ class JournalManager {
 
         // Générer le HTML pour chaque voyage (version simplifiée pour la liste)
         const journalHTML = this.journal.map((journey, journeyIndex) => {
-            const generatedDate = new Date(journey.generatedAt);
-            const formattedDate = generatedDate.toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+            // Déterminer la date à afficher
+            let displayDate = '';
+            
+            // Si c'est un voyage avec des jours et une date calendrier
+            if (journey.days && journey.days.length > 0 && journey.days[0].calendarDate) {
+                displayDate = journey.days[0].calendarDate;
+            } else {
+                // Sinon utiliser la date de génération classique
+                const generatedDate = new Date(journey.generatedAt);
+                displayDate = generatedDate.toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
 
             return `
                 <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.journalManager.openJourneyInVoyageModal(${journeyIndex})">
@@ -99,7 +133,7 @@ class JournalManager {
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <h3 class="text-xl font-bold mb-1" style="color: #940000;">${journey.title}</h3>
-                                <p class="text-sm text-gray-600">Généré le ${formattedDate} • ${journey.totalDays} jours</p>
+                                <p class="text-sm text-gray-600">${displayDate} • ${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}</p>
                             </div>
                             <button onclick="event.stopPropagation(); window.journalManager.deleteJourney(${journeyIndex})" 
                                     class="text-red-500 hover:text-red-700 p-2" 
@@ -141,38 +175,50 @@ class JournalManager {
             voyageTitle.textContent = journey.title;
         }
         if (voyageSubtitle) {
-            const generatedDate = new Date(journey.generatedAt);
-            const formattedDate = generatedDate.toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            voyageSubtitle.innerHTML = `Généré le ${formattedDate} • <span id="voyage-total-days">${journey.totalDays}</span> jours`;
+            // Déterminer la date à afficher
+            let displayDate = '';
+            
+            // Si c'est un voyage avec des jours et une date calendrier
+            if (journey.days && journey.days.length > 0 && journey.days[0].calendarDate) {
+                displayDate = journey.days[0].calendarDate;
+            } else {
+                // Sinon utiliser la date de génération classique
+                const generatedDate = new Date(journey.generatedAt);
+                displayDate = generatedDate.toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+            
+            voyageSubtitle.innerHTML = `${displayDate} • <span id="voyage-total-days">${journey.totalDays}</span> jour${journey.totalDays > 1 ? 's' : ''}`;
         }
 
         // Générer le HTML des jours
         const daysHTML = journey.days.map((day, index) => {
             let contentHtml = '';
 
-            // Description du jour
+            // Description du jour avec rendu Markdown
             if (day.description) {
+                const descriptionHtml = this.simpleMarkdown(day.description);
                 contentHtml += `
                     <div class="bg-gray-50 rounded-lg p-3 mb-3">
                         <div class="text-xs text-gray-500 mb-1">📖 Description :</div>
-                        <div class="text-sm text-gray-800 leading-relaxed">${day.description.replace(/\n/g, '<br>')}</div>
+                        <div class="text-sm text-gray-800 leading-relaxed prose prose-sm max-w-none">${descriptionHtml}</div>
                     </div>
                 `;
             }
 
-            // Événement aléatoire
+            // Événement aléatoire avec rendu Markdown
             if (day.eventResult) {
+                const eventHtml = this.simpleMarkdown(day.eventResult);
                 contentHtml += `
                     <div class="bg-yellow-50 border border-yellow-300 rounded-lg p-3 mb-3">
                         <div class="flex items-center text-xs text-yellow-700 mb-2">
                             <i class="fas fa-dice mr-1"></i>
                             <span class="font-semibold">Événement aléatoire</span>
                         </div>
-                        <div class="text-sm text-gray-800">${day.eventResult}</div>
+                        <div class="text-sm text-gray-800 prose prose-sm max-w-none">${eventHtml}</div>
                     </div>
                 `;
             }
