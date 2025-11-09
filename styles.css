@@ -919,6 +919,13 @@ body {
     width: 20px;
     height: 20px;
     background: #3b82f6;
+
+/* Effet hover pour le bouton de prolongation */
+.extend-day-btn:hover {
+    background-color: #555555 !important;
+}
+
+
     border: 2px solid white;
     border-radius: 50%;
     cursor: grab;
@@ -1176,7 +1183,7 @@ body {
 
 .prose strong {
     font-weight: 700;
-    color: white;
+    color: black;
 }
 
 .prose em {

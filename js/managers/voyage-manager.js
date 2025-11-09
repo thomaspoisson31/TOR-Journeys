@@ -613,7 +613,7 @@ class VoyageManager {
                                         <i class="fas fa-dice text-xs" style="color: white !important;"></i>
                                     </button>
                                 ` : ''}
-                                <button class="extend-day-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #555555;" title="Prolonger d'une journée" data-day-index="${i}">
+                                <button class="extend-day-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #999999;" title="Prolonger d'une journée" data-day-index="${i}">
                                     <i class="fas fa-plus-circle text-xs" style="color: white !important;"></i>
                                 </button>
                             </div>
@@ -1326,7 +1326,7 @@ class VoyageManager {
 
         const sourceDayData = this.dayByDayData[dayIndex];
 
-        // Créer une nouvelle journée à J+1
+        // Créer une nouvelle journée à J+1 (SANS événement)
         const newDayData = {
             day: sourceDayData.day + 1,
             discoveries: [...sourceDayData.discoveries],
@@ -1344,12 +1344,13 @@ class VoyageManager {
         // Incrémenter le nombre total de jours
         this.totalJourneyDays += 1;
 
-        // Recalculer les numéros de jours et dates pour toutes les journées suivantes
+        // Recalculer les numéros de jours et dates pour toutes les journées suivantes (à partir de dayIndex + 2)
         this.recalculateDaysFromIndex(dayIndex + 2);
 
-        // Décaler les descriptions et événements
-        this.shiftDescriptionsFromIndex(dayIndex + 1);
-        this.shiftRandomEventsFromIndex(dayIndex + 1);
+        // Décaler les descriptions et événements SEULEMENT pour les jours APRÈS la nouvelle journée
+        // Important: dayIndex + 2 car la journée dayIndex garde sa description/événement
+        this.shiftDescriptionsFromIndex(dayIndex + 2);
+        this.shiftRandomEventsFromIndex(dayIndex + 2);
 
         // Sauvegarder les descriptions mises à jour
         this.saveDescriptionsForMap();
