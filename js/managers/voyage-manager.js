@@ -607,11 +607,16 @@ class VoyageManager {
                                 ${weatherSymbol ? `<span class="text-xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
                                 ${discoveriesHtml}
                             </div>
-                            ${hasRandomEvents ? `
-                                <button class="day-random-event-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors flex-shrink-0" style="background-color: #940000;" title="Événement aléatoire disponible" data-day-index="${i}">
-                                    <i class="fas fa-dice text-xs" style="color: white !important;"></i>
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                ${hasRandomEvents ? `
+                                    <button class="day-random-event-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="Événement aléatoire disponible" data-day-index="${i}">
+                                        <i class="fas fa-dice text-xs" style="color: white !important;"></i>
+                                    </button>
+                                ` : ''}
+                                <button class="extend-day-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #555555;" title="Prolonger d'une journée" data-day-index="${i}">
+                                    <i class="fas fa-plus-circle text-xs" style="color: white !important;"></i>
                                 </button>
-                            ` : ''}
+                            </div>
                         </div>
                     </div>
                     <div class="day-content p-4 bg-white">
@@ -660,6 +665,9 @@ class VoyageManager {
 
         // Setup event listeners pour les boutons d'événements aléatoires
         this.setupDayRandomEventButtons();
+
+        // Setup event listeners pour les boutons de prolongation
+        this.setupExtendDayButtons();
     }
 
     renderDayContent(dayData, weatherData) {
@@ -1268,6 +1276,32 @@ class VoyageManager {
         });
     }
 
+    setupExtendDayButtons() {
+        const extendDayBtns = document.querySelectorAll('.extend-day-btn');
+        console.log(`⏱️ Configuration de ${extendDayBtns.length} boutons de prolongation`);
+
+        extendDayBtns.forEach(btn => {
+            // Retirer les anciens listeners
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('⏱️ Bouton prolongation du jour cliqué');
+
+                const dayIndex = parseInt(newBtn.dataset.dayIndex);
+                console.log(`⏱️ Index du jour à prolonger: ${dayIndex}`);
+
+                if (this.dayByDayData && this.dayByDayData[dayIndex]) {
+                    this.extendDay(dayIndex);
+                } else {
+                    console.warn(`⚠️ Données du jour ${dayIndex} non disponibles`);
+                }
+            });
+        });
+    }
+
     highlightDiscoveryOnMap(discoveryName, discoveryType, highlight) {
         if (discoveryType === 'location') {
             // Utiliser la fonction globale pour les lieux
@@ -1280,6 +1314,116 @@ class VoyageManager {
                 highlightDiscoveryOnMap(discoveryName, discoveryType, highlight);
             }
         }
+    }
+
+    extendDay(dayIndex) {
+        console.log(`⏱️ Prolongation du jour ${dayIndex + 1}`);
+
+        if (!this.dayByDayData || dayIndex < 0 || dayIndex >= this.dayByDayData.length) {
+            console.error(`❌ Index invalide: ${dayIndex}`);
+            return;
+        }
+
+        const sourceDayData = this.dayByDayData[dayIndex];
+
+        // Créer une nouvelle journée à J+1
+        const newDayData = {
+            day: sourceDayData.day + 1,
+            discoveries: [...sourceDayData.discoveries],
+            calendarDate: this.getCalendarDateForDay(sourceDayData.day + 1),
+            startCoordinates: sourceDayData.startCoordinates ? { ...sourceDayData.startCoordinates } : null,
+            endCoordinates: sourceDayData.endCoordinates ? { ...sourceDayData.endCoordinates } : null
+        };
+
+        // Recalculer la météo pour la nouvelle journée
+        const newWeatherData = this.getWeatherForDay(newDayData.day);
+
+        // Insérer la nouvelle journée à dayIndex + 1
+        this.dayByDayData.splice(dayIndex + 1, 0, newDayData);
+
+        // Incrémenter le nombre total de jours
+        this.totalJourneyDays += 1;
+
+        // Recalculer les numéros de jours et dates pour toutes les journées suivantes
+        this.recalculateDaysFromIndex(dayIndex + 2);
+
+        // Décaler les descriptions et événements
+        this.shiftDescriptionsFromIndex(dayIndex + 1);
+        this.shiftRandomEventsFromIndex(dayIndex + 1);
+
+        // Sauvegarder les descriptions mises à jour
+        this.saveDescriptionsForMap();
+
+        // Sauvegarder automatiquement dans le journal
+        this.saveJourneyToJournal();
+
+        // Rafraîchir l'affichage
+        this.renderAllDays();
+
+        // Activer la nouvelle journée
+        this.highlightDay(dayIndex + 1);
+
+        console.log(`✅ Journée prolongée avec succès. Nouveau total: ${this.totalJourneyDays} jours`);
+    }
+
+    recalculateDaysFromIndex(startIndex) {
+        console.log(`🔄 Recalcul des jours à partir de l'index ${startIndex}`);
+
+        for (let i = startIndex; i < this.dayByDayData.length; i++) {
+            const dayNumber = i + 1;
+            this.dayByDayData[i].day = dayNumber;
+            this.dayByDayData[i].calendarDate = this.getCalendarDateForDay(dayNumber);
+
+            console.log(`📅 Jour ${dayNumber}: ${this.dayByDayData[i].calendarDate}`);
+        }
+    }
+
+    shiftDescriptionsFromIndex(startIndex) {
+        console.log(`📝 Décalage des descriptions à partir de l'index ${startIndex}`);
+
+        const newDescriptions = {};
+
+        // Copier les descriptions avant le point d'insertion
+        for (let day = 1; day < startIndex; day++) {
+            if (this.journeyDescriptions[day]) {
+                newDescriptions[day] = this.journeyDescriptions[day];
+            }
+        }
+
+        // Décaler les descriptions après le point d'insertion
+        Object.keys(this.journeyDescriptions).forEach(day => {
+            const dayNum = parseInt(day);
+            if (dayNum >= startIndex) {
+                newDescriptions[dayNum + 1] = this.journeyDescriptions[dayNum];
+            }
+        });
+
+        this.journeyDescriptions = newDescriptions;
+        console.log(`✅ Descriptions décalées`);
+    }
+
+    shiftRandomEventsFromIndex(startIndex) {
+        console.log(`🎲 Décalage des événements aléatoires à partir de l'index ${startIndex}`);
+
+        const newRandomEvents = {};
+
+        // Copier les événements avant le point d'insertion
+        for (let day = 1; day < startIndex; day++) {
+            if (this.randomEvents[day]) {
+                newRandomEvents[day] = this.randomEvents[day];
+            }
+        }
+
+        // Décaler les événements après le point d'insertion
+        Object.keys(this.randomEvents).forEach(day => {
+            const dayNum = parseInt(day);
+            if (dayNum >= startIndex) {
+                newRandomEvents[dayNum + 1] = this.randomEvents[dayNum];
+            }
+        });
+
+        this.randomEvents = newRandomEvents;
+        console.log(`✅ Événements aléatoires décalés`);
     }
 
     openDiscoveryFromHeader(discoveryName, discoveryType) {
