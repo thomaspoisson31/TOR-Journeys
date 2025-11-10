@@ -496,6 +496,7 @@ class VoyageManager {
         // Utiliser la date de début fixe du voyage plutôt que la date courante
         if (this.journeyStartDate && calendarData && calendarData.length > 0) {
             let monthIndex = this.journeyStartDate.monthIndex;
+            // day peut être ajusté par les raccourcis (valeur déjà décalée)
             let calendarDay = this.journeyStartDate.day + day - 1;
 
             console.log(`📅 Calcul initial: monthIndex=${monthIndex}, calendarDay=${calendarDay}`);
@@ -616,6 +617,9 @@ class VoyageManager {
                                 <button class="extend-day-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #999999;" title="Prolonger d'une journée" data-day-index="${i}">
                                     <i class="fas fa-plus-circle text-xs" style="color: white !important;"></i>
                                 </button>
+                                <button class="shorten-day-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #999999;" title="Raccourcir (durée 0)" data-day-index="${i}">
+                                    <i class="fas fa-minus-circle text-xs" style="color: white !important;"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -668,6 +672,9 @@ class VoyageManager {
 
         // Setup event listeners pour les boutons de prolongation
         this.setupExtendDayButtons();
+
+        // Setup event listeners pour les boutons de raccourci
+        this.setupShortenDayButtons();
     }
 
     renderDayContent(dayData, weatherData) {
@@ -1302,6 +1309,32 @@ class VoyageManager {
         });
     }
 
+    setupShortenDayButtons() {
+        const shortenDayBtns = document.querySelectorAll('.shorten-day-btn');
+        console.log(`⚡ Configuration de ${shortenDayBtns.length} boutons de raccourci`);
+
+        shortenDayBtns.forEach(btn => {
+            // Retirer les anciens listeners
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('⚡ Bouton raccourci du jour cliqué');
+
+                const dayIndex = parseInt(newBtn.dataset.dayIndex);
+                console.log(`⚡ Index du jour à raccourcir: ${dayIndex}`);
+
+                if (this.dayByDayData && this.dayByDayData[dayIndex]) {
+                    this.shortenDay(dayIndex);
+                } else {
+                    console.warn(`⚠️ Données du jour ${dayIndex} non disponibles`);
+                }
+            });
+        });
+    }
+
     highlightDiscoveryOnMap(discoveryName, discoveryType, highlight) {
         if (discoveryType === 'location') {
             // Utiliser la fonction globale pour les lieux
@@ -1365,6 +1398,62 @@ class VoyageManager {
         this.highlightDay(dayIndex + 1);
 
         console.log(`✅ Journée prolongée avec succès. Nouveau total: ${this.totalJourneyDays} jours`);
+    }
+
+    shortenDay(dayIndex) {
+        console.log(`⚡ Raccourci du jour ${dayIndex + 1} (durée 0)`);
+
+        if (!this.dayByDayData || dayIndex < 0 || dayIndex >= this.dayByDayData.length) {
+            console.error(`❌ Index invalide: ${dayIndex}`);
+            return;
+        }
+
+        // Marquer cette journée comme ayant une durée de 0
+        this.dayByDayData[dayIndex].isShortened = true;
+
+        // Recalculer les dates pour tous les jours suivants
+        // Les jours suivants "remontent" d'un jour dans le calendrier
+        this.recalculateDaysFromIndexWithShortcuts(dayIndex + 1);
+
+        // Sauvegarder les descriptions et événements mis à jour
+        this.saveDescriptionsForMap();
+
+        // Sauvegarder automatiquement dans le journal
+        this.saveJourneyToJournal();
+
+        // Rafraîchir l'affichage
+        this.renderAllDays();
+
+        // Activer la journée raccourcie
+        this.highlightDay(dayIndex);
+
+        console.log(`✅ Journée raccourcie avec succès (durée 0 jour)`);
+    }
+
+    recalculateDaysFromIndexWithShortcuts(startIndex) {
+        console.log(`🔄 Recalcul des jours avec raccourcis à partir de l'index ${startIndex}`);
+
+        // Calculer le décalage cumulé dû aux raccourcis précédents
+        let cumulativeOffset = 0;
+        for (let i = 0; i < startIndex; i++) {
+            if (this.dayByDayData[i].isShortened) {
+                cumulativeOffset++;
+            }
+        }
+
+        // Recalculer les dates en tenant compte des raccourcis
+        for (let i = startIndex; i < this.dayByDayData.length; i++) {
+            // Compter les raccourcis jusqu'à ce jour
+            if (this.dayByDayData[i].isShortened) {
+                cumulativeOffset++;
+            }
+
+            // Le numéro de jour affiché reste i+1, mais la date calendrier est décalée
+            const calendarDayNumber = (i + 1) - cumulativeOffset;
+            this.dayByDayData[i].calendarDate = this.getCalendarDateForDay(calendarDayNumber);
+
+            console.log(`📅 Jour ${i + 1} ${this.dayByDayData[i].isShortened ? '(raccourci)' : ''}: ${this.dayByDayData[i].calendarDate}`);
+        }
     }
 
     recalculateDaysFromIndex(startIndex) {

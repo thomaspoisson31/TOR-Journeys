@@ -925,6 +925,11 @@ body {
     background-color: #555555 !important;
 }
 
+/* Effet hover pour le bouton de raccourci */
+.shorten-day-btn:hover {
+    background-color: #555555 !important;
+}
+
 
     border: 2px solid white;
     border-radius: 50%;
