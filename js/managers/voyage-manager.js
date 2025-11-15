@@ -10,6 +10,7 @@ class VoyageManager {
         this.journeyDescriptions = {}; // Pour stocker les descriptions générées
         this.currentDescriptionDay = 1; // Pour suivre le jour affiché dans la modale de description
         this.randomEvents = {}; // Pour stocker les événements aléatoires générés par jour
+        this.currentPathSignature = null; // Signature unique du voyage actuel
 
         // Stocker les constantes passées en paramètre
         this.MAP_DISTANCE_MILES = constants.MAP_DISTANCE_MILES || MAP_DISTANCE_MILES;
@@ -196,6 +197,15 @@ class VoyageManager {
     }
 
     generateJourneyData() {
+        // Créer une signature unique pour ce voyage
+        if (typeof journeyPath !== 'undefined' && journeyPath.length > 0) {
+            this.currentPathSignature = this.createPathSignature(journeyPath);
+            console.log(`🔑 Signature du voyage actuel: ${this.currentPathSignature}`);
+            
+            // Charger les événements spécifiques à ce voyage
+            this.loadRandomEventsForJourney();
+        }
+
         // Récupérer les dimensions réelles de la carte active
         const mapImage = document.getElementById('map-image');
         const actualMapWidth = mapImage?.naturalWidth || window.MAP_WIDTH || 5103;
@@ -2658,6 +2668,36 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         });
     }
 
+    loadRandomEventsForJourney() {
+        // Charger les événements aléatoires spécifiques à ce voyage
+        if (!this.currentPathSignature) return;
+
+        const storageKey = `randomEvents_${this.currentPathSignature}`;
+        const savedEvents = localStorage.getItem(storageKey);
+
+        if (savedEvents) {
+            try {
+                this.randomEvents = JSON.parse(savedEvents);
+                console.log(`📖 Événements aléatoires chargés pour le voyage ${this.currentPathSignature}:`, Object.keys(this.randomEvents).length, 'événement(s)');
+            } catch (e) {
+                console.error('❌ Erreur lors du chargement des événements aléatoires:', e);
+                this.randomEvents = {};
+            }
+        } else {
+            this.randomEvents = {};
+            console.log(`📖 Nouveau voyage - aucun événement aléatoire préexistant`);
+        }
+    }
+
+    saveRandomEventsForJourney() {
+        // Sauvegarder les événements aléatoires spécifiques à ce voyage
+        if (!this.currentPathSignature) return;
+
+        const storageKey = `randomEvents_${this.currentPathSignature}`;
+        localStorage.setItem(storageKey, JSON.stringify(this.randomEvents));
+        console.log(`💾 Événements aléatoires sauvegardés pour le voyage ${this.currentPathSignature}`);
+    }
+
     triggerRandomEvent(dayData) {
         // Filter discoveries that have random events in the original data
         const possibleEventLocations = dayData.discoveries.filter(discovery => {
@@ -2705,6 +2745,9 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         this.randomEvents[dayNumber] = eventText;
         console.log(`📖 Événement aléatoire généré pour le jour ${dayNumber}:`, this.randomEvents[dayNumber]);
+
+        // Sauvegarder les événements pour ce voyage spécifique
+        this.saveRandomEventsForJourney();
 
         // Rafraîchir l'affichage de la modale pour montrer le nouvel événement
         this.renderAllDays();
