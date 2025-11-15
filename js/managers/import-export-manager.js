@@ -731,25 +731,50 @@ class ImportExportManager {
             this.dataManager.locationsData = { locations: [] };
         }
 
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        console.log(`🔄 [mergeLocations] Carte active: ${activeMapUrl}`);
+        console.log(`🔄 [mergeLocations] Lieux existants AVANT fusion: ${this.dataManager.locationsData.locations.length}`);
+
+        // ÉTAPE 1: Conserver les lieux des AUTRES cartes
+        const locationsFromOtherMaps = this.dataManager.locationsData.locations.filter(loc => {
+            // Garder les lieux sans mapId OU ceux d'une autre carte
+            const keepLocation = !loc.mapId || (activeMapUrl && loc.mapId !== activeMapUrl);
+            if (keepLocation) {
+                console.log(`✅ [mergeLocations] Conservation du lieu "${loc.name}" (mapId: ${loc.mapId || 'aucun'})`);
+            }
+            return keepLocation;
+        });
+
+        console.log(`🔄 [mergeLocations] Lieux conservés des autres cartes: ${locationsFromOtherMaps.length}`);
+
+        // ÉTAPE 2: Traiter les lieux importés
+        const processedImportedLocations = [];
         importedLocations.forEach(importedLocation => {
+            // Chercher un lieu existant avec le même nom SUR LA MÊME CARTE
             const existingLocation = this.dataManager.locationsData.locations.find(
-                loc => loc.name === importedLocation.name
+                loc => loc.name === importedLocation.name && 
+                       (!loc.mapId || !activeMapUrl || loc.mapId === activeMapUrl)
             );
 
             if (existingLocation) {
                 // Mettre à jour le lieu existant
-                Object.assign(existingLocation, importedLocation);
+                const updatedLocation = { ...existingLocation, ...importedLocation };
+                processedImportedLocations.push(updatedLocation);
                 console.log(`🔄 Lieu mis à jour: ${importedLocation.name}`);
             } else {
                 // Ajouter le nouveau lieu avec un ID unique
-                this.ensureUniqueId(importedLocation, this.dataManager.locationsData.locations);
-                this.dataManager.locationsData.locations.push(importedLocation);
+                this.ensureUniqueId(importedLocation, [...locationsFromOtherMaps, ...processedImportedLocations]);
+                processedImportedLocations.push(importedLocation);
                 console.log(`➕ Nouveau lieu ajouté: ${importedLocation.name}`);
             }
         });
 
-        // S'assurer que les références globales sont bien mises à jour
-        this.dataManager.locationsData = { ...this.dataManager.locationsData };
+        // ÉTAPE 3: Fusionner les lieux des autres cartes + lieux importés
+        const mergedLocations = [...locationsFromOtherMaps, ...processedImportedLocations];
+        console.log(`🔄 [mergeLocations] Total lieux APRÈS fusion: ${mergedLocations.length}`);
+
+        // ÉTAPE 4: Mettre à jour les données
+        this.dataManager.locationsData = { locations: mergedLocations };
         window.locationsData = this.dataManager.locationsData;
     }
 
@@ -763,25 +788,50 @@ class ImportExportManager {
             this.dataManager.regionsData = { regions: [] };
         }
 
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        console.log(`🔄 [mergeRegions] Carte active: ${activeMapUrl}`);
+        console.log(`🔄 [mergeRegions] Régions existantes AVANT fusion: ${this.dataManager.regionsData.regions.length}`);
+
+        // ÉTAPE 1: Conserver les régions des AUTRES cartes
+        const regionsFromOtherMaps = this.dataManager.regionsData.regions.filter(reg => {
+            // Garder les régions sans mapId OU celles d'une autre carte
+            const keepRegion = !reg.mapId || (activeMapUrl && reg.mapId !== activeMapUrl);
+            if (keepRegion) {
+                console.log(`✅ [mergeRegions] Conservation de la région "${reg.name}" (mapId: ${reg.mapId || 'aucun'})`);
+            }
+            return keepRegion;
+        });
+
+        console.log(`🔄 [mergeRegions] Régions conservées des autres cartes: ${regionsFromOtherMaps.length}`);
+
+        // ÉTAPE 2: Traiter les régions importées
+        const processedImportedRegions = [];
         importedRegions.forEach(importedRegion => {
+            // Chercher une région existante avec le même nom SUR LA MÊME CARTE
             const existingRegion = this.dataManager.regionsData.regions.find(
-                reg => reg.name === importedRegion.name
+                reg => reg.name === importedRegion.name && 
+                       (!reg.mapId || !activeMapUrl || reg.mapId === activeMapUrl)
             );
 
             if (existingRegion) {
                 // Mettre à jour la région existante
-                Object.assign(existingRegion, importedRegion);
+                const updatedRegion = { ...existingRegion, ...importedRegion };
+                processedImportedRegions.push(updatedRegion);
                 console.log(`🔄 Région mise à jour: ${importedRegion.name}`);
             } else {
                 // Ajouter la nouvelle région avec un ID unique
-                this.ensureUniqueId(importedRegion, this.dataManager.regionsData.regions);
-                this.dataManager.regionsData.regions.push(importedRegion);
+                this.ensureUniqueId(importedRegion, [...regionsFromOtherMaps, ...processedImportedRegions]);
+                processedImportedRegions.push(importedRegion);
                 console.log(`➕ Nouvelle région ajoutée: ${importedRegion.name}`);
             }
         });
 
-        // S'assurer que les références globales sont bien mises à jour
-        this.dataManager.regionsData = { ...this.dataManager.regionsData };
+        // ÉTAPE 3: Fusionner les régions des autres cartes + régions importées
+        const mergedRegions = [...regionsFromOtherMaps, ...processedImportedRegions];
+        console.log(`🔄 [mergeRegions] Total régions APRÈS fusion: ${mergedRegions.length}`);
+
+        // ÉTAPE 4: Mettre à jour les données
+        this.dataManager.regionsData = { regions: mergedRegions };
         window.regionsData = this.dataManager.regionsData;
     }
 
