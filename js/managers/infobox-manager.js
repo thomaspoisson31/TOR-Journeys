@@ -3035,12 +3035,32 @@ class InfoBoxManager {
             fullscreenOverlay.classList.remove('panning');
         });
 
-        // Fermeture en cliquant sur l'overlay (zone noire) mais pas sur l'image
+        // Fonction de fermeture réutilisable
+        const closeFullscreen = () => {
+            fullscreenOverlay.classList.add('hidden');
+            this.resetZoomForFullscreen();
+            // Remettre le focus sur l'InfoBox pour permettre la navigation
+            const infoBox = document.getElementById('info-box');
+            if (infoBox && infoBox.style.display === 'block') {
+                infoBox.focus();
+            }
+        };
+
+        // Fermeture avec la touche Échap
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && !fullscreenOverlay.classList.contains('hidden')) {
+                closeFullscreen();
+            }
+        };
+        
+        // Ajouter l'écouteur d'événement pour Échap
+        document.addEventListener('keydown', handleEscape);
+
+        // Fermeture en cliquant sur l'overlay (zone noire)
         fullscreenOverlay.addEventListener('click', (e) => {
             // Si on clique directement sur l'overlay (pas sur l'image ou les contrôles)
             if (e.target === fullscreenOverlay) {
-                fullscreenOverlay.classList.add('hidden');
-                this.resetZoomForFullscreen();
+                closeFullscreen();
             }
         });
 
@@ -3049,21 +3069,8 @@ class InfoBoxManager {
             e.stopPropagation();
         });
 
-        // Gestion des boutons de zoom
-        controls.addEventListener('click', (e) => {
-            e.stopPropagation();
-            
-            const btn = e.target.closest('.fullscreen-zoom-btn');
-            if (!btn) return;
-            
-            if (btn.id === 'fullscreen-zoom-in') {
-                zoom(0.2);
-            } else if (btn.id === 'fullscreen-zoom-out') {
-                zoom(-0.2);
-            } else if (btn.id === 'fullscreen-zoom-reset') {
-                resetZoom();
-            }
-        });
+        // Masquer les contrôles de zoom (inutiles avec molette/pinch)
+        controls.style.display = 'none';
 
         // Appliquer le conteneur, les contrôles et le niveau de zoom une seule fois
         // On suppose que l'image est ajoutée dynamiquement après le chargement des listeners
