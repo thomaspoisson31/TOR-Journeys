@@ -801,6 +801,57 @@ Testing: manuel via console browser
 Debugging: Chrome DevTools + console.log
 Backup: export JSON régulier
 
+PRINCIPES DE VALIDATION TECHNIQUE
+----------------------------------
+
+1. VALIDATION PAR LES LOGS :
+   
+   Méthodologie pour confirmer le bon fonctionnement d'une feature :
+   - Logs structurés avec emojis (🔄 fusion, ✅ succès, 💾 sauvegarde, 📊 stats)
+   - Compteurs explicites (ex: "12 conservés + 27 importés = 39 total")
+   - Vérifications multiples (localStorage, window, dataManager)
+   - Traces de synchronisation (locale → window → dataManager → cloud)
+   
+   Exemple de validation import/merge :
+   ```
+   🔄 [mergeLocations] Carte active: /maps/moria.jpg
+   🔄 [mergeLocations] Lieux existants AVANT fusion: 12
+   ✅ [mergeLocations] Conservation du lieu "Eriador Town" (mapId: /maps/eriador.jpg)
+   🔄 [mergeLocations] Lieux conservés des autres cartes: 12
+   ➕ Nouveau lieu ajouté: Moria Gate
+   🔄 [mergeLocations] Total lieux APRÈS fusion: 39
+   ✅ [mergeLocations] window.locationsData synchronisé: 39 lieux
+   ```
+
+2. TESTS DE NON-RÉGRESSION :
+   
+   Scénarios à valider après chaque modification majeure :
+   a) Import mode REPLACE : Toutes les données de la carte active remplacées
+   b) Import mode MERGE : Données autres cartes + nouvelles données = total cohérent
+   c) Changement carte : Affichage filtré par mapId
+   d) Sauvegarde cloud : Pas de perte de données, timestamp mis à jour
+   e) Rechargement page : État restauré depuis cloud
+   
+   Validation réussie si :
+   - Logs montrent compteurs corrects (ex: 12 + 27 = 39)
+   - Aucun message d'erreur ❌
+   - Sauvegarde cloud confirmée ✅
+   - Rendering correct après rechargement
+
+3. TRAÇABILITÉ DES DONNÉES :
+   
+   Ordre de synchronisation critique (toujours respecter) :
+   1. Modification objet dans tableau local
+   2. window.locationsData = tableau local
+   3. dataManager.locationsData = tableau local
+   4. saveToLocal() → localStorage
+   5. markAsUnsaved() → cloud sync
+   
+   Vérifications obligatoires :
+   - Console.log des compteurs AVANT et APRÈS opération
+   - Comparaison des mapId lors des opérations de filtrage
+   - Validation des structures (locations: [], regions: [])
+
 PRINCIPES DE RENDERING DESCRIPTIONS VOYAGE
 -------------------------------------------
 
@@ -981,6 +1032,48 @@ PRINCIPES EVENT DELEGATION POUR ÉLÉMENTS DYNAMIQUES
    - Cartes de jours (.day-card, .day-header)
    - Boutons d'événements aléatoires (.day-random-event-btn)
    - Éléments de découverte (.discovery-item)
+
+SUCCÈS TECHNIQUES CONFIRMÉS
+---------------------------
+
+1. Fusion intelligente par mapId lors de l'import (v1.3.10) :
+   - Problématique : Lors de l'import de lieux/régions, garantir que les données des autres cartes sont préservées
+   - Solution implémentée : 
+     * Mode MERGE : conservation des lieux/régions dont le mapId diffère de la carte active
+     * Filtrage avant fusion : `locationsFromOtherMaps` et `regionsFromOtherMaps`
+     * Fusion finale : [...autreCartes, ...importés]
+   - Validation dans les logs :
+     ```
+     🔄 [mergeLocations] Lieux conservés des autres cartes: 12
+     🔄 [mergeLocations] Total lieux APRÈS fusion: 39
+     🔄 [mergeLocations] Détail fusion: 12 conservés + 27 importés = 39 total
+     ```
+   - Impact : Préservation complète des données multi-cartes lors des imports
+   - Fichiers concernés : 
+     * import-export-manager.js (mergeLocations, mergeRegions)
+     * auth-manager.js (syncUserData avec attribution mapId aux éléments sans mapId)
+   - Test validé : Import 27 lieux Moria + conservation 12 lieux Eriador = 39 total ✅
+
+2. Synchronisation automatique post-import (v1.3.10) :
+   - Workflow : Import → Fusion → Sauvegarde localStorage → Sauvegarde cloud → Pas de rechargement
+   - Logs de confirmation :
+     ```
+     📥 [processImport] Sauvegarde dans localStorage...
+     ✅ [processImport] Lieux sauvegardés dans localStorage
+     📥 [processImport] Déclenchement sauvegarde cloud automatique...
+     ✅ [processImport] Sauvegarde cloud terminée avec succès
+     ```
+   - Avantage : Les données importées sont immédiatement visibles ET synchronisées
+   - Alert utilisateur : "✅ Import et sauvegarde réussis !"
+
+3. Rendering conditionnel par carte (v1.3.10) :
+   - Filtrage automatique : Seuls les lieux avec `mapId` correspondant à `activeMapUrl` s'affichent
+   - Logs de preuve :
+     ```
+     Carte Moria : 📊 Filtered: 31/31 locations (27 Moria + 4 sans mapId)
+     Carte Eriador : 📊 Filtered: 12/31 locations (12 Eriador uniquement)
+     ```
+   - Cohérence : Les lieux sans `mapId` s'affichent sur toutes les cartes (rétrocompatibilité)
 
 PROBLÈMES RÉSOLUS
 -----------------
