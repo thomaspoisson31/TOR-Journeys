@@ -1367,7 +1367,8 @@ class VoyageManager {
             discoveries: [...sourceDayData.discoveries],
             calendarDate: this.getCalendarDateForDay(sourceDayData.day + 1),
             startCoordinates: sourceDayData.startCoordinates ? { ...sourceDayData.startCoordinates } : null,
-            endCoordinates: sourceDayData.endCoordinates ? { ...sourceDayData.endCoordinates } : null
+            endCoordinates: sourceDayData.endCoordinates ? { ...sourceDayData.endCoordinates } : null,
+            isExtended: true // Marquer comme jour prolongé
         };
 
         // Recalculer la météo pour la nouvelle journée
@@ -1379,8 +1380,8 @@ class VoyageManager {
         // Incrémenter le nombre total de jours
         this.totalJourneyDays += 1;
 
-        // Recalculer les numéros de jours et dates pour toutes les journées suivantes (à partir de dayIndex + 2)
-        this.recalculateDaysFromIndex(dayIndex + 2);
+        // Recalculer AVEC raccourcis ET prolongations
+        this.recalculateDaysFromIndexWithShortcuts(0);
 
         // Décaler les descriptions et événements SEULEMENT pour les jours APRÈS la nouvelle journée
         // Important: dayIndex + 2 car la journée dayIndex garde sa description/événement
@@ -1440,24 +1441,35 @@ class VoyageManager {
     recalculateDaysFromIndexWithShortcuts(startIndex) {
         console.log(`🔄 Recalcul des jours avec raccourcis à partir de l'index ${startIndex}`);
 
-        // Calculer le décalage cumulé dû aux raccourcis précédents
-        let cumulativeOffset = 0;
+        // Calculer l'offset depuis le début en comptant raccourcis ET prolongations
+        let cumulativeOffsetFromShortcuts = 0;
+        let cumulativeExtensions = 0;
         
-        // Recalculer les numéros de jour et les dates en tenant compte des raccourcis
-        for (let i = startIndex; i < this.dayByDayData.length; i++) {
-            // Compter les raccourcis jusqu'à ce jour (AVANT ce jour)
+        for (let i = 0; i < this.dayByDayData.length; i++) {
+            // Compter les raccourcis AVANT ce jour
             if (i > 0 && this.dayByDayData[i - 1].isShortened) {
-                cumulativeOffset++;
+                cumulativeOffsetFromShortcuts++;
+            }
+            
+            // Compter les prolongations AVANT ce jour (sauf le jour courant s'il est lui-même prolongé)
+            if (i > 0 && this.dayByDayData[i - 1].isExtended) {
+                cumulativeExtensions++;
             }
 
-            // Le numéro de jour affiché est ajusté en fonction des raccourcis
-            const actualDayNumber = (i + 1) - cumulativeOffset;
+            // Le numéro de jour réel = index + 1 - raccourcis + prolongations
+            // Mais on ne compte PAS les prolongations car elles dupliquent un jour existant
+            const actualDayNumber = (i + 1) - cumulativeOffsetFromShortcuts;
             this.dayByDayData[i].day = actualDayNumber;
             
             // La date calendrier est calculée avec le numéro de jour réel
             this.dayByDayData[i].calendarDate = this.getCalendarDateForDay(actualDayNumber);
 
-            console.log(`📅 Index ${i}: Jour ${actualDayNumber} ${this.dayByDayData[i].isShortened ? '(raccourci)' : ''}: ${this.dayByDayData[i].calendarDate}`);
+            const flags = [];
+            if (this.dayByDayData[i].isShortened) flags.push('raccourci');
+            if (this.dayByDayData[i].isExtended) flags.push('prolongé');
+            const flagsStr = flags.length > 0 ? ` (${flags.join(', ')})` : '';
+
+            console.log(`📅 Index ${i}: Jour ${actualDayNumber}${flagsStr}: ${this.dayByDayData[i].calendarDate}`);
         }
         
         // Recalculer le total en soustrayant les jours raccourcis
