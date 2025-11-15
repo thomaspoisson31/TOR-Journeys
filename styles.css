@@ -922,12 +922,18 @@ body {
 
 /* Effet hover pour le bouton de prolongation */
 .extend-day-btn:hover {
-    background-color: #555555 !important;
+    background-color: #444444 !important;
 }
 
 /* Effet hover pour le bouton de raccourci */
 .shorten-day-btn:hover {
-    background-color: #555555 !important;
+    background-color: #444444 !important;
+}
+
+/* Réduire l'épaisseur du cercle des icônes */
+.extend-day-btn i,
+.shorten-day-btn i {
+    font-weight: 400 !important;
 }
 
 
