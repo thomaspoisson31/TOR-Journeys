@@ -2891,10 +2891,16 @@ class InfoBoxManager {
             </button>
         `;
 
-        // Indicateur de niveau de zoom
+        // Indicateur de niveau de zoom (masqué sur PC, visible sur mobile)
         const zoomLevel = document.createElement('div');
         zoomLevel.className = 'fullscreen-zoom-level';
         zoomLevel.textContent = '100%';
+        
+        // Détecter si on est sur mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (!isMobile) {
+            zoomLevel.style.display = 'none';
+        }
 
         const resetZoom = () => {
             zoomScale = 1;
@@ -2997,8 +3003,11 @@ class InfoBoxManager {
             fullscreenOverlay.classList.remove('panning');
         });
 
-        // Gestion du drag (PC)
-        fullscreenOverlay.addEventListener('mousedown', (e) => {
+        // Gestion du drag (PC) - uniquement sur l'image
+        container.addEventListener('mousedown', (e) => {
+            // Empêcher la propagation pour ne pas fermer l'overlay
+            e.stopPropagation();
+            
             if (zoomScale > 1) {
                 e.preventDefault();
                 isPanning = true;
@@ -3008,7 +3017,7 @@ class InfoBoxManager {
             }
         });
 
-        fullscreenOverlay.addEventListener('mousemove', (e) => {
+        document.addEventListener('mousemove', (e) => {
             if (isPanning && zoomScale > 1) {
                 e.preventDefault();
                 const deltaX = e.clientX - lastMouseX;
@@ -3021,26 +3030,37 @@ class InfoBoxManager {
             }
         });
 
-        fullscreenOverlay.addEventListener('mouseup', () => {
+        document.addEventListener('mouseup', () => {
             isPanning = false;
             fullscreenOverlay.classList.remove('panning');
         });
 
-        fullscreenOverlay.addEventListener('mouseleave', () => {
-            isPanning = false;
-            fullscreenOverlay.classList.remove('panning');
+        // Fermeture en cliquant sur l'overlay (zone noire) mais pas sur l'image
+        fullscreenOverlay.addEventListener('click', (e) => {
+            // Si on clique directement sur l'overlay (pas sur l'image ou les contrôles)
+            if (e.target === fullscreenOverlay) {
+                fullscreenOverlay.classList.add('hidden');
+                this.resetZoomForFullscreen();
+            }
+        });
+
+        // Empêcher la propagation des clics sur l'image
+        container.addEventListener('click', (e) => {
+            e.stopPropagation();
         });
 
         // Gestion des boutons de zoom
-        document.addEventListener('click', (e) => {
-            if (e.target.id === 'fullscreen-zoom-in' || e.target.closest('#fullscreen-zoom-in')) {
-                e.stopPropagation();
+        controls.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            const btn = e.target.closest('.fullscreen-zoom-btn');
+            if (!btn) return;
+            
+            if (btn.id === 'fullscreen-zoom-in') {
                 zoom(0.2);
-            } else if (e.target.id === 'fullscreen-zoom-out' || e.target.closest('#fullscreen-zoom-out')) {
-                e.stopPropagation();
+            } else if (btn.id === 'fullscreen-zoom-out') {
                 zoom(-0.2);
-            } else if (e.target.id === 'fullscreen-zoom-reset' || e.target.closest('#fullscreen-zoom-reset')) {
-                e.stopPropagation();
+            } else if (btn.id === 'fullscreen-zoom-reset') {
                 resetZoom();
             }
         });
