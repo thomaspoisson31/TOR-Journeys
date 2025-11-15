@@ -548,17 +548,6 @@ class PositionManager {
 
     // Méthode pour animer le déplacement du marqueur vers une nouvelle position
     animateToPosition(targetX, targetY, duration = 1000) {
-        // Ne pas animer si le mode aventure est actif
-        if (this.adventureMode) {
-            console.log("📍 [animateToPosition] Ignoré car le mode aventure est actif.");
-            // Optionnellement, mettre à jour la position sans animation si nécessaire
-            const activeMapId = window.settingsManager?.activeMapUrl;
-            this.currentPosition = { x: targetX, y: targetY, mapId: activeMapId };
-            this.updateMarkerPosition();
-            this.savePosition();
-            return;
-        }
-
         const startX = this.currentPosition.x;
         const startY = this.currentPosition.y;
         const startTime = performance.now();
