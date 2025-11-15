@@ -2895,7 +2895,7 @@ class InfoBoxManager {
         const zoomLevel = document.createElement('div');
         zoomLevel.className = 'fullscreen-zoom-level';
         zoomLevel.textContent = '100%';
-        
+
         // Détecter si on est sur mobile
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (!isMobile) {
@@ -3005,11 +3005,10 @@ class InfoBoxManager {
 
         // Gestion du drag (PC) - uniquement sur l'image
         container.addEventListener('mousedown', (e) => {
-            // Empêcher la propagation pour ne pas fermer l'overlay
-            e.stopPropagation();
-            
-            if (zoomScale > 1) {
+            // Bouton 2 = clic droit
+            if (e.button === 2 && zoomScale > 1) {
                 e.preventDefault();
+                e.stopPropagation();
                 isPanning = true;
                 lastMouseX = e.clientX;
                 lastMouseY = e.clientY;
@@ -3030,9 +3029,11 @@ class InfoBoxManager {
             }
         });
 
-        document.addEventListener('mouseup', () => {
-            isPanning = false;
-            fullscreenOverlay.classList.remove('panning');
+        document.addEventListener('mouseup', (e) => {
+            if (isPanning) {
+                isPanning = false;
+                fullscreenOverlay.classList.remove('panning');
+            }
         });
 
         // Fonction de fermeture réutilisable
@@ -3052,7 +3053,7 @@ class InfoBoxManager {
                 closeFullscreen();
             }
         };
-        
+
         // Ajouter l'écouteur d'événement pour Échap
         document.addEventListener('keydown', handleEscape);
 
