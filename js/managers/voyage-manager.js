@@ -1459,6 +1459,33 @@ class VoyageManager {
             // SAUF si le jour est raccourci (durée 0), on garde quand même une date pour l'affichage
             this.dayByDayData[i].calendarDate = this.getCalendarDateForDay(actualDayNumber);
 
+            // IMPORTANT: Recalculer les coordonnées pour ce jour
+            // Si le jour est raccourci, garder les mêmes coordonnées que le jour précédent (non raccourci)
+            if (this.dayByDayData[i].isShortened) {
+                // Trouver le dernier jour non raccourci
+                let previousNonShortenedIndex = i - 1;
+                while (previousNonShortenedIndex >= 0 && this.dayByDayData[previousNonShortenedIndex].isShortened) {
+                    previousNonShortenedIndex--;
+                }
+                
+                if (previousNonShortenedIndex >= 0) {
+                    // Copier les coordonnées du jour précédent non raccourci
+                    this.dayByDayData[i].startCoordinates = { ...this.dayByDayData[previousNonShortenedIndex].startCoordinates };
+                    this.dayByDayData[i].endCoordinates = { ...this.dayByDayData[previousNonShortenedIndex].endCoordinates };
+                    console.log(`📍 Jour ${i} raccourci: coordonnées copiées du jour ${previousNonShortenedIndex}`);
+                } else {
+                    // Si c'est le premier jour et qu'il est raccourci, utiliser les coordonnées du tracé
+                    const dayCoordinates = this.calculateDayCoordinates(actualDayNumber);
+                    this.dayByDayData[i].startCoordinates = dayCoordinates.start;
+                    this.dayByDayData[i].endCoordinates = dayCoordinates.end;
+                }
+            } else {
+                // Pour les jours non raccourcis, recalculer normalement
+                const dayCoordinates = this.calculateDayCoordinates(actualDayNumber);
+                this.dayByDayData[i].startCoordinates = dayCoordinates.start;
+                this.dayByDayData[i].endCoordinates = dayCoordinates.end;
+            }
+
             const flags = [];
             if (this.dayByDayData[i].isShortened) flags.push('raccourci');
             if (this.dayByDayData[i].isExtended) flags.push('prolongé');
