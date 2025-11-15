@@ -109,6 +109,48 @@ console.log("✅ Essential DOM elements:", {
     loaderOverlay: !!loaderOverlay
 });
 
+// ==========================================
+// 🎮 TOOLBAR VISIBILITY MANAGEMENT
+// ==========================================
+
+/**
+ * Met à jour la visibilité des boutons de la toolbar en fonction du mode aventure
+ */
+function updateToolbarButtonsVisibility() {
+    const adventureMode = window.positionManager?.adventureMode || false;
+
+    // Boutons à masquer quand le mode aventure est INACTIF
+    const drawModeBtn = document.getElementById('draw-mode');
+    const journalBtn = document.getElementById('journal-btn');
+
+    // Boutons à masquer quand le mode aventure est ACTIF
+    const addLocationBtn = document.getElementById('add-location-mode');
+    const addRegionBtn = document.getElementById('add-region-mode');
+
+    if (adventureMode) {
+        // Mode aventure ACTIF : masquer ajout lieu/région, afficher tracé/journal
+        if (drawModeBtn) drawModeBtn.classList.remove('hidden');
+        if (journalBtn) journalBtn.classList.remove('hidden');
+        if (addLocationBtn) addLocationBtn.classList.add('hidden');
+        if (addRegionBtn) addRegionBtn.classList.add('hidden');
+    } else {
+        // Mode aventure INACTIF : masquer tracé/journal, afficher ajout lieu/région
+        if (drawModeBtn) drawModeBtn.classList.add('hidden');
+        if (journalBtn) journalBtn.classList.add('hidden');
+        if (addLocationBtn) addLocationBtn.classList.remove('hidden');
+        if (addRegionBtn) addRegionBtn.classList.remove('hidden');
+    }
+
+    console.log(`🎮 Visibilité des boutons mise à jour - Mode Aventure: ${adventureMode ? 'Actif' : 'Inactif'}`);
+}
+
+// Exposer la fonction globalement
+window.updateToolbarButtonsVisibility = updateToolbarButtonsVisibility;
+
+// ==========================================
+// 🔍 DEBUG & LOGGING
+// ==========================================
+
 // --- Fonction d'initialisation simplifiée ---
 async function initializeApp() {
     console.log('🚀 Starting simplified application...');
@@ -322,7 +364,7 @@ function renderLocations() {
         // Ajouter la classe has-thumbnail si une vignette existe (pour l'effet de zoom au survol)
         if (hasThumbnail) {
             marker.classList.add('has-thumbnail');
-            
+
             // Stocker les données de vignette dans le marqueur pour affichage au survol
             const thumbnailImage = location.images.find(img => img.type === 'vignette');
             if (thumbnailImage) {
@@ -803,20 +845,24 @@ function initializeMap() {
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
 
-    resetView(); // Vue initiale optimale
+    // Reset view to fit the entire map
+    resetView();
 
-    // Forcer l'application des filtres après resetView pour garantir l'affichage correct
-    if (filterManager) {
-        console.log("🔍 [initializeMap] Application finale des filtres après resetView");
-        setTimeout(() => {
-            filterManager.applyFilters();
-        }, 150);
+    // Apply filters one final time after everything is loaded
+    console.log("🔍 [initializeMap] Application finale des filtres après resetView");
+    if (window.filterManager) {
+        window.filterManager.applyFilters();
+    }
+
+    // Mettre à jour la visibilité des boutons de la toolbar en fonction du mode aventure
+    if (typeof updateToolbarButtonsVisibility === 'function') {
+        updateToolbarButtonsVisibility();
     }
 
     console.log("✅ Map initialized successfully");
 }
 
-// --- Variables d'état pour la navigation ---
+// --- Fonctions de navigation de la carte ---
 let isPanning = false;
 let lastMouseX = 0;
 let lastMouseY = 0;
@@ -842,7 +888,6 @@ let isColorChangeModalOpen = false;
 let currentColorChangeTarget = null;
 let currentColorChangeType = null; // 'location' ou 'region'
 
-// --- Fonctions de navigation de la carte ---
 function updateMapTransform() {
     window.scale = scale; // Toujours synchroniser window.scale
     mapContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;

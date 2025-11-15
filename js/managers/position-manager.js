@@ -38,6 +38,19 @@ class PositionManager {
         if (!this.adventureMode) {
             this.updateMarkerCursor();
         }
+
+        // Marquer comme modifié et synchroniser avec le cloud
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+
+        // Mettre à jour la visibilité des boutons de la toolbar
+        if (typeof window.updateToolbarButtonsVisibility === 'function') {
+            window.updateToolbarButtonsVisibility();
+        }
     }
 
     updateMarkerCursor() {

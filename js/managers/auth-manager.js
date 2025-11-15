@@ -365,7 +365,9 @@ class AuthManager {
             },
             journal: JSON.parse(localStorage.getItem('travelJournal') || '{}'),
             position: JSON.parse(localStorage.getItem('adventurers_position') || 'null'),
-            filtersByMap: JSON.parse(localStorage.getItem('filtersByMap') || '{}')
+            filtersByMap: JSON.parse(localStorage.getItem('filtersByMap') || '{}'),
+            // Ajouter l'état actuel du mode aventure
+            adventureMode: window.positionManager?.adventureMode || JSON.parse(localStorage.getItem('adventurers_adventure_mode') || 'false')
         };
 
         this.logAuth(`📦 Données collectées pour le contexte`, Object.keys(data));
@@ -558,6 +560,24 @@ class AuthManager {
             console.log("[AuthManager] ⚠️ [applyContextData] Aucune position dans le contexte");
         }
 
+        // Restaurer le mode aventure
+        if (data.adventureMode !== undefined && window.positionManager) {
+            const wasAdventureMode = window.positionManager.adventureMode;
+            window.positionManager.adventureMode = data.adventureMode;
+            localStorage.setItem('adventurers_adventure_mode', data.adventureMode.toString());
+            this.logAuth(`🎲 Mode Aventure restauré depuis le cloud: ${data.adventureMode ? 'Actif' : 'Inactif'}`);
+
+            // Mettre à jour l'indicateur visuel
+            if (window.positionManager.updateAdventureModeIndicator) {
+                window.positionManager.updateAdventureModeIndicator();
+            }
+
+            // Mettre à jour la visibilité des boutons
+            if (window.updateToolbarButtonsVisibility) {
+                window.updateToolbarButtonsVisibility();
+            }
+        }
+
         // Sauvegarder les filtres pour restauration après initialisation complète
         // IMPORTANT: Toujours traiter filtersByMap, même s'il est vide ou undefined
         const filtersByMap = data.filtersByMap || {};
@@ -713,7 +733,8 @@ class AuthManager {
                         threats: []
                     },
                     position: null,
-                    filtersByMap: {}
+                    filtersByMap: {},
+                    adventureMode: false // Initialiser adventureMode à false
                 };
 
                 await this.applyContextData(emptyData);
@@ -766,7 +787,8 @@ class AuthManager {
                         adventure: { quest: '', rumors: [], threats: [] },
                         position: null,
                         filtersByMap: {},
-                        _environment: envPrefix
+                        _environment: envPrefix,
+                        adventureMode: false // Initialiser adventureMode à false
                     };
                     await this.applyContextData(emptyData);
                     this.saveToLocalStorage(emptyData, true);
@@ -1304,7 +1326,7 @@ class AuthManager {
 
     async checkForLocationDeletions(localData, envPrefix) {
         this.logAuth("🔍 Vérification des suppressions de lieux...");
-        
+
         try {
             // Récupérer les données actuelles du cloud
             const response = await fetch(`/api/user/data?env=${envPrefix}`, {
@@ -1324,11 +1346,11 @@ class AuthManager {
             }
 
             const cloudData = await response.json();
-            
+
             // Récupérer l'ID de la carte active
             const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl || localStorage.getItem('activeMapUrl');
             this.logAuth(`🗺️ Carte active pour comparaison: ${activeMapId}`);
-            
+
             // IMPORTANT: Filtrer les lieux par carte active uniquement - CLOUD ET LOCAL
             const cloudLocations = (cloudData.locations?.locations || []).filter(loc => 
                 loc.mapId === activeMapId
@@ -1336,23 +1358,23 @@ class AuthManager {
             const localLocations = (localData.locations?.locations || []).filter(loc => 
                 loc.mapId === activeMapId
             );
-            
+
             this.logAuth(`📊 Comparaison pour carte active: Cloud=${cloudLocations.length} lieux, Local=${localLocations.length} lieux`);
             this.logAuth(`🔍 Détail - Cloud IDs: ${cloudLocations.map(l => l.id).join(', ')}`);
             this.logAuth(`🔍 Détail - Local IDs: ${localLocations.map(l => l.id).join(', ')}`);
-            
+
             const cloudLocationIds = new Set(cloudLocations.map(loc => loc.id));
             const localLocationIds = new Set(localLocations.map(loc => loc.id));
-            
+
             // Trouver les lieux présents dans le cloud mais absents localement (pour la carte active uniquement)
             const deletedLocations = cloudLocations.filter(cloudLoc => !localLocationIds.has(cloudLoc.id));
-            
+
             if (deletedLocations.length > 0) {
                 this.logAuth(`⚠️ ALERTE: ${deletedLocations.length} lieu(x) de la carte active seraient supprimé(s) par cette synchronisation!`);
                 deletedLocations.forEach(loc => {
                     this.logAuth(`   - ${loc.name} (ID: ${loc.id}, Carte: ${loc.mapId || 'global'})`);
                 });
-                
+
                 return {
                     hasDeleted: true,
                     deletedLocations: deletedLocations,
@@ -1364,7 +1386,7 @@ class AuthManager {
                 this.logAuth(`✅ Aucune suppression détectée pour la carte active (Cloud: ${cloudLocations.length}, Local: ${localLocations.length})`);
                 return { hasDeleted: false, deletedLocations: [] };
             }
-            
+
         } catch (error) {
             this.logAuth(`⚠️ Erreur lors de la vérification des suppressions: ${error.message}`);
             return { hasDeleted: false, deletedLocations: [] };
@@ -1375,7 +1397,7 @@ class AuthManager {
         return new Promise((resolve) => {
             // Récupérer le nom de la carte active pour l'affichage
             const activeMapName = window.settingsManager?.activeMapName || 'la carte active';
-            
+
             // Créer une modale d'avertissement visible et bloquante
             const warningModal = document.createElement('div');
             warningModal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[200]';
@@ -1385,7 +1407,7 @@ class AuthManager {
                         <i class="fas fa-exclamation-triangle text-yellow-400 text-5xl mr-4 animate-pulse"></i>
                         <h2 class="text-3xl font-bold text-white">⚠️ ALERTE DE SUPPRESSION ⚠️</h2>
                     </div>
-                    
+
                     <div class="bg-red-800 border-2 border-red-600 rounded p-4 mb-6">
                         <p class="text-white text-lg mb-4">
                             <strong class="text-yellow-300">ATTENTION:</strong> Cette synchronisation va <strong class="underline">SUPPRIMER ${deletionInfo.deletedLocations.length} lieu(x)</strong> de "${activeMapName}" dans votre sauvegarde cloud !
@@ -1397,7 +1419,7 @@ class AuthManager {
                             Cloud actuel: <strong>${deletionInfo.cloudTotal} lieux</strong> → Après sync: <strong>${deletionInfo.localTotal} lieux</strong>
                         </p>
                     </div>
-                    
+
                     <div class="bg-gray-800 rounded p-4 mb-6 max-h-60 overflow-y-auto">
                         <p class="text-white font-bold mb-2">Lieux qui seront supprimés :</p>
                         <ul class="text-gray-300 space-y-1">
@@ -1411,14 +1433,14 @@ class AuthManager {
                             `).join('')}
                         </ul>
                     </div>
-                    
+
                     <div class="bg-yellow-900 border-2 border-yellow-600 rounded p-4 mb-6">
                         <p class="text-yellow-200 text-sm">
                             <i class="fas fa-info-circle mr-2"></i>
                             Si ces suppressions sont inattendues, cliquez sur <strong>ANNULER</strong> et vérifiez vos données avant de synchroniser.
                         </p>
                     </div>
-                    
+
                     <div class="flex justify-end space-x-4">
                         <button id="deletion-cancel-btn" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors text-lg">
                             <i class="fas fa-ban mr-2"></i>ANNULER
@@ -1429,24 +1451,24 @@ class AuthManager {
                     </div>
                 </div>
             `;
-            
+
             document.body.appendChild(warningModal);
-            
+
             const cancelBtn = warningModal.querySelector('#deletion-cancel-btn');
             const confirmBtn = warningModal.querySelector('#deletion-confirm-btn');
-            
+
             cancelBtn.addEventListener('click', () => {
                 this.logAuth("❌ Utilisateur a annulé la synchronisation (suppressions détectées)");
                 document.body.removeChild(warningModal);
                 resolve(false);
             });
-            
+
             confirmBtn.addEventListener('click', () => {
                 this.logAuth("✅ Utilisateur a confirmé la synchronisation malgré les suppressions");
                 document.body.removeChild(warningModal);
                 resolve(true);
             });
-            
+
             // Empêcher la fermeture en cliquant à l'extérieur
             warningModal.addEventListener('click', (e) => {
                 if (e.target === warningModal) {
@@ -1534,6 +1556,12 @@ class AuthManager {
                 window.charactersManager.charactersData = data.characters; 
                 this.logAuth("✅ CharactersManager.charactersData mis à jour.");
             }
+        }
+        
+        // Sauvegarder le mode aventure
+        if (data.adventureMode !== undefined) {
+            localStorage.setItem('adventurers_adventure_mode', data.adventureMode.toString());
+            this.logAuth(`  - Mode aventure (${data.adventureMode}) sauvegardé dans localStorage.`);
         }
 
         // Si ce n'est pas depuis le cloud, marquer comme modifications non sauvegardées
