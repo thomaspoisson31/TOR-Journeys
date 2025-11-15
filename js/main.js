@@ -634,9 +634,6 @@ function initializeMap() {
     mapContainer.style.width = `${MAP_WIDTH}px`;
     mapContainer.style.height = `${MAP_HEIGHT}px`;
 
-    // Mettre à jour l'affichage des dimensions
-    updateMapDimensionsDisplay();
-
     // Mettre à jour les constantes du PathManager avec les vraies dimensions
     if (pathManager) {
         pathManager.mapConstants.MAP_WIDTH = MAP_WIDTH;
@@ -849,18 +846,6 @@ let currentColorChangeType = null; // 'location' ou 'region'
 function updateMapTransform() {
     window.scale = scale; // Toujours synchroniser window.scale
     mapContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-    updateMapDimensionsDisplay();
-}
-
-function updateMapDimensionsDisplay() {
-    const widthDisplay = document.getElementById('map-width-display');
-    const heightDisplay = document.getElementById('map-height-display');
-
-    if (widthDisplay && heightDisplay && MAP_WIDTH > 0 && MAP_HEIGHT > 0) {
-        // Afficher les dimensions réelles de la carte (100%), sans tenir compte du zoom
-        widthDisplay.textContent = MAP_WIDTH;
-        heightDisplay.textContent = MAP_HEIGHT;
-    }
 }
 
 function constrainPan() {

@@ -33,7 +33,7 @@ class PositionManager {
         } else {
             this.updateMarkerCursor(); // Réinitialiser le curseur si le mode aventure est désactivé
         }
-        
+
         // Si le mode aventure est activé, et que l'on vient de le désactiver, alors il faut réactiver le drag et mettre à jour le curseur
         if (!this.adventureMode) {
             this.updateMarkerCursor();
@@ -466,7 +466,7 @@ class PositionManager {
                     <span>Mode Aventure:</span>
                     <span id="adventure-mode-status" class="font-bold px-2 py-1 rounded-full"></span>
                 </div>
-                
+
                 <button id="adventure-mode-toggle-btn" class="w-full px-2 py-1 rounded text-xs transition-colors flex items-center justify-center font-semibold">
                     <span id="adventure-mode-toggle-text"></span>
                 </button>
@@ -496,18 +496,19 @@ class PositionManager {
 
         const statusSpan = modal.querySelector('#adventure-mode-status');
         const toggleButton = modal.querySelector('#adventure-mode-toggle-btn');
-        const toggleTextSpan = modal.querySelector('#adventure-mode-toggle-text');
 
-        // Mise à jour de l'état du Mode Aventure
+        if (!statusSpan || !toggleButton) return;
+
+        // Mise à jour de l'affichage du statut et du bouton
         if (this.adventureMode) {
             statusSpan.textContent = "Actif";
-            statusSpan.style.backgroundColor = '#10B981'; // Vert
+            statusSpan.style.backgroundColor = '#22C55E'; // Vert
             statusSpan.style.color = '#fff';
 
             toggleButton.textContent = "Interrompre mode Aventure";
-            toggleButton.style.backgroundColor = '#F59E0B'; // Orange
+            toggleButton.style.backgroundColor = '#F97316'; // Orange
             toggleButton.style.color = '#fff';
-            toggleButton.style.borderColor = '#D97706';
+            toggleButton.style.borderColor = '#EA580C';
         } else {
             statusSpan.textContent = "Inactif";
             statusSpan.style.backgroundColor = '#6B7280'; // Gris
@@ -518,14 +519,22 @@ class PositionManager {
             toggleButton.style.color = '#fff';
             toggleButton.style.borderColor = '#16A34A';
         }
-        
-        // Mise à jour de la position (supprimée pour respecter la demande)
-        // Si vous souhaitez réafficher les coordonnées, décommentez les lignes ci-dessous
-        // const xElement = modal.querySelector('#position-x');
-        // const yElement = modal.querySelector('#position-y');
-        // if (xElement) xElement.textContent = Math.round(this.currentPosition.x);
-        // if (yElement) yElement.textContent = Math.round(this.currentPosition.y);
+
+        // Mettre à jour l'indicateur dans le cartouche de date
+        this.updateAdventureModeIndicator();
     }
+
+    updateAdventureModeIndicator() {
+        const indicator = document.getElementById('adventure-mode-indicator');
+        if (!indicator) return;
+
+        if (this.adventureMode) {
+            indicator.classList.remove('hidden');
+        } else {
+            indicator.classList.add('hidden');
+        }
+    }
+
 
     centerMapOnPosition() {
         // Cette fonction est supprimée car le bouton "Centrer" a été retiré de la modal.
