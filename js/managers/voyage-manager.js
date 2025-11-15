@@ -615,10 +615,10 @@ class VoyageManager {
                                     </button>
                                 ` : ''}
                                 <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="Raccourcir (durée 0)" data-day-index="${i}">
-                                    <i class="fas fa-minus-circle text-sm" style="color: white !important;"></i>
+                                    <i class="fas fa-minus-circle text-lg" style="color: white !important;"></i>
                                 </button>
                                 <button class="extend-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="Prolonger d'une journée" data-day-index="${i}">
-                                    <i class="fas fa-plus-circle text-sm" style="color: white !important;"></i>
+                                    <i class="fas fa-plus-circle text-lg" style="color: white !important;"></i>
                                 </button>
                             </div>
                         </div>

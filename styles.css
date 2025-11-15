@@ -933,7 +933,7 @@ body {
 /* Réduire l'épaisseur du cercle des icônes */
 .extend-day-btn i,
 .shorten-day-btn i {
-    font-weight: 400 !important;
+    font-weight: 300 !important;
 }
 
 
