@@ -1,4 +1,3 @@
-
 class PositionManager {
     constructor(domElements, mapConstants) {
         this.dom = domElements;
@@ -8,49 +7,92 @@ class PositionManager {
         this.dragStartX = 0;
         this.dragStartY = 0;
         this.currentPosition = this.loadPosition();
+        this.adventureMode = this.loadAdventureMode(); // Nouvel état pour le mode aventure
+    }
+
+    loadAdventureMode() {
+        const savedMode = localStorage.getItem('adventurers_adventure_mode');
+        return savedMode === 'true'; // Retourne true si 'true', sinon false par défaut
+    }
+
+    saveAdventureMode() {
+        localStorage.setItem('adventurers_adventure_mode', this.adventureMode.toString());
+        console.log(`💾 [PositionManager.saveAdventureMode] Mode Aventure sauvegardé: ${this.adventureMode}`);
+    }
+
+    toggleAdventureMode() {
+        this.adventureMode = !this.adventureMode;
+        this.saveAdventureMode();
+        this.updateMarkerCursor(); // Mettre à jour le curseur
+        this.updatePositionModal(); // Mettre à jour la modal avec le nouvel état
+
+        // Si le mode aventure est activé, désactiver le glissement manuel immédiatement
+        if (this.adventureMode) {
+            this.isDragging = false;
+            this.positionMarker.style.cursor = 'default'; // Changer le curseur si le mode aventure est actif
+        } else {
+            this.updateMarkerCursor(); // Réinitialiser le curseur si le mode aventure est désactivé
+        }
+        
+        // Si le mode aventure est activé, et que l'on vient de le désactiver, alors il faut réactiver le drag et mettre à jour le curseur
+        if (!this.adventureMode) {
+            this.updateMarkerCursor();
+        }
+    }
+
+    updateMarkerCursor() {
+        if (!this.positionMarker) return;
+
+        if (this.adventureMode) {
+            // En mode aventure, le marqueur ne doit pas être déplaçable manuellement
+            this.positionMarker.style.cursor = 'default'; 
+        } else {
+            // Sinon, curseur de déplacement par défaut
+            this.positionMarker.style.cursor = 'move';
+        }
     }
 
     init() {
         console.log("📍 Initializing PositionManager...");
         this.createPositionMarker();
         this.setupEventListeners();
+        this.updateMarkerCursor(); // Initialiser le curseur
         console.log("✅ PositionManager initialized with position:", this.currentPosition);
+        console.log("✅ Mode Aventure initial:", this.adventureMode ? "Actif" : "Inactif");
     }
 
     loadPosition() {
-        // Vérifier si la position vient du cloud (flag temporaire)
         const fromCloud = localStorage.getItem('adventurers_position_from_cloud');
         const activeMapId = window.settingsManager?.activeMapUrl;
-        
+
         console.log("📍 [PositionManager.loadPosition] État du flag cloud:", fromCloud);
         console.log("📍 [PositionManager.loadPosition] Carte active:", activeMapId);
-        
+
         const saved = localStorage.getItem('adventurers_position');
         console.log("📍 [PositionManager.loadPosition] Position dans localStorage:", saved);
-        
+
         if (saved) {
             try {
                 const position = JSON.parse(saved);
-                
-                // Vérifier si la position correspond à la carte active
+
                 if (position.mapId && activeMapId && position.mapId !== activeMapId) {
                     console.log("📍 [PositionManager] Position d'une autre carte, utilisation position par défaut");
                     return this.getDefaultPosition();
                 }
-                
+
                 if (fromCloud === 'true') {
                     console.log("📍 [PositionManager] Position chargée depuis CLOUD via localStorage:", position);
                 } else {
                     console.log("📍 [PositionManager] Position chargée depuis localStorage local:", position);
                 }
-                
+
                 return position;
             } catch (e) {
                 console.error("❌ [PositionManager] Erreur parsing position:", e);
                 localStorage.removeItem('adventurers_position_from_cloud');
             }
         }
-        
+
         return this.getDefaultPosition();
     }
 
@@ -72,11 +114,10 @@ class PositionManager {
             y: this.currentPosition.y,
             mapId: activeMapId
         };
-        
+
         console.log("💾 [PositionManager.savePosition] Sauvegarde position:", positionToSave);
         localStorage.setItem('adventurers_position', JSON.stringify(positionToSave));
-        
-        // Log pour vérifier que le flag cloud n'est pas présent
+
         const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
         console.log("💾 [PositionManager.savePosition] Flag cloud après save:", cloudFlag);
     }
@@ -88,18 +129,15 @@ class PositionManager {
             return;
         }
 
-        // Nettoyer tous les marqueurs existants pour éviter les doublons
         const existingMarkers = positionLayer.querySelectorAll('.position-marker');
         existingMarkers.forEach(marker => marker.remove());
         console.log(`📍 [PositionManager] ${existingMarkers.length} marqueur(s) existant(s) supprimé(s)`);
 
-        // Créer le marqueur de position
         this.positionMarker = document.createElement('div');
         this.positionMarker.id = 'position-marker';
         this.positionMarker.className = 'position-marker';
         this.positionMarker.title = 'Position des aventuriers';
-        
-        // Créer l'image
+
         const img = document.createElement('img');
         img.src = '/images/markers/Position.png';
         img.alt = 'Position';
@@ -107,19 +145,13 @@ class PositionManager {
         img.style.height = '100%';
         img.style.objectFit = 'contain';
         img.style.display = 'block';
-        
-        // Gestion des erreurs de chargement de l'image
+
         img.onerror = () => {
-            // Afficher un emoji de secours
             this.positionMarker.innerHTML = '<div style="font-size: 48px; line-height: 64px; text-align: center;">📍</div>';
         };
 
         this.positionMarker.appendChild(img);
-
-        // Positionner le marqueur
         this.updateMarkerPosition();
-
-        // Ajouter à la couche dédiée
         positionLayer.appendChild(this.positionMarker);
     }
 
@@ -128,45 +160,35 @@ class PositionManager {
 
         this.positionMarker.style.left = `${this.currentPosition.x}px`;
         this.positionMarker.style.top = `${this.currentPosition.y}px`;
-        
-        // Adapter la taille selon le zoom
         this.updateMarkerSize();
     }
-    
+
     updateMarkerSize() {
         if (!this.positionMarker) return;
-        
+
         const currentScale = window.scale || 1;
         const zoomPercentage = currentScale * 100;
-        
-        // Taille x2 en dessous de 50%, taille normale au-dessus
         const sizeMultiplier = zoomPercentage < 50 ? 2 : 1;
-        
         const baseSize = 64;
         const newSize = baseSize * sizeMultiplier;
-        
+
         this.positionMarker.style.width = `${newSize}px`;
         this.positionMarker.style.height = `${newSize}px`;
-        
-        // Vérifier la proximité avec les lieux ayant des rumeurs
         this.checkRumoursProximity();
     }
 
     checkRumoursProximity() {
         if (!this.positionMarker || !window.locationsData || !window.locationsData.locations) return;
 
-        const PROXIMITY_THRESHOLD = 100; // 100 pixels
+        const PROXIMITY_THRESHOLD = 100;
         let nearRumours = false;
 
-        // Vérifier chaque lieu
         for (const location of window.locationsData.locations) {
-            // Vérifier si le lieu a des rumeurs
-            const hasRumours = (location.Rumeurs && location.Rumeurs.length > 0 && 
+            const hasRumours = (location.Rumeurs && location.Rumeurs.length > 0 &&
                                location.Rumeurs.some(r => r && r !== "A définir")) ||
                               (location.Rumeur && location.Rumeur !== "A définir");
 
             if (hasRumours && location.coordinates) {
-                // Calculer la distance
                 const dx = location.coordinates.x - this.currentPosition.x;
                 const dy = location.coordinates.y - this.currentPosition.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
@@ -178,19 +200,16 @@ class PositionManager {
             }
         }
 
-        // Vérifier les régions ayant des rumeurs
         if (!nearRumours && window.regionsData && window.regionsData.regions) {
             for (const region of window.regionsData.regions) {
-                // Vérifier si la région a des rumeurs
-                const hasRumours = (region.Rumeurs && region.Rumeurs.length > 0 && 
+                const hasRumours = (region.Rumeurs && region.Rumeurs.length > 0 &&
                                    region.Rumeurs.some(r => r && r !== "A définir")) ||
                                   (region.Rumeur && region.Rumeur !== "A définir");
 
                 if (hasRumours && region.points && region.points.length > 0) {
-                    // Calculer la distance au centre de la région
                     const centerX = region.points.reduce((sum, p) => sum + p.x, 0) / region.points.length;
                     const centerY = region.points.reduce((sum, p) => sum + p.y, 0) / region.points.length;
-                    
+
                     const dx = centerX - this.currentPosition.x;
                     const dy = centerY - this.currentPosition.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -203,7 +222,6 @@ class PositionManager {
             }
         }
 
-        // Appliquer ou retirer le cadre jaune
         if (nearRumours) {
             this.positionMarker.style.border = '4px solid #FCD34D';
             this.positionMarker.style.borderRadius = '8px';
@@ -218,10 +236,10 @@ class PositionManager {
     setupEventListeners() {
         if (!this.positionMarker) return;
 
-        // Événements de glisser-déposer (souris)
+        // --- Gestion du glisser-déposer (souris) ---
         this.positionMarker.addEventListener('mousedown', (e) => {
-            // Ne pas permettre le drag si le mode dessin est actif
-            if (e.button === 0 && !window.isDrawingMode) { // Clic gauche seulement et pas en mode dessin
+            // Ne pas permettre le drag si le mode dessin est actif OU si le mode aventure est actif
+            if (e.button === 0 && !window.isDrawingMode && !this.adventureMode) { 
                 this.handleDragStart(e);
             }
         });
@@ -241,84 +259,69 @@ class PositionManager {
         document.addEventListener('mousemove', this.dragMoveHandler);
         document.addEventListener('mouseup', this.dragEndHandler);
 
-        // Événements tactiles pour mobile
+        // --- Événements tactiles pour mobile ---
         let touchStartTime = 0;
         let touchHasMoved = false;
 
         this.positionMarker.addEventListener('touchstart', (e) => {
-            if (window.isDrawingMode) return;
-            
+            if (window.isDrawingMode || this.adventureMode) return; // Ne pas démarrer si mode dessin ou mode aventure
+
             touchStartTime = Date.now();
             touchHasMoved = false;
-            
-            // Démarrer le drag immédiatement
+
             const touch = e.touches[0];
             this.isDragging = true;
             this.dragStartX = touch.clientX;
             this.dragStartY = touch.clientY;
-            
-            // Désactiver temporairement le pan de la carte
+
             const viewport = this.dom.getElementById('viewport');
             if (viewport) {
                 viewport.style.pointerEvents = 'none';
             }
-            
             e.stopPropagation();
         }, { passive: false });
 
         this.positionMarker.addEventListener('touchmove', (e) => {
             if (!this.isDragging) return;
-            
+
             touchHasMoved = true;
             e.preventDefault();
-            
+
             const touch = e.touches[0];
             const scale = window.scale || 1;
             const deltaX = touch.clientX - this.dragStartX;
             const deltaY = touch.clientY - this.dragStartY;
 
-            // Convertir le delta en coordonnées de la carte
             const mapDeltaX = deltaX / scale;
             const mapDeltaY = deltaY / scale;
 
-            // Calculer les nouvelles coordonnées
             const newX = this.currentPosition.x + mapDeltaX;
             const newY = this.currentPosition.y + mapDeltaY;
 
-            // Contraindre dans les limites de la carte
             this.currentPosition.x = Math.max(0, Math.min(this.mapConstants.MAP_WIDTH, newX));
             this.currentPosition.y = Math.max(0, Math.min(this.mapConstants.MAP_HEIGHT, newY));
 
-            // Mettre à jour l'affichage
             this.updateMarkerPosition();
-
-            // Vérifier la proximité avec les rumeurs
             this.checkRumoursProximity();
 
-            // Mettre à jour les coordonnées de départ pour le prochain mouvement
             this.dragStartX = touch.clientX;
             this.dragStartY = touch.clientY;
         }, { passive: false });
 
         this.positionMarker.addEventListener('touchend', (e) => {
             const touchDuration = Date.now() - touchStartTime;
-            
+
             e.preventDefault();
             e.stopPropagation();
-            
+
             if (this.isDragging) {
                 this.isDragging = false;
-                
-                // Réactiver le pan de la carte
                 const viewport = this.dom.getElementById('viewport');
                 if (viewport) {
                     viewport.style.pointerEvents = 'auto';
                 }
-                
-                // Sauvegarder la nouvelle position
-                this.savePosition();
 
-                // Marquer comme non sauvegardé et programmer la synchronisation
+                this.savePosition();
                 if (typeof window.markAsUnsaved === 'function') {
                     window.markAsUnsaved();
                 }
@@ -326,7 +329,7 @@ class PositionManager {
                     window.scheduleAutoSync();
                 }
             }
-            
+
             // Si c'est un long press sans mouvement, ouvrir la modal
             if (!touchHasMoved && touchDuration >= 500) {
                 this.showPositionModal(e);
@@ -341,6 +344,19 @@ class PositionManager {
             this.showPositionModal(e);
             return false;
         });
+
+        // Mise à jour du curseur au survol
+        this.positionMarker.addEventListener('mouseenter', () => {
+            if (!this.isDragging && !window.isDrawingMode) {
+                this.updateMarkerCursor();
+            }
+        });
+
+        this.positionMarker.addEventListener('mouseleave', () => {
+            if (!this.isDragging && !window.isDrawingMode) {
+                this.positionMarker.style.cursor = 'pointer'; // Retour au curseur par défaut
+            }
+        });
     }
 
     handleDragStart(e) {
@@ -351,9 +367,8 @@ class PositionManager {
         this.dragStartX = e.clientX;
         this.dragStartY = e.clientY;
 
-        this.positionMarker.style.cursor = 'move';
-        
-        // Désactiver temporairement le pan de la carte
+        this.positionMarker.style.cursor = 'move'; // Curseur de déplacement pendant le drag
+
         const viewport = this.dom.getElementById('viewport');
         if (viewport) {
             viewport.style.pointerEvents = 'none';
@@ -369,25 +384,18 @@ class PositionManager {
         const deltaX = e.clientX - this.dragStartX;
         const deltaY = e.clientY - this.dragStartY;
 
-        // Convertir le delta en coordonnées de la carte
         const mapDeltaX = deltaX / scale;
         const mapDeltaY = deltaY / scale;
 
-        // Calculer les nouvelles coordonnées
         const newX = this.currentPosition.x + mapDeltaX;
         const newY = this.currentPosition.y + mapDeltaY;
 
-        // Contraindre dans les limites de la carte
         this.currentPosition.x = Math.max(0, Math.min(this.mapConstants.MAP_WIDTH, newX));
         this.currentPosition.y = Math.max(0, Math.min(this.mapConstants.MAP_HEIGHT, newY));
 
-        // Mettre à jour l'affichage
         this.updateMarkerPosition();
-
-        // Vérifier la proximité avec les rumeurs
         this.checkRumoursProximity();
 
-        // Mettre à jour les coordonnées de départ pour le prochain mouvement
         this.dragStartX = e.clientX;
         this.dragStartY = e.clientY;
     }
@@ -396,46 +404,39 @@ class PositionManager {
         if (!this.isDragging) return;
 
         this.isDragging = false;
-        this.positionMarker.style.cursor = 'move';
+        // Le curseur est géré par updateMarkerCursor() appelée après la sauvegarde
 
-        // Réactiver le pan de la carte
         const viewport = this.dom.getElementById('viewport');
         if (viewport) {
             viewport.style.pointerEvents = 'auto';
         }
 
-        // Sauvegarder la nouvelle position
         this.savePosition();
-
-        // Marquer comme non sauvegardé et programmer la synchronisation
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
         if (typeof window.scheduleAutoSync === 'function') {
             window.scheduleAutoSync();
         }
+        this.updateMarkerCursor(); // Mettre à jour le curseur après le drag end
     }
 
     showPositionModal(event) {
-        // Créer la modal si elle n'existe pas
         let modal = document.getElementById('position-modal');
         if (!modal) {
             modal = this.createPositionModal();
             document.body.appendChild(modal);
         }
 
-        // Mettre à jour le contenu
-        this.updateModalContent(modal);
+        this.updatePositionModal(modal); // Utilisation de la nouvelle méthode
 
-        // Positionner la modal près du curseur
         if (event) {
-            const modalWidth = 180;
-            const modalHeight = 100;
-            
+            const modalWidth = 250; // Ajusté pour le nouveau contenu
+            const modalHeight = 150; // Ajusté pour le nouveau contenu
+
             let left = event.clientX + 10;
             let top = event.clientY - modalHeight / 2;
 
-            // Vérifier les limites de l'écran
             if (left + modalWidth > window.innerWidth) {
                 left = event.clientX - modalWidth - 10;
             }
@@ -450,7 +451,6 @@ class PositionManager {
             modal.style.top = `${top}px`;
         }
 
-        // Afficher la modal
         modal.classList.remove('hidden');
     }
 
@@ -458,29 +458,25 @@ class PositionManager {
         const modal = document.createElement('div');
         modal.id = 'position-modal';
         modal.className = 'hidden absolute z-50 bg-gray-900 bg-opacity-95 border border-gray-700 rounded-lg p-3 shadow-xl';
-        modal.style.minWidth = '180px';
+        modal.style.minWidth = '250px'; // Augmenté
 
         modal.innerHTML = `
             <div class="space-y-2">
-                <div class="flex items-center justify-between text-xs">
-                    <span class="text-gray-400">X:</span>
-                    <span id="position-x" class="font-bold text-blue-400"></span>
+                <div class="flex items-center justify-between text-xs text-gray-400">
+                    <span>Mode Aventure:</span>
+                    <span id="adventure-mode-status" class="font-bold px-2 py-1 rounded-full"></span>
                 </div>
-                <div class="flex items-center justify-between text-xs">
-                    <span class="text-gray-400">Y:</span>
-                    <span id="position-y" class="font-bold text-blue-400"></span>
-                </div>
-                <button id="center-position-btn" class="w-full mt-2 px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs transition-colors flex items-center justify-center">
-                    <i class="fas fa-crosshairs mr-1"></i>
-                    <span>Centrer</span>
+                
+                <button id="adventure-mode-toggle-btn" class="w-full px-2 py-1 rounded text-xs transition-colors flex items-center justify-center font-semibold">
+                    <span id="adventure-mode-toggle-text"></span>
                 </button>
             </div>
         `;
 
-        // Event listeners
-        modal.querySelector('#center-position-btn').addEventListener('click', () => {
-            this.centerMapOnPosition();
-            modal.classList.add('hidden');
+        // Gestionnaire d'événement pour le bouton d'activation/désactivation du mode aventure
+        const toggleButton = modal.querySelector('#adventure-mode-toggle-btn');
+        toggleButton.addEventListener('click', () => {
+            this.toggleAdventureMode();
         });
 
         // Fermer en cliquant ailleurs
@@ -494,35 +490,46 @@ class PositionManager {
         return modal;
     }
 
-    updateModalContent(modal) {
-        const xElement = modal.querySelector('#position-x');
-        const yElement = modal.querySelector('#position-y');
+    updatePositionModal(modal) {
+        if (!modal) modal = document.getElementById('position-modal');
+        if (!modal) return;
 
-        if (xElement) {
-            xElement.textContent = Math.round(this.currentPosition.x);
+        const statusSpan = modal.querySelector('#adventure-mode-status');
+        const toggleButton = modal.querySelector('#adventure-mode-toggle-btn');
+        const toggleTextSpan = modal.querySelector('#adventure-mode-toggle-text');
+
+        // Mise à jour de l'état du Mode Aventure
+        if (this.adventureMode) {
+            statusSpan.textContent = "Actif";
+            statusSpan.style.backgroundColor = '#10B981'; // Vert
+            statusSpan.style.color = '#fff';
+
+            toggleButton.textContent = "Interrompre mode Aventure";
+            toggleButton.style.backgroundColor = '#F59E0B'; // Orange
+            toggleButton.style.color = '#fff';
+            toggleButton.style.borderColor = '#D97706';
+        } else {
+            statusSpan.textContent = "Inactif";
+            statusSpan.style.backgroundColor = '#6B7280'; // Gris
+            statusSpan.style.color = '#fff';
+
+            toggleButton.textContent = "Activer mode Aventure";
+            toggleButton.style.backgroundColor = '#22C55E'; // Vert
+            toggleButton.style.color = '#fff';
+            toggleButton.style.borderColor = '#16A34A';
         }
-        if (yElement) {
-            yElement.textContent = Math.round(this.currentPosition.y);
-        }
+        
+        // Mise à jour de la position (supprimée pour respecter la demande)
+        // Si vous souhaitez réafficher les coordonnées, décommentez les lignes ci-dessous
+        // const xElement = modal.querySelector('#position-x');
+        // const yElement = modal.querySelector('#position-y');
+        // if (xElement) xElement.textContent = Math.round(this.currentPosition.x);
+        // if (yElement) yElement.textContent = Math.round(this.currentPosition.y);
     }
 
     centerMapOnPosition() {
-        const viewport = this.dom.getElementById('viewport');
-        if (!viewport) return;
-
-        const viewportWidth = viewport.clientWidth;
-        const viewportHeight = viewport.clientHeight;
-        const currentScale = window.scale || 1;
-
-        // Calculer le pan nécessaire pour centrer la position
-        window.panX = viewportWidth / 2 - this.currentPosition.x * currentScale;
-        window.panY = viewportHeight / 2 - this.currentPosition.y * currentScale;
-
-        // Appliquer la transformation
-        const mapContainer = this.dom.getElementById('map-container');
-        if (mapContainer) {
-            mapContainer.style.transform = `translate(${window.panX}px, ${window.panY}px) scale(${currentScale})`;
-        }
+        // Cette fonction est supprimée car le bouton "Centrer" a été retiré de la modal.
+        console.warn("La fonction centerMapOnPosition() a été appelée mais le bouton correspondant a été retiré de la modal.");
     }
 
     // Méthode pour mettre à jour la position programmatiquement
@@ -531,6 +538,7 @@ class PositionManager {
         this.currentPosition = { x, y, mapId: activeMapId };
         this.updateMarkerPosition();
         this.savePosition();
+        this.updatePositionModal(); // Mettre à jour la modal si elle est ouverte
     }
 
     // Méthode pour obtenir la position actuelle
@@ -540,6 +548,17 @@ class PositionManager {
 
     // Méthode pour animer le déplacement du marqueur vers une nouvelle position
     animateToPosition(targetX, targetY, duration = 1000) {
+        // Ne pas animer si le mode aventure est actif
+        if (this.adventureMode) {
+            console.log("📍 [animateToPosition] Ignoré car le mode aventure est actif.");
+            // Optionnellement, mettre à jour la position sans animation si nécessaire
+            const activeMapId = window.settingsManager?.activeMapUrl;
+            this.currentPosition = { x: targetX, y: targetY, mapId: activeMapId };
+            this.updateMarkerPosition();
+            this.savePosition();
+            return;
+        }
+
         const startX = this.currentPosition.x;
         const startY = this.currentPosition.y;
         const startTime = performance.now();
@@ -548,25 +567,20 @@ class PositionManager {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
 
-            // Fonction d'easing pour un mouvement fluide (ease-in-out)
             const easeProgress = progress < 0.5
                 ? 2 * progress * progress
                 : 1 - Math.pow(-2 * progress + 2, 2) / 2;
 
-            // Calculer la position interpolée
             const currentX = startX + (targetX - startX) * easeProgress;
             const currentY = startY + (targetY - startY) * easeProgress;
 
-            // Mettre à jour la position
             this.currentPosition.x = currentX;
             this.currentPosition.y = currentY;
             this.updateMarkerPosition();
 
-            // Continuer l'animation si pas terminée
             if (progress < 1) {
                 requestAnimationFrame(animate);
             } else {
-                // Animation terminée - sauvegarder la position finale
                 const activeMapId = window.settingsManager?.activeMapUrl;
                 this.currentPosition = {
                     x: targetX,
@@ -576,7 +590,6 @@ class PositionManager {
                 this.updateMarkerPosition();
                 this.savePosition();
 
-                // Marquer comme non sauvegardé et programmer la synchronisation
                 if (typeof window.markAsUnsaved === 'function') {
                     window.markAsUnsaved();
                 }
