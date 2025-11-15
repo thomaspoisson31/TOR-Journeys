@@ -505,6 +505,11 @@ class SettingsManager {
                             ` : ''}
                         </div>
                         <div class="flex flex-col gap-2">
+                            <button class="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 rounded transition-colors" 
+                                    onclick="event.stopPropagation(); window.settingsManager.renameMap(${index})"
+                                    title="Renommer">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
                             <button class="p-2 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 rounded transition-colors" 
                                     onclick="event.stopPropagation(); window.settingsManager.editMapScale(${index})"
                                     title="Modifier l'échelle">
@@ -694,6 +699,51 @@ class SettingsManager {
         // IMPORTANT: Le ZoomManager sera mis à jour automatiquement par initializeMap()
         // qui est appelé après le chargement de la nouvelle carte
         console.log('🔍 [switchMap] Le ZoomManager sera mis à jour par initializeMap()');
+    }
+
+    renameMap(index) {
+        const map = this.availableMaps[index];
+
+        const newName = prompt(
+            `Renommer la carte\n\n` +
+            `Nom actuel : "${map.name}"\n\n` +
+            `Nouveau nom :`,
+            map.name
+        );
+
+        if (newName !== null) {
+            const trimmedName = newName.trim();
+            
+            // Validation : nom non vide
+            if (!trimmedName) {
+                alert('Le nom de la carte ne peut pas être vide.');
+                return;
+            }
+
+            // Validation : unicité (optionnel)
+            const nameExists = this.availableMaps.some((m, i) => 
+                i !== index && m.name.toLowerCase() === trimmedName.toLowerCase()
+            );
+
+            if (nameExists) {
+                alert('Une carte avec ce nom existe déjà.');
+                return;
+            }
+
+            // Renommage
+            const oldName = map.name;
+            map.name = trimmedName;
+
+            // Si c'est la carte active, mettre à jour activeMapName
+            if (map.url === this.activeMapUrl) {
+                this.activeMapName = trimmedName;
+            }
+
+            this.saveMapsData();
+            this.renderMapsGrid();
+
+            console.log(`🏷️ Carte renommée: "${oldName}" → "${trimmedName}"`);
+        }
     }
 
     editMapScale(index) {
