@@ -2427,7 +2427,7 @@ class InfoBoxManager {
                                        ${isAssociated ? 'checked' : ''}
                                        class="form-checkbox h-5 w-5 text-blue-600 character-checkbox">
                                 ${thumbnailImage ? `
-                                    <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                    <img src="${thumbnailImage.url}" alt="${character.name}"
                                          class="w-12 h-12 rounded-full object-cover border-2 ${borderClass}">
                                 ` : `
                                     <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
@@ -2799,7 +2799,7 @@ class InfoBoxManager {
         if (itemType === 'location') {
             // Supprimer le lieu
             if (window.locationsData && window.locationsData.locations) {
-                const index = window.locationsData.locations.findIndex(loc => 
+                const index = window.locationsData.locations.findIndex(loc =>
                     String(loc.id) === String(this.currentItem.id)
                 );
 
@@ -2820,7 +2820,7 @@ class InfoBoxManager {
         } else if (itemType === 'region') {
             // Supprimer la région
             if (window.regionsData && window.regionsData.regions) {
-                const index = window.regionsData.regions.findIndex(reg => 
+                const index = window.regionsData.regions.findIndex(reg =>
                     String(reg.id) === String(this.currentItem.id)
                 );
 
@@ -2829,7 +2829,7 @@ class InfoBoxManager {
 
                     // Synchroniser avec dataManager
                     if (window.dataManager) {
-                        window.dataManager.regionsData = window.regionsData;
+                        window.dataManager.regionsData = window.dataManager.regionsData;
                         window.dataManager.saveRegionsToLocal();
                     }
 
@@ -2910,6 +2910,51 @@ class InfoBoxManager {
             zoomLevel.textContent = '100%';
             fullscreenOverlay.classList.remove('zooming', 'panning'); // Nettoyer les classes
         };
+
+        // Fonction de fermeture réutilisable
+        const closeFullscreen = () => {
+            console.log('🚪 [closeFullscreen] Fermeture de l\'overlay');
+            fullscreenOverlay.classList.add('hidden');
+            this.resetZoomForFullscreen();
+            // Remettre le focus sur l'InfoBox pour permettre la navigation
+            const infoBox = document.getElementById('info-box');
+            if (infoBox && infoBox.style.display === 'block') {
+                infoBox.focus();
+            }
+        };
+
+        // Ajouter l'écouteur d'événement pour Échap
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && !fullscreenOverlay.classList.contains('hidden')) {
+                console.log('⌨️ [handleEscape] Touche Échap détectée');
+                closeFullscreen();
+            }
+        };
+
+        // Ajouter l'écouteur d'événement pour Échap
+        document.addEventListener('keydown', handleEscape);
+
+        // Fermeture en cliquant sur l'overlay (zone noire)
+        fullscreenOverlay.addEventListener('click', (e) => {
+            console.log('🖱️ [overlay click] Target:', e.target.id || e.target.className);
+            // Si on clique directement sur l'overlay (pas sur l'image ou les contrôles)
+            if (e.target === fullscreenOverlay) {
+                console.log('🖱️ [overlay click] Clic sur fond noir - fermeture');
+                closeFullscreen();
+            } else {
+                console.log('🖱️ [overlay click] Clic sur autre élément - pas de fermeture');
+            }
+        });
+
+        // Clic gauche sur l'image = fermeture
+        container.addEventListener('click', (e) => {
+            console.log('🖱️ [container click] Clic sur image/conteneur');
+            // Seulement si c'est un clic gauche (button 0) et pas un drag
+            if (e.button === 0 || e.button === undefined) {
+                console.log('🖱️ [container click] Clic gauche détecté - fermeture');
+                closeFullscreen();
+            }
+        });
 
         // Fonction pour réinitialiser le zoom, appelée lors de la fermeture de l'overlay
         this.resetZoomForFullscreen = resetZoom;
@@ -3034,40 +3079,6 @@ class InfoBoxManager {
                 isPanning = false;
                 fullscreenOverlay.classList.remove('panning');
             }
-        });
-
-        // Fonction de fermeture réutilisable
-        const closeFullscreen = () => {
-            fullscreenOverlay.classList.add('hidden');
-            this.resetZoomForFullscreen();
-            // Remettre le focus sur l'InfoBox pour permettre la navigation
-            const infoBox = document.getElementById('info-box');
-            if (infoBox && infoBox.style.display === 'block') {
-                infoBox.focus();
-            }
-        };
-
-        // Fermeture avec la touche Échap
-        const handleEscape = (e) => {
-            if (e.key === 'Escape' && !fullscreenOverlay.classList.contains('hidden')) {
-                closeFullscreen();
-            }
-        };
-
-        // Ajouter l'écouteur d'événement pour Échap
-        document.addEventListener('keydown', handleEscape);
-
-        // Fermeture en cliquant sur l'overlay (zone noire)
-        fullscreenOverlay.addEventListener('click', (e) => {
-            // Si on clique directement sur l'overlay (pas sur l'image ou les contrôles)
-            if (e.target === fullscreenOverlay) {
-                closeFullscreen();
-            }
-        });
-
-        // Empêcher la propagation des clics sur l'image
-        container.addEventListener('click', (e) => {
-            e.stopPropagation();
         });
 
         // Masquer les contrôles de zoom (inutiles avec molette/pinch)
