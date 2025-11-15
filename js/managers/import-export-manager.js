@@ -727,7 +727,11 @@ class ImportExportManager {
     mergeLocations(importedLocations) {
         if (!importedLocations || importedLocations.length === 0) return;
 
-        if (!this.dataManager.locationsData || !this.dataManager.locationsData.locations) {
+        // CRITIQUE: Synchroniser avec window.locationsData qui est la source de vérité
+        if (window.locationsData && window.locationsData.locations) {
+            this.dataManager.locationsData = window.locationsData;
+            console.log(`🔄 [mergeLocations] Synchronisation avec window.locationsData: ${window.locationsData.locations.length} lieux`);
+        } else if (!this.dataManager.locationsData || !this.dataManager.locationsData.locations) {
             this.dataManager.locationsData = { locations: [] };
         }
 
@@ -772,10 +776,13 @@ class ImportExportManager {
         // ÉTAPE 3: Fusionner les lieux des autres cartes + lieux importés
         const mergedLocations = [...locationsFromOtherMaps, ...processedImportedLocations];
         console.log(`🔄 [mergeLocations] Total lieux APRÈS fusion: ${mergedLocations.length}`);
+        console.log(`🔄 [mergeLocations] Détail fusion: ${locationsFromOtherMaps.length} conservés + ${processedImportedLocations.length} importés = ${mergedLocations.length} total`);
 
         // ÉTAPE 4: Mettre à jour les données
         this.dataManager.locationsData = { locations: mergedLocations };
         window.locationsData = this.dataManager.locationsData;
+        
+        console.log(`✅ [mergeLocations] window.locationsData synchronisé: ${window.locationsData.locations.length} lieux`);
     }
 
     /**
@@ -784,7 +791,11 @@ class ImportExportManager {
     mergeRegions(importedRegions) {
         if (!importedRegions || importedRegions.length === 0) return;
 
-        if (!this.dataManager.regionsData || !this.dataManager.regionsData.regions) {
+        // CRITIQUE: Synchroniser avec window.regionsData qui est la source de vérité
+        if (window.regionsData && window.regionsData.regions) {
+            this.dataManager.regionsData = window.regionsData;
+            console.log(`🔄 [mergeRegions] Synchronisation avec window.regionsData: ${window.regionsData.regions.length} régions`);
+        } else if (!this.dataManager.regionsData || !this.dataManager.regionsData.regions) {
             this.dataManager.regionsData = { regions: [] };
         }
 
@@ -829,10 +840,13 @@ class ImportExportManager {
         // ÉTAPE 3: Fusionner les régions des autres cartes + régions importées
         const mergedRegions = [...regionsFromOtherMaps, ...processedImportedRegions];
         console.log(`🔄 [mergeRegions] Total régions APRÈS fusion: ${mergedRegions.length}`);
+        console.log(`🔄 [mergeRegions] Détail fusion: ${regionsFromOtherMaps.length} conservées + ${processedImportedRegions.length} importées = ${mergedRegions.length} total`);
 
         // ÉTAPE 4: Mettre à jour les données
         this.dataManager.regionsData = { regions: mergedRegions };
         window.regionsData = this.dataManager.regionsData;
+        
+        console.log(`✅ [mergeRegions] window.regionsData synchronisé: ${window.regionsData.regions.length} régions`);
     }
 
     /**
