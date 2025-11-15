@@ -860,6 +860,48 @@ PRINCIPES DE RENDERING DESCRIPTIONS VOYAGE
    - journal stocke l'historique complet de tous les voyages générés
    - Synchronisation bidirectionnelle: localStorage ↔ cloud
 
+PRINCIPES GESTION OVERLAY PLEIN ÉCRAN IMAGES
+--------------------------------------------
+
+1. MODALITÉS DE ZOOM/PAN:
+   
+   PC (souris):
+   - Molette souris: zoom in/out (0.5x à 5x)
+   - Clic droit maintenu: pan (déplacement) si zoomé > 1x
+   - Clic gauche sur image: fermeture de l'overlay
+   - Clic sur fond noir: fermeture de l'overlay
+   - Touche Échap: fermeture + retour focus InfoBox
+   - Menu contextuel désactivé (preventDefault sur contextmenu)
+   
+   Mobile/Tactile:
+   - Pinch (2 doigts): zoom in/out
+   - 1 doigt glissé: pan si zoomé > 1x
+   - Tap sur image: fermeture de l'overlay
+   - Tap sur fond noir: fermeture de l'overlay
+   - Indicateur zoom visible (ex: "150%")
+
+2. GESTION DES CURSEURS:
+   - PC mode pan (clic droit maintenu): cursor = 'grabbing'
+   - PC survol en mode zoomé: cursor = 'move'
+   - PC par défaut: cursor défini par CSS
+
+3. PRÉVENTION DES CONFLITS:
+   - Clic droit pour pan (PC) vs clic gauche pour fermer
+   - stopPropagation() uniquement sur clic droit (pan)
+   - Pas de stopPropagation() sur clic gauche (permet fermeture)
+   - Event delegation: listeners sur conteneur parent stable
+   
+4. RÉINITIALISATION:
+   - Fermeture overlay: resetZoom() automatique
+   - Double-clic: reset manuel (zoom 1x, offsets à 0)
+   - Nettoyage listeners: removeEventListener avant recréation
+
+5. CODE CONCERNÉ:
+   - infobox-manager.js: setupFullscreenImageListeners()
+   - Création conteneur zoom, gestion transform CSS
+   - Event listeners: wheel, touchstart/move/end, mousedown/move/up
+   - Fonction closeFullscreen() réutilisable
+
 PRINCIPES EVENT DELEGATION POUR ÉLÉMENTS DYNAMIQUES
 ----------------------------------------------------
 
@@ -943,7 +985,20 @@ PRINCIPES EVENT DELEGATION POUR ÉLÉMENTS DYNAMIQUES
 PROBLÈMES RÉSOLUS
 -----------------
 
-1. Clics sur en-têtes de jours non détectés (v1.3.8):
+1. Fermeture de l'overlay plein écran des images (v1.3.9):
+   - Problème: Impossible de fermer l'overlay après avoir activé le zoom/pan avec clic droit
+   - Cause: Event listeners mal configurés, clic sur l'image empêchait la fermeture
+   - Impact: Utilisateur bloqué dans la visualisation plein écran, surtout sur mobile
+   - Solution: 
+     * Clic gauche sur l'image = fermeture immédiate (stopPropagation retiré)
+     * Clic sur fond noir (overlay) = fermeture
+     * Touche Échap = fermeture + retour focus sur InfoBox
+     * Clic droit (bouton 2) = pan uniquement si zoomé (>1x) sur PC
+     * Pan mobile via tactile (1 doigt) inchangé
+   - Bénéfices: Navigation fluide, pas de blocage, contrôles intuitifs
+   - Fichier concerné: infobox-manager.js (setupFullscreenImageListeners)
+
+2. Clics sur en-têtes de jours non détectés (v1.3.8):
    - Problème: Cliquer sur l'en-tête d'un jour (Jour X, date) ne déplaçait pas le marqueur ni ne changeait la date
    - Cause: Event listeners attachés AVANT innerHTML, puis écrasés lors du rendu
    - Impact: Navigation impossible dans le voyage, utilisateur bloqué
