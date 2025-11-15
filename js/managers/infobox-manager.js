@@ -330,12 +330,16 @@ class InfoBoxManager {
                             const img = galleryItem.querySelector('img');
                             fullscreenImage.src = img.src;
                             fullscreenOverlay.classList.remove('hidden');
+                            this.setupFullscreenImageListeners(); // Appel pour initialiser le zoom
                         });
                     });
 
+                    // Fermeture de l'overlay
                     if (fullscreenOverlay) {
                         fullscreenOverlay.addEventListener('click', () => {
                             fullscreenOverlay.classList.add('hidden');
+                            // Réinitialiser le zoom lors de la fermeture
+                            this.resetZoomForFullscreen();
                         });
                     }
                 }, 100);
@@ -1010,7 +1014,7 @@ class InfoBoxManager {
     }
 
     saveThumbnailCrop(thumbnailImage, crop) {
-        // Mettre à jour l'objet image avec les nouvelles métadonnées
+        // Mettre à jour l'objet image avec les métadonnées de cadrage
         thumbnailImage.thumbnailCrop = { ...crop };
 
         // Sauvegarder automatiquement
@@ -2851,6 +2855,206 @@ class InfoBoxManager {
         }
         if (window.renderRegions) {
             window.renderRegions();
+        }
+    }
+
+    // --- Zoom pour les images en plein écran ---
+    setupFullscreenImageListeners() {
+        const fullscreenOverlay = document.getElementById('fullscreen-overlay');
+        if (!fullscreenOverlay) return;
+
+        let zoomScale = 1;
+        let panX = 0;
+        let panY = 0;
+        let isPanning = false;
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+        const minZoom = 1;
+        const maxZoom = 5;
+
+        // Créer le conteneur pour le zoom
+        const container = document.createElement('div');
+        container.className = 'fullscreen-overlay-container';
+
+        // Créer les contrôles de zoom
+        const controls = document.createElement('div');
+        controls.className = 'fullscreen-zoom-controls';
+        controls.innerHTML = `
+            <button class="fullscreen-zoom-btn" id="fullscreen-zoom-out" title="Dézoomer">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button class="fullscreen-zoom-btn" id="fullscreen-zoom-reset" title="Réinitialiser">
+                <i class="fas fa-expand-arrows-alt"></i>
+            </button>
+            <button class="fullscreen-zoom-btn" id="fullscreen-zoom-in" title="Zoomer">
+                <i class="fas fa-plus"></i>
+            </button>
+        `;
+
+        // Indicateur de niveau de zoom
+        const zoomLevel = document.createElement('div');
+        zoomLevel.className = 'fullscreen-zoom-level';
+        zoomLevel.textContent = '100%';
+
+        const resetZoom = () => {
+            zoomScale = 1;
+            panX = 0;
+            panY = 0;
+            container.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
+            zoomLevel.textContent = '100%';
+            fullscreenOverlay.classList.remove('zooming', 'panning'); // Nettoyer les classes
+        };
+
+        // Fonction pour réinitialiser le zoom, appelée lors de la fermeture de l'overlay
+        this.resetZoomForFullscreen = resetZoom;
+
+        const updateTransform = () => {
+            container.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
+            zoomLevel.textContent = `${Math.round(zoomScale * 100)}%`;
+
+            if (zoomScale > 1) {
+                fullscreenOverlay.classList.add('zooming');
+            } else {
+                fullscreenOverlay.classList.remove('zooming');
+            }
+        };
+
+        const zoom = (delta, centerX = null, centerY = null) => {
+            const oldScale = zoomScale;
+            zoomScale = Math.max(minZoom, Math.min(maxZoom, zoomScale * (1 + delta)));
+
+            if (centerX !== null && centerY !== null && zoomScale > 1) {
+                const rect = fullscreenOverlay.getBoundingClientRect();
+                const offsetX = centerX - rect.left - rect.width / 2;
+                const offsetY = centerY - rect.top - rect.height / 2;
+
+                const scaleDiff = zoomScale / oldScale - 1;
+                panX -= offsetX * scaleDiff;
+                panY -= offsetY * scaleDiff;
+            }
+
+            updateTransform();
+        };
+
+        // Gestion de la molette (PC)
+        fullscreenOverlay.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            zoom(delta, e.clientX, e.clientY);
+        }, { passive: false });
+
+        // Gestion du pinch (mobile)
+        let touchDist = 0;
+        let touchCenterX = 0;
+        let touchCenterY = 0;
+
+        fullscreenOverlay.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                touchDist = Math.sqrt(dx * dx + dy * dy);
+                touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            } else if (e.touches.length === 1 && zoomScale > 1) {
+                isPanning = true;
+                lastMouseX = e.touches[0].clientX;
+                lastMouseY = e.touches[0].clientY;
+                fullscreenOverlay.classList.add('panning');
+            }
+        }, { passive: false });
+
+        fullscreenOverlay.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const newDist = Math.sqrt(dx * dx + dy * dy);
+
+                if (touchDist > 0) {
+                    const delta = (newDist / touchDist - 1);
+                    zoom(delta, touchCenterX, touchCenterY);
+                }
+
+                touchDist = newDist;
+                touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            } else if (e.touches.length === 1 && isPanning && zoomScale > 1) {
+                e.preventDefault();
+                const deltaX = e.touches[0].clientX - lastMouseX;
+                const deltaY = e.touches[0].clientY - lastMouseY;
+                panX += deltaX;
+                panY += deltaY;
+                updateTransform();
+                lastMouseX = e.touches[0].clientX;
+                lastMouseY = e.touches[0].clientY;
+            }
+        }, { passive: false });
+
+        fullscreenOverlay.addEventListener('touchend', () => {
+            isPanning = false;
+            touchDist = 0;
+            fullscreenOverlay.classList.remove('panning');
+        });
+
+        // Gestion du drag (PC)
+        fullscreenOverlay.addEventListener('mousedown', (e) => {
+            if (zoomScale > 1) {
+                e.preventDefault();
+                isPanning = true;
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+                fullscreenOverlay.classList.add('panning');
+            }
+        });
+
+        fullscreenOverlay.addEventListener('mousemove', (e) => {
+            if (isPanning && zoomScale > 1) {
+                e.preventDefault();
+                const deltaX = e.clientX - lastMouseX;
+                const deltaY = e.clientY - lastMouseY;
+                panX += deltaX;
+                panY += deltaY;
+                updateTransform();
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+            }
+        });
+
+        fullscreenOverlay.addEventListener('mouseup', () => {
+            isPanning = false;
+            fullscreenOverlay.classList.remove('panning');
+        });
+
+        fullscreenOverlay.addEventListener('mouseleave', () => {
+            isPanning = false;
+            fullscreenOverlay.classList.remove('panning');
+        });
+
+        // Gestion des boutons de zoom
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'fullscreen-zoom-in' || e.target.closest('#fullscreen-zoom-in')) {
+                e.stopPropagation();
+                zoom(0.2);
+            } else if (e.target.id === 'fullscreen-zoom-out' || e.target.closest('#fullscreen-zoom-out')) {
+                e.stopPropagation();
+                zoom(-0.2);
+            } else if (e.target.id === 'fullscreen-zoom-reset' || e.target.closest('#fullscreen-zoom-reset')) {
+                e.stopPropagation();
+                resetZoom();
+            }
+        });
+
+        // Appliquer le conteneur, les contrôles et le niveau de zoom une seule fois
+        // On suppose que l'image est ajoutée dynamiquement après le chargement des listeners
+        const fullscreenImage = fullscreenOverlay.querySelector('#fullscreen-image');
+        if (fullscreenImage) {
+            // Déplacer l'image dans le conteneur
+            fullscreenOverlay.insertBefore(container, fullscreenImage);
+            container.appendChild(fullscreenImage);
+            fullscreenOverlay.appendChild(controls);
+            fullscreenOverlay.appendChild(zoomLevel);
+            resetZoom(); // Initialiser à l'état par défaut
         }
     }
 }
