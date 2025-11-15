@@ -1441,27 +1441,22 @@ class VoyageManager {
     recalculateDaysFromIndexWithShortcuts(startIndex) {
         console.log(`🔄 Recalcul des jours avec raccourcis à partir de l'index ${startIndex}`);
 
-        // Calculer l'offset depuis le début en comptant raccourcis ET prolongations
-        let cumulativeOffsetFromShortcuts = 0;
-        let cumulativeExtensions = 0;
-        
+        // Parcourir tous les jours et recalculer les numéros en tenant compte des raccourcis
         for (let i = 0; i < this.dayByDayData.length; i++) {
-            // Compter les raccourcis AVANT ce jour
-            if (i > 0 && this.dayByDayData[i - 1].isShortened) {
-                cumulativeOffsetFromShortcuts++;
+            // Compter TOUS les raccourcis jusqu'à ce jour (inclus)
+            let shortenedCountBeforeAndIncluding = 0;
+            for (let j = 0; j <= i; j++) {
+                if (this.dayByDayData[j].isShortened) {
+                    shortenedCountBeforeAndIncluding++;
+                }
             }
             
-            // Compter les prolongations AVANT ce jour (sauf le jour courant s'il est lui-même prolongé)
-            if (i > 0 && this.dayByDayData[i - 1].isExtended) {
-                cumulativeExtensions++;
-            }
-
-            // Le numéro de jour réel = index + 1 - raccourcis + prolongations
-            // Mais on ne compte PAS les prolongations car elles dupliquent un jour existant
-            const actualDayNumber = (i + 1) - cumulativeOffsetFromShortcuts;
+            // Le numéro de jour réel = index + 1 - nombre de raccourcis jusqu'ici
+            const actualDayNumber = (i + 1) - shortenedCountBeforeAndIncluding;
             this.dayByDayData[i].day = actualDayNumber;
             
             // La date calendrier est calculée avec le numéro de jour réel
+            // SAUF si le jour est raccourci (durée 0), on garde quand même une date pour l'affichage
             this.dayByDayData[i].calendarDate = this.getCalendarDateForDay(actualDayNumber);
 
             const flags = [];
