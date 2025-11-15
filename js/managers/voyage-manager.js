@@ -564,9 +564,10 @@ class VoyageManager {
             const dayData = this.dayByDayData[i];
             const dayNumber = dayData.day;
             const calendarDate = dayData.calendarDate;
+            const isShortened = dayData.isShortened || false;
 
-            // Récupérer météo et saison
-            const weatherData = this.getWeatherForDay(dayNumber);
+            // Récupérer météo et saison (sauf si jour raccourci)
+            const weatherData = !isShortened ? this.getWeatherForDay(dayNumber) : null;
             let weatherSymbol = '';
             let weatherTooltip = '';
 
@@ -598,14 +599,15 @@ class VoyageManager {
             }).join('');
 
             // Carte du jour avec en-tête cliquable
+            // Ne pas afficher "Jour X" et météo si le jour est raccourci
             allDaysHtml += `
-                <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden" data-day-index="${i}">
+                <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden ${isShortened ? 'opacity-75' : ''}" data-day-index="${i}">
                     <div class="day-header bg-gray-50 p-3 cursor-pointer hover:bg-gray-100 transition-colors">
                         <div class="flex items-center justify-between gap-2">
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-base font-bold whitespace-nowrap" style="color: #940000;">Jour ${dayNumber}</span>
-                                <span class="text-xs text-gray-600 whitespace-nowrap">${calendarDate}</span>
-                                ${weatherSymbol ? `<span class="text-xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
+                                ${!isShortened ? `<span class="text-base font-bold whitespace-nowrap" style="color: #940000;">Jour ${dayNumber}</span>` : ''}
+                                <span class="text-xs ${isShortened ? 'italic' : ''} text-gray-600 whitespace-nowrap">${calendarDate}${isShortened ? ' (raccourci)' : ''}</span>
+                                ${!isShortened && weatherSymbol ? `<span class="text-xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
                                 ${discoveriesHtml}
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
@@ -614,8 +616,8 @@ class VoyageManager {
                                         <i class="fas fa-dice text-xs" style="color: white !important;"></i>
                                     </button>
                                 ` : ''}
-                                <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="Raccourcir (durée 0)" data-day-index="${i}">
-                                    <i class="fas fa-minus-circle text-lg" style="color: white !important;"></i>
+                                <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="${isShortened ? 'Annuler raccourci' : 'Raccourcir (durée 0)'}" data-day-index="${i}">
+                                    <i class="fas fa-${isShortened ? 'undo' : 'minus-circle'} text-lg" style="color: white !important;"></i>
                                 </button>
                                 <button class="extend-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="Prolonger d'une journée" data-day-index="${i}">
                                     <i class="fas fa-plus-circle text-lg" style="color: white !important;"></i>
@@ -1408,12 +1410,17 @@ class VoyageManager {
             return;
         }
 
-        // Marquer cette journée comme ayant une durée de 0
-        this.dayByDayData[dayIndex].isShortened = true;
+        // Si déjà raccourci, annuler le raccourci
+        if (this.dayByDayData[dayIndex].isShortened) {
+            console.log(`🔄 Annulation du raccourci pour le jour ${dayIndex + 1}`);
+            this.dayByDayData[dayIndex].isShortened = false;
+        } else {
+            // Marquer cette journée comme ayant une durée de 0
+            this.dayByDayData[dayIndex].isShortened = true;
+        }
 
-        // Recalculer les dates pour tous les jours suivants
-        // Les jours suivants "remontent" d'un jour dans le calendrier
-        this.recalculateDaysFromIndexWithShortcuts(dayIndex + 1);
+        // Recalculer les numéros de jours et les dates pour tous les jours
+        this.recalculateDaysFromIndexWithShortcuts(0);
 
         // Sauvegarder les descriptions et événements mis à jour
         this.saveDescriptionsForMap();
@@ -1427,7 +1434,7 @@ class VoyageManager {
         // Activer la journée raccourcie
         this.highlightDay(dayIndex);
 
-        console.log(`✅ Journée raccourcie avec succès (durée 0 jour)`);
+        console.log(`✅ Journée ${this.dayByDayData[dayIndex].isShortened ? 'raccourcie' : 'restaurée'} avec succès`);
     }
 
     recalculateDaysFromIndexWithShortcuts(startIndex) {
@@ -1435,25 +1442,30 @@ class VoyageManager {
 
         // Calculer le décalage cumulé dû aux raccourcis précédents
         let cumulativeOffset = 0;
-        for (let i = 0; i < startIndex; i++) {
-            if (this.dayByDayData[i].isShortened) {
-                cumulativeOffset++;
-            }
-        }
-
-        // Recalculer les dates en tenant compte des raccourcis
+        
+        // Recalculer les numéros de jour et les dates en tenant compte des raccourcis
         for (let i = startIndex; i < this.dayByDayData.length; i++) {
-            // Compter les raccourcis jusqu'à ce jour
-            if (this.dayByDayData[i].isShortened) {
+            // Compter les raccourcis jusqu'à ce jour (AVANT ce jour)
+            if (i > 0 && this.dayByDayData[i - 1].isShortened) {
                 cumulativeOffset++;
             }
 
-            // Le numéro de jour affiché reste i+1, mais la date calendrier est décalée
-            const calendarDayNumber = (i + 1) - cumulativeOffset;
-            this.dayByDayData[i].calendarDate = this.getCalendarDateForDay(calendarDayNumber);
+            // Le numéro de jour affiché est ajusté en fonction des raccourcis
+            const actualDayNumber = (i + 1) - cumulativeOffset;
+            this.dayByDayData[i].day = actualDayNumber;
+            
+            // La date calendrier est calculée avec le numéro de jour réel
+            this.dayByDayData[i].calendarDate = this.getCalendarDateForDay(actualDayNumber);
 
-            console.log(`📅 Jour ${i + 1} ${this.dayByDayData[i].isShortened ? '(raccourci)' : ''}: ${this.dayByDayData[i].calendarDate}`);
+            console.log(`📅 Index ${i}: Jour ${actualDayNumber} ${this.dayByDayData[i].isShortened ? '(raccourci)' : ''}: ${this.dayByDayData[i].calendarDate}`);
         }
+        
+        // Recalculer le total en soustrayant les jours raccourcis
+        const shortenedCount = this.dayByDayData.filter(d => d.isShortened).length;
+        const originalTotal = this.dayByDayData.length;
+        this.totalJourneyDays = originalTotal - shortenedCount;
+        
+        console.log(`📊 Total actualisé: ${this.totalJourneyDays} jours (${originalTotal} entrées - ${shortenedCount} raccourcis)`);
     }
 
     recalculateDaysFromIndex(startIndex) {
