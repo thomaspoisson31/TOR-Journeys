@@ -70,6 +70,7 @@ class PositionManager {
         this.createPositionMarker();
         this.setupEventListeners();
         this.updateMarkerCursor(); // Initialiser le curseur
+        this.updateAdventureModeIndicator(); // Afficher l'indicateur dès le chargement
         console.log("✅ PositionManager initialized with position:", this.currentPosition);
         console.log("✅ Mode Aventure initial:", this.adventureMode ? "Actif" : "Inactif");
     }
