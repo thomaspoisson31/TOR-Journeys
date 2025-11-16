@@ -589,7 +589,8 @@ class PositionManager {
                         nearbyLocations.push({
                             name: location.name,
                             color: location.color || 'gray',
-                            distance: Math.round(distance)
+                            distance: Math.round(distance),
+                            data: location
                         });
                     }
                 }
@@ -618,7 +619,8 @@ class PositionManager {
                     if (this.isPointInPolygon(this.currentPosition, points)) {
                         currentRegions.push({
                             name: region.name,
-                            color: region.color || 'gray'
+                            color: region.color || 'gray',
+                            data: region
                         });
                     }
                 }
@@ -632,8 +634,10 @@ class PositionManager {
                 .sort((a, b) => a.distance - b.distance)
                 .map(loc => {
                     const bgColor = colorMap[loc.color] || colorMap.gray;
-                    return `<div class="text-xs px-2 py-1 rounded" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
+                    const exploreIcon = this.adventureMode ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${loc.name}', 'location')" title="Explorer"></i>` : '';
+                    return `<div class="text-xs px-2 py-1 rounded flex items-center justify-between" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
                         <span class="font-medium text-white">${loc.name}</span>
+                        ${exploreIcon}
                     </div>`;
                 })
                 .join('');
@@ -647,13 +651,77 @@ class PositionManager {
             currentRegionsList.innerHTML = currentRegions
                 .map(reg => {
                     const bgColor = colorMap[reg.color] || colorMap.gray;
-                    return `<div class="text-xs px-2 py-1 rounded" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
+                    const exploreIcon = this.adventureMode ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${reg.name}', 'region')" title="Explorer"></i>` : '';
+                    return `<div class="text-xs px-2 py-1 rounded flex items-center justify-between" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
                         <span class="font-medium text-white">${reg.name}</span>
+                        ${exploreIcon}
                     </div>`;
                 })
                 .join('');
         } else {
             currentRegionsSection.classList.add('hidden');
+        }
+    }
+
+    explorePlace(placeName, placeType) {
+        console.log(`🧭 Exploration de ${placeType}: ${placeName}`);
+
+        // Ajouter une entrée au journal d'aventure
+        if (window.adventureManager) {
+            // Obtenir la date actuelle du calendrier
+            let currentDate = 'Date inconnue';
+            if (window.calendarManager && window.calendarManager.currentCalendarDate) {
+                const calDate = window.calendarManager.currentCalendarDate;
+                currentDate = `${calDate.day} ${calDate.month}`;
+            }
+
+            // Créer l'entrée de journal
+            const journalEntry = {
+                date: currentDate,
+                description: `Exploration : ${placeName}`,
+                timestamp: new Date().toISOString()
+            };
+
+            // Ajouter au journal
+            window.adventureManager.addJournalEntry(journalEntry);
+            console.log(`📖 Entrée ajoutée au journal d'aventure:`, journalEntry);
+        }
+
+        // Ouvrir la modale du lieu/région
+        if (placeType === 'location') {
+            const location = window.locationsData?.locations.find(loc => loc.name === placeName);
+            if (location && window.infoBoxManager) {
+                // Fermer la modale de position
+                const positionModal = document.getElementById('position-modal');
+                if (positionModal) {
+                    positionModal.classList.add('hidden');
+                }
+
+                // Ouvrir l'infobox du lieu
+                const fakeEvent = {
+                    clientX: window.innerWidth / 2,
+                    clientY: window.innerHeight / 2,
+                    type: 'click'
+                };
+                window.infoBoxManager.showInfoBox(fakeEvent, location, 'location');
+            }
+        } else if (placeType === 'region') {
+            const region = window.regionsData?.regions.find(reg => reg.name === placeName);
+            if (region && window.infoBoxManager) {
+                // Fermer la modale de position
+                const positionModal = document.getElementById('position-modal');
+                if (positionModal) {
+                    positionModal.classList.add('hidden');
+                }
+
+                // Ouvrir l'infobox de la région
+                const fakeEvent = {
+                    clientX: window.innerWidth / 2,
+                    clientY: window.innerHeight / 2,
+                    type: 'click'
+                };
+                window.infoBoxManager.showInfoBox(fakeEvent, region, 'region');
+            }
         }
     }
 
