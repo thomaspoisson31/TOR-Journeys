@@ -1664,42 +1664,30 @@ class VoyageManager {
         this.saveJourneyToJournal();
         console.log(`📖 Voyage sauvegardé dans le journal`);
 
-        // Accéder aux variables globales via window
-        const isCalendarMode = window.isCalendarMode;
-        const calendarData = window.calendarData;
-
-        // Mettre à jour la date du calendrier principal si on est en mode calendrier
-        if (isCalendarMode && this.journeyStartDate && calendarData && calendarData.length > 0) {
-
-            // Calculer la nouvelle date basée sur la date de début fixe du voyage
-            let monthIndex = this.journeyStartDate.monthIndex;
-            let newDay = this.journeyStartDate.day + this.totalJourneyDays - 1;
-
-            // Naviguer à travers les mois si nécessaire
-            while (newDay > calendarData[monthIndex].days.length) {
-                newDay -= calendarData[monthIndex].days.length;
-                monthIndex = (monthIndex + 1) % calendarData.length;
-            }
-
-            // Mettre à jour la date courante globale
-            window.currentCalendarDate = {
-                month: calendarData[monthIndex].name,
-                day: newDay
-            };
-
-            // Sauvegarder la nouvelle date
-            if (typeof window.saveCalendarToLocal === 'function') {
-                window.saveCalendarToLocal();
-            }
-
-            // Mettre à jour l'affichage de la saison
-            if (typeof window.updateSeasonDisplay === 'function') {
-                window.updateSeasonDisplay();
-            }
-
-            // Programmer une synchronisation
-            if (typeof window.scheduleAutoSync === 'function') {
-                window.scheduleAutoSync();
+        // Mettre à jour la date du calendrier au dernier jour du voyage
+        if (lastDayData.calendarDate && window.calendarManager) {
+            console.log(`📅 Mise à jour de la date du calendrier au dernier jour: ${lastDayData.calendarDate}`);
+            
+            // Parser la date du calendrier (format "15 Nórui")
+            const dateParts = lastDayData.calendarDate.split(' ');
+            if (dateParts.length >= 2) {
+                const dayNumber = dateParts[0];
+                const monthName = dateParts[1];
+                const parsedDay = parseInt(dayNumber);
+                
+                if (parsedDay && monthName && window.calendarManager.calendarData) {
+                    const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
+                    if (monthIndex >= 0) {
+                        window.calendarManager.currentCalendarDate = {
+                            month: monthName,
+                            day: parsedDay
+                        };
+                        window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
+                        window.calendarManager.updateSeasonDisplay();
+                        window.calendarManager.saveCalendarToLocal();
+                        console.log(`✅ Date du calendrier mise à jour au dernier jour: ${parsedDay} ${monthName}`);
+                    }
+                }
             }
         }
 

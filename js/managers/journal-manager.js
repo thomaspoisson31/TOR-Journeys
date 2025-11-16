@@ -310,131 +310,13 @@ class JournalManager {
             console.log('🗺️ Mode Voyage : boutons d\'action masqués (voyage passé)');
         }
 
-        // Utiliser event delegation pour gérer les clics sur les en-têtes
-        // Retirer tout listener précédent pour éviter les doublons
-        const oldListener = voyageDaysContent._dayHeaderClickListener;
-        if (oldListener) {
-            voyageDaysContent.removeEventListener('click', oldListener);
-        }
+        // Les en-têtes de jours ne sont PAS cliquables depuis le journal
+        // Désactiver complètement les listeners de clic
+        console.log('🚫 En-têtes de jour non cliquables depuis le journal');
 
-        // Créer et stocker le nouveau listener
-        const dayHeaderClickListener = (e) => {
-            // Trouver l'en-tête de jour cliqué
-            const dayHeader = e.target.closest('.day-header');
-            if (!dayHeader) return;
-
-            const dayCard = dayHeader.closest('.day-card');
-            if (!dayCard) return;
-
-            const dayIndex = parseInt(dayCard.dataset.dayIndex);
-            if (isNaN(dayIndex)) {
-                console.warn('⚠️ Index de jour invalide');
-                return;
-            }
-
-            console.log(`📅 Clic sur en-tête du jour ${dayIndex + 1} depuis le journal (event delegation)`);
-            
-            const day = journey.days[dayIndex];
-            if (!day) {
-                console.warn(`⚠️ Données du jour ${dayIndex + 1} non disponibles`);
-                return;
-            }
-
-            // En mode exploration, ne pas permettre le clic sur les en-têtes
-            if (isExploration) {
-                console.log('🧭 Mode Exploration : clic sur en-tête désactivé');
-                return;
-            }
-
-            // Validation des coordonnées avant déplacement
-            if (!day.startCoordinates || 
-                typeof day.startCoordinates.x !== 'number' || 
-                typeof day.startCoordinates.y !== 'number') {
-                console.warn(`⚠️ Coordonnées invalides pour le jour ${day.dayNumber}:`, day.startCoordinates);
-                
-                // Message utilisateur si pas de coordonnées
-                const notification = document.createElement('div');
-                notification.className = 'fixed top-4 right-4 bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                notification.textContent = `Pas de coordonnées disponibles pour le jour ${day.dayNumber}`;
-                document.body.appendChild(notification);
-                setTimeout(() => notification.remove(), 3000);
-                
-                return;
-            }
-
-            // Surbrillance visuelle du jour cliqué
-            const allCards = voyageDaysContent.querySelectorAll('.day-card');
-            allCards.forEach(card => {
-                card.classList.remove('ring-2', 'ring-blue-500');
-            });
-            dayCard.classList.add('ring-2', 'ring-blue-500');
-            dayCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-            // Mettre à jour la date du calendrier si elle existe
-            if (day.calendarDate && window.calendarManager) {
-                console.log(`📅 Mise à jour de la date du calendrier depuis le journal: ${day.calendarDate}`);
-                
-                // Parser la date du calendrier (format "15 Nórui")
-                const dateParts = day.calendarDate.split(' ');
-                if (dateParts.length >= 2) {
-                    const dayNumber = dateParts[0];
-                    const monthName = dateParts[1];
-                    const parsedDay = parseInt(dayNumber);
-                    
-                    if (parsedDay && monthName && window.calendarManager.calendarData) {
-                        const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                        if (monthIndex >= 0) {
-                            window.calendarManager.currentCalendarDate = {
-                                month: monthName,
-                                day: parsedDay
-                            };
-                            window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
-                            window.calendarManager.updateSeasonDisplay();
-                            window.calendarManager.saveCalendarToLocal();
-                            console.log(`✅ Date du calendrier mise à jour: ${parsedDay} ${monthName}`);
-                        } else {
-                            console.warn(`⚠️ Mois "${monthName}" non trouvé dans calendarData`);
-                        }
-                    }
-                } else {
-                    console.warn(`⚠️ Format de date invalide: "${day.calendarDate}"`);
-                }
-            }
-
-            // Déplacer le marqueur de position avec validation
-            if (window.positionManager) {
-                console.log(`📍 Déplacement du marqueur depuis le journal vers le jour ${day.dayNumber}:`, day.startCoordinates);
-                
-                try {
-                    window.positionManager.animateToPosition(
-                        day.startCoordinates.x,
-                        day.startCoordinates.y,
-                        800
-                    );
-                    console.log(`✅ Animation du marqueur lancée avec succès depuis le journal`);
-                } catch (error) {
-                    console.error(`❌ Erreur lors du déplacement du marqueur depuis le journal:`, error);
-                }
-            } else {
-                console.warn(`⚠️ PositionManager non disponible`);
-            }
-        };
-
-        // IMPORTANT: Attacher le listener au conteneur APRÈS l'avoir créé
-        voyageDaysContent.addEventListener('click', dayHeaderClickListener);
-        voyageDaysContent._dayHeaderClickListener = dayHeaderClickListener;
-        
-        console.log('✅ Event delegation configurée pour les en-têtes de jour');
-
-        // Ajouter le curseur selon le contexte
+        // Ajouter le curseur par défaut pour tous les en-têtes
         const style = document.createElement('style');
-        if (isExploration) {
-            // En mode exploration, curseur par défaut (pas cliquable)
-            style.textContent = '.day-header { cursor: default; }';
-        } else {
-            // En mode voyage, curseur pointer (cliquable)
-            style.textContent = '.day-header { cursor: pointer; }';
-        }
+        style.textContent = '.day-header { cursor: default; }';
         
         // Supprimer l'ancien style s'il existe
         const oldStyle = document.getElementById('journal-day-header-style');
@@ -445,6 +327,21 @@ class JournalManager {
 
         // Afficher la modale
         voyageModal.classList.remove('hidden');
+
+        // Ajouter un listener pour retourner au journal à la fermeture
+        const closeVoyageBtn = document.getElementById('close-voyage-segments');
+        if (closeVoyageBtn) {
+            // Retirer l'ancien listener s'il existe
+            const newCloseBtn = closeVoyageBtn.cloneNode(true);
+            closeVoyageBtn.parentNode.replaceChild(newCloseBtn, closeVoyageBtn);
+            
+            // Ajouter le nouveau listener
+            newCloseBtn.addEventListener('click', () => {
+                voyageModal.classList.add('hidden');
+                // Rouvrir le journal
+                this.openJournal();
+            });
+        }
     }
 
     deleteJourney(index) {
