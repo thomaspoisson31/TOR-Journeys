@@ -472,7 +472,8 @@ class PositionManager {
         const modal = document.createElement('div');
         modal.id = 'position-modal';
         modal.className = 'hidden absolute z-50 bg-gray-900 bg-opacity-95 border border-gray-700 rounded-lg p-3 shadow-xl';
-        modal.style.minWidth = '250px'; // Augmenté
+        modal.style.minWidth = '280px';
+        modal.style.maxWidth = '400px';
 
         modal.innerHTML = `
             <div class="space-y-2">
@@ -484,6 +485,16 @@ class PositionManager {
                 <button id="adventure-mode-toggle-btn" class="w-full px-2 py-1 rounded text-xs transition-colors flex items-center justify-center font-semibold">
                     <span id="adventure-mode-toggle-text"></span>
                 </button>
+
+                <div id="position-nearby-locations" class="hidden pt-2 border-t border-gray-600">
+                    <div class="text-xs font-semibold text-gray-300 mb-1">📍 Lieux à proximité:</div>
+                    <div id="nearby-locations-list" class="space-y-1"></div>
+                </div>
+
+                <div id="position-current-regions" class="hidden pt-2 border-t border-gray-600">
+                    <div class="text-xs font-semibold text-gray-300 mb-1">🗺️ Régions traversées:</div>
+                    <div id="current-regions-list" class="space-y-1"></div>
+                </div>
             </div>
         `;
 
@@ -536,6 +547,119 @@ class PositionManager {
 
         // Mettre à jour l'indicateur dans le cartouche de date
         this.updateAdventureModeIndicator();
+
+        // Mettre à jour les lieux et régions
+        this.updateNearbyLocationsAndRegions(modal);
+    }
+
+    updateNearbyLocationsAndRegions(modal) {
+        if (!modal) modal = document.getElementById('position-modal');
+        if (!modal) return;
+
+        const nearbyLocationsSection = modal.querySelector('#position-nearby-locations');
+        const nearbyLocationsList = modal.querySelector('#nearby-locations-list');
+        const currentRegionsSection = modal.querySelector('#position-current-regions');
+        const currentRegionsList = modal.querySelector('#current-regions-list');
+
+        if (!nearbyLocationsSection || !nearbyLocationsList || !currentRegionsSection || !currentRegionsList) return;
+
+        const PROXIMITY_THRESHOLD = 100; // pixels
+        const colorMap = {
+            red: '#EF4444',
+            blue: '#3B82F6',
+            green: '#22C55E',
+            violet: '#8B5CF6',
+            orange: '#FCA503',
+            black: '#111827',
+            yellow: '#EACC08',
+            purple: '#9333EA',
+            gray: '#6B7280'
+        };
+
+        // Trouver les lieux à proximité
+        const nearbyLocations = [];
+        if (window.locationsData && window.locationsData.locations) {
+            const activeMapId = window.settingsManager?.activeMapUrl;
+            
+            window.locationsData.locations.forEach(location => {
+                if (location.coordinates && (!location.mapId || location.mapId === activeMapId)) {
+                    const dx = location.coordinates.x - this.currentPosition.x;
+                    const dy = location.coordinates.y - this.currentPosition.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance <= PROXIMITY_THRESHOLD) {
+                        nearbyLocations.push({
+                            name: location.name,
+                            color: location.color || 'gray',
+                            distance: Math.round(distance)
+                        });
+                    }
+                }
+            });
+        }
+
+        // Trouver les régions traversées
+        const currentRegions = [];
+        if (window.regionsData && window.regionsData.regions) {
+            const activeMapId = window.settingsManager?.activeMapUrl;
+            
+            window.regionsData.regions.forEach(region => {
+                if (region.points && region.points.length > 0 && (!region.mapId || region.mapId === activeMapId)) {
+                    // Vérifier si le point est dans le polygone
+                    if (this.isPointInPolygon(this.currentPosition, region.points)) {
+                        currentRegions.push({
+                            name: region.name,
+                            color: region.color || 'gray'
+                        });
+                    }
+                }
+            });
+        }
+
+        // Afficher les lieux à proximité
+        if (nearbyLocations.length > 0) {
+            nearbyLocationsSection.classList.remove('hidden');
+            nearbyLocationsList.innerHTML = nearbyLocations
+                .sort((a, b) => a.distance - b.distance)
+                .map(loc => {
+                    const bgColor = colorMap[loc.color] || colorMap.gray;
+                    return `<div class="text-xs px-2 py-1 rounded" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
+                        <span class="font-medium text-white">${loc.name}</span>
+                        <span class="text-gray-400 ml-1">(${loc.distance}px)</span>
+                    </div>`;
+                })
+                .join('');
+        } else {
+            nearbyLocationsSection.classList.add('hidden');
+        }
+
+        // Afficher les régions traversées
+        if (currentRegions.length > 0) {
+            currentRegionsSection.classList.remove('hidden');
+            currentRegionsList.innerHTML = currentRegions
+                .map(reg => {
+                    const bgColor = colorMap[reg.color] || colorMap.gray;
+                    return `<div class="text-xs px-2 py-1 rounded" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
+                        <span class="font-medium text-white">${reg.name}</span>
+                    </div>`;
+                })
+                .join('');
+        } else {
+            currentRegionsSection.classList.add('hidden');
+        }
+    }
+
+    isPointInPolygon(point, polygon) {
+        let inside = false;
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            const xi = polygon[i].x, yi = polygon[i].y;
+            const xj = polygon[j].x, yj = polygon[j].y;
+
+            const intersect = ((yi > point.y) !== (yj > point.y)) &&
+                (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
+        }
+        return inside;
     }
 
     updateAdventureModeIndicator() {
