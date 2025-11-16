@@ -667,7 +667,7 @@ class PositionManager {
         console.log(`🧭 Exploration de ${placeType}: ${placeName}`);
 
         // Ajouter une entrée au journal d'aventure
-        if (window.adventureManager) {
+        if (window.journalManager) {
             // Obtenir la date actuelle du calendrier
             let currentDate = 'Date inconnue';
             if (window.calendarManager && window.calendarManager.currentCalendarDate) {
@@ -675,16 +675,40 @@ class PositionManager {
                 currentDate = `${calDate.day} ${calDate.month}`;
             }
 
-            // Créer l'entrée de journal
-            const journalEntry = {
-                date: currentDate,
-                description: `Exploration : ${placeName}`,
-                timestamp: new Date().toISOString()
+            // Créer une nouvelle entrée de journal au format attendu par JournalManager
+            const newEntry = {
+                title: `Exploration - ${placeName}`,
+                totalDays: 1,
+                generatedAt: new Date().toISOString(),
+                days: [{
+                    dayNumber: 1,
+                    calendarDate: currentDate,
+                    weatherSymbol: null,
+                    discoveries: [],
+                    description: `**Exploration de ${placeType === 'location' ? 'lieu' : 'région'}**\n\n${placeName}`,
+                    eventResult: null,
+                    startCoordinates: null
+                }]
             };
 
             // Ajouter au journal
-            window.adventureManager.addJournalEntry(journalEntry);
-            console.log(`📖 Entrée ajoutée au journal d'aventure:`, journalEntry);
+            window.journalManager.loadJournal();
+            window.journalManager.journal.unshift(newEntry);
+            localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
+            
+            // Marquer comme non sauvegardé
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+            
+            console.log(`📖 Entrée ajoutée au journal d'aventure:`, newEntry);
+            
+            // Notification visuelle
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            notification.innerHTML = '<i class="fas fa-check mr-2"></i>Ajouté au journal';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
         }
 
         // Ouvrir la modale du lieu/région
