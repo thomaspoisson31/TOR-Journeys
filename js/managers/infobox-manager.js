@@ -2233,92 +2233,230 @@ class InfoBoxManager {
     }
 
     renderLieuxRegionsTabRead() {
+        console.log(`🗺️ [renderLieuxRegionsTabRead] ========== DÉBUT DU RENDU ==========`);
+
         const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
         if (!lieuxRegionsTab) {
             console.error(`❌ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab NON TROUVÉ !`);
             return;
         }
 
-        const item = this.currentItem;
-        const type = this.currentType;
+        console.log(`✅ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab trouvé`);
 
-        if (type !== 'character') {
-            console.warn('⚠️ renderLieuxRegionsTabRead appelé pour un type non-personnage');
+        lieuxRegionsTab.innerHTML = '';
+
+        const character = this.currentItem;
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Personnage complet:`, character);
+
+        const associatedLocationIds = character.associatedLocations || [];
+        const associatedRegionIds = character.associatedRegions || [];
+
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Rendu pour personnage "${character.name}"`);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedLocationIds:`, associatedLocationIds);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedRegionIds:`, associatedRegionIds);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Type de associatedLocationIds:`, typeof associatedLocationIds, Array.isArray(associatedLocationIds));
+
+        // Récupérer les lieux associés
+        const locationsData = window.locationsData || { locations: [] };
+        const associatedLocations = (locationsData.locations || []).filter(loc =>
+            associatedLocationIds.includes(String(loc.id))
+        );
+
+        // Récupérer les régions associées
+        const regionsData = window.regionsData || { regions: [] };
+        const associatedRegions = (regionsData.regions || []).filter(reg =>
+            associatedRegionIds.includes(String(reg.id))
+        );
+
+        console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedLocations.length} lieux associés trouvés`);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedRegions.length} régions associées trouvées`);
+
+        if (associatedLocations.length === 0 && associatedRegions.length === 0) {
+            lieuxRegionsTab.innerHTML = '<p class="text-gray-500 p-4 italic" style="color: #6b7280 !important;">Aucun lieu ou région associé à ce personnage.</p>';
             return;
         }
 
-        // Vérifier si le mode Aventure est actif
-        const isAdventureMode = window.positionManager?.adventureMode || false;
-
-        // Récupérer les lieux et régions liés
-        const linkedLocations = item.linkedLocations || [];
-        const linkedRegions = item.linkedRegions || [];
-
-        let content = '<div class="p-4">';
+        let html = '<div class="p-4 space-y-6">';
 
         // Section Lieux
-        if (linkedLocations.length > 0) {
-            content += '<div class="mb-6"><h4 class="text-base font-semibold mb-3 text-gray-800">Lieux visités</h4><div class="space-y-2">';
-            linkedLocations.forEach(locName => {
-                const location = window.locationsData?.locations.find(l => l.name === locName);
-                if (location) {
-                    content += `
-                        <div class="flex items-center space-x-2 p-2 bg-gray-100 rounded hover:bg-gray-200 transition-colors">
-                            <div class="flex-1 flex items-center space-x-2 cursor-pointer"
-                                 onclick="window.infoBoxManager.openLinkedLocation('${locName.replace(/'/g, "\\'")}')">
-                                <i class="fas fa-map-marker-alt text-blue-600"></i>
-                                <span class="text-gray-800">${locName}</span>
-                            </div>
-                            ${isAdventureMode ? `
-                                <button class="explore-icon p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-100 rounded transition-colors"
-                                        onclick="event.stopPropagation(); window.infoBoxManager.exploreLocation('${locName.replace(/'/g, "\\'")}', 'location')"
-                                        title="Explorer ce lieu">
-                                    <i class="fas fa-compass"></i>
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
-                }
-            });
-            content += '</div></div>';
-        } else {
-            content += '<div class="mb-6"><h4 class="text-base font-semibold mb-3 text-gray-800">Lieux visités</h4><p class="text-gray-500 italic text-sm">Aucun lieu associé</p></div>';
+        if (associatedLocations.length > 0) {
+            html += `
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
+                        <i class="fas fa-map-marker-alt mr-2" style="color: #940000 !important;"></i>
+                        Lieux associés
+                    </h3>
+                    <div class="space-y-2">
+                        ${associatedLocations.map(location => {
+                            const thumbnailImage = location.images?.find(img => img.type === 'vignette');
+                            return `
+                                <div class="location-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
+                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')"
+                                     style="background-color: white !important;">
+                                    <div class="flex items-center space-x-3">
+                                        ${thumbnailImage ? `
+                                            <img src="${thumbnailImage.url}" alt="${location.name}"
+                                                 class="w-10 h-10 rounded-full object-cover border-2"
+                                                 style="border-color: #940000 !important;">
+                                        ` : `
+                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
+                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
+                                                <i class="fas fa-map-marker-alt text-sm" style="color: white !important;"></i>
+                                            </div>
+                                        `}
+                                        <div class="flex-1">
+                                            <h4 class="font-medium" style="color: black !important;">${location.name}</h4>
+                                        </div>
+                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
         }
 
         // Section Régions
-        if (linkedRegions.length > 0) {
-            content += '<div><h4 class="text-base font-semibold mb-3 text-gray-800">Régions traversées</h4><div class="space-y-2">';
-            linkedRegions.forEach(regName => {
-                const region = window.regionsData?.regions.find(r => r.name === regName);
-                if (region) {
-                    content += `
-                        <div class="flex items-center space-x-2 p-2 bg-gray-100 rounded hover:bg-gray-200 transition-colors">
-                            <div class="flex-1 flex items-center space-x-2 cursor-pointer"
-                                 onclick="window.infoBoxManager.openLinkedRegion('${regName.replace(/'/g, "\\'")}')">
-                                <i class="fas fa-draw-polygon text-green-600"></i>
-                                <span class="text-gray-800">${regName}</span>
-                            </div>
-                            ${isAdventureMode ? `
-                                <button class="explore-icon p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-100 rounded transition-colors"
-                                        onclick="event.stopPropagation(); window.infoBoxManager.exploreLocation('${regName.replace(/'/g, "\\'")}', 'region')"
-                                        title="Explorer cette région">
-                                    <i class="fas fa-compass"></i>
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
-                }
-            });
-            content += '</div></div>';
-        } else {
-            content += '<div><h4 class="text-base font-semibold mb-3 text-gray-800">Régions traversées</h4><p class="text-gray-500 italic text-sm">Aucune région associée</p></div>';
+        if (associatedRegions.length > 0) {
+            html += `
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
+                        <i class="fas fa-mountain mr-2" style="color: #940000 !important;"></i>
+                        Régions associées
+                    </h3>
+                    <div class="space-y-2">
+                        ${associatedRegions.map(region => {
+                            const thumbnailImage = region.images?.find(img => img.type === 'vignette');
+                            return `
+                                <div class="region-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
+                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')"
+                                     style="background-color: white !important;">
+                                    <div class="flex items-center space-x-3">
+                                        ${thumbnailImage ? `
+                                            <img src="${thumbnailImage.url}" alt="${region.name}"
+                                                 class="w-10 h-10 rounded-full object-cover border-2"
+                                                 style="border-color: #940000 !important;">
+                                        ` : `
+                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
+                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
+                                                <i class="fas fa-mountain text-sm" style="color: white !important;"></i>
+                                            </div>
+                                        `}
+                                        <div class="flex-1">
+                                            <h4 class="font-medium" style="color: black !important;">${region.name}</h4>
+                                        </div>
+                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
         }
 
-        content += '</div>';
-
-        lieuxRegionsTab.innerHTML = content;
+        html += '</div>';
+        lieuxRegionsTab.innerHTML = html;
+        console.log(`🗺️ [renderLieuxRegionsTabRead] ========== FIN DU RENDU ==========`);
     }
 
+
+    renderPersonnagesTabEdit() {
+        const personnagesTab = document.getElementById('personnages-tab');
+        if (!personnagesTab) return;
+
+        // Récupérer les IDs des personnages associés et les normaliser en String
+        const associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
+
+        if (!window.charactersManager || !window.charactersManager.characters) {
+            personnagesTab.innerHTML = `
+                <div class="edit-form p-4">
+                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>
+                    <div class="flex space-x-2 mt-4">
+                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-save mr-1"></i>Sauvegarder
+                        </button>
+                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-times mr-1"></i>Annuler
+                        </button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Filtrer les personnages de la carte active et trier par ordre alphabétique
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const availableCharacters = window.charactersManager.characters
+            .filter(char => !char.mapId || !activeMapId || char.mapId === activeMapId)
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        if (availableCharacters.length === 0) {
+            personnagesTab.innerHTML = `
+                <div class="edit-form p-4">
+                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible sur cette carte</p>
+                    <div class="flex space-x-2 mt-4">
+                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-save mr-1"></i>Sauvegarder
+                        </button>
+                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                            <i class="fas fa-times mr-1"></i>Annuler
+                        </button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        const html = `
+            <div class="edit-form p-4">
+                <div class="space-y-2 mb-4">
+                    ${availableCharacters.map(character => {
+                        const isAssociated = associatedCharacterIds.includes(String(character.id));
+                        const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+                        const type = character.type === 'PJ' ? 'Joueur' : (character.type === 'PNJ' ? 'PNJ' : 'Autre');
+                        const typeClass = character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600';
+                        const borderClass = character.type === 'PJ' ? 'border-blue-500' : 'border-green-500';
+
+                        return `
+                            <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors group">
+                                <input type="checkbox"
+                                       value="${character.id}"
+                                       data-character-id="${character.id}"
+                                       ${isAssociated ? 'checked' : ''}
+                                       class="form-checkbox h-5 w-5 text-blue-600 character-checkbox">
+                                ${thumbnailImage ? `
+                                    <img src="${thumbnailImage.url}" alt="${character.name}"
+                                         class="w-12 h-12 rounded-full object-cover border-2 ${borderClass}">
+                                ` : `
+                                    <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
+                                        <i class="fas fa-user text-xl text-gray-400"></i>
+                                    </div>
+                                `}
+                                <div class="flex-1">
+                                    <div class="font-medium text-white">${character.name}</div>
+                                    <span class="inline-block px-2 py-0.5 text-xs rounded ${typeClass} text-white">
+                                        ${type}
+                                    </span>
+                                </div>
+                            </label>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-save mr-1"></i>Sauvegarder
+                    </button>
+                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-times mr-1"></i>Annuler
+                    </button>
+                </div>
+            </div>
+        `;
+
+        personnagesTab.innerHTML = html;
+    }
 
     renderLieuxRegionsTabEdit() {
         const lieuxRegionsContent = document.getElementById('lieux-regions-content');
@@ -2956,109 +3094,6 @@ class InfoBoxManager {
             fullscreenOverlay.appendChild(controls);
             fullscreenOverlay.appendChild(zoomLevel);
             resetZoom(); // Initialiser à l'état par défaut
-        }
-    }
-
-    openLinkedLocation(locationName) {
-        console.log(`📍 Ouverture du lieu lié: ${locationName}`);
-        const location = window.locationsData?.locations.find(l => l.name === locationName);
-
-        if (!location) {
-            console.error(`❌ Lieu non trouvé: ${locationName}`);
-            return;
-        }
-
-        // Sauvegarder l'infobox actuelle comme précédente
-        this.previousInfoBox = {
-            item: this.currentItem,
-            type: this.currentType,
-            fromInfoBox: true,
-            shouldShowPersonnagesTab: true
-        };
-
-        // Créer un événement simulé pour le positionnement
-        const fakeEvent = {
-            clientX: window.innerWidth / 2,
-            clientY: window.innerHeight / 2,
-            type: 'click'
-        };
-
-        // Ouvrir l'infobox du lieu
-        this.showInfoBox(fakeEvent, location, 'location');
-    }
-
-    openLinkedRegion(regionName) {
-        console.log(`🗺️ Ouverture de la région liée: ${regionName}`);
-        const region = window.regionsData?.regions.find(r => r.name === regionName);
-
-        if (!region) {
-            console.error(`❌ Région non trouvée: ${regionName}`);
-            return;
-        }
-
-        // Sauvegarder l'infobox actuelle comme précédente
-        this.previousInfoBox = {
-            item: this.currentItem,
-            type: this.currentType,
-            fromInfoBox: true,
-            shouldShowPersonnagesTab: true
-        };
-
-        // Créer un événement simulé pour le positionnement
-        const fakeEvent = {
-            clientX: window.innerWidth / 2,
-            clientY: window.innerHeight / 2,
-            type: 'click'
-        };
-
-        // Ouvrir l'infobox de la région
-        this.showInfoBox(fakeEvent, region, 'region');
-    }
-
-    exploreLocation(name, locationType) {
-        console.log(`🧭 Exploration de ${locationType}: ${name}`);
-
-        // Récupérer la date actuelle du calendrier
-        if (!window.calendarManager || !window.calendarManager.currentCalendarDate) {
-            console.error('❌ CalendarManager non disponible ou date non définie');
-            alert('Impossible de créer l\'entrée de journal : calendrier non initialisé');
-            return;
-        }
-
-        const currentDate = window.calendarManager.currentCalendarDate;
-        const calendarDate = `${currentDate.day} ${currentDate.month}`;
-
-        // Créer une entrée de journal
-        const journalEntry = {
-            type: 'exploration',
-            title: `Exploration : ${name}`,
-            locationName: name,
-            locationType: locationType,
-            calendarDate: calendarDate,
-            date: new Date().toISOString(),
-            description: `Exploration de ${locationType === 'location' ? 'le lieu' : 'la région'} "${name}".`
-        };
-
-        // Ajouter au journal d'aventure
-        if (window.journalManager) {
-            // Vérifier si le journal actuel existe
-            let currentJournal = JSON.parse(localStorage.getItem('adventureJournal') || '[]');
-            currentJournal.push(journalEntry);
-            localStorage.setItem('adventureJournal', JSON.stringify(currentJournal));
-
-            // Marquer comme non sauvegardé
-            if (typeof window.markAsUnsaved === 'function') {
-                window.markAsUnsaved();
-            }
-
-            console.log(`✅ Entrée de journal créée pour ${name}`);
-        }
-
-        // Ouvrir la modale correspondante
-        if (locationType === 'location') {
-            this.openLinkedLocation(name);
-        } else if (locationType === 'region') {
-            this.openLinkedRegion(name);
         }
     }
 }
