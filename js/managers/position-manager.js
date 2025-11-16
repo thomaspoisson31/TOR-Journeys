@@ -602,9 +602,20 @@ class PositionManager {
             const activeMapId = window.settingsManager?.activeMapUrl;
             
             window.regionsData.regions.forEach(region => {
-                if (region.points && region.points.length > 0 && (!region.mapId || region.mapId === activeMapId)) {
+                // Extraire les points depuis différentes structures possibles
+                let points = [];
+                if (region.points && Array.isArray(region.points)) {
+                    points = region.points;
+                } else if (region.coordinates?.points && Array.isArray(region.coordinates.points)) {
+                    points = region.coordinates.points;
+                } else if (Array.isArray(region.coordinates)) {
+                    points = region.coordinates;
+                }
+
+                // Vérifier que la région a des coordonnées valides
+                if (points.length >= 3 && (!region.mapId || region.mapId === activeMapId)) {
                     // Vérifier si le point est dans le polygone
-                    if (this.isPointInPolygon(this.currentPosition, region.points)) {
+                    if (this.isPointInPolygon(this.currentPosition, points)) {
                         currentRegions.push({
                             name: region.name,
                             color: region.color || 'gray'
