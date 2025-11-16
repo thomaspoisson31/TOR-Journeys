@@ -2253,6 +2253,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             generatedAt: new Date().toISOString(),
             totalDays: this.totalJourneyDays,
             pathSignature: pathSignature, // Ajouter la signature pour identifier le tracé
+            journeyType: 'journey', // Identifier comme voyage tracé
             days: []
         };
 

@@ -680,6 +680,7 @@ class PositionManager {
                 title: `Exploration - ${placeName}`,
                 totalDays: 1,
                 generatedAt: new Date().toISOString(),
+                journeyType: 'exploration', // Identifier comme exploration
                 days: [{
                     dayNumber: 1,
                     calendarDate: currentDate,

@@ -201,6 +201,10 @@ class JournalManager {
             return;
         }
 
+        // Déterminer le type de voyage
+        const isExploration = journey.journeyType === 'exploration';
+        console.log(`📖 Ouverture ${isExploration ? 'exploration' : 'voyage'}: ${journey.title}`);
+
         // Mettre à jour le titre et sous-titre
         if (voyageTitle) {
             voyageTitle.textContent = journey.title;
@@ -290,6 +294,22 @@ class JournalManager {
 
         voyageDaysContent.innerHTML = daysHTML;
 
+        // Masquer ou afficher les boutons d'actions selon le type
+        const describeBtn = document.getElementById('describe-journey-header-btn');
+        const finishBtn = document.getElementById('finish-journey-header-btn');
+        
+        if (isExploration) {
+            // Mode Exploration : masquer les boutons
+            if (describeBtn) describeBtn.classList.add('hidden');
+            if (finishBtn) finishBtn.classList.add('hidden');
+            console.log('🧭 Mode Exploration : boutons d\'action masqués');
+        } else {
+            // Mode Voyage : afficher les boutons (mais désactivés car voyage passé)
+            if (describeBtn) describeBtn.classList.add('hidden');
+            if (finishBtn) finishBtn.classList.add('hidden');
+            console.log('🗺️ Mode Voyage : boutons d\'action masqués (voyage passé)');
+        }
+
         // Utiliser event delegation pour gérer les clics sur les en-têtes
         // Retirer tout listener précédent pour éviter les doublons
         const oldListener = voyageDaysContent._dayHeaderClickListener;
@@ -317,6 +337,12 @@ class JournalManager {
             const day = journey.days[dayIndex];
             if (!day) {
                 console.warn(`⚠️ Données du jour ${dayIndex + 1} non disponibles`);
+                return;
+            }
+
+            // En mode exploration, ne pas permettre le clic sur les en-têtes
+            if (isExploration) {
+                console.log('🧭 Mode Exploration : clic sur en-tête désactivé');
                 return;
             }
 
@@ -400,19 +426,22 @@ class JournalManager {
         
         console.log('✅ Event delegation configurée pour les en-têtes de jour');
 
-        // Ajouter le curseur pointer via CSS
+        // Ajouter le curseur selon le contexte
         const style = document.createElement('style');
-        style.textContent = '.day-header { cursor: pointer; }';
-        if (!document.getElementById('journal-day-header-style')) {
-            style.id = 'journal-day-header-style';
-            document.head.appendChild(style);
+        if (isExploration) {
+            // En mode exploration, curseur par défaut (pas cliquable)
+            style.textContent = '.day-header { cursor: default; }';
+        } else {
+            // En mode voyage, curseur pointer (cliquable)
+            style.textContent = '.day-header { cursor: pointer; }';
         }
-
-        // Masquer les boutons d'actions (car c'est un voyage du passé)
-        const describeBtn = document.getElementById('describe-journey-header-btn');
-        const finishBtn = document.getElementById('finish-journey-header-btn');
-        if (describeBtn) describeBtn.classList.add('hidden');
-        if (finishBtn) finishBtn.classList.add('hidden');
+        
+        // Supprimer l'ancien style s'il existe
+        const oldStyle = document.getElementById('journal-day-header-style');
+        if (oldStyle) oldStyle.remove();
+        
+        style.id = 'journal-day-header-style';
+        document.head.appendChild(style);
 
         // Afficher la modale
         voyageModal.classList.remove('hidden');
