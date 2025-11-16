@@ -201,7 +201,7 @@ class VoyageManager {
         if (typeof journeyPath !== 'undefined' && journeyPath.length > 0) {
             this.currentPathSignature = this.createPathSignature(journeyPath);
             console.log(`🔑 Signature du voyage actuel: ${this.currentPathSignature}`);
-            
+
             // Charger les événements spécifiques à ce voyage
             this.loadRandomEventsForJourney();
         }
@@ -1460,11 +1460,11 @@ class VoyageManager {
                     shortenedCountBeforeAndIncluding++;
                 }
             }
-            
+
             // Le numéro de jour réel = index + 1 - nombre de raccourcis jusqu'ici
             const actualDayNumber = (i + 1) - shortenedCountBeforeAndIncluding;
             this.dayByDayData[i].day = actualDayNumber;
-            
+
             // La date calendrier est calculée avec le numéro de jour réel
             // SAUF si le jour est raccourci (durée 0), on garde quand même une date pour l'affichage
             this.dayByDayData[i].calendarDate = this.getCalendarDateForDay(actualDayNumber);
@@ -1477,7 +1477,7 @@ class VoyageManager {
                 while (previousNonShortenedIndex >= 0 && this.dayByDayData[previousNonShortenedIndex].isShortened) {
                     previousNonShortenedIndex--;
                 }
-                
+
                 if (previousNonShortenedIndex >= 0) {
                     // Copier les coordonnées du jour précédent non raccourci
                     this.dayByDayData[i].startCoordinates = { ...this.dayByDayData[previousNonShortenedIndex].startCoordinates };
@@ -1503,12 +1503,12 @@ class VoyageManager {
 
             console.log(`📅 Index ${i}: Jour ${actualDayNumber}${flagsStr}: ${this.dayByDayData[i].calendarDate}`);
         }
-        
+
         // Recalculer le total en soustrayant les jours raccourcis
         const shortenedCount = this.dayByDayData.filter(d => d.isShortened).length;
         const originalTotal = this.dayByDayData.length;
         this.totalJourneyDays = originalTotal - shortenedCount;
-        
+
         console.log(`📊 Total actualisé: ${this.totalJourneyDays} jours (${originalTotal} entrées - ${shortenedCount} raccourcis)`);
     }
 
@@ -1656,46 +1656,37 @@ class VoyageManager {
     }
 
     finishJourney() {
-        // Obtenir la date du dernier jour
-        const lastDayData = this.dayByDayData[this.totalJourneyDays - 1];
-        if (!lastDayData) return;
+        console.log('🏁 Fin du voyage - Génération du journal');
 
-        // Sauvegarder le voyage dans le journal (avec ou sans descriptions)
-        this.saveJourneyToJournal();
-        console.log(`📖 Voyage sauvegardé dans le journal`);
-
-        // Mettre à jour la date du calendrier au dernier jour du voyage
-        if (lastDayData.calendarDate && window.calendarManager) {
-            console.log(`📅 Mise à jour de la date du calendrier au dernier jour: ${lastDayData.calendarDate}`);
-            
-            // Parser la date du calendrier (format "15 Nórui")
-            const dateParts = lastDayData.calendarDate.split(' ');
-            if (dateParts.length >= 2) {
-                const dayNumber = dateParts[0];
-                const monthName = dateParts[1];
-                const parsedDay = parseInt(dayNumber);
-                
-                if (parsedDay && monthName && window.calendarManager.calendarData) {
-                    const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                    if (monthIndex >= 0) {
-                        window.calendarManager.currentCalendarDate = {
-                            month: monthName,
-                            day: parsedDay
-                        };
-                        window.calendarManager.currentSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
-                        window.calendarManager.updateSeasonDisplay();
-                        window.calendarManager.saveCalendarToLocal();
-                        console.log(`✅ Date du calendrier mise à jour au dernier jour: ${parsedDay} ${monthName}`);
-                    }
-                }
-            }
+        if (!this.dayByDayData || this.dayByDayData.length === 0) {
+            console.warn('⚠️ Pas de données de voyage à enregistrer');
+            return;
         }
 
-        // Fermer la modal des segments de voyage
-        this.dom.hideModal(this.dom.voyageSegmentsModal);
+        // Sauvegarder le voyage dans le journal
+        this.saveJourneyToJournal();
 
-        // Afficher un message de confirmation (optionnel)
-        console.log(`🏁 Voyage terminé ! Date finale : ${lastDayData.calendarDate}`);
+        // Déplacer le marqueur de position à la destination (dernier point du tracé)
+        if (window.journeyPath && window.journeyPath.length > 0 && window.positionManager) {
+            const lastPoint = window.journeyPath[window.journeyPath.length - 1];
+            window.positionManager.animateToPosition(lastPoint.x, lastPoint.y, 1000);
+            console.log(`📍 Marqueur déplacé à la destination du voyage: (${Math.round(lastPoint.x)}, ${Math.round(lastPoint.y)})`);
+        }
+
+        // Notification de succès
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        notification.innerHTML = '<i class="fas fa-check mr-2"></i>Voyage enregistré dans le journal';
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+
+        // Fermer la modale
+        const modal = this.dom.getElementById('voyage-segments-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+
+        console.log('✅ Voyage enregistré avec succès');
     }
 
     async generateJourneyDescription() {

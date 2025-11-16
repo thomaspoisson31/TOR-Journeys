@@ -325,6 +325,14 @@ class JournalManager {
         style.id = 'journal-day-header-style';
         document.head.appendChild(style);
 
+        // DÉSACTIVER les clics sur les en-têtes de jour pour les voyages enregistrés
+        // Retirer le listener global de VoyageManager s'il existe
+        if (voyageDaysContent._dayHeaderClickListener) {
+            voyageDaysContent.removeEventListener('click', voyageDaysContent._dayHeaderClickListener);
+            delete voyageDaysContent._dayHeaderClickListener;
+            console.log('✅ Listener de clic sur en-têtes désactivé pour voyage enregistré');
+        }
+
         // Afficher la modale
         voyageModal.classList.remove('hidden');
 
