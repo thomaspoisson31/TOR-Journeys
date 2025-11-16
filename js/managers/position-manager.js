@@ -697,6 +697,42 @@ class PositionManager {
             window.journalManager.journal.unshift(newEntry);
             localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
             
+            // Incrémenter la date du calendrier de +1 jour après l'exploration
+            if (window.calendarManager && window.calendarManager.isCalendarMode && window.calendarManager.currentCalendarDate && window.calendarManager.calendarData) {
+                const calDate = window.calendarManager.currentCalendarDate;
+                const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === calDate.month);
+                
+                if (monthIndex >= 0) {
+                    let newDay = calDate.day + 1;
+                    let newMonthIndex = monthIndex;
+                    
+                    // Gérer le passage au mois suivant
+                    const month = window.calendarManager.calendarData[monthIndex];
+                    const maxDays = month.days.length;
+                    
+                    if (newDay > maxDays) {
+                        newDay = 1;
+                        newMonthIndex = (monthIndex + 1) % window.calendarManager.calendarData.length;
+                    }
+                    
+                    // Mettre à jour la date
+                    window.calendarManager.currentCalendarDate = {
+                        month: window.calendarManager.calendarData[newMonthIndex].name,
+                        day: newDay
+                    };
+                    
+                    // Mettre à jour la saison
+                    const newSeason = window.calendarManager.calendarData[newMonthIndex].season.toLowerCase();
+                    window.calendarManager.currentSeason = newSeason;
+                    
+                    // Sauvegarder et afficher
+                    window.calendarManager.updateSeasonDisplay();
+                    window.calendarManager.saveCalendarToLocal();
+                    
+                    console.log(`📅 Date du calendrier incrémentée après exploration : ${newDay} ${window.calendarManager.calendarData[newMonthIndex].name}`);
+                }
+            }
+            
             // Marquer comme non sauvegardé
             if (typeof window.markAsUnsaved === 'function') {
                 window.markAsUnsaved();
