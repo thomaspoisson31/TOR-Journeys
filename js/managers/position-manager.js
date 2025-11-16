@@ -487,12 +487,10 @@ class PositionManager {
                 </button>
 
                 <div id="position-nearby-locations" class="hidden pt-2 border-t border-gray-600">
-                    <div class="text-xs font-semibold text-gray-300 mb-1">📍 Lieux à proximité:</div>
                     <div id="nearby-locations-list" class="space-y-1"></div>
                 </div>
 
                 <div id="position-current-regions" class="hidden pt-2 border-t border-gray-600">
-                    <div class="text-xs font-semibold text-gray-300 mb-1">🗺️ Régions traversées:</div>
                     <div id="current-regions-list" class="space-y-1"></div>
                 </div>
             </div>
@@ -625,7 +623,6 @@ class PositionManager {
                     const bgColor = colorMap[loc.color] || colorMap.gray;
                     return `<div class="text-xs px-2 py-1 rounded" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
                         <span class="font-medium text-white">${loc.name}</span>
-                        <span class="text-gray-400 ml-1">(${loc.distance}px)</span>
                     </div>`;
                 })
                 .join('');
@@ -633,7 +630,7 @@ class PositionManager {
             nearbyLocationsSection.classList.add('hidden');
         }
 
-        // Afficher les régions traversées
+        // Afficher les régions survolées
         if (currentRegions.length > 0) {
             currentRegionsSection.classList.remove('hidden');
             currentRegionsList.innerHTML = currentRegions
