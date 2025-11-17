@@ -139,6 +139,9 @@ class SettingsManager {
         // Onglet Saison - réutiliser CalendarManager
         this.setupSeasonListeners();
 
+        // Onglet Tables Aléatoires
+        this.setupRandomTablesListeners();
+
         // Onglet Import/Export
         this.setupImportExportListeners();
     }
@@ -192,6 +195,9 @@ class SettingsManager {
                 break;
             case 'season':
                 this.updateSeasonContent();
+                break;
+            case 'random-tables':
+                this.renderRandomTablesTab();
                 break;
             case 'importExport':
                 // Aucune action spécifique requise ici, juste l'affichage
@@ -1156,6 +1162,324 @@ class SettingsManager {
         // Le contenu de saison est géré par CalendarManager
         if (window.calendarManager) {
             window.calendarManager.updateCalendarUI();
+        }
+    }
+
+    // === GESTION DES TABLES ALÉATOIRES ===
+    setupRandomTablesListeners() {
+        // Les listeners seront configurés dans renderRandomTablesTab
+    }
+
+    renderRandomTablesTab() {
+        // Déléguer le rendu à l'AdventureManager
+        if (window.adventureManager) {
+            const tabContent = document.getElementById('settings-random-tables-content');
+            if (tabContent) {
+                // Utiliser la même méthode de rendu que l'AdventureManager
+                const tables = window.adventureManager.adventureData.randomTables || [];
+                const compositeTables = window.adventureManager.adventureData.compositeTables || [];
+
+                // Trier les tables par ordre alphabétique
+                const sortedTables = [...tables].sort((a, b) => {
+                    const nameA = (a.name || 'Table sans nom').toLowerCase();
+                    const nameB = (b.name || 'Table sans nom').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                });
+
+                const sortedCompositeTables = [...compositeTables].sort((a, b) => {
+                    const nameA = (a.name || 'Table sans nom').toLowerCase();
+                    const nameB = (b.name || 'Table sans nom').toLowerCase();
+                    return nameA.localeCompare(nameB);
+                });
+
+                let html = `
+                    <div class="mb-3 flex space-x-2">
+                        <input type="file" id="settings-upload-random-table" accept=".json" class="hidden">
+                        <button onclick="document.getElementById('settings-upload-random-table').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                            <i class="fas fa-upload mr-2"></i>Importer une table JSON
+                        </button>
+                        ${tables.length >= 2 ? `
+                            <button onclick="window.settingsManager.openCompositeTableModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
+                                <i class="fas fa-layer-group mr-2"></i>Créer une table composite
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+
+                if (sortedTables.length === 0 && sortedCompositeTables.length === 0) {
+                    html += '<p class="text-gray-400 italic">Aucune table aléatoire importée.</p>';
+                } else {
+                    html += '<div class="space-y-2">';
+                    
+                    // Afficher les tables composites en premier
+                    sortedCompositeTables.forEach((table) => {
+                        const originalIndex = compositeTables.indexOf(table);
+                        const tableName = (table.name || 'Table sans nom').replace(/'/g, "\\'");
+                        html += `
+                            <div class="bg-gray-800 rounded p-2 border-2 border-blue-500">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs font-semibold">Composite</span>
+                                        <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button onclick="window.settingsManager.rollOnCompositeTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
+                                            <i class="fas fa-dice mr-1"></i>Tirer
+                                        </button>
+                                        <button onclick="window.settingsManager.deleteCompositeTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="settings-composite-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
+                                    <div class="text-green-400 font-semibold mb-1 text-xs">Résultats des tirages :</div>
+                                    <div id="settings-composite-result-content-${originalIndex}" class="text-sm"></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    // Afficher les tables simples
+                    sortedTables.forEach((table) => {
+                        const originalIndex = tables.indexOf(table);
+                        const tableName = (table.name || 'Table sans nom').replace(/'/g, "\\'");
+                        html += `
+                            <div class="bg-gray-800 rounded p-2 border border-gray-700">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
+                                    <div class="flex space-x-2">
+                                        <button onclick="window.settingsManager.rollOnTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
+                                            <i class="fas fa-dice mr-1"></i>Tirer
+                                        </button>
+                                        <button onclick="window.settingsManager.deleteRandomTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="settings-table-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
+                                    <div class="text-green-400 font-semibold mb-1 text-xs">Résultat du tirage :</div>
+                                    <div id="settings-table-result-content-${originalIndex}" class="text-sm"></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+
+                tabContent.innerHTML = html;
+
+                const uploadInput = document.getElementById('settings-upload-random-table');
+                if (uploadInput) {
+                    uploadInput.onchange = (e) => this.handleRandomTableUpload(e);
+                }
+            }
+        }
+    }
+
+    async handleRandomTableUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            const text = await file.text();
+            const entries = JSON.parse(text);
+
+            if (!Array.isArray(entries) || entries.length === 0) {
+                alert('Le fichier JSON doit contenir un tableau d\'entrées.');
+                return;
+            }
+
+            const fileName = file.name.replace(/\.json$/i, '');
+
+            const newTable = {
+                name: fileName,
+                entries: entries
+            };
+
+            if (window.adventureManager) {
+                if (!window.adventureManager.adventureData.randomTables) {
+                    window.adventureManager.adventureData.randomTables = [];
+                }
+                window.adventureManager.adventureData.randomTables.push(newTable);
+                window.adventureManager.saveToLocalStorage();
+                this.renderRandomTablesTab();
+            }
+
+            event.target.value = '';
+        } catch (error) {
+            console.error('Erreur lors de l\'import de la table:', error);
+            alert('Erreur lors de l\'import du fichier JSON. Vérifiez le format.');
+        }
+    }
+
+    rollOnTable(tableIndex) {
+        if (!window.adventureManager) return;
+        
+        const table = window.adventureManager.adventureData.randomTables[tableIndex];
+        if (!table || !table.entries || table.entries.length === 0) return;
+
+        const randomIndex = Math.floor(Math.random() * table.entries.length);
+        const entry = table.entries[randomIndex];
+
+        const resultContainer = document.getElementById(`settings-table-result-${tableIndex}`);
+        const resultContent = document.getElementById(`settings-table-result-content-${tableIndex}`);
+
+        if (resultContainer && resultContent) {
+            let html = '<div class="space-y-2">';
+
+            for (const [key, value] of Object.entries(entry)) {
+                html += `
+                    <div>
+                        <span class="text-gray-400 font-semibold">${key}:</span>
+                        <span class="text-white ml-2">${value}</span>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            
+            html += `
+                <div class="flex justify-end space-x-2 mt-3 pt-3 border-t border-gray-600">
+                    <button onclick="window.settingsManager.addResultToJournal(${tableIndex}, ${JSON.stringify(entry).replace(/"/g, '&quot;')}, '${table.name.replace(/'/g, "\\'")}'); event.stopPropagation();" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs flex items-center space-x-1" title="Ajouter au journal">
+                        <i class="fas fa-book"></i>
+                        <span>Journal</span>
+                    </button>
+                    <button onclick="window.settingsManager.clearTableResult(${tableIndex}); event.stopPropagation();" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs flex items-center space-x-1" title="Annuler">
+                        <i class="fas fa-times"></i>
+                        <span>Annuler</span>
+                    </button>
+                </div>
+            `;
+            
+            resultContent.innerHTML = html;
+            resultContainer.classList.remove('hidden');
+        }
+    }
+
+    deleteRandomTable(index) {
+        if (!window.adventureManager) return;
+        
+        if (confirm('Voulez-vous vraiment supprimer cette table aléatoire ?')) {
+            window.adventureManager.adventureData.randomTables.splice(index, 1);
+            window.adventureManager.saveToLocalStorage();
+            this.renderRandomTablesTab();
+        }
+    }
+
+    openCompositeTableModal() {
+        if (window.adventureManager) {
+            window.adventureManager.openCompositeTableModal();
+            
+            // Intercepter la sauvegarde pour rafraîchir notre onglet
+            const originalSave = window.adventureManager.saveCompositeTable.bind(window.adventureManager);
+            window.adventureManager.saveCompositeTable = () => {
+                originalSave();
+                this.renderRandomTablesTab();
+            };
+        }
+    }
+
+    rollOnCompositeTable(compositeIndex) {
+        if (!window.adventureManager) return;
+        
+        const compositeTable = window.adventureManager.adventureData.compositeTables[compositeIndex];
+        if (!compositeTable || !compositeTable.tables || compositeTable.tables.length === 0) return;
+
+        const resultContainer = document.getElementById(`settings-composite-result-${compositeIndex}`);
+        const resultContent = document.getElementById(`settings-composite-result-content-${compositeIndex}`);
+
+        if (resultContainer && resultContent) {
+            let html = '<div class="space-y-3">';
+            let allResults = [];
+
+            compositeTable.tables.forEach(tableRef => {
+                const table = window.adventureManager.adventureData.randomTables[tableRef.tableIndex];
+                if (!table || !table.entries || table.entries.length === 0) return;
+
+                const randomIndex = Math.floor(Math.random() * table.entries.length);
+                const entry = table.entries[randomIndex];
+
+                allResults.push({
+                    tableName: table.name,
+                    entry: entry
+                });
+
+                html += `
+                    <div class="bg-gray-800 p-2 rounded">
+                        <div class="text-blue-400 font-semibold text-xs mb-1">${table.name}:</div>
+                        <div class="space-y-1">
+                `;
+
+                for (const [key, value] of Object.entries(entry)) {
+                    html += `
+                        <div>
+                            <span class="text-gray-400 font-semibold text-xs">${key}:</span>
+                            <span class="text-white ml-2 text-sm">${value}</span>
+                        </div>
+                    `;
+                }
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            
+            html += `
+                <div class="flex justify-end space-x-2 mt-3 pt-3 border-t border-gray-600">
+                    <button onclick="window.settingsManager.addCompositeResultToJournal(${compositeIndex}, ${JSON.stringify(allResults).replace(/"/g, '&quot;')}, '${compositeTable.name.replace(/'/g, "\\'")}'); event.stopPropagation();" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs flex items-center space-x-1" title="Ajouter au journal">
+                        <i class="fas fa-book"></i>
+                        <span>Journal</span>
+                    </button>
+                    <button onclick="window.settingsManager.clearCompositeResult(${compositeIndex}); event.stopPropagation();" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-xs flex items-center space-x-1" title="Annuler">
+                        <i class="fas fa-times"></i>
+                        <span>Annuler</span>
+                    </button>
+                </div>
+            `;
+            
+            resultContent.innerHTML = html;
+            resultContainer.classList.remove('hidden');
+        }
+    }
+
+    deleteCompositeTable(index) {
+        if (!window.adventureManager) return;
+        
+        if (confirm('Voulez-vous vraiment supprimer cette table composite ?')) {
+            window.adventureManager.adventureData.compositeTables.splice(index, 1);
+            window.adventureManager.saveToLocalStorage();
+            this.renderRandomTablesTab();
+        }
+    }
+
+    clearTableResult(tableIndex) {
+        const resultContainer = document.getElementById(`settings-table-result-${tableIndex}`);
+        if (resultContainer) {
+            resultContainer.classList.add('hidden');
+        }
+    }
+
+    clearCompositeResult(compositeIndex) {
+        const resultContainer = document.getElementById(`settings-composite-result-${compositeIndex}`);
+        if (resultContainer) {
+            resultContainer.classList.add('hidden');
+        }
+    }
+
+    addResultToJournal(tableIndex, entry, tableName) {
+        if (window.adventureManager) {
+            window.adventureManager.addResultToJournal(tableIndex, entry, tableName);
+            this.clearTableResult(tableIndex);
+        }
+    }
+
+    addCompositeResultToJournal(compositeIndex, allResults, tableName) {
+        if (window.adventureManager) {
+            window.adventureManager.addCompositeResultToJournal(compositeIndex, allResults, tableName);
+            this.clearCompositeResult(compositeIndex);
         }
     }
 

@@ -888,6 +888,9 @@
                     <button class="settings-tab-button px-6 py-3 text-gray-400 border-b-2 border-transparent font-medium hover:text-white" data-tab="season">
                         <i class="fas fa-leaf mr-2"></i>Saison
                     </button>
+                    <button class="settings-tab-button px-6 py-3 text-gray-400 border-b-2 border-transparent font-medium hover:text-white" data-tab="random-tables">
+                        <i class="fas fa-dice mr-2"></i>Tables Aléatoires
+                    </button>
                     <button class="settings-tab-button px-6 py-3 text-gray-400 border-b-2 border-transparent font-medium hover:text-white" data-tab="import-export">Import / Export</button>
                 </div>
 
@@ -1140,6 +1143,13 @@
                         <div class="mt-6 text-xs text-gray-400 flex-shrink-0">
                             <i class="fas fa-info-circle mr-1"></i>
                             <span id="season-mode-info">Mode manuel : sélectionnez une saison. Importez un calendrier CSV pour synchroniser automatiquement les saisons avec les dates.</span>
+                        </div>
+                    </div>
+
+                    <!-- Random Tables Tab -->
+                    <div id="random-tables-tab" class="settings-tab-content h-full overflow-y-auto" style="display: none;">
+                        <div class="random-tables-view p-4">
+                            <div id="settings-random-tables-content"></div>
                         </div>
                     </div>
 
