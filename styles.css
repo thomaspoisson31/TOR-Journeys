@@ -869,6 +869,7 @@ body {
 
 .journal-tab-content {
     display: none;
+    min-height: 500px; /* Hauteur minimale pour garder la modale stable */
 }
 
 .journal-tab-content.active {
