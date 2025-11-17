@@ -493,12 +493,8 @@ class PositionManager {
             <div class="space-y-2">
                 <div class="flex items-center justify-between text-xs text-gray-400">
                     <span>Mode Aventure:</span>
-                    <span id="adventure-mode-status" class="font-bold px-2 py-1 rounded-full"></span>
+                    <span id="adventure-mode-status" class="font-bold px-2 py-1 rounded-full cursor-pointer hover:opacity-80 transition-opacity" title="Cliquer pour basculer"></span>
                 </div>
-
-                <button id="adventure-mode-toggle-btn" class="w-full px-2 py-1 rounded text-xs transition-colors flex items-center justify-center font-semibold">
-                    <span id="adventure-mode-toggle-text"></span>
-                </button>
 
                 <div id="position-nearby-locations" class="hidden pt-2 border-t border-gray-600">
                     <div id="nearby-locations-list" class="space-y-1"></div>
@@ -510,9 +506,9 @@ class PositionManager {
             </div>
         `;
 
-        // Gestionnaire d'événement pour le bouton d'activation/désactivation du mode aventure
-        const toggleButton = modal.querySelector('#adventure-mode-toggle-btn');
-        toggleButton.addEventListener('click', () => {
+        // Gestionnaire d'événement pour le statut cliquable
+        const statusSpan = modal.querySelector('#adventure-mode-status');
+        statusSpan.addEventListener('click', () => {
             this.toggleAdventureMode();
         });
 
@@ -532,29 +528,18 @@ class PositionManager {
         if (!modal) return;
 
         const statusSpan = modal.querySelector('#adventure-mode-status');
-        const toggleButton = modal.querySelector('#adventure-mode-toggle-btn');
 
-        if (!statusSpan || !toggleButton) return;
+        if (!statusSpan) return;
 
-        // Mise à jour de l'affichage du statut et du bouton
+        // Mise à jour de l'affichage du statut
         if (this.adventureMode) {
             statusSpan.textContent = "Actif";
             statusSpan.style.backgroundColor = '#22C55E'; // Vert
             statusSpan.style.color = '#fff';
-
-            toggleButton.textContent = "Interrompre mode Aventure";
-            toggleButton.style.backgroundColor = '#F97316'; // Orange
-            toggleButton.style.color = '#fff';
-            toggleButton.style.borderColor = '#EA580C';
         } else {
             statusSpan.textContent = "Inactif";
             statusSpan.style.backgroundColor = '#6B7280'; // Gris
             statusSpan.style.color = '#fff';
-
-            toggleButton.textContent = "Activer mode Aventure";
-            toggleButton.style.backgroundColor = '#22C55E'; // Vert
-            toggleButton.style.color = '#fff';
-            toggleButton.style.borderColor = '#16A34A';
         }
 
         // Mettre à jour l'indicateur dans le cartouche de date
