@@ -1284,15 +1284,6 @@ class SettingsManager {
         }
     }
 
-    
-            const originalSave = window.adventureManager.saveCompositeTable.bind(window.adventureManager);
-            window.adventureManager.saveCompositeTable = () => {
-                originalSave();
-                this.renderRandomTablesTab();
-            };
-        }
-    }
-
     rollOnCompositeTable(compositeIndex) {
         if (!window.adventureManager) return;
         
