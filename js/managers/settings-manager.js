@@ -199,7 +199,7 @@ class SettingsManager {
             case 'random-tables':
                 this.renderRandomTablesTab();
                 break;
-            case 'importExport':
+            case 'import-export':
                 // Aucune action spécifique requise ici, juste l'affichage
                 break;
         }
