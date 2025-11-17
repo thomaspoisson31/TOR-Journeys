@@ -359,6 +359,20 @@ class PositionManager {
             return false;
         });
 
+        // Gestionnaire global pour fermer la modale au clic droit en dehors
+        document.addEventListener('contextmenu', (e) => {
+            const modal = document.getElementById('position-modal');
+            if (modal && !modal.classList.contains('hidden')) {
+                // Vérifier si le clic est en dehors de la modale et du marqueur
+                if (!modal.contains(e.target) && !this.positionMarker.contains(e.target)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    modal.classList.add('hidden');
+                    return false;
+                }
+            }
+        });
+
         // Mise à jour du curseur au survol
         this.positionMarker.addEventListener('mouseenter', () => {
             if (!this.isDragging && !window.isDrawingMode) {
@@ -502,13 +516,13 @@ class PositionManager {
             this.toggleAdventureMode();
         });
 
-        // Fermer en cliquant ailleurs
+        // Fermer en cliquant ailleurs (clic gauche uniquement)
         document.addEventListener('click', (e) => {
             if (modal.classList.contains('hidden')) return;
             if (!modal.contains(e.target) && !this.positionMarker.contains(e.target)) {
                 modal.classList.add('hidden');
             }
-        });
+        }, true);
 
         return modal;
     }
