@@ -1173,105 +1173,108 @@ class SettingsManager {
     renderRandomTablesTab() {
         // Déléguer le rendu à l'AdventureManager
         if (window.adventureManager) {
-            const tabContent = document.getElementById('settings-random-tables-content');
-            if (tabContent) {
-                // Utiliser la même méthode de rendu que l'AdventureManager
-                const tables = window.adventureManager.adventureData.randomTables || [];
-                const compositeTables = window.adventureManager.adventureData.compositeTables || [];
+            const tabContent = document.getElementById('random-tables-content');
+            if (!tabContent) {
+                console.error('❌ random-tables-content not found in settings');
+                return;
+            }
 
-                // Trier les tables par ordre alphabétique
-                const sortedTables = [...tables].sort((a, b) => {
-                    const nameA = (a.name || 'Table sans nom').toLowerCase();
-                    const nameB = (b.name || 'Table sans nom').toLowerCase();
-                    return nameA.localeCompare(nameB);
-                });
+            // Utiliser la même méthode de rendu que l'AdventureManager
+            const tables = window.adventureManager.adventureData.randomTables || [];
+            const compositeTables = window.adventureManager.adventureData.compositeTables || [];
 
-                const sortedCompositeTables = [...compositeTables].sort((a, b) => {
-                    const nameA = (a.name || 'Table sans nom').toLowerCase();
-                    const nameB = (b.name || 'Table sans nom').toLowerCase();
-                    return nameA.localeCompare(nameB);
-                });
+            // Trier les tables par ordre alphabétique
+            const sortedTables = [...tables].sort((a, b) => {
+                const nameA = (a.name || 'Table sans nom').toLowerCase();
+                const nameB = (b.name || 'Table sans nom').toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
 
-                let html = `
-                    <div class="mb-3 flex space-x-2">
-                        <input type="file" id="settings-upload-random-table" accept=".json" class="hidden">
-                        <button onclick="document.getElementById('settings-upload-random-table').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                            <i class="fas fa-upload mr-2"></i>Importer une table JSON
+            const sortedCompositeTables = [...compositeTables].sort((a, b) => {
+                const nameA = (a.name || 'Table sans nom').toLowerCase();
+                const nameB = (b.name || 'Table sans nom').toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+
+            let html = `
+                <div class="mb-3 flex space-x-2">
+                    <input type="file" id="settings-upload-random-table" accept=".json" class="hidden">
+                    <button onclick="document.getElementById('settings-upload-random-table').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                        <i class="fas fa-upload mr-2"></i>Importer une table JSON
+                    </button>
+                    ${tables.length >= 2 ? `
+                        <button onclick="window.settingsManager.openCompositeTableModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
+                            <i class="fas fa-layer-group mr-2"></i>Créer une table composite
                         </button>
-                        ${tables.length >= 2 ? `
-                            <button onclick="window.settingsManager.openCompositeTableModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
-                                <i class="fas fa-layer-group mr-2"></i>Créer une table composite
-                            </button>
-                        ` : ''}
-                    </div>
-                `;
+                    ` : ''}
+                </div>
+            `;
 
-                if (sortedTables.length === 0 && sortedCompositeTables.length === 0) {
-                    html += '<p class="text-gray-400 italic">Aucune table aléatoire importée.</p>';
-                } else {
-                    html += '<div class="space-y-2">';
-                    
-                    // Afficher les tables composites en premier
-                    sortedCompositeTables.forEach((table) => {
-                        const originalIndex = compositeTables.indexOf(table);
-                        const tableName = (table.name || 'Table sans nom').replace(/'/g, "\\'");
-                        html += `
-                            <div class="bg-gray-800 rounded p-2 border-2 border-blue-500">
-                                <div class="flex justify-between items-center">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs font-semibold">Composite</span>
-                                        <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <button onclick="window.settingsManager.rollOnCompositeTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
-                                            <i class="fas fa-dice mr-1"></i>Tirer
-                                        </button>
-                                        <button onclick="window.settingsManager.deleteCompositeTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div id="settings-composite-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
-                                    <div class="text-green-400 font-semibold mb-1 text-xs">Résultats des tirages :</div>
-                                    <div id="settings-composite-result-content-${originalIndex}" class="text-sm"></div>
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    // Afficher les tables simples
-                    sortedTables.forEach((table) => {
-                        const originalIndex = tables.indexOf(table);
-                        const tableName = (table.name || 'Table sans nom').replace(/'/g, "\\'");
-                        html += `
-                            <div class="bg-gray-800 rounded p-2 border border-gray-700">
-                                <div class="flex justify-between items-center">
+            if (sortedTables.length === 0 && sortedCompositeTables.length === 0) {
+                html += '<p class="text-gray-400 italic">Aucune table aléatoire importée.</p>';
+            } else {
+                html += '<div class="space-y-2">';
+                
+                // Afficher les tables composites en premier
+                sortedCompositeTables.forEach((table) => {
+                    const originalIndex = compositeTables.indexOf(table);
+                    const tableName = (table.name || 'Table sans nom').replace(/'/g, "\\'");
+                    html += `
+                        <div class="bg-gray-800 rounded p-2 border-2 border-blue-500">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs font-semibold">Composite</span>
                                     <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
-                                    <div class="flex space-x-2">
-                                        <button onclick="window.settingsManager.rollOnTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
-                                            <i class="fas fa-dice mr-1"></i>Tirer
-                                        </button>
-                                        <button onclick="window.settingsManager.deleteRandomTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
                                 </div>
-                                <div id="settings-table-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
-                                    <div class="text-green-400 font-semibold mb-1 text-xs">Résultat du tirage :</div>
-                                    <div id="settings-table-result-content-${originalIndex}" class="text-sm"></div>
+                                <div class="flex space-x-2">
+                                    <button onclick="window.settingsManager.rollOnCompositeTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-dice mr-1"></i>Tirer
+                                    </button>
+                                    <button onclick="window.settingsManager.deleteCompositeTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
-                        `;
-                    });
-                    html += '</div>';
-                }
+                            <div id="settings-composite-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
+                                <div class="text-green-400 font-semibold mb-1 text-xs">Résultats des tirages :</div>
+                                <div id="settings-composite-result-content-${originalIndex}" class="text-sm"></div>
+                            </div>
+                        </div>
+                    `;
+                });
 
-                tabContent.innerHTML = html;
+                // Afficher les tables simples
+                sortedTables.forEach((table) => {
+                    const originalIndex = tables.indexOf(table);
+                    const tableName = (table.name || 'Table sans nom').replace(/'/g, "\\'");
+                    html += `
+                        <div class="bg-gray-800 rounded p-2 border border-gray-700">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
+                                <div class="flex space-x-2">
+                                    <button onclick="window.settingsManager.rollOnTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-dice mr-1"></i>Tirer
+                                    </button>
+                                    <button onclick="window.settingsManager.deleteRandomTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="settings-table-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
+                                <div class="text-green-400 font-semibold mb-1 text-xs">Résultat du tirage :</div>
+                                <div id="settings-table-result-content-${originalIndex}" class="text-sm"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
 
-                const uploadInput = document.getElementById('settings-upload-random-table');
-                if (uploadInput) {
-                    uploadInput.onchange = (e) => this.handleRandomTableUpload(e);
-                }
+            tabContent.innerHTML = html;
+
+            const uploadInput = document.getElementById('settings-upload-random-table');
+            if (uploadInput) {
+                uploadInput.onchange = (e) => this.handleRandomTableUpload(e);
             }
         }
     }
