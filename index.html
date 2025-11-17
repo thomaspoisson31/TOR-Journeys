@@ -459,23 +459,65 @@
                 <!-- Header -->
                 <div class="flex justify-between items-center p-6 border-b border-gray-300">
                     <div class="flex-1">
-                        <h3 class="text-2xl font-bold" style="color: #940000;">Journal de Voyage</h3>
-                        <p class="text-sm text-gray-600 mt-1">Historique de vos voyages</p>
+                        <h3 class="text-2xl font-bold" style="color: #940000;">Journal d'Aventure</h3>
                     </div>
                     <button id="close-journal-btn" class="text-gray-400 hover:text-gray-600">
                         <i class="fas fa-times fa-lg"></i>
                     </button>
                 </div>
 
-                <!-- Contenu scrollable -->
-                <div class="flex-1 overflow-y-auto p-6" id="journal-content">
-                    <!-- Le contenu sera généré dynamiquement -->
+                <!-- Tabs -->
+                <div id="journal-tabs" class="flex border-b border-gray-300 px-6">
+                    <button class="journal-tab-button active px-6 py-3 text-gray-800 border-b-2 border-red-800 font-medium" data-tab="journal-list">
+                        <i class="fas fa-book mr-2"></i>Journal
+                    </button>
+                    <button class="journal-tab-button px-6 py-3 text-gray-500 border-b-2 border-transparent font-medium hover:text-gray-800" data-tab="objectives">
+                        <i class="fas fa-bullseye mr-2"></i>Objectifs
+                    </button>
+                    <button class="journal-tab-button px-6 py-3 text-gray-500 border-b-2 border-transparent font-medium hover:text-gray-800" data-tab="rumors">
+                        <i class="fas fa-comments mr-2"></i>Rumeurs
+                    </button>
                 </div>
 
-                <div id="journal-empty" class="hidden flex-1 flex flex-col items-center justify-center text-center py-12 text-gray-500">
-                    <i class="fas fa-book-open fa-3x mb-4"></i>
-                    <p class="text-lg">Aucun voyage enregistré pour le moment</p>
-                    <p class="text-sm mt-2">Générez des descriptions de voyage pour commencer votre journal</p>
+                <!-- Tab Content -->
+                <div class="flex-1 overflow-y-auto">
+                    <!-- Onglet Journal -->
+                    <div id="journal-list-tab" class="journal-tab-content active p-6">
+                        <div id="journal-content">
+                            <!-- Le contenu sera généré dynamiquement -->
+                        </div>
+                        <div id="journal-empty" class="hidden flex flex-col items-center justify-center text-center py-12 text-gray-500">
+                            <i class="fas fa-book-open fa-3x mb-4"></i>
+                            <p class="text-lg">Aucun voyage enregistré pour le moment</p>
+                            <p class="text-sm mt-2">Générez des descriptions de voyage pour commencer votre journal</p>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Objectifs -->
+                    <div id="objectives-tab" class="journal-tab-content hidden p-6">
+                        <div class="mb-4">
+                            <button id="add-objective-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                                <i class="fas fa-plus mr-2"></i>Nouvel objectif
+                            </button>
+                        </div>
+                        <div id="objectives-list" class="space-y-3">
+                            <!-- Les objectifs seront générés ici -->
+                        </div>
+                        <div id="objectives-empty" class="flex flex-col items-center justify-center text-center py-12 text-gray-500">
+                            <i class="fas fa-bullseye fa-3x mb-4"></i>
+                            <p class="text-lg">Aucun objectif défini</p>
+                            <p class="text-sm mt-2">Créez vos objectifs d'aventure</p>
+                        </div>
+                    </div>
+
+                    <!-- Onglet Rumeurs -->
+                    <div id="rumors-tab" class="journal-tab-content hidden p-6">
+                        <div class="flex flex-col items-center justify-center text-center py-12 text-gray-500">
+                            <i class="fas fa-comments fa-3x mb-4"></i>
+                            <p class="text-lg">Fonctionnalité à venir</p>
+                            <p class="text-sm mt-2">La gestion des rumeurs sera bientôt disponible</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

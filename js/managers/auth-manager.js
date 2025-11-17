@@ -363,7 +363,8 @@ class AuthManager {
                 activeMapUrl: window.settingsManager?.activeMapUrl || null,
                 availableMaps: window.settingsManager?.availableMaps || []
             },
-            journal: JSON.parse(localStorage.getItem('travelJournal') || '{}'),
+            // Journal de voyage et objectifs
+            journal: window.journalManager ? window.journalManager.getAllData() : { journal: [], objectives: [] },
             position: JSON.parse(localStorage.getItem('adventurers_position') || 'null'),
             filtersByMap: JSON.parse(localStorage.getItem('filtersByMap') || '{}'),
             // Ajouter l'état actuel du mode aventure
@@ -497,12 +498,17 @@ class AuthManager {
             this.logAuth("✅ Paramètres et cartes appliqués depuis le cloud");
         }
 
+        // Journal de voyage et objectifs
         if (data.journal) {
-            this.logAuth(`📖 Application de ${data.journal.length} entrées de journal depuis le contexte`);
-            localStorage.setItem('travelJournal', JSON.stringify(data.journal));
-            if (window.journalManager) {
-                window.journalManager.loadJournal();
-                this.logAuth("✅ Journal chargé depuis le contexte");
+            if (data.journal.journal) {
+                // Nouveau format avec journal et objectifs
+                localStorage.setItem('travelJournal', JSON.stringify(data.journal.journal));
+                localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives || []));
+                console.log('[AuthManager] ✅ Journal et objectifs chargés depuis le cloud');
+            } else {
+                // Ancien format (rétrocompatibilité)
+                localStorage.setItem('travelJournal', JSON.stringify(data.journal));
+                console.log('[AuthManager] ✅ Journal de voyage chargé depuis le cloud (ancien format)');
             }
         }
 
@@ -1534,7 +1540,16 @@ class AuthManager {
             }
         }
         if (data.journal) {
-            localStorage.setItem('travelJournal', JSON.stringify(data.journal));
+            // Journal de voyage et objectifs
+            if (data.journal.journal) {
+                localStorage.setItem('travelJournal', JSON.stringify(data.journal.journal));
+                localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives || []));
+                this.logAuth(`  - ${data.journal.journal.length} entrées de journal et ${data.journal.objectives?.length || 0} objectifs sauvegardés dans localStorage.`);
+            } else {
+                // Ancien format (rétrocompatibilité)
+                localStorage.setItem('travelJournal', JSON.stringify(data.journal));
+                this.logAuth(`  - ${data.journal.length} entrées de journal (ancien format) sauvegardées dans localStorage.`);
+            }
         }
         if (data.position) {
             localStorage.setItem('adventurers_position', JSON.stringify(data.position));
@@ -1557,7 +1572,7 @@ class AuthManager {
                 this.logAuth("✅ CharactersManager.charactersData mis à jour.");
             }
         }
-        
+
         // Sauvegarder le mode aventure
         if (data.adventureMode !== undefined) {
             localStorage.setItem('adventurers_adventure_mode', data.adventureMode.toString());

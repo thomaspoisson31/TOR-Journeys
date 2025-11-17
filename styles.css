@@ -837,19 +837,15 @@ body {
     font-family: 'Merriweather', serif;
 }
 
+/* Adventure Modal Tabs */
 .adventure-tab-button {
-    transition: all 0.2s ease;
-    border-bottom-width: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 .adventure-tab-button.active {
     color: white;
     border-color: #3b82f6;
-}
-
-.adventure-tab-button:not(.active):hover {
-    color: #d1d5db;
-    border-color: #6b7280;
 }
 
 .adventure-tab-content {
@@ -858,6 +854,58 @@ body {
 
 .adventure-tab-content.active {
     display: block;
+}
+
+/* Journal Modal Tabs */
+.journal-tab-button {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.journal-tab-button.active {
+    color: #940000;
+    border-color: #940000;
+}
+
+.journal-tab-content {
+    display: none;
+}
+
+.journal-tab-content.active {
+    display: block;
+}
+
+/* Objectives styling */
+.objective-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.objective-item:hover {
+    background-color: #f3f4f6;
+}
+
+.objective-item.completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+.objective-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.objective-text {
+    flex: 1;
+    color: #1f2937;
+    font-size: 14px;
 }
 
 .rumor-item, .threat-item {

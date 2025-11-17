@@ -1,9 +1,11 @@
 class JournalManager {
     constructor() {
         this.journal = [];
+        this.objectives = [];
         this.journalModal = null;
         this.journalContent = null;
         this.journalEmpty = null;
+        this.currentTab = 'journal-list';
     }
 
     init() {
@@ -11,6 +13,7 @@ class JournalManager {
         this.setupDOMReferences();
         this.setupEventListeners();
         this.loadJournal();
+        this.loadObjectives();
     }
 
     setupDOMReferences() {
@@ -37,6 +40,53 @@ class JournalManager {
                 }
             });
         }
+
+        // Gestion des onglets
+        const tabButtons = document.querySelectorAll('.journal-tab-button');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                this.switchTab(e.target.closest('.journal-tab-button').dataset.tab);
+            });
+        });
+
+        // Bouton d'ajout d'objectif
+        const addObjectiveBtn = document.getElementById('add-objective-btn');
+        if (addObjectiveBtn) {
+            addObjectiveBtn.addEventListener('click', () => this.addObjective());
+        }
+    }
+
+    switchTab(tabName) {
+        console.log(`📖 Changement d'onglet vers: ${tabName}`);
+        this.currentTab = tabName;
+
+        // Désactiver tous les onglets
+        document.querySelectorAll('.journal-tab-button').forEach(btn => {
+            btn.classList.remove('active', 'text-gray-800', 'border-red-800');
+            btn.classList.add('text-gray-500', 'border-transparent');
+        });
+        document.querySelectorAll('.journal-tab-content').forEach(content => {
+            content.classList.remove('active');
+            content.classList.add('hidden');
+        });
+
+        // Activer l'onglet sélectionné
+        const targetButton = document.querySelector(`.journal-tab-button[data-tab="${tabName}"]`);
+        const targetContent = document.getElementById(`${tabName}-tab`);
+
+        if (targetButton) {
+            targetButton.classList.add('active', 'text-gray-800', 'border-red-800');
+            targetButton.classList.remove('text-gray-500', 'border-transparent');
+        }
+        if (targetContent) {
+            targetContent.classList.remove('hidden');
+            targetContent.classList.add('active');
+        }
+
+        // Rafraîchir le contenu si nécessaire
+        if (tabName === 'objectives') {
+            this.renderObjectives();
+        }
     }
 
     loadJournal() {
@@ -60,7 +110,12 @@ class JournalManager {
 
     openJournal() {
         this.loadJournal();
+        this.loadObjectives();
         this.renderJournal();
+        
+        // Afficher l'onglet par défaut (Journal)
+        this.switchTab('journal-list');
+        
         if (this.journalModal) {
             this.journalModal.classList.remove('hidden');
         }
@@ -422,9 +477,109 @@ class JournalManager {
         console.log("📖 Journal exporté en Markdown");
     }
 
+    loadObjectives() {
+        const savedObjectives = localStorage.getItem('adventureObjectives');
+        if (savedObjectives && savedObjectives !== 'null' && savedObjectives !== 'undefined') {
+            try {
+                const parsed = JSON.parse(savedObjectives);
+                this.objectives = Array.isArray(parsed) ? parsed : [];
+                console.log(`📖 ${this.objectives.length} objectif(s) chargé(s) depuis le localStorage`);
+            } catch (e) {
+                console.error("Erreur lors du chargement des objectifs:", e);
+                this.objectives = [];
+            }
+        } else {
+            this.objectives = [];
+            console.log("📖 Aucun objectif trouvé dans le localStorage");
+        }
+    }
+
+    renderObjectives() {
+        const objectivesList = document.getElementById('objectives-list');
+        const objectivesEmpty = document.getElementById('objectives-empty');
+
+        if (!objectivesList || !objectivesEmpty) return;
+
+        if (this.objectives.length === 0) {
+            objectivesList.innerHTML = '';
+            objectivesEmpty.style.display = 'flex';
+            return;
+        }
+
+        objectivesEmpty.style.display = 'none';
+
+        const objectivesHTML = this.objectives.map((objective, index) => `
+            <div class="objective-item ${objective.completed ? 'completed' : ''}" data-index="${index}">
+                <input type="checkbox" ${objective.completed ? 'checked' : ''} 
+                       onchange="window.journalManager.toggleObjectiveComplete(${index})">
+                <div class="objective-text">${this.escapeHtml(objective.text)}</div>
+                <button onclick="window.journalManager.deleteObjective(${index})" 
+                        class="text-red-500 hover:text-red-700 p-2 ml-2" 
+                        title="Supprimer cet objectif">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `).join('');
+
+        objectivesList.innerHTML = objectivesHTML;
+    }
+
+    addObjective() {
+        const text = prompt("Nouvel objectif d'aventure :");
+        if (text && text.trim()) {
+            this.objectives.push({
+                text: text.trim(),
+                completed: false,
+                createdAt: new Date().toISOString()
+            });
+            this.saveObjectives();
+            this.renderObjectives();
+        }
+    }
+
+    toggleObjectiveComplete(index) {
+        if (this.objectives[index]) {
+            this.objectives[index].completed = !this.objectives[index].completed;
+            this.saveObjectives();
+            this.renderObjectives();
+        }
+    }
+
+    deleteObjective(index) {
+        if (confirm("Êtes-vous sûr de vouloir supprimer cet objectif ?")) {
+            this.objectives.splice(index, 1);
+            this.saveObjectives();
+            this.renderObjectives();
+        }
+    }
+
+    saveObjectives() {
+        localStorage.setItem('adventureObjectives', JSON.stringify(this.objectives));
+        console.log("💾 Objectifs sauvegardés dans localStorage");
+
+        // Marquer comme non sauvegardé pour sync cloud
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        // Synchroniser avec le cloud si authentifié
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Méthode pour récupérer toutes les données (pour synchronisation)
     getAllData() {
-        return this.journal;
+        return {
+            journal: this.journal,
+            objectives: this.objectives
+        };
     }
 }
 
