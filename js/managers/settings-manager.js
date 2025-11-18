@@ -1184,6 +1184,39 @@ class SettingsManager {
         const tables = window.adventureManager.adventureData.randomTables || [];
         const compositeTables = window.adventureManager.adventureData.compositeTables || [];
 
+        // LOGS DE DEBUG DÉTAILLÉS
+        console.log('📊 [DEBUG] Nombre de tables simples:', tables.length);
+        console.log('📊 [DEBUG] Nombre de tables composites:', compositeTables.length);
+        
+        // Afficher le contenu de chaque table simple
+        tables.forEach((table, index) => {
+            console.log(`📋 [DEBUG] Table simple ${index}:`, {
+                name: table.name,
+                entriesCount: table.entries?.length || 0,
+                entries: table.entries
+            });
+        });
+        
+        // Afficher le contenu de chaque table composite
+        compositeTables.forEach((composite, index) => {
+            console.log(`🔗 [DEBUG] Table composite ${index}:`, {
+                name: composite.name,
+                tableIndices: composite.tableIndices,
+                tableIndicesCount: composite.tableIndices?.length || 0
+            });
+        });
+        
+        // Vérifier les conteneurs de résultats dans le DOM
+        console.log('🔍 [DEBUG] Vérification des conteneurs de résultats...');
+        tables.forEach((table, index) => {
+            const resultContainer = document.getElementById(`settings-table-result-${index}`);
+            const resultContent = document.getElementById(`settings-table-result-content-${index}`);
+            console.log(`📦 [DEBUG] Conteneur table ${index}:`, {
+                resultContainer: !!resultContainer,
+                resultContent: !!resultContent
+            });
+        });
+
         // Trier les tables par ordre alphabétique
         const sortedTables = [...tables].sort((a, b) => {
             const nameA = (a.name || 'Table sans nom').toLowerCase();

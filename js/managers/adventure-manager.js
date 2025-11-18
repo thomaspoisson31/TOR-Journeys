@@ -427,52 +427,102 @@ class AdventureManager {
 
     // === MÉTHODES POUR LES TABLES ALÉATOIRES ===
     rollOnTable(tableIndex) {
+        console.log(`🎲 [DEBUG] rollOnTable appelé avec index: ${tableIndex}`);
+        
         const table = this.adventureData.randomTables[tableIndex];
+        console.log(`📋 [DEBUG] Table récupérée:`, table);
+        
         if (!table || !table.entries || table.entries.length === 0) {
-            console.error('Table invalide ou vide');
+            console.error('❌ Table invalide ou vide');
+            console.log('🔍 [DEBUG] État de la table:', {
+                tableExists: !!table,
+                entriesExists: !!(table?.entries),
+                entriesLength: table?.entries?.length || 0
+            });
             return;
         }
 
         // Tirer un résultat aléatoire
         const randomIndex = Math.floor(Math.random() * table.entries.length);
         const result = table.entries[randomIndex];
+        
+        console.log(`🎲 [DEBUG] Résultat du tirage:`, {
+            randomIndex,
+            result,
+            resultType: typeof result
+        });
 
         // Afficher le résultat dans un conteneur dédié
         const resultContainer = document.getElementById(`table-result-${tableIndex}`);
         const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
 
+        console.log(`📦 [DEBUG] Conteneurs DOM:`, {
+            resultContainer: !!resultContainer,
+            resultContent: !!resultContent
+        });
+
         if (resultContainer && resultContent) {
             resultContent.innerHTML = `<div class="text-white">${result}</div>`;
             resultContainer.classList.remove('hidden');
+            console.log(`✅ [DEBUG] Résultat affiché dans le DOM`);
+        } else {
+            console.error(`❌ [DEBUG] Conteneurs introuvables pour table-result-${tableIndex}`);
         }
 
         console.log(`🎲 Tirage sur "${table.name}": ${result}`);
     }
 
     rollOnCompositeTable(compositeIndex) {
+        console.log(`🔗 [DEBUG] rollOnCompositeTable appelé avec index: ${compositeIndex}`);
+        
         const composite = this.adventureData.compositeTables[compositeIndex];
+        console.log(`📋 [DEBUG] Table composite récupérée:`, composite);
+        
         if (!composite || !composite.tableIndices || composite.tableIndices.length === 0) {
-            console.error('Table composite invalide');
+            console.error('❌ Table composite invalide');
+            console.log('🔍 [DEBUG] État de la table composite:', {
+                compositeExists: !!composite,
+                tableIndicesExists: !!(composite?.tableIndices),
+                tableIndicesLength: composite?.tableIndices?.length || 0,
+                fullComposite: composite
+            });
             return;
         }
 
         // Effectuer un tirage sur chaque table simple
         const results = [];
-        composite.tableIndices.forEach(tableIndex => {
+        console.log(`🎲 [DEBUG] Tirage sur ${composite.tableIndices.length} table(s) simple(s)`);
+        
+        composite.tableIndices.forEach((tableIndex, idx) => {
+            console.log(`🔍 [DEBUG] Tirage ${idx + 1}/${composite.tableIndices.length} - index: ${tableIndex}`);
+            
             const table = this.adventureData.randomTables[tableIndex];
+            console.log(`📋 [DEBUG] Table trouvée:`, table);
+            
             if (table && table.entries && table.entries.length > 0) {
                 const randomIndex = Math.floor(Math.random() * table.entries.length);
                 const result = table.entries[randomIndex];
+                console.log(`✅ [DEBUG] Résultat du tirage:`, { tableName: table.name, result });
+                
                 results.push({
                     tableName: table.name,
                     result: result
                 });
+            } else {
+                console.error(`❌ [DEBUG] Table ${tableIndex} invalide ou vide`);
             }
         });
+
+        console.log(`📊 [DEBUG] Résultats totaux:`, results);
 
         // Afficher les résultats
         const resultContainer = document.getElementById(`composite-result-${compositeIndex}`);
         const resultContent = document.getElementById(`composite-result-content-${compositeIndex}`);
+
+        console.log(`📦 [DEBUG] Conteneurs DOM composite:`, {
+            resultContainer: !!resultContainer,
+            resultContent: !!resultContent
+        });
 
         if (resultContainer && resultContent) {
             const html = results.map(r => 
@@ -483,6 +533,9 @@ class AdventureManager {
             ).join('');
             resultContent.innerHTML = html;
             resultContainer.classList.remove('hidden');
+            console.log(`✅ [DEBUG] Résultats affichés dans le DOM`);
+        } else {
+            console.error(`❌ [DEBUG] Conteneurs introuvables pour composite-result-${compositeIndex}`);
         }
 
         console.log(`🎲 Tirage sur table composite "${composite.name}":`, results);
