@@ -471,13 +471,13 @@ class SettingsManager {
             let regionsCount = 0;
 
             if (window.locationsData && window.locationsData.locations) {
-                locationsCount = window.locationsData.locations.filter(loc => 
+                locationsCount = window.locationsData.locations.filter(loc =>
                     !loc.mapId || loc.mapId === map.url
                 ).length;
             }
 
             if (window.regionsData && window.regionsData.regions) {
-                regionsCount = window.regionsData.regions.filter(reg => 
+                regionsCount = window.regionsData.regions.filter(reg =>
                     !reg.mapId || reg.mapId === map.url
                 ).length;
             }
@@ -494,13 +494,13 @@ class SettingsManager {
                             <div class="text-base font-medium text-white truncate mb-2">${map.name}</div>
                             <div class="text-xs text-gray-400 mb-1" id="map-dims-${index}">${mapWidth}px • ${mapScale} miles • ${map.milesPerDay || 20} mi/j</div>
                             <div class="text-xs text-gray-400 mb-2">
-                                <i class="fas fa-map-marker-alt mr-1"></i>${locationsCount} lieu${locationsCount > 1 ? 'x' : ''} • 
+                                <i class="fas fa-map-marker-alt mr-1"></i>${locationsCount} lieu${locationsCount > 1 ? 'x' : ''} •
                                 <i class="fas fa-draw-polygon mr-1"></i>${regionsCount} région${regionsCount > 1 ? 's' : ''}
                             </div>
                             ${isActive ? '<div class="text-xs text-blue-400 mb-2"><i class="fas fa-check-circle mr-1"></i>Carte active</div>' : '<div class="text-xs text-gray-500 mb-2">Cliquer pour activer</div>'}
 
                             ${isActive ? `
-                            <button class="w-full mt-2 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center justify-center space-x-2 text-xs" 
+                            <button class="w-full mt-2 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center justify-center space-x-2 text-xs"
                                     onclick="event.stopPropagation(); window.settingsManager.deleteAllLocationsAndRegions()">
                                 <i class="fas fa-trash-alt"></i>
                                 <span>Supprimer tous les Lieux et Régions</span>
@@ -508,17 +508,17 @@ class SettingsManager {
                             ` : ''}
                         </div>
                         <div class="flex flex-col gap-2">
-                            <button class="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 rounded transition-colors" 
+                            <button class="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 rounded transition-colors"
                                     onclick="event.stopPropagation(); window.settingsManager.renameMap(${index})"
                                     title="Renommer">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
-                            <button class="p-2 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 rounded transition-colors" 
+                            <button class="p-2 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20 rounded transition-colors"
                                     onclick="event.stopPropagation(); window.settingsManager.editMapScale(${index})"
                                     title="Modifier l'échelle">
                                 <i class="fas fa-ruler"></i>
                             </button>
-                            <button class="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors" 
+                            <button class="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors"
                                     onclick="event.stopPropagation(); window.settingsManager.deleteMap(${index})"
                                     title="Supprimer">
                                 <i class="fas fa-trash"></i>
@@ -727,7 +727,7 @@ class SettingsManager {
             }
 
             // Validation : unicité (optionnel)
-            const nameExists = this.availableMaps.some((m, i) => 
+            const nameExists = this.availableMaps.some((m, i) =>
                 i !== index && m.name.toLowerCase() === trimmedName.toLowerCase()
             );
 
@@ -816,8 +816,8 @@ class SettingsManager {
             return;
         }
 
-        const confirmMessage = map.isDefault 
-            ? 'Êtes-vous sûr de vouloir supprimer cette carte par défaut ?' 
+        const confirmMessage = map.isDefault
+            ? 'Êtes-vous sûr de vouloir supprimer cette carte par défaut ?'
             : 'Êtes-vous sûr de vouloir supprimer cette carte ?';
 
         if (confirm(confirmMessage)) {
@@ -943,8 +943,8 @@ class SettingsManager {
             return;
         }
 
-        const prompt = `Génère une description d'un groupe d'aventuriers pour un jeu de rôle dans l'univers de la Terre du Milieu. 
-        Inclus 3-4 personnages avec leurs noms, races, classes et quelques traits de personnalité. 
+        const prompt = `Génère une description d'un groupe d'aventuriers pour un jeu de rôle dans l'univers de la Terre du Milieu.
+        Inclus 3-4 personnages avec leurs noms, races, classes et quelques traits de personnalité.
         Style narratif, environ 200 mots.`;
 
         try {
@@ -1014,8 +1014,8 @@ class SettingsManager {
             return;
         }
 
-        const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu). 
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu).
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
         Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
 
         try {
@@ -1025,32 +1025,6 @@ class SettingsManager {
             this.updatePartyContent();
         } catch (error) {
             console.error('Erreur génération aventuriers:', error);
-            alert('Erreur lors de la génération: ' + error.message);
-        }
-    }
-
-    async generateQuestDescription() {
-        const generateBtn = document.getElementById('generate-quest-description-btn');
-        const textarea = document.getElementById('adventurers-quest');
-
-        if (!this.geminiManager.isAvailable()) {
-            alert('API Gemini non disponible pour la génération automatique.');
-            return;
-        }
-
-        const prompt = `Génère une description de quête épique pour un jeu de rôle dans l'univers de la Terre du Milieu.
-        Inclus un objectif principal, des enjeux, et quelques obstacles potentiels.
-        Style narratif immersif, environ 250 mots.`;
-
-        try {
-            const description = await this.geminiManager.generateContent(prompt, generateBtn, 'quest');
-            if (textarea) {
-                textarea.value = description;
-                this.questDescription = description;
-                this.saveDescriptions();
-            }
-        } catch (error) {
-            console.error('Erreur génération description quête:', error);
             alert('Erreur lors de la génération: ' + error.message);
         }
     }
@@ -1187,7 +1161,7 @@ class SettingsManager {
         // LOGS DE DEBUG DÉTAILLÉS
         console.log('📊 [DEBUG] Nombre de tables simples:', tables.length);
         console.log('📊 [DEBUG] Nombre de tables composites:', compositeTables.length);
-        
+
         // Afficher le contenu de chaque table simple
         tables.forEach((table, index) => {
             console.log(`📋 [DEBUG] Table simple ${index}:`, {
@@ -1196,7 +1170,7 @@ class SettingsManager {
                 entries: table.entries
             });
         });
-        
+
         // Afficher le contenu de chaque table composite
         compositeTables.forEach((composite, index) => {
             console.log(`🔗 [DEBUG] Table composite ${index}:`, {
@@ -1205,7 +1179,7 @@ class SettingsManager {
                 tableIndicesCount: composite.tableIndices?.length || 0
             });
         });
-        
+
         // Vérifier les conteneurs de résultats dans le DOM
         console.log('🔍 [DEBUG] Vérification des conteneurs de résultats...');
         tables.forEach((table, index) => {
@@ -1254,6 +1228,11 @@ class SettingsManager {
             if (sortedCompositeTables && sortedCompositeTables.length > 0) {
                 compositeTablesHTML = sortedCompositeTables.map((composite, index) => {
                     const originalIndex = compositeTables.indexOf(composite); // Utiliser l'index original
+                    const tableIndices = composite.tableIndices || [];
+                    const tableNames = tableIndices.map(idx => {
+                        const table = tables[idx] || compositeTables[idx]; // Chercher dans les tables simples d'abord, puis composites
+                        return table ? table.name : `Table Inconnue (${idx})`;
+                    }).join(', ');
                     return `
                         <div class="bg-gray-800 rounded p-2 border-2 border-blue-500">
                             <div class="flex justify-between items-center">
@@ -1270,9 +1249,10 @@ class SettingsManager {
                                     </button>
                                 </div>
                             </div>
-                            <div id="settings-composite-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
-                                <div class="text-green-400 font-semibold mb-1 text-xs">Résultats des tirages :</div>
-                                <div id="settings-composite-result-content-${originalIndex}" class="text-sm"></div>
+                            <!-- Conteneur pour le résultat du tirage composite -->
+                            <div id="settings-composite-result-${originalIndex}" class="hidden mt-3 p-3 bg-gray-800 rounded border border-purple-500">
+                                <div class="text-sm font-semibold text-purple-300 mb-2">Résultat du tirage composite :</div>
+                                <div id="settings-composite-result-content-${originalIndex}"></div>
                             </div>
                         </div>
                     `;
@@ -1286,27 +1266,32 @@ class SettingsManager {
                     const originalIndex = tables.indexOf(table); // Utiliser l'index original
                     return `
                         <div class="bg-gray-800 rounded p-2 border border-gray-700">
-                            <div class="flex justify-between items-center">
-                                <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
+                            <div class="flex justify-between items-center mb-2">
+                                <h5 class="font-semibold text-white">${table.name || 'Table sans nom'}</h5>
                                 <div class="flex space-x-2">
-                                    <button onclick="window.settingsManager.rollOnSettingsTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
+                                    <button onclick="window.settingsManager.rollOnSettingsTable(${originalIndex})" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-sm">
                                         <i class="fas fa-dice mr-1"></i>Tirer
                                     </button>
-                                    <button onclick="window.settingsManager.deleteSettingsRandomTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                    <button onclick="window.settingsManager.exportTable(${originalIndex})" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-sm" title="Exporter cette table">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button onclick="window.settingsManager.deleteTable(${originalIndex})" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-sm" title="Supprimer cette table">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
-                            <!-- Conteneur pour afficher le résultat -->
-                            <div id="settings-table-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
-                                <div class="text-green-400 font-semibold mb-1 text-xs">Résultat du tirage :</div>
-                                <div id="settings-table-result-content-${originalIndex}" class="text-sm"></div>
+                            <p class="text-sm text-gray-400">${table.entries?.length || 0} entrée(s)</p>
+
+                            <!-- Conteneur pour le résultat du tirage -->
+                            <div id="settings-table-result-${originalIndex}" class="hidden mt-3 p-3 bg-gray-800 rounded border border-blue-500">
+                                <div class="text-sm font-semibold text-blue-300 mb-2">Résultat du tirage :</div>
+                                <div id="settings-table-result-content-${originalIndex}"></div>
                             </div>
                         </div>
                     `;
                 }).join('');
             }
-            
+
             html += compositeTablesHTML + simpleTablesHTML;
             html += '</div>';
         }
@@ -1696,7 +1681,7 @@ class SettingsManager {
             // Supprimer uniquement les lieux de la carte active
             if (window.locationsData && window.locationsData.locations) {
                 const initialCount = window.locationsData.locations.length;
-                window.locationsData.locations = window.locationsData.locations.filter(loc => 
+                window.locationsData.locations = window.locationsData.locations.filter(loc =>
                     loc.mapId && loc.mapId !== activeMapId
                 );
                 const deletedCount = initialCount - window.locationsData.locations.length;
@@ -1706,7 +1691,7 @@ class SettingsManager {
             // Supprimer uniquement les régions de la carte active
             if (window.regionsData && window.regionsData.regions) {
                 const initialCount = window.regionsData.regions.length;
-                window.regionsData.regions = window.regionsData.regions.filter(reg => 
+                window.regionsData.regions = window.regionsData.regions.filter(reg =>
                     reg.mapId && reg.mapId !== activeMapId
                 );
                 const deletedCount = initialCount - window.regionsData.regions.length;
