@@ -1015,7 +1015,7 @@ class SettingsManager {
         }
 
         const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu). 
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
         Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
 
         try {
@@ -1217,55 +1217,64 @@ class SettingsManager {
             html += '<div class="space-y-2">';
 
             // Afficher les tables composites en premier
-            sortedCompositeTables.forEach((table) => {
-                const originalIndex = compositeTables.indexOf(table);
-                html += `
-                    <div class="bg-gray-800 rounded p-2 border-2 border-blue-500">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center space-x-2">
-                                <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs font-semibold">Composite</span>
-                                <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
+            let compositeTablesHTML = '';
+            if (sortedCompositeTables && sortedCompositeTables.length > 0) {
+                compositeTablesHTML = sortedCompositeTables.map((composite, index) => {
+                    const originalIndex = compositeTables.indexOf(composite); // Utiliser l'index original
+                    return `
+                        <div class="bg-gray-800 rounded p-2 border-2 border-blue-500">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-blue-600 text-white px-2 py-0.5 rounded text-xs font-semibold">Composite</span>
+                                    <h4 class="text-base font-semibold text-white">${composite.name || 'Table sans nom'}</h4>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="window.settingsManager.rollOnSettingsCompositeTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-dice mr-1"></i>Tirer
+                                    </button>
+                                    <button onclick="window.settingsManager.deleteSettingsCompositeTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="flex space-x-2">
-                                <button onclick="window.settingsManager.rollOnSettingsCompositeTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
-                                    <i class="fas fa-dice mr-1"></i>Tirer
-                                </button>
-                                <button onclick="window.settingsManager.deleteSettingsCompositeTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                            <div id="settings-composite-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
+                                <div class="text-green-400 font-semibold mb-1 text-xs">Résultats des tirages :</div>
+                                <div id="settings-composite-result-content-${originalIndex}" class="text-sm"></div>
                             </div>
                         </div>
-                        <div id="settings-composite-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
-                            <div class="text-green-400 font-semibold mb-1 text-xs">Résultats des tirages :</div>
-                            <div id="settings-composite-result-content-${originalIndex}" class="text-sm"></div>
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                }).join('');
+            }
 
             // Afficher les tables simples
-            sortedTables.forEach((table) => {
-                const originalIndex = tables.indexOf(table);
-                html += `
-                    <div class="bg-gray-800 rounded p-2 border border-gray-700">
-                        <div class="flex justify-between items-center">
-                            <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
-                            <div class="flex space-x-2">
-                                <button onclick="window.settingsManager.rollOnSettingsTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
-                                    <i class="fas fa-dice mr-1"></i>Tirer
-                                </button>
-                                <button onclick="window.settingsManager.deleteSettingsRandomTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+            let simpleTablesHTML = '';
+            if (sortedTables && sortedTables.length > 0) {
+                simpleTablesHTML = sortedTables.map((table, index) => {
+                    const originalIndex = tables.indexOf(table); // Utiliser l'index original
+                    return `
+                        <div class="bg-gray-800 rounded p-2 border border-gray-700">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-base font-semibold text-white">${table.name || 'Table sans nom'}</h4>
+                                <div class="flex space-x-2">
+                                    <button onclick="window.settingsManager.rollOnSettingsTable(${originalIndex})" class="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-dice mr-1"></i>Tirer
+                                    </button>
+                                    <button onclick="window.settingsManager.deleteSettingsRandomTable(${originalIndex})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Conteneur pour afficher le résultat -->
+                            <div id="settings-table-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
+                                <div class="text-green-400 font-semibold mb-1 text-xs">Résultat du tirage :</div>
+                                <div id="settings-table-result-content-${originalIndex}" class="text-sm"></div>
                             </div>
                         </div>
-                        <div id="settings-table-result-${originalIndex}" class="hidden mt-2 p-2 bg-gray-700 rounded border border-green-500">
-                            <div class="text-green-400 font-semibold mb-1 text-xs">Résultat du tirage :</div>
-                            <div id="settings-table-result-content-${originalIndex}" class="text-sm"></div>
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                }).join('');
+            }
+            
+            html += compositeTablesHTML + simpleTablesHTML;
             html += '</div>';
         }
 
