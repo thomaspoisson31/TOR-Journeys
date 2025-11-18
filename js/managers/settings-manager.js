@@ -1250,7 +1250,7 @@ class SettingsManager {
                                 </div>
                             </div>
                             <!-- Conteneur pour le résultat du tirage composite -->
-                            <div id="settings-composite-result-${originalIndex}" class="hidden mt-3 p-3 bg-gray-800 rounded border border-purple-500">
+                            <div id="settings-composite-result-${originalIndex}" class="hidden mt-3 p-3 bg-gray-800 rounded border border-purple-500 max-h-64 overflow-y-auto">
                                 <div class="text-sm font-semibold text-purple-300 mb-2">Résultat du tirage composite :</div>
                                 <div id="settings-composite-result-content-${originalIndex}"></div>
                             </div>
@@ -1283,7 +1283,7 @@ class SettingsManager {
                             <p class="text-sm text-gray-400">${table.entries?.length || 0} entrée(s)</p>
 
                             <!-- Conteneur pour le résultat du tirage -->
-                            <div id="table-result-${originalIndex}" class="hidden mt-3 p-3 bg-gray-900 rounded border border-blue-500">
+                            <div id="table-result-${originalIndex}" class="hidden mt-3 p-3 bg-gray-900 rounded border border-blue-500 max-h-64 overflow-y-auto">
                                 <div class="text-sm font-semibold text-blue-300 mb-2">Résultat du tirage :</div>
                                 <div id="table-result-content-${originalIndex}"></div>
                             </div>
