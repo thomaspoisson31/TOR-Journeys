@@ -452,6 +452,24 @@ class AdventureManager {
             resultType: typeof result
         });
 
+        // Formater le résultat pour l'affichage
+        let formattedResult = '';
+        if (typeof result === 'object' && result !== null) {
+            // Si c'est un objet, formater les propriétés
+            formattedResult = '<div class="space-y-2">';
+            for (const [key, value] of Object.entries(result)) {
+                formattedResult += `
+                    <div>
+                        <span class="font-semibold text-blue-300">${key}:</span>
+                        <span class="text-white ml-2">${value}</span>
+                    </div>`;
+            }
+            formattedResult += '</div>';
+        } else {
+            // Si c'est une chaîne simple
+            formattedResult = `<div class="text-white">${result}</div>`;
+        }
+
         // Afficher le résultat dans un conteneur dédié
         const resultContainer = document.getElementById(`table-result-${tableIndex}`);
         const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
@@ -462,14 +480,14 @@ class AdventureManager {
         });
 
         if (resultContainer && resultContent) {
-            resultContent.innerHTML = `<div class="text-white">${result}</div>`;
+            resultContent.innerHTML = formattedResult;
             resultContainer.classList.remove('hidden');
             console.log(`✅ [DEBUG] Résultat affiché dans le DOM`);
         } else {
             console.error(`❌ [DEBUG] Conteneurs introuvables pour table-result-${tableIndex}`);
         }
 
-        console.log(`🎲 Tirage sur "${table.name}": ${result}`);
+        console.log(`🎲 Tirage sur "${table.name}":`, result);
     }
 
     rollOnCompositeTable(compositeIndex) {
