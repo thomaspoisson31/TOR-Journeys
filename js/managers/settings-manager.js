@@ -193,11 +193,11 @@ class SettingsManager {
             case 'season':
                 this.updateSeasonContent();
                 break;
-            case 'importExport':
+            case 'import-export':
                 // Aucune action spécifique requise ici, juste l'affichage
                 break;
-            case 'random-tables':
-                this.renderRandomTablesTab();
+            case 'randomTables':
+                this.renderSettingsRandomTablesTab();
                 break;
         }
     }
