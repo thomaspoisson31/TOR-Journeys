@@ -1164,9 +1164,14 @@ class SettingsManager {
 
     // === GESTION DES TABLES ALÉATOIRES ===
     renderSettingsRandomTablesTab() {
+        console.log('🎲 Rendering Settings Random Tables Tab...');
         const tabContent = document.getElementById('settings-random-tables-content');
         if (!tabContent) {
             console.error('❌ settings-random-tables-content not found');
+            console.log('📋 Available elements:', {
+                randomTablesTab: !!document.getElementById('randomTables-tab'),
+                randomTablesContent: !!document.getElementById('settings-random-tables-content')
+            });
             return;
         }
 
