@@ -424,6 +424,75 @@ class AdventureManager {
     getAllData() {
         return this.adventureData;
     }
+
+    // === MÉTHODES POUR LES TABLES ALÉATOIRES ===
+    rollOnTable(tableIndex) {
+        const table = this.adventureData.randomTables[tableIndex];
+        if (!table || !table.entries || table.entries.length === 0) {
+            console.error('Table invalide ou vide');
+            return;
+        }
+
+        // Tirer un résultat aléatoire
+        const randomIndex = Math.floor(Math.random() * table.entries.length);
+        const result = table.entries[randomIndex];
+
+        // Afficher le résultat dans un conteneur dédié
+        const resultContainer = document.getElementById(`table-result-${tableIndex}`);
+        const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
+
+        if (resultContainer && resultContent) {
+            resultContent.innerHTML = `<div class="text-white">${result}</div>`;
+            resultContainer.classList.remove('hidden');
+        }
+
+        console.log(`🎲 Tirage sur "${table.name}": ${result}`);
+    }
+
+    rollOnCompositeTable(compositeIndex) {
+        const composite = this.adventureData.compositeTables[compositeIndex];
+        if (!composite || !composite.tableIndices || composite.tableIndices.length === 0) {
+            console.error('Table composite invalide');
+            return;
+        }
+
+        // Effectuer un tirage sur chaque table simple
+        const results = [];
+        composite.tableIndices.forEach(tableIndex => {
+            const table = this.adventureData.randomTables[tableIndex];
+            if (table && table.entries && table.entries.length > 0) {
+                const randomIndex = Math.floor(Math.random() * table.entries.length);
+                const result = table.entries[randomIndex];
+                results.push({
+                    tableName: table.name,
+                    result: result
+                });
+            }
+        });
+
+        // Afficher les résultats
+        const resultContainer = document.getElementById(`composite-result-${compositeIndex}`);
+        const resultContent = document.getElementById(`composite-result-content-${compositeIndex}`);
+
+        if (resultContainer && resultContent) {
+            const html = results.map(r => 
+                `<div class="mb-1">
+                    <span class="font-semibold text-blue-300">${r.tableName}:</span>
+                    <span class="text-white ml-2">${r.result}</span>
+                </div>`
+            ).join('');
+            resultContent.innerHTML = html;
+            resultContainer.classList.remove('hidden');
+        }
+
+        console.log(`🎲 Tirage sur table composite "${composite.name}":`, results);
+    }
+
+    openCompositeTableModal() {
+        // Cette méthode sera appelée pour créer une table composite
+        // Pour l'instant, on affiche juste une alerte
+        alert('Création de table composite : fonctionnalité à implémenter');
+    }
 }
 
 export default AdventureManager;
