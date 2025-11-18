@@ -828,11 +828,12 @@ function initializeMap() {
     window.journalManager = journalManager; // Exposer globalement
     console.log("✅ JournalManager initialized");
 
-    // Initialiser AdventureManager
+    // AdventureManager maintenu pour compatibilité des données (tables aléatoires)
+    // mais sans initialiser les event listeners (bouton désactivé)
     adventureManager = new AdventureManager();
-    adventureManager.init();
-    window.adventureManager = adventureManager; // Exposer globalement
-    console.log("✅ AdventureManager initialized");
+    // adventureManager.init(); // Désactivé - fonctionnalités dans les Paramètres
+    window.adventureManager = adventureManager; // Exposer globalement pour accès aux données
+    console.log("✅ AdventureManager initialized (data-only mode)");
 
     // Initialiser CharactersManager
     charactersManager = new CharactersManager();
