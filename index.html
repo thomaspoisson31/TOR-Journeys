@@ -1057,6 +1057,33 @@
                         <!-- Section Saisons (mode manuel quand pas de calendrier) -->
                         <div id="manual-seasons-section" class="flex-shrink-0">
                             <div class="grid grid-cols-3 gap-4">
+
+        <!-- Random Roll Result Modal -->
+        <div id="random-roll-result-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]">
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-2xl mx-4 max-h-[80vh] flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-white">
+                        <i class="fas fa-dice mr-2"></i>Résultat du tirage aléatoire
+                    </h2>
+                    <button id="close-random-roll-result" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto mb-4">
+                    <div id="random-roll-result-content" class="bg-gray-900 rounded-lg p-4 text-white">
+                        <!-- Le contenu du tirage sera inséré ici -->
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button id="insert-roll-to-journal" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-book mr-2"></i>Insérer le tirage dans le journal
+                    </button>
+                </div>
+            </div>
+        </div>
+
                                 <!-- Printemps -->
                                 <div class="bg-gray-900 rounded-lg p-4 border border-gray-600">
                                     <h5 class="text-green-400 font-semibold mb-3 text-center">🌱 Printemps</h5>

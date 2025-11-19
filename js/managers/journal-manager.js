@@ -213,17 +213,28 @@ class JournalManager {
                 ? `${displayStartDate} → ${displayEndDate}`
                 : displayStartDate;
 
+            // Vérifier si c'est un tirage aléatoire
+            const isRandomRoll = journey.journeyType === 'random_roll';
+            const clickable = isRandomRoll ? '' : `onclick="window.journalManager.openJourneyInVoyageModal(${originalIndex})"`;
+            const cursorStyle = isRandomRoll ? 'cursor-default' : 'cursor-pointer';
+            const hoverStyle = isRandomRoll ? '' : 'hover:shadow-md';
+
             return `
-                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.journalManager.openJourneyInVoyageModal(${originalIndex})">
+                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 ${hoverStyle} transition-shadow ${cursorStyle}" ${clickable}>
                     <div class="p-4">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <h3 class="text-xl font-bold mb-1" style="color: #940000;">${journey.title}</h3>
-                                <p class="text-sm text-gray-600">${dateDisplay} • ${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}</p>
+                                <p class="text-sm text-gray-600">${dateDisplay}${journey.totalDays > 0 ? ` • ${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}` : ''}</p>
+                                ${isRandomRoll && journey.days[0]?.description ? `
+                                    <div class="mt-2 p-2 bg-gray-50 rounded text-sm text-gray-700">
+                                        ${journey.days[0].description}
+                                    </div>
+                                ` : ''}
                             </div>
                             <button onclick="event.stopPropagation(); window.journalManager.deleteJourney(${originalIndex})" 
                                     class="text-red-500 hover:text-red-700 p-2" 
-                                    title="Supprimer ce voyage">
+                                    title="Supprimer cette entrée">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -239,6 +250,12 @@ class JournalManager {
         const journey = this.journal[journeyIndex];
         if (!journey) {
             console.error("Voyage non trouvé:", journeyIndex);
+            return;
+        }
+
+        // Si c'est un tirage aléatoire, ne pas ouvrir la modale de voyage
+        if (journey.journeyType === 'random_roll') {
+            console.log('📖 Entrée de tirage aléatoire - pas d\'ouverture de modale');
             return;
         }
 
