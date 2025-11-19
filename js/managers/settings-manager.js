@@ -24,6 +24,17 @@ class SettingsManager {
         this.updateNarrationStyleDisplay();
     }
 
+    // Méthode publique pour charger les paramètres (appelée par AuthManager)
+    loadSettings() {
+        this.loadSettingsData();
+        
+        // Mettre à jour l'image de la carte active après chargement
+        const mapImage = document.getElementById('map-image');
+        if (mapImage && this.activeMapUrl) {
+            mapImage.src = this.activeMapUrl;
+        }
+    }
+
     loadSettingsData() {
         // Charger les cartes
         const savedMaps = localStorage.getItem('availableMaps');
