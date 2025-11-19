@@ -1087,6 +1087,13 @@ class SettingsManager {
         }
     }
 
+    // === GESTION IMPORT/EXPORT ===
+    setupImportExportListeners() {
+        // Les fonctionnalités d'import/export sont gérées par ImportExportManager
+        // Cette méthode est un placeholder pour éviter les erreurs
+        console.log('📦 Import/Export listeners setup (handled by ImportExportManager)');
+    }
+
     // === GESTION DES TABLES ALÉATOIRES ===
     renderSettingsRandomTablesTab() {
         console.log('🎲 Rendering Settings Random Tables Tab...');
