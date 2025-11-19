@@ -13,6 +13,7 @@ class SettingsManager {
         this.partyDescription = '';
         this.questDescription = '';
         this.narrationStyle = 'brief';
+        this.currentRollData = null; // Pour stocker les données du tirage en cours
 
         console.log('⚙️ SettingsManager initialized');
     }
@@ -21,6 +22,17 @@ class SettingsManager {
         this.loadSettingsData();
         this.setupEventListeners();
         this.updateNarrationStyleDisplay();
+    }
+
+    // Méthode publique pour charger les paramètres (appelée par AuthManager)
+    loadSettings() {
+        this.loadSettingsData();
+        
+        // Mettre à jour l'image de la carte active après chargement
+        const mapImage = document.getElementById('map-image');
+        if (mapImage && this.activeMapUrl) {
+            mapImage.src = this.activeMapUrl;
+        }
     }
 
     loadSettingsData() {
@@ -105,6 +117,24 @@ class SettingsManager {
     scheduleAutoSync() {
         if (typeof window.scheduleAutoSync === 'function') {
             window.scheduleAutoSync();
+        }
+    }
+
+    openSettings() {
+        const settingsModal = document.getElementById('settings-modal');
+        if (settingsModal) {
+            settingsModal.classList.remove('hidden');
+            this.isSettingsOpen = true;
+            // Afficher l'onglet actuel
+            this.switchTab(this.currentTab);
+        }
+    }
+
+    closeSettings() {
+        const settingsModal = document.getElementById('settings-modal');
+        if (settingsModal) {
+            settingsModal.classList.add('hidden');
+            this.isSettingsOpen = false;
         }
     }
 
@@ -979,56 +1009,6 @@ class SettingsManager {
         }
     }
 
-    updateQuestContent() {
-        const textarea = document.getElementById('quest-description-textarea');
-        if (textarea) {
-            textarea.value = this.questDescription;
-        }
-    }
-
-    saveQuestDescription() {
-        const textarea = document.getElementById('quest-description-textarea');
-        if (textarea) {
-            this.questDescription = textarea.value;
-            this.saveDescriptions();
-
-            // Feedback visuel
-            const saveBtn = document.getElementById('save-quest-description-btn');
-            if (saveBtn) {
-                const originalText = saveBtn.textContent;
-                saveBtn.textContent = 'Sauvegardé !';
-                saveBtn.classList.add('bg-green-600');
-                setTimeout(() => {
-                    saveBtn.textContent = originalText;
-                    saveBtn.classList.remove('bg-green-600');
-                }, 2000);
-            }
-        }
-    }
-
-    async generateAdventurersWizard() {
-        const generateBtn = document.getElementById('generate-adventurers-wizard');
-
-        if (!this.geminiManager.isAvailable()) {
-            alert('API Gemini non disponible pour la génération automatique.');
-            return;
-        }
-
-        const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu).
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
-        Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
-
-        try {
-            const description = await this.geminiManager.generateContent(prompt, generateBtn, 'adventurers');
-            this.partyDescription = description;
-            this.saveDescriptions();
-            this.updatePartyContent();
-        } catch (error) {
-            console.error('Erreur génération aventuriers:', error);
-            alert('Erreur lors de la génération: ' + error.message);
-        }
-    }
-
     // This setupQuestListeners is duplicated. The first one is used above.
     // This second one is removed to avoid conflicts.
 
@@ -1134,6 +1114,13 @@ class SettingsManager {
         if (window.calendarManager) {
             window.calendarManager.updateCalendarUI();
         }
+    }
+
+    // === GESTION IMPORT/EXPORT ===
+    setupImportExportListeners() {
+        // Les fonctionnalités d'import/export sont gérées par ImportExportManager
+        // Cette méthode est un placeholder pour éviter les erreurs
+        console.log('📦 Import/Export listeners setup (handled by ImportExportManager)');
     }
 
     // === GESTION DES TABLES ALÉATOIRES ===
@@ -1368,75 +1355,52 @@ class SettingsManager {
 
     rollOnSettingsCompositeTable(compositeIndex) {
         console.log(`🔗 [Settings] rollOnSettingsCompositeTable appelé avec index: ${compositeIndex}`);
-        
+
         if (!window.adventureManager) {
             console.error('❌ AdventureManager non disponible');
             return;
         }
-        
+
         const composite = window.adventureManager.adventureData.compositeTables[compositeIndex];
         console.log(`📋 [Settings] Table composite récupérée:`, composite);
-        
+
         if (!composite || !composite.tableIndices || composite.tableIndices.length === 0) {
             console.error('❌ Table composite invalide');
             return;
         }
 
-        const tables = window.adventureManager.adventureData.randomTables;
+        // Effectuer un tirage sur chaque table simple
         const results = [];
-        
-        composite.tableIndices.forEach((tableIndex) => {
-            const table = tables[tableIndex];
-            
+        console.log(`🎲 [Settings] Tirage sur ${composite.tableIndices.length} table(s) simple(s)`);
+
+        composite.tableIndices.forEach((tableIndex, idx) => {
+            const table = window.adventureManager.adventureData.randomTables[tableIndex];
+
             if (table && table.entries && table.entries.length > 0) {
                 const randomIndex = Math.floor(Math.random() * table.entries.length);
                 const result = table.entries[randomIndex];
-                
+
                 results.push({
                     tableName: table.name,
-                    result: typeof result === 'object' ? JSON.stringify(result) : result
+                    result: result
                 });
             }
         });
 
-        console.log(`📊 [Settings] Résultats du tirage:`, results);
+        // Formater les résultats
+        const formattedResult = results.map(r => {
+            let value = r.result;
+            if (typeof value === 'object' && value !== null) {
+                value = Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(', ');
+            }
+            return `<div class="mb-1">
+                <span class="font-semibold text-blue-300">${r.tableName}:</span>
+                <span class="text-white ml-2">${value}</span>
+            </div>`;
+        }).join('');
 
-        // Afficher les résultats
-        const resultContainer = document.getElementById(`settings-composite-result-${compositeIndex}`);
-        const resultContent = document.getElementById(`settings-composite-result-content-${compositeIndex}`);
-
-        if (resultContainer && resultContent) {
-            const html = results.map(r => {
-                let displayResult = r.result;
-                
-                // Si c'est un objet JSON, le formater joliment
-                try {
-                    const parsed = JSON.parse(r.result);
-                    displayResult = '<div class="space-y-1">';
-                    for (const [key, value] of Object.entries(parsed)) {
-                        displayResult += `
-                            <div>
-                                <span class="font-semibold text-purple-300">${key}:</span>
-                                <span class="text-white ml-2">${value}</span>
-                            </div>`;
-                    }
-                    displayResult += '</div>';
-                } catch (e) {
-                    // Si ce n'est pas du JSON, afficher tel quel
-                    displayResult = `<span class="text-white">${r.result}</span>`;
-                }
-                
-                return `
-                    <div class="mb-3 p-2 bg-gray-900 rounded">
-                        <div class="font-semibold text-blue-300 mb-1">${r.tableName}</div>
-                        ${displayResult}
-                    </div>`;
-            }).join('');
-            
-            resultContent.innerHTML = html;
-            resultContainer.classList.remove('hidden');
-            console.log(`✅ [Settings] Résultats affichés`);
-        }
+        // Afficher dans la modale dédiée
+        this.showRandomRollResultModal(composite.name, formattedResult, true);
     }
 
     deleteSettingsCompositeTable(index) {
@@ -1448,471 +1412,120 @@ class SettingsManager {
         }
     }
 
-    openSettingsCompositeTableModal() {
-        if (!window.adventureManager || !window.adventureManager.adventureData.randomTables) {
-            alert('Aucune table simple disponible pour créer une table composite.');
+    showRandomRollResultModal(tableName, formattedResult, isComposite) {
+        // Assurez-vous que la modale existe dans le HTML (elle doit être ajoutée manuellement dans index.html)
+        // Si elle n'existe pas, on pourrait la créer dynamiquement, mais c'est moins propre.
+        const modal = document.getElementById('random-roll-result-modal');
+        const modalTitle = document.getElementById('random-roll-result-title');
+        const resultContent = document.getElementById('random-roll-result-content');
+        const closeBtn = document.getElementById('close-random-roll-result');
+        const insertBtn = document.getElementById('insert-roll-to-journal');
+
+        if (!modal || !modalTitle || !resultContent || !closeBtn || !insertBtn) {
+            console.error('❌ Modale de résultat de tirage ou ses éléments non trouvés. Assurez-vous que la modale existe dans le HTML.');
+            // Optionnellement, créer la modale si elle n'existe pas.
             return;
         }
 
-        const tables = window.adventureManager.adventureData.randomTables;
-        
-        // Créer la modale
-        const modal = document.createElement('div');
-        modal.id = 'composite-table-modal';
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]';
-        
-        modal.innerHTML = `
-            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-2xl mx-4 max-h-[80vh] overflow-y-auto">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold text-white">Créer une table composite</h3>
-                    <button id="close-composite-modal" class="text-gray-400 hover:text-white">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Nom de la table composite</label>
-                        <input type="text" id="composite-name-input" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Ex: Rencontres complètes">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-2">Sélectionnez les tables à combiner</label>
-                        <div id="tables-checklist" class="space-y-2 max-h-64 overflow-y-auto">
-                            ${tables.map((table, index) => `
-                                <label class="flex items-center p-2 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer">
-                                    <input type="checkbox" class="composite-table-checkbox mr-3" data-index="${index}">
-                                    <span class="text-white">${table.name || 'Table sans nom'}</span>
-                                    <span class="text-gray-400 text-sm ml-auto">(${table.entries?.length || 0} entrées)</span>
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button id="cancel-composite" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg">Annuler</button>
-                    <button id="create-composite" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white">Créer</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-        
-        // Gestionnaires d'événements
-        document.getElementById('close-composite-modal').addEventListener('click', () => {
-            modal.remove();
-        });
-        
-        document.getElementById('cancel-composite').addEventListener('click', () => {
-            modal.remove();
-        });
-        
-        document.getElementById('create-composite').addEventListener('click', () => {
-            const nameInput = document.getElementById('composite-name-input');
-            const checkboxes = document.querySelectorAll('.composite-table-checkbox:checked');
-            
-            if (!nameInput.value.trim()) {
-                alert('Veuillez donner un nom à la table composite.');
-                return;
-            }
-            
-            if (checkboxes.length === 0) {
-                alert('Veuillez sélectionner au moins une table.');
-                return;
-            }
-            
-            const tableIndices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
-            
-            const newComposite = {
-                name: nameInput.value.trim(),
-                tableIndices: tableIndices
-            };
-            
-            if (!window.adventureManager.adventureData.compositeTables) {
-                window.adventureManager.adventureData.compositeTables = [];
-            }
-            
-            window.adventureManager.adventureData.compositeTables.push(newComposite);
-            window.adventureManager.saveToLocalStorage();
-            
-            modal.remove();
-            this.renderSettingsRandomTablesTab();
-        });
-    }
+        // Afficher le titre du résultat
+        modalTitle.innerHTML = `${isComposite ? 'Table composite' : 'Table'}: <strong>${tableName}</strong>`;
 
-    // === GESTION IMPORT/EXPORT ===
-    setupImportExportListeners() {
-        console.log('⚙️ Configuration des listeners Import/Export...');
+        // Afficher le résultat
+        resultContent.innerHTML = formattedResult;
 
-        // Import/Export Lieux et Régions
-        const exportLocationsRegionsBtn = document.getElementById('export-locations-regions-btn');
-        const importLocationsRegionsBtn = document.getElementById('import-locations-regions-btn');
-        const importLocationsRegionsInput = document.getElementById('import-locations-regions-input');
+        // Stocker les données pour l'insertion dans le journal
+        this.currentRollData = {
+            tableName: tableName,
+            formattedResult: formattedResult,
+            isComposite: isComposite,
+            timestamp: new Date().toISOString()
+        };
 
-        console.log('📍 Boutons Lieux/Régions:', {
-            exportBtn: !!exportLocationsRegionsBtn,
-            importBtn: !!importLocationsRegionsBtn,
-            fileInput: !!importLocationsRegionsInput
-        });
+        // Afficher la modale
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex'; // Utiliser flex pour le centrage
 
-        if (exportLocationsRegionsBtn) {
-            exportLocationsRegionsBtn.addEventListener('click', () => {
-                console.log('📤 Export lieux/régions demandé');
-                if (window.importExportManager) {
-                    window.importExportManager.exportUnifiedData();
-                }
-            });
-        }
-
-        if (importLocationsRegionsBtn) {
-            importLocationsRegionsBtn.addEventListener('click', () => {
-                console.log('📥 Import lieux/régions demandé');
-                if (importLocationsRegionsInput) {
-                    importLocationsRegionsInput.click();
-                }
-            });
-        }
-
-        if (importLocationsRegionsInput) {
-            importLocationsRegionsInput.addEventListener('change', (event) => {
-                if (window.importExportManager) {
-                    window.importExportManager.handleImportFile(event);
-                }
-            });
-        }
-
-        // Import/Export Personnages
-        const exportCharactersBtn = document.getElementById('export-characters-btn');
-        const importCharactersBtn = document.getElementById('import-characters-btn');
-        const importCharactersInput = document.getElementById('import-characters-input');
-
-        console.log('👥 Boutons Personnages:', {
-            exportBtn: !!exportCharactersBtn,
-            importBtn: !!importCharactersBtn,
-            fileInput: !!importCharactersInput
-        });
-
-        if (exportCharactersBtn) {
-            exportCharactersBtn.addEventListener('click', () => {
-                console.log('📤 Export personnages demandé');
-                if (window.charactersManager) {
-                    window.charactersManager.exportCharacters();
-                } else {
-                    console.error('❌ charactersManager non disponible');
-                }
-            });
-        }
-
-        if (importCharactersBtn) {
-            importCharactersBtn.addEventListener('click', () => {
-                console.log('📥 Import personnages demandé');
-                if (importCharactersInput) {
-                    importCharactersInput.click();
-                } else {
-                    console.error('❌ import-characters-input non trouvé');
-                }
-            });
-        }
-
-        if (importCharactersInput) {
-            importCharactersInput.addEventListener('change', (event) => {
-                console.log('📄 Fichier personnages sélectionné');
-                if (window.charactersManager) {
-                    window.charactersManager.handleImportCharacters(event);
-                } else {
-                    console.error('❌ charactersManager non disponible');
-                }
-            });
-        }
-
-        console.log('✅ Listeners Import/Export configurés');
-    }
-
-
-    // === GESTION PRINCIPALE ===
-    openSettings() {
-        const modal = document.getElementById('settings-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            this.isSettingsOpen = true;
-
-            // Ouvrir l'onglet cartes par défaut
-            this.switchTab('maps');
-        }
-    }
-
-    closeSettings() {
-        const modal = document.getElementById('settings-modal');
-        if (modal) {
+        // Gérer la fermeture
+        closeBtn.onclick = () => {
             modal.classList.add('hidden');
-            this.isSettingsOpen = false;
-        }
-    }
+            this.currentRollData = null;
+        };
 
-    // Getters pour accès externe
-    getNarrationStyle() {
-        return this.narrationStyle;
-    }
-
-    getPartyDescription() {
-        return this.partyDescription;
-    }
-
-    getQuestDescription() {
-        return this.questDescription;
-    }
-
-    getCurrentMapConfig() {
-        return {
-            activeMap: this.activeMapUrl,
-            activeMapName: this.activeMapName
+        // Gérer l'insertion dans le journal
+        insertBtn.onclick = () => {
+            this.insertRollToJournal();
+            modal.classList.add('hidden');
         };
     }
 
-    getAvailableMaps() {
-        return this.availableMaps;
-    }
+    insertRollToJournal() {
+        if (!this.currentRollData || !window.journalManager) {
+            console.error('❌ Données de tirage ou JournalManager non disponibles');
+            return;
+        }
 
-    // Méthode pour récupérer tous les paramètres (pour la synchronisation)
-    getAllSettings() {
-        return {
-            availableMaps: this.availableMaps,
-            activeMapUrl: this.activeMapUrl,
-            activeMapName: this.activeMapName,
-            partyDescription: this.partyDescription,
-            questDescription: this.questDescription,
-            narrationStyle: this.narrationStyle
+        // Obtenir la date actuelle du calendrier
+        let currentDate = 'Date inconnue'; // Valeur par défaut
+        if (window.calendarManager) {
+            currentDate = window.calendarManager.getCurrentDateString();
+        } else {
+            console.warn('⚠️ CalendarManager non disponible pour obtenir la date actuelle.');
+        }
+
+        // Créer une entrée de journal pour le tirage
+        const rollEntry = {
+            title: `Tirage aléatoire : ${this.currentRollData.tableName}`,
+            generatedAt: this.currentRollData.timestamp,
+            totalDays: 0, // Les tirages n'ont pas de durée en jours
+            journeyType: 'random_roll', // Type spécifique pour les tirages aléatoires
+            days: [{
+                dayNumber: 1, // Un seul "jour" pour l'événement de tirage
+                calendarDate: currentDate,
+                eventResult: null, // Pas de résultat d'événement spécifique
+                description: this.currentRollData.formattedResult, // Le résultat formaté du tirage
+                discoveries: [] // Pas de découvertes
+            }]
         };
-    }
 
-    // Méthode pour charger les paramètres depuis les données de contexte
-    loadSettings(settings) {
-        if (!settings) {
-            console.log('⚠️ Aucun paramètre à charger');
-            return;
-        }
-
-        console.log('⚙️ Chargement des paramètres depuis le contexte:', settings);
-
-        // Charger les cartes
-        if (settings.availableMaps && Array.isArray(settings.availableMaps)) {
-            // Migrer les anciennes cartes sans dimensions/échelle/vitesse
-            this.availableMaps = settings.availableMaps.map(map => ({
-                ...map,
-                width: map.width || 5103,
-                height: map.height || 3296,
-                scale: map.scale || 600,
-                milesPerDay: map.milesPerDay || 20
-            }));
-            console.log('✅ Cartes chargées:', this.availableMaps.length);
-        }
-        if (settings.activeMapUrl) {
-            this.activeMapUrl = settings.activeMapUrl;
-            console.log('✅ Carte active URL:', this.activeMapUrl);
-        }
-        if (settings.activeMapName) {
-            this.activeMapName = settings.activeMapName;
-            console.log('✅ Carte active nom:', this.activeMapName);
-        }
-
-        // Charger les descriptions
-        if (settings.partyDescription !== undefined) {
-            this.partyDescription = settings.partyDescription;
-            console.log('✅ Description aventuriers chargée');
-        }
-        if (settings.questDescription !== undefined) {
-            this.questDescription = settings.questDescription;
-            console.log('✅ Description quête chargée');
-        }
-        if (settings.narrationStyle) {
-            this.narrationStyle = settings.narrationStyle;
-            console.log('✅ Style de narration chargé:', this.narrationStyle);
-        }
-
-        // Sauvegarder dans localStorage
-        this.saveMapsData();
-        this.saveDescriptions();
-
-        // Mettre à jour l'image de la carte principale
-        const mapImage = document.getElementById('map-image');
-        if (mapImage && this.activeMapUrl) {
-            console.log('🗺️ Mise à jour de l\'image de la carte:', this.activeMapUrl);
-
-            // Trouver la carte active pour récupérer son échelle
-            const activeMap = this.availableMaps.find(m => m.url === this.activeMapUrl);
-            const mapScale = activeMap?.scale || 600;
-            console.log(`🗺️ Échelle de la carte active: ${mapScale} miles`);
-
-            // Callback pour re-render après chargement
-            const onImageLoaded = () => {
-                console.log('✅ Image de carte chargée, re-initialisation de la carte');
-
-                // IMPORTANT: Appliquer l'échelle AVANT l'initialisation de la carte
-                if (window.pathManager) {
-                    window.pathManager.mapConstants.MAP_DISTANCE_MILES = mapScale;
-                    console.log(`🗺️ Échelle appliquée au PathManager: ${mapScale} miles`);
-                }
-
-                // IMPORTANT: Reset complet des dimensions globales
-                window.MAP_WIDTH = 0;
-                window.MAP_HEIGHT = 0;
-                console.log('🗺️ Reset MAP_WIDTH et MAP_HEIGHT à 0 avant réinitialisation');
-
-                // Toujours réinitialiser la carte lors du changement d'image
-                if (typeof window.initializeMap === 'function') {
-                    console.log('🗺️ Réinitialisation de la carte depuis loadSettings');
-                    window.initializeMap();
-                } else {
-                    // Si initializeMap n'existe pas encore, juste re-render
-                    if (typeof window.renderLocations === 'function') {
-                        window.renderLocations();
-                        console.log('✅ Lieux rendus après loadSettings');
-                    }
-                    if (typeof window.renderRegions === 'function') {
-                        window.renderRegions();
-                        console.log('✅ Régions rendues après loadSettings');
-                    }
-                }
-            };
-
-            // Toujours définir le callback avant de changer src
-            mapImage.onload = onImageLoaded;
-
-            // Si l'image est déjà complètement chargée avec cette URL, déclencher manuellement
-            if (mapImage.complete && mapImage.naturalWidth > 0 && mapImage.src.endsWith(this.activeMapUrl)) {
-                console.log('⚡ Image déjà chargée, callback immédiat');
-                onImageLoaded();
-            } else {
-                // Forcer le rechargement
-                mapImage.src = this.activeMapUrl;
+        // Récupérer le journal existant
+        let journal = [];
+        const savedJournal = localStorage.getItem('travelJournal');
+        if (savedJournal) {
+            try {
+                const parsed = JSON.parse(savedJournal);
+                journal = Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                console.error("Erreur lors du parsing du journal:", e);
+                journal = []; // Réinitialiser si le parsing échoue
             }
         }
 
-        // Mettre à jour l'affichage si la modale des paramètres est ouverte
-        if (this.isSettingsOpen) {
-            this.renderMapsGrid();
-            this.updatePartyContent();
-            this.updateQuestContent();
-            this.updateNarrationStyleDisplay();
-        }
+        // Ajouter l'entrée au journal
+        journal.push(rollEntry);
 
-        console.log('✅ Paramètres chargés avec succès');
-    }
+        // Sauvegarder le journal mis à jour
+        localStorage.setItem('travelJournal', JSON.stringify(journal));
+        console.log("📖 Tirage aléatoire inséré dans le journal");
 
-    deleteAllLocationsAndRegions() {
-        const activeMapName = this.activeMapName || 'cette carte';
-
-        const confirmed = confirm(
-            `⚠️ ATTENTION : Cette action va supprimer TOUS les lieux et TOUTES les régions de "${activeMapName}".\n\n` +
-            'Les lieux et régions des autres cartes seront conservés.\n\n' +
-            'Cette action est IRRÉVERSIBLE.\n\n' +
-            'Êtes-vous absolument sûr de vouloir continuer ?'
-        );
-
-        if (!confirmed) {
-            return;
-        }
-
-        // Double confirmation pour éviter les erreurs
-        const doubleConfirm = confirm(
-            '🚨 DERNIÈRE CONFIRMATION 🚨\n\n' +
-            `Vous allez supprimer DÉFINITIVEMENT tous les lieux et régions de "${activeMapName}".\n\n` +
-            'Confirmez-vous cette suppression ?'
-        );
-
-        if (!doubleConfirm) {
-            return;
-        }
-
-        try {
-            const activeMapId = this.activeMapUrl;
-            console.log(`🗑️ Suppression de tous les lieux et régions de la carte active: ${activeMapId}`);
-
-            // Supprimer uniquement les lieux de la carte active
-            if (window.locationsData && window.locationsData.locations) {
-                const initialCount = window.locationsData.locations.length;
-                window.locationsData.locations = window.locationsData.locations.filter(loc =>
-                    loc.mapId && loc.mapId !== activeMapId
-                );
-                const deletedCount = initialCount - window.locationsData.locations.length;
-                console.log(`✅ ${deletedCount} lieu(x) supprimé(s) de la carte active`);
-            }
-
-            // Supprimer uniquement les régions de la carte active
-            if (window.regionsData && window.regionsData.regions) {
-                const initialCount = window.regionsData.regions.length;
-                window.regionsData.regions = window.regionsData.regions.filter(reg =>
-                    reg.mapId && reg.mapId !== activeMapId
-                );
-                const deletedCount = initialCount - window.regionsData.regions.length;
-                console.log(`✅ ${deletedCount} région(s) supprimée(s) de la carte active`);
-            }
-
-            // Sauvegarder dans localStorage
-            if (window.dataManager) {
-                window.dataManager.saveLocationsToLocal();
-                window.dataManager.saveRegionsToLocal();
-            } else {
-                localStorage.setItem('middleEarthLocations', JSON.stringify(window.locationsData));
-                localStorage.setItem('middleEarthRegions', JSON.stringify(window.regionsData));
-            }
-
-            // Re-render la carte
-            if (typeof window.renderLocations === 'function') {
-                window.renderLocations();
-            }
-            if (typeof window.renderRegions === 'function') {
-                window.renderRegions();
-            }
-
-            // Marquer comme non sauvegardé pour afficher l'icône cloud
-            if (typeof window.markAsUnsaved === 'function') {
-                window.markAsUnsaved();
-            }
-
-            // Synchroniser
-            if (typeof window.scheduleAutoSync === 'function') {
-                window.scheduleAutoSync();
-            }
-
-            alert(`✅ Tous les lieux et régions de "${activeMapName}" ont été supprimés avec succès.`);
-            console.log(`✅ Suppression complète terminée pour la carte: ${activeMapId}`);
-
-        } catch (error) {
-            console.error('❌ Erreur lors de la suppression:', error);
-            alert('❌ Erreur lors de la suppression : ' + error.message);
-        }
-    }
-
-    // Function to switch map, added based on the user's request
-    switchMap(mapUrl) {
-        console.log(`🗺️ Changement de carte vers: ${mapUrl}`);
-
-        this.activeMapUrl = mapUrl;
-        localStorage.setItem('activeMapUrl', mapUrl);
-
-        // Nettoyer les descriptions de voyage lors du changement de carte
-        if (window.voyageManager) {
-            window.voyageManager.clearDescriptions();
-            console.log("🧹 Descriptions de voyage nettoyées lors du changement de carte");
-        }
-
-        // Charger la nouvelle carte
-        const mapImage = document.getElementById('map-image');
-        if (mapImage) {
-            mapImage.src = mapUrl;
-        }
-
-        // Marquer comme non sauvegardé
+        // Marquer comme non sauvegardé pour que l'icône cloud apparaisse
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
 
-        // Fermer la modal de paramètres
-        this.closeSettings();
+        // Planifier la synchronisation avec le cloud
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
 
-        console.log(`✅ Carte changée: ${mapUrl}`);
+        // Afficher une notification de succès
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        notification.innerHTML = '<i class="fas fa-check mr-2"></i>Tirage inséré dans le journal';
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
+
+        // Réinitialiser les données de tirage en cours
+        this.currentRollData = null;
     }
 }
 
