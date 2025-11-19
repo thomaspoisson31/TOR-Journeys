@@ -1149,6 +1149,10 @@ class SettingsManager {
             return;
         }
 
+        // Assurer que le conteneur a un overflow et une hauteur maximale
+        tabContent.style.maxHeight = '70vh';
+        tabContent.style.overflowY = 'auto';
+
         // Utiliser les données d'AdventureManager
         if (!window.adventureManager) {
             tabContent.innerHTML = '<p class="text-gray-400 italic">AdventureManager non disponible.</p>';
