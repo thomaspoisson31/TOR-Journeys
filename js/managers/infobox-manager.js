@@ -432,35 +432,32 @@ class InfoBoxManager {
             // Nettoyer complètement l'onglet
             evenementsTab.innerHTML = '';
 
-            const evenements = item.Evenements_Voyage || [];
+            const randomTables = item.RandomTables || [];
 
-            if (evenements.length > 0) {
-                // Récupérer le nom de la table (si disponible)
-                const tableName = item.Evenements_Voyage_TableName || 'Table aléatoire';
-
-                const tableHTML = `
-                    <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
-                        <!-- Titre de la table -->
-                        <h3 class="text-xl font-bold mb-4 text-center" style="color: #940000;">${tableName}</h3>
-
-                        <!-- Bouton de tirage -->
-                        <div class="mb-4 flex justify-center">
-                            <button onclick="window.infoBoxManager.rollRandomEvent()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors flex items-center space-x-2">
+            if (randomTables.length > 0) {
+                const tablesHTML = randomTables.map((table, tableIndex) => `
+                    <div class="mb-6 p-4 bg-gray-800 rounded-lg border border-gray-600">
+                        <h3 class="text-lg font-bold mb-3 text-center" style="color: #940000;">${table.name || 'Table sans nom'}</h3>
+                        
+                        <div class="flex justify-center mb-3">
+                            <button onclick="window.infoBoxManager.rollOnTable(${tableIndex})" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors flex items-center space-x-2">
                                 <i class="fas fa-dice"></i>
-                                <span>Tirage aléatoire</span>
+                                <span>Tirer</span>
                             </button>
                         </div>
 
-                        <!-- Conteneur pour le résultat du tirage -->
-                        <div id="random-event-result" class="hidden mb-6 p-4 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
-                            <h4 class="text-lg font-bold mb-3 text-blue-300" style="font-family: 'Merriweather', serif; font-size: 1.25rem;">
-                                <i class="fas fa-dice mr-2"></i>Événement de voyage
-                            </h4>
-                            <div id="random-event-content"></div>
+                        <div id="table-result-${tableIndex}" class="hidden p-3 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
+                            <div class="text-sm font-semibold text-blue-300 mb-2">Résultat :</div>
+                            <div id="table-result-content-${tableIndex}"></div>
                         </div>
                     </div>
+                `).join('');
+
+                evenementsTab.innerHTML = `
+                    <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
+                        ${tablesHTML}
+                    </div>
                 `;
-                evenementsTab.innerHTML = tableHTML;
             } else {
                 evenementsTab.innerHTML = '<div class="p-4 prose prose-invert text-gray-400 italic">Aucune table aléatoire</div>';
             }
@@ -619,19 +616,36 @@ class InfoBoxManager {
             editForm.className = 'edit-form p-4';
             evenementsTab.appendChild(editForm);
 
-            const currentEvenements = item.Evenements_Voyage || [];
-            const tableName = item.Evenements_Voyage_TableName || '';
+            const randomTables = item.RandomTables || [];
+
+            let tablesHTML = '';
+            if (randomTables.length > 0) {
+                tablesHTML = randomTables.map((table, index) => `
+                    <div class="mb-4 p-3 bg-gray-800 rounded-lg border border-gray-600">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-white font-semibold">${table.name || 'Table sans nom'}</span>
+                            <button onclick="window.infoBoxManager.deleteRandomTable(${index})" class="text-red-400 hover:text-red-300">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="text-xs text-gray-400">${table.entries?.length || 0} entrée(s)</div>
+                    </div>
+                `).join('');
+            }
 
             editForm.innerHTML = `
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-2 text-white">
-                        Importer un fichier JSON d'événements :
+                        Ajouter une table aléatoire :
                     </label>
-                    <input type="file" id="evenements-file-input" accept=".json" class="mb-2 block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
-                    <div class="text-xs text-gray-400 mb-3">Format attendu : tableau JSON avec clés "Dé du destin", "Résultat", "Description"</div>
-                    ${tableName ? `<h3 class="text-xl font-bold mb-2 text-center" style="color: #940000;">${tableName}</h3>` : ''}
-                    ${currentEvenements.length > 0 ? `<div class="text-sm text-green-400 mb-2">✓ ${currentEvenements.length} événement(s) chargé(s)</div>` : ''}
+                    <input type="file" id="new-random-table-input" accept=".json" class="mb-2 block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                    <div class="text-xs text-gray-400 mb-3">Format JSON attendu</div>
                 </div>
+
+                <div id="tables-list" class="mb-4">
+                    ${tablesHTML || '<div class="text-gray-400 text-sm italic">Aucune table</div>'}
+                </div>
+
                 <div class="flex space-x-2">
                     <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
                         <i class="fas fa-save mr-1"></i>Sauvegarder
@@ -639,14 +653,13 @@ class InfoBoxManager {
                     <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
                         <i class="fas fa-times mr-1"></i>Annuler
                     </button>
-                    ${currentEvenements.length > 0 ? '<button onclick="window.infoBoxManager.clearEvenements()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"><i class="fas fa-trash mr-1"></i>Effacer</button>' : ''}
                 </div>
             `;
 
             // Setup event listener pour l'import de fichier
-            const fileInput = document.getElementById('evenements-file-input');
+            const fileInput = document.getElementById('new-random-table-input');
             if (fileInput) {
-                fileInput.addEventListener('change', (e) => this.handleEvenementsFileImport(e));
+                fileInput.addEventListener('change', (e) => this.handleNewRandomTableImport(e));
             }
         }
     }
@@ -1175,17 +1188,8 @@ class InfoBoxManager {
             this.currentItem.Tradition_Ancienne = traditionTextarea.value.trim();
         }
 
-        // Événements de voyage
-        if (this.tempEvenements !== undefined) {
-            this.currentItem.Evenements_Voyage = this.tempEvenements;
-            this.tempEvenements = undefined;
-        }
-
-        // Nom de la table aléatoire
-        if (this.tempEvenementsTableName !== undefined) {
-            this.currentItem.Evenements_Voyage_TableName = this.tempEvenementsTableName;
-            this.tempEvenementsTableName = undefined;
-        }
+        // RandomTables est déjà dans this.currentItem (modification directe)
+        // Pas besoin de traitement supplémentaire
 
         // Personnages associés (pour lieux et régions uniquement)
         if (this.currentType === 'location' || this.currentType === 'region') {
@@ -1595,7 +1599,7 @@ class InfoBoxManager {
         }
     }
 
-    handleEvenementsFileImport(event) {
+    handleNewRandomTableImport(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -1604,34 +1608,27 @@ class InfoBoxManager {
             try {
                 const jsonData = JSON.parse(e.target.result);
 
-                // Valider le format
                 if (!Array.isArray(jsonData)) {
                     alert('Format invalide : le fichier doit contenir un tableau JSON');
                     return;
                 }
 
-                // Valider les entrées
-                const isValid = jsonData.every(item =>
-                    item.hasOwnProperty('Dé du destin') ||
-                    item.hasOwnProperty('Résultat') ||
-                    item.hasOwnProperty('Description')
-                );
-
-                if (!isValid) {
-                    alert('Format invalide : chaque entrée doit avoir au moins une des clés attendues');
-                    return;
+                // Initialiser RandomTables si nécessaire
+                if (!this.currentItem.RandomTables) {
+                    this.currentItem.RandomTables = [];
                 }
 
-                // Stocker temporairement les événements
-                this.tempEvenements = jsonData;
+                // Ajouter la nouvelle table
+                const tableName = file.name.replace(/\.json$/i, '');
+                this.currentItem.RandomTables.push({
+                    name: tableName,
+                    entries: jsonData
+                });
 
-                // Stocker le nom du fichier (sans l'extension .json)
-                this.tempEvenementsTableName = file.name.replace(/\.json$/i, '');
+                console.log(`✅ Table "${tableName}" ajoutée avec ${jsonData.length} entrée(s)`);
 
-                // Afficher l'aperçu
-                this.updateEvenementsPreview(jsonData);
-
-                console.log(`✅ ${jsonData.length} événement(s) importé(s) depuis "${this.tempEvenementsTableName}"`);
+                // Re-render le mode édition
+                this.renderEditMode();
 
             } catch (error) {
                 console.error('❌ Erreur lors de l\'import:', error);
@@ -1639,53 +1636,69 @@ class InfoBoxManager {
             }
         };
         reader.readAsText(file);
+
+        // Reset le champ
+        event.target.value = '';
     }
 
-    updateEvenementsPreview(evenements) {
-        const preview = document.getElementById('evenements-preview');
-        if (!preview) return;
-
-        if (evenements.length === 0) {
-            preview.innerHTML = '';
+    deleteRandomTable(index) {
+        if (!this.currentItem.RandomTables || index < 0 || index >= this.currentItem.RandomTables.length) {
             return;
         }
 
-        preview.innerHTML = `
-            <div class="bg-gray-800 rounded p-2 max-h-64 overflow-y-auto">
-                <table class="w-full text-xs">
-                    <thead>
-                        <tr class="text-gray-400">
-                            <th class="text-left p-1">Dé</th>
-                            <th class="text-left p-1">Résultat</th>
-                            <th class="text-left p-1">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${evenements.map((evt, i) => `
-                            <tr class="border-t border-gray-700">
-                                <td class="p-1">${evt['Dé du destin'] || '-'}</td>
-                                <td class="p-1">${evt['Résultat'] || '-'}</td>
-                                <td class="p-1 truncate max-w-xs" title="${evt['Description'] || '-'}">${(evt['Description'] || '-').substring(0, 50)}${(evt['Description'] || '').length > 50 ? '...' : ''}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        `;
-    }
-
-    clearEvenements() {
-        if (!confirm('Êtes-vous sûr de vouloir effacer tous les événements de voyage ?')) {
+        const tableName = this.currentItem.RandomTables[index].name || 'cette table';
+        if (!confirm(`Voulez-vous vraiment supprimer "${tableName}" ?`)) {
             return;
         }
 
-        this.tempEvenements = [];
-        this.updateEvenementsPreview([]);
+        this.currentItem.RandomTables.splice(index, 1);
+        console.log(`🗑️ Table "${tableName}" supprimée`);
 
-        const fileInput = document.getElementById('evenements-file-input');
-        if (fileInput) {
-            fileInput.value = '';
+        // Re-render le mode édition
+        this.renderEditMode();
+    }
+
+    rollOnTable(tableIndex) {
+        if (!this.currentItem.RandomTables || tableIndex < 0 || tableIndex >= this.currentItem.RandomTables.length) {
+            return;
         }
+
+        const table = this.currentItem.RandomTables[tableIndex];
+        if (!table.entries || table.entries.length === 0) {
+            alert('Cette table est vide');
+            return;
+        }
+
+        // Tirer un résultat aléatoire
+        const randomIndex = Math.floor(Math.random() * table.entries.length);
+        const result = table.entries[randomIndex];
+
+        // Formater le résultat
+        let formattedResult = '';
+        if (typeof result === 'object' && result !== null) {
+            formattedResult = '<div class="space-y-1 text-white">';
+            for (const [key, value] of Object.entries(result)) {
+                formattedResult += `
+                    <div>
+                        <span class="font-semibold" style="color: #940000;">${key}:</span>
+                        <span class="ml-2">${value}</span>
+                    </div>`;
+            }
+            formattedResult += '</div>';
+        } else {
+            formattedResult = `<div class="text-white">${result}</div>`;
+        }
+
+        // Afficher le résultat
+        const resultContainer = document.getElementById(`table-result-${tableIndex}`);
+        const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
+        
+        if (resultContainer && resultContent) {
+            resultContent.innerHTML = formattedResult;
+            resultContainer.classList.remove('hidden');
+        }
+
+        console.log(`🎲 Tirage sur "${table.name}":`, result);
     }
 
     async openLibraryForEdit() {
