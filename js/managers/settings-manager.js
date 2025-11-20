@@ -1028,7 +1028,7 @@ class SettingsManager {
         }
 
         const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu).
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
         Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
 
         try {
@@ -1322,7 +1322,7 @@ class SettingsManager {
         }
     }
 
-    handleSettingsRandomTableUpload(event) {
+    async handleSettingsRandomTableUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -1779,85 +1779,80 @@ class SettingsManager {
 
     insertRandomResultToJournal() {
         if (!this.currentRandomResult) {
-            console.warn("⚠️ Aucun résultat de tirage disponible");
+            console.error('❌ Aucun résultat de tirage à insérer');
             return;
         }
 
-        // Récupérer le gestionnaire de journal
-        if (!window.journalManager) {
-            console.error("❌ JournalManager non disponible");
-            alert("Erreur : le gestionnaire de journal n'est pas disponible.");
-            return;
-        }
-
-        // Obtenir la date actuelle du calendrier
-        const currentDate = window.calendarManager?.getCurrentDateString() || new Date().toLocaleDateString('fr-FR');
-
-        // Construire le titre
-        const title = this.currentRandomResult.tableName || "Événement aléatoire";
-
-        // Construire le texte (rendu Markdown du résultat)
-        let text = '';
-        if (typeof this.currentRandomResult.result === 'string') {
-            text = this.currentRandomResult.result;
-        } else if (typeof this.currentRandomResult.result === 'object') {
-            text = Object.entries(this.currentRandomResult.result)
-                .map(([key, value]) => `**${key}** : ${value}`)
-                .join('\n\n');
+        // Récupérer la date actuelle du calendrier
+        let currentDate = 'Date inconnue';
+        if (window.calendarManager && window.calendarManager.currentCalendarDate) {
+            const date = window.calendarManager.currentCalendarDate;
+            currentDate = `${date.day} ${date.month}`;
         }
 
         // Créer l'entrée de journal
         const journalEntry = {
-            title: title,
-            totalDays: 0, // Durée = 0 jours
-            generatedAt: new Date().toISOString(),
-            journeyType: 'random_event', // Marqueur pour identifier ce type d'entrée
-            days: [
-                {
-                    dayNumber: 1,
-                    calendarDate: currentDate,
-                    description: text,
-                    eventResult: null,
-                    weatherSymbol: null,
-                    weatherText: null,
-                    discoveries: []
-                }
-            ]
+            title: this.currentRandomResult.tableName,
+            text: this.currentRandomResult.result,
+            calendarDate: currentDate,
+            duration: 0,
+            journeyType: 'random_event'
         };
 
-        // Ajouter au journal
-        window.journalManager.journal.push(journalEntry);
+        // Ajouter au journal via le JournalManager
+        if (window.journalManager) {
+            // Charger le journal existant
+            window.journalManager.loadJournal();
 
-        // Sauvegarder
-        localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
+            // Créer une structure de voyage pour l'événement
+            const eventJourney = {
+                title: journalEntry.title,
+                generatedAt: new Date().toISOString(),
+                totalDays: 1,
+                journeyType: 'random_event',
+                days: [{
+                    dayNumber: 1,
+                    calendarDate: journalEntry.calendarDate,
+                    description: journalEntry.text,
+                    discoveries: []
+                }]
+            };
 
-        // Marquer comme non sauvegardé pour sync cloud
-        if (typeof window.markAsUnsaved === 'function') {
-            window.markAsUnsaved();
+            // Ajouter au journal
+            window.journalManager.journal.push(eventJourney);
+            localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
+
+            // Marquer comme non sauvegardé
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+
+            // Synchroniser avec le cloud
+            if (typeof window.scheduleAutoSync === 'function') {
+                window.scheduleAutoSync();
+            }
+
+            console.log('📖 Événement aléatoire ajouté au journal:', eventJourney);
+
+            // Fermer la modale de résultat
+            this.closeRandomRollResult();
+
+            // Afficher une notification de succès
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
+            notification.innerHTML = `
+                <i class="fas fa-check mr-2"></i>
+                Ajouté au Journal d'Aventure
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        } else {
+            console.error('❌ JournalManager non disponible');
+            alert('Erreur : impossible d\'accéder au journal');
         }
-
-        // Synchroniser avec le cloud si authentifié
-        if (typeof window.scheduleAutoSync === 'function') {
-            window.scheduleAutoSync();
-        }
-
-        console.log("✅ Événement aléatoire ajouté au journal");
-
-        // Afficher une notification
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
-        notification.innerHTML = `
-            <i class="fas fa-check mr-2"></i>
-            Événement ajouté au journal
-        `;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.remove();
-        }, 2000);
-
-        // Fermer la modale
-        this.closeRandomRollResult();
     }
 
 
