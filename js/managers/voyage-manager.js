@@ -992,13 +992,6 @@ class VoyageManager {
         this.updateHeaderButtons();
     }
 
-    updateHeaderButtons() {
-        const describeBtn = this.dom.getElementById('describe-journey-header-btn');
-        const finishBtn = this.dom.getElementById('finish-journey-header-btn');
-
-        // Afficher le bouton de description
-
-
     updateJourneyHeaderForCurrentPath() {
         // Cette méthode met à jour le titre et la durée de la modale
         // pour le voyage EN COURS (non sauvegardé)
@@ -1035,6 +1028,11 @@ class VoyageManager {
         }
     }
 
+    updateHeaderButtons() {
+        const describeBtn = this.dom.getElementById('describe-journey-header-btn');
+        const finishBtn = this.dom.getElementById('finish-journey-header-btn');
+
+        // Afficher le bouton de description
         if (describeBtn) {
             describeBtn.classList.remove('hidden');
             describeBtn.onclick = () => this.generateJourneyDescription();
