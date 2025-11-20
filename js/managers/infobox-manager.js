@@ -1498,11 +1498,8 @@ class InfoBoxManager {
 
         this.currentItem.images.push(newImage);
 
-        // Vider le champ
-        const urlField = document.getElementById('new-image-url');
-        if (urlField) {
-            urlField.value = '';
-        }
+        // Vider le champ (urlField déjà déclaré en haut de la méthode)
+        urlField.value = '';
 
         // Re-render la galerie d'images
         const imagesGallery = document.getElementById('edit-images-gallery');
