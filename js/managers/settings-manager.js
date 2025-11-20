@@ -1015,7 +1015,7 @@ class SettingsManager {
         }
 
         const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu).
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
         Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
 
         try {
@@ -1309,7 +1309,7 @@ class SettingsManager {
         }
     }
 
-    async handleSettingsRandomTableUpload(event) {
+    handleSettingsRandomTableUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -1368,15 +1368,15 @@ class SettingsManager {
 
     rollOnSettingsCompositeTable(compositeIndex) {
         console.log(`🔗 [Settings] rollOnSettingsCompositeTable appelé avec index: ${compositeIndex}`);
-        
+
         if (!window.adventureManager) {
             console.error('❌ AdventureManager non disponible');
             return;
         }
-        
+
         const composite = window.adventureManager.adventureData.compositeTables[compositeIndex];
         console.log(`📋 [Settings] Table composite récupérée:`, composite);
-        
+
         if (!composite || !composite.tableIndices || composite.tableIndices.length === 0) {
             console.error('❌ Table composite invalide');
             return;
@@ -1384,14 +1384,14 @@ class SettingsManager {
 
         const tables = window.adventureManager.adventureData.randomTables;
         const results = [];
-        
+
         composite.tableIndices.forEach((tableIndex) => {
             const table = tables[tableIndex];
-            
+
             if (table && table.entries && table.entries.length > 0) {
                 const randomIndex = Math.floor(Math.random() * table.entries.length);
                 const result = table.entries[randomIndex];
-                
+
                 results.push({
                     tableName: table.name,
                     result: typeof result === 'object' ? JSON.stringify(result) : result
@@ -1408,7 +1408,7 @@ class SettingsManager {
         if (resultContainer && resultContent) {
             const html = results.map(r => {
                 let displayResult = r.result;
-                
+
                 // Si c'est un objet JSON, le formater joliment
                 try {
                     const parsed = JSON.parse(r.result);
@@ -1416,8 +1416,8 @@ class SettingsManager {
                     for (const [key, value] of Object.entries(parsed)) {
                         displayResult += `
                             <div>
-                                <span class="font-semibold text-purple-300">${key}:</span>
-                                <span class="text-white ml-2">${value}</span>
+                                <span class="font-semibold" style="color: #940000;">${key}:</span>
+                                <span class="ml-2">${value}</span>
                             </div>`;
                     }
                     displayResult += '</div>';
@@ -1425,14 +1425,14 @@ class SettingsManager {
                     // Si ce n'est pas du JSON, afficher tel quel
                     displayResult = `<span class="text-white">${r.result}</span>`;
                 }
-                
+
                 return `
                     <div class="mb-3 p-2 bg-gray-900 rounded">
                         <div class="font-semibold text-blue-300 mb-1">${r.tableName}</div>
                         ${displayResult}
                     </div>`;
             }).join('');
-            
+
             resultContent.innerHTML = html;
             resultContainer.classList.remove('hidden');
             console.log(`✅ [Settings] Résultats affichés`);
@@ -1455,12 +1455,12 @@ class SettingsManager {
         }
 
         const tables = window.adventureManager.adventureData.randomTables;
-        
+
         // Créer la modale
         const modal = document.createElement('div');
         modal.id = 'composite-table-modal';
         modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]';
-        
+
         modal.innerHTML = `
             <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-2xl mx-4 max-h-[80vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-4">
@@ -1469,13 +1469,13 @@ class SettingsManager {
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Nom de la table composite</label>
                         <input type="text" id="composite-name-input" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white" placeholder="Ex: Rencontres complètes">
                     </div>
-                    
+
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Sélectionnez les tables à combiner</label>
                         <div id="tables-checklist" class="space-y-2 max-h-64 overflow-y-auto">
@@ -1489,53 +1489,53 @@ class SettingsManager {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="flex justify-end space-x-3 mt-6">
                     <button id="cancel-composite" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg">Annuler</button>
                     <button id="create-composite" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white">Créer</button>
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         // Gestionnaires d'événements
         document.getElementById('close-composite-modal').addEventListener('click', () => {
             modal.remove();
         });
-        
+
         document.getElementById('cancel-composite').addEventListener('click', () => {
             modal.remove();
         });
-        
+
         document.getElementById('create-composite').addEventListener('click', () => {
             const nameInput = document.getElementById('composite-name-input');
             const checkboxes = document.querySelectorAll('.composite-table-checkbox:checked');
-            
+
             if (!nameInput.value.trim()) {
                 alert('Veuillez donner un nom à la table composite.');
                 return;
             }
-            
+
             if (checkboxes.length === 0) {
                 alert('Veuillez sélectionner au moins une table.');
                 return;
             }
-            
+
             const tableIndices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
-            
+
             const newComposite = {
                 name: nameInput.value.trim(),
                 tableIndices: tableIndices
             };
-            
+
             if (!window.adventureManager.adventureData.compositeTables) {
                 window.adventureManager.adventureData.compositeTables = [];
             }
-            
+
             window.adventureManager.adventureData.compositeTables.push(newComposite);
             window.adventureManager.saveToLocalStorage();
-            
+
             modal.remove();
             this.renderSettingsRandomTablesTab();
         });
@@ -1632,23 +1632,108 @@ class SettingsManager {
 
     // === GESTION PRINCIPALE ===
     openSettings() {
-        const modal = document.getElementById('settings-modal');
-        if (modal) {
-            modal.classList.remove('hidden');
+        const settingsModal = document.getElementById('settings-modal');
+        if (settingsModal) {
+            settingsModal.classList.remove('hidden');
             this.isSettingsOpen = true;
-
-            // Ouvrir l'onglet cartes par défaut
-            this.switchTab('maps');
+            // Afficher l'onglet actuel
+            this.switchTab(this.currentTab);
         }
     }
 
     closeSettings() {
-        const modal = document.getElementById('settings-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        const settingsModal = document.getElementById('settings-modal');
+        if (settingsModal) {
+            settingsModal.classList.add('hidden');
             this.isSettingsOpen = false;
         }
     }
+
+    showRandomRollResult(tableName, result) {
+        const modal = document.getElementById('random-roll-result-modal');
+        const content = document.getElementById('random-roll-result-content');
+
+        if (!modal || !content) return;
+
+        // Formater le résultat
+        let formattedResult = '';
+        if (typeof result === 'object') {
+            formattedResult = '<div class="space-y-1">';
+            for (const [key, value] of Object.entries(result)) {
+                formattedResult += `
+                    <div>
+                        <span class="font-semibold" style="color: #940000;">${key}:</span>
+                        <span class="ml-2">${value}</span>
+                    </div>`;
+            }
+            formattedResult += '</div>';
+        } else {
+            formattedResult = `<p>${result}</p>`;
+        }
+
+        content.innerHTML = `
+            <div class="mb-4">
+                <h4 class="text-lg font-semibold mb-3" style="color: #940000;">
+                    <i class="fas fa-dice mr-2"></i>${tableName}
+                </h4>
+                ${formattedResult}
+            </div>
+        `;
+
+        modal.classList.remove('hidden');
+    }
+
+    showRandomRollResultComposite(compositeName, results) {
+        const modal = document.getElementById('random-roll-result-modal');
+        const content = document.getElementById('random-roll-result-content');
+
+        if (!modal || !content) return;
+
+        const resultsHTML = results.map(r => {
+            let displayResult = r.result;
+
+            // Si c'est un objet JSON, le formater joliment
+            try {
+                const parsed = JSON.parse(r.result);
+                displayResult = '<div class="space-y-1">';
+                for (const [key, value] of Object.entries(parsed)) {
+                    displayResult += `
+                        <div>
+                            <span class="font-semibold" style="color: #940000;">${key}:</span>
+                            <span class="ml-2">${value}</span>
+                        </div>`;
+                }
+                displayResult += '</div>';
+            } catch (e) {
+                displayResult = `<span>${r.result}</span>`;
+            }
+
+            return `
+                <div class="mb-4 p-3 bg-gray-100 rounded">
+                    <div class="font-semibold mb-2" style="color: #940000;">${r.tableName}</div>
+                    ${displayResult}
+                </div>`;
+        }).join('');
+
+        content.innerHTML = `
+            <div class="mb-4">
+                <h4 class="text-lg font-semibold mb-3" style="color: #940000;">
+                    <i class="fas fa-layer-group mr-2"></i>${compositeName}
+                </h4>
+                ${resultsHTML}
+            </div>
+        `;
+
+        modal.classList.remove('hidden');
+    }
+
+    closeRandomRollResult() {
+        const modal = document.getElementById('random-roll-result-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
 
     // Getters pour accès externe
     getNarrationStyle() {
