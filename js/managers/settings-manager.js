@@ -141,6 +141,12 @@ class SettingsManager {
 
         // Onglet Import/Export
         this.setupImportExportListeners();
+
+        // Bouton de fermeture de la modale de résultat de tirage
+        const closeRandomResultBtn = document.getElementById('close-random-roll-result');
+        if (closeRandomResultBtn) {
+            closeRandomResultBtn.addEventListener('click', () => this.closeRandomRollResult());
+        }
     }
 
     setupTabListeners() {
