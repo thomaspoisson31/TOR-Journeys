@@ -1787,15 +1787,6 @@ class SettingsManager {
             currentDate = `${date.day} ${date.month}`;
         }
 
-        // Créer l'entrée de journal
-        const journalEntry = {
-            title: this.currentRandomResult.tableName,
-            text: this.currentRandomResult.result,
-            calendarDate: currentDate,
-            duration: 0,
-            journeyType: 'random_event'
-        };
-
         // Ajouter au journal via le JournalManager
         if (window.journalManager) {
             // Charger le journal existant
@@ -1803,14 +1794,14 @@ class SettingsManager {
 
             // Créer une structure de voyage pour l'événement
             const eventJourney = {
-                title: journalEntry.title,
+                title: this.currentRandomResult.title, // Utiliser le titre au lieu de tableName
                 generatedAt: new Date().toISOString(),
                 totalDays: 1,
                 journeyType: 'random_event',
                 days: [{
                     dayNumber: 1,
-                    calendarDate: journalEntry.calendarDate,
-                    description: journalEntry.text,
+                    calendarDate: currentDate,
+                    description: this.currentRandomResult.text,
                     discoveries: []
                 }]
             };

@@ -213,14 +213,9 @@ class JournalManager {
                 ? `${displayStartDate} → ${displayEndDate}`
                 : displayStartDate;
 
-            // Vérifier si c'est un événement aléatoire (non cliquable)
-            const isRandomEvent = journey.journeyType === 'random_event';
-            const cursorClass = isRandomEvent ? 'cursor-default' : 'cursor-pointer';
-            const hoverClass = isRandomEvent ? '' : 'hover:shadow-md';
-            const onclickAttr = isRandomEvent ? '' : `onclick="window.journalManager.openJourneyInVoyageModal(${originalIndex})"`;
-
+            // Toutes les entrées sont cliquables
             return `
-                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 ${hoverClass} transition-shadow ${cursorClass}" ${onclickAttr}>
+                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.journalManager.openJourneyInVoyageModal(${originalIndex})">
                     <div class="p-4">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
