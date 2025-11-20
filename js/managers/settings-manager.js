@@ -1792,9 +1792,16 @@ class SettingsManager {
             // Charger le journal existant
             window.journalManager.loadJournal();
 
+            // Extraire le champ "Résultat" du texte pour l'utiliser comme titre
+            let eventTitle = this.currentRandomResult.title;
+            const resultMatch = this.currentRandomResult.text.match(/Résultat:\s*([^\n<]+)/);
+            if (resultMatch && resultMatch[1]) {
+                eventTitle = resultMatch[1].trim();
+            }
+
             // Créer une structure de voyage pour l'événement
             const eventJourney = {
-                title: this.currentRandomResult.title, // Utiliser le titre au lieu de tableName
+                title: eventTitle,
                 generatedAt: new Date().toISOString(),
                 totalDays: 1,
                 journeyType: 'random_event',

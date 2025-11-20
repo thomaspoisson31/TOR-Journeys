@@ -289,9 +289,14 @@ class JournalManager {
         const daysHTML = journey.days.map((day, index) => {
             let contentHtml = '';
 
-            // Description du jour avec rendu Markdown
+            // Description du jour avec rendu Markdown (en filtrant le champ "Dé du destin")
             if (day.description) {
-                const descriptionHtml = this.simpleMarkdown(day.description);
+                // Filtrer le champ "Dé du destin" de la description
+                let filteredDescription = day.description;
+                filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
+                filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
+                
+                const descriptionHtml = this.simpleMarkdown(filteredDescription);
                 contentHtml += `
                     <div class="bg-gray-50 rounded-lg p-3 mb-3">
                         <div class="text-xs text-gray-500 mb-1">📖 Description :</div>
