@@ -1642,38 +1642,6 @@ class InfoBoxManager {
                     return;
                 }
 
-
-    rollRandomEvent() {
-        if (!this.currentItem || !this.currentItem.Evenements_Voyage || this.currentItem.Evenements_Voyage.length === 0) {
-            return;
-        }
-
-        const evenements = this.currentItem.Evenements_Voyage;
-        const randomEvent = evenements[Math.floor(Math.random() * evenements.length)];
-
-        const resultContainer = document.getElementById('random-event-result');
-        const resultContent = document.getElementById('random-event-content');
-
-        if (resultContainer && resultContent) {
-            resultContent.innerHTML = `
-                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
-                    <span class="font-semibold text-blue-200">Dé du destin :</span>
-                    <span class="ml-2 text-white">${randomEvent['Dé du destin'] || '-'}</span>
-                </div>
-                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
-                    <span class="font-semibold text-blue-200">Résultat :</span>
-                    <span class="ml-2 text-white">${randomEvent['Résultat'] || '-'}</span>
-                </div>
-                <div style="font-family: 'Merriweather', serif; font-size: 1rem;">
-                    <span class="font-semibold text-blue-200">Description :</span>
-                    <p class="mt-1 text-gray-200 leading-relaxed">${randomEvent['Description'] || '-'}</p>
-                </div>
-            `;
-            resultContainer.classList.remove('hidden');
-        }
-    }
-
-
                 // Stocker temporairement les événements
                 this.tempEvenements = jsonData;
 
@@ -2148,6 +2116,36 @@ class InfoBoxManager {
             modal.classList.add('hidden');
         }
         this.selectedLibraryImagesForEdit = [];
+    }
+
+    rollRandomEvent() {
+        if (!this.currentItem || !this.currentItem.Evenements_Voyage || this.currentItem.Evenements_Voyage.length === 0) {
+            return;
+        }
+
+        const evenements = this.currentItem.Evenements_Voyage;
+        const randomEvent = evenements[Math.floor(Math.random() * evenements.length)];
+
+        const resultContainer = document.getElementById('random-event-result');
+        const resultContent = document.getElementById('random-event-content');
+
+        if (resultContainer && resultContent) {
+            resultContent.innerHTML = `
+                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                    <span class="font-semibold text-blue-200">Dé du destin :</span>
+                    <span class="ml-2 text-white">${randomEvent['Dé du destin'] || '-'}</span>
+                </div>
+                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                    <span class="font-semibold text-blue-200">Résultat :</span>
+                    <span class="ml-2 text-white">${randomEvent['Résultat'] || '-'}</span>
+                </div>
+                <div style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                    <span class="font-semibold text-blue-200">Description :</span>
+                    <p class="mt-1 text-gray-200 leading-relaxed">${randomEvent['Description'] || '-'}</p>
+                </div>
+            `;
+            resultContainer.classList.remove('hidden');
+        }
     }
 
     toggleEvenementsTable() {
