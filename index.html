@@ -859,16 +859,24 @@
         </div>
 
         <!-- Random Roll Result Modal -->
-        <div id="random-roll-result-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] hidden">
-            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col" style="font-family: 'Merriweather', serif;">
-                <div class="flex justify-between items-center p-6 border-b border-gray-300">
-                    <h3 class="text-2xl font-bold" style="color: #940000;">Résultat du tirage aléatoire</h3>
-                    <button id="close-random-roll-result" class="text-gray-400 hover:text-gray-600">
+        <div id="random-roll-result-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]">
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-2xl mx-4 max-h-[80vh] overflow-y-auto" style="font-family: 'Merriweather', serif;">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-white">
+                        <i class="fas fa-dice mr-2"></i>Tirage Aléatoire
+                    </h2>
+                    <button id="close-random-roll-result" class="text-gray-400 hover:text-white">
                         <i class="fas fa-times fa-lg"></i>
                     </button>
                 </div>
-                <div class="flex-1 overflow-y-auto p-6" id="random-roll-result-content" style="color: black;">
-                    <!-- Le contenu du résultat sera inséré ici -->
+                <div id="random-roll-result-content" class="prose prose-invert max-w-none">
+                    <!-- Le résultat sera affiché ici -->
+                </div>
+                <div class="mt-4 flex justify-center">
+                    <button id="insert-random-result-to-journal" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors flex items-center space-x-2">
+                        <i class="fas fa-book"></i>
+                        <span>Insérer dans le Journal</span>
+                    </button>
                 </div>
             </div>
         </div>

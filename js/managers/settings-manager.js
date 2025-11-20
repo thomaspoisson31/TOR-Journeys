@@ -13,6 +13,7 @@ class SettingsManager {
         this.partyDescription = '';
         this.questDescription = '';
         this.narrationStyle = 'brief';
+        this.currentRandomResult = null; // Pour stocker le résultat du tirage aléatoire
 
         console.log('⚙️ SettingsManager initialized');
     }
@@ -146,6 +147,12 @@ class SettingsManager {
         const closeRandomResultBtn = document.getElementById('close-random-roll-result');
         if (closeRandomResultBtn) {
             closeRandomResultBtn.addEventListener('click', () => this.closeRandomRollResult());
+        }
+
+        // Bouton d'insertion dans le journal
+        const insertToJournalBtn = document.getElementById('insert-random-result-to-journal');
+        if (insertToJournalBtn) {
+            insertToJournalBtn.addEventListener('click', () => this.insertRandomResultToJournal());
         }
     }
 
@@ -1681,64 +1688,147 @@ class SettingsManager {
     showRandomRollResult(tableName, result) {
         const modal = document.getElementById('random-roll-result-modal');
         const content = document.getElementById('random-roll-result-content');
+        const insertButtonContainer = document.getElementById('insert-random-result-button-container'); // Nouveau conteneur
 
-        if (!modal || !content) return;
-
-        // Formater le résultat
-        let formattedResult = '';
-        if (typeof result === 'object') {
-            formattedResult = '<div class="space-y-1">';
-            for (const [key, value] of Object.entries(result)) {
-                formattedResult += `
-                    <div>
-                        <span class="font-semibold" style="color: #940000;">${key}:</span>
-                        <span class="ml-2">${value}</span>
-                    </div>`;
-            }
-            formattedResult += '</div>';
-        } else {
-            formattedResult = `<p>${result}</p>`;
-        }
-
-        content.innerHTML = `
-            <div class="mb-4">
-                <h4 class="text-lg font-semibold mb-3" style="color: #940000;">
-                    <i class="fas fa-dice mr-2"></i>${tableName}
-                </h4>
-                ${formattedResult}
-            </div>
-        `;
-
-        modal.classList.remove('hidden');
-    }
-
-    showRandomRollResultModal(tableName, formattedResult) {
-        const modal = document.getElementById('random-roll-result-modal');
-        const content = document.getElementById('random-roll-result-content');
-
-        if (!modal || !content) {
-            console.error('Modal ou contenu de résultat introuvable.');
+        if (!modal || !content || !insertButtonContainer) {
+            console.error('Modal, contenu, ou conteneur de bouton introuvable.');
             return;
         }
 
+        // Stocker le résultat pour l'insertion dans le journal
+        this.currentRandomResult = {
+            tableName: tableName,
+            result: result
+        };
+
+        // Afficher le nom de la table et le résultat
         content.innerHTML = `
-            <div class="mb-4">
-                <h4 class="text-lg font-semibold mb-3" style="color: #940000;">
-                    <i class="fas fa-dice mr-2"></i>${tableName}
-                </h4>
-                ${formattedResult}
-            </div>
+            <h4 class="text-lg font-semibold mb-3" style="color: #940000;">
+                <i class="fas fa-dice mr-2"></i>${tableName}
+            </h4>
+            <div class="text-gray-200">${this.markdownToHtml(result)}</div>
         `;
+
+        // Afficher le bouton "Insérer dans le Journal"
+        insertButtonContainer.innerHTML = `
+            <button id="insert-random-result-to-journal" class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors">
+                <i class="fas fa-journal-whills mr-2"></i>Insérer dans le Journal
+            </button>
+        `;
+
+        // Réattacher l'écouteur d'événement au nouveau bouton
+        document.getElementById('insert-random-result-to-journal').addEventListener('click', () => this.insertRandomResultToJournal());
 
         modal.classList.remove('hidden');
     }
 
+    showRandomRollResultModal(tableName, result) {
+        const modal = document.getElementById('random-roll-result-modal');
+        const content = document.getElementById('random-roll-result-content');
+        const insertButtonContainer = document.getElementById('insert-random-result-button-container'); // Nouveau conteneur
+
+        if (!modal || !content || !insertButtonContainer) {
+            console.error('Modal, contenu, ou conteneur de bouton introuvable.');
+            return;
+        }
+
+        // Stocker le résultat pour l'insertion dans le journal
+        this.currentRandomResult = {
+            tableName: tableName,
+            result: result
+        };
+
+        // Afficher le nom de la table et le résultat
+        content.innerHTML = `
+            <h4 class="text-lg font-semibold mb-3" style="color: #940000;">
+                <i class="fas fa-dice mr-2"></i>${tableName}
+            </h4>
+            <div class="text-gray-200">${this.markdownToHtml(result)}</div>
+        `;
+
+        // Afficher le bouton "Insérer dans le Journal"
+        insertButtonContainer.innerHTML = `
+            <button id="insert-random-result-to-journal" class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors">
+                <i class="fas fa-journal-whills mr-2"></i>Insérer dans le Journal
+            </button>
+        `;
+
+        // Réattacher l'écouteur d'événement au nouveau bouton
+        // Assurez-vous que l'ID est correct et qu'il est ajouté avant d'attacher l'événement
+        const newInsertButton = document.getElementById('insert-random-result-to-journal');
+        if (newInsertButton) {
+            newInsertButton.addEventListener('click', () => this.insertRandomResultToJournal());
+        } else {
+            console.error('Erreur: Bouton "Insérer dans le Journal" non trouvé après création.');
+        }
+
+        modal.classList.remove('hidden');
+    }
 
     closeRandomRollResult() {
         const modal = document.getElementById('random-roll-result-modal');
+        const insertButtonContainer = document.getElementById('insert-random-result-button-container'); // Conteneur du bouton
         if (modal) {
             modal.classList.add('hidden');
         }
+        if (insertButtonContainer) {
+            insertButtonContainer.innerHTML = ''; // Vider le conteneur du bouton
+        }
+        this.currentRandomResult = null; // Réinitialiser le résultat stocké
+    }
+
+    insertRandomResultToJournal() {
+        if (!this.currentRandomResult || !window.journalManager) {
+            console.error('❌ Pas de résultat à insérer ou JournalManager non disponible');
+            return;
+        }
+
+        // Obtenir la date actuelle du calendrier
+        let currentDate = 'Date inconnue';
+        if (window.calendarManager && window.calendarManager.currentCalendarDate) {
+            const calDate = window.calendarManager.currentCalendarDate;
+            currentDate = `${calDate.day} ${calDate.month}`;
+        }
+
+        // Créer une nouvelle entrée de journal (format exploration avec 0 jours)
+        const newEntry = {
+            title: this.currentRandomResult.tableName,
+            totalDays: 0,
+            generatedAt: new Date().toISOString(),
+            journeyType: 'random_event', // Type spécial pour les événements aléatoires
+            days: [{
+                dayNumber: 1,
+                calendarDate: currentDate,
+                weatherSymbol: null,
+                discoveries: [],
+                description: this.currentRandomResult.result,
+                eventResult: null
+            }]
+        };
+
+        // Ajouter au journal
+        window.journalManager.journal.push(newEntry);
+        localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
+
+        // Marquer comme non sauvegardé et synchroniser
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+
+        console.log('✅ Événement aléatoire inséré dans le journal');
+
+        // Notification de succès
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
+        notification.innerHTML = '<i class="fas fa-check mr-2"></i>Événement ajouté au journal';
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 2000);
+
+        // Fermer la modale
+        this.closeRandomRollResult();
     }
 
 
