@@ -435,27 +435,22 @@ class InfoBoxManager {
             const evenements = item.Evenements_Voyage || [];
 
             if (evenements.length > 0) {
-                // Tirer un événement aléatoire
-                const randomEvent = evenements[Math.floor(Math.random() * evenements.length)];
-
                 const tableHTML = `
                     <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
-                        <div class="mb-6 p-4 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
+                        <!-- Bouton de tirage -->
+                        <div class="mb-4 flex justify-center">
+                            <button onclick="window.infoBoxManager.rollRandomEvent()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors flex items-center space-x-2">
+                                <i class="fas fa-dice"></i>
+                                <span>Tirer un événement</span>
+                            </button>
+                        </div>
+
+                        <!-- Conteneur pour le résultat du tirage -->
+                        <div id="random-event-result" class="hidden mb-6 p-4 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
                             <h4 class="text-lg font-bold mb-3 text-blue-300" style="font-family: 'Merriweather', serif; font-size: 1.25rem;">
                                 <i class="fas fa-dice mr-2"></i>Événement de voyage
                             </h4>
-                            <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
-                                <span class="font-semibold text-blue-200">Dé du destin :</span>
-                                <span class="ml-2 text-white">${randomEvent['Dé du destin'] || '-'}</span>
-                            </div>
-                            <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
-                                <span class="font-semibold text-blue-200">Résultat :</span>
-                                <span class="ml-2 text-white">${randomEvent['Résultat'] || '-'}</span>
-                            </div>
-                            <div style="font-family: 'Merriweather', serif; font-size: 1rem;">
-                                <span class="font-semibold text-blue-200">Description :</span>
-                                <p class="mt-1 text-gray-200 leading-relaxed">${randomEvent['Description'] || '-'}</p>
-                            </div>
+                            <div id="random-event-content"></div>
                         </div>
 
                         <div class="mb-2">
@@ -1252,6 +1247,38 @@ class InfoBoxManager {
                 associatedCharacterIds.forEach(charId => {
                     const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
                     if (char) {
+
+
+    rollRandomEvent() {
+        if (!this.currentItem || !this.currentItem.Evenements_Voyage || this.currentItem.Evenements_Voyage.length === 0) {
+            return;
+        }
+
+        const evenements = this.currentItem.Evenements_Voyage;
+        const randomEvent = evenements[Math.floor(Math.random() * evenements.length)];
+
+        const resultContainer = document.getElementById('random-event-result');
+        const resultContent = document.getElementById('random-event-content');
+
+        if (resultContainer && resultContent) {
+            resultContent.innerHTML = `
+                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                    <span class="font-semibold text-blue-200">Dé du destin :</span>
+                    <span class="ml-2 text-white">${randomEvent['Dé du destin'] || '-'}</span>
+                </div>
+                <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                    <span class="font-semibold text-blue-200">Résultat :</span>
+                    <span class="ml-2 text-white">${randomEvent['Résultat'] || '-'}</span>
+                </div>
+                <div style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                    <span class="font-semibold text-blue-200">Description :</span>
+                    <p class="mt-1 text-gray-200 leading-relaxed">${randomEvent['Description'] || '-'}</p>
+                </div>
+            `;
+            resultContainer.classList.remove('hidden');
+        }
+    }
+
                         console.log(`  - ${char.name} (id: ${char.id}):`, {
                             associatedLocations: char.associatedLocations,
                             associatedRegions: char.associatedRegions
