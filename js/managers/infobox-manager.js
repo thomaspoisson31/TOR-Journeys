@@ -426,53 +426,70 @@ class InfoBoxManager {
             }
         }
 
-        // Onglet Tables Aléatoires
+        // Onglet Événements de voyage
         const evenementsTab = document.getElementById('evenements-voyage-tab');
         if (evenementsTab) {
             // Nettoyer complètement l'onglet
             evenementsTab.innerHTML = '';
 
-            const tables = item.randomTables || [];
+            const evenements = item.Evenements_Voyage || [];
 
-            if (tables.length > 0) {
-                // Afficher la liste des tables avec boutons de tirage et suppression
-                const tablesHTML = `
-                    <div class="p-4 h-full overflow-y-auto space-y-4">
-                        ${tables.map((table, index) => `
-                            <div class="bg-gray-700 rounded-lg p-4 border border-gray-600">
-                                <div class="flex items-center justify-between mb-3">
-                                    <h4 class="text-lg font-bold text-white">${table.name || `Table ${index + 1}`}</h4>
-                                    <div class="flex space-x-2">
-                                        <button onclick="window.infoBoxManager.rollOnTableInInfobox(${index})" 
-                                                class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
-                                            <i class="fas fa-dice mr-1"></i>Tirer
-                                        </button>
-                                        <button onclick="window.infoBoxManager.deleteTableInInfobox(${index})" 
-                                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="text-sm text-gray-300 mb-2">
-                                    ${table.entries ? table.entries.length : 0} entrée(s)
-                                </div>
-                                <div id="table-result-${index}" class="hidden mt-3 p-3 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
-                                    <div class="text-sm font-semibold text-blue-300 mb-2">Résultat du tirage :</div>
-                                    <div id="table-result-content-${index}" class="text-white"></div>
-                                </div>
+            if (evenements.length > 0) {
+                // Tirer un événement aléatoire
+                const randomEvent = evenements[Math.floor(Math.random() * evenements.length)];
+
+                const tableHTML = `
+                    <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
+                        <div class="mb-6 p-4 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
+                            <h4 class="text-lg font-bold mb-3 text-blue-300" style="font-family: 'Merriweather', serif; font-size: 1.25rem;">
+                                <i class="fas fa-dice mr-2"></i>Événement de voyage
+                            </h4>
+                            <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                                <span class="font-semibold text-blue-200">Dé du destin :</span>
+                                <span class="ml-2 text-white">${randomEvent['Dé du destin'] || '-'}</span>
                             </div>
-                        `).join('')}
+                            <div class="mb-2" style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                                <span class="font-semibold text-blue-200">Résultat :</span>
+                                <span class="ml-2 text-white">${randomEvent['Résultat'] || '-'}</span>
+                            </div>
+                            <div style="font-family: 'Merriweather', serif; font-size: 1rem;">
+                                <span class="font-semibold text-blue-200">Description :</span>
+                                <p class="mt-1 text-gray-200 leading-relaxed">${randomEvent['Description'] || '-'}</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <button onclick="window.infoBoxManager.toggleEvenementsTable()" class="flex items-center text-gray-300 hover:text-white transition-colors">
+                                <i id="evenements-toggle-icon" class="fas fa-chevron-right mr-2"></i>
+                                <h4 class="text-md font-semibold">Table complète des événements</h4>
+                            </button>
+                        </div>
+
+                        <div id="evenements-table-container" class="hidden">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-800">
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Dé du destin</th>
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Résultat</th>
+                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${evenements.map((evt, index) => `
+                                        <tr class="${index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'}">
+                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Dé du destin'] || ''}</td>
+                                            <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${evt['Résultat'] || ''}</td>
+                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Description'] || ''}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 `;
-                evenementsTab.innerHTML = tablesHTML;
+                evenementsTab.innerHTML = tableHTML;
             } else {
-                // Aucune table - afficher message et lien vers mode édition
-                evenementsTab.innerHTML = `
-                    <div class="p-4 text-center">
-                        <div class="prose prose-invert text-gray-400 italic mb-4">Aucune table aléatoire</div>
-                        <p class="text-sm text-gray-500">Passez en mode édition pour importer des tables JSON</p>
-                    </div>
-                `;
+                evenementsTab.innerHTML = '<div class="p-4 prose prose-invert text-gray-400 italic">Aucune table aléatoire</div>';
             }
         }
     }
@@ -620,7 +637,7 @@ class InfoBoxManager {
             `;
         }
 
-        // Onglet Tables Aléatoires (mode édition)
+        // Onglet Événements de voyage (mode édition)
         const evenementsTab = document.getElementById('evenements-voyage-tab');
         if (evenementsTab) {
             // Nettoyer complètement l'onglet
@@ -629,30 +646,18 @@ class InfoBoxManager {
             editForm.className = 'edit-form p-4';
             evenementsTab.appendChild(editForm);
 
-            const tables = item.randomTables || [];
+            const currentEvenements = item.Evenements_Voyage || [];
 
             editForm.innerHTML = `
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-2 text-white">
-                        Importer une table JSON :
+                        Importer un fichier JSON d'événements :
                     </label>
-                    <input type="file" id="tables-file-input" accept=".json" class="mb-2 block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
-                    <div class="text-xs text-gray-400 mb-3">Format : { "name": "Nom de la table", "entries": [...] }</div>
+                    <input type="file" id="evenements-file-input" accept=".json" class="mb-2 block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                    <div class="text-xs text-gray-400 mb-3">Format attendu : tableau JSON avec clés "Dé du destin", "Résultat", "Description"</div>
+                    ${currentEvenements.length > 0 ? `<div class="text-sm text-green-400 mb-2">✓ ${currentEvenements.length} événement(s) chargé(s)</div>` : ''}
                 </div>
-                
-                ${tables.length > 0 ? `
-                    <div class="mb-4">
-                        <h4 class="text-sm font-medium text-white mb-2">Tables existantes (${tables.length})</h4>
-                        <div class="space-y-2 max-h-60 overflow-y-auto">
-                            ${tables.map((table, idx) => `
-                                <div class="bg-gray-700 p-2 rounded text-sm text-gray-300">
-                                    ${table.name || `Table ${idx + 1}`} (${table.entries ? table.entries.length : 0} entrées)
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : ''}
-                
+                <div id="evenements-preview" class="mb-4 max-h-60 overflow-y-auto"></div>
                 <div class="flex space-x-2">
                     <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
                         <i class="fas fa-save mr-1"></i>Sauvegarder
@@ -660,13 +665,19 @@ class InfoBoxManager {
                     <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
                         <i class="fas fa-times mr-1"></i>Annuler
                     </button>
+                    ${currentEvenements.length > 0 ? '<button onclick="window.infoBoxManager.clearEvenements()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"><i class="fas fa-trash mr-1"></i>Effacer</button>' : ''}
                 </div>
             `;
 
+            // Afficher l'aperçu si des événements existent
+            if (currentEvenements.length > 0) {
+                this.updateEvenementsPreview(currentEvenements);
+            }
+
             // Setup event listener pour l'import de fichier
-            const fileInput = document.getElementById('tables-file-input');
+            const fileInput = document.getElementById('evenements-file-input');
             if (fileInput) {
-                fileInput.addEventListener('change', (e) => this.handleTablesFileImport(e));
+                fileInput.addEventListener('change', (e) => this.handleEvenementsFileImport(e));
             }
         }
     }
@@ -1497,149 +1508,6 @@ class InfoBoxManager {
         };
 
         this.currentItem.images.push(newImage);
-
-        // Vider le champ (urlField déjà déclaré en haut de la méthode)
-        urlField.value = '';
-
-        // Re-render la galerie d'images
-        const imagesGallery = document.getElementById('edit-images-gallery');
-        if (imagesGallery) {
-            imagesGallery.innerHTML = this.renderEditImagesGallery();
-        }
-
-        console.log("🖼️ Image added from URL:", this.currentItem.images[this.currentItem.images.length - 1].url);
-    }
-
-    // === MÉTHODES POUR LES TABLES ALÉATOIRES ===
-    handleTablesFileImport(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const tableData = JSON.parse(e.target.result);
-                
-                // Valider le format
-                if (!tableData.name || !tableData.entries || !Array.isArray(tableData.entries)) {
-                    alert('Format invalide. Le JSON doit contenir "name" et "entries" (tableau).');
-                    return;
-                }
-
-                // Initialiser randomTables si nécessaire
-                if (!this.currentItem.randomTables) {
-                    this.currentItem.randomTables = [];
-                }
-
-                // Ajouter la nouvelle table
-                this.currentItem.randomTables.push(tableData);
-                
-                console.log(`✅ Table "${tableData.name}" importée avec ${tableData.entries.length} entrée(s)`);
-                
-                // Rafraîchir l'affichage en mode édition
-                this.renderEditMode();
-            } catch (error) {
-                console.error('❌ Erreur lors du parsing JSON:', error);
-                alert('Erreur lors de la lecture du fichier JSON: ' + error.message);
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    rollOnTableInInfobox(tableIndex) {
-        const table = this.currentItem.randomTables[tableIndex];
-        if (!table || !table.entries || table.entries.length === 0) {
-            console.error('❌ Table invalide ou vide');
-            return;
-        }
-
-        // Tirer un résultat aléatoire
-        const randomIndex = Math.floor(Math.random() * table.entries.length);
-        const result = table.entries[randomIndex];
-        
-        console.log(`🎲 Tirage sur "${table.name}":`, result);
-
-        // Formater le résultat pour l'affichage
-        let formattedResult = '';
-        if (typeof result === 'object' && result !== null) {
-            formattedResult = '<div class="space-y-1">';
-            for (const [key, value] of Object.entries(result)) {
-                formattedResult += `
-                    <div>
-                        <span class="font-semibold text-blue-300">${key}:</span>
-                        <span class="text-white ml-2">${value}</span>
-                    </div>`;
-            }
-            formattedResult += '</div>';
-        } else {
-            formattedResult = `<div class="text-white">${result}</div>`;
-        }
-
-        // Afficher le résultat
-        const resultContainer = document.getElementById(`table-result-${tableIndex}`);
-        const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
-
-        if (resultContainer && resultContent) {
-            resultContent.innerHTML = formattedResult;
-            resultContainer.classList.remove('hidden');
-        }
-    }
-
-    deleteTableInInfobox(tableIndex) {
-        if (!confirm('Voulez-vous vraiment supprimer cette table ?')) {
-            return;
-        }
-
-        if (this.currentItem.randomTables && this.currentItem.randomTables[tableIndex]) {
-            const tableName = this.currentItem.randomTables[tableIndex].name;
-            this.currentItem.randomTables.splice(tableIndex, 1);
-            
-            console.log(`🗑️ Table "${tableName}" supprimée`);
-            
-            // Sauvegarder et rafraîchir
-            this.saveCurrentItem();
-            this.renderReadMode();
-        }
-    }
-
-    saveCurrentItem() {
-        const type = this.currentType;
-        const item = this.currentItem;
-
-        if (type === 'location') {
-            // Mettre à jour le lieu dans locationsData
-            if (window.locationsData && window.locationsData.locations) {
-                const index = window.locationsData.locations.findIndex(loc => loc.id === item.id);
-                if (index !== -1) {
-                    window.locationsData.locations[index] = item;
-                    localStorage.setItem('locationsData', JSON.stringify(window.locationsData));
-                    
-                    if (typeof window.markAsUnsaved === 'function') {
-                        window.markAsUnsaved();
-                    }
-                }
-            }
-        } else if (type === 'region') {
-            // Mettre à jour la région dans regionsData
-            if (window.regionsData && window.regionsData.regions) {
-                const index = window.regionsData.regions.findIndex(reg => reg.id === item.id);
-                if (index !== -1) {
-                    window.regionsData.regions[index] = item;
-                    localStorage.setItem('regionsData', JSON.stringify(window.regionsData));
-                    
-                    if (typeof window.markAsUnsaved === 'function') {
-                        window.markAsUnsaved();
-                    }
-                }
-            }
-        } else if (type === 'character') {
-            // Mettre à jour le personnage
-            if (window.charactersManager) {
-                window.charactersManager.updateCharacter(item);
-            }
-        }
-    }
-
 
         // Vider le champ
         urlField.value = '';
@@ -2817,10 +2685,11 @@ class InfoBoxManager {
         this.currentEntity.associatedRegions = associatedRegions;
 
         // Mettre à jour bidirectionnelle : mettre à jour les lieux et régions également
-        if (window.dataManager && window.dataManager.locationsData && window.dataManager.locationsData.locations) {
+        if (window.locationsManager && window.locationsManager.locationsData && window.locationsManager.locationsData.locations) {
             const characterId = String(this.currentEntity.id);
-            window.dataManager.locationsData.locations.forEach(location => {
+            window.locationsManager.locationsData.locations.forEach(location => {
                 const isAssociated = associatedLocations.includes(String(location.id));
+                const characterManager = window.charactersManager; // Ensure charactersManager is available
 
                 if (!location.associatedCharacters) {
                     location.associatedCharacters = [];
@@ -2836,16 +2705,14 @@ class InfoBoxManager {
                     console.log(`❌ Lieu ${location.name} dissocié du personnage ${this.currentEntity.name}`);
                 }
             });
-            
-            // Synchroniser avec window.locationsData
-            window.locationsData = window.dataManager.locationsData;
-            window.dataManager.saveLocationsToLocal();
+            window.locationsManager.saveLocationsToLocal();
         }
 
-        if (window.dataManager && window.dataManager.regionsData && window.dataManager.regionsData.regions) {
+        if (window.regionsManager && window.regionsManager.regionsData && window.regionsManager.regionsData.regions) {
             const characterId = String(this.currentEntity.id);
-            window.dataManager.regionsData.regions.forEach(region => {
+            window.regionsManager.regionsData.regions.forEach(region => {
                 const isAssociated = associatedRegions.includes(String(region.id));
+                 const characterManager = window.charactersManager; // Ensure charactersManager is available
 
                 if (!region.associatedCharacters) {
                     region.associatedCharacters = [];
@@ -2861,11 +2728,9 @@ class InfoBoxManager {
                     console.log(`❌ Région ${region.name} dissociée du personnage ${this.currentEntity.name}`);
                 }
             });
-            
-            // Synchroniser avec window.regionsData
-            window.regionsData = window.dataManager.regionsData;
-            window.dataManager.saveRegionsToLocal();
+             window.regionsManager.saveRegionsToLocal();
         }
+
 
         // Sauvegarder le personnage lui-même
         if (window.charactersManager) {
