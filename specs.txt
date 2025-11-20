@@ -131,6 +131,22 @@ CONVENTIONS DE CODAGE JAVASCRIPT
    - Notifications utilisateur (succès/erreur/info)
    - Pattern: showNotification(title, message, type)
 
+8. GESTION DES FONCTIONS ASYNCHRONES:
+   - TOUJOURS déclarer une méthode avec `async` si elle utilise `await`
+   - Pattern standard :
+     async methodName() {
+         try {
+             const data = await fetch(url);
+             // traitement
+         } catch (error) {
+             console.error('❌ Erreur:', error);
+             alert('Erreur: ' + error.message);
+         }
+     }
+   - Ne jamais utiliser `await` sans `async` (SyntaxError)
+   - Toujours gérer les erreurs avec try/catch dans les fonctions async
+   - Préférer async/await à .then() pour la lisibilité
+
 VERSIONING
 ----------
 

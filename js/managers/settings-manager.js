@@ -1309,7 +1309,7 @@ class SettingsManager {
         }
     }
 
-    handleSettingsRandomTableUpload(event) {
+    async handleSettingsRandomTableUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
