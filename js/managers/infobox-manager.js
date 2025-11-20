@@ -436,8 +436,8 @@ class InfoBoxManager {
 
             if (randomTables.length > 0) {
                 const tablesHTML = randomTables.map((table, tableIndex) => `
-                    <div class="mb-6 p-4 bg-gray-800 rounded-lg border border-gray-600">
-                        <h3 class="text-lg font-bold mb-3 text-center" style="color: #940000;">${table.name || 'Table sans nom'}</h3>
+                    <div class="mb-6 p-4 rounded-lg border border-gray-300" style="background-color: #f5f5f5;">
+                        <h3 class="text-lg font-bold mb-3 text-center" style="color: #940000; font-family: 'Merriweather', serif;">${table.name || 'Table sans nom'}</h3>
                         
                         <div class="flex justify-center mb-3">
                             <button onclick="window.infoBoxManager.rollOnTable(${tableIndex})" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors flex items-center space-x-2">
@@ -446,20 +446,20 @@ class InfoBoxManager {
                             </button>
                         </div>
 
-                        <div id="table-result-${tableIndex}" class="hidden p-3 bg-blue-900 bg-opacity-50 border border-blue-600 rounded">
-                            <div class="text-sm font-semibold text-blue-300 mb-2">Résultat :</div>
-                            <div id="table-result-content-${tableIndex}"></div>
+                        <div id="table-result-${tableIndex}" class="hidden p-3 rounded" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
+                            <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat :</div>
+                            <div id="table-result-content-${tableIndex}" style="color: #1f2937;"></div>
                         </div>
                     </div>
                 `).join('');
 
                 evenementsTab.innerHTML = `
-                    <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
+                    <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif; background-color: white;">
                         ${tablesHTML}
                     </div>
                 `;
             } else {
-                evenementsTab.innerHTML = '<div class="p-4 prose prose-invert text-gray-400 italic">Aucune table aléatoire</div>';
+                evenementsTab.innerHTML = '<div class="p-4 text-gray-500 italic">Aucune table aléatoire</div>';
             }
         }
     }
@@ -621,14 +621,14 @@ class InfoBoxManager {
             let tablesHTML = '';
             if (randomTables.length > 0) {
                 tablesHTML = randomTables.map((table, index) => `
-                    <div class="mb-4 p-3 bg-gray-800 rounded-lg border border-gray-600">
+                    <div class="mb-4 p-3 rounded-lg border border-gray-300" style="background-color: #f5f5f5;">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="text-white font-semibold">${table.name || 'Table sans nom'}</span>
-                            <button onclick="window.infoBoxManager.deleteRandomTable(${index})" class="text-red-400 hover:text-red-300">
+                            <span class="font-semibold" style="color: #940000; font-family: 'Merriweather', serif;">${table.name || 'Table sans nom'}</span>
+                            <button onclick="window.infoBoxManager.deleteRandomTable(${index})" class="text-red-600 hover:text-red-700">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
-                        <div class="text-xs text-gray-400">${table.entries?.length || 0} entrée(s)</div>
+                        <div class="text-xs" style="color: #6b7280;">${table.entries?.length || 0} entrée(s)</div>
                     </div>
                 `).join('');
             }
@@ -638,12 +638,12 @@ class InfoBoxManager {
                     <label class="block text-sm font-medium mb-2 text-white">
                         Ajouter une table aléatoire :
                     </label>
-                    <input type="file" id="new-random-table-input" accept=".json" class="mb-2 block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
-                    <div class="text-xs text-gray-400 mb-3">Format JSON attendu</div>
+                    <input type="file" id="new-random-table-input" accept=".json" class="mb-2 block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+                    <div class="text-xs text-gray-500 mb-3">Format JSON attendu</div>
                 </div>
 
                 <div id="tables-list" class="mb-4">
-                    ${tablesHTML || '<div class="text-gray-400 text-sm italic">Aucune table</div>'}
+                    ${tablesHTML || '<div class="text-gray-500 text-sm italic">Aucune table</div>'}
                 </div>
 
                 <div class="flex space-x-2">
