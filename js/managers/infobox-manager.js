@@ -632,7 +632,6 @@ class InfoBoxManager {
                     ${tableName ? `<h3 class="text-xl font-bold mb-2 text-center" style="color: #940000;">${tableName}</h3>` : ''}
                     ${currentEvenements.length > 0 ? `<div class="text-sm text-green-400 mb-2">✓ ${currentEvenements.length} événement(s) chargé(s)</div>` : ''}
                 </div>
-                <div id="evenements-preview" class="mb-4 max-h-60 overflow-y-auto"></div>
                 <div class="flex space-x-2">
                     <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
                         <i class="fas fa-save mr-1"></i>Sauvegarder
@@ -643,11 +642,6 @@ class InfoBoxManager {
                     ${currentEvenements.length > 0 ? '<button onclick="window.infoBoxManager.clearEvenements()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"><i class="fas fa-trash mr-1"></i>Effacer</button>' : ''}
                 </div>
             `;
-
-            // Afficher l'aperçu si des événements existent
-            if (currentEvenements.length > 0) {
-                this.updateEvenementsPreview(currentEvenements);
-            }
 
             // Setup event listener pour l'import de fichier
             const fileInput = document.getElementById('evenements-file-input');
