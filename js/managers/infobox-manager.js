@@ -437,12 +437,12 @@ class InfoBoxManager {
             if (evenements.length > 0) {
                 // Récupérer le nom de la table (si disponible)
                 const tableName = item.Evenements_Voyage_TableName || 'Table aléatoire';
-                
+
                 const tableHTML = `
                     <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
                         <!-- Titre de la table -->
                         <h3 class="text-xl font-bold mb-4 text-center" style="color: #940000;">${tableName}</h3>
-                        
+
                         <!-- Bouton de tirage -->
                         <div class="mb-4 flex justify-center">
                             <button onclick="window.infoBoxManager.rollRandomEvent()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors flex items-center space-x-2">
@@ -1184,7 +1184,7 @@ class InfoBoxManager {
             this.currentItem.Evenements_Voyage = this.tempEvenements;
             this.tempEvenements = undefined;
         }
-        
+
         // Nom de la table aléatoire
         if (this.tempEvenementsTableName !== undefined) {
             this.currentItem.Evenements_Voyage_TableName = this.tempEvenementsTableName;
@@ -1628,7 +1628,7 @@ class InfoBoxManager {
 
                 // Stocker temporairement les événements
                 this.tempEvenements = jsonData;
-                
+
                 // Stocker le nom du fichier (sans l'extension .json)
                 this.tempEvenementsTableName = file.name.replace(/\.json$/i, '');
 
