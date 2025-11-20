@@ -567,6 +567,9 @@ class VoyageManager {
         const voyageDaysContent = this.dom.getElementById('voyage-days-content');
         if (!voyageDaysContent) return;
 
+        // Mettre à jour le titre et la durée pour le voyage en cours
+        this.updateJourneyHeaderForCurrentPath();
+
         let allDaysHtml = '';
 
         // Générer le HTML pour chaque jour
@@ -994,6 +997,44 @@ class VoyageManager {
         const finishBtn = this.dom.getElementById('finish-journey-header-btn');
 
         // Afficher le bouton de description
+
+
+    updateJourneyHeaderForCurrentPath() {
+        // Cette méthode met à jour le titre et la durée de la modale
+        // pour le voyage EN COURS (non sauvegardé)
+        
+        if (!window.journeyPath || window.journeyPath.length === 0) {
+            return;
+        }
+
+        const voyageTitle = document.querySelector('#voyage-segments-modal h3');
+        const voyageSubtitle = document.querySelector('#voyage-segments-modal p.text-sm');
+
+        if (voyageTitle && this.totalJourneyDays > 0) {
+            // Détecter les points de départ et d'arrivée
+            let startLocation = "Point de départ";
+            let endLocation = "Point d'arrivée";
+
+            // Trouver le premier et dernier lieu découvert
+            if (window.journeyDiscoveries && window.journeyDiscoveries.length > 0) {
+                const discoveries = window.journeyDiscoveries.filter(d => d.type === 'location');
+                if (discoveries.length > 0) {
+                    startLocation = discoveries[0].name;
+                    if (discoveries.length > 1) {
+                        endLocation = discoveries[discoveries.length - 1].name;
+                    }
+                }
+            }
+
+            voyageTitle.textContent = `Voyage de ${startLocation} à ${endLocation}`;
+        }
+
+        if (voyageSubtitle && this.journeyStartDate) {
+            const startDateStr = `${this.journeyStartDate.day} ${window.calendarData[this.journeyStartDate.monthIndex].name}`;
+            voyageSubtitle.innerHTML = `${startDateStr} • <span id="voyage-total-days">${this.totalJourneyDays}</span> jour${this.totalJourneyDays > 1 ? 's' : ''}`;
+        }
+    }
+
         if (describeBtn) {
             describeBtn.classList.remove('hidden');
             describeBtn.onclick = () => this.generateJourneyDescription();
