@@ -1015,7 +1015,7 @@ class SettingsManager {
         }
 
         const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu).
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
         Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
 
         try {
@@ -1344,17 +1344,46 @@ class SettingsManager {
     }
 
     rollOnSettingsTable(tableIndex) {
-        if (!window.adventureManager) return;
-        window.adventureManager.rollOnTable(tableIndex);
-        // Re-render pour afficher le résultat
-        setTimeout(() => {
-            const resultContainer = document.getElementById(`settings-table-result-${tableIndex}`);
-            const sourceContainer = document.getElementById(`table-result-${tableIndex}`);
-            if (resultContainer && sourceContainer) {
-                resultContainer.innerHTML = sourceContainer.innerHTML;
-                resultContainer.classList.remove('hidden');
+        console.log(`🎲 [DEBUG] rollOnSettingsTable appelé avec index: ${tableIndex}`);
+
+        const table = window.adventureManager.adventureData.randomTables[tableIndex];
+        console.log(`📋 [DEBUG] Table récupérée:`, table);
+
+        if (!table || !table.entries || table.entries.length === 0) {
+            console.error('❌ Table invalide ou vide');
+            return;
+        }
+
+        // Tirer un résultat aléatoire
+        const randomIndex = Math.floor(Math.random() * table.entries.length);
+        const result = table.entries[randomIndex];
+
+        console.log(`🎲 [DEBUG] Résultat du tirage:`, {
+            randomIndex,
+            result,
+            resultType: typeof result
+        });
+
+        // Formater le résultat pour l'affichage
+        let formattedResult = '';
+        if (typeof result === 'object' && result !== null) {
+            formattedResult = '<div class="space-y-2">';
+            for (const [key, value] of Object.entries(result)) {
+                formattedResult += `
+                    <div class="mb-2">
+                        <span class="font-semibold" style="color: #940000;">${key}:</span>
+                        <span class="ml-2" style="color: black;">${value}</span>
+                    </div>`;
             }
-        }, 100);
+            formattedResult += '</div>';
+        } else {
+            formattedResult = `<div style="color: black;">${result}</div>`;
+        }
+
+        // Afficher dans la nouvelle modale
+        this.showRandomRollResultModal(table.name, formattedResult);
+
+        console.log(`🎲 Tirage sur "${table.name}":`, result);
     }
 
     deleteSettingsRandomTable(index) {
@@ -1367,76 +1396,70 @@ class SettingsManager {
     }
 
     rollOnSettingsCompositeTable(compositeIndex) {
-        console.log(`🔗 [Settings] rollOnSettingsCompositeTable appelé avec index: ${compositeIndex}`);
-
-        if (!window.adventureManager) {
-            console.error('❌ AdventureManager non disponible');
-            return;
-        }
+        console.log(`🔗 [DEBUG] rollOnSettingsCompositeTable appelé avec index: ${compositeIndex}`);
 
         const composite = window.adventureManager.adventureData.compositeTables[compositeIndex];
-        console.log(`📋 [Settings] Table composite récupérée:`, composite);
+        console.log(`📋 [DEBUG] Table composite récupérée:`, composite);
 
         if (!composite || !composite.tableIndices || composite.tableIndices.length === 0) {
             console.error('❌ Table composite invalide');
             return;
         }
 
-        const tables = window.adventureManager.adventureData.randomTables;
-        const results = [];
+        let compositeResults = [];
 
-        composite.tableIndices.forEach((tableIndex) => {
-            const table = tables[tableIndex];
+        // Tirer sur chaque table de la composition
+        composite.tableIndices.forEach((tableIndex, idx) => {
+            console.log(`🎲 [DEBUG] Tirage ${idx + 1}/${composite.tableIndices.length} sur table index ${tableIndex}`);
 
-            if (table && table.entries && table.entries.length > 0) {
-                const randomIndex = Math.floor(Math.random() * table.entries.length);
-                const result = table.entries[randomIndex];
+            const table = window.adventureManager.adventureData.randomTables[tableIndex];
 
-                results.push({
-                    tableName: table.name,
-                    result: typeof result === 'object' ? JSON.stringify(result) : result
-                });
+            if (!table || !table.entries || table.entries.length === 0) {
+                console.warn(`⚠️ Table ${tableIndex} invalide ou vide, ignorée`);
+                return;
             }
+
+            const randomIndex = Math.floor(Math.random() * table.entries.length);
+            const result = table.entries[randomIndex];
+
+            console.log(`🎲 [DEBUG] Résultat du tirage ${idx + 1}:`, result);
+
+            compositeResults.push({
+                tableName: table.name,
+                result: result
+            });
         });
 
-        console.log(`📊 [Settings] Résultats du tirage:`, results);
+        console.log(`✅ [DEBUG] Résultats composites:`, compositeResults);
 
-        // Afficher les résultats
-        const resultContainer = document.getElementById(`settings-composite-result-${compositeIndex}`);
-        const resultContent = document.getElementById(`settings-composite-result-content-${compositeIndex}`);
+        // Formater les résultats pour l'affichage
+        let formattedResults = '<div class="space-y-4">';
+        compositeResults.forEach((item, idx) => {
+            formattedResults += `
+                <div class="p-3 bg-gray-100 rounded border border-gray-300">
+                    <div class="text-sm font-semibold mb-2" style="color: #940000;">${item.tableName}</div>
+                    <div style="color: black;">`;
 
-        if (resultContainer && resultContent) {
-            const html = results.map(r => {
-                let displayResult = r.result;
-
-                // Si c'est un objet JSON, le formater joliment
-                try {
-                    const parsed = JSON.parse(r.result);
-                    displayResult = '<div class="space-y-1">';
-                    for (const [key, value] of Object.entries(parsed)) {
-                        displayResult += `
-                            <div>
-                                <span class="font-semibold" style="color: #940000;">${key}:</span>
-                                <span class="ml-2">${value}</span>
-                            </div>`;
-                    }
-                    displayResult += '</div>';
-                } catch (e) {
-                    // Si ce n'est pas du JSON, afficher tel quel
-                    displayResult = `<span class="text-white">${r.result}</span>`;
+            if (typeof item.result === 'object' && item.result !== null) {
+                for (const [key, value] of Object.entries(item.result)) {
+                    formattedResults += `
+                        <div class="mb-1">
+                            <span class="font-semibold" style="color: #940000;">${key}:</span>
+                            <span class="ml-2">${value}</span>
+                        </div>`;
                 }
+            } else {
+                formattedResults += `<div>${item.result}</div>`;
+            }
 
-                return `
-                    <div class="mb-3 p-2 bg-gray-900 rounded">
-                        <div class="font-semibold text-blue-300 mb-1">${r.tableName}</div>
-                        ${displayResult}
-                    </div>`;
-            }).join('');
+            formattedResults += `</div></div>`;
+        });
+        formattedResults += '</div>';
 
-            resultContent.innerHTML = html;
-            resultContainer.classList.remove('hidden');
-            console.log(`✅ [Settings] Résultats affichés`);
-        }
+        // Afficher dans la nouvelle modale
+        this.showRandomRollResultModal(composite.name, formattedResults);
+
+        console.log(`🔗 Tirage composite sur "${composite.name}":`, compositeResults);
     }
 
     deleteSettingsCompositeTable(index) {
@@ -1683,49 +1706,27 @@ class SettingsManager {
         modal.classList.remove('hidden');
     }
 
-    showRandomRollResultComposite(compositeName, results) {
+    showRandomRollResultModal(tableName, formattedResult) {
         const modal = document.getElementById('random-roll-result-modal');
         const content = document.getElementById('random-roll-result-content');
 
-        if (!modal || !content) return;
-
-        const resultsHTML = results.map(r => {
-            let displayResult = r.result;
-
-            // Si c'est un objet JSON, le formater joliment
-            try {
-                const parsed = JSON.parse(r.result);
-                displayResult = '<div class="space-y-1">';
-                for (const [key, value] of Object.entries(parsed)) {
-                    displayResult += `
-                        <div>
-                            <span class="font-semibold" style="color: #940000;">${key}:</span>
-                            <span class="ml-2">${value}</span>
-                        </div>`;
-                }
-                displayResult += '</div>';
-            } catch (e) {
-                displayResult = `<span>${r.result}</span>`;
-            }
-
-            return `
-                <div class="mb-4 p-3 bg-gray-100 rounded">
-                    <div class="font-semibold mb-2" style="color: #940000;">${r.tableName}</div>
-                    ${displayResult}
-                </div>`;
-        }).join('');
+        if (!modal || !content) {
+            console.error('Modal ou contenu de résultat introuvable.');
+            return;
+        }
 
         content.innerHTML = `
             <div class="mb-4">
                 <h4 class="text-lg font-semibold mb-3" style="color: #940000;">
-                    <i class="fas fa-layer-group mr-2"></i>${compositeName}
+                    <i class="fas fa-dice mr-2"></i>${tableName}
                 </h4>
-                ${resultsHTML}
+                ${formattedResult}
             </div>
         `;
 
         modal.classList.remove('hidden');
     }
+
 
     closeRandomRollResult() {
         const modal = document.getElementById('random-roll-result-modal');
