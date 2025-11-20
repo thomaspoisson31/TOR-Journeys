@@ -1028,7 +1028,7 @@ class SettingsManager {
         }
 
         const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu).
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
         Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
 
         try {
@@ -1181,7 +1181,7 @@ class SettingsManager {
 
         // Afficher le contenu de chaque table simple
         tables.forEach((table, index) => {
-            console.log(`📋 [DEBUG] Table simple ${index}:`, {
+            console.log('📋 [DEBUG] Table simple', index, ':', {
                 name: table.name,
                 entriesCount: table.entries?.length || 0,
                 entries: table.entries
@@ -1190,7 +1190,7 @@ class SettingsManager {
 
         // Afficher le contenu de chaque table composite
         compositeTables.forEach((composite, index) => {
-            console.log(`🔗 [DEBUG] Table composite ${index}:`, {
+            console.log('🔗 [DEBUG] Table composite', index, ':', {
                 name: composite.name,
                 tableIndices: composite.tableIndices,
                 tableIndicesCount: composite.tableIndices?.length || 0
@@ -1202,7 +1202,7 @@ class SettingsManager {
         tables.forEach((table, index) => {
             const resultContainer = document.getElementById(`settings-table-result-${index}`);
             const resultContent = document.getElementById(`settings-table-result-content-${index}`);
-            console.log(`📦 [DEBUG] Conteneur table ${index}:`, {
+            console.log('📦 [DEBUG] Conteneur table', index, ':', {
                 resultContainer: !!resultContainer,
                 resultContent: !!resultContent
             });
@@ -1722,47 +1722,44 @@ class SettingsManager {
         modal.classList.remove('hidden');
     }
 
-    showRandomRollResultModal(tableName, result) {
+    showRandomRollResultModal(eventName, eventText) {
+        console.log(`🎲 [DEBUG] showRandomRollResultModal appelé:`, {
+            eventName,
+            eventText: eventText ? eventText.substring(0, 50) + '...' : null
+        });
+
         const modal = document.getElementById('random-roll-result-modal');
         const content = document.getElementById('random-roll-result-content');
-        const insertButtonContainer = document.getElementById('insert-random-result-button-container'); // Nouveau conteneur
+        const insertButton = document.getElementById('insert-random-result-to-journal');
 
-        if (!modal || !content || !insertButtonContainer) {
-            console.error('Modal, contenu, ou conteneur de bouton introuvable.');
+        console.log(`📦 [DEBUG] Éléments DOM trouvés:`, {
+            modal: !!modal,
+            content: !!content,
+            insertButton: !!insertButton
+        });
+
+        if (!modal || !content) {
+            console.error('Modal ou contenu introuvable.');
             return;
         }
 
-        // Stocker le résultat pour l'insertion dans le journal
+        // Stocker le résultat actuel
         this.currentRandomResult = {
-            tableName: tableName,
-            result: result
+            title: eventName,
+            text: eventText
         };
 
-        // Afficher le nom de la table et le résultat
+        // Remplir le contenu
         content.innerHTML = `
-            <h4 class="text-lg font-semibold mb-3" style="color: #940000;">
-                <i class="fas fa-dice mr-2"></i>${tableName}
-            </h4>
-            <div class="text-gray-200">${this.markdownToHtml(result)}</div>
+            <h3 class="text-xl font-bold mb-4" style="color: #940000;">${eventName}</h3>
+            <div class="prose prose-sm max-w-none">
+                ${this.markdownToHtml(eventText)}
+            </div>
         `;
 
-        // Afficher le bouton "Insérer dans le Journal"
-        insertButtonContainer.innerHTML = `
-            <button id="insert-random-result-to-journal" class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors">
-                <i class="fas fa-journal-whills mr-2"></i>Insérer dans le Journal
-            </button>
-        `;
-
-        // Réattacher l'écouteur d'événement au nouveau bouton
-        // Assurez-vous que l'ID est correct et qu'il est ajouté avant d'attacher l'événement
-        const newInsertButton = document.getElementById('insert-random-result-to-journal');
-        if (newInsertButton) {
-            newInsertButton.addEventListener('click', () => this.insertRandomResultToJournal());
-        } else {
-            console.error('Erreur: Bouton "Insérer dans le Journal" non trouvé après création.');
-        }
-
+        // Afficher la modale
         modal.classList.remove('hidden');
+        console.log(`✅ [DEBUG] Modale affichée`);
     }
 
     closeRandomRollResult() {
@@ -2072,7 +2069,7 @@ class SettingsManager {
                 window.renderRegions();
             }
 
-            // Marquer comme non sauvegardé pour afficher l'icône cloud
+            // Marquer comme non sauvegardé
             if (typeof window.markAsUnsaved === 'function') {
                 window.markAsUnsaved();
             }
