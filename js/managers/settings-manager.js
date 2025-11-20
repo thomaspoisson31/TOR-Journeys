@@ -1794,7 +1794,11 @@ class SettingsManager {
 
             // Extraire le champ "Résultat" du texte pour l'utiliser comme titre
             let eventTitle = this.currentRandomResult.title;
-            const resultMatch = this.currentRandomResult.text.match(/Résultat:\s*([^\n<]+)/);
+            
+            // Chercher le champ "Résultat:" dans le texte HTML ou texte brut
+            const resultMatch = this.currentRandomResult.text.match(/Résultat[:\s]*<\/span>\s*<span[^>]*>([^<]+)<\/span>/i) ||
+                               this.currentRandomResult.text.match(/Résultat[:\s]*([^\n<]+)/i);
+            
             if (resultMatch && resultMatch[1]) {
                 eventTitle = resultMatch[1].trim();
             }
