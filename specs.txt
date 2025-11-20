@@ -147,6 +147,18 @@ CONVENTIONS DE CODAGE JAVASCRIPT
    - Toujours gérer les erreurs avec try/catch dans les fonctions async
    - Préférer async/await à .then() pour la lisibilité
 
+9. ÉCHAPPEMENT DES CARACTÈRES SPÉCIAUX DANS LES ATTRIBUTS HTML:
+   - TOUJOURS échapper les apostrophes (') dans les noms affichés dans les attributs onclick
+   - Pattern obligatoire: `const escapedName = name.replace(/'/g, "\\'");`
+   - Applicable aux lieux, régions, personnages avec apostrophes (ex: "L'Ultime Redoute")
+   - Exemple d'utilisation:
+     ```javascript
+     const escapedName = location.name.replace(/'/g, "\\'");
+     const html = `<i onclick="window.manager.action('${escapedName}')"></i>`;
+     ```
+   - Prévention: évite les erreurs JavaScript causées par des apostrophes non échappées
+   - Contexte: événements onclick inline, data-attributes, template strings dans HTML
+
 VERSIONING
 ----------
 
@@ -676,7 +688,16 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Correction détection lieux/régions à proximité du tracé (v1.3.7)
+1. Correction erreur JavaScript avec apostrophes (v1.3.11)
+   - Fix erreur lors du clic sur "Explorer le lieu" pour des noms avec apostrophes
+   - Problème: onclick="explorePlace('L'Ultime...')" générait une SyntaxError
+   - Solution: Échappement systématique des apostrophes via .replace(/'/g, "\\'")
+   - Application: Noms de lieux et régions dans la modale de position
+   - Impact: Support complet des caractères spéciaux dans les noms
+   - Fichiers concernés: position-manager.js (lignes ~447 et ~465)
+   - Principe ajouté dans CONVENTIONS DE CODAGE JAVASCRIPT (point 9)
+
+2. Correction détection lieux/régions à proximité du tracé (v1.3.7)
    - Fix détection des lieux et régions lors du tracé d'un voyage
    - Problème: dataManager.locationsData/regionsData non synchronisés avec window.locationsData/regionsData
    - Cause: PathManager utilisait des données obsolètes après chargement cloud
@@ -1094,7 +1115,17 @@ SUCCÈS TECHNIQUES CONFIRMÉS
 PROBLÈMES RÉSOLUS
 -----------------
 
-1. Fermeture de l'overlay plein écran des images (v1.3.9):
+1. Erreur JavaScript avec apostrophes dans les noms (v1.3.11):
+   - Problème: Clic sur "Explorer le lieu" pour "L'Ultime Redoute des Nains" générait une erreur JavaScript
+   - Cause: Apostrophe dans le nom cassait l'attribut onclick (chaîne prématurément fermée)
+   - Exemple d'erreur: onclick="explorePlace('L'Ultime...')" → syntaxe invalide
+   - Impact: Impossible d'explorer les lieux/régions avec apostrophes dans le nom
+   - Solution: Échappement systématique via .replace(/'/g, "\\'") avant insertion dans HTML
+   - Bénéfices: Tous les caractères spéciaux supportés dans les noms
+   - Fichiers concernés: position-manager.js (updateNearbyLocationsAndRegions)
+   - Principe général: Toujours échapper les apostrophes pour attributs onclick inline
+
+2. Fermeture de l'overlay plein écran des images (v1.3.9):
    - Problème: Impossible de fermer l'overlay après avoir activé le zoom/pan avec clic droit
    - Cause: Event listeners mal configurés, clic sur l'image empêchait la fermeture
    - Impact: Utilisateur bloqué dans la visualisation plein écran, surtout sur mobile
