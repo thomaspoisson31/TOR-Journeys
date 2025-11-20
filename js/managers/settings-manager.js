@@ -1028,7 +1028,7 @@ class SettingsManager {
         }
 
         const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu).
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
         Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
 
         try {
@@ -1322,7 +1322,7 @@ class SettingsManager {
         }
     }
 
-    async handleSettingsRandomTableUpload(event) {
+    handleSettingsRandomTableUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -1778,54 +1778,83 @@ class SettingsManager {
     }
 
     insertRandomResultToJournal() {
-        if (!this.currentRandomResult || !window.journalManager) {
-            console.error('❌ Pas de résultat à insérer ou JournalManager non disponible');
+        if (!this.currentRandomResult) {
+            console.warn("⚠️ Aucun résultat de tirage disponible");
+            return;
+        }
+
+        // Récupérer le gestionnaire de journal
+        if (!window.journalManager) {
+            console.error("❌ JournalManager non disponible");
+            alert("Erreur : le gestionnaire de journal n'est pas disponible.");
             return;
         }
 
         // Obtenir la date actuelle du calendrier
-        let currentDate = 'Date inconnue';
-        if (window.calendarManager && window.calendarManager.currentCalendarDate) {
-            const calDate = window.calendarManager.currentCalendarDate;
-            currentDate = `${calDate.day} ${calDate.month}`;
+        const currentDate = window.calendarManager?.getCurrentDateString() || new Date().toLocaleDateString('fr-FR');
+
+        // Construire le titre
+        const title = this.currentRandomResult.tableName || "Événement aléatoire";
+
+        // Construire le texte (rendu Markdown du résultat)
+        let text = '';
+        if (typeof this.currentRandomResult.result === 'string') {
+            text = this.currentRandomResult.result;
+        } else if (typeof this.currentRandomResult.result === 'object') {
+            text = Object.entries(this.currentRandomResult.result)
+                .map(([key, value]) => `**${key}** : ${value}`)
+                .join('\n\n');
         }
 
-        // Créer une nouvelle entrée de journal (format exploration avec 0 jours)
-        const newEntry = {
-            title: this.currentRandomResult.tableName,
-            totalDays: 0,
+        // Créer l'entrée de journal
+        const journalEntry = {
+            title: title,
+            totalDays: 0, // Durée = 0 jours
             generatedAt: new Date().toISOString(),
-            journeyType: 'random_event', // Type spécial pour les événements aléatoires
-            days: [{
-                dayNumber: 1,
-                calendarDate: currentDate,
-                weatherSymbol: null,
-                discoveries: [],
-                description: this.currentRandomResult.result,
-                eventResult: null
-            }]
+            journeyType: 'random_event', // Marqueur pour identifier ce type d'entrée
+            days: [
+                {
+                    dayNumber: 1,
+                    calendarDate: currentDate,
+                    description: text,
+                    eventResult: null,
+                    weatherSymbol: null,
+                    weatherText: null,
+                    discoveries: []
+                }
+            ]
         };
 
         // Ajouter au journal
-        window.journalManager.journal.push(newEntry);
+        window.journalManager.journal.push(journalEntry);
+
+        // Sauvegarder
         localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
 
-        // Marquer comme non sauvegardé et synchroniser
+        // Marquer comme non sauvegardé pour sync cloud
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
+
+        // Synchroniser avec le cloud si authentifié
         if (typeof window.scheduleAutoSync === 'function') {
             window.scheduleAutoSync();
         }
 
-        console.log('✅ Événement aléatoire inséré dans le journal');
+        console.log("✅ Événement aléatoire ajouté au journal");
 
-        // Notification de succès
+        // Afficher une notification
         const notification = document.createElement('div');
         notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
-        notification.innerHTML = '<i class="fas fa-check mr-2"></i>Événement ajouté au journal';
+        notification.innerHTML = `
+            <i class="fas fa-check mr-2"></i>
+            Événement ajouté au journal
+        `;
         document.body.appendChild(notification);
-        setTimeout(() => notification.remove(), 2000);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 2000);
 
         // Fermer la modale
         this.closeRandomRollResult();
