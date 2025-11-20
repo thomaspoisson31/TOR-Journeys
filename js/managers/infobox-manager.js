@@ -437,11 +437,14 @@ class InfoBoxManager {
             if (evenements.length > 0) {
                 const tableHTML = `
                     <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
+                        <!-- Titre de la table -->
+                        <h3 class="text-xl font-bold mb-4 text-center" style="color: #940000;">${item.name}</h3>
+                        
                         <!-- Bouton de tirage -->
                         <div class="mb-4 flex justify-center">
                             <button onclick="window.infoBoxManager.rollRandomEvent()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors flex items-center space-x-2">
                                 <i class="fas fa-dice"></i>
-                                <span>Tirer un événement</span>
+                                <span>Tirage aléatoire</span>
                             </button>
                         </div>
 
@@ -451,34 +454,6 @@ class InfoBoxManager {
                                 <i class="fas fa-dice mr-2"></i>Événement de voyage
                             </h4>
                             <div id="random-event-content"></div>
-                        </div>
-
-                        <div class="mb-2">
-                            <button onclick="window.infoBoxManager.toggleEvenementsTable()" class="flex items-center text-gray-300 hover:text-white transition-colors">
-                                <i id="evenements-toggle-icon" class="fas fa-chevron-right mr-2"></i>
-                                <h4 class="text-md font-semibold">Table complète des événements</h4>
-                            </button>
-                        </div>
-
-                        <div id="evenements-table-container" class="hidden">
-                            <table class="w-full border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-800">
-                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Dé du destin</th>
-                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Résultat</th>
-                                        <th class="border border-gray-600 px-3 py-2 text-left text-sm font-semibold">Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${evenements.map((evt, index) => `
-                                        <tr class="${index % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'}">
-                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Dé du destin'] || ''}</td>
-                                            <td class="border border-gray-600 px-3 py-2 text-sm font-medium">${evt['Résultat'] || ''}</td>
-                                            <td class="border border-gray-600 px-3 py-2 text-sm">${evt['Description'] || ''}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 `;
