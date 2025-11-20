@@ -623,13 +623,13 @@ class InfoBoxManager {
             const tableName = item.Evenements_Voyage_TableName || '';
 
             editForm.innerHTML = `
-                ${tableName ? `<h3 class="text-xl font-bold mb-4 text-center" style="color: #940000;">${tableName}</h3>` : ''}
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-2 text-white">
                         Importer un fichier JSON d'événements :
                     </label>
                     <input type="file" id="evenements-file-input" accept=".json" class="mb-2 block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
                     <div class="text-xs text-gray-400 mb-3">Format attendu : tableau JSON avec clés "Dé du destin", "Résultat", "Description"</div>
+                    ${tableName ? `<h3 class="text-xl font-bold mb-2 text-center" style="color: #940000;">${tableName}</h3>` : ''}
                     ${currentEvenements.length > 0 ? `<div class="text-sm text-green-400 mb-2">✓ ${currentEvenements.length} événement(s) chargé(s)</div>` : ''}
                 </div>
                 <div id="evenements-preview" class="mb-4 max-h-60 overflow-y-auto"></div>
