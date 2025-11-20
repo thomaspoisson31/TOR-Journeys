@@ -435,10 +435,13 @@ class InfoBoxManager {
             const evenements = item.Evenements_Voyage || [];
 
             if (evenements.length > 0) {
+                // Récupérer le nom de la table (si disponible)
+                const tableName = item.Evenements_Voyage_TableName || 'Table aléatoire';
+                
                 const tableHTML = `
                     <div class="p-4 h-full overflow-y-auto" style="font-family: 'Merriweather', serif;">
                         <!-- Titre de la table -->
-                        <h3 class="text-xl font-bold mb-4 text-center" style="color: #940000;">${item.name}</h3>
+                        <h3 class="text-xl font-bold mb-4 text-center" style="color: #940000;">${tableName}</h3>
                         
                         <!-- Bouton de tirage -->
                         <div class="mb-4 flex justify-center">
@@ -1181,6 +1184,12 @@ class InfoBoxManager {
             this.currentItem.Evenements_Voyage = this.tempEvenements;
             this.tempEvenements = undefined;
         }
+        
+        // Nom de la table aléatoire
+        if (this.tempEvenementsTableName !== undefined) {
+            this.currentItem.Evenements_Voyage_TableName = this.tempEvenementsTableName;
+            this.tempEvenementsTableName = undefined;
+        }
 
         // Personnages associés (pour lieux et régions uniquement)
         if (this.currentType === 'location' || this.currentType === 'region') {
@@ -1619,11 +1628,14 @@ class InfoBoxManager {
 
                 // Stocker temporairement les événements
                 this.tempEvenements = jsonData;
+                
+                // Stocker le nom du fichier (sans l'extension .json)
+                this.tempEvenementsTableName = file.name.replace(/\.json$/i, '');
 
                 // Afficher l'aperçu
                 this.updateEvenementsPreview(jsonData);
 
-                console.log(`✅ ${jsonData.length} événement(s) importé(s)`);
+                console.log(`✅ ${jsonData.length} événement(s) importé(s) depuis "${this.tempEvenementsTableName}"`);
 
             } catch (error) {
                 console.error('❌ Erreur lors de l\'import:', error);
