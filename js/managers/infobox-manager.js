@@ -2817,11 +2817,10 @@ class InfoBoxManager {
         this.currentEntity.associatedRegions = associatedRegions;
 
         // Mettre à jour bidirectionnelle : mettre à jour les lieux et régions également
-        if (window.locationsManager && window.locationsManager.locationsData && window.locationsManager.locationsData.locations) {
+        if (window.dataManager && window.dataManager.locationsData && window.dataManager.locationsData.locations) {
             const characterId = String(this.currentEntity.id);
-            window.locationsManager.locationsData.locations.forEach(location => {
+            window.dataManager.locationsData.locations.forEach(location => {
                 const isAssociated = associatedLocations.includes(String(location.id));
-                const characterManager = window.charactersManager; // Ensure charactersManager is available
 
                 if (!location.associatedCharacters) {
                     location.associatedCharacters = [];
@@ -2837,14 +2836,16 @@ class InfoBoxManager {
                     console.log(`❌ Lieu ${location.name} dissocié du personnage ${this.currentEntity.name}`);
                 }
             });
-            window.locationsManager.saveLocationsToLocal();
+            
+            // Synchroniser avec window.locationsData
+            window.locationsData = window.dataManager.locationsData;
+            window.dataManager.saveLocationsToLocal();
         }
 
-        if (window.regionsManager && window.regionsManager.regionsData && window.regionsManager.regionsData.regions) {
+        if (window.dataManager && window.dataManager.regionsData && window.dataManager.regionsData.regions) {
             const characterId = String(this.currentEntity.id);
-            window.regionsManager.regionsData.regions.forEach(region => {
+            window.dataManager.regionsData.regions.forEach(region => {
                 const isAssociated = associatedRegions.includes(String(region.id));
-                 const characterManager = window.charactersManager; // Ensure charactersManager is available
 
                 if (!region.associatedCharacters) {
                     region.associatedCharacters = [];
@@ -2860,9 +2861,11 @@ class InfoBoxManager {
                     console.log(`❌ Région ${region.name} dissociée du personnage ${this.currentEntity.name}`);
                 }
             });
-             window.regionsManager.saveRegionsToLocal();
+            
+            // Synchroniser avec window.regionsData
+            window.regionsData = window.dataManager.regionsData;
+            window.dataManager.saveRegionsToLocal();
         }
-
 
         // Sauvegarder le personnage lui-même
         if (window.charactersManager) {
