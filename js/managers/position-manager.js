@@ -633,7 +633,8 @@ class PositionManager {
                 .sort((a, b) => a.distance - b.distance)
                 .map(loc => {
                     const bgColor = colorMap[loc.color] || colorMap.gray;
-                    const exploreIcon = this.adventureMode ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${loc.name}', 'location')" title="Explorer"></i>` : '';
+                    const escapedName = loc.name.replace(/'/g, "\\'");
+                    const exploreIcon = this.adventureMode ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${escapedName}', 'location')" title="Explorer"></i>` : '';
                     return `<div class="text-xs px-2 py-1 rounded flex items-center justify-between" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
                         <span class="font-medium text-white">${loc.name}</span>
                         ${exploreIcon}
@@ -650,7 +651,8 @@ class PositionManager {
             currentRegionsList.innerHTML = currentRegions
                 .map(reg => {
                     const bgColor = colorMap[reg.color] || colorMap.gray;
-                    const exploreIcon = this.adventureMode ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${reg.name}', 'region')" title="Explorer"></i>` : '';
+                    const escapedName = reg.name.replace(/'/g, "\\'");
+                    const exploreIcon = this.adventureMode ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${escapedName}', 'region')" title="Explorer"></i>` : '';
                     return `<div class="text-xs px-2 py-1 rounded flex items-center justify-between" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
                         <span class="font-medium text-white">${reg.name}</span>
                         ${exploreIcon}
