@@ -1498,6 +1498,20 @@ class InfoBoxManager {
 
         this.currentItem.images.push(newImage);
 
+        // Vider le champ
+        const urlField = document.getElementById('new-image-url');
+        if (urlField) {
+            urlField.value = '';
+        }
+
+        // Re-render la galerie d'images
+        const imagesGallery = document.getElementById('edit-images-gallery');
+        if (imagesGallery) {
+            imagesGallery.innerHTML = this.renderEditImagesGallery();
+        }
+
+        console.log("🖼️ Image added from URL:", this.currentItem.images[this.currentItem.images.length - 1].url);
+    }
 
     // === MÉTHODES POUR LES TABLES ALÉATOIRES ===
     handleTablesFileImport(event) {
