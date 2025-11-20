@@ -2836,6 +2836,17 @@ class InfoBoxManager {
                     console.log(`❌ Lieu ${location.name} dissocié du personnage ${this.currentEntity.name}`);
                 }
             });
+
+                const isCurrentlyAssociated = location.associatedCharacters.includes(characterId);
+
+                if (isAssociated && !isCurrentlyAssociated) {
+                    location.associatedCharacters.push(characterId);
+                    console.log(`✅ Lieu ${location.name} associé au personnage ${this.currentEntity.name}`);
+                } else if (!isAssociated && isCurrentlyAssociated) {
+                    location.associatedCharacters = location.associatedCharacters.filter(charId => String(charId) !== characterId);
+                    console.log(`❌ Lieu ${location.name} dissocié du personnage ${this.currentEntity.name}`);
+                }
+            });
             
             // Synchroniser avec window.locationsData
             window.locationsData = window.dataManager.locationsData;
@@ -2850,6 +2861,17 @@ class InfoBoxManager {
                 if (!region.associatedCharacters) {
                     region.associatedCharacters = [];
                 }
+
+                const isCurrentlyAssociated = region.associatedCharacters.includes(characterId);
+
+                if (isAssociated && !isCurrentlyAssociated) {
+                    region.associatedCharacters.push(characterId);
+                    console.log(`✅ Région ${region.name} associée au personnage ${this.currentEntity.name}`);
+                } else if (!isAssociated && isCurrentlyAssociated) {
+                    region.associatedCharacters = region.associatedCharacters.filter(charId => String(charId) !== characterId);
+                    console.log(`❌ Région ${region.name} dissociée du personnage ${this.currentEntity.name}`);
+                }
+            });
 
                 const isCurrentlyAssociated = region.associatedCharacters.includes(characterId);
 
