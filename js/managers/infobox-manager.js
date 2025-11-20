@@ -620,8 +620,10 @@ class InfoBoxManager {
             evenementsTab.appendChild(editForm);
 
             const currentEvenements = item.Evenements_Voyage || [];
+            const tableName = item.Evenements_Voyage_TableName || '';
 
             editForm.innerHTML = `
+                ${tableName ? `<h3 class="text-xl font-bold mb-4 text-center" style="color: #940000;">${tableName}</h3>` : ''}
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-2 text-white">
                         Importer un fichier JSON d'événements :
