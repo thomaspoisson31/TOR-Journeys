@@ -2845,6 +2845,112 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             }
         }, 100);
     }
+
+    handleDayRandomEvent(dayIndex, tableIndex, discoveryName, discoveryType) {
+        console.log(`🎲 [handleDayRandomEvent] DÉBUT - dayIndex=${dayIndex}, tableIndex=${tableIndex}`);
+        console.log(`🎲 [handleDayRandomEvent] discoveryName="${discoveryName}", discoveryType="${discoveryType}"`);
+
+        const dayData = this.dayByDayData[dayIndex];
+        if (!dayData) {
+            console.error(`❌ Jour ${dayIndex} non trouvé`);
+            return;
+        }
+
+        console.log(`🎲 [handleDayRandomEvent] dayData trouvé, ${dayData.discoveries.length} découverte(s)`);
+
+        // Trouver la découverte spécifique
+        const discovery = dayData.discoveries.find(d => d.name === discoveryName && d.type === discoveryType);
+        if (!discovery) {
+            console.error(`❌ Découverte non trouvée: ${discoveryName} (${discoveryType})`);
+            return;
+        }
+
+        console.log(`🎲 [handleDayRandomEvent] Découverte trouvée:`, discovery.name);
+
+        // Récupérer les données complètes de la découverte
+        let fullData = null;
+        if (discoveryType === 'location' && typeof locationsData !== 'undefined') {
+            fullData = locationsData.locations.find(loc => loc.name === discoveryName);
+        } else if (discoveryType === 'region' && typeof regionsData !== 'undefined') {
+            fullData = regionsData.regions.find(reg => reg.name === discoveryName);
+        }
+
+        if (!fullData || !fullData.RandomTables || !Array.isArray(fullData.RandomTables)) {
+            console.error(`❌ Pas de tables aléatoires pour ${discoveryName}`);
+            return;
+        }
+
+        console.log(`🎲 [handleDayRandomEvent] ${fullData.RandomTables.length} table(s) disponible(s) pour ${discoveryName}`);
+        console.log(`🎲 [handleDayRandomEvent] Noms des tables:`, fullData.RandomTables.map(t => t.name || 'Sans nom'));
+        console.log(`🎲 [handleDayRandomEvent] tableIndex reçu: ${tableIndex} (type: ${typeof tableIndex})`);
+
+        // IMPORTANT : convertir tableIndex en nombre si c'est une chaîne
+        const numericTableIndex = parseInt(tableIndex, 10);
+        console.log(`🎲 [handleDayRandomEvent] tableIndex converti: ${numericTableIndex}`);
+
+        if (isNaN(numericTableIndex) || numericTableIndex < 0 || numericTableIndex >= fullData.RandomTables.length) {
+            console.error(`❌ Index de table invalide: ${tableIndex} (converti: ${numericTableIndex}, max: ${fullData.RandomTables.length - 1})`);
+            return;
+        }
+
+        const table = fullData.RandomTables[numericTableIndex];
+        console.log(`🎲 [handleDayRandomEvent] Table sélectionnée [${numericTableIndex}]: "${table.name || 'Sans nom'}"`);
+
+        // Effectuer le tirage
+        this.rollOnTable(table);
+
+        console.log(`🎲 [handleDayRandomEvent] FIN`);
+    }
+
+    rollOnTable(table) {
+        // Vérifier si la table et ses entrées existent
+        if (!table || !table.entries || table.entries.length === 0) {
+            console.error("❌ La table fournie est invalide ou ne contient pas d'entrées.");
+            alert("Erreur lors du tirage au sort : la table est invalide.");
+            return;
+        }
+
+        // Choisir une entrée aléatoire
+        const randomEntry = table.entries[Math.floor(Math.random() * table.entries.length)];
+        console.log(`🎲 [rollOnTable] Entrée choisie:`, randomEntry);
+
+        // Construire le texte de l'événement aléatoire
+        const eventText = `
+            <div class="mb-2"><strong>Table :</strong> ${table.name || 'Table sans nom'}</div>
+            <div class="mb-2"><strong>Dé du destin :</strong> ${randomEntry['Dé du destin'] || randomEntry.dice || '-'}</div>
+            <div class="mb-2"><strong>Résultat :</strong> ${randomEntry['Résultat'] || randomEntry.result || '-'}</div>
+            ${randomEntry['Description'] || randomEntry.description ? `<div><strong>Description :</strong> ${randomEntry['Description'] || randomEntry.description}</div>` : ''}
+        `;
+
+        // Trouver le jour actuel
+        const dayIndex = this.currentDayIndex; // Utiliser l'index du jour actuellement affiché
+        const dayData = this.dayByDayData[dayIndex];
+
+        if (!dayData) {
+            console.error(`❌ Impossible de trouver les données du jour actuel (index: ${dayIndex})`);
+            return;
+        }
+
+        const dayNumber = dayData.day; // Utiliser le numéro de jour réel
+
+        // Stocker l'événement pour ce jour
+        this.randomEvents[dayNumber] = eventText;
+        console.log(`✅ Événement aléatoire généré pour le jour ${dayNumber}:`, this.randomEvents[dayNumber]);
+
+        // Sauvegarder les événements pour ce voyage
+        this.saveRandomEventsForJourney();
+
+        // Rafraîchir l'affichage pour montrer le nouvel événement
+        this.renderAllDays();
+
+        // Faire défiler jusqu'à la carte du jour concerné
+        setTimeout(() => {
+            const dayCard = document.querySelector(`.day-card[data-day-index="${dayIndex}"]`);
+            if (dayCard) {
+                dayCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }, 100);
+    }
 }
 
 
