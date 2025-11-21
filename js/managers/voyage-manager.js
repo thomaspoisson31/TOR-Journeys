@@ -802,8 +802,10 @@ class VoyageManager {
 
                         // Fermer le dropdown en cliquant sur l'overlay
                         overlay.addEventListener('click', (overlayEvent) => {
-                            // Ne pas fermer si on clique sur un item de table
-                            if (overlayEvent.target.closest('.day-random-table-item')) {
+                            // Ne pas fermer si on clique sur un item de table OU sur le dropdown lui-même
+                            if (overlayEvent.target.closest('.day-random-table-item') || 
+                                overlayEvent.target.closest('.day-random-tables-dropdown')) {
+                                console.log(`🎲 [OVERLAY] Clic sur item ou dropdown - pas de fermeture`);
                                 return;
                             }
                             
