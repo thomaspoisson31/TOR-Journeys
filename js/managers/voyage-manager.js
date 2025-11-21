@@ -717,11 +717,28 @@ class VoyageManager {
         // Setup event listeners pour les boutons de menu de tables aléatoires et les items de table
         // Event delegation pour les items de table aléatoire (PRIORITÉ MAXIMALE)
         voyageDaysContent.addEventListener('click', (e) => {
+            console.log(`🎲 [EVENT CAPTURE] Clic capturé sur:`, {
+                target: e.target.className,
+                currentTarget: e.currentTarget.id,
+                eventPhase: e.eventPhase, // 1=CAPTURING, 2=AT_TARGET, 3=BUBBLING
+                bubbles: e.bubbles,
+                cancelable: e.cancelable,
+                defaultPrevented: e.defaultPrevented,
+                propagationStopped: e.cancelBubble
+            });
+
             const tableItem = e.target.closest('.day-random-table-item');
+            console.log(`🎲 [EVENT CAPTURE] tableItem trouvé:`, !!tableItem);
+            
             if (tableItem) {
+                console.log(`🎲 [CLICK ITEM] ========== DÉBUT TRAITEMENT ITEM ==========`);
+                console.log(`🎲 [CLICK ITEM] Event phase avant stopPropagation:`, e.eventPhase);
+                
                 e.stopPropagation();
                 e.preventDefault();
                 e.stopImmediatePropagation(); // Empêcher TOUS les autres handlers
+
+                console.log(`🎲 [CLICK ITEM] stopPropagation/preventDefault/stopImmediatePropagation appelés`);
 
                 const dayIndex = parseInt(tableItem.dataset.dayIndex);
                 const tableIndex = parseInt(tableItem.dataset.tableIndex);
@@ -747,6 +764,7 @@ class VoyageManager {
 
                 console.log(`🎲 [CLICK ITEM] Appel de rollRandomEventForDay avec dayIndex=${dayIndex}, tableIndex=${tableIndex}`);
                 this.rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType);
+                console.log(`🎲 [CLICK ITEM] ========== FIN TRAITEMENT ITEM ==========`);
                 return;
             }
         }, true); // Utiliser la capture pour intercepter AVANT les autres handlers
@@ -802,16 +820,27 @@ class VoyageManager {
 
                         // Fermer le dropdown en cliquant sur l'overlay
                         overlay.addEventListener('click', (overlayEvent) => {
+                            console.log(`🎲 [OVERLAY] ========== ÉVÉNEMENT OVERLAY ==========`);
+                            console.log(`🎲 [OVERLAY] Event phase:`, overlayEvent.eventPhase);
+                            console.log(`🎲 [OVERLAY] Target:`, overlayEvent.target.className || overlayEvent.target.id);
+                            console.log(`🎲 [OVERLAY] CurrentTarget:`, overlayEvent.currentTarget.id);
+                            console.log(`🎲 [OVERLAY] Target === overlay:`, overlayEvent.target === overlay);
+                            console.log(`🎲 [OVERLAY] Closest .day-random-table-item:`, !!overlayEvent.target.closest('.day-random-table-item'));
+                            console.log(`🎲 [OVERLAY] defaultPrevented:`, overlayEvent.defaultPrevented);
+                            console.log(`🎲 [OVERLAY] cancelBubble:`, overlayEvent.cancelBubble);
+                            
                             // Ne réagir QUE si on clique directement sur l'overlay (pas sur ses enfants)
                             if (overlayEvent.target !== overlay) {
-                                console.log(`🎲 [OVERLAY] Clic sur un élément enfant - ignoré`);
+                                console.log(`🎲 [OVERLAY] ❌ Clic sur un élément enfant - IGNORÉ`);
+                                console.log(`🎲 [OVERLAY] ========== FIN (IGNORÉ) ==========`);
                                 return;
                             }
                             
                             overlayEvent.stopPropagation();
-                            console.log(`🎲 [OVERLAY] Clic sur overlay - fermeture du dropdown`);
+                            console.log(`🎲 [OVERLAY] ✅ Clic sur overlay - fermeture du dropdown`);
                             dropdown.classList.add('hidden');
                             overlay.remove();
+                            console.log(`🎲 [OVERLAY] ========== FIN (FERMÉ) ==========`);
                         });
                     }
                 }
