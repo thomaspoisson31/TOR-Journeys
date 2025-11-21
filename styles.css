@@ -1748,3 +1748,18 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
+
+/* Dropdown des tables aléatoires - z-index élevé pour apparaître au-dessus */
+.day-random-tables-dropdown {
+    z-index: 100 !important;
+}
+
+/* Assurer que le conteneur parent ne cache pas le dropdown */
+.day-card {
+    position: relative;
+}
+
+.day-header {
+    position: relative;
+    z-index: 1;
+}
