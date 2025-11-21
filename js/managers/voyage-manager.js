@@ -969,10 +969,10 @@ class VoyageManager {
                 let hasRandomEvents = false;
                 if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
                     const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                    hasRandomEvents = location && location.Evenements_Voyage && Array.isArray(location.Evenements_Voyage) && location.Evenements_Voyage.length > 0;
+                    hasRandomEvents = location && location.RandomTables && Array.isArray(location.RandomTables) && location.RandomTables.length > 0;
                 } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
                     const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                    hasRandomEvents = region && region.Evenements_Voyage && Array.isArray(region.Evenements_Voyage) && region.Evenements_Voyage.length > 0;
+                    hasRandomEvents = region && region.RandomTables && Array.isArray(region.RandomTables) && region.RandomTables.length > 0;
                 }
 
                 // Obtenir l'image pour la miniature
@@ -1011,7 +1011,7 @@ class VoyageManager {
     updateJourneyHeaderForCurrentPath() {
         // Cette méthode met à jour le titre et la durée de la modale
         // pour le voyage EN COURS (non sauvegardé)
-        
+
         if (!window.journeyPath || window.journeyPath.length === 0) {
             return;
         }
@@ -1341,12 +1341,12 @@ class VoyageManager {
                 const dayIndex = parseInt(newBtn.dataset.dayIndex);
                 const discoveryName = newBtn.dataset.discoveryName;
                 const discoveryType = newBtn.dataset.discoveryType;
-                
+
                 console.log(`🎲 Index du jour: ${dayIndex}, Découverte: ${discoveryName} (${discoveryType})`);
 
                 if (this.dayByDayData && this.dayByDayData[dayIndex]) {
                     const dayData = this.dayByDayData[dayIndex];
-                    
+
                     // Trouver la découverte spécifique
                     const specificDiscovery = dayData.discoveries.find(d => 
                         d.name === discoveryName && d.type === discoveryType
@@ -2377,6 +2377,16 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
+
+        // Synchroniser avec le cloud
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+
+        // Rafraîchir le JournalManager si disponible
+        if (window.journalManager) {
+            window.journalManager.loadJournal();
+        }
     }
 
     displayJourneyDescription(description, isFromMultipleGeneration = false) {
@@ -2713,10 +2723,10 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         return dayData.discoveries.some(discovery => {
             if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
                 const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                return location && location.Evenements_Voyage && Array.isArray(location.Evenements_Voyage) && location.Evenements_Voyage.length > 0;
+                return location && location.RandomTables && Array.isArray(location.RandomTables) && location.RandomTables.length > 0;
             } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
                 const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                return region && region.Evenements_Voyage && Array.isArray(region.Evenements_Voyage) && region.Evenements_Voyage.length > 0;
+                return region && region.RandomTables && Array.isArray(region.RandomTables) && region.RandomTables.length > 0;
             }
             return false;
         });
@@ -2753,52 +2763,73 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     }
 
     triggerRandomEvent(dayData) {
-        // Filter discoveries that have random events in the original data
+        console.log('🎲 triggerRandomEvent appelé avec dayData:', dayData);
+
+        // Filter discoveries that have random tables in the original data
         const possibleEventLocations = dayData.discoveries.filter(discovery => {
             if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
                 const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                return location && location.Evenements_Voyage && location.Evenements_Voyage.length > 0;
+                const hasTables = location && location.RandomTables && Array.isArray(location.RandomTables) && location.RandomTables.length > 0;
+                console.log(`🔍 Lieu "${discovery.name}" - a des tables:`, hasTables);
+                return hasTables;
             } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
                 const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                return region && region.Evenements_Voyage && region.Evenements_Voyage.length > 0;
+                const hasTables = region && region.RandomTables && Array.isArray(region.RandomTables) && region.RandomTables.length > 0;
+                console.log(`🔍 Région "${discovery.name}" - a des tables:`, hasTables);
+                return hasTables;
             }
             return false;
         });
 
         if (possibleEventLocations.length === 0) {
-            console.warn("Aucun événement aléatoire disponible pour ce jour.");
-            alert("Aucun événement aléatoire disponible pour ce jour.");
+            console.warn("Aucune table aléatoire disponible pour ce jour.");
+            alert("Aucune table aléatoire disponible pour ce jour.");
             return;
         }
 
-        // Choose a random location/region that has events
+        // Choose a random location/region that has tables
         const selectedDiscovery = possibleEventLocations[Math.floor(Math.random() * possibleEventLocations.length)];
+        console.log(`🎯 Découverte sélectionnée:`, selectedDiscovery);
 
-        // Get the actual location/region data with events
-        let eventsList = [];
+        // Get the actual location/region data with tables
+        let randomTables = [];
         if (selectedDiscovery.type === 'location' && typeof locationsData !== 'undefined') {
             const location = locationsData.locations.find(loc => loc.name === selectedDiscovery.name);
-            eventsList = location.Evenements_Voyage || [];
+            randomTables = location.RandomTables || [];
         } else if (selectedDiscovery.type === 'region' && typeof regionsData !== 'undefined') {
             const region = regionsData.regions.find(reg => reg.name === selectedDiscovery.name);
-            eventsList = region.Evenements_Voyage || [];
+            randomTables = region.RandomTables || [];
         }
 
-        // Choose a random event from the selected location's events
-        const randomEvent = eventsList[Math.floor(Math.random() * eventsList.length)];
+        console.log(`📋 Nombre de tables disponibles:`, randomTables.length);
+
+        // Choose a random table
+        const selectedTable = randomTables[Math.floor(Math.random() * randomTables.length)];
+        console.log(`🎲 Table sélectionnée:`, selectedTable);
+
+        // Choose a random entry from the table
+        if (!selectedTable.entries || selectedTable.entries.length === 0) {
+            console.warn("La table sélectionnée n'a pas d'entrées.");
+            alert("La table sélectionnée n'a pas d'entrées.");
+            return;
+        }
+
+        const randomEntry = selectedTable.entries[Math.floor(Math.random() * selectedTable.entries.length)];
+        console.log(`📖 Entrée sélectionnée:`, randomEntry);
 
         // Déterminer le numéro du jour concerné
         const dayNumber = dayData.day;
 
-        // Stocker l'événement complet pour ce jour (avec Dé du destin, Résultat et Description)
+        // Stocker l'événement complet pour ce jour
         const eventText = `
-            <div class="mb-2"><strong>Dé du destin :</strong> ${randomEvent['Dé du destin'] || '-'}</div>
-            <div class="mb-2"><strong>Résultat :</strong> ${randomEvent['Résultat'] || '-'}</div>
-            ${randomEvent['Description'] ? `<div><strong>Description :</strong> ${randomEvent['Description']}</div>` : ''}
+            <div class="mb-2"><strong>Table :</strong> ${selectedTable.name || 'Table sans nom'}</div>
+            <div class="mb-2"><strong>Dé du destin :</strong> ${randomEntry['Dé du destin'] || randomEntry.dice || '-'}</div>
+            <div class="mb-2"><strong>Résultat :</strong> ${randomEntry['Résultat'] || randomEntry.result || '-'}</div>
+            ${randomEntry['Description'] || randomEntry.description ? `<div><strong>Description :</strong> ${randomEntry['Description'] || randomEntry.description}</div>` : ''}
         `;
 
         this.randomEvents[dayNumber] = eventText;
-        console.log(`📖 Événement aléatoire généré pour le jour ${dayNumber}:`, this.randomEvents[dayNumber]);
+        console.log(`✅ Événement aléatoire généré pour le jour ${dayNumber}:`, this.randomEvents[dayNumber]);
 
         // Sauvegarder les événements pour ce voyage spécifique
         this.saveRandomEventsForJourney();
@@ -2810,12 +2841,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         setTimeout(() => {
             const dayCard = document.querySelector(`.day-card[data-day-index="${dayNumber - 1}"]`);
             if (dayCard) {
-                dayCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // Ajouter temporairement un effet visuel
-                dayCard.classList.add('ring-2', 'ring-yellow-500');
-                setTimeout(() => {
-                    dayCard.classList.remove('ring-2', 'ring-yellow-500');
-                }, 2000);
+                dayCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }, 100);
     }
