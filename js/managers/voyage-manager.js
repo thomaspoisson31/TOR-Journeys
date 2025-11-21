@@ -624,7 +624,21 @@ class VoyageManager {
             const headerDiscoveries = dayData.discoveries.slice(0, 2);
             const discoveriesHtml = headerDiscoveries.map(discovery => {
                 const name = discovery.name.length > 15 ? discovery.name.substring(0, 12) + '...' : discovery.name;
-                return `<span class="discovery-badge text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" onclick="event.stopPropagation(); window.voyageManager.openDiscoveryFromHeader('${discovery.name}', '${discovery.type}')">${name}</span>`;
+                
+                // Vérifier si ce lieu/région a des tables d'événements aléatoires
+                let hasRandomTables = false;
+                if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
+                    const location = locationsData.locations.find(loc => loc.name === discovery.name);
+                    hasRandomTables = location && location.RandomTables && Array.isArray(location.RandomTables) && location.RandomTables.length > 0;
+                } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
+                    const region = regionsData.regions.find(reg => reg.name === discovery.name);
+                    hasRandomTables = region && region.RandomTables && Array.isArray(region.RandomTables) && region.RandomTables.length > 0;
+                }
+                
+                // Icône de dé si des tables existent
+                const diceIcon = hasRandomTables ? ' <i class="fas fa-dice text-xs" style="color: #940000;" title="Tables d\'événements disponibles"></i>' : '';
+                
+                return `<span class="discovery-badge text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" onclick="event.stopPropagation(); window.voyageManager.openDiscoveryFromHeader('${discovery.name}', '${discovery.type}')">${name}${diceIcon}</span>`;
             }).join('');
 
             // Carte du jour avec en-tête cliquable
@@ -640,11 +654,6 @@ class VoyageManager {
                                 ${discoveriesHtml}
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
-                                ${randomTablesForDay.length > 0 ? randomTablesForDay.map((tableInfo, tableIdx) => `
-                                    <button class="day-random-event-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="${tableInfo.tableName}" data-day-index="${i}" data-table-index="${tableIdx}" data-discovery-name="${tableInfo.discoveryName}" data-discovery-type="${tableInfo.discoveryType}">
-                                        <i class="fas fa-dice text-xs" style="color: white !important;"></i>
-                                    </button>
-                                `).join('') : ''}
                                 <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="${isShortened ? 'Annuler raccourci' : 'Raccourcir (durée 0)'}" data-day-index="${i}">
                                     <i class="fas fa-${isShortened ? 'undo' : 'minus-circle'} text-lg" style="color: white !important;"></i>
                                 </button>
@@ -697,9 +706,6 @@ class VoyageManager {
 
         // Setup event listeners pour les découvertes
         this.setupDiscoveryInteractions();
-
-        // Setup event listeners pour les boutons d'événements aléatoires
-        this.setupDayRandomEventButtons();
 
         // Setup event listeners pour les boutons de prolongation
         this.setupExtendDayButtons();
@@ -1324,50 +1330,7 @@ class VoyageManager {
         });
     }
 
-    setupDayRandomEventButtons() {
-        const dayRandomEventBtns = document.querySelectorAll('.day-random-event-btn');
-        console.log(`🎲 Configuration de ${dayRandomEventBtns.length} boutons d\'événements aléatoires`);
-
-        dayRandomEventBtns.forEach(btn => {
-            // Retirer les anciens listeners
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-
-            newBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🎲 Bouton événement aléatoire du jour cliqué');
-
-                const dayIndex = parseInt(newBtn.dataset.dayIndex);
-                const discoveryName = newBtn.dataset.discoveryName;
-                const discoveryType = newBtn.dataset.discoveryType;
-
-                console.log(`🎲 Index du jour: ${dayIndex}, Découverte: ${discoveryName} (${discoveryType})`);
-
-                if (this.dayByDayData && this.dayByDayData[dayIndex]) {
-                    const dayData = this.dayByDayData[dayIndex];
-
-                    // Trouver la découverte spécifique
-                    const specificDiscovery = dayData.discoveries.find(d => 
-                        d.name === discoveryName && d.type === discoveryType
-                    );
-
-                    if (specificDiscovery) {
-                        // Créer un dayData temporaire avec uniquement cette découverte
-                        const tempDayData = {
-                            ...dayData,
-                            discoveries: [specificDiscovery]
-                        };
-                        this.triggerRandomEvent(tempDayData);
-                    } else {
-                        console.warn(`⚠️ Découverte ${discoveryName} non trouvée`);
-                    }
-                } else {
-                    console.warn(`⚠️ Données du jour ${dayIndex} non disponibles`);
-                }
-            });
-        });
-    }
+    
 
     setupExtendDayButtons() {
         const extendDayBtns = document.querySelectorAll('.extend-day-btn');
