@@ -640,31 +640,15 @@ class VoyageManager {
                                 ${discoveriesHtml}
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
-                                ${randomTablesForDay.length > 0 ? `
-                                    <div class="relative">
-                                        <button class="day-random-tables-menu-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="Événements aléatoires" data-day-index="${i}">
-                                            <i class="fas fa-dice text-xs" style="color: white !important;"></i>
-                                        </button>
-                                        <div data-day-index="${i}" class="day-random-tables-dropdown hidden absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-20">
-                                            <div class="py-1">
-                                                ${randomTablesForDay.map((tableInfo, tableIdx) => `
-                                                    <button class="day-random-table-item block w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-100"
-                                                            data-day-index="${i}"
-                                                            data-table-index="${tableIdx}"
-                                                            data-discovery-name="${tableInfo.discoveryName}"
-                                                            data-discovery-type="${tableInfo.discoveryType}"
-                                                            data-table-name="${tableInfo.tableName}">
-                                                        ${tableInfo.tableName}
-                                                    </button>
-                                                `).join('')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ` : ''}
+                                ${randomTablesForDay.length > 0 ? randomTablesForDay.map((tableInfo, tableIdx) => `
+                                    <button class="day-random-event-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="${tableInfo.tableName}" data-day-index="${i}" data-table-index="${tableIdx}" data-discovery-name="${tableInfo.discoveryName}" data-discovery-type="${tableInfo.discoveryType}">
+                                        <i class="fas fa-dice text-xs" style="color: white !important;"></i>
+                                    </button>
+                                `).join('') : ''}
                                 <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="${isShortened ? 'Annuler raccourci' : 'Raccourcir (durée 0)'}" data-day-index="${i}">
                                     <i class="fas fa-${isShortened ? 'undo' : 'minus-circle'} text-lg" style="color: white !important;"></i>
                                 </button>
-                                <button class="extend-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="Prolonger d\'une journée" data-day-index="${i}">
+                                <button class="extend-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="Prolonger d'une journée" data-day-index="${i}">
                                     <i class="fas fa-plus-circle text-lg" style="color: white !important;"></i>
                                 </button>
                             </div>
@@ -714,128 +698,8 @@ class VoyageManager {
         // Setup event listeners pour les découvertes
         this.setupDiscoveryInteractions();
 
-        // Setup event listeners pour les boutons de menu de tables aléatoires et les items de table
-        // Event delegation pour les items de table aléatoire
-        voyageDaysContent.addEventListener('click', (e) => {
-            const tableItem = e.target.closest('.day-random-table-item');
-
-            if (tableItem) {
-                e.stopPropagation();
-                e.preventDefault();
-
-                const dayIndex = parseInt(tableItem.dataset.dayIndex);
-                const tableIndex = parseInt(tableItem.dataset.tableIndex);
-                const discoveryName = tableItem.dataset.discoveryName;
-                const discoveryType = tableItem.dataset.discoveryType;
-                const tableName = tableItem.dataset.tableName;
-
-                console.log(`🎲 Clic sur table "${tableName}" (Jour ${dayIndex})`);
-
-                // Fermer le dropdown et l'overlay
-                const dropdown = tableItem.closest('.day-random-tables-dropdown');
-                if (dropdown) dropdown.classList.add('hidden');
-
-                const overlay = document.getElementById('dropdown-overlay');
-                if (overlay) overlay.remove();
-
-                this.rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType);
-                return;
-            }
-        });
-
-        // Event delegation pour les boutons de menu (toggle)
-        voyageDaysContent.addEventListener('click', (e) => {
-            // Ne pas traiter si c'est un item de table
-            if (e.target.closest('.day-random-table-item')) {
-                return;
-            }
-
-            const menuBtn = e.target.closest('.day-random-tables-menu-btn');
-            if (menuBtn) {
-                e.stopPropagation();
-                const dayIndex = menuBtn.dataset.dayIndex;
-                const dropdown = document.querySelector(`.day-random-tables-dropdown[data-day-index="${dayIndex}"]`);
-
-                console.log(`🎲 [TOGGLE MENU] Bouton menu cliqué pour jour ${dayIndex}`);
-
-                // Fermer tous les autres dropdowns et retirer l'overlay
-                document.querySelectorAll('.day-random-tables-dropdown').forEach(dd => {
-                    if (dd !== dropdown) {
-                        dd.classList.add('hidden');
-                    }
-                });
-
-                // Retirer l'overlay existant
-                const existingOverlay = document.getElementById('dropdown-overlay');
-                if (existingOverlay) {
-                    existingOverlay.remove();
-                }
-
-                // Toggle le dropdown actuel
-                if (dropdown) {
-                    const wasHidden = dropdown.classList.contains('hidden');
-                    dropdown.classList.toggle('hidden');
-
-                    console.log(`🎲 [TOGGLE MENU] Dropdown ${wasHidden ? 'ouvert' : 'fermé'}`);
-
-                    // Positionner le dropdown en fixed par rapport au bouton
-                    if (wasHidden) {
-                        const btnRect = menuBtn.getBoundingClientRect();
-                        dropdown.style.position = 'fixed';
-                        dropdown.style.top = (btnRect.bottom + 8) + 'px';
-                        dropdown.style.left = (btnRect.right - 192) + 'px'; // 192px = w-48
-                        dropdown.style.right = 'auto';
-
-                        const overlay = document.createElement('div');
-                        overlay.id = 'dropdown-overlay';
-                        document.body.appendChild(overlay);
-
-                        console.log(`🎲 [TOGGLE MENU] Overlay créé`);
-
-                        // Fermer le dropdown en cliquant sur l'overlay (pas sur le dropdown)
-                        overlay.addEventListener('click', (overlayEvent) => {
-                            console.log(`🎲 [OVERLAY] Event phase:`, overlayEvent.eventPhase);
-                            console.log(`🎲 [OVERLAY] Target:`, overlayEvent.target.className || overlayEvent.target.id);
-                            console.log(`🎲 [OVERLAY] CurrentTarget:`, overlayEvent.currentTarget.id);
-
-                            // Vérifier si le clic est à l'intérieur du dropdown
-                            const clickedInsideDropdown = dropdown.contains(overlayEvent.target);
-                            console.log(`🎲 [OVERLAY] Clic dans dropdown?`, clickedInsideDropdown);
-
-                            // Ne fermer que si on clique EN DEHORS du dropdown (sur l'overlay lui-même)
-                            if (!clickedInsideDropdown) {
-                                overlayEvent.stopPropagation();
-                                console.log(`🎲 [OVERLAY] ✅ Clic EN DEHORS du dropdown - fermeture`);
-                                dropdown.classList.add('hidden');
-                                overlay.remove();
-                                console.log(`🎲 [OVERLAY] ========== FIN (FERMÉ) ==========`);
-                            } else {
-                                console.log(`🎲 [OVERLAY] ⏭️ Clic DANS le dropdown - on laisse l'événement se propager`);
-                                console.log(`🎲 [OVERLAY] ========== FIN (PROPAGATION) ==========`);
-                            }
-                        });
-                    }
-                }
-                return;
-            }
-        });
-
-        // Fermer les dropdowns en cliquant ailleurs
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.day-random-tables-menu-btn') &&
-                !e.target.closest('.day-random-tables-dropdown') &&
-                !e.target.closest('.day-random-table-item')) {
-                document.querySelectorAll('.day-random-tables-dropdown').forEach(dd => {
-                    dd.classList.add('hidden');
-                });
-
-                const overlay = document.getElementById('dropdown-overlay');
-                if (overlay) {
-                    overlay.remove();
-                }
-            }
-        });
-
+        // Setup event listeners pour les boutons d'événements aléatoires
+        this.setupDayRandomEventButtons();
 
         // Setup event listeners pour les boutons de prolongation
         this.setupExtendDayButtons();
@@ -1484,7 +1348,7 @@ class VoyageManager {
                     const dayData = this.dayByDayData[dayIndex];
 
                     // Trouver la découverte spécifique
-                    const specificDiscovery = dayData.discoveries.find(d =>
+                    const specificDiscovery = dayData.discoveries.find(d => 
                         d.name === discoveryName && d.type === discoveryType
                     );
 
@@ -1506,10 +1370,10 @@ class VoyageManager {
     }
 
     setupExtendDayButtons() {
-        const extendBtns = document.querySelectorAll('.extend-day-btn');
-        console.log(`⏱️ Configuration de ${extendBtns.length} boutons de prolongation`);
+        const extendDayBtns = document.querySelectorAll('.extend-day-btn');
+        console.log(`⏱️ Configuration de ${extendDayBtns.length} boutons de prolongation`);
 
-        extendBtns.forEach(btn => {
+        extendDayBtns.forEach(btn => {
             // Retirer les anciens listeners
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
@@ -2282,8 +2146,8 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         // Créer l'objet voyage pour le journal
         const journeyData = {
             title: `Voyage de ${this.totalJourneyDays} jours`,
-            generatedAt: new Date().toISOString(),
             totalDays: this.totalJourneyDays,
+            generatedAt: new Date().toISOString(),
             days: this.dayByDayData.map((dayData, index) => {
                 const dayNumber = index + 1;
                 const weatherData = this.getWeatherForDay(dayNumber);
@@ -2980,158 +2844,6 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                 dayCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }, 100);
-    }
-
-    rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType) {
-        console.log(`🎲 [rollRandomEventForDay] ========== DÉBUT ==========`);
-        console.log(`🎲 [rollRandomEventForDay] Paramètres:`, { dayIndex, tableIndex, discoveryName, discoveryType });
-        console.log(`🎲 [rollRandomEventForDay] this.dayByDayData disponible:`, !!this.dayByDayData);
-        console.log(`🎲 [rollRandomEventForDay] Longueur dayByDayData:`, this.dayByDayData?.length);
-
-        // Vérification des données globales
-        console.log(`🎲 [rollRandomEventForDay] Vérification des données globales...`);
-        console.log(`🎲 [rollRandomEventForDay] - typeof window.locationsData:`, typeof window.locationsData);
-        console.log(`🎲 [rollRandomEventForDay] - typeof window.regionsData:`, typeof window.regionsData);
-        console.log(`🎲 [rollRandomEventForDay] - typeof locationsData:`, typeof locationsData);
-        console.log(`🎲 [rollRandomEventForDay] - typeof regionsData:`, typeof regionsData);
-
-        // Récupérer les données de la découverte
-        let discoveryData = null;
-
-        try {
-            if (discoveryType === 'location') {
-                console.log(`🎲 [rollRandomEventForDay] Recherche lieu "${discoveryName}"...`);
-
-                // Essayer window.locationsData en premier
-                if (window.locationsData && window.locationsData.locations) {
-                    console.log(`🎲 [rollRandomEventForDay] Utilisation de window.locationsData (${window.locationsData.locations.length} lieux)`);
-                    discoveryData = window.locationsData.locations.find(loc => loc.name === discoveryName);
-                }
-                // Fallback sur locationsData global
-                else if (typeof locationsData !== 'undefined' && locationsData.locations) {
-                    console.log(`🎲 [rollRandomEventForDay] Utilisation de locationsData global (${locationsData.locations.length} lieux)`);
-                    discoveryData = locationsData.locations.find(loc => loc.name === discoveryName);
-                } else {
-                    console.error(`❌ [rollRandomEventForDay] Aucune source de données pour les lieux disponible`);
-                    return;
-                }
-            }
-            else if (discoveryType === 'region') {
-                console.log(`🎲 [rollRandomEventForDay] Recherche région "${discoveryName}"...`);
-
-                // Essayer window.regionsData en premier
-                if (window.regionsData && window.regionsData.regions) {
-                    console.log(`🎲 [rollRandomEventForDay] Utilisation de window.regionsData (${window.regionsData.regions.length} régions)`);
-                    discoveryData = window.regionsData.regions.find(reg => reg.name === discoveryName);
-                }
-                // Fallback sur regionsData global
-                else if (typeof regionsData !== 'undefined' && regionsData.regions) {
-                    console.log(`🎲 [rollRandomEventForDay] Utilisation de regionsData global (${regionsData.regions.length} régions)`);
-                    discoveryData = regionsData.regions.find(reg => reg.name === discoveryName);
-                } else {
-                    console.error(`❌ [rollRandomEventForDay] Aucune source de données pour les régions disponible`);
-                    return;
-                }
-            }
-
-            console.log(`🎲 [rollRandomEventForDay] Découverte trouvée:`, discoveryData ? 'OUI' : 'NON');
-            if (discoveryData) {
-                console.log(`🎲 [rollRandomEventForDay] Découverte:`, { name: discoveryData.name, hasRandomTables: !!discoveryData.RandomTables });
-            }
-
-            if (!discoveryData) {
-                console.error(`❌ [rollRandomEventForDay] Découverte "${discoveryName}" non trouvée`);
-                alert(`Erreur: La découverte "${discoveryName}" n'a pas été trouvée dans les données.`);
-                return;
-            }
-
-            console.log(`🎲 [rollRandomEventForDay] Vérification RandomTables...`);
-            console.log(`🎲 [rollRandomEventForDay] - RandomTables existe:`, !!discoveryData.RandomTables);
-            console.log(`🎲 [rollRandomEventForDay] - Est un tableau:`, Array.isArray(discoveryData.RandomTables));
-            console.log(`🎲 [rollRandomEventForDay] - Longueur:`, discoveryData.RandomTables?.length);
-
-            if (!discoveryData.RandomTables || !Array.isArray(discoveryData.RandomTables) || discoveryData.RandomTables.length === 0) {
-                console.error(`❌ [rollRandomEventForDay] Pas de tables aléatoires pour "${discoveryName}"`);
-                alert(`Erreur: Aucune table aléatoire disponible pour "${discoveryName}".`);
-                return;
-            }
-
-            console.log(`🎲 [rollRandomEventForDay] Récupération table à l'index ${tableIndex}...`);
-            const randomTable = discoveryData.RandomTables[tableIndex];
-
-            console.log(`🎲 [rollRandomEventForDay] Table trouvée:`, randomTable ? 'OUI' : 'NON');
-            if (randomTable) {
-                console.log(`🎲 [rollRandomEventForDay] Table:`, { name: randomTable.name, hasEntries: !!randomTable.entries });
-            }
-
-            if (!randomTable) {
-                console.error(`❌ [rollRandomEventForDay] Table ${tableIndex} non trouvée (${discoveryData.RandomTables.length} tables disponibles)`);
-                alert(`Erreur: Table d'index ${tableIndex} introuvable pour "${discoveryName}".`);
-                return;
-            }
-
-            // Lancer le tirage
-            console.log(`🎲 [rollRandomEventForDay] Appel de performRandomRoll avec le jour ${dayIndex + 1}...`);
-            this.performRandomRoll(randomTable, dayIndex + 1);
-            console.log(`🎲 [rollRandomEventForDay] ========== FIN ==========`);
-
-        } catch (error) {
-            console.error(`❌ [rollRandomEventForDay] ERREUR:`, error);
-            console.error(`❌ [rollRandomEventForDay] Stack:`, error.stack);
-            alert(`Erreur lors du tirage aléatoire: ${error.message}`);
-        }
-    }
-
-
-    performRandomRoll(table, dayNumber) {
-        console.log(`🎲 [DEBUG] ========== performRandomRoll DÉBUT ==========`);
-        console.log(`🎲 [DEBUG] Table:`, table?.name);
-        console.log(`🎲 [DEBUG] Jour:`, dayNumber);
-        console.log(`🎲 [DEBUG] Table complète:`, table);
-
-        if (!table) {
-            console.error(`❌ [DEBUG] Table est null ou undefined`);
-            return;
-        }
-
-        if (!table.entries) {
-            console.error(`❌ [DEBUG] table.entries est null ou undefined`);
-            return;
-        }
-
-        if (!Array.isArray(table.entries)) {
-            console.error(`❌ [DEBUG] table.entries n'est pas un array:`, typeof table.entries);
-            return;
-        }
-
-        if (table.entries.length === 0) {
-            console.error(`❌ [DEBUG] table.entries est vide`);
-            return;
-        }
-
-        console.log(`✅ [DEBUG] Table valide avec ${table.entries.length} entrées`);
-        console.log(`🎲 [DEBUG] Entrées:`, table.entries);
-
-        // Tirer aléatoirement une entrée
-        const randomIndex = Math.floor(Math.random() * table.entries.length);
-        console.log(`🎲 [DEBUG] Index tiré:`, randomIndex);
-
-        const result = table.entries[randomIndex];
-        console.log(`🎲 [DEBUG] Résultat tiré:`, result);
-
-        // Stocker le résultat pour ce jour
-        console.log(`🎲 [DEBUG] Stockage dans randomEvents[${dayNumber}]`);
-        this.randomEvents[dayNumber] = result;
-        console.log(`🎲 [DEBUG] randomEvents après stockage:`, this.randomEvents);
-
-        // Sauvegarder dans localStorage spécifique au voyage
-        console.log(`🎲 [DEBUG] Sauvegarde dans localStorage...`);
-        this.saveRandomEventsForJourney();
-
-        // Mettre à jour l'affichage
-        console.log(`🎲 [DEBUG] Appel de renderAllDays...`);
-        this.renderAllDays();
-        console.log(`🎲 [DEBUG] ========== performRandomRoll FIN ==========`);
     }
 }
 
