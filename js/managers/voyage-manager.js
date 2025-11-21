@@ -824,23 +824,22 @@ class VoyageManager {
                             console.log(`🎲 [OVERLAY] Event phase:`, overlayEvent.eventPhase);
                             console.log(`🎲 [OVERLAY] Target:`, overlayEvent.target.className || overlayEvent.target.id);
                             console.log(`🎲 [OVERLAY] CurrentTarget:`, overlayEvent.currentTarget.id);
-                            console.log(`🎲 [OVERLAY] Target === overlay:`, overlayEvent.target === overlay);
-                            console.log(`🎲 [OVERLAY] Closest .day-random-table-item:`, !!overlayEvent.target.closest('.day-random-table-item'));
-                            console.log(`🎲 [OVERLAY] defaultPrevented:`, overlayEvent.defaultPrevented);
-                            console.log(`🎲 [OVERLAY] cancelBubble:`, overlayEvent.cancelBubble);
                             
-                            // Ne réagir QUE si on clique directement sur l'overlay (pas sur ses enfants)
-                            if (overlayEvent.target !== overlay) {
-                                console.log(`🎲 [OVERLAY] ❌ Clic sur un élément enfant - IGNORÉ`);
+                            // Ignorer si le clic provient du dropdown ou de ses enfants
+                            if (overlayEvent.target.closest('.day-random-tables-dropdown')) {
+                                console.log(`🎲 [OVERLAY] ❌ Clic dans le dropdown - IGNORÉ`);
                                 console.log(`🎲 [OVERLAY] ========== FIN (IGNORÉ) ==========`);
                                 return;
                             }
                             
-                            overlayEvent.stopPropagation();
-                            console.log(`🎲 [OVERLAY] ✅ Clic sur overlay - fermeture du dropdown`);
-                            dropdown.classList.add('hidden');
-                            overlay.remove();
-                            console.log(`🎲 [OVERLAY] ========== FIN (FERMÉ) ==========`);
+                            // Ne fermer que si on clique directement sur l'overlay
+                            if (overlayEvent.target === overlay) {
+                                overlayEvent.stopPropagation();
+                                console.log(`🎲 [OVERLAY] ✅ Clic sur overlay - fermeture du dropdown`);
+                                dropdown.classList.add('hidden');
+                                overlay.remove();
+                                console.log(`🎲 [OVERLAY] ========== FIN (FERMÉ) ==========`);
+                            }
                         });
                     }
                 }
