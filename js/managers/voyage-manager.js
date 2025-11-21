@@ -721,6 +721,7 @@ class VoyageManager {
             if (tableItem) {
                 e.stopPropagation();
                 e.preventDefault();
+                e.stopImmediatePropagation(); // Empêcher TOUS les autres handlers
 
                 const dayIndex = parseInt(tableItem.dataset.dayIndex);
                 const tableIndex = parseInt(tableItem.dataset.tableIndex);
@@ -801,6 +802,11 @@ class VoyageManager {
 
                         // Fermer le dropdown en cliquant sur l'overlay
                         overlay.addEventListener('click', (overlayEvent) => {
+                            // Ne pas fermer si on clique sur un item de table
+                            if (overlayEvent.target.closest('.day-random-table-item')) {
+                                return;
+                            }
+                            
                             overlayEvent.stopPropagation();
                             console.log(`🎲 [OVERLAY] Clic sur overlay - fermeture du dropdown`);
                             dropdown.classList.add('hidden');
