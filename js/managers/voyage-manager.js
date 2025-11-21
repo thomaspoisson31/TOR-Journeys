@@ -715,9 +715,8 @@ class VoyageManager {
         this.setupDiscoveryInteractions();
 
         // Setup event listeners pour les boutons de menu de tables aléatoires et les items de table
-        // Event delegation pour les boutons de menu de tables aléatoires
+        // Event delegation pour les items de table aléatoire (PRIORITÉ MAXIMALE)
         voyageDaysContent.addEventListener('click', (e) => {
-            // Clic sur un item de table (AVANT le toggle du menu)
             const tableItem = e.target.closest('.day-random-table-item');
             if (tableItem) {
                 e.stopPropagation();
@@ -727,30 +726,44 @@ class VoyageManager {
                 const tableIndex = parseInt(tableItem.dataset.tableIndex);
                 const discoveryName = tableItem.dataset.discoveryName;
                 const discoveryType = tableItem.dataset.discoveryType;
+                const tableName = tableItem.dataset.tableName;
 
-                console.log(`🎲 Clic sur table "${tableItem.dataset.tableName}" - Jour ${dayIndex}, Découverte: ${discoveryName} (${discoveryType})`);
+                console.log(`🎲 [CLICK ITEM] Clic détecté sur table "${tableName}"`);
+                console.log(`🎲 [CLICK ITEM] Données - Jour ${dayIndex}, Table ${tableIndex}, Découverte: ${discoveryName} (${discoveryType})`);
 
-                // Fermer le dropdown et l'overlay
+                // Fermer le dropdown et l'overlay APRÈS avoir récupéré les données
                 const dropdown = tableItem.closest('.day-random-tables-dropdown');
                 if (dropdown) {
+                    console.log(`🎲 [CLICK ITEM] Fermeture du dropdown`);
                     dropdown.classList.add('hidden');
                 }
 
                 const overlay = document.getElementById('dropdown-overlay');
                 if (overlay) {
+                    console.log(`🎲 [CLICK ITEM] Suppression de l'overlay`);
                     overlay.remove();
                 }
 
+                console.log(`🎲 [CLICK ITEM] Appel de rollRandomEventForDay avec dayIndex=${dayIndex}, tableIndex=${tableIndex}`);
                 this.rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType);
                 return;
             }
+        }, true); // Utiliser la capture pour intercepter AVANT les autres handlers
 
-            // Toggle du menu déroulant
+        // Event delegation pour les boutons de menu (toggle)
+        voyageDaysContent.addEventListener('click', (e) => {
+            // Ne pas traiter si c'est un item de table
+            if (e.target.closest('.day-random-table-item')) {
+                return;
+            }
+
             const menuBtn = e.target.closest('.day-random-tables-menu-btn');
             if (menuBtn) {
                 e.stopPropagation();
                 const dayIndex = menuBtn.dataset.dayIndex;
                 const dropdown = document.querySelector(`.day-random-tables-dropdown[data-day-index="${dayIndex}"]`);
+
+                console.log(`🎲 [TOGGLE MENU] Bouton menu cliqué pour jour ${dayIndex}`);
 
                 // Fermer tous les autres dropdowns et retirer l'overlay
                 document.querySelectorAll('.day-random-tables-dropdown').forEach(dd => {
@@ -770,6 +783,8 @@ class VoyageManager {
                     const wasHidden = dropdown.classList.contains('hidden');
                     dropdown.classList.toggle('hidden');
 
+                    console.log(`🎲 [TOGGLE MENU] Dropdown ${wasHidden ? 'ouvert' : 'fermé'}`);
+
                     // Positionner le dropdown en fixed par rapport au bouton
                     if (wasHidden) {
                         const btnRect = menuBtn.getBoundingClientRect();
@@ -782,9 +797,12 @@ class VoyageManager {
                         overlay.id = 'dropdown-overlay';
                         document.body.appendChild(overlay);
 
-                        // Fermer le dropdown en cliquant sur l'overlay (ne pas propager aux items)
+                        console.log(`🎲 [TOGGLE MENU] Overlay créé`);
+
+                        // Fermer le dropdown en cliquant sur l'overlay
                         overlay.addEventListener('click', (overlayEvent) => {
                             overlayEvent.stopPropagation();
+                            console.log(`🎲 [OVERLAY] Clic sur overlay - fermeture du dropdown`);
                             dropdown.classList.add('hidden');
                             overlay.remove();
                         });
