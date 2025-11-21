@@ -640,11 +640,27 @@ class VoyageManager {
                                 ${discoveriesHtml}
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
-                                ${randomTablesForDay.length > 0 ? randomTablesForDay.map((tableInfo, tableIdx) => `
-                                    <button class="day-random-event-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="${tableInfo.tableName}" data-day-index="${i}" data-table-index="${tableIdx}" data-discovery-name="${tableInfo.discoveryName}" data-discovery-type="${tableInfo.discoveryType}">
-                                        <i class="fas fa-dice text-xs" style="color: white !important;"></i>
-                                    </button>
-                                `).join('') : ''}
+                                ${randomTablesForDay.length > 0 ? `
+                                    <div class="relative">
+                                        <button class="day-random-tables-menu-btn w-7 h-7 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="Événements aléatoires" data-day-index="${i}">
+                                            <i class="fas fa-dice text-xs" style="color: white !important;"></i>
+                                        </button>
+                                        <div data-day-index="${i}" class="day-random-tables-dropdown hidden absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-20">
+                                            <div class="py-1">
+                                                ${randomTablesForDay.map((tableInfo, tableIdx) => `
+                                                    <button class="day-random-table-item block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                            data-day-index="${i}"
+                                                            data-table-index="${tableIdx}"
+                                                            data-discovery-name="${tableInfo.discoveryName}"
+                                                            data-discovery-type="${tableInfo.discoveryType}"
+                                                            data-table-name="${tableInfo.tableName}">
+                                                        <i class="fas fa-dice mr-2"></i> ${tableInfo.tableName}
+                                                    </button>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ` : ''}
                                 <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="${isShortened ? 'Annuler raccourci' : 'Raccourcir (durée 0)'}" data-day-index="${i}">
                                     <i class="fas fa-${isShortened ? 'undo' : 'minus-circle'} text-lg" style="color: white !important;"></i>
                                 </button>
@@ -698,8 +714,60 @@ class VoyageManager {
         // Setup event listeners pour les découvertes
         this.setupDiscoveryInteractions();
 
-        // Setup event listeners pour les boutons d'événements aléatoires
-        this.setupDayRandomEventButtons();
+        // Setup event listeners pour les boutons de menu de tables aléatoires et les items de table
+        // Event delegation pour les boutons de menu de tables aléatoires
+        voyageDaysContent.addEventListener('click', (e) => {
+            // Toggle du menu déroulant
+            const menuBtn = e.target.closest('.day-random-tables-menu-btn');
+            if (menuBtn) {
+                e.stopPropagation();
+                const dayIndex = menuBtn.dataset.dayIndex;
+                const dropdown = document.querySelector(`.day-random-tables-dropdown[data-day-index="${dayIndex}"]`);
+
+                // Fermer tous les autres dropdowns
+                document.querySelectorAll('.day-random-tables-dropdown').forEach(dd => {
+                    if (dd !== dropdown) {
+                        dd.classList.add('hidden');
+                    }
+                });
+
+                // Toggle le dropdown actuel
+                if (dropdown) {
+                    dropdown.classList.toggle('hidden');
+                }
+                return;
+            }
+
+            // Clic sur un item de table
+            const tableItem = e.target.closest('.day-random-table-item');
+            if (tableItem) {
+                e.stopPropagation();
+                const dayIndex = parseInt(tableItem.dataset.dayIndex);
+                const tableIndex = parseInt(tableItem.dataset.tableIndex);
+                const discoveryName = tableItem.dataset.discoveryName;
+                const discoveryType = tableItem.dataset.discoveryType;
+
+                console.log(`🎲 Clic sur table "${tableItem.dataset.tableName}" - Jour ${dayIndex}, Découverte: ${discoveryName} (${discoveryType})`);
+
+                // Fermer le dropdown
+                const dropdown = tableItem.closest('.day-random-tables-dropdown');
+                if (dropdown) {
+                    dropdown.classList.add('hidden');
+                }
+
+                this.rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType);
+            }
+        });
+
+        // Fermer les dropdowns en cliquant ailleurs
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.day-random-tables-menu-btn') && !e.target.closest('.day-random-tables-dropdown')) {
+                document.querySelectorAll('.day-random-tables-dropdown').forEach(dd => {
+                    dd.classList.add('hidden');
+                });
+            }
+        });
+
 
         // Setup event listeners pour les boutons de prolongation
         this.setupExtendDayButtons();
@@ -1348,7 +1416,7 @@ class VoyageManager {
                     const dayData = this.dayByDayData[dayIndex];
 
                     // Trouver la découverte spécifique
-                    const specificDiscovery = dayData.discoveries.find(d => 
+                    const specificDiscovery = dayData.discoveries.find(d =>
                         d.name === discoveryName && d.type === discoveryType
                     );
 
