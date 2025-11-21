@@ -2957,101 +2957,44 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     }
 
     rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType) {
-        console.log(`🎲 [DEBUG] ========== rollRandomEventForDay DÉBUT ==========`);
-        console.log(`🎲 [DEBUG] Paramètres reçus:`, {
-            dayIndex: dayIndex,
-            tableIndex: tableIndex,
-            discoveryName: discoveryName,
-            discoveryType: discoveryType
-        });
+        console.log(`🎲 [rollRandomEventForDay] DÉBUT - jour ${dayIndex}, table ${tableIndex}, découverte ${discoveryName} (${discoveryType})`);
 
-        // Vérifier que les paramètres sont valides
-        if (typeof dayIndex !== 'number' || isNaN(dayIndex)) {
-            console.error(`❌ [DEBUG] dayIndex invalide:`, dayIndex);
-            return;
-        }
-        if (typeof tableIndex !== 'number' || isNaN(tableIndex)) {
-            console.error(`❌ [DEBUG] tableIndex invalide:`, tableIndex);
-            return;
-        }
-
-        // Récupérer les données du jour
-        console.log(`🎲 [DEBUG] Récupération dayByDayData[${dayIndex}]...`);
-        console.log(`🎲 [DEBUG] dayByDayData disponible:`, !!this.dayByDayData);
-        console.log(`🎲 [DEBUG] dayByDayData.length:`, this.dayByDayData?.length);
-
-        const dayData = this.dayByDayData[dayIndex];
-        if (!dayData) {
-            console.error(`❌ [DEBUG] Données du jour ${dayIndex} non trouvées`);
-            console.error(`❌ [DEBUG] dayByDayData:`, this.dayByDayData);
-            return;
-        }
-        console.log(`✅ [DEBUG] Données du jour trouvées:`, dayData);
-
-        // Récupérer la découverte
-        console.log(`🎲 [DEBUG] Recherche de la découverte "${discoveryName}" (${discoveryType})...`);
-        console.log(`🎲 [DEBUG] Découvertes du jour:`, dayData.discoveries);
-
-        const discovery = dayData.discoveries.find(d => d.name === discoveryName && d.type === discoveryType);
-        if (!discovery) {
-            console.error(`❌ [DEBUG] Découverte ${discoveryName} (${discoveryType}) non trouvée`);
-            console.error(`❌ [DEBUG] Découvertes disponibles:`, dayData.discoveries.map(d => `${d.name} (${d.type})`));
-            return;
-        }
-        console.log(`✅ [DEBUG] Découverte trouvée:`, discovery);
-
-        // Récupérer l'objet complet (lieu ou région)
-        console.log(`🎲 [DEBUG] Récupération de l'objet complet...`);
-        console.log(`🎲 [DEBUG] locationsData disponible:`, typeof locationsData !== 'undefined');
-        console.log(`🎲 [DEBUG] regionsData disponible:`, typeof regionsData !== 'undefined');
-
-        let fullItem = null;
+        // Récupérer les données de la découverte
+        let discoveryData = null;
         if (discoveryType === 'location' && typeof locationsData !== 'undefined') {
-            console.log(`🎲 [DEBUG] Recherche dans locationsData.locations...`);
-            console.log(`🎲 [DEBUG] Nombre de lieux:`, locationsData.locations?.length);
-            fullItem = locationsData.locations.find(loc => loc.name === discoveryName);
-            console.log(`🎲 [DEBUG] Lieu trouvé:`, !!fullItem);
+            discoveryData = locationsData.locations.find(loc => loc.name === discoveryName);
+            console.log(`🎲 [rollRandomEventForDay] Recherche lieu dans locationsData:`, locationsData.locations.length, 'lieux');
         } else if (discoveryType === 'region' && typeof regionsData !== 'undefined') {
-            console.log(`🎲 [DEBUG] Recherche dans regionsData.regions...`);
-            console.log(`🎲 [DEBUG] Nombre de régions:`, regionsData.regions?.length);
-            fullItem = regionsData.regions.find(reg => reg.name === discoveryName);
-            console.log(`🎲 [DEBUG] Région trouvée:`, !!fullItem);
+            discoveryData = regionsData.regions.find(reg => reg.name === discoveryName);
+            console.log(`🎲 [rollRandomEventForDay] Recherche région dans regionsData:`, regionsData.regions.length, 'régions');
         }
 
-        if (!fullItem) {
-            console.error(`❌ [DEBUG] Objet complet non trouvé pour ${discoveryName}`);
-            return;
-        }
-        console.log(`✅ [DEBUG] Objet complet trouvé:`, fullItem);
-        console.log(`🎲 [DEBUG] RandomTables présent:`, !!fullItem.RandomTables);
-        console.log(`🎲 [DEBUG] RandomTables est array:`, Array.isArray(fullItem.RandomTables));
-        console.log(`🎲 [DEBUG] Nombre de RandomTables:`, fullItem.RandomTables?.length);
-        console.log(`🎲 [DEBUG] Contenu RandomTables:`, fullItem.RandomTables);
+        console.log(`🎲 [rollRandomEventForDay] Découverte trouvée:`, discoveryData);
 
-        if (!fullItem.RandomTables || !Array.isArray(fullItem.RandomTables) || fullItem.RandomTables.length === 0) {
-            console.error(`❌ [DEBUG] Aucune table aléatoire trouvée`);
+        if (!discoveryData) {
+            console.warn(`⚠️ Découverte non trouvée: ${discoveryName}`);
             return;
         }
 
-        // Récupérer la table spécifique
-        console.log(`🎲 [DEBUG] Récupération de la table à l'index ${tableIndex}...`);
-        const randomTable = fullItem.RandomTables[tableIndex];
+        console.log(`🎲 [rollRandomEventForDay] RandomTables:`, discoveryData.RandomTables);
+
+        if (!discoveryData.RandomTables || !Array.isArray(discoveryData.RandomTables) || discoveryData.RandomTables.length === 0) {
+            console.warn(`⚠️ Pas de tables aléatoires pour ${discoveryName}`);
+            return;
+        }
+
+        const randomTable = discoveryData.RandomTables[tableIndex];
+        console.log(`🎲 [rollRandomEventForDay] Table sélectionnée (index ${tableIndex}):`, randomTable);
+
         if (!randomTable) {
-            console.error(`❌ [DEBUG] Table d'index ${tableIndex} non trouvée`);
-            console.error(`❌ [DEBUG] Tables disponibles:`, fullItem.RandomTables.map((t, i) => `${i}: ${t.name}`));
+            console.warn(`⚠️ Table ${tableIndex} non trouvée pour ${discoveryName}`);
             return;
         }
-
-        console.log(`✅ [DEBUG] Table trouvée:`, {
-            name: randomTable.name,
-            entries: randomTable.entries?.length || 0
-        });
-        console.log(`🎲 [DEBUG] Contenu complet de la table:`, randomTable);
 
         // Lancer le tirage
-        console.log(`🎲 [DEBUG] Appel de performRandomRoll...`);
-        this.performRandomRoll(randomTable, dayData.day);
-        console.log(`🎲 [DEBUG] ========== rollRandomEventForDay FIN ==========`);
+        console.log(`🎲 [rollRandomEventForDay] Appel de performRandomRoll...`);
+        this.performRandomRoll(randomTable, dayIndex + 1); // Pass dayIndex + 1 for the actual day number
+        console.log(`🎲 [rollRandomEventForDay] FIN`);
     }
 
 
