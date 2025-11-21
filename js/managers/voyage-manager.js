@@ -664,7 +664,7 @@ class VoyageManager {
                                 <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="${isShortened ? 'Annuler raccourci' : 'Raccourcir (durée 0)'}" data-day-index="${i}">
                                     <i class="fas fa-${isShortened ? 'undo' : 'minus-circle'} text-lg" style="color: white !important;"></i>
                                 </button>
-                                <button class="extend-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="Prolonger d'une journée" data-day-index="${i}">
+                                <button class="extend-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="Prolonger d\'une journée" data-day-index="${i}">
                                     <i class="fas fa-plus-circle text-lg" style="color: white !important;"></i>
                                 </button>
                             </div>
@@ -2256,8 +2256,8 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
         // Créer l'objet voyage pour le journal
         const journeyData = {
             title: `Voyage de ${this.totalJourneyDays} jours`,
-            totalDays: this.totalJourneyDays,
             generatedAt: new Date().toISOString(),
+            totalDays: this.totalJourneyDays,
             days: this.dayByDayData.map((dayData, index) => {
                 const dayNumber = index + 1;
                 const weatherData = this.getWeatherForDay(dayNumber);
@@ -2959,6 +2959,8 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType) {
         console.log(`🎲 [rollRandomEventForDay] ========== DÉBUT ==========`);
         console.log(`🎲 [rollRandomEventForDay] Paramètres:`, { dayIndex, tableIndex, discoveryName, discoveryType });
+        console.log(`🎲 [rollRandomEventForDay] this.dayByDayData disponible:`, !!this.dayByDayData);
+        console.log(`🎲 [rollRandomEventForDay] Longueur dayByDayData:`, this.dayByDayData?.length);
 
         // Vérification des données globales
         console.log(`🎲 [rollRandomEventForDay] Vérification des données globales...`);
@@ -2969,16 +2971,16 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
         // Récupérer les données de la découverte
         let discoveryData = null;
-        
+
         try {
             if (discoveryType === 'location') {
                 console.log(`🎲 [rollRandomEventForDay] Recherche lieu "${discoveryName}"...`);
-                
+
                 // Essayer window.locationsData en premier
                 if (window.locationsData && window.locationsData.locations) {
                     console.log(`🎲 [rollRandomEventForDay] Utilisation de window.locationsData (${window.locationsData.locations.length} lieux)`);
                     discoveryData = window.locationsData.locations.find(loc => loc.name === discoveryName);
-                } 
+                }
                 // Fallback sur locationsData global
                 else if (typeof locationsData !== 'undefined' && locationsData.locations) {
                     console.log(`🎲 [rollRandomEventForDay] Utilisation de locationsData global (${locationsData.locations.length} lieux)`);
@@ -2987,15 +2989,15 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
                     console.error(`❌ [rollRandomEventForDay] Aucune source de données pour les lieux disponible`);
                     return;
                 }
-            } 
+            }
             else if (discoveryType === 'region') {
                 console.log(`🎲 [rollRandomEventForDay] Recherche région "${discoveryName}"...`);
-                
+
                 // Essayer window.regionsData en premier
                 if (window.regionsData && window.regionsData.regions) {
                     console.log(`🎲 [rollRandomEventForDay] Utilisation de window.regionsData (${window.regionsData.regions.length} régions)`);
                     discoveryData = window.regionsData.regions.find(reg => reg.name === discoveryName);
-                } 
+                }
                 // Fallback sur regionsData global
                 else if (typeof regionsData !== 'undefined' && regionsData.regions) {
                     console.log(`🎲 [rollRandomEventForDay] Utilisation de regionsData global (${regionsData.regions.length} régions)`);
@@ -3030,7 +3032,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
 
             console.log(`🎲 [rollRandomEventForDay] Récupération table à l'index ${tableIndex}...`);
             const randomTable = discoveryData.RandomTables[tableIndex];
-            
+
             console.log(`🎲 [rollRandomEventForDay] Table trouvée:`, randomTable ? 'OUI' : 'NON');
             if (randomTable) {
                 console.log(`🎲 [rollRandomEventForDay] Table:`, { name: randomTable.name, hasEntries: !!randomTable.entries });
@@ -3046,7 +3048,7 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
             console.log(`🎲 [rollRandomEventForDay] Appel de performRandomRoll avec le jour ${dayIndex + 1}...`);
             this.performRandomRoll(randomTable, dayIndex + 1);
             console.log(`🎲 [rollRandomEventForDay] ========== FIN ==========`);
-            
+
         } catch (error) {
             console.error(`❌ [rollRandomEventForDay] ERREUR:`, error);
             console.error(`❌ [rollRandomEventForDay] Stack:`, error.stack);
