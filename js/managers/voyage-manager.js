@@ -717,6 +717,34 @@ class VoyageManager {
         // Setup event listeners pour les boutons de menu de tables aléatoires et les items de table
         // Event delegation pour les boutons de menu de tables aléatoires
         voyageDaysContent.addEventListener('click', (e) => {
+            // Clic sur un item de table (AVANT le toggle du menu)
+            const tableItem = e.target.closest('.day-random-table-item');
+            if (tableItem) {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                const dayIndex = parseInt(tableItem.dataset.dayIndex);
+                const tableIndex = parseInt(tableItem.dataset.tableIndex);
+                const discoveryName = tableItem.dataset.discoveryName;
+                const discoveryType = tableItem.dataset.discoveryType;
+
+                console.log(`🎲 Clic sur table "${tableItem.dataset.tableName}" - Jour ${dayIndex}, Découverte: ${discoveryName} (${discoveryType})`);
+
+                // Fermer le dropdown et l'overlay
+                const dropdown = tableItem.closest('.day-random-tables-dropdown');
+                if (dropdown) {
+                    dropdown.classList.add('hidden');
+                }
+                
+                const overlay = document.getElementById('dropdown-overlay');
+                if (overlay) {
+                    overlay.remove();
+                }
+
+                this.rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType);
+                return;
+            }
+            
             // Toggle du menu déroulant
             const menuBtn = e.target.closest('.day-random-tables-menu-btn');
             if (menuBtn) {
@@ -754,8 +782,9 @@ class VoyageManager {
                         overlay.id = 'dropdown-overlay';
                         document.body.appendChild(overlay);
                         
-                        // Fermer le dropdown en cliquant sur l'overlay
-                        overlay.addEventListener('click', () => {
+                        // Fermer le dropdown en cliquant sur l'overlay (ne pas propager aux items)
+                        overlay.addEventListener('click', (overlayEvent) => {
+                            overlayEvent.stopPropagation();
                             dropdown.classList.add('hidden');
                             overlay.remove();
                         });
@@ -763,36 +792,13 @@ class VoyageManager {
                 }
                 return;
             }
-
-            // Clic sur un item de table
-            const tableItem = e.target.closest('.day-random-table-item');
-            if (tableItem) {
-                e.stopPropagation();
-                const dayIndex = parseInt(tableItem.dataset.dayIndex);
-                const tableIndex = parseInt(tableItem.dataset.tableIndex);
-                const discoveryName = tableItem.dataset.discoveryName;
-                const discoveryType = tableItem.dataset.discoveryType;
-
-                console.log(`🎲 Clic sur table "${tableItem.dataset.tableName}" - Jour ${dayIndex}, Découverte: ${discoveryName} (${discoveryType})`);
-
-                // Fermer le dropdown et l'overlay
-                const dropdown = tableItem.closest('.day-random-tables-dropdown');
-                if (dropdown) {
-                    dropdown.classList.add('hidden');
-                }
-                
-                const overlay = document.getElementById('dropdown-overlay');
-                if (overlay) {
-                    overlay.remove();
-                }
-
-                this.rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType);
-            }
         });
 
         // Fermer les dropdowns en cliquant ailleurs
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.day-random-tables-menu-btn') && !e.target.closest('.day-random-tables-dropdown')) {
+            if (!e.target.closest('.day-random-tables-menu-btn') && 
+                !e.target.closest('.day-random-tables-dropdown') &&
+                !e.target.closest('.day-random-table-item')) {
                 document.querySelectorAll('.day-random-tables-dropdown').forEach(dd => {
                     dd.classList.add('hidden');
                 });
