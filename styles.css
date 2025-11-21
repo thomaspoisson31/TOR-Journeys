@@ -1749,10 +1749,16 @@ body {
     box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
-/* Dropdown des tables aléatoires - z-index élevé pour apparaître au-dessus */
+/* Dropdown des tables aléatoires - z-index très élevé pour apparaître au-dessus de tout */
 .day-random-tables-dropdown {
-    z-index: 1000 !important;
+    z-index: 9999 !important;
     position: absolute !important;
+    pointer-events: auto !important;
+}
+
+/* Empêcher les interactions avec les éléments en dessous quand le dropdown est ouvert */
+.day-random-tables-dropdown:not(.hidden) ~ * {
+    pointer-events: none;
 }
 
 /* Assurer que le conteneur parent ne cache pas le dropdown */
@@ -1776,4 +1782,15 @@ body {
 .day-random-tables-menu-btn {
     position: relative;
     z-index: 2;
+}
+
+/* Style compact pour les items de table dans le dropdown */
+.day-random-table-item {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
+}
+
+.day-random-table-item i {
+    display: none !important;
 }

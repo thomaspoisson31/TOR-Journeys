@@ -648,13 +648,13 @@ class VoyageManager {
                                         <div data-day-index="${i}" class="day-random-tables-dropdown hidden absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-20">
                                             <div class="py-1">
                                                 ${randomTablesForDay.map((tableInfo, tableIdx) => `
-                                                    <button class="day-random-table-item block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    <button class="day-random-table-item block w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-100"
                                                             data-day-index="${i}"
                                                             data-table-index="${tableIdx}"
                                                             data-discovery-name="${tableInfo.discoveryName}"
                                                             data-discovery-type="${tableInfo.discoveryType}"
                                                             data-table-name="${tableInfo.tableName}">
-                                                        <i class="fas fa-dice mr-2"></i> ${tableInfo.tableName}
+                                                        ${tableInfo.tableName}
                                                     </button>
                                                 `).join('')}
                                             </div>
@@ -724,16 +724,37 @@ class VoyageManager {
                 const dayIndex = menuBtn.dataset.dayIndex;
                 const dropdown = document.querySelector(`.day-random-tables-dropdown[data-day-index="${dayIndex}"]`);
 
-                // Fermer tous les autres dropdowns
+                // Fermer tous les autres dropdowns et retirer l'overlay
                 document.querySelectorAll('.day-random-tables-dropdown').forEach(dd => {
                     if (dd !== dropdown) {
                         dd.classList.add('hidden');
                     }
                 });
 
+                // Retirer l'overlay existant
+                const existingOverlay = document.getElementById('dropdown-overlay');
+                if (existingOverlay) {
+                    existingOverlay.remove();
+                }
+
                 // Toggle le dropdown actuel
                 if (dropdown) {
+                    const wasHidden = dropdown.classList.contains('hidden');
                     dropdown.classList.toggle('hidden');
+                    
+                    // Ajouter un overlay transparent pour bloquer les interactions si le dropdown est ouvert
+                    if (wasHidden) {
+                        const overlay = document.createElement('div');
+                        overlay.id = 'dropdown-overlay';
+                        overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9998; background: transparent;';
+                        document.body.appendChild(overlay);
+                        
+                        // Fermer le dropdown en cliquant sur l'overlay
+                        overlay.addEventListener('click', () => {
+                            dropdown.classList.add('hidden');
+                            overlay.remove();
+                        });
+                    }
                 }
                 return;
             }
@@ -749,10 +770,15 @@ class VoyageManager {
 
                 console.log(`🎲 Clic sur table "${tableItem.dataset.tableName}" - Jour ${dayIndex}, Découverte: ${discoveryName} (${discoveryType})`);
 
-                // Fermer le dropdown
+                // Fermer le dropdown et l'overlay
                 const dropdown = tableItem.closest('.day-random-tables-dropdown');
                 if (dropdown) {
                     dropdown.classList.add('hidden');
+                }
+                
+                const overlay = document.getElementById('dropdown-overlay');
+                if (overlay) {
+                    overlay.remove();
                 }
 
                 this.rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType);
@@ -765,6 +791,11 @@ class VoyageManager {
                 document.querySelectorAll('.day-random-tables-dropdown').forEach(dd => {
                     dd.classList.add('hidden');
                 });
+                
+                const overlay = document.getElementById('dropdown-overlay');
+                if (overlay) {
+                    overlay.remove();
+                }
             }
         });
 
