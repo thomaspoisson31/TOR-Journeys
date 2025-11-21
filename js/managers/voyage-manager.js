@@ -802,15 +802,16 @@ class VoyageManager {
                             const clickedInsideDropdown = dropdown.contains(overlayEvent.target);
                             console.log(`🎲 [OVERLAY] Clic dans dropdown?`, clickedInsideDropdown);
 
-                            // Ne fermer que si on clique EN DEHORS du dropdown
-                            if (!clickedInsideDropdown && overlayEvent.target === overlay) {
+                            // Ne fermer que si on clique EN DEHORS du dropdown (sur l'overlay lui-même)
+                            if (!clickedInsideDropdown) {
                                 overlayEvent.stopPropagation();
-                                console.log(`🎲 [OVERLAY] ✅ Clic sur overlay - fermeture du dropdown`);
+                                console.log(`🎲 [OVERLAY] ✅ Clic EN DEHORS du dropdown - fermeture`);
                                 dropdown.classList.add('hidden');
                                 overlay.remove();
                                 console.log(`🎲 [OVERLAY] ========== FIN (FERMÉ) ==========`);
                             } else {
-                                console.log(`🎲 [OVERLAY] ⏭️ Clic dans le dropdown - ne pas fermer`);
+                                console.log(`🎲 [OVERLAY] ⏭️ Clic DANS le dropdown - on laisse l'événement se propager`);
+                                console.log(`🎲 [OVERLAY] ========== FIN (PROPAGATION) ==========`);
                             }
                         });
                     }
