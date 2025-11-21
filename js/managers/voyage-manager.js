@@ -2957,44 +2957,101 @@ Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
     }
 
     rollRandomEventForDay(dayIndex, tableIndex, discoveryName, discoveryType) {
-        console.log(`🎲 [rollRandomEventForDay] DÉBUT - jour ${dayIndex}, table ${tableIndex}, découverte ${discoveryName} (${discoveryType})`);
+        console.log(`🎲 [rollRandomEventForDay] ========== DÉBUT ==========`);
+        console.log(`🎲 [rollRandomEventForDay] Paramètres:`, { dayIndex, tableIndex, discoveryName, discoveryType });
+
+        // Vérification des données globales
+        console.log(`🎲 [rollRandomEventForDay] Vérification des données globales...`);
+        console.log(`🎲 [rollRandomEventForDay] - typeof window.locationsData:`, typeof window.locationsData);
+        console.log(`🎲 [rollRandomEventForDay] - typeof window.regionsData:`, typeof window.regionsData);
+        console.log(`🎲 [rollRandomEventForDay] - typeof locationsData:`, typeof locationsData);
+        console.log(`🎲 [rollRandomEventForDay] - typeof regionsData:`, typeof regionsData);
 
         // Récupérer les données de la découverte
         let discoveryData = null;
-        if (discoveryType === 'location' && typeof locationsData !== 'undefined') {
-            discoveryData = locationsData.locations.find(loc => loc.name === discoveryName);
-            console.log(`🎲 [rollRandomEventForDay] Recherche lieu dans locationsData:`, locationsData.locations.length, 'lieux');
-        } else if (discoveryType === 'region' && typeof regionsData !== 'undefined') {
-            discoveryData = regionsData.regions.find(reg => reg.name === discoveryName);
-            console.log(`🎲 [rollRandomEventForDay] Recherche région dans regionsData:`, regionsData.regions.length, 'régions');
+        
+        try {
+            if (discoveryType === 'location') {
+                console.log(`🎲 [rollRandomEventForDay] Recherche lieu "${discoveryName}"...`);
+                
+                // Essayer window.locationsData en premier
+                if (window.locationsData && window.locationsData.locations) {
+                    console.log(`🎲 [rollRandomEventForDay] Utilisation de window.locationsData (${window.locationsData.locations.length} lieux)`);
+                    discoveryData = window.locationsData.locations.find(loc => loc.name === discoveryName);
+                } 
+                // Fallback sur locationsData global
+                else if (typeof locationsData !== 'undefined' && locationsData.locations) {
+                    console.log(`🎲 [rollRandomEventForDay] Utilisation de locationsData global (${locationsData.locations.length} lieux)`);
+                    discoveryData = locationsData.locations.find(loc => loc.name === discoveryName);
+                } else {
+                    console.error(`❌ [rollRandomEventForDay] Aucune source de données pour les lieux disponible`);
+                    return;
+                }
+            } 
+            else if (discoveryType === 'region') {
+                console.log(`🎲 [rollRandomEventForDay] Recherche région "${discoveryName}"...`);
+                
+                // Essayer window.regionsData en premier
+                if (window.regionsData && window.regionsData.regions) {
+                    console.log(`🎲 [rollRandomEventForDay] Utilisation de window.regionsData (${window.regionsData.regions.length} régions)`);
+                    discoveryData = window.regionsData.regions.find(reg => reg.name === discoveryName);
+                } 
+                // Fallback sur regionsData global
+                else if (typeof regionsData !== 'undefined' && regionsData.regions) {
+                    console.log(`🎲 [rollRandomEventForDay] Utilisation de regionsData global (${regionsData.regions.length} régions)`);
+                    discoveryData = regionsData.regions.find(reg => reg.name === discoveryName);
+                } else {
+                    console.error(`❌ [rollRandomEventForDay] Aucune source de données pour les régions disponible`);
+                    return;
+                }
+            }
+
+            console.log(`🎲 [rollRandomEventForDay] Découverte trouvée:`, discoveryData ? 'OUI' : 'NON');
+            if (discoveryData) {
+                console.log(`🎲 [rollRandomEventForDay] Découverte:`, { name: discoveryData.name, hasRandomTables: !!discoveryData.RandomTables });
+            }
+
+            if (!discoveryData) {
+                console.error(`❌ [rollRandomEventForDay] Découverte "${discoveryName}" non trouvée`);
+                alert(`Erreur: La découverte "${discoveryName}" n'a pas été trouvée dans les données.`);
+                return;
+            }
+
+            console.log(`🎲 [rollRandomEventForDay] Vérification RandomTables...`);
+            console.log(`🎲 [rollRandomEventForDay] - RandomTables existe:`, !!discoveryData.RandomTables);
+            console.log(`🎲 [rollRandomEventForDay] - Est un tableau:`, Array.isArray(discoveryData.RandomTables));
+            console.log(`🎲 [rollRandomEventForDay] - Longueur:`, discoveryData.RandomTables?.length);
+
+            if (!discoveryData.RandomTables || !Array.isArray(discoveryData.RandomTables) || discoveryData.RandomTables.length === 0) {
+                console.error(`❌ [rollRandomEventForDay] Pas de tables aléatoires pour "${discoveryName}"`);
+                alert(`Erreur: Aucune table aléatoire disponible pour "${discoveryName}".`);
+                return;
+            }
+
+            console.log(`🎲 [rollRandomEventForDay] Récupération table à l'index ${tableIndex}...`);
+            const randomTable = discoveryData.RandomTables[tableIndex];
+            
+            console.log(`🎲 [rollRandomEventForDay] Table trouvée:`, randomTable ? 'OUI' : 'NON');
+            if (randomTable) {
+                console.log(`🎲 [rollRandomEventForDay] Table:`, { name: randomTable.name, hasEntries: !!randomTable.entries });
+            }
+
+            if (!randomTable) {
+                console.error(`❌ [rollRandomEventForDay] Table ${tableIndex} non trouvée (${discoveryData.RandomTables.length} tables disponibles)`);
+                alert(`Erreur: Table d'index ${tableIndex} introuvable pour "${discoveryName}".`);
+                return;
+            }
+
+            // Lancer le tirage
+            console.log(`🎲 [rollRandomEventForDay] Appel de performRandomRoll avec le jour ${dayIndex + 1}...`);
+            this.performRandomRoll(randomTable, dayIndex + 1);
+            console.log(`🎲 [rollRandomEventForDay] ========== FIN ==========`);
+            
+        } catch (error) {
+            console.error(`❌ [rollRandomEventForDay] ERREUR:`, error);
+            console.error(`❌ [rollRandomEventForDay] Stack:`, error.stack);
+            alert(`Erreur lors du tirage aléatoire: ${error.message}`);
         }
-
-        console.log(`🎲 [rollRandomEventForDay] Découverte trouvée:`, discoveryData);
-
-        if (!discoveryData) {
-            console.warn(`⚠️ Découverte non trouvée: ${discoveryName}`);
-            return;
-        }
-
-        console.log(`🎲 [rollRandomEventForDay] RandomTables:`, discoveryData.RandomTables);
-
-        if (!discoveryData.RandomTables || !Array.isArray(discoveryData.RandomTables) || discoveryData.RandomTables.length === 0) {
-            console.warn(`⚠️ Pas de tables aléatoires pour ${discoveryName}`);
-            return;
-        }
-
-        const randomTable = discoveryData.RandomTables[tableIndex];
-        console.log(`🎲 [rollRandomEventForDay] Table sélectionnée (index ${tableIndex}):`, randomTable);
-
-        if (!randomTable) {
-            console.warn(`⚠️ Table ${tableIndex} non trouvée pour ${discoveryName}`);
-            return;
-        }
-
-        // Lancer le tirage
-        console.log(`🎲 [rollRandomEventForDay] Appel de performRandomRoll...`);
-        this.performRandomRoll(randomTable, dayIndex + 1); // Pass dayIndex + 1 for the actual day number
-        console.log(`🎲 [rollRandomEventForDay] FIN`);
     }
 
 
