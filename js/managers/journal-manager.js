@@ -309,13 +309,13 @@ class JournalManager {
             if (day.eventResult) {
                 const eventHtml = this.simpleMarkdown(day.eventResult);
                 contentHtml += `
-                    <div class="bg-gray-800 border border-yellow-500 rounded-lg p-3 mb-3">
-                        <div class="flex items-center text-xs text-yellow-400 mb-2">
+                    <div class="bg-yellow-50 border border-yellow-400 rounded-lg p-3 mb-3">
+                        <div class="flex items-center text-xs mb-2" style="color: #d97706;">
                             <i class="fas fa-dice mr-1"></i>
                             <span class="font-semibold">Événement aléatoire</span>
                         </div>
-                        <div class="text-sm prose prose-sm max-w-none" style="color: #f3f4f6 !important;">
-                            <div style="color: #f3f4f6 !important;">${eventHtml}</div>
+                        <div class="text-sm prose prose-sm max-w-none" style="color: #1f2937 !important;">
+                            <div style="color: #1f2937 !important;">${eventHtml}</div>
                         </div>
                     </div>
                 `;
