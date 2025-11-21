@@ -1752,31 +1752,27 @@ body {
 /* Dropdown des tables aléatoires - z-index très élevé pour apparaître au-dessus de tout */
 .day-random-tables-dropdown {
     position: fixed !important;
-    z-index: 10000 !important;
+    z-index: 99999 !important;
     pointer-events: auto !important;
+    isolation: isolate !important;
 }
 
 /* Assurer que le conteneur parent ne cache pas le dropdown */
 .day-card {
     position: relative;
-    overflow: visible !important;
 }
 
 .day-header {
     position: relative;
-    z-index: 1;
-    overflow: visible !important;
 }
 
 .day-content {
     position: relative;
-    z-index: 0;
 }
 
-/* Conteneur du bouton de menu */
+/* Conteneur du bouton de menu - isolation pour créer un nouveau contexte */
 .day-random-tables-menu-btn {
     position: relative;
-    z-index: 2;
 }
 
 /* Style compact pour les items de table dans le dropdown */
