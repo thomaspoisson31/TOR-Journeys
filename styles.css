@@ -1751,14 +1751,9 @@ body {
 
 /* Dropdown des tables aléatoires - z-index très élevé pour apparaître au-dessus de tout */
 .day-random-tables-dropdown {
-    z-index: 9999 !important;
-    position: absolute !important;
+    position: fixed !important;
+    z-index: 10000 !important;
     pointer-events: auto !important;
-}
-
-/* Empêcher les interactions avec les éléments en dessous quand le dropdown est ouvert */
-.day-random-tables-dropdown:not(.hidden) ~ * {
-    pointer-events: none;
 }
 
 /* Assurer que le conteneur parent ne cache pas le dropdown */
@@ -1793,4 +1788,15 @@ body {
 
 .day-random-table-item i {
     display: none !important;
+}
+
+/* Overlay transparent pour bloquer les interactions */
+#dropdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background: transparent;
 }

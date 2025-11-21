@@ -742,11 +742,16 @@ class VoyageManager {
                     const wasHidden = dropdown.classList.contains('hidden');
                     dropdown.classList.toggle('hidden');
                     
-                    // Ajouter un overlay transparent pour bloquer les interactions si le dropdown est ouvert
+                    // Positionner le dropdown en fixed par rapport au bouton
                     if (wasHidden) {
+                        const btnRect = menuBtn.getBoundingClientRect();
+                        dropdown.style.position = 'fixed';
+                        dropdown.style.top = (btnRect.bottom + 8) + 'px';
+                        dropdown.style.left = (btnRect.right - 192) + 'px'; // 192px = w-48
+                        dropdown.style.right = 'auto';
+                        
                         const overlay = document.createElement('div');
                         overlay.id = 'dropdown-overlay';
-                        overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9998; background: transparent;';
                         document.body.appendChild(overlay);
                         
                         // Fermer le dropdown en cliquant sur l'overlay
