@@ -718,7 +718,7 @@ class VoyageManager {
         // Event delegation pour les items de table aléatoire
         voyageDaysContent.addEventListener('click', (e) => {
             const tableItem = e.target.closest('.day-random-table-item');
-            
+
             if (tableItem) {
                 e.stopPropagation();
                 e.preventDefault();
@@ -794,13 +794,21 @@ class VoyageManager {
 
                         // Fermer le dropdown en cliquant sur l'overlay (pas sur le dropdown)
                         overlay.addEventListener('click', (overlayEvent) => {
-                            // Ignorer si le clic est sur le dropdown ou ses enfants
-                            if (overlayEvent.target !== overlay) {
-                                return;
+                            console.log(`🎲 [OVERLAY] Event phase:`, overlayEvent.eventPhase);
+                            console.log(`🎲 [OVERLAY] Target:`, overlayEvent.target.className || overlayEvent.target.id);
+                            console.log(`🎲 [OVERLAY] CurrentTarget:`, overlayEvent.currentTarget.id);
+
+                            // Ne fermer que si on clique directement sur l'overlay (pas sur le dropdown)
+                            if (overlayEvent.target === overlay) {
+                                overlayEvent.stopPropagation();
+                                console.log(`🎲 [OVERLAY] ✅ Clic sur overlay - fermeture du dropdown`);
+                                dropdown.classList.add('hidden');
+                                overlay.remove();
+                                console.log(`🎲 [OVERLAY] ========== FIN (FERMÉ) ==========`);
+                            } else {
+                                console.log(`🎲 [OVERLAY] ⏭️ Clic dans le dropdown - propagation autorisée`);
+                                console.log(`🎲 [OVERLAY] ========== FIN (PROPAGÉ) ==========`);
                             }
-                            
-                            dropdown.classList.add('hidden');
-                            overlay.remove();
                         });
                     }
                 }
