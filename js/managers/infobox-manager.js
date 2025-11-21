@@ -436,17 +436,16 @@ class InfoBoxManager {
 
             if (randomTables.length > 0) {
                 const tablesHTML = randomTables.map((table, tableIndex) => `
-                    <div class="mb-6 p-4 rounded-lg border border-gray-300" style="background-color: #f5f5f5;">
-                        <h3 class="text-lg font-bold mb-3 text-center" style="color: #940000; font-family: 'Merriweather', serif;">${table.name || 'Table sans nom'}</h3>
-                        
-                        <div class="flex justify-center mb-3">
-                            <button onclick="window.infoBoxManager.rollOnTable(${tableIndex})" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold transition-colors flex items-center space-x-2">
-                                <i class="fas fa-dice"></i>
-                                <span>Tirer</span>
+                    <div class="mb-4 p-3 rounded-lg border border-gray-300" style="background-color: #f5f5f5;">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-semibold" style="color: #940000; font-family: 'Merriweather', serif;">${table.name || 'Table sans nom'}</span>
+                            <button onclick="window.infoBoxManager.rollOnTable(${tableIndex})" class="text-blue-600 hover:text-blue-700 transition-colors" title="Tirer sur cette table">
+                                <i class="fas fa-dice text-xl"></i>
                             </button>
                         </div>
-
-                        <div id="table-result-${tableIndex}" class="hidden p-3 rounded" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
+                        <div class="text-xs" style="color: #6b7280;">${table.entries?.length || 0} entrée(s)</div>
+                        
+                        <div id="table-result-${tableIndex}" class="hidden p-3 rounded mt-3" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
                             <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat :</div>
                             <div id="table-result-content-${tableIndex}" style="color: #1f2937;"></div>
                         </div>
