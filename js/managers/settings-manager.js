@@ -1365,14 +1365,14 @@ class SettingsManager {
         }
 
         const tables = window.adventureManager.adventureData.randomTables;
-        
+
         if (tableIndex < 0 || tableIndex >= tables.length) {
             console.error('❌ [deleteTable] Index invalide:', tableIndex);
             return;
         }
 
         const tableName = tables[tableIndex].name || 'Table sans nom';
-        
+
         if (!confirm(`Voulez-vous vraiment supprimer la table "${tableName}" ?\n\nCette action est irréversible.`)) {
             console.log('🚫 [deleteTable] Suppression annulée par l\'utilisateur');
             return;
@@ -1392,18 +1392,29 @@ class SettingsManager {
 
         // Re-render l'onglet
         this.renderSettingsRandomTablesTab();
-        
+
         console.log(`🔄 [deleteTable] Interface mise à jour`);
     }
 
     rollOnSettingsTable(tableIndex) {
         console.log(`🎲 [DEBUG] rollOnSettingsTable appelé avec index: ${tableIndex}`);
 
-        const table = window.adventureManager.adventureData.randomTables[tableIndex];
-        console.log(`📋 [DEBUG] Table récupérée:`, table);
+        if (!window.adventureManager || !window.adventureManager.adventureData.randomTables) {
+            console.error('❌ [rollOnSettingsTable] AdventureManager ou randomTables non disponible');
+            return;
+        }
 
-        if (!table || !table.entries || table.entries.length === 0) {
-            console.error('❌ Table invalide ou vide');
+        const tables = window.adventureManager.adventureData.randomTables;
+
+        if (tableIndex < 0 || tableIndex >= tables.length) {
+            console.error('❌ [rollOnSettingsTable] Index invalide:', tableIndex);
+            return;
+        }
+
+        const table = tables[tableIndex];
+
+        if (!table.entries || table.entries.length === 0) {
+            console.error('❌ [rollOnSettingsTable] Table invalide ou vide');
             return;
         }
 
@@ -1411,30 +1422,58 @@ class SettingsManager {
         const randomIndex = Math.floor(Math.random() * table.entries.length);
         const result = table.entries[randomIndex];
 
-        console.log(`🎲 [DEBUG] Résultat du tirage:`, {
-            randomIndex,
-            result,
-            resultType: typeof result
-        });
-
         // Formater le résultat pour l'affichage
         let formattedResult = '';
         if (typeof result === 'object' && result !== null) {
-            formattedResult = '<div class="space-y-2">';
-            for (const [key, value] of Object.entries(result)) {
-                formattedResult += `
-                    <div class="mb-2">
-                        <span class="font-semibold" style="color: #940000;">${key}:</span>
-                        <span class="ml-2" style="color: black;">${value}</span>
-                    </div>`;
+            // Si c'est un objet avec des propriétés
+            const entries = Object.entries(result);
+
+            // Trouver le "Dé du destin" s'il existe
+            const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
+            const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+
+            if (otherEntries.length > 0) {
+                const [mainKey, mainValue] = otherEntries[0];
+
+                // Afficher la valeur principale avec le dé du destin entre parenthèses si présent
+                if (fateEntry) {
+                    formattedResult = `<span style="color: #1f2937; font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
+                } else {
+                    formattedResult = `<span style="color: #1f2937; font-weight: 600;">${mainValue}</span>`;
+                }
+
+                // Ajouter les autres propriétés s'il y en a sur la même ligne
+                for (let i = 1; i < otherEntries.length; i++) {
+                    const [key, value] = otherEntries[i];
+                    formattedResult += ` <span style="color: #1f2937;"><span style="font-weight: 500;">${key}:</span> ${value}</span>`;
+                }
+            } else if (fateEntry) {
+                formattedResult = `<span style="color: #1f2937; font-weight: 600;">${fateEntry[1]}</span>`;
             }
-            formattedResult += '</div>';
         } else {
-            formattedResult = `<div style="color: black;">${result}</div>`;
+            // Si c'est une chaîne simple
+            formattedResult = `<span style="color: #1f2937; font-weight: 600;">${result}</span>`;
         }
 
-        // Afficher dans la nouvelle modale
-        this.showRandomRollResultModal(table.name, formattedResult);
+        // Afficher le résultat dans la modale
+        const modal = document.getElementById('random-roll-result-modal');
+        const content = document.getElementById('random-roll-result-content');
+
+        if (modal && content) {
+            content.innerHTML = `
+                <div>
+                    <span style="color: #940000; font-weight: 700; font-size: 1.1rem;">${table.name || 'Table aléatoire'}</span> ${formattedResult}
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+
+            // Stocker le résultat pour insertion dans le journal
+            this.currentRandomResult = {
+                tableName: table.name || 'Table aléatoire',
+                result: formattedResult
+            };
+        }
 
         console.log(`🎲 Tirage sur "${table.name}":`, result);
     }
@@ -1834,11 +1873,11 @@ class SettingsManager {
 
             // Extraire le champ "Résultat" du texte pour l'utiliser comme titre
             let eventTitle = this.currentRandomResult.title;
-            
+
             // Chercher le champ "Résultat:" dans le texte HTML ou texte brut
             const resultMatch = this.currentRandomResult.text.match(/Résultat[:\s]*<\/span>\s*<span[^>]*>([^<]+)<\/span>/i) ||
                                this.currentRandomResult.text.match(/Résultat[:\s]*([^\n<]+)/i);
-            
+
             if (resultMatch && resultMatch[1]) {
                 eventTitle = resultMatch[1].trim();
             }

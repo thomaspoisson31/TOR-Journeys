@@ -444,7 +444,7 @@ class InfoBoxManager {
                             </button>
                         </div>
                         <div class="text-xs" style="color: #6b7280;">${table.entries?.length || 0} entrée(s)</div>
-                        
+
                         <div id="table-result-${tableIndex}" class="hidden p-3 rounded mt-3" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
                             <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat :</div>
                             <div id="table-result-content-${tableIndex}" style="color: #1f2937;"></div>
@@ -1658,13 +1658,18 @@ class InfoBoxManager {
     }
 
     rollOnTable(tableIndex) {
-        if (!this.currentItem.RandomTables || tableIndex < 0 || tableIndex >= this.currentItem.RandomTables.length) {
-            return;
-        }
+        console.log(`🎲 [DEBUG] rollOnTable appelé avec index: ${tableIndex}`);
 
         const table = this.currentItem.RandomTables[tableIndex];
-        if (!table.entries || table.entries.length === 0) {
-            alert('Cette table est vide');
+        console.log(`📋 [DEBUG] Table récupérée:`, table);
+
+        if (!table || !table.entries || table.entries.length === 0) {
+            console.error('❌ Table invalide ou vide');
+            console.log('🔍 [DEBUG] État de la table:', {
+                tableExists: !!table,
+                entriesExists: !!(table?.entries),
+                entriesLength: table?.entries?.length || 0
+            });
             return;
         }
 
@@ -1672,29 +1677,60 @@ class InfoBoxManager {
         const randomIndex = Math.floor(Math.random() * table.entries.length);
         const result = table.entries[randomIndex];
 
-        // Formater le résultat
+        console.log(`🎲 [DEBUG] Résultat du tirage:`, {
+            randomIndex,
+            result,
+            resultType: typeof result
+        });
+
+        // Formater le résultat pour l'affichage
         let formattedResult = '';
         if (typeof result === 'object' && result !== null) {
-            formattedResult = '<div class="space-y-1 text-white">';
-            for (const [key, value] of Object.entries(result)) {
-                formattedResult += `
-                    <div>
-                        <span class="font-semibold" style="color: #940000;">${key}:</span>
-                        <span class="ml-2">${value}</span>
-                    </div>`;
+            // Si c'est un objet, formater les propriétés
+            const entries = Object.entries(result);
+
+            // Trouver le "Dé du destin" s'il existe
+            const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
+            const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+
+            if (otherEntries.length > 0) {
+                const [mainKey, mainValue] = otherEntries[0];
+
+                // Afficher la valeur principale avec le dé du destin entre parenthèses si présent
+                if (fateEntry) {
+                    formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
+                } else {
+                    formattedResult = `<span style="font-weight: 600;">${mainValue}</span>`;
+                }
+
+                // Ajouter les autres propriétés s'il y en a sur la même ligne
+                for (let i = 1; i < otherEntries.length; i++) {
+                    const [key, value] = otherEntries[i];
+                    formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
+                }
+            } else if (fateEntry) {
+                formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
             }
-            formattedResult += '</div>';
         } else {
-            formattedResult = `<div class="text-white">${result}</div>`;
+            // Si c'est une chaîne simple
+            formattedResult = `<span style="font-weight: 600;">${result}</span>`;
         }
 
-        // Afficher le résultat
+        // Afficher le résultat dans un conteneur dédié
         const resultContainer = document.getElementById(`table-result-${tableIndex}`);
         const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
-        
+
+        console.log(`📦 [DEBUG] Conteneurs DOM:`, {
+            resultContainer: !!resultContainer,
+            resultContent: !!resultContent
+        });
+
         if (resultContainer && resultContent) {
             resultContent.innerHTML = formattedResult;
             resultContainer.classList.remove('hidden');
+            console.log(`✅ [DEBUG] Résultat affiché dans le DOM`);
+        } else {
+            console.error(`❌ [DEBUG] Conteneurs introuvables pour table-result-${tableIndex}`);
         }
 
         console.log(`🎲 Tirage sur "${table.name}":`, result);
