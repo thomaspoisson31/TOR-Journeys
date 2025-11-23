@@ -400,7 +400,7 @@ class InfoBoxManager {
                 const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
                 const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
 
-                // Mettre à jour le titre avec icône dé si plus d'une rumeur
+                // Mettre à jour le titre avec icône dé si au moins 2 rumeurs
                 const titleElement = document.getElementById('rumeurs-title');
                 if (titleElement) {
                     // Créer un conteneur flex pour le titre et le bouton
@@ -412,7 +412,7 @@ class InfoBoxManager {
                     h3.className = 'mb-0';
                     titleContainer.appendChild(h3);
                     
-                    if (rumeursValides.length > 1) {
+                    if (rumeursValides.length >= 2) {
                         const button = document.createElement('button');
                         button.onclick = () => window.infoBoxManager.rollRandomRumeur();
                         button.className = 'ml-2 text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-blue-900 hover:bg-opacity-30';
