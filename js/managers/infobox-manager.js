@@ -403,18 +403,32 @@ class InfoBoxManager {
                 // Mettre à jour le titre avec icône dé si plus d'une rumeur
                 const titleElement = document.getElementById('rumeurs-title');
                 if (titleElement) {
+                    // Créer un conteneur flex pour le titre et le bouton
+                    const titleContainer = document.createElement('div');
+                    titleContainer.className = 'flex items-center mb-3';
+                    
+                    const h3 = document.createElement('h3');
+                    h3.textContent = 'Rumeurs';
+                    h3.className = 'mb-0';
+                    titleContainer.appendChild(h3);
+                    
                     if (rumeursValides.length > 1) {
-                        titleElement.innerHTML = `
-                            Rumeurs
-                            <button onclick="window.infoBoxManager.rollRandomRumeur()"
-                                    class="ml-2 text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-blue-900 hover:bg-opacity-30"
-                                    title="Tirer une rumeur aléatoire">
-                                <i class="fas fa-dice text-xl"></i>
-                            </button>
-                        `;
-                    } else {
-                        titleElement.innerHTML = 'Rumeurs';
+                        const button = document.createElement('button');
+                        button.onclick = () => window.infoBoxManager.rollRandomRumeur();
+                        button.className = 'ml-2 text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-blue-900 hover:bg-opacity-30';
+                        button.title = 'Tirer une rumeur aléatoire';
+                        button.style.color = '#3b82f6'; // Force la couleur en inline
+                        
+                        const icon = document.createElement('i');
+                        icon.className = 'fas fa-dice text-xl';
+                        icon.style.color = '#3b82f6'; // Force la couleur en inline
+                        
+                        button.appendChild(icon);
+                        titleContainer.appendChild(button);
                     }
+                    
+                    // Remplacer le h3 par le conteneur
+                    titleElement.parentNode.replaceChild(titleContainer, titleElement);
                 }
 
                 let rumeursHTML = '';
