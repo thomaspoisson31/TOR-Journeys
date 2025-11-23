@@ -1102,6 +1102,16 @@ body {
     display: flex;
 }
 
+/* Onglet Tables Aléatoires - prendre toute la largeur */
+#random-tables-tab {
+    width: 100%;
+}
+
+#settings-random-tables-content {
+    width: 100%;
+    padding: 1.5rem;
+}
+
 /* Styles pour les modales de voyage en fond blanc */
 .voyage-modal-white {
     background-color: white !important;
