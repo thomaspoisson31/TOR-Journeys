@@ -768,7 +768,6 @@ class InfoBoxManager {
     }
 
 
-
     // Fonction utilitaire pour le rendu Markdown basique
     renderMarkdown(text) {
         if (!text) return '';
@@ -1182,8 +1181,8 @@ class InfoBoxManager {
             delete this.currentItem.Rumeurs;
         }
 
-        // Tradition ancienne
-        if (traditionTextarea) {
+        // Tradition ancienne (seulement pour lieux et régions)
+        if (traditionTextarea && this.currentType !== 'character') {
             this.currentItem.Tradition_Ancienne = traditionTextarea.value.trim();
         }
 
@@ -2009,7 +2008,6 @@ class InfoBoxManager {
         console.log(`🔼 Nouveau chemin:`, this.currentLibraryPath);
         this.renderLibraryNavigation(this.currentLibraryPath);
     }
-
 
 
 
