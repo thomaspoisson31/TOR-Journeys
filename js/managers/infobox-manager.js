@@ -585,9 +585,15 @@ class InfoBoxManager {
                     <div id="edit-rumeurs-list" class="space-y-2 mb-3">
                         ${rumeursHTML || '<p class="text-gray-400 italic text-sm">Aucune rumeur. Cliquez sur "Ajouter une rumeur" ci-dessous.</p>'}
                     </div>
-                    <button onclick="window.infoBoxManager.addRumeurInEdit()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm">
-                        <i class="fas fa-plus mr-1"></i>Ajouter une rumeur
-                    </button>
+                    <div class="flex space-x-2 mb-3">
+                        <button onclick="window.infoBoxManager.addRumeurInEdit()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm">
+                            <i class="fas fa-plus mr-1"></i>Ajouter une rumeur
+                        </button>
+                        <button onclick="document.getElementById('import-rumeurs-json-input').click()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm">
+                            <i class="fas fa-file-import mr-1"></i>Importer JSON
+                        </button>
+                        <input type="file" id="import-rumeurs-json-input" accept=".json" class="hidden">
+                    </div>
                 </div>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-white mb-2">
@@ -604,6 +610,12 @@ class InfoBoxManager {
                     </button>
                 </div>
             `;
+
+            // Setup event listener pour l'import de rumeurs JSON
+            const rumeursFileInput = document.getElementById('import-rumeurs-json-input');
+            if (rumeursFileInput) {
+                rumeursFileInput.addEventListener('change', (e) => this.handleRumeursJsonImport(e));
+            }
         }
 
         // Onglet Événements de voyage (mode édition)
@@ -1138,6 +1150,98 @@ class InfoBoxManager {
         if (remainingRumeurs.length === 0) {
             list.innerHTML = '<p class="text-gray-400 italic text-sm">Aucune rumeur. Cliquez sur "Ajouter une rumeur" ci-dessous.</p>';
         }
+    }
+
+    handleRumeursJsonImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const jsonData = JSON.parse(e.target.result);
+
+                if (!Array.isArray(jsonData)) {
+                    alert('Format invalide : le fichier doit contenir un tableau JSON');
+                    return;
+                }
+
+                const list = document.getElementById('edit-rumeurs-list');
+                if (!list) return;
+
+                // Supprimer le message "Aucune rumeur" s'il existe
+                const emptyMsg = list.querySelector('p.text-gray-400');
+                if (emptyMsg) emptyMsg.remove();
+
+                // Compter le nombre de rumeurs existantes
+                const existingRumeurs = list.querySelectorAll('[data-rumeur-index]');
+                let startIndex = existingRumeurs.length;
+
+                // Extraire les rumeurs du JSON
+                const nouvelles = [];
+                jsonData.forEach(entry => {
+                    let rumeurText = '';
+                    
+                    // Format table aléatoire : chercher la clé "Résultat"
+                    if (typeof entry === 'object' && entry !== null) {
+                        if (entry.Résultat) {
+                            rumeurText = entry.Résultat;
+                        } else if (entry.Result) {
+                            rumeurText = entry.Result;
+                        } else {
+                            // Prendre la première valeur non-vide qui n'est pas "Dé du destin"
+                            const keys = Object.keys(entry);
+                            for (const key of keys) {
+                                if (!key.toLowerCase().includes('destin') && 
+                                    !key.toLowerCase().includes('fate') && 
+                                    !key.toLowerCase().includes('dé') &&
+                                    entry[key]) {
+                                    rumeurText = entry[key];
+                                    break;
+                                }
+                            }
+                        }
+                    } else if (typeof entry === 'string') {
+                        // Format simple : tableau de strings
+                        rumeurText = entry;
+                    }
+
+                    if (rumeurText && rumeurText.trim()) {
+                        nouvelles.push(rumeurText.trim());
+                    }
+                });
+
+                if (nouvelles.length === 0) {
+                    alert('Aucune rumeur valide trouvée dans le fichier JSON');
+                    return;
+                }
+
+                // Ajouter les nouvelles rumeurs
+                nouvelles.forEach((rumeur, idx) => {
+                    const newIndex = startIndex + idx;
+                    const newRumeurHTML = `
+                        <div class="flex items-start space-x-2 mb-2" data-rumeur-index="${newIndex}">
+                            <textarea rows="3" class="flex-1 p-2 border rounded bg-white text-black text-sm border-gray-600 edit-rumeur-input" data-index="${newIndex}">${rumeur}</textarea>
+                            <button onclick="window.infoBoxManager.deleteRumeurInEdit(${newIndex})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    list.insertAdjacentHTML('beforeend', newRumeurHTML);
+                });
+
+                console.log(`✅ ${nouvelles.length} rumeur(s) importée(s) depuis JSON`);
+                alert(`${nouvelles.length} rumeur(s) ajoutée(s) avec succès`);
+
+            } catch (error) {
+                console.error('❌ Erreur lors de l\'import:', error);
+                alert('Erreur lors de la lecture du fichier JSON: ' + error.message);
+            }
+        };
+        reader.readAsText(file);
+
+        // Reset le champ
+        event.target.value = '';
     }
 
     async saveEdit() {
