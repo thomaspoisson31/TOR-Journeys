@@ -401,7 +401,7 @@ class InfoBoxManager {
                 const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
 
                 // Mettre à jour le titre avec icône dé si plus d'une rumeur
-                const titleElement = rumeursSection.querySelector('h3');
+                const titleElement = document.getElementById('rumeurs-title');
                 if (titleElement) {
                     if (rumeursValides.length > 1) {
                         titleElement.innerHTML = `
@@ -413,7 +413,7 @@ class InfoBoxManager {
                             </button>
                         `;
                     } else {
-                        titleElement.textContent = 'Rumeurs';
+                        titleElement.innerHTML = 'Rumeurs';
                     }
                 }
 
