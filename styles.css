@@ -177,14 +177,24 @@ body {
 /* Exception pour le bouton dé dans les rumeurs */
 #rumeurs-title button {
     color: #3b82f6 !important;
+    background: transparent !important;
 }
 
 #rumeurs-title button:hover {
     color: #60a5fa !important;
+    background-color: rgba(59, 130, 246, 0.1) !important;
 }
 
-#rumeurs-title button i {
-    color: inherit !important;
+#rumeurs-title button i,
+#rumeurs-title button i.fas {
+    color: #3b82f6 !important;
+    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free' !important;
+    font-weight: 900 !important;
+}
+
+#rumeurs-title button:hover i,
+#rumeurs-title button:hover i.fas {
+    color: #60a5fa !important;
 }
 
 /* Assurer le défilement pour tous les onglets */
