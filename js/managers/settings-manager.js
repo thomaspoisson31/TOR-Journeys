@@ -1525,8 +1525,8 @@ class SettingsManager {
 
         console.log(`✅ [DEBUG] Résultats composites:`, compositeResults);
 
-        // Formater les résultats pour l'affichage
-        let formattedResults = '<div class="space-y-4">';
+        // Formater les résultats pour l'affichage (sans espace entre les blocs)
+        let formattedResults = '<div>';
         compositeResults.forEach((item, idx) => {
             // Formater chaque résultat de la même manière que les tables simples
             let itemFormattedResult = '';
@@ -1561,7 +1561,7 @@ class SettingsManager {
             }
 
             formattedResults += `
-                <div class="p-3 bg-gray-100 rounded border border-gray-300">
+                <div class="p-3 bg-gray-100 rounded border border-gray-300" style="margin-bottom: 0;">
                     <div class="text-sm font-semibold mb-2" style="color: #940000;">${item.tableName}</div>
                     <div style="color: #1f2937;">${itemFormattedResult}</div>
                 </div>`;
