@@ -406,7 +406,7 @@ class InfoBoxManager {
                     if (rumeursValides.length > 1) {
                         titleElement.innerHTML = `
                             Rumeurs
-                            <button onclick="window.infoBoxManager.rollRandomRumeur()" 
+                            <button onclick="window.infoBoxManager.rollRandomRumeur()"
                                     class="ml-2 text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-blue-900 hover:bg-opacity-30"
                                     title="Tirer une rumeur aléatoire">
                                 <i class="fas fa-dice text-xl"></i>
@@ -1207,7 +1207,7 @@ class InfoBoxManager {
                 const nouvelles = [];
                 jsonData.forEach(entry => {
                     let rumeurText = '';
-                    
+
                     // Format table aléatoire : chercher la clé "Résultat"
                     if (typeof entry === 'object' && entry !== null) {
                         if (entry.Résultat) {
@@ -1218,8 +1218,8 @@ class InfoBoxManager {
                             // Prendre la première valeur non-vide qui n'est pas "Dé du destin"
                             const keys = Object.keys(entry);
                             for (const key of keys) {
-                                if (!key.toLowerCase().includes('destin') && 
-                                    !key.toLowerCase().includes('fate') && 
+                                if (!key.toLowerCase().includes('destin') &&
+                                    !key.toLowerCase().includes('fate') &&
                                     !key.toLowerCase().includes('dé') &&
                                     entry[key]) {
                                     rumeurText = entry[key];
