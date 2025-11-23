@@ -393,22 +393,48 @@ class InfoBoxManager {
             }
 
             // Section Rumeurs
+            const rumeursSection = rumeursTab.querySelector('#rumeurs-section');
             const rumeursContent = rumeursTab.querySelector('#rumeurs-content');
-            if (rumeursContent) {
-                let rumeursHTML = '';
-
+            if (rumeursSection && rumeursContent) {
                 // Normaliser les rumeurs en tableau
                 const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
                 const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
 
+                // Mettre à jour le titre avec icône dé si plus d'une rumeur
+                const titleElement = rumeursSection.querySelector('h3');
+                if (titleElement) {
+                    if (rumeursValides.length > 1) {
+                        titleElement.innerHTML = `
+                            Rumeurs
+                            <button onclick="window.infoBoxManager.rollRandomRumeur()" 
+                                    class="ml-2 text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-blue-900 hover:bg-opacity-30"
+                                    title="Tirer une rumeur aléatoire">
+                                <i class="fas fa-dice text-xl"></i>
+                            </button>
+                        `;
+                    } else {
+                        titleElement.textContent = 'Rumeurs';
+                    }
+                }
+
+                let rumeursHTML = '';
+
+                // Zone de résultat du tirage aléatoire (cachée par défaut)
+                rumeursHTML += `
+                    <div id="rumeur-random-result" class="hidden p-3 rounded-lg border border-gray-300 mb-4" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
+                        <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Rumeur tirée :</div>
+                        <div id="rumeur-random-content" class="prose prose-invert" style="color: #1f2937;"></div>
+                    </div>
+                `;
+
                 if (rumeursValides.length > 0) {
-                    rumeursHTML = rumeursValides.map((rumeur, index) => `
+                    rumeursHTML += rumeursValides.map((rumeur, index) => `
                         <div class="mb-4 ${index > 0 ? 'pt-4 border-t border-yellow-600 border-opacity-30' : ''}">
                             <div class="prose prose-invert">${this.renderMarkdown(rumeur)}</div>
                         </div>
                     `).join('');
                 } else {
-                    rumeursHTML = '<div class="prose prose-invert text-gray-400 italic">Aucune rumeur disponible.</div>';
+                    rumeursHTML += '<div class="prose prose-invert text-gray-400 italic">Aucune rumeur disponible.</div>';
                 }
 
                 rumeursContent.innerHTML = rumeursHTML;
@@ -1758,6 +1784,44 @@ class InfoBoxManager {
 
         // Re-render le mode édition
         this.renderEditMode();
+    }
+
+    rollRandomRumeur() {
+        console.log(`🎲 [rollRandomRumeur] Tirage d'une rumeur aléatoire`);
+
+        if (!this.currentItem) {
+            console.error('❌ Aucun élément courant');
+            return;
+        }
+
+        // Normaliser les rumeurs en tableau
+        const rumeurs = this.currentItem.Rumeurs || (this.currentItem.Rumeur ? [this.currentItem.Rumeur] : []);
+        const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
+
+        console.log(`🎲 ${rumeursValides.length} rumeur(s) disponible(s)`);
+
+        if (rumeursValides.length === 0) {
+            console.warn('⚠️ Aucune rumeur valide à tirer');
+            return;
+        }
+
+        // Tirer une rumeur aléatoire
+        const randomIndex = Math.floor(Math.random() * rumeursValides.length);
+        const randomRumeur = rumeursValides[randomIndex];
+
+        console.log(`🎲 Rumeur tirée (index ${randomIndex}):`, randomRumeur.substring(0, 50) + '...');
+
+        // Afficher le résultat
+        const resultContainer = document.getElementById('rumeur-random-result');
+        const resultContent = document.getElementById('rumeur-random-content');
+
+        if (resultContainer && resultContent) {
+            resultContent.innerHTML = this.renderMarkdown(randomRumeur);
+            resultContainer.classList.remove('hidden');
+            console.log(`✅ Rumeur affichée dans le conteneur`);
+        } else {
+            console.error('❌ Conteneurs de résultat non trouvés');
+        }
     }
 
     rollOnTable(tableIndex) {
