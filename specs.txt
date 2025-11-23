@@ -868,6 +868,93 @@ PRINCIPES DE VALIDATION TECHNIQUE
    - Comparaison des mapId lors des opérations de filtrage
    - Validation des structures (locations: [], regions: [])
 
+ENSEIGNEMENTS CLÉS DU DÉVELOPPEMENT
+------------------------------------
+
+1. ARCHITECTURE ET MODULARITÉ :
+   - Privilégier la CONSOLIDATION des indicateurs visuels plutôt que leur multiplication
+   - Un seul indicateur contextuel bien placé > plusieurs indicateurs répétitifs
+   - Éviter la surcharge visuelle dans les interfaces denses
+   - Exemple : icône de dé au niveau lieu/région plutôt que sur chaque jour de voyage
+
+2. GESTION DES MODIFICATIONS :
+   - TOUJOURS favoriser les modifications INCRÉMENTALES plutôt que les refactorisations globales
+   - Tester chaque changement individuellement avant d'en cumuler plusieurs
+   - Conserver la structure existante autant que possible lors des évolutions
+   - En cas de régression, revenir au dernier checkpoint stable
+
+3. SÉPARATION DES RESPONSABILITÉS :
+   - Séparer clairement génération HTML et configuration des interactions
+   - Utiliser des méthodes spécialisées pour chaque type d'interaction
+   - Éviter les effets de bord entre méthodes de rendering
+   - Pattern : renderContent() → setupInteractions() → cleanup()
+
+4. PRINCIPE DE RESPONSABILITÉ UNIQUE :
+   - Un bouton = une action claire et unique
+   - Éviter les boutons multi-fonctions qui changent de comportement
+   - Les indicateurs visuels doivent être passifs (affichage) ou actifs (action), mais pas les deux
+   - Exemple : icône de dé = indicateur qui ouvre l'infobox, pas un déclencheur d'événement
+
+5. GESTION DE L'ÉTAT ET SIGNATURES UNIQUES :
+   - Créer des signatures uniques pour identifier les données temporaires (ex: pathSignature)
+   - Permet de stocker des données spécifiques sans risque de collision
+   - Évite la perte de données lors de modifications mineures
+   - Pattern : createSignature() basé sur caractéristiques stables (points départ/fin, longueur)
+
+6. EVENT DELEGATION POUR CONTENU DYNAMIQUE :
+   - TOUJOURS utiliser event delegation pour du contenu généré par innerHTML
+   - Attacher UN SEUL listener sur le conteneur parent stable
+   - Utiliser event.target.closest() pour détecter l'élément cliqué
+   - Pattern critique : container.addEventListener('click', listener) avec cleanup
+   - Stocker les listeners pour pouvoir les nettoyer : container._listener = listener
+
+7. VALIDATION ROBUSTE AVANT ACTIONS :
+   - Toujours vérifier l'existence des données avant traitement
+   - Valider les types (typeof === 'number', !isNaN())
+   - Logger les erreurs avec contexte détaillé
+   - Ne JAMAIS supposer qu'une propriété existe
+   - Afficher des messages utilisateur clairs en cas d'échec
+
+8. GESTION DES AFFICHAGES CONDITIONNELS :
+   - Vérifications robustes en chaîne avec opérateur && :
+     * Existence de l'objet
+     * Type correct (Array.isArray, typeof)
+     * Contenu présent (length > 0)
+   - Génération conditionnelle d'HTML plutôt que manipulation DOM après coup
+   - Pattern : const icon = hasData ? '<i>...</i>' : '';
+
+9. LOGS ET DEBUGGING :
+   - Utiliser des émojis distinctifs par type d'opération
+   - Logger les états AVANT et APRÈS les modifications critiques
+   - Afficher les compteurs et statistiques pour validation
+   - Facilite grandement le débogage dans les applications complexes
+   - Exemples : 🎲 événements, 📍 position, 🗺️ carte, 🔍 filtres
+
+10. OPTIMISATION UX/UI :
+    - Dans une interface dense, privilégier la compacité ET la clarté
+    - Un indicateur bien placé vaut mieux que plusieurs actions dispersées
+    - Réduire le nombre de clics nécessaires en regroupant les informations liées
+    - Marquer visuellement l'élément actif (classe CSS, ring, highlight)
+    - Scroller vers l'élément si nécessaire (scrollIntoView)
+
+11. PIÈGES À ÉVITER :
+    - ❌ Refactoriser plusieurs systèmes à la fois
+    - ❌ Supposer que les données existent sans vérification
+    - ❌ Attacher des listeners AVANT innerHTML (ils seront perdus)
+    - ❌ Multiplier les indicateurs visuels similaires
+    - ❌ Créer des boutons multi-fonctions changeant de comportement
+    - ❌ Oublier de nettoyer les anciens listeners avant d'en créer de nouveaux
+
+12. BONNES PRATIQUES CONFIRMÉES :
+    - ✅ Modifications incrémentales et testables
+    - ✅ Event delegation pour contenu dynamique
+    - ✅ Validation exhaustive avant traitement
+    - ✅ Logs structurés avec compteurs
+    - ✅ Séparation rendering / interactions
+    - ✅ Signatures uniques pour données temporaires
+    - ✅ Cleanup explicite des listeners
+    - ✅ Messages utilisateur clairs en cas d'erreur
+
 PRINCIPES DE RENDERING DESCRIPTIONS VOYAGE
 -------------------------------------------
 
