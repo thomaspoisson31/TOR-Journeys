@@ -1462,7 +1462,8 @@ class SettingsManager {
         if (modal && content) {
             content.innerHTML = `
                 <div>
-                    <span style="color: #940000; font-weight: 700; font-size: 1.1rem;">${table.name || 'Table aléatoire'}</span> ${formattedResult}
+                    <div style="color: #940000; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;">${table.name || 'Table aléatoire'}</div>
+                    <div>${formattedResult}</div>
                 </div>
             `;
 
@@ -1527,24 +1528,43 @@ class SettingsManager {
         // Formater les résultats pour l'affichage
         let formattedResults = '<div class="space-y-4">';
         compositeResults.forEach((item, idx) => {
+            // Formater chaque résultat de la même manière que les tables simples
+            let itemFormattedResult = '';
+            if (typeof item.result === 'object' && item.result !== null) {
+                const entries = Object.entries(item.result);
+                
+                // Trouver le "Dé du destin" s'il existe
+                const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
+                const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+
+                if (otherEntries.length > 0) {
+                    const [mainKey, mainValue] = otherEntries[0];
+
+                    // Afficher la valeur principale avec le dé du destin entre parenthèses si présent
+                    if (fateEntry) {
+                        itemFormattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
+                    } else {
+                        itemFormattedResult = `<span style="font-weight: 600;">${mainValue}</span>`;
+                    }
+
+                    // Ajouter les autres propriétés s'il y en a sur la même ligne
+                    for (let i = 1; i < otherEntries.length; i++) {
+                        const [key, value] = otherEntries[i];
+                        itemFormattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
+                    }
+                } else if (fateEntry) {
+                    itemFormattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
+                }
+            } else {
+                // Si c'est une chaîne simple
+                itemFormattedResult = `<span style="font-weight: 600;">${item.result}</span>`;
+            }
+
             formattedResults += `
                 <div class="p-3 bg-gray-100 rounded border border-gray-300">
                     <div class="text-sm font-semibold mb-2" style="color: #940000;">${item.tableName}</div>
-                    <div style="color: black;">`;
-
-            if (typeof item.result === 'object' && item.result !== null) {
-                for (const [key, value] of Object.entries(item.result)) {
-                    formattedResults += `
-                        <div class="mb-1">
-                            <span class="font-semibold" style="color: #940000;">${key}:</span>
-                            <span class="ml-2">${value}</span>
-                        </div>`;
-                }
-            } else {
-                formattedResults += `<div>${item.result}</div>`;
-            }
-
-            formattedResults += `</div></div>`;
+                    <div style="color: #1f2937;">${itemFormattedResult}</div>
+                </div>`;
         });
         formattedResults += '</div>';
 

@@ -1726,7 +1726,11 @@ class InfoBoxManager {
         });
 
         if (resultContainer && resultContent) {
-            resultContent.innerHTML = formattedResult;
+            // Formater avec le nom de la table et un saut de ligne
+            resultContent.innerHTML = `
+                <div style="color: #940000; font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">${table.name || 'Table aléatoire'}</div>
+                <div>${formattedResult}</div>
+            `;
             resultContainer.classList.remove('hidden');
             console.log(`✅ [DEBUG] Résultat affiché dans le DOM`);
         } else {
