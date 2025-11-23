@@ -1561,11 +1561,7 @@ class SettingsManager {
             }
 
             const isLast = idx === compositeResults.length - 1;
-            formattedResults += `
-                <div class="p-3 bg-gray-100 rounded border border-gray-300" style="margin-bottom: ${isLast ? '0' : '0.5rem'};">
-                    <div class="text-sm font-semibold mb-2" style="color: #940000;">${item.tableName}</div>
-                    <div style="color: #1f2937;">${itemFormattedResult}</div>
-                </div>`;
+            formattedResults += `<div class="p-3 bg-gray-100 rounded border border-gray-300" style="margin-bottom: ${isLast ? '0' : '0.5rem'};"><div class="text-sm font-semibold mb-2" style="color: #940000;">${item.tableName}</div><div style="color: #1f2937;">${itemFormattedResult}</div></div>`;
         });
 
         // Afficher dans la nouvelle modale
