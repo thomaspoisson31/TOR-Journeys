@@ -1356,6 +1356,46 @@ class SettingsManager {
         }
     }
 
+    deleteTable(tableIndex) {
+        console.log(`🗑️ [deleteTable] Suppression de la table index: ${tableIndex}`);
+
+        if (!window.adventureManager || !window.adventureManager.adventureData.randomTables) {
+            console.error('❌ [deleteTable] AdventureManager ou randomTables non disponible');
+            return;
+        }
+
+        const tables = window.adventureManager.adventureData.randomTables;
+        
+        if (tableIndex < 0 || tableIndex >= tables.length) {
+            console.error('❌ [deleteTable] Index invalide:', tableIndex);
+            return;
+        }
+
+        const tableName = tables[tableIndex].name || 'Table sans nom';
+        
+        if (!confirm(`Voulez-vous vraiment supprimer la table "${tableName}" ?\n\nCette action est irréversible.`)) {
+            console.log('🚫 [deleteTable] Suppression annulée par l\'utilisateur');
+            return;
+        }
+
+        // Supprimer la table
+        tables.splice(tableIndex, 1);
+        console.log(`✅ [deleteTable] Table "${tableName}" supprimée`);
+
+        // Sauvegarder dans localStorage
+        window.adventureManager.saveToLocalStorage();
+
+        // Marquer comme non sauvegardé pour sync cloud
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        // Re-render l'onglet
+        this.renderSettingsRandomTablesTab();
+        
+        console.log(`🔄 [deleteTable] Interface mise à jour`);
+    }
+
     rollOnSettingsTable(tableIndex) {
         console.log(`🎲 [DEBUG] rollOnSettingsTable appelé avec index: ${tableIndex}`);
 
