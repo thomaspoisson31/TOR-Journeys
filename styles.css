@@ -174,7 +174,7 @@ body {
     font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free' !important;
 }
 
-/* Exception pour le bouton dé dans les rumeurs - spécificité maximale */
+/* Exception pour le bouton dé dans les rumeurs - spécificité maximale renforcée */
 #info-box #rumeurs-section #rumeurs-title button,
 #rumeurs-title button {
     color: #3b82f6 !important;
@@ -187,20 +187,28 @@ body {
     background-color: rgba(59, 130, 246, 0.1) !important;
 }
 
-#info-box #rumeurs-section #rumeurs-title button i,
-#info-box #rumeurs-section #rumeurs-title button i.fas,
+/* Triple niveau de spécificité pour forcer la couleur de l'icône */
+#info-box #rumeurs-section #rumeurs-title button i.fas.fa-dice,
 #info-box #rumeurs-section #rumeurs-title button i.fa-dice,
-#rumeurs-title button i,
-#rumeurs-title button i.fas {
+#info-box #rumeurs-section #rumeurs-title button i.fas,
+#info-box #rumeurs-section #rumeurs-title button i,
+#rumeurs-title button i.fas.fa-dice,
+#rumeurs-title button i.fa-dice,
+#rumeurs-title button i.fas,
+#rumeurs-title button i {
     color: #3b82f6 !important;
     font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free' !important;
     font-weight: 900 !important;
 }
 
-#info-box #rumeurs-section #rumeurs-title button:hover i,
+#info-box #rumeurs-section #rumeurs-title button:hover i.fas.fa-dice,
+#info-box #rumeurs-section #rumeurs-title button:hover i.fa-dice,
 #info-box #rumeurs-section #rumeurs-title button:hover i.fas,
-#rumeurs-title button:hover i,
-#rumeurs-title button:hover i.fas {
+#info-box #rumeurs-section #rumeurs-title button:hover i,
+#rumeurs-title button:hover i.fas.fa-dice,
+#rumeurs-title button:hover i.fa-dice,
+#rumeurs-title button:hover i.fas,
+#rumeurs-title button:hover i {
     color: #60a5fa !important;
 }
 
