@@ -390,7 +390,7 @@ body {
 }
 
 .tab-button:hover i {
-    color: black;
+    /* Laisser le style inline (défini par JS) avoir la priorité */
 }
 
 .tab-button.active {
