@@ -237,8 +237,8 @@ class InfoBoxManager {
             console.log('🎨 [Description] icon trouvée:', !!icon);
             if (icon) {
                 const targetColor = hasDescription ? redColor : defaultColor;
-                icon.style.color = targetColor;
-                console.log('🎨 [Description] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
+                icon.style.setProperty('color', targetColor, 'important');
+                console.log('🎨 [Description] Couleur appliquée avec !important:', targetColor);
             }
         } else {
             console.log('🎨 [Description] Bouton non trouvé');
@@ -253,8 +253,8 @@ class InfoBoxManager {
             console.log('🎨 [Images] icon trouvée:', !!icon);
             if (icon) {
                 const targetColor = hasImages ? redColor : defaultColor;
-                icon.style.color = targetColor;
-                console.log('🎨 [Images] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
+                icon.style.setProperty('color', targetColor, 'important');
+                console.log('🎨 [Images] Couleur appliquée avec !important:', targetColor);
             }
         } else {
             console.log('🎨 [Images] Bouton non trouvé');
@@ -275,8 +275,8 @@ class InfoBoxManager {
             console.log('🎨 [Rumeurs] icon trouvée:', !!icon);
             if (icon) {
                 const targetColor = hasContent ? redColor : defaultColor;
-                icon.style.color = targetColor;
-                console.log('🎨 [Rumeurs] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
+                icon.style.setProperty('color', targetColor, 'important');
+                console.log('🎨 [Rumeurs] Couleur appliquée avec !important:', targetColor);
             }
         } else {
             console.log('🎨 [Rumeurs] Bouton non trouvé');
@@ -291,8 +291,8 @@ class InfoBoxManager {
             console.log('🎨 [Personnages] icon trouvée:', !!icon);
             if (icon) {
                 const targetColor = hasPersonnages ? redColor : defaultColor;
-                icon.style.color = targetColor;
-                console.log('🎨 [Personnages] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
+                icon.style.setProperty('color', targetColor, 'important');
+                console.log('🎨 [Personnages] Couleur appliquée avec !important:', targetColor);
             }
         } else if (!personnagesTabButton) {
             console.log('🎨 [Personnages] Bouton non trouvé');
@@ -312,8 +312,8 @@ class InfoBoxManager {
             console.log('🎨 [Lieux/Régions] icon trouvée:', !!icon);
             if (icon) {
                 const targetColor = hasLieuxRegions ? redColor : defaultColor;
-                icon.style.color = targetColor;
-                console.log('🎨 [Lieux/Régions] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
+                icon.style.setProperty('color', targetColor, 'important');
+                console.log('🎨 [Lieux/Régions] Couleur appliquée avec !important:', targetColor);
             }
         } else if (!lieuxRegionsTabButton) {
             console.log('🎨 [Lieux/Régions] Bouton non trouvé');
@@ -330,8 +330,8 @@ class InfoBoxManager {
             console.log('🎨 [Tables Aléatoires] icon trouvée:', !!icon);
             if (icon) {
                 const targetColor = hasTables ? redColor : defaultColor;
-                icon.style.color = targetColor;
-                console.log('🎨 [Tables Aléatoires] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
+                icon.style.setProperty('color', targetColor, 'important');
+                console.log('🎨 [Tables Aléatoires] Couleur appliquée avec !important:', targetColor);
             }
         } else {
             console.log('🎨 [Tables Aléatoires] Bouton non trouvé');
