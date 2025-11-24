@@ -381,7 +381,6 @@ body {
 
 .tab-button i {
     transition: color 0.2s ease;
-    color: #666666 !important;
     margin: 0 !important;
     pointer-events: none; /* L'icône ne capture pas les clics, on clique toujours sur le bouton */
 }
@@ -391,7 +390,7 @@ body {
 }
 
 .tab-button:hover i {
-    color: black !important;
+    color: black;
 }
 
 .tab-button.active {
@@ -400,7 +399,7 @@ body {
 }
 
 .tab-button.active i {
-    color: #940000 !important;
+    color: #940000;
 }
 
 .tab-content {

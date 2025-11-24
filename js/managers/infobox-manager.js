@@ -211,6 +211,81 @@ class InfoBoxManager {
                 console.log(`📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region`);
             }
         }
+
+        // Mettre à jour les couleurs des icônes selon le contenu
+        this.updateTabIconColors();
+    }
+
+    updateTabIconColors() {
+        if (!this.currentItem) return;
+
+        const item = this.currentItem;
+        const redColor = '#940000';
+        const defaultColor = '#666666';
+
+        // Onglet Description (text)
+        const textTabButton = document.querySelector('.tab-button[data-tab="text"]');
+        if (textTabButton) {
+            const hasDescription = item.description && item.description.trim() !== '';
+            const icon = textTabButton.querySelector('i');
+            if (icon) {
+                icon.style.color = hasDescription ? redColor : defaultColor;
+            }
+        }
+
+        // Onglet Images
+        const imageTabButton = document.querySelector('.tab-button[data-tab="image"]');
+        if (imageTabButton) {
+            const hasImages = item.images && item.images.length > 0;
+            const icon = imageTabButton.querySelector('i');
+            if (icon) {
+                icon.style.color = hasImages ? redColor : defaultColor;
+            }
+        }
+
+        // Onglet Rumeurs et Traditions
+        const rumeursTabButton = document.querySelector('.tab-button[data-tab="rumeurs-traditions"]');
+        if (rumeursTabButton) {
+            const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
+            const rumeursValides = rumeurs.filter(r => r && r !== "A définir");
+            const hasTradition = item.Tradition_Ancienne && item.Tradition_Ancienne.trim() !== '';
+            const hasContent = rumeursValides.length > 0 || hasTradition;
+            const icon = rumeursTabButton.querySelector('i');
+            if (icon) {
+                icon.style.color = hasContent ? redColor : defaultColor;
+            }
+        }
+
+        // Onglet Personnages (pour lieux/régions)
+        const personnagesTabButton = document.querySelector('.tab-button[data-tab="personnages"]');
+        if (personnagesTabButton && (this.currentType === 'location' || this.currentType === 'region')) {
+            const hasPersonnages = item.associatedCharacters && item.associatedCharacters.length > 0;
+            const icon = personnagesTabButton.querySelector('i');
+            if (icon) {
+                icon.style.color = hasPersonnages ? redColor : defaultColor;
+            }
+        }
+
+        // Onglet Lieux/Régions (pour personnages)
+        const lieuxRegionsTabButton = document.querySelector('.tab-button[data-tab="lieux-regions"]');
+        if (lieuxRegionsTabButton && this.currentType === 'character') {
+            const hasLieuxRegions = (item.associatedLocations && item.associatedLocations.length > 0) ||
+                                    (item.associatedRegions && item.associatedRegions.length > 0);
+            const icon = lieuxRegionsTabButton.querySelector('i');
+            if (icon) {
+                icon.style.color = hasLieuxRegions ? redColor : defaultColor;
+            }
+        }
+
+        // Onglet Tables Aléatoires (événements-voyage)
+        const evenementsTabButton = document.querySelector('.tab-button[data-tab="evenements-voyage"]');
+        if (evenementsTabButton) {
+            const hasTables = item.RandomTables && item.RandomTables.length > 0;
+            const icon = evenementsTabButton.querySelector('i');
+            if (icon) {
+                icon.style.color = hasTables ? redColor : defaultColor;
+            }
+        }
     }
 
     positionInfoBox(event, type) {
