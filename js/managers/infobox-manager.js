@@ -217,20 +217,31 @@ class InfoBoxManager {
     }
 
     updateTabIconColors() {
-        if (!this.currentItem) return;
+        if (!this.currentItem) {
+            console.log('🎨 [updateTabIconColors] Aucun item actuel');
+            return;
+        }
 
         const item = this.currentItem;
         const redColor = '#940000';
         const defaultColor = '#666666';
+
+        console.log('🎨 [updateTabIconColors] Début de mise à jour pour:', item.name);
 
         // Onglet Description (text)
         const textTabButton = document.querySelector('.tab-button[data-tab="text"]');
         if (textTabButton) {
             const hasDescription = item.description && item.description.trim() !== '';
             const icon = textTabButton.querySelector('i');
+            console.log('🎨 [Description] hasDescription:', hasDescription, 'description:', item.description?.substring(0, 50));
+            console.log('🎨 [Description] icon trouvée:', !!icon);
             if (icon) {
-                icon.style.color = hasDescription ? redColor : defaultColor;
+                const targetColor = hasDescription ? redColor : defaultColor;
+                icon.style.color = targetColor;
+                console.log('🎨 [Description] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
             }
+        } else {
+            console.log('🎨 [Description] Bouton non trouvé');
         }
 
         // Onglet Images
@@ -238,9 +249,15 @@ class InfoBoxManager {
         if (imageTabButton) {
             const hasImages = item.images && item.images.length > 0;
             const icon = imageTabButton.querySelector('i');
+            console.log('🎨 [Images] hasImages:', hasImages, 'count:', item.images?.length || 0);
+            console.log('🎨 [Images] icon trouvée:', !!icon);
             if (icon) {
-                icon.style.color = hasImages ? redColor : defaultColor;
+                const targetColor = hasImages ? redColor : defaultColor;
+                icon.style.color = targetColor;
+                console.log('🎨 [Images] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
             }
+        } else {
+            console.log('🎨 [Images] Bouton non trouvé');
         }
 
         // Onglet Rumeurs et Traditions
@@ -251,9 +268,18 @@ class InfoBoxManager {
             const hasTradition = item.Tradition_Ancienne && item.Tradition_Ancienne.trim() !== '';
             const hasContent = rumeursValides.length > 0 || hasTradition;
             const icon = rumeursTabButton.querySelector('i');
+            console.log('🎨 [Rumeurs] rumeurs brutes:', item.Rumeurs, 'rumeur unique:', item.Rumeur);
+            console.log('🎨 [Rumeurs] rumeursValides count:', rumeursValides.length);
+            console.log('🎨 [Rumeurs] hasTradition:', hasTradition, 'tradition:', item.Tradition_Ancienne?.substring(0, 50));
+            console.log('🎨 [Rumeurs] hasContent:', hasContent);
+            console.log('🎨 [Rumeurs] icon trouvée:', !!icon);
             if (icon) {
-                icon.style.color = hasContent ? redColor : defaultColor;
+                const targetColor = hasContent ? redColor : defaultColor;
+                icon.style.color = targetColor;
+                console.log('🎨 [Rumeurs] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
             }
+        } else {
+            console.log('🎨 [Rumeurs] Bouton non trouvé');
         }
 
         // Onglet Personnages (pour lieux/régions)
@@ -261,9 +287,17 @@ class InfoBoxManager {
         if (personnagesTabButton && (this.currentType === 'location' || this.currentType === 'region')) {
             const hasPersonnages = item.associatedCharacters && item.associatedCharacters.length > 0;
             const icon = personnagesTabButton.querySelector('i');
+            console.log('🎨 [Personnages] hasPersonnages:', hasPersonnages, 'count:', item.associatedCharacters?.length || 0);
+            console.log('🎨 [Personnages] icon trouvée:', !!icon);
             if (icon) {
-                icon.style.color = hasPersonnages ? redColor : defaultColor;
+                const targetColor = hasPersonnages ? redColor : defaultColor;
+                icon.style.color = targetColor;
+                console.log('🎨 [Personnages] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
             }
+        } else if (!personnagesTabButton) {
+            console.log('🎨 [Personnages] Bouton non trouvé');
+        } else {
+            console.log('🎨 [Personnages] Type non compatible:', this.currentType);
         }
 
         // Onglet Lieux/Régions (pour personnages)
@@ -272,9 +306,19 @@ class InfoBoxManager {
             const hasLieuxRegions = (item.associatedLocations && item.associatedLocations.length > 0) ||
                                     (item.associatedRegions && item.associatedRegions.length > 0);
             const icon = lieuxRegionsTabButton.querySelector('i');
+            console.log('🎨 [Lieux/Régions] hasLieuxRegions:', hasLieuxRegions);
+            console.log('🎨 [Lieux/Régions] locations count:', item.associatedLocations?.length || 0);
+            console.log('🎨 [Lieux/Régions] regions count:', item.associatedRegions?.length || 0);
+            console.log('🎨 [Lieux/Régions] icon trouvée:', !!icon);
             if (icon) {
-                icon.style.color = hasLieuxRegions ? redColor : defaultColor;
+                const targetColor = hasLieuxRegions ? redColor : defaultColor;
+                icon.style.color = targetColor;
+                console.log('🎨 [Lieux/Régions] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
             }
+        } else if (!lieuxRegionsTabButton) {
+            console.log('🎨 [Lieux/Régions] Bouton non trouvé');
+        } else {
+            console.log('🎨 [Lieux/Régions] Type non compatible:', this.currentType);
         }
 
         // Onglet Tables Aléatoires (événements-voyage)
@@ -282,10 +326,18 @@ class InfoBoxManager {
         if (evenementsTabButton) {
             const hasTables = item.RandomTables && item.RandomTables.length > 0;
             const icon = evenementsTabButton.querySelector('i');
+            console.log('🎨 [Tables Aléatoires] hasTables:', hasTables, 'count:', item.RandomTables?.length || 0);
+            console.log('🎨 [Tables Aléatoires] icon trouvée:', !!icon);
             if (icon) {
-                icon.style.color = hasTables ? redColor : defaultColor;
+                const targetColor = hasTables ? redColor : defaultColor;
+                icon.style.color = targetColor;
+                console.log('🎨 [Tables Aléatoires] Couleur appliquée:', targetColor, 'Couleur effective:', icon.style.color);
             }
+        } else {
+            console.log('🎨 [Tables Aléatoires] Bouton non trouvé');
         }
+
+        console.log('🎨 [updateTabIconColors] Fin de mise à jour');
     }
 
     positionInfoBox(event, type) {
