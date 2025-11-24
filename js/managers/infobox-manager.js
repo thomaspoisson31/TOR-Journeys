@@ -2529,7 +2529,32 @@ class InfoBoxManager {
         }
 
         // Récupérer les IDs des personnages associés et les normaliser en String
-        const associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
+        let associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
+
+        // NETTOYAGE : Retirer les personnages qui n'existent plus
+        if (window.charactersManager && associatedCharacterIds.length > 0) {
+            const validCharacterIds = associatedCharacterIds.filter(charId => {
+                const exists = window.charactersManager.characters.some(c => String(c.id) === charId);
+                if (!exists) {
+                    console.warn(`🧹 [renderPersonnagesTabRead] Personnage orphelin détecté et retiré: ${charId}`);
+                }
+                return exists;
+            });
+
+            // Si des personnages ont été retirés, mettre à jour et sauvegarder
+            if (validCharacterIds.length !== associatedCharacterIds.length) {
+                console.log(`🧹 [renderPersonnagesTabRead] Nettoyage: ${associatedCharacterIds.length - validCharacterIds.length} association(s) orpheline(s) supprimée(s)`);
+                this.currentItem.associatedCharacters = validCharacterIds;
+                associatedCharacterIds = validCharacterIds;
+
+                // Sauvegarder les modifications
+                if (this.currentType === 'location' && window.dataManager) {
+                    window.dataManager.saveLocationsToLocal();
+                } else if (this.currentType === 'region' && window.dataManager) {
+                    window.dataManager.saveRegionsToLocal();
+                }
+            }
+        }
 
         console.log(`📋 [renderPersonnagesTabRead] Lieu/Région: ${this.currentItem.name}`);
         console.log(`📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés):`, associatedCharacterIds);
