@@ -58,12 +58,14 @@ class PositionManager {
     updateAdventureModeIndicator() {
         const indicator = document.getElementById('adventure-mode-indicator');
         if (indicator) {
+            // Toujours afficher l'indicateur, juste changer la couleur
+            indicator.classList.remove('hidden');
             if (this.adventureMode) {
-                indicator.classList.remove('hidden', 'bg-gray-600');
+                indicator.classList.remove('bg-gray-600');
                 indicator.classList.add('bg-green-600');
                 indicator.textContent = 'Mode Aventure';
             } else {
-                indicator.classList.remove('hidden', 'bg-green-600');
+                indicator.classList.remove('bg-green-600');
                 indicator.classList.add('bg-gray-600');
                 indicator.textContent = 'Mode Aventure';
             }
