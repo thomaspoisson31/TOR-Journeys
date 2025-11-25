@@ -149,14 +149,49 @@ class AdventureManager {
             rumorsTab.innerHTML = '';
             let rumorsContent = '';
 
+            // Récupérer les résultats cochés depuis randomTablesManager
+            const checkedResults = window.randomTablesManager ? window.randomTablesManager.checkedResults : {};
+            const checkedEntries = [];
+
+            // Parcourir tous les résultats cochés pour reconstituer les informations
+            for (const [hash, isChecked] of Object.entries(checkedResults)) {
+                if (isChecked) {
+                    // Le hash est au format "result_XXXXX" généré depuis tableName::resultContent
+                    // On stocke le hash pour l'affichage
+                    checkedEntries.push({
+                        hash: hash,
+                        // On ne peut pas facilement retrouver le texte exact depuis le hash
+                        // Il faudra le stocker différemment ou parcourir toutes les tables
+                    });
+                }
+            }
+
+            // Si on a des résultats cochés, les afficher
+            if (checkedEntries.length > 0) {
+                rumorsContent += '<div class="mb-4"><h4 class="text-sm font-medium text-white mb-2">Résultats de tables aléatoires :</h4>';
+                
+                // Parcourir toutes les tables pour retrouver les résultats cochés
+                const checkedResultsHtml = this.getCheckedRandomResults();
+                if (checkedResultsHtml) {
+                    rumorsContent += checkedResultsHtml;
+                }
+                
+                rumorsContent += '</div>';
+            }
+
+            // Afficher les rumeurs manuelles
             if (this.adventureData.rumors.length > 0) {
-                rumorsContent = this.adventureData.rumors.map((rumor, index) => `
+                rumorsContent += '<div class="mb-4"><h4 class="text-sm font-medium text-white mb-2">Rumeurs manuelles :</h4>';
+                rumorsContent += this.adventureData.rumors.map((rumor, index) => `
                     <div class="rumor-item ${rumor.completed ? 'completed' : ''}" data-index="${index}">
                         <input type="checkbox" ${rumor.completed ? 'checked' : ''} onchange="window.adventureManager.toggleRumorComplete(${index})">
                         <div class="rumor-text">${rumor.text}</div>
                     </div>
                 `).join('');
-            } else {
+                rumorsContent += '</div>';
+            }
+
+            if (!rumorsContent) {
                 rumorsContent = '<p class="text-gray-400 italic">Aucune rumeur enregistrée.</p>';
             }
 
@@ -423,6 +458,174 @@ class AdventureManager {
 
     getAllData() {
         return this.adventureData;
+    }
+
+    // Récupérer tous les résultats cochés depuis les tables aléatoires
+    getCheckedRandomResults() {
+        if (!window.randomTablesManager) {
+            return '';
+        }
+
+        const checkedResults = window.randomTablesManager.checkedResults;
+        const resultsHtml = [];
+
+        // Parcourir toutes les tables pour retrouver les résultats cochés
+        const allTables = this.collectAllRandomTables();
+        
+        allTables.forEach(tableInfo => {
+            const table = tableInfo.table;
+            const isComposite = table.isComposite || false;
+
+            if (isComposite && table.subtables) {
+                // Table composite
+                table.subtables.forEach((subtable, subIdx) => {
+                    if (subtable.entries && subtable.entries.length > 0) {
+                        subtable.entries.forEach((result, resultIdx) => {
+                            const rawContent = this.extractRawContent(result);
+                            const resultHash = window.randomTablesManager.generateResultHash(`${table.name}::${subtable.name}`, rawContent);
+                            
+                            if (checkedResults[resultHash]) {
+                                const formattedResult = this.formatResult(result);
+                                resultsHtml.push(`
+                                    <div class="rumor-item mb-2 p-2 bg-gray-800 rounded" data-hash="${resultHash}">
+                                        <div class="flex items-start gap-2">
+                                            <input type="checkbox" 
+                                                   checked 
+                                                   onchange="window.adventureManager.toggleRandomResultChecked('${resultHash}', this.checked)"
+                                                   class="mt-1">
+                                            <div class="flex-1">
+                                                <div class="text-xs text-blue-400 mb-1">${table.name} → ${subtable.name}</div>
+                                                <div class="text-sm text-white">${formattedResult}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
+                            }
+                        });
+                    }
+                });
+            } else if (table.entries) {
+                // Table simple
+                table.entries.forEach((result, resultIdx) => {
+                    const rawContent = this.extractRawContent(result);
+                    const resultHash = window.randomTablesManager.generateResultHash(table.name, rawContent);
+                    
+                    if (checkedResults[resultHash]) {
+                        const formattedResult = this.formatResult(result);
+                        resultsHtml.push(`
+                            <div class="rumor-item mb-2 p-2 bg-gray-800 rounded" data-hash="${resultHash}">
+                                <div class="flex items-start gap-2">
+                                    <input type="checkbox" 
+                                           checked 
+                                           onchange="window.adventureManager.toggleRandomResultChecked('${resultHash}', this.checked)"
+                                           class="mt-1">
+                                    <div class="flex-1">
+                                        <div class="text-xs text-blue-400 mb-1">${table.name}</div>
+                                        <div class="text-sm text-white">${formattedResult}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    }
+                });
+            }
+        });
+
+        return resultsHtml.join('');
+    }
+
+    // Collecter toutes les tables aléatoires disponibles
+    collectAllRandomTables() {
+        const allTables = [];
+
+        // 1. Tables des paramètres (adventureData.randomTables)
+        if (this.adventureData.randomTables) {
+            this.adventureData.randomTables.forEach(table => {
+                allTables.push({
+                    source: 'Paramètres',
+                    table: table
+                });
+            });
+        }
+
+        // 2. Tables des lieux
+        if (window.locationsData && window.locationsData.locations) {
+            window.locationsData.locations.forEach(location => {
+                if (location.RandomTables && Array.isArray(location.RandomTables)) {
+                    location.RandomTables.forEach(table => {
+                        allTables.push({
+                            source: location.name,
+                            table: table
+                        });
+                    });
+                }
+            });
+        }
+
+        // 3. Tables des régions
+        if (window.regionsData && window.regionsData.regions) {
+            window.regionsData.regions.forEach(region => {
+                if (region.RandomTables && Array.isArray(region.RandomTables)) {
+                    region.RandomTables.forEach(table => {
+                        allTables.push({
+                            source: region.name,
+                            table: table
+                        });
+                    });
+                }
+            });
+        }
+
+        return allTables;
+    }
+
+    // Extraire le contenu brut d'un résultat
+    extractRawContent(result) {
+        if (typeof result === 'object' && result !== null) {
+            const entries = Object.entries(result);
+            const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+            if (otherEntries.length > 0) {
+                return otherEntries[0][1];
+            }
+            return JSON.stringify(result);
+        }
+        return result;
+    }
+
+    // Formater un résultat pour l'affichage
+    formatResult(result) {
+        if (typeof result === 'object' && result !== null) {
+            const entries = Object.entries(result);
+            const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
+            const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+
+            let formatted = '';
+            if (otherEntries.length > 0) {
+                const [mainKey, mainValue] = otherEntries[0];
+                if (fateEntry) {
+                    formatted = `(${fateEntry[1]}) ${mainValue}`;
+                } else {
+                    formatted = mainValue;
+                }
+                for (let i = 1; i < otherEntries.length; i++) {
+                    const [key, value] = otherEntries[i];
+                    formatted += ` <span class="text-gray-400">${key}:</span> ${value}`;
+                }
+            } else if (fateEntry) {
+                formatted = fateEntry[1];
+            }
+            return formatted;
+        }
+        return result;
+    }
+
+    // Basculer l'état d'un résultat de table aléatoire
+    toggleRandomResultChecked(resultHash, isChecked) {
+        if (window.randomTablesManager) {
+            window.randomTablesManager.toggleResultChecked(resultHash, isChecked);
+            // Rafraîchir l'affichage
+            this.renderContent();
+        }
     }
 
     // === MÉTHODES POUR LES TABLES ALÉATOIRES ===
