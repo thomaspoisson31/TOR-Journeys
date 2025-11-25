@@ -368,7 +368,9 @@ class AuthManager {
             position: JSON.parse(localStorage.getItem('adventurers_position') || 'null'),
             filtersByMap: JSON.parse(localStorage.getItem('filtersByMap') || '{}'),
             // Ajouter l'état actuel du mode aventure
-            adventureMode: window.positionManager?.adventureMode || JSON.parse(localStorage.getItem('adventurers_adventure_mode') || 'false')
+            adventureMode: window.positionManager?.adventureMode || JSON.parse(localStorage.getItem('adventurers_adventure_mode') || 'false'),
+            // Ajouter les états des cases à cocher des tirages aléatoires
+            randomTablesCheckedResults: JSON.parse(localStorage.getItem('randomTablesCheckedResults') || '{}')
         };
 
         this.logAuth(`📦 Données collectées pour le contexte`, Object.keys(data));
@@ -581,6 +583,15 @@ class AuthManager {
             // Mettre à jour la visibilité des boutons
             if (window.updateToolbarButtonsVisibility) {
                 window.updateToolbarButtonsVisibility();
+            }
+        }
+
+        // Restaurer les états des cases à cocher des tirages aléatoires
+        if (data.randomTablesCheckedResults) {
+            localStorage.setItem('randomTablesCheckedResults', JSON.stringify(data.randomTablesCheckedResults));
+            if (window.randomTablesManager) {
+                window.randomTablesManager.checkedResults = data.randomTablesCheckedResults;
+                this.logAuth(`✅ ${Object.keys(data.randomTablesCheckedResults).length} état(s) de cases à cocher restauré(s)`);
             }
         }
 

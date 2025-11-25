@@ -3,14 +3,53 @@ class RandomTablesManager {
     constructor() {
         this.modal = null;
         this.contentDiv = null;
+        this.checkedResults = {}; // {hash: boolean}
     }
 
     init() {
         console.log("🎲 Initializing RandomTablesManager...");
         this.modal = document.getElementById('random-tables-modal');
         this.contentDiv = document.getElementById('random-tables-content');
+        this.loadCheckedResults();
         this.setupEventListeners();
         console.log("✅ RandomTablesManager initialized");
+    }
+
+    loadCheckedResults() {
+        const saved = localStorage.getItem('randomTablesCheckedResults');
+        if (saved) {
+            try {
+                this.checkedResults = JSON.parse(saved);
+                console.log("✅ États des cases à cocher chargés:", Object.keys(this.checkedResults).length);
+            } catch (e) {
+                console.error("❌ Erreur chargement états cases:", e);
+                this.checkedResults = {};
+            }
+        }
+    }
+
+    saveCheckedResults() {
+        localStorage.setItem('randomTablesCheckedResults', JSON.stringify(this.checkedResults));
+        
+        // Marquer comme non sauvegardé pour sync cloud
+        if (window.authManager && window.authManager.isAuthenticated) {
+            window.authManager.markAsUnsaved();
+        }
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+    }
+
+    generateResultHash(tableName, resultContent) {
+        // Créer un hash simple basé sur le nom de la table et le contenu
+        const str = `${tableName}::${resultContent}`;
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return `result_${Math.abs(hash)}`;
     }
 
     setupEventListeners() {
@@ -284,6 +323,8 @@ class RandomTablesManager {
 
         // Formater le résultat pour l'affichage
         let formattedResult = '';
+        let rawContent = '';
+        
         if (typeof result === 'object' && result !== null) {
             // Si c'est un objet avec des propriétés
             const entries = Object.entries(result);
@@ -294,6 +335,7 @@ class RandomTablesManager {
 
             if (otherEntries.length > 0) {
                 const [mainKey, mainValue] = otherEntries[0];
+                rawContent = mainValue;
 
                 // Afficher la valeur principale avec le dé du destin entre parenthèses si présent
                 if (fateEntry) {
@@ -308,17 +350,30 @@ class RandomTablesManager {
                     formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
                 }
             } else if (fateEntry) {
+                rawContent = fateEntry[1];
                 formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
             }
         } else {
             // Si c'est une chaîne simple
+            rawContent = result;
             formattedResult = `<span style="font-weight: 600;">${result}</span>`;
         }
+
+        // Générer un hash unique pour ce résultat
+        const resultHash = this.generateResultHash(table.name, rawContent);
+        const isChecked = this.checkedResults[resultHash] || false;
 
         return `
             <div class="p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
                 <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat (${randomIndex + 1}/${table.entries.length}) :</div>
-                <div style="color: #1f2937;">${formattedResult}</div>
+                <div class="flex items-start gap-3" style="color: #1f2937;">
+                    <input type="checkbox" 
+                           class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
+                           data-result-hash="${resultHash}"
+                           ${isChecked ? 'checked' : ''}
+                           onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
+                    <div class="flex-1">${formattedResult}</div>
+                </div>
             </div>
         `;
     }
@@ -336,6 +391,8 @@ class RandomTablesManager {
 
                 // Formater le résultat
                 let formattedResult = '';
+                let rawContent = '';
+                
                 if (typeof result === 'object' && result !== null) {
                     const entries = Object.entries(result);
                     const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
@@ -343,6 +400,8 @@ class RandomTablesManager {
 
                     if (otherEntries.length > 0) {
                         const [mainKey, mainValue] = otherEntries[0];
+                        rawContent = mainValue;
+                        
                         if (fateEntry) {
                             formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
                         } else {
@@ -353,24 +412,43 @@ class RandomTablesManager {
                             formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
                         }
                     } else if (fateEntry) {
+                        rawContent = fateEntry[1];
                         formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
                     }
                 } else {
+                    rawContent = result;
                     formattedResult = `<span style="font-weight: 600;">${result}</span>`;
                 }
+
+                // Générer un hash unique pour ce résultat
+                const resultHash = this.generateResultHash(`${table.name}::${subtable.name}`, rawContent);
+                const isChecked = this.checkedResults[resultHash] || false;
 
                 html += `
                     <div class="mb-4 p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
                         <div class="text-sm font-semibold mb-2" style="color: #1e40af;">
                             ${subtable.name || `Sous-table ${idx + 1}`} (${randomIndex + 1}/${subtable.entries.length}) :
                         </div>
-                        <div style="color: #1f2937;">${formattedResult}</div>
+                        <div class="flex items-start gap-3" style="color: #1f2937;">
+                            <input type="checkbox" 
+                                   class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
+                                   data-result-hash="${resultHash}"
+                                   ${isChecked ? 'checked' : ''}
+                                   onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
+                            <div class="flex-1">${formattedResult}</div>
+                        </div>
                     </div>
                 `;
             }
         });
 
         return html || '<p class="text-gray-500 italic">Aucun résultat disponible.</p>';
+    }
+
+    toggleResultChecked(resultHash, isChecked) {
+        this.checkedResults[resultHash] = isChecked;
+        this.saveCheckedResults();
+        console.log(`✅ Résultat ${resultHash} marqué comme ${isChecked ? 'coché' : 'non coché'}`);
     }
 
     showResult(tableName, resultHtml) {
