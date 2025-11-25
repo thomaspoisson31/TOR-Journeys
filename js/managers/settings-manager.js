@@ -1897,31 +1897,35 @@ class SettingsManager {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = resultText;
             
-            // Chercher dans les divs avec bg-gray-100 qui contiennent le résultat principal
-            const resultBlocks = tempDiv.querySelectorAll('div.bg-gray-100');
-            for (const block of resultBlocks) {
-                // Chercher le texte "Résultat" dans les span avec font-weight: 600
-                const spans = block.querySelectorAll('span[style*="font-weight: 600"]');
-                for (const span of spans) {
-                    const text = span.textContent.trim();
-                    // Vérifier si c'est le résultat principal (pas le dé du destin)
-                    if (text && !text.startsWith('(') && text.length > 0) {
-                        eventTitle = text;
-                        break;
-                    }
-                }
-                if (eventTitle !== this.currentRandomResult.tableName) {
+            // Méthode 1 : Chercher dans les span avec font-weight: 600 (résultat principal)
+            const boldSpans = tempDiv.querySelectorAll('span[style*="font-weight: 600"]');
+            for (const span of boldSpans) {
+                let text = span.textContent.trim();
+                // Retirer le dé du destin s'il est présent au début (format: (X/Y) ou (OEIL))
+                text = text.replace(/^\([^)]+\)\s*/, '');
+                
+                // Vérifier si c'est le résultat principal (pas vide et pas trop long)
+                if (text && text.length > 0 && text.length < 100) {
+                    eventTitle = text;
                     break;
                 }
             }
 
-            // Si on n'a pas trouvé avec la méthode ci-dessus, essayer avec regex
+            // Méthode 2 : Si pas trouvé, chercher avec regex dans le HTML brut
             if (eventTitle === this.currentRandomResult.tableName) {
-                // Chercher un pattern comme (X/Y) Texte ou juste du texte après les parenthèses
-                const cleanMatch = resultText.match(/\(\d+\/\d+\)\s*([^<]+)/i) ||
-                                  resultText.match(/font-weight:\s*600[^>]*>([^<(]+)/i);
-                if (cleanMatch && cleanMatch[1]) {
-                    eventTitle = cleanMatch[1].trim();
+                // Pattern pour extraire le texte après le dé du destin
+                const patterns = [
+                    /\([^)]+\)\s*([^<]+)/i,  // (X/Y) Texte
+                    /font-weight:\s*600[^>]*>\s*\([^)]+\)\s*([^<]+)/i,  // span bold avec (X/Y) Texte
+                    /font-weight:\s*600[^>]*>([^<(]+)/i  // span bold avec Texte seul
+                ];
+                
+                for (const pattern of patterns) {
+                    const match = resultText.match(pattern);
+                    if (match && match[1]) {
+                        eventTitle = match[1].trim();
+                        break;
+                    }
                 }
             }
 
