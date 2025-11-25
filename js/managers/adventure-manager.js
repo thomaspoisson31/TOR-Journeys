@@ -169,13 +169,13 @@ class AdventureManager {
             // Si on a des résultats cochés, les afficher
             if (checkedEntries.length > 0) {
                 rumorsContent += '<div class="mb-4"><h4 class="text-sm font-medium text-white mb-2">Résultats de tables aléatoires :</h4>';
-                
+
                 // Parcourir toutes les tables pour retrouver les résultats cochés
                 const checkedResultsHtml = this.getCheckedRandomResults();
                 if (checkedResultsHtml) {
                     rumorsContent += checkedResultsHtml;
                 }
-                
+
                 rumorsContent += '</div>';
             }
 
@@ -454,318 +454,53 @@ class AdventureManager {
         }
     }
 
-    
+
 
     getAllData() {
         return this.adventureData;
     }
 
-    // Récupérer tous les résultats cochés depuis les tables aléatoires
     getCheckedRandomResults() {
         if (!window.randomTablesManager) {
-            return '';
+            return null;
         }
 
-        const checkedResults = window.randomTablesManager.checkedResults;
-        const resultsHtml = [];
+        const checkedResults = window.randomTablesManager.checkedResults || {};
+        const checkedEntries = [];
 
-        // Parcourir toutes les tables pour retrouver les résultats cochés
-        const allTables = this.collectAllRandomTables();
-        
-        allTables.forEach(tableInfo => {
-            const table = tableInfo.table;
-            const isComposite = table.isComposite || false;
+        // Parcourir tous les résultats cochés
+        for (const [hash, isChecked] of Object.entries(checkedResults)) {
+            if (isChecked) {
+                checkedEntries.push(hash);
+            }
+        }
 
-            if (isComposite && table.subtables) {
-                // Table composite
-                table.subtables.forEach((subtable, subIdx) => {
-                    if (subtable.entries && subtable.entries.length > 0) {
-                        subtable.entries.forEach((result, resultIdx) => {
-                            const rawContent = this.extractRawContent(result);
-                            const resultHash = window.randomTablesManager.generateResultHash(`${table.name}::${subtable.name}`, rawContent);
-                            
-                            if (checkedResults[resultHash]) {
-                                const formattedResult = this.formatResult(result);
-                                resultsHtml.push(`
-                                    <div class="rumor-item mb-2 p-2 bg-gray-800 rounded" data-hash="${resultHash}">
-                                        <div class="flex items-start gap-2">
-                                            <input type="checkbox" 
-                                                   checked 
-                                                   onchange="window.adventureManager.toggleRandomResultChecked('${resultHash}', this.checked)"
-                                                   class="mt-1">
-                                            <div class="flex-1">
-                                                <div class="text-xs text-blue-400 mb-1">${table.name} → ${subtable.name}</div>
-                                                <div class="text-sm text-white">${formattedResult}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `);
-                            }
-                        });
-                    }
-                });
-            } else if (table.entries) {
-                // Table simple
-                table.entries.forEach((result, resultIdx) => {
-                    const rawContent = this.extractRawContent(result);
-                    const resultHash = window.randomTablesManager.generateResultHash(table.name, rawContent);
-                    
-                    if (checkedResults[resultHash]) {
-                        const formattedResult = this.formatResult(result);
-                        resultsHtml.push(`
-                            <div class="rumor-item mb-2 p-2 bg-gray-800 rounded" data-hash="${resultHash}">
-                                <div class="flex items-start gap-2">
-                                    <input type="checkbox" 
-                                           checked 
-                                           onchange="window.adventureManager.toggleRandomResultChecked('${resultHash}', this.checked)"
-                                           class="mt-1">
-                                    <div class="flex-1">
-                                        <div class="text-xs text-blue-400 mb-1">${table.name}</div>
-                                        <div class="text-sm text-white">${formattedResult}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        `);
-                    }
-                });
+        if (checkedEntries.length === 0) {
+            return null;
+        }
+
+        // Générer le HTML pour chaque résultat coché
+        let html = '<div class="space-y-2">';
+
+        checkedEntries.forEach(hash => {
+            const resultData = window.randomTablesManager.getResultDataByHash(hash);
+            if (resultData) {
+                html += `
+                    <div class="bg-yellow-50 border border-yellow-400 rounded-lg p-3">
+                        <div class="flex items-center text-xs mb-2" style="color: #d97706;">
+                            <i class="fas fa-dice mr-1"></i>
+                            <span class="font-semibold">${resultData.tableName || 'Table aléatoire'}</span>
+                        </div>
+                        <div class="text-sm" style="color: #1f2937;">
+                            ${resultData.content || ''}
+                        </div>
+                    </div>
+                `;
             }
         });
 
-        return resultsHtml.join('');
-    }
-
-    // Collecter toutes les tables aléatoires disponibles
-    collectAllRandomTables() {
-        const allTables = [];
-
-        // 1. Tables des paramètres (adventureData.randomTables)
-        if (this.adventureData.randomTables) {
-            this.adventureData.randomTables.forEach(table => {
-                allTables.push({
-                    source: 'Paramètres',
-                    table: table
-                });
-            });
-        }
-
-        // 2. Tables des lieux
-        if (window.locationsData && window.locationsData.locations) {
-            window.locationsData.locations.forEach(location => {
-                if (location.RandomTables && Array.isArray(location.RandomTables)) {
-                    location.RandomTables.forEach(table => {
-                        allTables.push({
-                            source: location.name,
-                            table: table
-                        });
-                    });
-                }
-            });
-        }
-
-        // 3. Tables des régions
-        if (window.regionsData && window.regionsData.regions) {
-            window.regionsData.regions.forEach(region => {
-                if (region.RandomTables && Array.isArray(region.RandomTables)) {
-                    region.RandomTables.forEach(table => {
-                        allTables.push({
-                            source: region.name,
-                            table: table
-                        });
-                    });
-                }
-            });
-        }
-
-        return allTables;
-    }
-
-    // Extraire le contenu brut d'un résultat
-    extractRawContent(result) {
-        if (typeof result === 'object' && result !== null) {
-            const entries = Object.entries(result);
-            const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
-            if (otherEntries.length > 0) {
-                return otherEntries[0][1];
-            }
-            return JSON.stringify(result);
-        }
-        return result;
-    }
-
-    // Formater un résultat pour l'affichage
-    formatResult(result) {
-        if (typeof result === 'object' && result !== null) {
-            const entries = Object.entries(result);
-            const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
-            const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
-
-            let formatted = '';
-            if (otherEntries.length > 0) {
-                const [mainKey, mainValue] = otherEntries[0];
-                if (fateEntry) {
-                    formatted = `(${fateEntry[1]}) ${mainValue}`;
-                } else {
-                    formatted = mainValue;
-                }
-                for (let i = 1; i < otherEntries.length; i++) {
-                    const [key, value] = otherEntries[i];
-                    formatted += ` <span class="text-gray-400">${key}:</span> ${value}`;
-                }
-            } else if (fateEntry) {
-                formatted = fateEntry[1];
-            }
-            return formatted;
-        }
-        return result;
-    }
-
-    // Basculer l'état d'un résultat de table aléatoire
-    toggleRandomResultChecked(resultHash, isChecked) {
-        if (window.randomTablesManager) {
-            window.randomTablesManager.toggleResultChecked(resultHash, isChecked);
-            // Rafraîchir l'affichage
-            this.renderContent();
-        }
-    }
-
-    // === MÉTHODES POUR LES TABLES ALÉATOIRES ===
-    rollOnTable(tableIndex) {
-        console.log(`🎲 [DEBUG] rollOnTable appelé avec index: ${tableIndex}`);
-        
-        const table = this.adventureData.randomTables[tableIndex];
-        console.log(`📋 [DEBUG] Table récupérée:`, table);
-        
-        if (!table || !table.entries || table.entries.length === 0) {
-            console.error('❌ Table invalide ou vide');
-            console.log('🔍 [DEBUG] État de la table:', {
-                tableExists: !!table,
-                entriesExists: !!(table?.entries),
-                entriesLength: table?.entries?.length || 0
-            });
-            return;
-        }
-
-        // Tirer un résultat aléatoire
-        const randomIndex = Math.floor(Math.random() * table.entries.length);
-        const result = table.entries[randomIndex];
-        
-        console.log(`🎲 [DEBUG] Résultat du tirage:`, {
-            randomIndex,
-            result,
-            resultType: typeof result
-        });
-
-        // Formater le résultat pour l'affichage
-        let formattedResult = '';
-        if (typeof result === 'object' && result !== null) {
-            // Si c'est un objet, formater les propriétés
-            formattedResult = '<div class="space-y-2">';
-            for (const [key, value] of Object.entries(result)) {
-                formattedResult += `
-                    <div>
-                        <span class="font-semibold text-blue-300">${key}:</span>
-                        <span class="text-white ml-2">${value}</span>
-                    </div>`;
-            }
-            formattedResult += '</div>';
-        } else {
-            // Si c'est une chaîne simple
-            formattedResult = `<div class="text-white">${result}</div>`;
-        }
-
-        // Afficher le résultat dans un conteneur dédié
-        const resultContainer = document.getElementById(`table-result-${tableIndex}`);
-        const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
-
-        console.log(`📦 [DEBUG] Conteneurs DOM:`, {
-            resultContainer: !!resultContainer,
-            resultContent: !!resultContent
-        });
-
-        if (resultContainer && resultContent) {
-            resultContent.innerHTML = formattedResult;
-            resultContainer.classList.remove('hidden');
-            console.log(`✅ [DEBUG] Résultat affiché dans le DOM`);
-        } else {
-            console.error(`❌ [DEBUG] Conteneurs introuvables pour table-result-${tableIndex}`);
-        }
-
-        console.log(`🎲 Tirage sur "${table.name}":`, result);
-    }
-
-    rollOnCompositeTable(compositeIndex) {
-        console.log(`🔗 [DEBUG] rollOnCompositeTable appelé avec index: ${compositeIndex}`);
-        
-        const composite = this.adventureData.compositeTables[compositeIndex];
-        console.log(`📋 [DEBUG] Table composite récupérée:`, composite);
-        
-        if (!composite || !composite.tableIndices || composite.tableIndices.length === 0) {
-            console.error('❌ Table composite invalide');
-            console.log('🔍 [DEBUG] État de la table composite:', {
-                compositeExists: !!composite,
-                tableIndicesExists: !!(composite?.tableIndices),
-                tableIndicesLength: composite?.tableIndices?.length || 0,
-                fullComposite: composite
-            });
-            return;
-        }
-
-        // Effectuer un tirage sur chaque table simple
-        const results = [];
-        console.log(`🎲 [DEBUG] Tirage sur ${composite.tableIndices.length} table(s) simple(s)`);
-        
-        composite.tableIndices.forEach((tableIndex, idx) => {
-            console.log(`🔍 [DEBUG] Tirage ${idx + 1}/${composite.tableIndices.length} - index: ${tableIndex}`);
-            
-            const table = this.adventureData.randomTables[tableIndex];
-            console.log(`📋 [DEBUG] Table trouvée:`, table);
-            
-            if (table && table.entries && table.entries.length > 0) {
-                const randomIndex = Math.floor(Math.random() * table.entries.length);
-                const result = table.entries[randomIndex];
-                console.log(`✅ [DEBUG] Résultat du tirage:`, { tableName: table.name, result });
-                
-                results.push({
-                    tableName: table.name,
-                    result: result
-                });
-            } else {
-                console.error(`❌ [DEBUG] Table ${tableIndex} invalide ou vide`);
-            }
-        });
-
-        console.log(`📊 [DEBUG] Résultats totaux:`, results);
-
-        // Afficher les résultats
-        const resultContainer = document.getElementById(`composite-result-${compositeIndex}`);
-        const resultContent = document.getElementById(`composite-result-content-${compositeIndex}`);
-
-        console.log(`📦 [DEBUG] Conteneurs DOM composite:`, {
-            resultContainer: !!resultContainer,
-            resultContent: !!resultContent
-        });
-
-        if (resultContainer && resultContent) {
-            const html = results.map(r => 
-                `<div class="mb-1">
-                    <span class="font-semibold text-blue-300">${r.tableName}:</span>
-                    <span class="text-white ml-2">${r.result}</span>
-                </div>`
-            ).join('');
-            resultContent.innerHTML = html;
-            resultContainer.classList.remove('hidden');
-            console.log(`✅ [DEBUG] Résultats affichés dans le DOM`);
-        } else {
-            console.error(`❌ [DEBUG] Conteneurs introuvables pour composite-result-${compositeIndex}`);
-        }
-
-        console.log(`🎲 Tirage sur table composite "${composite.name}":`, results);
-    }
-
-    openCompositeTableModal() {
-        // Cette méthode sera appelée pour créer une table composite
-        // Pour l'instant, on affiche juste une alerte
-        alert('Création de table composite : fonctionnalité à implémenter');
+        html += '</div>';
+        return html;
     }
 }
 

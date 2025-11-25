@@ -1,4 +1,3 @@
-
 class RandomTablesManager {
     constructor() {
         this.modal = null;
@@ -30,11 +29,14 @@ class RandomTablesManager {
 
     saveCheckedResults() {
         localStorage.setItem('randomTablesCheckedResults', JSON.stringify(this.checkedResults));
-        
-        // Marquer comme non sauvegardé pour sync cloud
-        if (window.authManager && window.authManager.isAuthenticated) {
-            window.authManager.markAsUnsaved();
+        console.log('💾 États des cases à cocher sauvegardés:', Object.keys(this.checkedResults).length);
+
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
         }
+
+        // Synchroniser avec le cloud si authentifié
         if (typeof window.scheduleAutoSync === 'function') {
             window.scheduleAutoSync();
         }
@@ -79,13 +81,13 @@ class RandomTablesManager {
         if (!this.modal || !this.contentDiv) return;
 
         console.log("🎲 Ouverture de la modale Tables Aléatoires");
-        
+
         // Récupérer toutes les tables disponibles
         const allTables = this.collectAllTables();
-        
+
         // Générer le contenu
         this.renderTables(allTables);
-        
+
         // Afficher la modale
         this.modal.classList.remove('hidden');
     }
@@ -324,7 +326,7 @@ class RandomTablesManager {
         // Formater le résultat pour l'affichage
         let formattedResult = '';
         let rawContent = '';
-        
+
         if (typeof result === 'object' && result !== null) {
             // Si c'est un objet avec des propriétés
             const entries = Object.entries(result);
@@ -392,7 +394,7 @@ class RandomTablesManager {
                 // Formater le résultat
                 let formattedResult = '';
                 let rawContent = '';
-                
+
                 if (typeof result === 'object' && result !== null) {
                     const entries = Object.entries(result);
                     const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
@@ -401,7 +403,7 @@ class RandomTablesManager {
                     if (otherEntries.length > 0) {
                         const [mainKey, mainValue] = otherEntries[0];
                         rawContent = mainValue;
-                        
+
                         if (fateEntry) {
                             formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
                         } else {
@@ -475,6 +477,90 @@ class RandomTablesManager {
 
         // Afficher la modale de résultat
         resultModal.classList.remove('hidden');
+    }
+
+    getResultDataByHash(hash) {
+        // Parcourir toutes les tables pour trouver le résultat correspondant
+        const allTables = this.collectAllTables();
+
+        // Helper to iterate through different table structures
+        const findResultInTable = (tableData, category) => {
+            if (!tableData.results) return null;
+            for (const result of tableData.results) {
+                const resultHash = this.generateResultHash(tableData.name, result);
+                if (resultHash === hash) {
+                    return {
+                        tableName: tableData.name,
+                        content: result,
+                        category: category
+                    };
+                }
+            }
+            return null;
+        };
+
+        // Iterate through settings tables
+        if (allTables.settings) {
+            for (const table of allTables.settings) {
+                const found = findResultInTable(table, 'settings');
+                if (found) return found;
+            }
+        }
+
+        // Iterate through position tables (locations)
+        if (allTables.position && allTables.position.locations) {
+            for (const table of allTables.position.locations) {
+                const found = findResultInTable(table, 'location');
+                if (found) return found;
+            }
+        }
+
+        // Iterate through position tables (regions)
+        if (allTables.position && allTables.position.regions) {
+            for (const table of allTables.position.regions) {
+                const found = findResultInTable(table, 'region');
+                if (found) return found;
+            }
+        }
+
+        // Check composite tables
+        const checkComposite = (tables, category) => {
+            for (const table of tables) {
+                if (table.subtables) {
+                    for (const subtable of table.subtables) {
+                         if (subtable.entries) {
+                             for (const result of subtable.entries) {
+                                const resultHash = this.generateResultHash(`${table.name}::${subtable.name}`, result);
+                                if (resultHash === hash) {
+                                     return {
+                                         tableName: `${table.name}::${subtable.name}`,
+                                         content: result,
+                                         category: category
+                                     };
+                                }
+                             }
+                         }
+                    }
+                }
+            }
+            return null;
+        }
+
+        if (allTables.settings) {
+             const found = checkComposite(allTables.settings, 'settings');
+             if (found) return found;
+        }
+         if (allTables.position && allTables.position.locations) {
+             const found = checkComposite(allTables.position.locations, 'location');
+             if (found) return found;
+        }
+         if (allTables.position && allTables.position.regions) {
+             const found = checkComposite(allTables.position.regions, 'region');
+             if (found) return found;
+        }
+
+
+        return null; // Not found
     }
 }
 
