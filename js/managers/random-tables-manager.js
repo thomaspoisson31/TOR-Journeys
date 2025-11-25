@@ -282,10 +282,43 @@ class RandomTablesManager {
         const randomIndex = Math.floor(Math.random() * table.entries.length);
         const result = table.entries[randomIndex];
 
+        // Formater le résultat pour l'affichage
+        let formattedResult = '';
+        if (typeof result === 'object' && result !== null) {
+            // Si c'est un objet avec des propriétés
+            const entries = Object.entries(result);
+
+            // Trouver le "Dé du destin" s'il existe
+            const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
+            const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+
+            if (otherEntries.length > 0) {
+                const [mainKey, mainValue] = otherEntries[0];
+
+                // Afficher la valeur principale avec le dé du destin entre parenthèses si présent
+                if (fateEntry) {
+                    formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
+                } else {
+                    formattedResult = `<span style="font-weight: 600;">${mainValue}</span>`;
+                }
+
+                // Ajouter les autres propriétés s'il y en a sur la même ligne
+                for (let i = 1; i < otherEntries.length; i++) {
+                    const [key, value] = otherEntries[i];
+                    formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
+                }
+            } else if (fateEntry) {
+                formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
+            }
+        } else {
+            // Si c'est une chaîne simple
+            formattedResult = `<span style="font-weight: 600;">${result}</span>`;
+        }
+
         return `
             <div class="p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
                 <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat (${randomIndex + 1}/${table.entries.length}) :</div>
-                <div style="color: #1f2937;">${result}</div>
+                <div style="color: #1f2937;">${formattedResult}</div>
             </div>
         `;
     }
@@ -301,12 +334,37 @@ class RandomTablesManager {
                 const randomIndex = Math.floor(Math.random() * subtable.entries.length);
                 const result = subtable.entries[randomIndex];
 
+                // Formater le résultat
+                let formattedResult = '';
+                if (typeof result === 'object' && result !== null) {
+                    const entries = Object.entries(result);
+                    const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
+                    const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+
+                    if (otherEntries.length > 0) {
+                        const [mainKey, mainValue] = otherEntries[0];
+                        if (fateEntry) {
+                            formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
+                        } else {
+                            formattedResult = `<span style="font-weight: 600;">${mainValue}</span>`;
+                        }
+                        for (let i = 1; i < otherEntries.length; i++) {
+                            const [key, value] = otherEntries[i];
+                            formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
+                        }
+                    } else if (fateEntry) {
+                        formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
+                    }
+                } else {
+                    formattedResult = `<span style="font-weight: 600;">${result}</span>`;
+                }
+
                 html += `
                     <div class="mb-4 p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
                         <div class="text-sm font-semibold mb-2" style="color: #1e40af;">
                             ${subtable.name || `Sous-table ${idx + 1}`} (${randomIndex + 1}/${subtable.entries.length}) :
                         </div>
-                        <div style="color: #1f2937;">${result}</div>
+                        <div style="color: #1f2937;">${formattedResult}</div>
                     </div>
                 `;
             }
