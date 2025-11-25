@@ -87,7 +87,7 @@ class JournalManager {
 
         // Rafraîchir le contenu selon l'onglet
         if (tabName === 'journal-list') {
-            this.renderJournalEntries();
+            this.renderJournal();
         } else if (tabName === 'objectives') {
             this.renderObjectives();
         } else if (tabName === 'rumors') {
