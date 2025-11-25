@@ -461,30 +461,44 @@ class AdventureManager {
     }
 
     getCheckedRandomResults() {
+        console.log('🔍 [AdventureManager.getCheckedRandomResults] Début');
+        
         if (!window.randomTablesManager) {
+            console.log('❌ [AdventureManager.getCheckedRandomResults] randomTablesManager non disponible');
             return null;
         }
 
         const checkedResults = window.randomTablesManager.checkedResults || {};
+        console.log('📊 [AdventureManager.getCheckedRandomResults] checkedResults:', checkedResults);
+        
         const checkedEntries = [];
 
         // Parcourir tous les résultats cochés
         for (const [hash, isChecked] of Object.entries(checkedResults)) {
             if (isChecked) {
+                console.log('✅ [AdventureManager.getCheckedRandomResults] Hash coché:', hash);
                 checkedEntries.push(hash);
             }
         }
 
+        console.log('📊 [AdventureManager.getCheckedRandomResults] Nombre de hash cochés:', checkedEntries.length);
+
         if (checkedEntries.length === 0) {
+            console.log('⚠️ [AdventureManager.getCheckedRandomResults] Aucun résultat coché');
             return null;
         }
 
         // Générer le HTML pour chaque résultat coché
         let html = '<div class="space-y-2">';
+        let foundCount = 0;
 
         checkedEntries.forEach(hash => {
+            console.log('🔍 [AdventureManager.getCheckedRandomResults] Recherche données pour hash:', hash);
             const resultData = window.randomTablesManager.getResultDataByHash(hash);
+            
             if (resultData) {
+                console.log('✅ [AdventureManager.getCheckedRandomResults] Données trouvées:', resultData);
+                foundCount++;
                 html += `
                     <div class="bg-yellow-50 border border-yellow-400 rounded-lg p-3">
                         <div class="flex items-center text-xs mb-2" style="color: #d97706;">
@@ -496,11 +510,16 @@ class AdventureManager {
                         </div>
                     </div>
                 `;
+            } else {
+                console.log('❌ [AdventureManager.getCheckedRandomResults] Aucune donnée trouvée pour hash:', hash);
             }
         });
 
         html += '</div>';
-        return html;
+        
+        console.log(`📊 [AdventureManager.getCheckedRandomResults] ${foundCount}/${checkedEntries.length} résultats trouvés`);
+        
+        return foundCount > 0 ? html : null;
     }
 }
 

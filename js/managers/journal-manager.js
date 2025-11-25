@@ -96,24 +96,33 @@ class JournalManager {
     }
 
     renderRumorsTab() {
+        console.log('📖 [JournalManager.renderRumorsTab] Début du rendu');
+        
         const rumorsContent = document.getElementById('rumors-content');
         const rumorsEmpty = document.getElementById('rumors-empty');
 
-        if (!rumorsContent || !rumorsEmpty) return;
+        if (!rumorsContent || !rumorsEmpty) {
+            console.log('❌ [JournalManager.renderRumorsTab] Éléments DOM non trouvés');
+            return;
+        }
 
         // Récupérer les résultats cochés via AdventureManager
         if (!window.adventureManager) {
+            console.log('❌ [JournalManager.renderRumorsTab] adventureManager non disponible');
             rumorsContent.innerHTML = '';
             rumorsEmpty.classList.remove('hidden');
             return;
         }
 
+        console.log('🔍 [JournalManager.renderRumorsTab] Appel de getCheckedRandomResults...');
         const checkedResultsHtml = window.adventureManager.getCheckedRandomResults();
 
         if (checkedResultsHtml) {
+            console.log('✅ [JournalManager.renderRumorsTab] HTML des rumeurs généré, affichage');
             rumorsContent.innerHTML = checkedResultsHtml;
             rumorsEmpty.classList.add('hidden');
         } else {
+            console.log('⚠️ [JournalManager.renderRumorsTab] Aucune rumeur à afficher');
             rumorsContent.innerHTML = '';
             rumorsEmpty.classList.remove('hidden');
         }

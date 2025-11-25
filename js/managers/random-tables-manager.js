@@ -480,18 +480,46 @@ class RandomTablesManager {
     }
 
     getResultDataByHash(hash) {
+        console.log('🔍 [getResultDataByHash] Recherche du hash:', hash);
+        
         // Parcourir toutes les tables pour trouver le résultat correspondant
         const allTables = this.collectAllTables();
+        console.log('📊 [getResultDataByHash] Tables disponibles:', {
+            settings: allTables.settings?.length || 0,
+            locations: allTables.position?.locations?.length || 0,
+            regions: allTables.position?.regions?.length || 0
+        });
 
-        // Helper to iterate through different table structures
+        // Helper pour formater le contenu en string
+        const formatContent = (result) => {
+            if (typeof result === 'object' && result !== null) {
+                const entries = Object.entries(result);
+                const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+                if (otherEntries.length > 0) {
+                    return otherEntries[0][1]; // Retourner la valeur principale
+                }
+            }
+            return result;
+        };
+
+        // Helper pour parcourir les tables simples
         const findResultInTable = (tableData, category) => {
-            if (!tableData.results) return null;
-            for (const result of tableData.results) {
-                const resultHash = this.generateResultHash(tableData.name, result);
+            if (!tableData.entries) {
+                console.log('⚠️ [findResultInTable] Table sans entries:', tableData.name);
+                return null;
+            }
+            
+            console.log('🔍 [findResultInTable] Vérification table:', tableData.name, 'avec', tableData.entries.length, 'entrées');
+            
+            for (const result of tableData.entries) {
+                const rawContent = formatContent(result);
+                const resultHash = this.generateResultHash(tableData.name, rawContent);
+                
                 if (resultHash === hash) {
+                    console.log('✅ [findResultInTable] Hash trouvé dans table simple:', tableData.name);
                     return {
                         tableName: tableData.name,
-                        content: result,
+                        content: rawContent,
                         category: category
                     };
                 }
@@ -499,68 +527,82 @@ class RandomTablesManager {
             return null;
         };
 
-        // Iterate through settings tables
-        if (allTables.settings) {
-            for (const table of allTables.settings) {
-                const found = findResultInTable(table, 'settings');
-                if (found) return found;
-            }
-        }
-
-        // Iterate through position tables (locations)
-        if (allTables.position && allTables.position.locations) {
-            for (const table of allTables.position.locations) {
-                const found = findResultInTable(table, 'location');
-                if (found) return found;
-            }
-        }
-
-        // Iterate through position tables (regions)
-        if (allTables.position && allTables.position.regions) {
-            for (const table of allTables.position.regions) {
-                const found = findResultInTable(table, 'region');
-                if (found) return found;
-            }
-        }
-
-        // Check composite tables
+        // Helper pour parcourir les tables composites
         const checkComposite = (tables, category) => {
             for (const table of tables) {
                 if (table.subtables) {
+                    console.log('🔍 [checkComposite] Table composite:', table.name, 'avec', table.subtables.length, 'sous-tables');
+                    
                     for (const subtable of table.subtables) {
-                         if (subtable.entries) {
-                             for (const result of subtable.entries) {
-                                const resultHash = this.generateResultHash(`${table.name}::${subtable.name}`, result);
+                        if (subtable.entries) {
+                            console.log('🔍 [checkComposite] Sous-table:', subtable.name, 'avec', subtable.entries.length, 'entrées');
+                            
+                            for (const result of subtable.entries) {
+                                const rawContent = formatContent(result);
+                                const resultHash = this.generateResultHash(`${table.name}::${subtable.name}`, rawContent);
+                                
                                 if (resultHash === hash) {
-                                     return {
-                                         tableName: `${table.name}::${subtable.name}`,
-                                         content: result,
-                                         category: category
-                                     };
+                                    console.log('✅ [checkComposite] Hash trouvé dans table composite:', `${table.name}::${subtable.name}`);
+                                    return {
+                                        tableName: `${table.name} - ${subtable.name}`,
+                                        content: rawContent,
+                                        category: category
+                                    };
                                 }
-                             }
-                         }
+                            }
+                        }
                     }
                 }
             }
             return null;
+        };
+
+        // Parcourir les tables des paramètres
+        if (allTables.settings && allTables.settings.length > 0) {
+            console.log('🔍 [getResultDataByHash] Vérification dans settings...');
+            for (const table of allTables.settings) {
+                // Vérifier si c'est une table simple
+                const found = findResultInTable(table, 'settings');
+                if (found) return found;
+                
+                // Vérifier si c'est une table composite
+                if (table.subtables) {
+                    const found = checkComposite([table], 'settings');
+                    if (found) return found;
+                }
+            }
         }
 
-        if (allTables.settings) {
-             const found = checkComposite(allTables.settings, 'settings');
-             if (found) return found;
-        }
-         if (allTables.position && allTables.position.locations) {
-             const found = checkComposite(allTables.position.locations, 'location');
-             if (found) return found;
-        }
-         if (allTables.position && allTables.position.regions) {
-             const found = checkComposite(allTables.position.regions, 'region');
-             if (found) return found;
+        // Parcourir les tables des lieux
+        if (allTables.position?.locations && allTables.position.locations.length > 0) {
+            console.log('🔍 [getResultDataByHash] Vérification dans locations...');
+            for (const table of allTables.position.locations) {
+                const found = findResultInTable(table, 'location');
+                if (found) return found;
+                
+                if (table.subtables) {
+                    const found = checkComposite([table], 'location');
+                    if (found) return found;
+                }
+            }
         }
 
+        // Parcourir les tables des régions
+        if (allTables.position?.regions && allTables.position.regions.length > 0) {
+            console.log('🔍 [getResultDataByHash] Vérification dans regions...');
+            for (const table of allTables.position.regions) {
+                const found = findResultInTable(table, 'region');
+                if (found) return found;
+                
+                if (table.subtables) {
+                    const found = checkComposite([table], 'region');
+                    if (found) return found;
+                }
+            }
+        }
 
-        return null; // Not found
+        console.log('❌ [getResultDataByHash] Hash non trouvé:', hash);
+        return null;
     }
 }
 
