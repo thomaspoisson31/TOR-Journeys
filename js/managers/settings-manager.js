@@ -1888,11 +1888,14 @@ class SettingsManager {
             window.journalManager.loadJournal();
 
             // Extraire le champ "Résultat" du texte pour l'utiliser comme titre
-            let eventTitle = this.currentRandomResult.title;
+            let eventTitle = this.currentRandomResult.tableName;
+
+            // Le texte du résultat est dans 'result' et non 'text'
+            const resultText = this.currentRandomResult.result || '';
 
             // Chercher le champ "Résultat:" dans le texte HTML ou texte brut
-            const resultMatch = this.currentRandomResult.text.match(/Résultat[:\s]*<\/span>\s*<span[^>]*>([^<]+)<\/span>/i) ||
-                               this.currentRandomResult.text.match(/Résultat[:\s]*([^\n<]+)/i);
+            const resultMatch = resultText.match(/Résultat[:\s]*<\/span>\s*<span[^>]*>([^<]+)<\/span>/i) ||
+                               resultText.match(/Résultat[:\s]*([^\n<]+)/i);
 
             if (resultMatch && resultMatch[1]) {
                 eventTitle = resultMatch[1].trim();
@@ -1907,7 +1910,7 @@ class SettingsManager {
                 days: [{
                     dayNumber: 1,
                     calendarDate: currentDate,
-                    description: this.currentRandomResult.text,
+                    description: resultText,
                     discoveries: []
                 }]
             };
