@@ -34,18 +34,10 @@ class PositionManager {
             this.updateMarkerCursor(); // Réinitialiser le curseur si le mode aventure est désactivé
         }
 
-        // Si le mode aventure est activé, et que l'on vient de le désactiver, alors il faut réactiver le drag et mettre à jour le curseur
-        if (!this.adventureMode) {
-            this.updateMarkerCursor();
-        }
+        console.log(`🎮 Mode Aventure ${this.adventureMode ? 'activé' : 'désactivé'}`);
 
-        // Marquer comme modifié et synchroniser avec le cloud
-        if (typeof window.markAsUnsaved === 'function') {
-            window.markAsUnsaved();
-        }
-        if (typeof window.scheduleAutoSync === 'function') {
-            window.scheduleAutoSync();
-        }
+        // Mettre à jour l'affichage de l'indicateur dans le cartouche de date
+        this.updateAdventureModeIndicator();
 
         // Mettre à jour la visibilité des boutons de la toolbar
         if (typeof window.updateToolbarButtonsVisibility === 'function') {
@@ -57,11 +49,24 @@ class PositionManager {
         if (!this.positionMarker) return;
 
         if (this.adventureMode) {
-            // En mode aventure, le marqueur ne doit pas être déplaçable manuellement
-            this.positionMarker.style.cursor = 'default'; 
+            this.positionMarker.style.cursor = 'default'; // Curseur par défaut en mode aventure
         } else {
-            // Sinon, curseur de déplacement par défaut
-            this.positionMarker.style.cursor = 'move';
+            this.positionMarker.style.cursor = 'move'; // Curseur de déplacement sinon
+        }
+    }
+
+    updateAdventureModeIndicator() {
+        const indicator = document.getElementById('adventure-mode-indicator');
+        if (indicator) {
+            if (this.adventureMode) {
+                indicator.classList.remove('hidden', 'bg-gray-600');
+                indicator.classList.add('bg-green-600');
+                indicator.textContent = 'Mode Aventure';
+            } else {
+                indicator.classList.remove('hidden', 'bg-green-600');
+                indicator.classList.add('bg-gray-600');
+                indicator.textContent = 'Mode Aventure';
+            }
         }
     }
 
@@ -166,6 +171,7 @@ class PositionManager {
 
         this.positionMarker.appendChild(img);
         this.updateMarkerPosition();
+        this.positionMarker.style.cursor = this.adventureMode ? 'default' : 'move'; // Appliquer le curseur initial
         positionLayer.appendChild(this.positionMarker);
     }
 
@@ -577,7 +583,7 @@ class PositionManager {
         const nearbyLocations = [];
         if (window.locationsData && window.locationsData.locations) {
             const activeMapId = window.settingsManager?.activeMapUrl;
-            
+
             window.locationsData.locations.forEach(location => {
                 if (location.coordinates && (!location.mapId || location.mapId === activeMapId)) {
                     const dx = location.coordinates.x - this.currentPosition.x;
@@ -600,7 +606,7 @@ class PositionManager {
         const currentRegions = [];
         if (window.regionsData && window.regionsData.regions) {
             const activeMapId = window.settingsManager?.activeMapUrl;
-            
+
             window.regionsData.regions.forEach(region => {
                 // Extraire les points depuis différentes structures possibles
                 let points = [];
@@ -697,50 +703,50 @@ class PositionManager {
             window.journalManager.loadJournal();
             window.journalManager.journal.unshift(newEntry);
             localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
-            
+
             // Incrémenter la date du calendrier de +1 jour après l'exploration
             if (window.calendarManager && window.calendarManager.isCalendarMode && window.calendarManager.currentCalendarDate && window.calendarManager.calendarData) {
                 const calDate = window.calendarManager.currentCalendarDate;
                 const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === calDate.month);
-                
+
                 if (monthIndex >= 0) {
                     let newDay = calDate.day + 1;
                     let newMonthIndex = monthIndex;
-                    
+
                     // Gérer le passage au mois suivant
                     const month = window.calendarManager.calendarData[monthIndex];
                     const maxDays = month.days.length;
-                    
+
                     if (newDay > maxDays) {
                         newDay = 1;
                         newMonthIndex = (monthIndex + 1) % window.calendarManager.calendarData.length;
                     }
-                    
+
                     // Mettre à jour la date
                     window.calendarManager.currentCalendarDate = {
                         month: window.calendarManager.calendarData[newMonthIndex].name,
                         day: newDay
                     };
-                    
+
                     // Mettre à jour la saison
                     const newSeason = window.calendarManager.calendarData[newMonthIndex].season.toLowerCase();
                     window.calendarManager.currentSeason = newSeason;
-                    
+
                     // Sauvegarder et afficher
                     window.calendarManager.updateSeasonDisplay();
                     window.calendarManager.saveCalendarToLocal();
-                    
+
                     console.log(`📅 Date du calendrier incrémentée après exploration : ${newDay} ${window.calendarManager.calendarData[newMonthIndex].name}`);
                 }
             }
-            
+
             // Marquer comme non sauvegardé
             if (typeof window.markAsUnsaved === 'function') {
                 window.markAsUnsaved();
             }
-            
+
             console.log(`📖 Entrée ajoutée au journal d'aventure:`, newEntry);
-            
+
             // Notification visuelle
             const notification = document.createElement('div');
             notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';

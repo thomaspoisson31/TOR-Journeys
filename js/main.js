@@ -1315,6 +1315,16 @@ function setupInfoBoxListeners() {
         });
     }
 
+    // Clic sur l'indicateur de mode aventure pour basculer le mode
+    const adventureModeIndicator = document.getElementById('adventure-mode-indicator');
+    if (adventureModeIndicator) {
+        adventureModeIndicator.addEventListener('click', () => {
+            if (positionManager) {
+                positionManager.toggleAdventureMode();
+            }
+        });
+    }
+
     console.log("✅ Info-box listeners setup complete");
 }
 
