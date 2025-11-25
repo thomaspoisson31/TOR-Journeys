@@ -812,10 +812,14 @@ class PositionManager {
         const indicator = document.getElementById('adventure-mode-indicator');
         if (!indicator) return;
 
+        // Toujours afficher l'indicateur, juste changer la couleur
+        indicator.classList.remove('hidden');
         if (this.adventureMode) {
-            indicator.classList.remove('hidden');
+            indicator.classList.remove('bg-gray-600');
+            indicator.classList.add('bg-green-600');
         } else {
-            indicator.classList.add('hidden');
+            indicator.classList.remove('bg-green-600');
+            indicator.classList.add('bg-gray-600');
         }
     }
 
