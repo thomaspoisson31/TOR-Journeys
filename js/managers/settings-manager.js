@@ -1887,19 +1887,45 @@ class SettingsManager {
             // Charger le journal existant
             window.journalManager.loadJournal();
 
-            // Extraire le champ "Résultat" du texte pour l'utiliser comme titre
-            let eventTitle = this.currentRandomResult.tableName;
-
             // Le texte du résultat est dans 'result' et non 'text'
             const resultText = this.currentRandomResult.result || '';
 
-            // Chercher le champ "Résultat:" dans le texte HTML ou texte brut
-            const resultMatch = resultText.match(/Résultat[:\s]*<\/span>\s*<span[^>]*>([^<]+)<\/span>/i) ||
-                               resultText.match(/Résultat[:\s]*([^\n<]+)/i);
+            // Extraire le champ "Résultat" du texte HTML pour l'utiliser comme titre
+            let eventTitle = this.currentRandomResult.tableName;
 
-            if (resultMatch && resultMatch[1]) {
-                eventTitle = resultMatch[1].trim();
+            // Parser le HTML pour extraire le texte brut du champ "Résultat"
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = resultText;
+            
+            // Chercher dans les divs avec bg-gray-100 qui contiennent le résultat principal
+            const resultBlocks = tempDiv.querySelectorAll('div.bg-gray-100');
+            for (const block of resultBlocks) {
+                // Chercher le texte "Résultat" dans les span avec font-weight: 600
+                const spans = block.querySelectorAll('span[style*="font-weight: 600"]');
+                for (const span of spans) {
+                    const text = span.textContent.trim();
+                    // Vérifier si c'est le résultat principal (pas le dé du destin)
+                    if (text && !text.startsWith('(') && text.length > 0) {
+                        eventTitle = text;
+                        break;
+                    }
+                }
+                if (eventTitle !== this.currentRandomResult.tableName) {
+                    break;
+                }
             }
+
+            // Si on n'a pas trouvé avec la méthode ci-dessus, essayer avec regex
+            if (eventTitle === this.currentRandomResult.tableName) {
+                // Chercher un pattern comme (X/Y) Texte ou juste du texte après les parenthèses
+                const cleanMatch = resultText.match(/\(\d+\/\d+\)\s*([^<]+)/i) ||
+                                  resultText.match(/font-weight:\s*600[^>]*>([^<(]+)/i);
+                if (cleanMatch && cleanMatch[1]) {
+                    eventTitle = cleanMatch[1].trim();
+                }
+            }
+
+            console.log(`📖 Titre extrait pour le journal: "${eventTitle}"`);
 
             // Créer une structure de voyage pour l'événement
             const eventJourney = {
