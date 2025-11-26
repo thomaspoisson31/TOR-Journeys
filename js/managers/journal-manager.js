@@ -26,9 +26,12 @@ class JournalManager {
         this.journalBtn = document.getElementById('journal-btn');
         this.closeJournalBtn = document.getElementById('close-journal-btn');
 
-        // Références pour l'onglet Rumeurs
-        this.rumorsContent = document.getElementById('rumors-content');
-        this.rumorsEmpty = document.getElementById('rumors-empty');
+        // Pas de références spécifiques pour l'onglet Rumeurs car le contenu est dans #rumors-tab
+        console.log('📖 [setupDOMReferences] Éléments trouvés:', {
+            journalModal: !!this.journalModal,
+            journalContent: !!this.journalContent,
+            journalEmpty: !!this.journalEmpty
+        });
     }
 
     setupEventListeners() {
@@ -659,7 +662,10 @@ class JournalManager {
     }
 
     renderRumors() {
-        if (!this.rumorsContent || !this.rumorsEmpty) return;
+        if (!this.rumorsContent || !this.rumorsEmpty) {
+            console.warn('📖 [renderRumors] Éléments DOM non trouvés - rumorsContent:', !!this.rumorsContent, 'rumorsEmpty:', !!this.rumorsEmpty);
+            return;
+        }
 
         console.log('📖 [renderRumors] Début du rendu des rumeurs');
 
@@ -677,6 +683,23 @@ class JournalManager {
             regions: regionsData.length,
             characters: charactersData.length
         });
+
+        // Debug : afficher les 3 premiers éléments de chaque type pour vérifier les rumeurs
+        console.log('📖 [renderRumors] Échantillon locations:', locationsData.slice(0, 3).map(l => ({
+            name: l.name,
+            mapId: l.mapId,
+            hasRumeurs: !!(l.Rumeurs && Array.isArray(l.Rumeurs) && l.Rumeurs.length > 0)
+        })));
+        console.log('📖 [renderRumors] Échantillon regions:', regionsData.slice(0, 3).map(r => ({
+            name: r.name,
+            mapId: r.mapId,
+            hasRumeurs: !!(r.Rumeurs && Array.isArray(r.Rumeurs) && r.Rumeurs.length > 0)
+        })));
+        console.log('📖 [renderRumors] Échantillon characters:', charactersData.slice(0, 3).map(c => ({
+            name: c.name,
+            mapId: c.mapId,
+            hasRumeurs: !!(c.Rumeurs && Array.isArray(c.Rumeurs) && c.Rumeurs.length > 0)
+        })));
 
         // Filtrer et collecter les éléments avec rumeurs pour la carte active
         const regionsWithRumors = regionsData
@@ -709,25 +732,33 @@ class JournalManager {
             characters: charactersWithRumors.length
         });
 
+        // Récupérer l'onglet Rumeurs directement
+        const rumorsTab = document.getElementById('rumors-tab');
+        if (!rumorsTab) {
+            console.error('📖 [renderRumors] Onglet rumors-tab non trouvé !');
+            return;
+        }
+
         // Si aucun élément avec rumeurs
         if (regionsWithRumors.length === 0 && locationsWithRumors.length === 0 && charactersWithRumors.length === 0) {
-            this.rumorsContent.innerHTML = '';
-            this.rumorsContent.classList.add('hidden');
-            this.rumorsEmpty.classList.remove('hidden');
+            rumorsTab.innerHTML = `
+                <div class="flex flex-col items-center justify-center text-center py-12 text-gray-500">
+                    <i class="fas fa-comments fa-3x mb-4"></i>
+                    <p class="text-lg">Aucune rumeur pour cette carte</p>
+                    <p class="text-sm mt-2">Les rumeurs des lieux, régions et personnages apparaîtront ici</p>
+                </div>
+            `;
             console.log('📖 [renderRumors] Aucune rumeur trouvée pour la carte active');
             return;
         }
 
-        this.rumorsContent.classList.remove('hidden');
-        this.rumorsEmpty.classList.add('hidden');
-
-        let rumorsHTML = '<div class="space-y-4">';
+        let rumorsHTML = '<div class="p-6 space-y-4">';
 
         // Rendu des régions
         if (regionsWithRumors.length > 0) {
             rumorsHTML += `
                 <div>
-                    <h3 class="text-xl font-bold mb-1" style="color: #940000;">Régions</h3>
+                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Régions</h3>
                     <ul class="list-disc pl-5 space-y-1">
             `;
             regionsWithRumors.forEach(region => {
@@ -741,7 +772,7 @@ class JournalManager {
         if (locationsWithRumors.length > 0) {
             rumorsHTML += `
                 <div>
-                    <h3 class="text-xl font-bold mb-1" style="color: #940000;">Lieux</h3>
+                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Lieux</h3>
                     <ul class="list-disc pl-5 space-y-1">
             `;
             locationsWithRumors.forEach(location => {
@@ -755,7 +786,7 @@ class JournalManager {
         if (charactersWithRumors.length > 0) {
             rumorsHTML += `
                 <div>
-                    <h3 class="text-xl font-bold mb-1" style="color: #940000;">Personnages</h3>
+                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Personnages</h3>
                     <ul class="list-disc pl-5 space-y-1">
             `;
             charactersWithRumors.forEach(character => {
@@ -766,8 +797,8 @@ class JournalManager {
         }
 
         rumorsHTML += '</div>';
-        this.rumorsContent.innerHTML = rumorsHTML;
-        console.log('📖 [renderRumors] Rendu terminé');
+        rumorsTab.innerHTML = rumorsHTML;
+        console.log('📖 [renderRumors] Rendu terminé avec succès');
     }
 
 

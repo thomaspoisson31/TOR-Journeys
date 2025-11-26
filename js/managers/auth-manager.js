@@ -837,7 +837,7 @@ class AuthManager {
             // Sauvegarder dans localStorage (comme cache uniquement)
             this.saveToLocalStorage(cloudData, true); // true = depuis le cloud
 
-            // FORCER un rendu immédiat après chargement cloud
+            // Forcer un rendu immédiat après chargement cloud
             this.logAuth("🎨 Rendu forcé après chargement cloud");
             if (typeof window.renderLocations === 'function') {
                 window.renderLocations();
@@ -846,6 +846,12 @@ class AuthManager {
             if (typeof window.renderRegions === 'function') {
                 window.renderRegions();
                 this.logAuth(`✅ ${window.regionsData?.regions?.length || 0} régions rendues depuis le cloud`);
+            }
+
+            // Rafraîchir l'onglet Rumeurs après chargement des données
+            if (window.journalManager && typeof window.journalManager.renderRumors === 'function') {
+                console.log('[AuthManager] 📖 Rafraîchissement de l\'onglet Rumeurs après chargement cloud', null);
+                window.journalManager.renderRumors();
             }
 
             // Marquer comme sauvegardé après chargement cloud
