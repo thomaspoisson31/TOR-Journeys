@@ -124,8 +124,8 @@ class JournalManager {
         this.renderJournal();
         this.renderRumors(); // Afficher les rumeurs
 
-        // Afficher l'onglet par défaut (Journal)
-        this.switchTab('journal-list');
+        // Afficher l'onglet par défaut (Rumeurs)
+        this.switchTab('rumors');
 
         if (this.journalModal) {
             this.journalModal.classList.remove('hidden');
@@ -525,10 +525,17 @@ class JournalManager {
 
         objectivesEmpty.style.display = 'none';
 
-        const objectivesHTML = this.objectives.map((objective, index) => `
-            <div class="objective-item ${objective.completed ? 'completed' : ''}" data-index="${index}">
-                <input type="checkbox" ${objective.completed ? 'checked' : ''}
-                       onchange="window.journalManager.toggleObjectiveComplete(${index})">
+        const objectivesHTML = this.objectives.map((objective, index) => {
+            const status = objective.status || 'proposed';
+            const isCompleted = status === 'completed';
+            return `
+            <div class="objective-item ${isCompleted ? 'completed' : ''}" data-index="${index}">
+                <select onchange="window.journalManager.updateObjectiveStatus(${index}, this.value)"
+                        class="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 mr-2">
+                    <option value="proposed" ${status === 'proposed' ? 'selected' : ''}>Proposé</option>
+                    <option value="in_progress" ${status === 'in_progress' ? 'selected' : ''}>En cours</option>
+                    <option value="completed" ${status === 'completed' ? 'selected' : ''}>Atteint</option>
+                </select>
                 <div class="objective-text">${this.escapeHtml(objective.text)}</div>
                 <button onclick="window.journalManager.deleteObjective(${index})"
                         class="text-red-500 hover:text-red-700 p-2 ml-2"
@@ -536,7 +543,8 @@ class JournalManager {
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
-        `).join('');
+        `;
+        }).join('');
 
         objectivesList.innerHTML = objectivesHTML;
     }
@@ -546,6 +554,7 @@ class JournalManager {
         if (text && text.trim()) {
             this.objectives.push({
                 text: text.trim(),
+                status: 'proposed',
                 completed: false,
                 createdAt: new Date().toISOString()
             });
@@ -554,9 +563,11 @@ class JournalManager {
         }
     }
 
-    toggleObjectiveComplete(index) {
+    updateObjectiveStatus(index, status) {
         if (this.objectives[index]) {
-            this.objectives[index].completed = !this.objectives[index].completed;
+            this.objectives[index].status = status;
+            // Maintenir la compatibilité avec l'ancien système
+            this.objectives[index].completed = (status === 'completed');
             this.saveObjectives();
             this.renderObjectives();
         }
