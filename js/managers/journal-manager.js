@@ -661,99 +661,113 @@ class JournalManager {
     renderRumors() {
         if (!this.rumorsContent || !this.rumorsEmpty) return;
 
-        if (this.rumors.length === 0) {
-            this.rumorsContent.innerHTML = ''; // Vider le contenu
+        console.log('📖 [renderRumors] Début du rendu des rumeurs');
+
+        // Obtenir la carte active
+        const activeMapUrl = localStorage.getItem('activeMapUrl');
+        console.log('📖 [renderRumors] Carte active:', activeMapUrl);
+
+        // Récupérer les données depuis window
+        const locationsData = window.locationsData?.locations || [];
+        const regionsData = window.regionsData?.regions || [];
+        const charactersData = window.charactersManager?.characters || [];
+
+        console.log('📖 [renderRumors] Données disponibles:', {
+            locations: locationsData.length,
+            regions: regionsData.length,
+            characters: charactersData.length
+        });
+
+        // Filtrer et collecter les éléments avec rumeurs pour la carte active
+        const regionsWithRumors = regionsData
+            .filter(region => {
+                const isActiveMap = region.mapId === activeMapUrl;
+                const hasRumors = region.Rumeurs && Array.isArray(region.Rumeurs) && region.Rumeurs.length > 0;
+                return isActiveMap && hasRumors;
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        const locationsWithRumors = locationsData
+            .filter(location => {
+                const isActiveMap = location.mapId === activeMapUrl;
+                const hasRumors = location.Rumeurs && Array.isArray(location.Rumeurs) && location.Rumeurs.length > 0;
+                return isActiveMap && hasRumors;
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        const charactersWithRumors = charactersData
+            .filter(character => {
+                const isActiveMap = character.mapId === activeMapUrl;
+                const hasRumors = character.Rumeurs && Array.isArray(character.Rumeurs) && character.Rumeurs.length > 0;
+                return isActiveMap && hasRumors;
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        console.log('📖 [renderRumors] Éléments avec rumeurs:', {
+            regions: regionsWithRumors.length,
+            locations: locationsWithRumors.length,
+            characters: charactersWithRumors.length
+        });
+
+        // Si aucun élément avec rumeurs
+        if (regionsWithRumors.length === 0 && locationsWithRumors.length === 0 && charactersWithRumors.length === 0) {
+            this.rumorsContent.innerHTML = '';
             this.rumorsContent.classList.add('hidden');
             this.rumorsEmpty.classList.remove('hidden');
+            console.log('📖 [renderRumors] Aucune rumeur trouvée pour la carte active');
             return;
         }
 
         this.rumorsContent.classList.remove('hidden');
         this.rumorsEmpty.classList.add('hidden');
 
-        // Organiser les rumeurs par catégorie
-        const categorizedRumors = {
-            regions: {},
-            locations: {},
-            characters: {}
-        };
-
-        this.rumors.forEach(rumor => {
-            if (rumor.region) {
-                if (!categorizedRumors.regions[rumor.region]) {
-                    categorizedRumors.regions[rumor.region] = [];
-                }
-                categorizedRumors.regions[rumor.region].push(rumor);
-            }
-            if (rumor.location) {
-                if (!categorizedRumors.locations[rumor.location]) {
-                    categorizedRumors.locations[rumor.location] = [];
-                }
-                categorizedRumors.locations[rumor.location].push(rumor);
-            }
-            if (rumor.character) {
-                if (!categorizedRumors.characters[rumor.character]) {
-                    categorizedRumors.characters[rumor.character] = [];
-                }
-                categorizedRumors.characters[rumor.character].push(rumor);
-            }
-        });
-
-        let rumorsHTML = '';
+        let rumorsHTML = '<div class="space-y-4">';
 
         // Rendu des régions
-        const sortedRegions = Object.keys(categorizedRumors.regions).sort();
-        if (sortedRegions.length > 0) {
+        if (regionsWithRumors.length > 0) {
             rumorsHTML += `
                 <div>
-                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Régions</h3>
+                    <h3 class="text-xl font-bold mb-1" style="color: #940000;">Régions</h3>
                     <ul class="list-disc pl-5 space-y-1">
             `;
-            sortedRegions.forEach(region => {
-                rumorsHTML += `<li>${this.escapeHtml(region)}</li>`;
-                // Afficher les rumeurs associées si nécessaire (optionnel)
-                // categorizedRumors.regions[region].forEach(rumor => {
-                //     rumorsHTML += `<li class="ml-4 text-sm text-gray-700">${this.simpleMarkdown(rumor.text)}</li>`;
-                // });
+            regionsWithRumors.forEach(region => {
+                rumorsHTML += `<li class="text-gray-800">${this.escapeHtml(region.name)}</li>`;
             });
             rumorsHTML += '</ul></div>';
+            console.log('📖 [renderRumors] Régions avec rumeurs ajoutées:', regionsWithRumors.length);
         }
 
         // Rendu des lieux
-        const sortedLocations = Object.keys(categorizedRumors.locations).sort();
-        if (sortedLocations.length > 0) {
+        if (locationsWithRumors.length > 0) {
             rumorsHTML += `
                 <div>
-                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Lieux</h3>
+                    <h3 class="text-xl font-bold mb-1" style="color: #940000;">Lieux</h3>
                     <ul class="list-disc pl-5 space-y-1">
             `;
-            sortedLocations.forEach(location => {
-                rumorsHTML += `<li>${this.escapeHtml(location)}</li>`;
-                // categorizedRumors.locations[location].forEach(rumor => {
-                //     rumorsHTML += `<li class="ml-4 text-sm text-gray-700">${this.simpleMarkdown(rumor.text)}</li>`;
-                // });
+            locationsWithRumors.forEach(location => {
+                rumorsHTML += `<li class="text-gray-800">${this.escapeHtml(location.name)}</li>`;
             });
             rumorsHTML += '</ul></div>';
+            console.log('📖 [renderRumors] Lieux avec rumeurs ajoutés:', locationsWithRumors.length);
         }
 
         // Rendu des personnages
-        const sortedCharacters = Object.keys(categorizedRumors.characters).sort();
-        if (sortedCharacters.length > 0) {
+        if (charactersWithRumors.length > 0) {
             rumorsHTML += `
                 <div>
-                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Personnages</h3>
+                    <h3 class="text-xl font-bold mb-1" style="color: #940000;">Personnages</h3>
                     <ul class="list-disc pl-5 space-y-1">
             `;
-            sortedCharacters.forEach(character => {
-                rumorsHTML += `<li>${this.escapeHtml(character)}</li>`;
-                // categorizedRumors.characters[character].forEach(rumor => {
-                //     rumorsHTML += `<li class="ml-4 text-sm text-gray-700">${this.simpleMarkdown(rumor.text)}</li>`;
-                // });
+            charactersWithRumors.forEach(character => {
+                rumorsHTML += `<li class="text-gray-800">${this.escapeHtml(character.name)}</li>`;
             });
             rumorsHTML += '</ul></div>';
+            console.log('📖 [renderRumors] Personnages avec rumeurs ajoutés:', charactersWithRumors.length);
         }
 
+        rumorsHTML += '</div>';
         this.rumorsContent.innerHTML = rumorsHTML;
+        console.log('📖 [renderRumors] Rendu terminé');
     }
 
 
