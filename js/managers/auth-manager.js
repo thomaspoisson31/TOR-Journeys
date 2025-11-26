@@ -363,8 +363,8 @@ class AuthManager {
                 activeMapUrl: window.settingsManager?.activeMapUrl || null,
                 availableMaps: window.settingsManager?.availableMaps || []
             },
-            // Journal de voyage et objectifs
-            journal: window.journalManager ? window.journalManager.getAllData() : { journal: [], objectives: [] },
+            // Journal de voyage, objectifs et rumeurs avec états des cases
+            journal: window.journalManager ? window.journalManager.getAllData() : { journal: [], objectives: [], rumors: [], rumorsCheckboxStates: {} },
             position: JSON.parse(localStorage.getItem('adventurers_position') || 'null'),
             filtersByMap: JSON.parse(localStorage.getItem('filtersByMap') || '{}'),
             // Ajouter l'état actuel du mode aventure
@@ -503,10 +503,12 @@ class AuthManager {
         // Journal de voyage et objectifs
         if (data.journal) {
             if (data.journal.journal) {
-                // Nouveau format avec journal et objectifs
+                // Nouveau format avec journal, objectifs et rumeurs
                 localStorage.setItem('travelJournal', JSON.stringify(data.journal.journal));
                 localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives || []));
-                console.log('[AuthManager] ✅ Journal et objectifs chargés depuis le cloud');
+                localStorage.setItem('adventureRumors', JSON.stringify(data.journal.rumors || []));
+                localStorage.setItem('rumorsCheckboxStates', JSON.stringify(data.journal.rumorsCheckboxStates || {}));
+                console.log('[AuthManager] ✅ Journal, objectifs et rumeurs chargés depuis le cloud');
             } else {
                 // Ancien format (rétrocompatibilité)
                 localStorage.setItem('travelJournal', JSON.stringify(data.journal));

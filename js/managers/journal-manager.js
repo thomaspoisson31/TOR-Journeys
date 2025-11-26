@@ -608,6 +608,20 @@ class JournalManager {
             this.rumors = [];
             console.log("📖 Aucune rumeur trouvée dans le localStorage");
         }
+
+        // Charger les états des cases à cocher
+        const savedStates = localStorage.getItem('rumorsCheckboxStates');
+        if (savedStates && savedStates !== 'null' && savedStates !== 'undefined') {
+            try {
+                this.rumorsCheckboxStates = JSON.parse(savedStates);
+                console.log(`📖 ${Object.keys(this.rumorsCheckboxStates).length} état(s) de cases à cocher chargé(s)`);
+            } catch (e) {
+                console.error("Erreur lors du chargement des états des cases à cocher:", e);
+                this.rumorsCheckboxStates = {};
+            }
+        } else {
+            this.rumorsCheckboxStates = {};
+        }
     }
 
     saveRumors() {
@@ -619,6 +633,29 @@ class JournalManager {
         if (typeof window.scheduleAutoSync === 'function') {
             window.scheduleAutoSync();
         }
+    }
+
+    saveRumorsCheckboxStates() {
+        localStorage.setItem('rumorsCheckboxStates', JSON.stringify(this.rumorsCheckboxStates));
+        console.log("💾 États des cases à cocher des rumeurs sauvegardés");
+        if (window.authManager && window.authManager.isAuthenticated) {
+            window.authManager.markAsUnsaved();
+        }
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+    }
+
+    toggleRumorCheckbox(itemType, itemName, rumorIndex) {
+        const key = `${itemType}_${itemName}_${rumorIndex}`;
+        this.rumorsCheckboxStates[key] = !this.rumorsCheckboxStates[key];
+        this.saveRumorsCheckboxStates();
+        console.log(`📖 Case à cocher rumeur ${key} mise à jour:`, this.rumorsCheckboxStates[key]);
+    }
+
+    isRumorChecked(itemType, itemName, rumorIndex) {
+        const key = `${itemType}_${itemName}_${rumorIndex}`;
+        return this.rumorsCheckboxStates[key] || false;
     }
 
     addRumor(rumorData) {
@@ -676,23 +713,6 @@ class JournalManager {
             characters: charactersData.length
         });
 
-        // Debug : afficher les 3 premiers éléments de chaque type pour vérifier les rumeurs
-        console.log('📖 [renderRumors] Échantillon locations:', locationsData.slice(0, 3).map(l => ({
-            name: l.name,
-            mapId: l.mapId,
-            hasRumeurs: !!(l.Rumeurs && Array.isArray(l.Rumeurs) && l.Rumeurs.length > 0)
-        })));
-        console.log('📖 [renderRumors] Échantillon regions:', regionsData.slice(0, 3).map(r => ({
-            name: r.name,
-            mapId: r.mapId,
-            hasRumeurs: !!(r.Rumeurs && Array.isArray(r.Rumeurs) && r.Rumeurs.length > 0)
-        })));
-        console.log('📖 [renderRumors] Échantillon characters:', charactersData.slice(0, 3).map(c => ({
-            name: c.name,
-            mapId: c.mapId,
-            hasRumeurs: !!(c.Rumeurs && Array.isArray(c.Rumeurs) && c.Rumeurs.length > 0)
-        })));
-
         // Filtrer et collecter les éléments avec rumeurs pour la carte active
         const regionsWithRumors = regionsData
             .filter(region => {
@@ -744,47 +764,119 @@ class JournalManager {
             return;
         }
 
-        let rumorsHTML = '<div class="p-6 space-y-4">';
+        let rumorsHTML = '<div class="p-6 space-y-6">';
 
-        // Rendu des régions
+        // Rendu des régions avec leurs rumeurs
         if (regionsWithRumors.length > 0) {
             rumorsHTML += `
                 <div>
-                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Régions</h3>
-                    <ul class="list-disc pl-5 space-y-1">
+                    <h3 class="text-xl font-bold mb-3" style="color: #940000;">
+                        <i class="fas fa-mountain mr-2"></i>Régions
+                    </h3>
+                    <div class="space-y-4">
             `;
             regionsWithRumors.forEach(region => {
-                rumorsHTML += `<li class="text-gray-800">${this.escapeHtml(region.name)}</li>`;
+                rumorsHTML += `
+                    <div class="border-l-4 border-red-800 pl-4">
+                        <h4 class="font-bold text-gray-800 mb-2">${this.escapeHtml(region.name)}</h4>
+                        <div class="space-y-2">
+                `;
+                region.Rumeurs.forEach((rumor, index) => {
+                    const isChecked = this.isRumorChecked('region', region.name, index);
+                    const checkboxId = `rumor-region-${region.name.replace(/\s+/g, '_')}-${index}`;
+                    rumorsHTML += `
+                        <div class="flex items-start space-x-2">
+                            <input type="checkbox" 
+                                   id="${checkboxId}"
+                                   ${isChecked ? 'checked' : ''}
+                                   onchange="window.journalManager.toggleRumorCheckbox('region', '${this.escapeHtml(region.name)}', ${index})"
+                                   class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                            <label for="${checkboxId}" class="text-sm text-gray-700 cursor-pointer ${isChecked ? 'line-through opacity-60' : ''}">${this.escapeHtml(rumor)}</label>
+                        </div>
+                    `;
+                });
+                rumorsHTML += `
+                        </div>
+                    </div>
+                `;
             });
-            rumorsHTML += '</ul></div>';
+            rumorsHTML += '</div></div>';
             console.log('📖 [renderRumors] Régions avec rumeurs ajoutées:', regionsWithRumors.length);
         }
 
-        // Rendu des lieux
+        // Rendu des lieux avec leurs rumeurs
         if (locationsWithRumors.length > 0) {
             rumorsHTML += `
                 <div>
-                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Lieux</h3>
-                    <ul class="list-disc pl-5 space-y-1">
+                    <h3 class="text-xl font-bold mb-3" style="color: #940000;">
+                        <i class="fas fa-map-marker-alt mr-2"></i>Lieux
+                    </h3>
+                    <div class="space-y-4">
             `;
             locationsWithRumors.forEach(location => {
-                rumorsHTML += `<li class="text-gray-800">${this.escapeHtml(location.name)}</li>`;
+                rumorsHTML += `
+                    <div class="border-l-4 border-red-800 pl-4">
+                        <h4 class="font-bold text-gray-800 mb-2">${this.escapeHtml(location.name)}</h4>
+                        <div class="space-y-2">
+                `;
+                location.Rumeurs.forEach((rumor, index) => {
+                    const isChecked = this.isRumorChecked('location', location.name, index);
+                    const checkboxId = `rumor-location-${location.name.replace(/\s+/g, '_')}-${index}`;
+                    rumorsHTML += `
+                        <div class="flex items-start space-x-2">
+                            <input type="checkbox" 
+                                   id="${checkboxId}"
+                                   ${isChecked ? 'checked' : ''}
+                                   onchange="window.journalManager.toggleRumorCheckbox('location', '${this.escapeHtml(location.name)}', ${index})"
+                                   class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                            <label for="${checkboxId}" class="text-sm text-gray-700 cursor-pointer ${isChecked ? 'line-through opacity-60' : ''}">${this.escapeHtml(rumor)}</label>
+                        </div>
+                    `;
+                });
+                rumorsHTML += `
+                        </div>
+                    </div>
+                `;
             });
-            rumorsHTML += '</ul></div>';
+            rumorsHTML += '</div></div>';
             console.log('📖 [renderRumors] Lieux avec rumeurs ajoutés:', locationsWithRumors.length);
         }
 
-        // Rendu des personnages
+        // Rendu des personnages avec leurs rumeurs
         if (charactersWithRumors.length > 0) {
             rumorsHTML += `
                 <div>
-                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Personnages</h3>
-                    <ul class="list-disc pl-5 space-y-1">
+                    <h3 class="text-xl font-bold mb-3" style="color: #940000;">
+                        <i class="fas fa-users mr-2"></i>Personnages
+                    </h3>
+                    <div class="space-y-4">
             `;
             charactersWithRumors.forEach(character => {
-                rumorsHTML += `<li class="text-gray-800">${this.escapeHtml(character.name)}</li>`;
+                rumorsHTML += `
+                    <div class="border-l-4 border-red-800 pl-4">
+                        <h4 class="font-bold text-gray-800 mb-2">${this.escapeHtml(character.name)}</h4>
+                        <div class="space-y-2">
+                `;
+                character.Rumeurs.forEach((rumor, index) => {
+                    const isChecked = this.isRumorChecked('character', character.name, index);
+                    const checkboxId = `rumor-character-${character.name.replace(/\s+/g, '_')}-${index}`;
+                    rumorsHTML += `
+                        <div class="flex items-start space-x-2">
+                            <input type="checkbox" 
+                                   id="${checkboxId}"
+                                   ${isChecked ? 'checked' : ''}
+                                   onchange="window.journalManager.toggleRumorCheckbox('character', '${this.escapeHtml(character.name)}', ${index})"
+                                   class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                            <label for="${checkboxId}" class="text-sm text-gray-700 cursor-pointer ${isChecked ? 'line-through opacity-60' : ''}">${this.escapeHtml(rumor)}</label>
+                        </div>
+                    `;
+                });
+                rumorsHTML += `
+                        </div>
+                    </div>
+                `;
             });
-            rumorsHTML += '</ul></div>';
+            rumorsHTML += '</div></div>';
             console.log('📖 [renderRumors] Personnages avec rumeurs ajoutés:', charactersWithRumors.length);
         }
 
@@ -799,7 +891,8 @@ class JournalManager {
         return {
             journal: this.journal,
             objectives: this.objectives,
-            rumors: this.rumors // Inclure les rumeurs
+            rumors: this.rumors,
+            rumorsCheckboxStates: this.rumorsCheckboxStates // Inclure les états des cases à cocher
         };
     }
 }
