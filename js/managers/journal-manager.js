@@ -651,6 +651,12 @@ class JournalManager {
         this.rumorsCheckboxStates[key] = !this.rumorsCheckboxStates[key];
         this.saveRumorsCheckboxStates();
         console.log(`📖 Case à cocher rumeur ${key} mise à jour:`, this.rumorsCheckboxStates[key]);
+        
+        // Re-render si on est en mode "Sélection" pour mettre à jour l'affichage
+        const rumorsFilter = localStorage.getItem('rumorsFilter') || 'selection';
+        if (rumorsFilter === 'selection') {
+            this.renderRumors();
+        }
     }
 
     isRumorChecked(itemType, itemName, rumorIndex) {
@@ -764,7 +770,24 @@ class JournalManager {
             return;
         }
 
+        // Charger l'état du filtre (par défaut: "selection")
+        const rumorsFilter = localStorage.getItem('rumorsFilter') || 'selection';
+
         let rumorsHTML = '<div class="p-6 space-y-6">';
+        
+        // Ajouter le bouton de filtre
+        rumorsHTML += `
+            <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-300">
+                <h3 class="text-lg font-semibold text-gray-800">Filtrer les rumeurs</h3>
+                <div class="flex items-center space-x-3">
+                    <span class="text-sm text-gray-600">Toutes</span>
+                    <button id="rumors-filter-switch" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${rumorsFilter === 'selection' ? 'bg-blue-600' : 'bg-gray-300'}">
+                        <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${rumorsFilter === 'selection' ? 'translate-x-6' : 'translate-x-1'}"></span>
+                    </button>
+                    <span class="text-sm text-gray-600">Sélection</span>
+                </div>
+            </div>
+        `;
 
         // Rendu des régions avec leurs rumeurs
         if (regionsWithRumors.length > 0) {
@@ -776,6 +799,14 @@ class JournalManager {
                     <div class="space-y-4">
             `;
             regionsWithRumors.forEach(region => {
+                // Vérifier s'il y a au moins une rumeur à afficher selon le filtre
+                const hasVisibleRumors = region.Rumeurs.some((rumor, index) => {
+                    const isChecked = this.isRumorChecked('region', region.name, index);
+                    return rumorsFilter === 'all' || isChecked;
+                });
+
+                if (!hasVisibleRumors) return;
+
                 rumorsHTML += `
                     <div class="border-l-4 border-red-800 pl-4">
                         <h4 class="font-bold text-gray-800 mb-2">${this.escapeHtml(region.name)}</h4>
@@ -783,6 +814,10 @@ class JournalManager {
                 `;
                 region.Rumeurs.forEach((rumor, index) => {
                     const isChecked = this.isRumorChecked('region', region.name, index);
+                    
+                    // Filtrer selon le mode sélectionné
+                    if (rumorsFilter === 'selection' && !isChecked) return;
+
                     const checkboxId = `rumor-region-${region.name.replace(/\s+/g, '_')}-${index}`;
                     rumorsHTML += `
                         <div class="flex items-start space-x-2">
@@ -814,6 +849,14 @@ class JournalManager {
                     <div class="space-y-4">
             `;
             locationsWithRumors.forEach(location => {
+                // Vérifier s'il y a au moins une rumeur à afficher selon le filtre
+                const hasVisibleRumors = location.Rumeurs.some((rumor, index) => {
+                    const isChecked = this.isRumorChecked('location', location.name, index);
+                    return rumorsFilter === 'all' || isChecked;
+                });
+
+                if (!hasVisibleRumors) return;
+
                 rumorsHTML += `
                     <div class="border-l-4 border-red-800 pl-4">
                         <h4 class="font-bold text-gray-800 mb-2">${this.escapeHtml(location.name)}</h4>
@@ -821,6 +864,10 @@ class JournalManager {
                 `;
                 location.Rumeurs.forEach((rumor, index) => {
                     const isChecked = this.isRumorChecked('location', location.name, index);
+                    
+                    // Filtrer selon le mode sélectionné
+                    if (rumorsFilter === 'selection' && !isChecked) return;
+
                     const checkboxId = `rumor-location-${location.name.replace(/\s+/g, '_')}-${index}`;
                     rumorsHTML += `
                         <div class="flex items-start space-x-2">
@@ -852,6 +899,14 @@ class JournalManager {
                     <div class="space-y-4">
             `;
             charactersWithRumors.forEach(character => {
+                // Vérifier s'il y a au moins une rumeur à afficher selon le filtre
+                const hasVisibleRumors = character.Rumeurs.some((rumor, index) => {
+                    const isChecked = this.isRumorChecked('character', character.name, index);
+                    return rumorsFilter === 'all' || isChecked;
+                });
+
+                if (!hasVisibleRumors) return;
+
                 rumorsHTML += `
                     <div class="border-l-4 border-red-800 pl-4">
                         <h4 class="font-bold text-gray-800 mb-2">${this.escapeHtml(character.name)}</h4>
@@ -859,6 +914,10 @@ class JournalManager {
                 `;
                 character.Rumeurs.forEach((rumor, index) => {
                     const isChecked = this.isRumorChecked('character', character.name, index);
+                    
+                    // Filtrer selon le mode sélectionné
+                    if (rumorsFilter === 'selection' && !isChecked) return;
+
                     const checkboxId = `rumor-character-${character.name.replace(/\s+/g, '_')}-${index}`;
                     rumorsHTML += `
                         <div class="flex items-start space-x-2">
@@ -883,6 +942,18 @@ class JournalManager {
         rumorsHTML += '</div>';
         rumorsTab.innerHTML = rumorsHTML;
         console.log('📖 [renderRumors] Rendu terminé avec succès');
+
+        // Ajouter l'event listener pour le bouton switch
+        const filterSwitch = document.getElementById('rumors-filter-switch');
+        if (filterSwitch) {
+            filterSwitch.addEventListener('click', () => {
+                const currentFilter = localStorage.getItem('rumorsFilter') || 'selection';
+                const newFilter = currentFilter === 'selection' ? 'all' : 'selection';
+                localStorage.setItem('rumorsFilter', newFilter);
+                console.log('📖 [renderRumors] Filtre changé:', newFilter);
+                this.renderRumors(); // Re-render avec le nouveau filtre
+            });
+        }
     }
 
 
