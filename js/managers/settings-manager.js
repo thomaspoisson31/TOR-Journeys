@@ -992,56 +992,6 @@ class SettingsManager {
         }
     }
 
-    updateQuestContent() {
-        const textarea = document.getElementById('quest-description-textarea');
-        if (textarea) {
-            textarea.value = this.questDescription;
-        }
-    }
-
-    saveQuestDescription() {
-        const textarea = document.getElementById('quest-description-textarea');
-        if (textarea) {
-            this.questDescription = textarea.value;
-            this.saveDescriptions();
-
-            // Feedback visuel
-            const saveBtn = document.getElementById('save-quest-description-btn');
-            if (saveBtn) {
-                const originalText = saveBtn.textContent;
-                saveBtn.textContent = 'Sauvegardé !';
-                saveBtn.classList.add('bg-green-600');
-                setTimeout(() => {
-                    saveBtn.textContent = originalText;
-                    saveBtn.classList.remove('bg-green-600');
-                }, 2000);
-            }
-        }
-    }
-
-    async generateAdventurersWizard() {
-        const generateBtn = document.getElementById('generate-adventurers-wizard');
-
-        if (!this.geminiManager.isAvailable()) {
-            alert('API Gemini non disponible pour la génération automatique.');
-            return;
-        }
-
-        const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu).
-        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
-        Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
-
-        try {
-            const description = await this.geminiManager.generateContent(prompt, generateBtn, 'adventurers');
-            this.partyDescription = description;
-            this.saveDescriptions();
-            this.updatePartyContent();
-        } catch (error) {
-            console.error('Erreur génération aventuriers:', error);
-            alert('Erreur lors de la génération: ' + error.message);
-        }
-    }
-
     // This setupQuestListeners is duplicated. The first one is used above.
     // This second one is removed to avoid conflicts.
 
@@ -1322,7 +1272,7 @@ class SettingsManager {
         }
     }
 
-    handleSettingsRandomTableUpload(event) {
+    async handleSettingsRandomTableUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -1871,67 +1821,53 @@ class SettingsManager {
 
     insertRandomResultToJournal() {
         if (!this.currentRandomResult) {
-            console.error('❌ Aucun résultat de tirage à insérer');
+            console.warn("Aucun résultat de tirage à insérer");
             return;
         }
 
-        // Récupérer la date actuelle du calendrier
-        let currentDate = 'Date inconnue';
-        let currentCalendarDate = null; // Stocker l'objet date complet
-        if (window.calendarManager && window.calendarManager.currentCalendarDate) {
-            currentCalendarDate = window.calendarManager.currentCalendarDate;
-            currentDate = `${currentCalendarDate.day} ${currentCalendarDate.month}`;
-        }
+        console.log("📖 Insertion du résultat dans le journal:", this.currentRandomResult);
 
-        // Vérifier si un voyage existe déjà pour cette date
-        const travelJournal = JSON.parse(localStorage.getItem('travelJournal') || '[]');
-        let journeyForDate = null;
-        let dayIndexInJourney = -1;
+        // Nettoyer le contenu HTML pour ne garder que le texte formaté
+        let cleanContent = this.currentRandomResult.content || '';
 
-        if (currentCalendarDate) {
-            // Chercher un voyage qui contient cette date
-            for (const journey of travelJournal) {
-                if (journey.days && Array.isArray(journey.days)) {
-                    const dayIndex = journey.days.findIndex(day => day.calendarDate === currentDate);
-                    if (dayIndex !== -1) {
-                        journeyForDate = journey;
-                        dayIndexInJourney = dayIndex;
-                        console.log(`✅ Voyage trouvé pour la date ${currentDate}:`, journey.title);
-                        break;
-                    }
+        // Créer un élément temporaire pour parser le HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = cleanContent;
+
+        // Supprimer les checkboxes et leurs attributs
+        const checkboxes = tempDiv.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => checkbox.remove());
+
+        // Récupérer le texte nettoyé
+        cleanContent = tempDiv.innerHTML;
+
+        // Créer une entrée de journal pour le tirage aléatoire
+        const journalEntry = {
+            title: this.currentRandomResult.title || "Tirage Aléatoire",
+            generatedAt: new Date().toISOString(),
+            totalDays: 1,
+            days: [
+                {
+                    dayNumber: 1,
+                    calendarDate: window.calendarManager?.getCurrentCalendarDate()?.day 
+                        ? `${window.calendarManager.getCurrentCalendarDate().day} ${window.calendarManager.getCurrentCalendarDate().month}`
+                        : new Date().toLocaleDateString('fr-FR'),
+                    weatherSymbol: '',
+                    weatherText: '',
+                    discoveries: [],
+                    description: '',
+                    eventResult: cleanContent
                 }
-            }
-        }
+            ],
+            journeyType: 'random_roll'
+        };
 
-        // Si un voyage existe pour cette date, y intégrer le tirage
-        if (journeyForDate && dayIndexInJourney !== -1) {
-            // Formater le résultat pour l'événement
-            const eventHTML = `
-                <div class="mb-2"><strong>Table :</strong> ${this.currentRandomResult.tableName || 'Table aléatoire'}</div>
-                <div class="mb-2"><strong>Résultat :</strong> ${this.currentRandomResult.title || 'Résultat'}</div>
-                <div><strong>Description :</strong> ${this.currentRandomResult.text || ''}</div>
-            `;
+        // Ajouter au journal via le JournalManager
+        if (window.journalManager) {
+            window.journalManager.journal.push(journalEntry);
+            localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
 
-            // Ajouter l'événement au jour correspondant
-            journeyForDate.days[dayIndexInJourney].eventResult = eventHTML;
-
-            // Sauvegarder le journal mis à jour
-            localStorage.setItem('travelJournal', JSON.stringify(travelJournal));
-            console.log(`✅ Événement aléatoire ajouté au voyage "${journeyForDate.title}" - Jour ${dayIndexInJourney + 1}`);
-
-            // Notification de succès
-            alert(`Événement aléatoire ajouté au voyage en cours le ${currentDate}`);
-
-            // Fermer la modale
-            this.closeRandomRollResult();
-
-            // Rafraîchir le journal si ouvert
-            if (window.journalManager) {
-                window.journalManager.loadJournal();
-                window.journalManager.renderJournal();
-            }
-
-            // Marquer comme non sauvegardé pour sync cloud
+            // Marquer comme non sauvegardé
             if (typeof window.markAsUnsaved === 'function') {
                 window.markAsUnsaved();
             }
@@ -1941,57 +1877,27 @@ class SettingsManager {
                 window.scheduleAutoSync();
             }
 
-            return;
+            console.log("✅ Résultat ajouté au journal");
+
+            // Fermer la modale du résultat
+            this.closeRandomRollResult();
+
+            // Afficher une notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
+            notification.innerHTML = `
+                <i class="fas fa-check mr-2"></i>
+                Résultat ajouté au journal
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        } else {
+            console.error("JournalManager non disponible");
+            alert("Erreur : impossible d'accéder au journal");
         }
-
-        // Si aucun voyage trouvé, créer une entrée séparée comme avant
-        console.log(`ℹ️ Aucun voyage trouvé pour la date ${currentDate}, création d'une entrée séparée`);
-
-        // Créer l'objet journal
-        const eventJourney = {
-            title: this.currentRandomResult.tableName || 'Événement Aléatoire', // Utiliser le nom de la table comme titre par défaut
-            generatedAt: new Date().toISOString(),
-            totalDays: 1,
-            journeyType: 'random_event',
-            days: [{
-                dayNumber: 1,
-                calendarDate: currentDate,
-                description: this.currentRandomResult.text || '', // Le texte contient déjà le formatage HTML
-                discoveries: []
-            }]
-        };
-
-        // Ajouter au journal
-        window.journalManager.journal.push(eventJourney);
-        localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
-
-        // Marquer comme non sauvegardé
-        if (typeof window.markAsUnsaved === 'function') {
-            window.markAsUnsaved();
-        }
-
-        // Synchroniser avec le cloud
-        if (typeof window.scheduleAutoSync === 'function') {
-            window.scheduleAutoSync();
-        }
-
-        console.log('📖 Événement aléatoire ajouté au journal:', eventJourney);
-
-        // Fermer la modale de résultat
-        this.closeRandomRollResult();
-
-        // Afficher une notification de succès
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
-        notification.innerHTML = `
-            <i class="fas fa-check mr-2"></i>
-            Ajouté au Journal d'Aventure
-        `;
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.remove();
-        }, 2000);
     }
 
 
