@@ -1,4 +1,3 @@
-
 class RandomTablesManager {
     constructor() {
         this.modal = null;
@@ -30,7 +29,7 @@ class RandomTablesManager {
 
     saveCheckedResults() {
         localStorage.setItem('randomTablesCheckedResults', JSON.stringify(this.checkedResults));
-        
+
         // Marquer comme non sauvegardé pour sync cloud
         if (window.authManager && window.authManager.isAuthenticated) {
             window.authManager.markAsUnsaved();
@@ -79,13 +78,13 @@ class RandomTablesManager {
         if (!this.modal || !this.contentDiv) return;
 
         console.log("🎲 Ouverture de la modale Tables Aléatoires");
-        
+
         // Récupérer toutes les tables disponibles
         const allTables = this.collectAllTables();
-        
+
         // Générer le contenu
         this.renderTables(allTables);
-        
+
         // Afficher la modale
         this.modal.classList.remove('hidden');
     }
@@ -324,7 +323,7 @@ class RandomTablesManager {
         // Formater le résultat pour l'affichage
         let formattedResult = '';
         let rawContent = '';
-        
+
         if (typeof result === 'object' && result !== null) {
             // Si c'est un objet avec des propriétés
             const entries = Object.entries(result);
@@ -392,7 +391,7 @@ class RandomTablesManager {
                 // Formater le résultat
                 let formattedResult = '';
                 let rawContent = '';
-                
+
                 if (typeof result === 'object' && result !== null) {
                     const entries = Object.entries(result);
                     const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
@@ -401,7 +400,7 @@ class RandomTablesManager {
                     if (otherEntries.length > 0) {
                         const [mainKey, mainValue] = otherEntries[0];
                         rawContent = mainValue;
-                        
+
                         if (fateEntry) {
                             formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
                         } else {
@@ -475,6 +474,56 @@ class RandomTablesManager {
 
         // Afficher la modale de résultat
         resultModal.classList.remove('hidden');
+    }
+
+    // Nouvelle méthode pour gérer le changement de checkbox des rumeurs
+    handleCheckboxChange(checkboxId, checked) {
+        console.log(`📋 Case à cocher ${checkboxId} ${checked ? 'cochée' : 'décochée'}`);
+
+        // Sauvegarder l'état
+        this.checkboxStates[checkboxId] = checked;
+        this.saveCheckboxStates();
+
+        // Si c'est une case rumeur qui est cochée, ajouter au JournalManager
+        if (checked && checkboxId.startsWith('rumor-checkbox-')) {
+            const parts = checkboxId.replace('rumor-checkbox-', '').split('-');
+            const type = parts[0]; // 'region', 'location' ou 'character'
+            const name = parts.slice(1).join('-');
+            const index = parseInt(parts[parts.length - 1]);
+
+            // Récupérer le texte de la rumeur depuis le DOM
+            const rumorDiv = document.querySelector(`[data-rumor-id="${checkboxId}"]`);
+            if (rumorDiv) {
+                const rumorText = rumorDiv.querySelector('.rumor-text')?.textContent?.trim();
+
+                if (rumorText && window.journalManager) {
+                    const rumorData = {
+                        text: rumorText,
+                        region: type === 'region' ? name : null,
+                        location: type === 'location' ? name : null,
+                        character: type === 'character' ? name : null
+                    };
+
+                    console.log(`📖 Ajout de la rumeur au Journal:`, rumorData);
+                    window.journalManager.addRumor(rumorData);
+                }
+            }
+        }
+        // Si décochée, on pourrait la retirer du journal (optionnel)
+
+        console.log(`💾 État sauvegardé pour ${checkboxId}:`, checked);
+    }
+
+    // Méthode pour sauvegarder les états des checkboxes (à implémenter si pas déjà fait)
+    saveCheckboxStates() {
+        if (typeof window.journalManager === 'undefined') return;
+        window.journalManager.saveRumorCheckboxStates(this.checkboxStates);
+    }
+
+    // Cette méthode doit être appelée pour charger les états des checkboxes au démarrage
+    loadCheckboxStates() {
+        if (typeof window.journalManager === 'undefined') return;
+        this.checkboxStates = window.journalManager.loadRumorCheckboxStates() || {};
     }
 }
 
