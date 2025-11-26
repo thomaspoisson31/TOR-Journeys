@@ -474,14 +474,16 @@ class AdventureManager {
         const checkedEntries = [];
 
         // Parcourir tous les résultats cochés
-        for (const [hash, isChecked] of Object.entries(checkedResults)) {
-            if (isChecked) {
-                console.log('✅ [AdventureManager.getCheckedRandomResults] Hash coché:', hash);
-                checkedEntries.push(hash);
+        for (const [hash, data] of Object.entries(checkedResults)) {
+            // Nouveau format : data est un objet avec {checked, tableName, content}
+            // Ancien format : data est juste true/false
+            if (data === true || (data && data.checked)) {
+                console.log('✅ [AdventureManager.getCheckedRandomResults] Hash coché:', hash, data);
+                checkedEntries.push({hash, data});
             }
         }
 
-        console.log('📊 [AdventureManager.getCheckedRandomResults] Nombre de hash cochés:', checkedEntries.length);
+        console.log('📊 [AdventureManager.getCheckedRandomResults] Nombre de résultats cochés:', checkedEntries.length);
 
         if (checkedEntries.length === 0) {
             console.log('⚠️ [AdventureManager.getCheckedRandomResults] Aucun résultat coché');
@@ -492,12 +494,24 @@ class AdventureManager {
         let html = '<div class="space-y-2">';
         let foundCount = 0;
 
-        checkedEntries.forEach(hash => {
-            console.log('🔍 [AdventureManager.getCheckedRandomResults] Recherche données pour hash:', hash);
-            const resultData = window.randomTablesManager.getResultDataByHash(hash);
+        checkedEntries.forEach(({hash, data}) => {
+            let resultData = null;
+            
+            // Si les données sont stockées dans le nouveau format
+            if (data && typeof data === 'object' && data.tableName && data.content) {
+                resultData = {
+                    tableName: data.tableName,
+                    content: data.content
+                };
+                console.log('✅ [AdventureManager.getCheckedRandomResults] Données depuis stockage:', resultData);
+            } else {
+                // Fallback : essayer de retrouver via hash (ancien format)
+                console.log('🔍 [AdventureManager.getCheckedRandomResults] Recherche données pour hash:', hash);
+                resultData = window.randomTablesManager.getResultDataByHash(hash);
+            }
             
             if (resultData) {
-                console.log('✅ [AdventureManager.getCheckedRandomResults] Données trouvées:', resultData);
+                console.log('✅ [AdventureManager.getCheckedRandomResults] Affichage:', resultData);
                 foundCount++;
                 html += `
                     <div class="bg-yellow-50 border border-yellow-400 rounded-lg p-3">

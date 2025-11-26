@@ -372,8 +372,10 @@ class RandomTablesManager {
                     <input type="checkbox" 
                            class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
                            data-result-hash="${resultHash}"
+                           data-table-name="${table.name}"
+                           data-result-content="${rawContent.replace(/"/g, '&quot;')}"
                            ${isChecked ? 'checked' : ''}
-                           onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
+                           onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked, {tableName: '${table.name}', content: this.dataset.resultContent})">
                     <div class="flex-1">${formattedResult}</div>
                 </div>
             </div>
@@ -435,8 +437,10 @@ class RandomTablesManager {
                             <input type="checkbox" 
                                    class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
                                    data-result-hash="${resultHash}"
+                                   data-table-name="${table.name} - ${subtable.name}"
+                                   data-result-content="${rawContent.replace(/"/g, '&quot;')}"
                                    ${isChecked ? 'checked' : ''}
-                                   onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
+                                   onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked, {tableName: '${table.name} - ${subtable.name}', content: this.dataset.resultContent})">
                             <div class="flex-1">${formattedResult}</div>
                         </div>
                     </div>
@@ -447,8 +451,19 @@ class RandomTablesManager {
         return html || '<p class="text-gray-500 italic">Aucun résultat disponible.</p>';
     }
 
-    toggleResultChecked(resultHash, isChecked) {
-        this.checkedResults[resultHash] = isChecked;
+    toggleResultChecked(resultHash, isChecked, resultData = null) {
+        if (isChecked && resultData) {
+            // Stocker les données complètes avec le hash
+            this.checkedResults[resultHash] = {
+                checked: true,
+                tableName: resultData.tableName,
+                content: resultData.content,
+                timestamp: Date.now()
+            };
+        } else if (!isChecked) {
+            // Supprimer l'entrée si décochée
+            delete this.checkedResults[resultHash];
+        }
         this.saveCheckedResults();
         console.log(`✅ Résultat ${resultHash} marqué comme ${isChecked ? 'coché' : 'non coché'}`);
     }
