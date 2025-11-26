@@ -470,16 +470,23 @@ class AdventureManager {
 
         const checkedResults = window.randomTablesManager.checkedResults || {};
         console.log('📊 [AdventureManager.getCheckedRandomResults] checkedResults:', checkedResults);
+        console.log('📊 [AdventureManager.getCheckedRandomResults] Clés:', Object.keys(checkedResults));
         
         const checkedEntries = [];
 
         // Parcourir tous les résultats cochés
         for (const [hash, data] of Object.entries(checkedResults)) {
-            // Nouveau format : data est un objet avec {checked, tableName, content}
+            console.log('🔍 [getCheckedRandomResults] Analyse hash:', hash, 'data:', data, 'type:', typeof data);
+            
+            // Nouveau format : data est un objet avec {checked, tableName, content, timestamp}
             // Ancien format : data est juste true/false
-            if (data === true || (data && data.checked)) {
+            const isChecked = (typeof data === 'object' && data.checked === true) || data === true;
+            
+            if (isChecked) {
                 console.log('✅ [AdventureManager.getCheckedRandomResults] Hash coché:', hash, data);
                 checkedEntries.push({hash, data});
+            } else {
+                console.log('⚠️ [AdventureManager.getCheckedRandomResults] Hash NON coché ou invalide:', hash, data);
             }
         }
 
@@ -497,21 +504,27 @@ class AdventureManager {
         checkedEntries.forEach(({hash, data}) => {
             let resultData = null;
             
-            // Si les données sont stockées dans le nouveau format
+            // Si les données sont stockées dans le nouveau format (objet avec checked, tableName, content)
             if (data && typeof data === 'object' && data.tableName && data.content) {
                 resultData = {
                     tableName: data.tableName,
                     content: data.content
                 };
-                console.log('✅ [AdventureManager.getCheckedRandomResults] Données depuis stockage:', resultData);
-            } else {
-                // Fallback : essayer de retrouver via hash (ancien format)
-                console.log('🔍 [AdventureManager.getCheckedRandomResults] Recherche données pour hash:', hash);
+                console.log('✅ [AdventureManager.getCheckedRandomResults] Données depuis stockage (nouveau format):', resultData);
+            } else if (data === true) {
+                // Fallback : ancien format (juste true), essayer de retrouver via hash
+                console.log('🔍 [AdventureManager.getCheckedRandomResults] Ancien format détecté, recherche données pour hash:', hash);
                 resultData = window.randomTablesManager.getResultDataByHash(hash);
+                
+                if (resultData) {
+                    console.log('✅ [AdventureManager.getCheckedRandomResults] Données retrouvées via hash:', resultData);
+                }
+            } else {
+                console.log('❌ [AdventureManager.getCheckedRandomResults] Format de données non reconnu:', data);
             }
             
             if (resultData) {
-                console.log('✅ [AdventureManager.getCheckedRandomResults] Affichage:', resultData);
+                console.log('✅ [AdventureManager.getCheckedRandomResults] Affichage résultat:', resultData);
                 foundCount++;
                 html += `
                     <div class="bg-yellow-50 border border-yellow-400 rounded-lg p-3">
