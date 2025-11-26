@@ -791,7 +791,7 @@ class JournalManager {
                                    ${isChecked ? 'checked' : ''}
                                    onchange="window.journalManager.toggleRumorCheckbox('region', '${this.escapeHtml(region.name)}', ${index})"
                                    class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                            <label for="${checkboxId}" class="text-sm text-gray-700 cursor-pointer ${isChecked ? 'line-through opacity-60' : ''}">${this.escapeHtml(rumor)}</label>
+                            <label for="${checkboxId}" class="text-sm cursor-pointer ${isChecked ? 'text-gray-900 font-bold' : 'text-gray-700'}">${this.escapeHtml(rumor)}</label>
                         </div>
                     `;
                 });
@@ -829,7 +829,7 @@ class JournalManager {
                                    ${isChecked ? 'checked' : ''}
                                    onchange="window.journalManager.toggleRumorCheckbox('location', '${this.escapeHtml(location.name)}', ${index})"
                                    class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                            <label for="${checkboxId}" class="text-sm text-gray-700 cursor-pointer ${isChecked ? 'line-through opacity-60' : ''}">${this.escapeHtml(rumor)}</label>
+                            <label for="${checkboxId}" class="text-sm cursor-pointer ${isChecked ? 'text-gray-900 font-bold' : 'text-gray-700'}">${this.escapeHtml(rumor)}</label>
                         </div>
                     `;
                 });
@@ -867,7 +867,7 @@ class JournalManager {
                                    ${isChecked ? 'checked' : ''}
                                    onchange="window.journalManager.toggleRumorCheckbox('character', '${this.escapeHtml(character.name)}', ${index})"
                                    class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                            <label for="${checkboxId}" class="text-sm text-gray-700 cursor-pointer ${isChecked ? 'line-through opacity-60' : ''}">${this.escapeHtml(rumor)}</label>
+                            <label for="${checkboxId}" class="text-sm cursor-pointer ${isChecked ? 'text-gray-900 font-bold' : 'text-gray-700'}">${this.escapeHtml(rumor)}</label>
                         </div>
                     `;
                 });
