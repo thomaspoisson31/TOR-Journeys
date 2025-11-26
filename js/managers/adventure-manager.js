@@ -149,49 +149,14 @@ class AdventureManager {
             rumorsTab.innerHTML = '';
             let rumorsContent = '';
 
-            // Récupérer les résultats cochés depuis randomTablesManager
-            const checkedResults = window.randomTablesManager ? window.randomTablesManager.checkedResults : {};
-            const checkedEntries = [];
-
-            // Parcourir tous les résultats cochés pour reconstituer les informations
-            for (const [hash, isChecked] of Object.entries(checkedResults)) {
-                if (isChecked) {
-                    // Le hash est au format "result_XXXXX" généré depuis tableName::resultContent
-                    // On stocke le hash pour l'affichage
-                    checkedEntries.push({
-                        hash: hash,
-                        // On ne peut pas facilement retrouver le texte exact depuis le hash
-                        // Il faudra le stocker différemment ou parcourir toutes les tables
-                    });
-                }
-            }
-
-            // Si on a des résultats cochés, les afficher
-            if (checkedEntries.length > 0) {
-                rumorsContent += '<div class="mb-4"><h4 class="text-sm font-medium text-white mb-2">Résultats de tables aléatoires :</h4>';
-
-                // Parcourir toutes les tables pour retrouver les résultats cochés
-                const checkedResultsHtml = this.getCheckedRandomResults();
-                if (checkedResultsHtml) {
-                    rumorsContent += checkedResultsHtml;
-                }
-
-                rumorsContent += '</div>';
-            }
-
-            // Afficher les rumeurs manuelles
             if (this.adventureData.rumors.length > 0) {
-                rumorsContent += '<div class="mb-4"><h4 class="text-sm font-medium text-white mb-2">Rumeurs manuelles :</h4>';
-                rumorsContent += this.adventureData.rumors.map((rumor, index) => `
+                rumorsContent = this.adventureData.rumors.map((rumor, index) => `
                     <div class="rumor-item ${rumor.completed ? 'completed' : ''}" data-index="${index}">
                         <input type="checkbox" ${rumor.completed ? 'checked' : ''} onchange="window.adventureManager.toggleRumorComplete(${index})">
                         <div class="rumor-text">${rumor.text}</div>
                     </div>
                 `).join('');
-                rumorsContent += '</div>';
-            }
-
-            if (!rumorsContent) {
+            } else {
                 rumorsContent = '<p class="text-gray-400 italic">Aucune rumeur enregistrée.</p>';
             }
 
@@ -454,99 +419,150 @@ class AdventureManager {
         }
     }
 
-
+    
 
     getAllData() {
         return this.adventureData;
     }
 
-    getCheckedRandomResults() {
-        console.log('🔍 [AdventureManager.getCheckedRandomResults] Début');
+    // === MÉTHODES POUR LES TABLES ALÉATOIRES ===
+    rollOnTable(tableIndex) {
+        console.log(`🎲 [DEBUG] rollOnTable appelé avec index: ${tableIndex}`);
         
-        if (!window.randomTablesManager) {
-            console.log('❌ [AdventureManager.getCheckedRandomResults] randomTablesManager non disponible');
-            return null;
+        const table = this.adventureData.randomTables[tableIndex];
+        console.log(`📋 [DEBUG] Table récupérée:`, table);
+        
+        if (!table || !table.entries || table.entries.length === 0) {
+            console.error('❌ Table invalide ou vide');
+            console.log('🔍 [DEBUG] État de la table:', {
+                tableExists: !!table,
+                entriesExists: !!(table?.entries),
+                entriesLength: table?.entries?.length || 0
+            });
+            return;
         }
 
-        const checkedResults = window.randomTablesManager.checkedResults || {};
-        console.log('📊 [AdventureManager.getCheckedRandomResults] checkedResults:', checkedResults);
-        console.log('📊 [AdventureManager.getCheckedRandomResults] Clés:', Object.keys(checkedResults));
+        // Tirer un résultat aléatoire
+        const randomIndex = Math.floor(Math.random() * table.entries.length);
+        const result = table.entries[randomIndex];
         
-        const checkedEntries = [];
+        console.log(`🎲 [DEBUG] Résultat du tirage:`, {
+            randomIndex,
+            result,
+            resultType: typeof result
+        });
 
-        // Parcourir tous les résultats cochés
-        for (const [hash, data] of Object.entries(checkedResults)) {
-            console.log('🔍 [getCheckedRandomResults] Analyse hash:', hash, 'data:', data, 'type:', typeof data);
-            
-            // Nouveau format : data est un objet avec {checked, tableName, content, timestamp}
-            // Ancien format : data est juste true/false
-            const isChecked = (typeof data === 'object' && data.checked === true) || data === true;
-            
-            if (isChecked) {
-                console.log('✅ [AdventureManager.getCheckedRandomResults] Hash coché:', hash, data);
-                checkedEntries.push({hash, data});
-            } else {
-                console.log('⚠️ [AdventureManager.getCheckedRandomResults] Hash NON coché ou invalide:', hash, data);
+        // Formater le résultat pour l'affichage
+        let formattedResult = '';
+        if (typeof result === 'object' && result !== null) {
+            // Si c'est un objet, formater les propriétés
+            formattedResult = '<div class="space-y-2">';
+            for (const [key, value] of Object.entries(result)) {
+                formattedResult += `
+                    <div>
+                        <span class="font-semibold text-blue-300">${key}:</span>
+                        <span class="text-white ml-2">${value}</span>
+                    </div>`;
             }
+            formattedResult += '</div>';
+        } else {
+            // Si c'est une chaîne simple
+            formattedResult = `<div class="text-white">${result}</div>`;
         }
 
-        console.log('📊 [AdventureManager.getCheckedRandomResults] Nombre de résultats cochés:', checkedEntries.length);
+        // Afficher le résultat dans un conteneur dédié
+        const resultContainer = document.getElementById(`table-result-${tableIndex}`);
+        const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
 
-        if (checkedEntries.length === 0) {
-            console.log('⚠️ [AdventureManager.getCheckedRandomResults] Aucun résultat coché');
-            return null;
+        console.log(`📦 [DEBUG] Conteneurs DOM:`, {
+            resultContainer: !!resultContainer,
+            resultContent: !!resultContent
+        });
+
+        if (resultContainer && resultContent) {
+            resultContent.innerHTML = formattedResult;
+            resultContainer.classList.remove('hidden');
+            console.log(`✅ [DEBUG] Résultat affiché dans le DOM`);
+        } else {
+            console.error(`❌ [DEBUG] Conteneurs introuvables pour table-result-${tableIndex}`);
         }
 
-        // Générer le HTML pour chaque résultat coché
-        let html = '<div class="space-y-2">';
-        let foundCount = 0;
+        console.log(`🎲 Tirage sur "${table.name}":`, result);
+    }
 
-        checkedEntries.forEach(({hash, data}) => {
-            let resultData = null;
+    rollOnCompositeTable(compositeIndex) {
+        console.log(`🔗 [DEBUG] rollOnCompositeTable appelé avec index: ${compositeIndex}`);
+        
+        const composite = this.adventureData.compositeTables[compositeIndex];
+        console.log(`📋 [DEBUG] Table composite récupérée:`, composite);
+        
+        if (!composite || !composite.tableIndices || composite.tableIndices.length === 0) {
+            console.error('❌ Table composite invalide');
+            console.log('🔍 [DEBUG] État de la table composite:', {
+                compositeExists: !!composite,
+                tableIndicesExists: !!(composite?.tableIndices),
+                tableIndicesLength: composite?.tableIndices?.length || 0,
+                fullComposite: composite
+            });
+            return;
+        }
+
+        // Effectuer un tirage sur chaque table simple
+        const results = [];
+        console.log(`🎲 [DEBUG] Tirage sur ${composite.tableIndices.length} table(s) simple(s)`);
+        
+        composite.tableIndices.forEach((tableIndex, idx) => {
+            console.log(`🔍 [DEBUG] Tirage ${idx + 1}/${composite.tableIndices.length} - index: ${tableIndex}`);
             
-            // Si les données sont stockées dans le nouveau format (objet avec checked, tableName, content)
-            if (data && typeof data === 'object' && data.tableName && data.content) {
-                resultData = {
-                    tableName: data.tableName,
-                    content: data.content
-                };
-                console.log('✅ [AdventureManager.getCheckedRandomResults] Données depuis stockage (nouveau format):', resultData);
-            } else if (data === true) {
-                // Fallback : ancien format (juste true), essayer de retrouver via hash
-                console.log('🔍 [AdventureManager.getCheckedRandomResults] Ancien format détecté, recherche données pour hash:', hash);
-                resultData = window.randomTablesManager.getResultDataByHash(hash);
+            const table = this.adventureData.randomTables[tableIndex];
+            console.log(`📋 [DEBUG] Table trouvée:`, table);
+            
+            if (table && table.entries && table.entries.length > 0) {
+                const randomIndex = Math.floor(Math.random() * table.entries.length);
+                const result = table.entries[randomIndex];
+                console.log(`✅ [DEBUG] Résultat du tirage:`, { tableName: table.name, result });
                 
-                if (resultData) {
-                    console.log('✅ [AdventureManager.getCheckedRandomResults] Données retrouvées via hash:', resultData);
-                }
+                results.push({
+                    tableName: table.name,
+                    result: result
+                });
             } else {
-                console.log('❌ [AdventureManager.getCheckedRandomResults] Format de données non reconnu:', data);
-            }
-            
-            if (resultData) {
-                console.log('✅ [AdventureManager.getCheckedRandomResults] Affichage résultat:', resultData);
-                foundCount++;
-                html += `
-                    <div class="bg-yellow-50 border border-yellow-400 rounded-lg p-3">
-                        <div class="flex items-center text-xs mb-2" style="color: #d97706;">
-                            <i class="fas fa-dice mr-1"></i>
-                            <span class="font-semibold">${resultData.tableName || 'Table aléatoire'}</span>
-                        </div>
-                        <div class="text-sm" style="color: #1f2937;">
-                            ${resultData.content || ''}
-                        </div>
-                    </div>
-                `;
-            } else {
-                console.log('❌ [AdventureManager.getCheckedRandomResults] Aucune donnée trouvée pour hash:', hash);
+                console.error(`❌ [DEBUG] Table ${tableIndex} invalide ou vide`);
             }
         });
 
-        html += '</div>';
-        
-        console.log(`📊 [AdventureManager.getCheckedRandomResults] ${foundCount}/${checkedEntries.length} résultats trouvés`);
-        
-        return foundCount > 0 ? html : null;
+        console.log(`📊 [DEBUG] Résultats totaux:`, results);
+
+        // Afficher les résultats
+        const resultContainer = document.getElementById(`composite-result-${compositeIndex}`);
+        const resultContent = document.getElementById(`composite-result-content-${compositeIndex}`);
+
+        console.log(`📦 [DEBUG] Conteneurs DOM composite:`, {
+            resultContainer: !!resultContainer,
+            resultContent: !!resultContent
+        });
+
+        if (resultContainer && resultContent) {
+            const html = results.map(r => 
+                `<div class="mb-1">
+                    <span class="font-semibold text-blue-300">${r.tableName}:</span>
+                    <span class="text-white ml-2">${r.result}</span>
+                </div>`
+            ).join('');
+            resultContent.innerHTML = html;
+            resultContainer.classList.remove('hidden');
+            console.log(`✅ [DEBUG] Résultats affichés dans le DOM`);
+        } else {
+            console.error(`❌ [DEBUG] Conteneurs introuvables pour composite-result-${compositeIndex}`);
+        }
+
+        console.log(`🎲 Tirage sur table composite "${composite.name}":`, results);
+    }
+
+    openCompositeTableModal() {
+        // Cette méthode sera appelée pour créer une table composite
+        // Pour l'instant, on affiche juste une alerte
+        alert('Création de table composite : fonctionnalité à implémenter');
     }
 }
 

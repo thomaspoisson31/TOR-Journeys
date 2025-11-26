@@ -1,3 +1,4 @@
+
 class RandomTablesManager {
     constructor() {
         this.modal = null;
@@ -29,14 +30,11 @@ class RandomTablesManager {
 
     saveCheckedResults() {
         localStorage.setItem('randomTablesCheckedResults', JSON.stringify(this.checkedResults));
-        console.log('💾 États des cases à cocher sauvegardés:', Object.keys(this.checkedResults).length);
-
-        // Marquer comme non sauvegardé
-        if (typeof window.markAsUnsaved === 'function') {
-            window.markAsUnsaved();
+        
+        // Marquer comme non sauvegardé pour sync cloud
+        if (window.authManager && window.authManager.isAuthenticated) {
+            window.authManager.markAsUnsaved();
         }
-
-        // Synchroniser avec le cloud si authentifié
         if (typeof window.scheduleAutoSync === 'function') {
             window.scheduleAutoSync();
         }
@@ -81,13 +79,13 @@ class RandomTablesManager {
         if (!this.modal || !this.contentDiv) return;
 
         console.log("🎲 Ouverture de la modale Tables Aléatoires");
-
+        
         // Récupérer toutes les tables disponibles
         const allTables = this.collectAllTables();
-
+        
         // Générer le contenu
         this.renderTables(allTables);
-
+        
         // Afficher la modale
         this.modal.classList.remove('hidden');
     }
@@ -326,7 +324,7 @@ class RandomTablesManager {
         // Formater le résultat pour l'affichage
         let formattedResult = '';
         let rawContent = '';
-
+        
         if (typeof result === 'object' && result !== null) {
             // Si c'est un objet avec des propriétés
             const entries = Object.entries(result);
@@ -372,10 +370,8 @@ class RandomTablesManager {
                     <input type="checkbox" 
                            class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
                            data-result-hash="${resultHash}"
-                           data-table-name="${table.name}"
-                           data-result-content="${rawContent.replace(/"/g, '&quot;')}"
                            ${isChecked ? 'checked' : ''}
-                           onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked, {tableName: '${table.name}', content: this.dataset.resultContent})">
+                           onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
                     <div class="flex-1">${formattedResult}</div>
                 </div>
             </div>
@@ -396,7 +392,7 @@ class RandomTablesManager {
                 // Formater le résultat
                 let formattedResult = '';
                 let rawContent = '';
-
+                
                 if (typeof result === 'object' && result !== null) {
                     const entries = Object.entries(result);
                     const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
@@ -405,7 +401,7 @@ class RandomTablesManager {
                     if (otherEntries.length > 0) {
                         const [mainKey, mainValue] = otherEntries[0];
                         rawContent = mainValue;
-
+                        
                         if (fateEntry) {
                             formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
                         } else {
@@ -437,10 +433,8 @@ class RandomTablesManager {
                             <input type="checkbox" 
                                    class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
                                    data-result-hash="${resultHash}"
-                                   data-table-name="${table.name} - ${subtable.name}"
-                                   data-result-content="${rawContent.replace(/"/g, '&quot;')}"
                                    ${isChecked ? 'checked' : ''}
-                                   onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked, {tableName: '${table.name} - ${subtable.name}', content: this.dataset.resultContent})">
+                                   onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
                             <div class="flex-1">${formattedResult}</div>
                         </div>
                     </div>
@@ -451,19 +445,8 @@ class RandomTablesManager {
         return html || '<p class="text-gray-500 italic">Aucun résultat disponible.</p>';
     }
 
-    toggleResultChecked(resultHash, isChecked, resultData = null) {
-        if (isChecked && resultData) {
-            // Stocker les données complètes avec le hash
-            this.checkedResults[resultHash] = {
-                checked: true,
-                tableName: resultData.tableName,
-                content: resultData.content,
-                timestamp: Date.now()
-            };
-        } else if (!isChecked) {
-            // Supprimer l'entrée si décochée
-            delete this.checkedResults[resultHash];
-        }
+    toggleResultChecked(resultHash, isChecked) {
+        this.checkedResults[resultHash] = isChecked;
         this.saveCheckedResults();
         console.log(`✅ Résultat ${resultHash} marqué comme ${isChecked ? 'coché' : 'non coché'}`);
     }
@@ -492,132 +475,6 @@ class RandomTablesManager {
 
         // Afficher la modale de résultat
         resultModal.classList.remove('hidden');
-    }
-
-    getResultDataByHash(hash) {
-        console.log('🔍 [getResultDataByHash] Recherche du hash:', hash);
-        
-        // Parcourir toutes les tables pour trouver le résultat correspondant
-        const allTables = this.collectAllTables();
-        console.log('📊 [getResultDataByHash] Tables disponibles:', {
-            settings: allTables.settings?.length || 0,
-            locations: allTables.position?.locations?.length || 0,
-            regions: allTables.position?.regions?.length || 0
-        });
-
-        // Helper pour formater le contenu en string
-        const formatContent = (result) => {
-            if (typeof result === 'object' && result !== null) {
-                const entries = Object.entries(result);
-                const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
-                if (otherEntries.length > 0) {
-                    return otherEntries[0][1]; // Retourner la valeur principale
-                }
-            }
-            return result;
-        };
-
-        // Helper pour parcourir les tables simples
-        const findResultInTable = (tableData, category) => {
-            if (!tableData.entries) {
-                console.log('⚠️ [findResultInTable] Table sans entries:', tableData.name);
-                return null;
-            }
-            
-            console.log('🔍 [findResultInTable] Vérification table:', tableData.name, 'avec', tableData.entries.length, 'entrées');
-            
-            for (const result of tableData.entries) {
-                const rawContent = formatContent(result);
-                const resultHash = this.generateResultHash(tableData.name, rawContent);
-                
-                if (resultHash === hash) {
-                    console.log('✅ [findResultInTable] Hash trouvé dans table simple:', tableData.name);
-                    return {
-                        tableName: tableData.name,
-                        content: rawContent,
-                        category: category
-                    };
-                }
-            }
-            return null;
-        };
-
-        // Helper pour parcourir les tables composites
-        const checkComposite = (tables, category) => {
-            for (const table of tables) {
-                if (table.subtables) {
-                    console.log('🔍 [checkComposite] Table composite:', table.name, 'avec', table.subtables.length, 'sous-tables');
-                    
-                    for (const subtable of table.subtables) {
-                        if (subtable.entries) {
-                            console.log('🔍 [checkComposite] Sous-table:', subtable.name, 'avec', subtable.entries.length, 'entrées');
-                            
-                            for (const result of subtable.entries) {
-                                const rawContent = formatContent(result);
-                                const resultHash = this.generateResultHash(`${table.name}::${subtable.name}`, rawContent);
-                                
-                                if (resultHash === hash) {
-                                    console.log('✅ [checkComposite] Hash trouvé dans table composite:', `${table.name}::${subtable.name}`);
-                                    return {
-                                        tableName: `${table.name} - ${subtable.name}`,
-                                        content: rawContent,
-                                        category: category
-                                    };
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
-        };
-
-        // Parcourir les tables des paramètres
-        if (allTables.settings && allTables.settings.length > 0) {
-            console.log('🔍 [getResultDataByHash] Vérification dans settings...');
-            for (const table of allTables.settings) {
-                // Vérifier si c'est une table simple
-                const found = findResultInTable(table, 'settings');
-                if (found) return found;
-                
-                // Vérifier si c'est une table composite
-                if (table.subtables) {
-                    const found = checkComposite([table], 'settings');
-                    if (found) return found;
-                }
-            }
-        }
-
-        // Parcourir les tables des lieux
-        if (allTables.position?.locations && allTables.position.locations.length > 0) {
-            console.log('🔍 [getResultDataByHash] Vérification dans locations...');
-            for (const table of allTables.position.locations) {
-                const found = findResultInTable(table, 'location');
-                if (found) return found;
-                
-                if (table.subtables) {
-                    const found = checkComposite([table], 'location');
-                    if (found) return found;
-                }
-            }
-        }
-
-        // Parcourir les tables des régions
-        if (allTables.position?.regions && allTables.position.regions.length > 0) {
-            console.log('🔍 [getResultDataByHash] Vérification dans regions...');
-            for (const table of allTables.position.regions) {
-                const found = findResultInTable(table, 'region');
-                if (found) return found;
-                
-                if (table.subtables) {
-                    const found = checkComposite([table], 'region');
-                    if (found) return found;
-                }
-            }
-        }
-
-        console.log('❌ [getResultDataByHash] Hash non trouvé:', hash);
-        return null;
     }
 }
 

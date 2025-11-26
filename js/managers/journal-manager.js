@@ -57,18 +57,17 @@ class JournalManager {
     }
 
     switchTab(tabName) {
-        console.log('📖 Changement d\'onglet vers:', tabName);
+        console.log(`📖 Changement d'onglet vers: ${tabName}`);
+        this.currentTab = tabName;
 
-        // Masquer tous les contenus d'onglet
-        document.querySelectorAll('.journal-tab-content').forEach(content => {
-            content.classList.add('hidden');
-            content.classList.remove('active');
-        });
-
-        // Désactiver tous les boutons d'onglet
+        // Désactiver tous les onglets
         document.querySelectorAll('.journal-tab-button').forEach(btn => {
-            btn.classList.remove('active', 'text-white', 'border-red-800');
+            btn.classList.remove('active', 'text-gray-800', 'border-red-800');
             btn.classList.add('text-gray-500', 'border-transparent');
+        });
+        document.querySelectorAll('.journal-tab-content').forEach(content => {
+            content.classList.remove('active');
+            content.classList.add('hidden');
         });
 
         // Activer l'onglet sélectionné
@@ -76,55 +75,17 @@ class JournalManager {
         const targetContent = document.getElementById(`${tabName}-tab`);
 
         if (targetButton) {
-            targetButton.classList.add('active', 'text-white', 'border-red-800');
+            targetButton.classList.add('active', 'text-gray-800', 'border-red-800');
             targetButton.classList.remove('text-gray-500', 'border-transparent');
         }
-
         if (targetContent) {
             targetContent.classList.remove('hidden');
             targetContent.classList.add('active');
         }
 
-        // Rafraîchir le contenu selon l'onglet
-        if (tabName === 'journal-list') {
-            this.renderJournal();
-        } else if (tabName === 'objectives') {
+        // Rafraîchir le contenu si nécessaire
+        if (tabName === 'objectives') {
             this.renderObjectives();
-        } else if (tabName === 'rumors') {
-            this.renderRumorsTab();
-        }
-    }
-
-    renderRumorsTab() {
-        console.log('📖 [JournalManager.renderRumorsTab] Début du rendu');
-        
-        const rumorsContent = document.getElementById('rumors-content');
-        const rumorsEmpty = document.getElementById('rumors-empty');
-
-        if (!rumorsContent || !rumorsEmpty) {
-            console.log('❌ [JournalManager.renderRumorsTab] Éléments DOM non trouvés');
-            return;
-        }
-
-        // Récupérer les résultats cochés via AdventureManager
-        if (!window.adventureManager) {
-            console.log('❌ [JournalManager.renderRumorsTab] adventureManager non disponible');
-            rumorsContent.innerHTML = '';
-            rumorsEmpty.classList.remove('hidden');
-            return;
-        }
-
-        console.log('🔍 [JournalManager.renderRumorsTab] Appel de getCheckedRandomResults...');
-        const checkedResultsHtml = window.adventureManager.getCheckedRandomResults();
-
-        if (checkedResultsHtml) {
-            console.log('✅ [JournalManager.renderRumorsTab] HTML des rumeurs généré, affichage');
-            rumorsContent.innerHTML = checkedResultsHtml;
-            rumorsEmpty.classList.add('hidden');
-        } else {
-            console.log('⚠️ [JournalManager.renderRumorsTab] Aucune rumeur à afficher');
-            rumorsContent.innerHTML = '';
-            rumorsEmpty.classList.remove('hidden');
         }
     }
 
@@ -151,10 +112,10 @@ class JournalManager {
         this.loadJournal();
         this.loadObjectives();
         this.renderJournal();
-
+        
         // Afficher l'onglet par défaut (Journal)
         this.switchTab('journal-list');
-
+        
         if (this.journalModal) {
             this.journalModal.classList.remove('hidden');
         }
@@ -185,7 +146,7 @@ class JournalManager {
                 return match.trim() ? `<p>${match}</p>` : '';
             })
             .replace(/<p><\/p>/g, '')
-            .replace(/<p>(<h[1-6]>)<\/p>/g, '$1')
+            .replace(/<p>(<h[1-6]>)/g, '$1')
             .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
             .replace(/<p>(<ul>)/g, '$1')
             .replace(/(<\/ul>)<\/p>/g, '$1');
@@ -211,12 +172,12 @@ class JournalManager {
             const dateB = b.days && b.days.length > 0 && b.days[0].calendarDate 
                 ? b.days[0].calendarDate 
                 : b.generatedAt;
-
+            
             // Si les deux ont des dates calendrier, comparer par celles-ci
             if (typeof dateA === 'string' && typeof dateB === 'string') {
                 return dateA.localeCompare(dateB);
             }
-
+            
             // Sinon, comparer par generatedAt
             return new Date(a.generatedAt) - new Date(b.generatedAt);
         });
@@ -225,11 +186,11 @@ class JournalManager {
         const journalHTML = sortedJournal.map((journey, sortedIndex) => {
             // Trouver l'index original pour la suppression
             const originalIndex = this.journal.indexOf(journey);
-
+            
             // Déterminer les dates à afficher
             let displayStartDate = '';
             let displayEndDate = '';
-
+            
             // Si c'est un voyage avec des jours et une date calendrier
             if (journey.days && journey.days.length > 0 && journey.days[0].calendarDate) {
                 displayStartDate = journey.days[0].calendarDate;
@@ -307,7 +268,7 @@ class JournalManager {
         if (voyageSubtitle) {
             // Déterminer la date à afficher
             let displayDate = '';
-
+            
             // Si c'est un voyage avec des jours et une date calendrier
             if (journey.days && journey.days.length > 0 && journey.days[0].calendarDate) {
                 displayDate = journey.days[0].calendarDate;
@@ -320,7 +281,7 @@ class JournalManager {
                     day: 'numeric'
                 });
             }
-
+            
             voyageSubtitle.innerHTML = `${displayDate} • <span id="voyage-total-days">${journey.totalDays}</span> jour${journey.totalDays > 1 ? 's' : ''}`;
         }
 
@@ -334,7 +295,7 @@ class JournalManager {
                 let filteredDescription = day.description;
                 filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
                 filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
-
+                
                 const descriptionHtml = this.simpleMarkdown(filteredDescription);
                 contentHtml += `
                     <div class="bg-gray-50 rounded-lg p-3 mb-3">
@@ -397,7 +358,7 @@ class JournalManager {
         // Masquer ou afficher les boutons d'actions selon le type
         const describeBtn = document.getElementById('describe-journey-header-btn');
         const finishBtn = document.getElementById('finish-journey-header-btn');
-
+        
         if (isExploration) {
             // Mode Exploration : masquer les boutons
             if (describeBtn) describeBtn.classList.add('hidden');
@@ -417,11 +378,11 @@ class JournalManager {
         // Ajouter le curseur par défaut pour tous les en-têtes
         const style = document.createElement('style');
         style.textContent = '.day-header { cursor: default; }';
-
+        
         // Supprimer l'ancien style s'il existe
         const oldStyle = document.getElementById('journal-day-header-style');
         if (oldStyle) oldStyle.remove();
-
+        
         style.id = 'journal-day-header-style';
         document.head.appendChild(style);
 
@@ -442,7 +403,7 @@ class JournalManager {
             // Retirer l'ancien listener s'il existe
             const newCloseBtn = closeVoyageBtn.cloneNode(true);
             closeVoyageBtn.parentNode.replaceChild(newCloseBtn, closeVoyageBtn);
-
+            
             // Ajouter le nouveau listener
             newCloseBtn.addEventListener('click', () => {
                 voyageModal.classList.add('hidden');
