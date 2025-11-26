@@ -1322,7 +1322,7 @@ class SettingsManager {
         }
     }
 
-    async handleSettingsRandomTableUpload(event) {
+    handleSettingsRandomTableUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -1532,7 +1532,7 @@ class SettingsManager {
             let itemFormattedResult = '';
             if (typeof item.result === 'object' && item.result !== null) {
                 const entries = Object.entries(item.result);
-                
+
                 // Trouver le "Dé du destin" s'il existe
                 const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
                 const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
@@ -1877,79 +1877,61 @@ class SettingsManager {
 
         // Récupérer la date actuelle du calendrier
         let currentDate = 'Date inconnue';
+        let currentCalendarDate = null; // Stocker l'objet date complet
         if (window.calendarManager && window.calendarManager.currentCalendarDate) {
-            const date = window.calendarManager.currentCalendarDate;
-            currentDate = `${date.day} ${date.month}`;
+            currentCalendarDate = window.calendarManager.currentCalendarDate;
+            currentDate = `${currentCalendarDate.day} ${currentCalendarDate.month}`;
         }
 
-        // Ajouter au journal via le JournalManager
-        if (window.journalManager) {
-            // Charger le journal existant
-            window.journalManager.loadJournal();
+        // Vérifier si un voyage existe déjà pour cette date
+        const travelJournal = JSON.parse(localStorage.getItem('travelJournal') || '[]');
+        let journeyForDate = null;
+        let dayIndexInJourney = -1;
 
-            // Le texte du résultat est dans 'result' et non 'text'
-            const resultText = this.currentRandomResult.result || '';
-
-            // Extraire le champ "Résultat" du texte HTML pour l'utiliser comme titre
-            let eventTitle = this.currentRandomResult.tableName;
-
-            // Parser le HTML pour extraire le texte brut du champ "Résultat"
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = resultText;
-            
-            // Méthode 1 : Chercher dans les span avec font-weight: 600 (résultat principal)
-            const boldSpans = tempDiv.querySelectorAll('span[style*="font-weight: 600"]');
-            for (const span of boldSpans) {
-                let text = span.textContent.trim();
-                // Retirer le dé du destin s'il est présent au début (format: (X/Y) ou (OEIL))
-                text = text.replace(/^\([^)]+\)\s*/, '');
-                
-                // Vérifier si c'est le résultat principal (pas vide et pas trop long)
-                if (text && text.length > 0 && text.length < 100) {
-                    eventTitle = text;
-                    break;
-                }
-            }
-
-            // Méthode 2 : Si pas trouvé, chercher avec regex dans le HTML brut
-            if (eventTitle === this.currentRandomResult.tableName) {
-                // Pattern pour extraire le texte après le dé du destin
-                const patterns = [
-                    /\([^)]+\)\s*([^<]+)/i,  // (X/Y) Texte
-                    /font-weight:\s*600[^>]*>\s*\([^)]+\)\s*([^<]+)/i,  // span bold avec (X/Y) Texte
-                    /font-weight:\s*600[^>]*>([^<(]+)/i  // span bold avec Texte seul
-                ];
-                
-                for (const pattern of patterns) {
-                    const match = resultText.match(pattern);
-                    if (match && match[1]) {
-                        eventTitle = match[1].trim();
+        if (currentCalendarDate) {
+            // Chercher un voyage qui contient cette date
+            for (const journey of travelJournal) {
+                if (journey.days && Array.isArray(journey.days)) {
+                    const dayIndex = journey.days.findIndex(day => day.calendarDate === currentDate);
+                    if (dayIndex !== -1) {
+                        journeyForDate = journey;
+                        dayIndexInJourney = dayIndex;
+                        console.log(`✅ Voyage trouvé pour la date ${currentDate}:`, journey.title);
                         break;
                     }
                 }
             }
+        }
 
-            console.log(`📖 Titre extrait pour le journal: "${eventTitle}"`);
+        // Si un voyage existe pour cette date, y intégrer le tirage
+        if (journeyForDate && dayIndexInJourney !== -1) {
+            // Formater le résultat pour l'événement
+            const eventHTML = `
+                <div class="mb-2"><strong>Table :</strong> ${this.currentRandomResult.tableName || 'Table aléatoire'}</div>
+                <div class="mb-2"><strong>Résultat :</strong> ${this.currentRandomResult.title || 'Résultat'}</div>
+                <div><strong>Description :</strong> ${this.currentRandomResult.text || ''}</div>
+            `;
 
-            // Créer une structure de voyage pour l'événement
-            const eventJourney = {
-                title: eventTitle,
-                generatedAt: new Date().toISOString(),
-                totalDays: 1,
-                journeyType: 'random_event',
-                days: [{
-                    dayNumber: 1,
-                    calendarDate: currentDate,
-                    description: resultText,
-                    discoveries: []
-                }]
-            };
+            // Ajouter l'événement au jour correspondant
+            journeyForDate.days[dayIndexInJourney].eventResult = eventHTML;
 
-            // Ajouter au journal
-            window.journalManager.journal.push(eventJourney);
-            localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
+            // Sauvegarder le journal mis à jour
+            localStorage.setItem('travelJournal', JSON.stringify(travelJournal));
+            console.log(`✅ Événement aléatoire ajouté au voyage "${journeyForDate.title}" - Jour ${dayIndexInJourney + 1}`);
 
-            // Marquer comme non sauvegardé
+            // Notification de succès
+            alert(`Événement aléatoire ajouté au voyage en cours le ${currentDate}`);
+
+            // Fermer la modale
+            this.closeRandomRollResult();
+
+            // Rafraîchir le journal si ouvert
+            if (window.journalManager) {
+                window.journalManager.loadJournal();
+                window.journalManager.renderJournal();
+            }
+
+            // Marquer comme non sauvegardé pour sync cloud
             if (typeof window.markAsUnsaved === 'function') {
                 window.markAsUnsaved();
             }
@@ -1959,27 +1941,57 @@ class SettingsManager {
                 window.scheduleAutoSync();
             }
 
-            console.log('📖 Événement aléatoire ajouté au journal:', eventJourney);
-
-            // Fermer la modale de résultat
-            this.closeRandomRollResult();
-
-            // Afficher une notification de succès
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
-            notification.innerHTML = `
-                <i class="fas fa-check mr-2"></i>
-                Ajouté au Journal d'Aventure
-            `;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.remove();
-            }, 2000);
-        } else {
-            console.error('❌ JournalManager non disponible');
-            alert('Erreur : impossible d\'accéder au journal');
+            return;
         }
+
+        // Si aucun voyage trouvé, créer une entrée séparée comme avant
+        console.log(`ℹ️ Aucun voyage trouvé pour la date ${currentDate}, création d'une entrée séparée`);
+
+        // Créer l'objet journal
+        const eventJourney = {
+            title: this.currentRandomResult.tableName || 'Événement Aléatoire', // Utiliser le nom de la table comme titre par défaut
+            generatedAt: new Date().toISOString(),
+            totalDays: 1,
+            journeyType: 'random_event',
+            days: [{
+                dayNumber: 1,
+                calendarDate: currentDate,
+                description: this.currentRandomResult.text || '', // Le texte contient déjà le formatage HTML
+                discoveries: []
+            }]
+        };
+
+        // Ajouter au journal
+        window.journalManager.journal.push(eventJourney);
+        localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
+
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        // Synchroniser avec le cloud
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+
+        console.log('📖 Événement aléatoire ajouté au journal:', eventJourney);
+
+        // Fermer la modale de résultat
+        this.closeRandomRollResult();
+
+        // Afficher une notification de succès
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
+        notification.innerHTML = `
+            <i class="fas fa-check mr-2"></i>
+            Ajouté au Journal d'Aventure
+        `;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 2000);
     }
 
 
