@@ -6,8 +6,6 @@ class JournalManager {
         this.journalContent = null;
         this.journalEmpty = null;
         this.currentTab = 'journal-list';
-        this.rumorsContent = null;
-        this.rumorsEmpty = null;
     }
 
     init() {
@@ -26,7 +24,6 @@ class JournalManager {
         this.journalBtn = document.getElementById('journal-btn');
         this.closeJournalBtn = document.getElementById('close-journal-btn');
 
-        // Pas de références spécifiques pour l'onglet Rumeurs car le contenu est dans #rumors-tab
         console.log('📖 [setupDOMReferences] Éléments trouvés:', {
             journalModal: !!this.journalModal,
             journalContent: !!this.journalContent,
@@ -662,11 +659,6 @@ class JournalManager {
     }
 
     renderRumors() {
-        if (!this.rumorsContent || !this.rumorsEmpty) {
-            console.warn('📖 [renderRumors] Éléments DOM non trouvés - rumorsContent:', !!this.rumorsContent, 'rumorsEmpty:', !!this.rumorsEmpty);
-            return;
-        }
-
         console.log('📖 [renderRumors] Début du rendu des rumeurs');
 
         // Obtenir la carte active
