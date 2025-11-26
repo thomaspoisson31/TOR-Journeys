@@ -193,55 +193,83 @@ class JournalManager {
             return new Date(a.generatedAt) - new Date(b.generatedAt);
         });
 
-        // Générer le HTML pour chaque voyage (version simplifiée pour la liste)
+        // Générer le HTML pour chaque voyage jour par jour
         const journalHTML = sortedJournal.map((journey, sortedIndex) => {
             // Trouver l'index original pour la suppression
             const originalIndex = this.journal.indexOf(journey);
 
-            // Déterminer les dates à afficher
-            let displayStartDate = '';
-            let displayEndDate = '';
+            // En-tête du voyage avec bouton de suppression
+            let voyageHTML = `
+                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 p-4">
+                    <div class="flex justify-between items-start mb-4 pb-3 border-b border-gray-200">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold" style="color: #940000;">${journey.title}</h3>
+                            <p class="text-sm text-gray-600">${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}</p>
+                        </div>
+                        <button onclick="window.journalManager.deleteJourney(${originalIndex})"
+                                class="text-red-500 hover:text-red-700 p-2"
+                                title="Supprimer ce voyage">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+            `;
 
-            // Si c'est un voyage avec des jours et une date calendrier
-            if (journey.days && journey.days.length > 0 && journey.days[0].calendarDate) {
-                displayStartDate = journey.days[0].calendarDate;
-                // Date de fin = dernier jour
-                if (journey.days[journey.days.length - 1].calendarDate) {
-                    displayEndDate = journey.days[journey.days.length - 1].calendarDate;
-                }
-            } else {
-                // Sinon utiliser la date de génération classique
-                const generatedDate = new Date(journey.generatedAt);
-                displayStartDate = generatedDate.toLocaleDateString('fr-FR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
+            // Parcourir chaque jour du voyage
+            if (journey.days && journey.days.length > 0) {
+                journey.days.forEach((day, dayIndex) => {
+                    const calendarDate = day.calendarDate || `Jour ${day.dayNumber}`;
+                    const weatherSymbol = day.weatherSymbol || '';
+                    
+                    // Collecter les découvertes du jour
+                    const discoveries = day.discoveries || [];
+                    const discoveryNames = discoveries.map(d => d.name).join(' et ');
+                    
+                    // Titre du jour avec date, météo et découvertes
+                    const dayTitle = discoveryNames 
+                        ? `${calendarDate} ${weatherSymbol}${discoveryNames}`
+                        : `${calendarDate} ${weatherSymbol}Voyage tranquille...`;
+                    
+                    voyageHTML += `
+                        <div class="mb-3 pl-4 border-l-4 border-gray-300">
+                            <div class="font-semibold text-gray-800 mb-1">${dayTitle}</div>
+                    `;
+                    
+                    // Afficher la description du jour si elle existe
+                    if (day.description) {
+                        // Filtrer le champ "Dé du destin" de la description
+                        let filteredDescription = day.description;
+                        filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
+                        filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
+                        
+                        const descriptionHtml = this.simpleMarkdown(filteredDescription);
+                        voyageHTML += `
+                            <div class="text-sm text-gray-700 mb-2">
+                                ${descriptionHtml}
+                            </div>
+                        `;
+                    }
+                    
+                    voyageHTML += `</div>`;
+                    
+                    // Afficher l'événement aléatoire comme une entrée séparée s'il existe
+                    if (day.eventResult) {
+                        const eventHtml = this.simpleMarkdown(day.eventResult);
+                        voyageHTML += `
+                            <div class="mb-3 pl-4 border-l-4 border-yellow-400">
+                                <div class="font-semibold text-yellow-700 mb-1">
+                                    ${calendarDate} ${weatherSymbol}Événement aléatoire
+                                </div>
+                                <div class="text-sm text-gray-700">
+                                    ${eventHtml}
+                                </div>
+                            </div>
+                        `;
+                    }
                 });
             }
 
-            // Construire la chaîne de dates
-            const dateDisplay = displayEndDate && displayEndDate !== displayStartDate
-                ? `${displayStartDate} → ${displayEndDate}`
-                : displayStartDate;
-
-            // Toutes les entrées sont cliquables
-            return `
-                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.journalManager.openJourneyInVoyageModal(${originalIndex})">
-                    <div class="p-4">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <h3 class="text-xl font-bold mb-1" style="color: #940000;">${journey.title}</h3>
-                                <p class="text-sm text-gray-600">${dateDisplay} • ${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}</p>
-                            </div>
-                            <button onclick="event.stopPropagation(); window.journalManager.deleteJourney(${originalIndex})"
-                                    class="text-red-500 hover:text-red-700 p-2"
-                                    title="Supprimer ce voyage">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
+            voyageHTML += `</div>`;
+            return voyageHTML;
         }).join('');
 
         this.journalContent.innerHTML = journalHTML;
