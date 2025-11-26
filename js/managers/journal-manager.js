@@ -6,6 +6,8 @@ class JournalManager {
         this.journalContent = null;
         this.journalEmpty = null;
         this.currentTab = 'journal-list';
+        this.rumorsContent = null;
+        this.rumorsEmpty = null;
     }
 
     init() {
@@ -14,6 +16,7 @@ class JournalManager {
         this.setupEventListeners();
         this.loadJournal();
         this.loadObjectives();
+        this.loadRumors(); // Charger les rumeurs au démarrage
     }
 
     setupDOMReferences() {
@@ -22,6 +25,10 @@ class JournalManager {
         this.journalEmpty = document.getElementById('journal-empty');
         this.journalBtn = document.getElementById('journal-btn');
         this.closeJournalBtn = document.getElementById('close-journal-btn');
+
+        // Références pour l'onglet Rumeurs
+        this.rumorsContent = document.getElementById('rumors-content');
+        this.rumorsEmpty = document.getElementById('rumors-empty');
     }
 
     setupEventListeners() {
@@ -86,6 +93,8 @@ class JournalManager {
         // Rafraîchir le contenu si nécessaire
         if (tabName === 'objectives') {
             this.renderObjectives();
+        } else if (tabName === 'rumors') {
+            this.renderRumors(); // Rendre le contenu de l'onglet rumeurs
         }
     }
 
@@ -111,11 +120,13 @@ class JournalManager {
     openJournal() {
         this.loadJournal();
         this.loadObjectives();
+        this.loadRumors(); // Charger les rumeurs à l'ouverture
         this.renderJournal();
-        
+        this.renderRumors(); // Afficher les rumeurs
+
         // Afficher l'onglet par défaut (Journal)
         this.switchTab('journal-list');
-        
+
         if (this.journalModal) {
             this.journalModal.classList.remove('hidden');
         }
@@ -166,18 +177,18 @@ class JournalManager {
 
         // Trier le journal par date ascendante
         const sortedJournal = [...this.journal].sort((a, b) => {
-            const dateA = a.days && a.days.length > 0 && a.days[0].calendarDate 
-                ? a.days[0].calendarDate 
+            const dateA = a.days && a.days.length > 0 && a.days[0].calendarDate
+                ? a.days[0].calendarDate
                 : a.generatedAt;
-            const dateB = b.days && b.days.length > 0 && b.days[0].calendarDate 
-                ? b.days[0].calendarDate 
+            const dateB = b.days && b.days.length > 0 && b.days[0].calendarDate
+                ? b.days[0].calendarDate
                 : b.generatedAt;
-            
+
             // Si les deux ont des dates calendrier, comparer par celles-ci
             if (typeof dateA === 'string' && typeof dateB === 'string') {
                 return dateA.localeCompare(dateB);
             }
-            
+
             // Sinon, comparer par generatedAt
             return new Date(a.generatedAt) - new Date(b.generatedAt);
         });
@@ -186,11 +197,11 @@ class JournalManager {
         const journalHTML = sortedJournal.map((journey, sortedIndex) => {
             // Trouver l'index original pour la suppression
             const originalIndex = this.journal.indexOf(journey);
-            
+
             // Déterminer les dates à afficher
             let displayStartDate = '';
             let displayEndDate = '';
-            
+
             // Si c'est un voyage avec des jours et une date calendrier
             if (journey.days && journey.days.length > 0 && journey.days[0].calendarDate) {
                 displayStartDate = journey.days[0].calendarDate;
@@ -222,8 +233,8 @@ class JournalManager {
                                 <h3 class="text-xl font-bold mb-1" style="color: #940000;">${journey.title}</h3>
                                 <p class="text-sm text-gray-600">${dateDisplay} • ${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}</p>
                             </div>
-                            <button onclick="event.stopPropagation(); window.journalManager.deleteJourney(${originalIndex})" 
-                                    class="text-red-500 hover:text-red-700 p-2" 
+                            <button onclick="event.stopPropagation(); window.journalManager.deleteJourney(${originalIndex})"
+                                    class="text-red-500 hover:text-red-700 p-2"
                                     title="Supprimer ce voyage">
                                 <i class="fas fa-trash"></i>
                             </button>
@@ -268,7 +279,7 @@ class JournalManager {
         if (voyageSubtitle) {
             // Déterminer la date à afficher
             let displayDate = '';
-            
+
             // Si c'est un voyage avec des jours et une date calendrier
             if (journey.days && journey.days.length > 0 && journey.days[0].calendarDate) {
                 displayDate = journey.days[0].calendarDate;
@@ -281,7 +292,7 @@ class JournalManager {
                     day: 'numeric'
                 });
             }
-            
+
             voyageSubtitle.innerHTML = `${displayDate} • <span id="voyage-total-days">${journey.totalDays}</span> jour${journey.totalDays > 1 ? 's' : ''}`;
         }
 
@@ -295,7 +306,7 @@ class JournalManager {
                 let filteredDescription = day.description;
                 filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
                 filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
-                
+
                 const descriptionHtml = this.simpleMarkdown(filteredDescription);
                 contentHtml += `
                     <div class="bg-gray-50 rounded-lg p-3 mb-3">
@@ -358,7 +369,7 @@ class JournalManager {
         // Masquer ou afficher les boutons d'actions selon le type
         const describeBtn = document.getElementById('describe-journey-header-btn');
         const finishBtn = document.getElementById('finish-journey-header-btn');
-        
+
         if (isExploration) {
             // Mode Exploration : masquer les boutons
             if (describeBtn) describeBtn.classList.add('hidden');
@@ -378,11 +389,11 @@ class JournalManager {
         // Ajouter le curseur par défaut pour tous les en-têtes
         const style = document.createElement('style');
         style.textContent = '.day-header { cursor: default; }';
-        
+
         // Supprimer l'ancien style s'il existe
         const oldStyle = document.getElementById('journal-day-header-style');
         if (oldStyle) oldStyle.remove();
-        
+
         style.id = 'journal-day-header-style';
         document.head.appendChild(style);
 
@@ -403,7 +414,7 @@ class JournalManager {
             // Retirer l'ancien listener s'il existe
             const newCloseBtn = closeVoyageBtn.cloneNode(true);
             closeVoyageBtn.parentNode.replaceChild(newCloseBtn, closeVoyageBtn);
-            
+
             // Ajouter le nouveau listener
             newCloseBtn.addEventListener('click', () => {
                 voyageModal.classList.add('hidden');
@@ -516,11 +527,11 @@ class JournalManager {
 
         const objectivesHTML = this.objectives.map((objective, index) => `
             <div class="objective-item ${objective.completed ? 'completed' : ''}" data-index="${index}">
-                <input type="checkbox" ${objective.completed ? 'checked' : ''} 
+                <input type="checkbox" ${objective.completed ? 'checked' : ''}
                        onchange="window.journalManager.toggleObjectiveComplete(${index})">
                 <div class="objective-text">${this.escapeHtml(objective.text)}</div>
-                <button onclick="window.journalManager.deleteObjective(${index})" 
-                        class="text-red-500 hover:text-red-700 p-2 ml-2" 
+                <button onclick="window.journalManager.deleteObjective(${index})"
+                        class="text-red-500 hover:text-red-700 p-2 ml-2"
                         title="Supprimer cet objectif">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -580,11 +591,178 @@ class JournalManager {
         return div.innerHTML;
     }
 
+    // --- Méthodes pour les Rumeurs ---
+
+    loadRumors() {
+        const savedRumors = localStorage.getItem('adventureRumors');
+        if (savedRumors && savedRumors !== 'null' && savedRumors !== 'undefined') {
+            try {
+                const parsed = JSON.parse(savedRumors);
+                this.rumors = Array.isArray(parsed) ? parsed : [];
+                console.log(`📖 ${this.rumors.length} rumeur(s) chargée(s) depuis le localStorage`);
+            } catch (e) {
+                console.error("Erreur lors du chargement des rumeurs:", e);
+                this.rumors = [];
+            }
+        } else {
+            this.rumors = [];
+            console.log("📖 Aucune rumeur trouvée dans le localStorage");
+        }
+    }
+
+    saveRumors() {
+        localStorage.setItem('adventureRumors', JSON.stringify(this.rumors));
+        console.log("💾 Rumeurs sauvegardées dans localStorage");
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+    }
+
+    addRumor(rumorData) {
+        // Assurez-vous que rumorData est un objet et contient les informations nécessaires
+        if (!rumorData || !rumorData.text) {
+            console.warn("Tentative d'ajout d'une rumeur invalide:", rumorData);
+            return;
+        }
+
+        // Vérifier si cette rumeur existe déjà pour éviter les doublons
+        const exists = this.rumors.some(r => r.text === rumorData.text &&
+                                        r.region === rumorData.region &&
+                                        r.location === rumorData.location &&
+                                        r.character === rumorData.character);
+        if (exists) {
+            console.log("Cette rumeur existe déjà.");
+            return;
+        }
+
+        const newRumor = {
+            ...rumorData,
+            id: Date.now(), // Simple ID basé sur le timestamp
+            createdAt: new Date().toISOString()
+        };
+        this.rumors.push(newRumor);
+        this.saveRumors();
+        this.renderRumors(); // Mettre à jour l'affichage
+    }
+
+    // Supprimer une rumeur par son ID
+    deleteRumor(id) {
+        if (confirm("Êtes-vous sûr de vouloir supprimer cette rumeur ?")) {
+            this.rumors = this.rumors.filter(r => r.id !== id);
+            this.saveRumors();
+            this.renderRumors();
+            console.log(`📖 Rumeur avec l'ID ${id} supprimée`);
+        }
+    }
+
+    renderRumors() {
+        if (!this.rumorsContent || !this.rumorsEmpty) return;
+
+        if (this.rumors.length === 0) {
+            this.rumorsContent.innerHTML = ''; // Vider le contenu
+            this.rumorsContent.classList.add('hidden');
+            this.rumorsEmpty.classList.remove('hidden');
+            return;
+        }
+
+        this.rumorsContent.classList.remove('hidden');
+        this.rumorsEmpty.classList.add('hidden');
+
+        // Organiser les rumeurs par catégorie
+        const categorizedRumors = {
+            regions: {},
+            locations: {},
+            characters: {}
+        };
+
+        this.rumors.forEach(rumor => {
+            if (rumor.region) {
+                if (!categorizedRumors.regions[rumor.region]) {
+                    categorizedRumors.regions[rumor.region] = [];
+                }
+                categorizedRumors.regions[rumor.region].push(rumor);
+            }
+            if (rumor.location) {
+                if (!categorizedRumors.locations[rumor.location]) {
+                    categorizedRumors.locations[rumor.location] = [];
+                }
+                categorizedRumors.locations[rumor.location].push(rumor);
+            }
+            if (rumor.character) {
+                if (!categorizedRumors.characters[rumor.character]) {
+                    categorizedRumors.characters[rumor.character] = [];
+                }
+                categorizedRumors.characters[rumor.character].push(rumor);
+            }
+        });
+
+        let rumorsHTML = '';
+
+        // Rendu des régions
+        const sortedRegions = Object.keys(categorizedRumors.regions).sort();
+        if (sortedRegions.length > 0) {
+            rumorsHTML += `
+                <div>
+                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Régions</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+            `;
+            sortedRegions.forEach(region => {
+                rumorsHTML += `<li>${this.escapeHtml(region)}</li>`;
+                // Afficher les rumeurs associées si nécessaire (optionnel)
+                // categorizedRumors.regions[region].forEach(rumor => {
+                //     rumorsHTML += `<li class="ml-4 text-sm text-gray-700">${this.simpleMarkdown(rumor.text)}</li>`;
+                // });
+            });
+            rumorsHTML += '</ul></div>';
+        }
+
+        // Rendu des lieux
+        const sortedLocations = Object.keys(categorizedRumors.locations).sort();
+        if (sortedLocations.length > 0) {
+            rumorsHTML += `
+                <div>
+                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Lieux</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+            `;
+            sortedLocations.forEach(location => {
+                rumorsHTML += `<li>${this.escapeHtml(location)}</li>`;
+                // categorizedRumors.locations[location].forEach(rumor => {
+                //     rumorsHTML += `<li class="ml-4 text-sm text-gray-700">${this.simpleMarkdown(rumor.text)}</li>`;
+                // });
+            });
+            rumorsHTML += '</ul></div>';
+        }
+
+        // Rendu des personnages
+        const sortedCharacters = Object.keys(categorizedRumors.characters).sort();
+        if (sortedCharacters.length > 0) {
+            rumorsHTML += `
+                <div>
+                    <h3 class="text-xl font-bold mb-2" style="color: #940000;">Personnages</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+            `;
+            sortedCharacters.forEach(character => {
+                rumorsHTML += `<li>${this.escapeHtml(character)}</li>`;
+                // categorizedRumors.characters[character].forEach(rumor => {
+                //     rumorsHTML += `<li class="ml-4 text-sm text-gray-700">${this.simpleMarkdown(rumor.text)}</li>`;
+                // });
+            });
+            rumorsHTML += '</ul></div>';
+        }
+
+        this.rumorsContent.innerHTML = rumorsHTML;
+    }
+
+
     // Méthode pour récupérer toutes les données (pour synchronisation)
     getAllData() {
         return {
             journal: this.journal,
-            objectives: this.objectives
+            objectives: this.objectives,
+            rumors: this.rumors // Inclure les rumeurs
         };
     }
 }
