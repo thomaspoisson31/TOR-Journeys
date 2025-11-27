@@ -1821,50 +1821,34 @@ class SettingsManager {
 
     insertRandomResultToJournal() {
         if (!this.currentRandomResult) {
-            console.warn("Aucun résultat de tirage à insérer");
+            console.log('⚠️ Aucun résultat de tirage à insérer');
             return;
         }
 
-        console.log("📖 Insertion du résultat dans le journal:", this.currentRandomResult);
+        // Obtenir la date calendrier actuelle
+        const currentDate = this.getCurrentCalendarDate();
 
-        // Nettoyer le contenu HTML pour ne garder que le texte formaté
-        let cleanContent = this.currentRandomResult.content || '';
-
-        // Créer un élément temporaire pour parser le HTML
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = cleanContent;
-
-        // Supprimer les checkboxes et leurs attributs
-        const checkboxes = tempDiv.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => checkbox.remove());
-
-        // Récupérer le texte nettoyé
-        cleanContent = tempDiv.innerHTML;
-
-        // Créer une entrée de journal pour le tirage aléatoire
-        const journalEntry = {
-            title: this.currentRandomResult.title || "Tirage Aléatoire",
-            generatedAt: new Date().toISOString(),
+        // Créer une nouvelle entrée de journal pour le tirage aléatoire
+        const newEntry = {
+            title: this.currentRandomResult.tableName,
             totalDays: 1,
-            days: [
-                {
-                    dayNumber: 1,
-                    calendarDate: window.calendarManager?.getCurrentCalendarDate()?.day 
-                        ? `${window.calendarManager.getCurrentCalendarDate().day} ${window.calendarManager.getCurrentCalendarDate().month}`
-                        : new Date().toLocaleDateString('fr-FR'),
-                    weatherSymbol: '',
-                    weatherText: '',
-                    discoveries: [],
-                    description: '',
-                    eventResult: cleanContent
-                }
-            ],
-            journeyType: 'random_roll'
+            generatedAt: new Date().toISOString(),
+            journeyType: 'random', // Identifier comme tirage aléatoire
+            days: [{
+                dayNumber: 1,
+                calendarDate: currentDate,
+                weatherSymbol: null,
+                discoveries: [],
+                description: this.currentRandomResult.result, // Utiliser le résultat formaté comme description
+                eventResult: null,
+                startCoordinates: null
+            }]
         };
 
-        // Ajouter au journal via le JournalManager
+        // Ajouter au journal
         if (window.journalManager) {
-            window.journalManager.journal.push(journalEntry);
+            window.journalManager.loadJournal();
+            window.journalManager.journal.push(newEntry); // Ajouter à la fin
             localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
 
             // Marquer comme non sauvegardé
@@ -1872,32 +1856,19 @@ class SettingsManager {
                 window.markAsUnsaved();
             }
 
-            // Synchroniser avec le cloud
+            // Synchroniser avec le cloud si authentifié
             if (typeof window.scheduleAutoSync === 'function') {
                 window.scheduleAutoSync();
             }
 
-            console.log("✅ Résultat ajouté au journal");
-
-            // Fermer la modale du résultat
-            this.closeRandomRollResult();
+            console.log('✅ Résultat de tirage inséré dans le journal');
 
             // Afficher une notification
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
-            notification.innerHTML = `
-                <i class="fas fa-check mr-2"></i>
-                Résultat ajouté au journal
-            `;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.remove();
-            }, 2000);
-        } else {
-            console.error("JournalManager non disponible");
-            alert("Erreur : impossible d'accéder au journal");
+            alert('Le résultat a été inséré dans le journal');
         }
+
+        // Fermer la modale de résultat
+        this.closeRandomRollResult();
     }
 
 
