@@ -1,4 +1,3 @@
-
 class RandomTablesManager {
     constructor() {
         this.modal = null;
@@ -30,7 +29,7 @@ class RandomTablesManager {
 
     saveCheckedResults() {
         localStorage.setItem('randomTablesCheckedResults', JSON.stringify(this.checkedResults));
-        
+
         // Marquer comme non sauvegardé pour sync cloud
         if (window.authManager && window.authManager.isAuthenticated) {
             window.authManager.markAsUnsaved();
@@ -79,13 +78,13 @@ class RandomTablesManager {
         if (!this.modal || !this.contentDiv) return;
 
         console.log("🎲 Ouverture de la modale Tables Aléatoires");
-        
+
         // Récupérer toutes les tables disponibles
         const allTables = this.collectAllTables();
-        
+
         // Générer le contenu
         this.renderTables(allTables);
-        
+
         // Afficher la modale
         this.modal.classList.remove('hidden');
     }
@@ -324,7 +323,7 @@ class RandomTablesManager {
         // Formater le résultat pour l'affichage
         let formattedResult = '';
         let rawContent = '';
-        
+
         if (typeof result === 'object' && result !== null) {
             // Si c'est un objet avec des propriétés
             const entries = Object.entries(result);
@@ -392,7 +391,7 @@ class RandomTablesManager {
                 // Formater le résultat
                 let formattedResult = '';
                 let rawContent = '';
-                
+
                 if (typeof result === 'object' && result !== null) {
                     const entries = Object.entries(result);
                     const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
@@ -401,7 +400,7 @@ class RandomTablesManager {
                     if (otherEntries.length > 0) {
                         const [mainKey, mainValue] = otherEntries[0];
                         rawContent = mainValue;
-                        
+
                         if (fateEntry) {
                             formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
                         } else {
@@ -475,6 +474,36 @@ class RandomTablesManager {
 
         // Afficher la modale de résultat
         resultModal.classList.remove('hidden');
+    }
+
+    insertRandomResultToJournal() {
+        console.log('📖 [insertRandomResultToJournal] Début insertion dans le journal');
+
+        if (!this.lastRandomResult) {
+            console.warn('⚠️ Aucun résultat aléatoire à insérer');
+            return;
+        }
+
+        // Récupérer la date calendrier actuelle avec vérifications robustes
+        let calendarDate = 'Date inconnue';
+
+        // Vérifier d'abord les variables globales (utilisées par le système de calendrier)
+        if (window.isCalendarMode && window.currentCalendarDate) {
+            calendarDate = `${window.currentCalendarDate.day} ${window.currentCalendarDate.month}`;
+            console.log('📅 Date récupérée depuis window.currentCalendarDate:', calendarDate);
+        }
+        // Fallback sur calendarManager si les variables globales ne sont pas disponibles
+        else if (window.calendarManager && window.calendarManager.currentCalendarDate) {
+            const currentDate = window.calendarManager.currentCalendarDate;
+            calendarDate = `${currentDate.day} ${currentDate.month}`;
+            console.log('📅 Date récupérée depuis calendarManager:', calendarDate);
+        }
+
+        console.log('📅 Date calendrier finale pour le tirage:', calendarDate);
+
+        // L'insertion réelle dans le journal se ferait ici, en utilisant 'calendarDate'
+        // et les informations de 'this.lastRandomResult'.
+        // Pour l'instant, nous nous concentrons sur la récupération correcte de la date.
     }
 }
 
