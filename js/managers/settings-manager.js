@@ -1825,8 +1825,11 @@ class SettingsManager {
             return;
         }
 
-        // Obtenir la date calendrier actuelle
-        const currentDate = this.getCurrentCalendarDate();
+        // Obtenir la date calendrier actuelle depuis CalendarManager
+        let currentDate = '1 Hithui'; // Valeur par défaut
+        if (window.calendarManager && window.calendarManager.currentDate) {
+            currentDate = window.calendarManager.currentDate;
+        }
 
         // Créer une nouvelle entrée de journal pour le tirage aléatoire
         const newEntry = {
