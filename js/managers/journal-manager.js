@@ -175,123 +175,113 @@ class JournalManager {
         this.journalContent.classList.remove('hidden');
         this.journalEmpty.classList.add('hidden');
 
-        // Trier le journal par date ascendante
-        const sortedJournal = [...this.journal].sort((a, b) => {
-            const dateA = a.days && a.days.length > 0 && a.days[0].calendarDate
-                ? a.days[0].calendarDate
-                : a.generatedAt;
-            const dateB = b.days && b.days.length > 0 && b.days[0].calendarDate
-                ? b.days[0].calendarDate
-                : b.generatedAt;
-
-            // Si les deux ont des dates calendrier, comparer par celles-ci
-            if (typeof dateA === 'string' && typeof dateB === 'string') {
-                return dateA.localeCompare(dateB);
-            }
-
-            // Sinon, comparer par generatedAt
-            return new Date(a.generatedAt) - new Date(b.generatedAt);
-        });
-
-        // Générer le HTML pour chaque voyage jour par jour
-        const journalHTML = sortedJournal.map((journey, sortedIndex) => {
-            // Trouver l'index original pour la suppression
-            const originalIndex = this.journal.indexOf(journey);
-
-            // Vérifier si c'est un tirage aléatoire
+        // Déstructurer tous les voyages en jours individuels avec métadonnées
+        const allDays = [];
+        this.journal.forEach((journey, journeyIndex) => {
             const isRandomRoll = journey.journeyType === 'random';
-
-            // En-tête du voyage avec bouton de suppression
-            let voyageHTML = `
-                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 p-4">
-                    <div class="flex justify-between items-start mb-4 pb-3 border-b border-gray-200">
-                        <div class="flex-1">
-                            <h3 class="text-xl font-bold" style="color: #940000;">${journey.title}</h3>
-                            ${!isRandomRoll ? `<p class="text-sm text-gray-600">${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}</p>` : ''}
-                        </div>
-                        <button onclick="window.journalManager.deleteJourney(${originalIndex})"
-                                class="text-red-500 hover:text-red-700 p-2"
-                                title="Supprimer ce voyage">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-            `;
-
-            // Parcourir chaque jour du voyage
+            const journeyIcon = isRandomRoll ? '🎲' : '⛰️';
+            
             if (journey.days && journey.days.length > 0) {
-                journey.days.forEach((day, dayIndex) => {
-                    const calendarDate = day.calendarDate || `Jour ${day.dayNumber}`;
-                    const weatherSymbol = day.weatherSymbol || '';
-                    
-                    // Pour les tirages aléatoires, afficher directement le contenu
-                    if (isRandomRoll) {
-                        voyageHTML += `
-                            <div class="mb-3 pl-4 border-l-4 border-purple-400">
-                                <div class="font-semibold text-purple-700 mb-2">${calendarDate}</div>
-                        `;
-                        
-                        if (day.description) {
-                            // Pour les tirages aléatoires, afficher la description telle quelle (déjà en HTML)
-                            voyageHTML += `
-                                <div class="text-sm text-gray-700 mb-2">
-                                    ${day.description}
-                                </div>
-                            `;
-                        }
-                        
-                        voyageHTML += `</div>`;
-                    } else {
-                        // Pour les voyages normaux
-                        const discoveries = day.discoveries || [];
-                        const discoveryNames = discoveries.map(d => d.name).join(' et ');
-                        
-                        // Titre du jour avec date, météo et découvertes
-                        const dayTitle = discoveryNames 
-                            ? `${calendarDate} ${weatherSymbol}${discoveryNames}`
-                            : `${calendarDate} ${weatherSymbol}Voyage tranquille...`;
-                        
-                        voyageHTML += `
-                            <div class="mb-3 pl-4 border-l-4 border-gray-300">
-                                <div class="font-semibold text-gray-800 mb-1">${dayTitle}</div>
-                        `;
-                        
-                        // Afficher la description du jour si elle existe
-                        if (day.description) {
-                            // Filtrer le champ "Dé du destin" de la description
-                            let filteredDescription = day.description;
-                            filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
-                            filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
-                            
-                            const descriptionHtml = this.simpleMarkdown(filteredDescription);
-                            voyageHTML += `
-                                <div class="text-sm text-gray-700 mb-2">
-                                    ${descriptionHtml}
-                                </div>
-                            `;
-                        }
-                        
-                        voyageHTML += `</div>`;
-                        
-                        // Afficher l'événement aléatoire comme une entrée séparée s'il existe
-                        if (day.eventResult) {
-                            const eventHtml = this.simpleMarkdown(day.eventResult);
-                            voyageHTML += `
-                                <div class="mb-3 pl-4 border-l-4 border-yellow-400">
-                                    <div class="font-semibold text-yellow-700 mb-1">
-                                        ${calendarDate} ${weatherSymbol}Événement aléatoire
-                                    </div>
-                                    <div class="text-sm text-gray-700">
-                                        ${eventHtml}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    }
+                journey.days.forEach((day) => {
+                    allDays.push({
+                        calendarDate: day.calendarDate || `Jour ${day.dayNumber}`,
+                        weatherSymbol: day.weatherSymbol || '',
+                        description: day.description,
+                        eventResult: day.eventResult,
+                        discoveries: day.discoveries || [],
+                        dayNumber: day.dayNumber,
+                        journeyTitle: journey.title,
+                        journeyIcon: journeyIcon,
+                        journeyIndex: journeyIndex,
+                        isRandomRoll: isRandomRoll
+                    });
                 });
             }
+        });
 
-            voyageHTML += `</div>`;
-            return voyageHTML;
+        // Trier tous les jours par date calendrier
+        allDays.sort((a, b) => {
+            return a.calendarDate.localeCompare(b.calendarDate);
+        });
+
+        // Générer le HTML pour chaque jour individuellement
+        const journalHTML = allDays.map((day) => {
+            let dayHTML = `<div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-3 p-4">`;
+            
+            // En-tête avec date + badge voyage
+            dayHTML += `
+                <div class="flex items-center gap-3 mb-3 pb-2 border-b border-gray-200">
+                    <div class="text-lg font-bold" style="color: #940000;">
+                        ${day.calendarDate}
+                        ${day.weatherSymbol ? `<span class="ml-2">${day.weatherSymbol}</span>` : ''}
+                    </div>
+                    <div class="flex-1 flex items-center gap-2">
+                        <span class="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-700">
+                            ${day.journeyIcon} ${day.journeyTitle}
+                        </span>
+                    </div>
+                    <button onclick="window.journalManager.deleteJourney(${day.journeyIndex})"
+                            class="text-red-500 hover:text-red-700 p-1"
+                            title="Supprimer ce voyage">
+                        <i class="fas fa-trash text-sm"></i>
+                    </button>
+                </div>
+            `;
+
+            // Contenu du jour
+            if (day.isRandomRoll) {
+                // Tirage aléatoire
+                if (day.description) {
+                    dayHTML += `
+                        <div class="text-sm text-gray-700">
+                            ${day.description}
+                        </div>
+                    `;
+                }
+            } else {
+                // Voyage normal
+                const discoveryNames = day.discoveries.map(d => d.name).join(' et ');
+                
+                if (discoveryNames) {
+                    dayHTML += `
+                        <div class="text-sm font-semibold text-blue-600 mb-2">
+                            📍 ${discoveryNames}
+                        </div>
+                    `;
+                }
+                
+                // Description
+                if (day.description) {
+                    let filteredDescription = day.description;
+                    filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
+                    filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
+                    
+                    const descriptionHtml = this.simpleMarkdown(filteredDescription);
+                    dayHTML += `
+                        <div class="text-sm text-gray-700 mb-2">
+                            ${descriptionHtml}
+                        </div>
+                    `;
+                }
+                
+                // Événement aléatoire
+                if (day.eventResult) {
+                    const eventHtml = this.simpleMarkdown(day.eventResult);
+                    dayHTML += `
+                        <div class="mt-3 pt-3 border-t border-yellow-200 bg-yellow-50 rounded p-3">
+                            <div class="text-xs font-semibold text-yellow-700 mb-1">
+                                🎲 Événement aléatoire
+                            </div>
+                            <div class="text-sm text-gray-700">
+                                ${eventHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            dayHTML += `</div>`;
+            return dayHTML;
         }).join('');
 
         this.journalContent.innerHTML = journalHTML;
