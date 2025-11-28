@@ -199,9 +199,42 @@ class JournalManager {
             }
         });
 
-        // Trier tous les jours par date calendrier
+        // Trier tous les jours par date calendrier (chronologiquement)
         allDays.sort((a, b) => {
-            return a.calendarDate.localeCompare(b.calendarDate);
+            // Extraire le mois et le jour de chaque date
+            const parseDate = (dateStr) => {
+                const parts = dateStr.split(' ');
+                if (parts.length >= 2) {
+                    return {
+                        day: parseInt(parts[0]) || 0,
+                        month: parts.slice(1).join(' ')
+                    };
+                }
+                return { day: 0, month: dateStr };
+            };
+
+            const dateA = parseDate(a.calendarDate);
+            const dateB = parseDate(b.calendarDate);
+
+            // Obtenir l'ordre des mois depuis le calendrier
+            const getMonthIndex = (monthName) => {
+                if (window.calendarManager && window.calendarManager.calendarData) {
+                    const index = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
+                    return index !== -1 ? index : 999;
+                }
+                return 999;
+            };
+
+            const monthIndexA = getMonthIndex(dateA.month);
+            const monthIndexB = getMonthIndex(dateB.month);
+
+            // Comparer d'abord par mois
+            if (monthIndexA !== monthIndexB) {
+                return monthIndexA - monthIndexB;
+            }
+
+            // Si même mois, comparer par jour
+            return dateA.day - dateB.day;
         });
 
         // Générer le HTML pour chaque jour individuellement
