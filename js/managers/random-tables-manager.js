@@ -72,6 +72,23 @@ class RandomTablesManager {
                 }
             });
         }
+
+        // Bouton fermer la modale de résultat
+        const closeResultBtn = document.getElementById('close-random-roll-result');
+        if (closeResultBtn) {
+            closeResultBtn.addEventListener('click', () => {
+                const resultModal = document.getElementById('random-roll-result-modal');
+                if (resultModal) {
+                    resultModal.classList.add('hidden');
+                }
+            });
+        }
+
+        // Bouton insérer dans le journal
+        const insertBtn = document.getElementById('insert-random-result-to-journal');
+        if (insertBtn) {
+            insertBtn.addEventListener('click', () => this.insertRandomResultToJournal());
+        }
     }
 
     openModal() {
