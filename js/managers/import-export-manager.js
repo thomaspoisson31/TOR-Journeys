@@ -522,12 +522,12 @@ class ImportExportManager {
         if (summaryEl) {
             summaryEl.innerHTML = `
                 <div class="space-y-2">
-                    <p><strong>Données à importer :</strong></p>
-                    <ul class="list-disc list-inside space-y-1">
+                    <p class="text-white"><strong>Données à importer :</strong></p>
+                    <ul class="list-disc list-inside space-y-1 text-gray-200">
                         <li>${processedData.locations.length} lieu(x)</li>
                         <li>${processedData.regions.length} région(s)</li>
                     </ul>
-                    <p class="text-sm text-gray-600 mt-4">
+                    <p class="text-sm text-gray-400 mt-4">
                         Les données importées seront fusionnées avec les données existantes. Les lieux et régions portant le même nom sur la même carte seront mis à jour, les nouveaux seront ajoutés.
                     </p>
                 </div>
@@ -865,15 +865,15 @@ class ImportExportManager {
      */
     createImportModal() {
         const modalHTML = `
-            <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-[70]">
-                <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                    <h3 class="text-lg font-semibold mb-4">Importer des données</h3>
-                    <div id="import-summary" class="mb-6"></div>
+            <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden flex items-center justify-center z-[70]">
+                <div class="bg-gray-800 text-white rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl border border-gray-700">
+                    <h3 class="text-lg font-semibold mb-4 text-white">Importer des données</h3>
+                    <div id="import-summary" class="mb-6 text-gray-200"></div>
                     <div class="flex space-x-3">
-                        <button id="import-merge" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        <button id="import-merge" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
                             Fusionner
                         </button>
-                        <button id="import-cancel" class="flex-1 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                        <button id="import-cancel" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
                             Annuler
                         </button>
                     </div>
