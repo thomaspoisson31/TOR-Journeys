@@ -706,6 +706,77 @@ class JournalManager {
         } else {
             this.rumorsCheckboxStates = {};
         }
+
+        // Extraire automatiquement les rumeurs des lieux/régions/personnages
+        this.extractRumorsFromData();
+    }
+
+    extractRumorsFromData() {
+        console.log('📖 [extractRumorsFromData] Extraction des rumeurs depuis les données...');
+        
+        // Extraire depuis les lieux
+        if (window.locationsData && window.locationsData.locations) {
+            window.locationsData.locations.forEach(location => {
+                this.extractRumorsFromItem(location, 'location');
+            });
+        }
+
+        // Extraire depuis les régions
+        if (window.regionsData && window.regionsData.regions) {
+            window.regionsData.regions.forEach(region => {
+                this.extractRumorsFromItem(region, 'region');
+            });
+        }
+
+        // Extraire depuis les personnages
+        if (window.charactersManager && window.charactersManager.characters) {
+            window.charactersManager.characters.forEach(character => {
+                this.extractRumorsFromItem(character, 'character');
+            });
+        }
+
+        console.log(`📖 [extractRumorsFromData] ${this.rumors.length} rumeur(s) totales après extraction`);
+    }
+
+    extractRumorsFromItem(item, itemType) {
+        if (!item) return;
+
+        const itemName = item.name || item.Name || 'Inconnu';
+        let rumeurs = [];
+
+        // Normaliser les rumeurs en tableau
+        if (item.Rumeurs && Array.isArray(item.Rumeurs)) {
+            rumeurs = item.Rumeurs;
+        } else if (item.Rumeur) {
+            rumeurs = [item.Rumeur];
+        }
+
+        // Filtrer les rumeurs valides
+        const rumeursValides = rumeurs.filter(r => r && r !== "A définir" && r.trim() !== '');
+
+        // Ajouter chaque rumeur au tableau si elle n'existe pas déjà
+        rumeursValides.forEach((rumeurText, index) => {
+            const rumorExists = this.rumors.some(r => 
+                r.text === rumeurText && 
+                r.itemType === itemType && 
+                r.itemName === itemName
+            );
+
+            if (!rumorExists) {
+                const newRumor = {
+                    text: rumeurText,
+                    itemType: itemType,
+                    itemName: itemName,
+                    rumorIndex: index,
+                    region: itemType === 'region' ? itemName : null,
+                    location: itemType === 'location' ? itemName : null,
+                    character: itemType === 'character' ? itemName : null,
+                    addedAt: new Date().toISOString(),
+                    id: Date.now() + Math.random()
+                };
+                this.rumors.push(newRumor);
+            }
+        });
     }
 
     saveRumors() {
