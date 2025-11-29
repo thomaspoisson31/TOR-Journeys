@@ -43,10 +43,6 @@
                 <i id="auth-icon" class="fas fa-user"></i>
                 <img id="user-profile-pic" class="absolute inset-0 w-full h-full object-cover rounded hidden" alt="Photo de profil">
             </button>
-            <!-- Journal d'Aventure Button -->
-            <button id="journal-btn" title="Journal d'Aventure" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors">
-                <i class="fas fa-book"></i>
-            </button>
             <!-- Bouton Aventure désactivé - fonctionnalités déplacées dans les Paramètres -->
             <!-- <button id="adventure-btn" title="Aventure" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors">
                 <i class="fas fa-scroll"></i>
@@ -54,12 +50,14 @@
             <button id="characters-btn" title="Personnages" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors">
                 <i class="fas fa-users"></i>
             </button>
-            <hr class="border-gray-600">
             <button id="draw-mode" title="Tracer un voyage" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors"><i class="fas fa-route"></i></button>
-            <hr class="border-gray-600">
+            <button id="random-roll-btn" title="Tirage Aléatoire" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors"><i class="fas fa-dice"></i></button>
+            <!-- Journal d'Aventure Button -->
+            <button id="journal-btn" title="Journal d'Aventure" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors">
+                <i class="fas fa-book"></i>
+            </button>
             <button id="add-location-mode" title="Ajouter un lieu" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors"><i class="fas fa-map-marker-alt"></i></button>
             <button id="add-region-mode" title="Créer une région" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors"><i class="fas fa-draw-polygon"></i></button>
-            <hr class="border-gray-600">
             <button id="filter-btn" title="Filtrer les lieux" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors"><i class="fas fa-filter"></i></button>
             <button id="map-switch" title="Changer de carte" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors hidden"><i id="map-switch-icon" class="fas fa-users"></i></button>
             <input type="file" id="import-file-input" class="hidden" accept=".json,application/json">
@@ -67,7 +65,6 @@
             <button id="import-regions" title="Importer des régions" class="w-10 h-10 bg-gray-700 hover:bg-green-600 rounded transition-colors hidden"><i class="fas fa-file-upload"></i></button>
             <input type="file" id="import-regions-input" class="hidden" accept=".json">
             <button id="export-regions" title="Exporter des régions" class="w-10 h-10 bg-gray-700 hover:bg-green-600 rounded transition-colors hidden"><i class="fas fa-file-download"></i></button>
-            <hr class="border-gray-600">
             <!-- Settings Button -->
             <button id="settings-btn" title="Paramètres" class="w-10 h-10 bg-gray-700 hover:bg-yellow-600 rounded transition-colors">
                 <i class="fas fa-cog"></i>
@@ -437,6 +434,24 @@
             </div>
         </div>
 
+        <!-- Random Tables Modal -->
+        <div id="random-tables-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-end justify-end z-[60]">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[95vh] flex flex-col mr-5 mb-5" style="font-family: 'Merriweather', serif;">
+                <!-- Header -->
+                <div class="flex justify-between items-center p-6 border-b border-gray-300">
+                    <h3 class="text-2xl font-bold" style="color: #940000;">Tables Aléatoires</h3>
+                    <button id="close-random-tables-modal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Contenu scrollable -->
+                <div class="flex-1 overflow-y-auto p-6" id="random-tables-content">
+                    <!-- Le contenu sera généré dynamiquement -->
+                </div>
+            </div>
+        </div>
+
         <!-- Add Character Modal -->
         <div id="add-character-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[70]">
             <div class="bg-gray-900 border border-gray-700 rounded-lg p-6 shadow-xl w-full max-w-md">
@@ -497,28 +512,25 @@
 
                 <!-- Tabs -->
                 <div id="journal-tabs" class="flex border-b border-gray-300 px-6">
-                    <button class="journal-tab-button active px-6 py-3 text-gray-800 border-b-2 border-red-800 font-medium" data-tab="journal-list">
-                        <i class="fas fa-book mr-2"></i>Journal
+                    <button class="journal-tab-button active px-6 py-3 text-gray-800 border-b-2 border-red-800 font-medium" data-tab="rumors">
+                        <i class="fas fa-comments mr-2"></i>Rumeurs
                     </button>
                     <button class="journal-tab-button px-6 py-3 text-gray-500 border-b-2 border-transparent font-medium hover:text-gray-800" data-tab="objectives">
                         <i class="fas fa-bullseye mr-2"></i>Objectifs
                     </button>
-                    <button class="journal-tab-button px-6 py-3 text-gray-500 border-b-2 border-transparent font-medium hover:text-gray-800" data-tab="rumors">
-                        <i class="fas fa-comments mr-2"></i>Rumeurs
+                    <button class="journal-tab-button px-6 py-3 text-gray-500 border-b-2 border-transparent font-medium hover:text-gray-800" data-tab="journal-list">
+                        <i class="fas fa-book mr-2"></i>Journal
                     </button>
                 </div>
 
                 <!-- Tab Content -->
                 <div class="flex-1 overflow-y-auto" style="min-height: 500px;">
-                    <!-- Onglet Journal -->
-                    <div id="journal-list-tab" class="journal-tab-content active p-6">
-                        <div id="journal-content">
-                            <!-- Le contenu sera généré dynamiquement -->
-                        </div>
-                        <div id="journal-empty" class="hidden flex flex-col items-center justify-center text-center py-12 text-gray-500">
-                            <i class="fas fa-book-open fa-3x mb-4"></i>
-                            <p class="text-lg">Aucun voyage enregistré pour le moment</p>
-                            <p class="text-sm mt-2">Générez des descriptions de voyage pour commencer votre journal</p>
+                    <!-- Onglet Rumeurs -->
+                    <div id="rumors-tab" class="journal-tab-content active p-6">
+                        <div class="flex flex-col items-center justify-center text-center py-12 text-gray-500">
+                            <i class="fas fa-comments fa-3x mb-4"></i>
+                            <p class="text-lg">Fonctionnalité à venir</p>
+                            <p class="text-sm mt-2">La gestion des rumeurs sera bientôt disponible</p>
                         </div>
                     </div>
 
@@ -539,12 +551,15 @@
                         </div>
                     </div>
 
-                    <!-- Onglet Rumeurs -->
-                    <div id="rumors-tab" class="journal-tab-content hidden p-6">
-                        <div class="flex flex-col items-center justify-center text-center py-12 text-gray-500">
-                            <i class="fas fa-comments fa-3x mb-4"></i>
-                            <p class="text-lg">Fonctionnalité à venir</p>
-                            <p class="text-sm mt-2">La gestion des rumeurs sera bientôt disponible</p>
+                    <!-- Onglet Journal -->
+                    <div id="journal-list-tab" class="journal-tab-content hidden p-6">
+                        <div id="journal-content">
+                            <!-- Le contenu sera généré dynamiquement -->
+                        </div>
+                        <div id="journal-empty" class="hidden flex flex-col items-center justify-center text-center py-12 text-gray-500">
+                            <i class="fas fa-book-open fa-3x mb-4"></i>
+                            <p class="text-lg">Aucun voyage enregistré pour le moment</p>
+                            <p class="text-sm mt-2">Générez des descriptions de voyage pour commencer votre journal</p>
                         </div>
                     </div>
                 </div>

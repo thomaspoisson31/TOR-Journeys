@@ -20,6 +20,13 @@ class InfoBoxManager {
         // Initialiser l'UploadManager
         this.uploadManager = new UploadManager();
 
+        // Variable pour stocker les images sélectionnées dans la bibliothèque
+        this.selectedLibraryImagesForEdit = [];
+        this.currentLibraryFolder = null;
+        this.currentLibraryPath = [];
+        this.libraryFolders = {};
+        this.libraryStructure = {};
+
         this.setupEventListeners();
 
         console.log("📋 InfoBoxManager initialized with UploadManager");
@@ -533,27 +540,27 @@ class InfoBoxManager {
                     // Créer un conteneur flex pour le titre et le bouton
                     const titleContainer = document.createElement('div');
                     titleContainer.className = 'flex items-center mb-3';
-                    
+
                     const h3 = document.createElement('h3');
                     h3.textContent = 'Rumeurs';
                     h3.className = 'mb-0';
                     titleContainer.appendChild(h3);
-                    
+
                     if (rumeursValides.length > 1) {
                         const button = document.createElement('button');
                         button.onclick = () => window.infoBoxManager.rollRandomRumeur();
                         button.className = 'ml-2 text-blue-400 hover:text-blue-300 transition-colors inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-blue-900 hover:bg-opacity-30';
                         button.title = 'Tirer une rumeur aléatoire';
                         button.style.color = '#3b82f6'; // Force la couleur en inline
-                        
+
                         const icon = document.createElement('i');
                         icon.className = 'fas fa-dice text-xl';
                         icon.style.color = '#3b82f6'; // Force la couleur en inline
-                        
+
                         button.appendChild(icon);
                         titleContainer.appendChild(button);
                     }
-                    
+
                     // Remplacer le h3 par le conteneur
                     titleElement.parentNode.replaceChild(titleContainer, titleElement);
                 }
@@ -611,11 +618,6 @@ class InfoBoxManager {
                             </button>
                         </div>
                         <div class="text-xs" style="color: #6b7280;">${table.entries?.length || 0} entrée(s)</div>
-
-                        <div id="table-result-${tableIndex}" class="hidden p-3 rounded mt-3" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
-                            <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat :</div>
-                            <div id="table-result-content-${tableIndex}" style="color: #1f2937;"></div>
-                        </div>
                     </div>
                 `).join('');
 
@@ -1816,7 +1818,7 @@ class InfoBoxManager {
 
     async generateDescription() {
         const nameField = document.getElementById('edit-name');
-        const descField = document.getElementById('edit-description');
+        const descTextarea = document.getElementById('edit-description');
 
         if (!nameField || !nameField.value.trim()) {
             alert("Veuillez d'abord entrer un nom.");
@@ -1928,40 +1930,38 @@ class InfoBoxManager {
     }
 
     rollRandomRumeur() {
-        console.log(`🎲 [rollRandomRumeur] Tirage d'une rumeur aléatoire`);
+        if (!this.currentItem) return;
 
-        if (!this.currentItem) {
-            console.error('❌ Aucun élément courant');
-            return;
-        }
-
-        // Normaliser les rumeurs en tableau
         const rumeurs = this.currentItem.Rumeurs || (this.currentItem.Rumeur ? [this.currentItem.Rumeur] : []);
         const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
 
-        console.log(`🎲 ${rumeursValides.length} rumeur(s) disponible(s)`);
+        if (rumeursValides.length === 0) return;
 
-        if (rumeursValides.length === 0) {
-            console.warn('⚠️ Aucune rumeur valide à tirer');
-            return;
-        }
-
-        // Tirer une rumeur aléatoire
         const randomIndex = Math.floor(Math.random() * rumeursValides.length);
-        const randomRumeur = rumeursValides[randomIndex];
+        const rumeurTiree = rumeursValides[randomIndex];
 
-        console.log(`🎲 Rumeur tirée (index ${randomIndex}):`, randomRumeur.substring(0, 50) + '...');
+        const resultDiv = document.getElementById('rumeur-random-result');
+        const contentDiv = document.getElementById('rumeur-random-content');
 
-        // Afficher le résultat
-        const resultContainer = document.getElementById('rumeur-random-result');
-        const resultContent = document.getElementById('rumeur-random-content');
+        if (resultDiv && contentDiv) {
+            // Générer un hash pour cette rumeur
+            const resultHash = window.randomTablesManager ?
+                window.randomTablesManager.generateResultHash(`${this.currentItem.name}::Rumeurs`, rumeurTiree) :
+                `rumeur_random`;
+            const isChecked = window.randomTablesManager && window.randomTablesManager.checkedResults[resultHash] || false;
 
-        if (resultContainer && resultContent) {
-            resultContent.innerHTML = this.renderMarkdown(randomRumeur);
-            resultContainer.classList.remove('hidden');
-            console.log(`✅ Rumeur affichée dans le conteneur`);
-        } else {
-            console.error('❌ Conteneurs de résultat non trouvés');
+            contentDiv.innerHTML = `
+                <input type="checkbox"
+                       class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer"
+                       data-result-hash="${resultHash}"
+                       ${isChecked ? 'checked' : ''}
+                       onchange="window.randomTablesManager && window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
+                <div class="flex-1">${this.renderMarkdown(rumeurTiree)}</div>
+            `;
+            resultDiv.classList.remove('hidden');
+
+            // Scroller vers le résultat
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
 
@@ -1993,6 +1993,8 @@ class InfoBoxManager {
 
         // Formater le résultat pour l'affichage
         let formattedResult = '';
+        let rawContent = '';
+        
         if (typeof result === 'object' && result !== null) {
             // Si c'est un objet, formater les propriétés
             const entries = Object.entries(result);
@@ -2003,6 +2005,7 @@ class InfoBoxManager {
 
             if (otherEntries.length > 0) {
                 const [mainKey, mainValue] = otherEntries[0];
+                rawContent = mainValue;
 
                 // Afficher la valeur principale avec le dé du destin entre parenthèses si présent
                 if (fateEntry) {
@@ -2017,32 +2020,39 @@ class InfoBoxManager {
                     formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
                 }
             } else if (fateEntry) {
+                rawContent = fateEntry[1];
                 formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
             }
         } else {
             // Si c'est une chaîne simple
+            rawContent = result;
             formattedResult = `<span style="font-weight: 600;">${result}</span>`;
         }
 
-        // Afficher le résultat dans un conteneur dédié
-        const resultContainer = document.getElementById(`table-result-${tableIndex}`);
-        const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
+        // Générer un hash unique pour ce résultat
+        const resultHash = window.randomTablesManager ? 
+            window.randomTablesManager.generateResultHash(table.name, rawContent) : 
+            `result_${Date.now()}`;
+        const isChecked = window.randomTablesManager && window.randomTablesManager.checkedResults[resultHash] || false;
 
-        console.log(`📦 [DEBUG] Conteneurs DOM:`, {
-            resultContainer: !!resultContainer,
-            resultContent: !!resultContent
-        });
+        // Préparer le HTML du résultat avec checkbox
+        const resultHtml = `
+            <div class="p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
+                <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat (${randomIndex + 1}/${table.entries.length}) :</div>
+                <div class="flex items-start gap-3" style="color: #1f2937;">
+                    <input type="checkbox" 
+                           class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
+                           data-result-hash="${resultHash}"
+                           ${isChecked ? 'checked' : ''}
+                           onchange="window.randomTablesManager && window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
+                    <div class="flex-1">${formattedResult}</div>
+                </div>
+            </div>
+        `;
 
-        if (resultContainer && resultContent) {
-            // Formater avec le nom de la table et un saut de ligne
-            resultContent.innerHTML = `
-                <div style="color: #940000; font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">${table.name || 'Table aléatoire'}</div>
-                <div>${formattedResult}</div>
-            `;
-            resultContainer.classList.remove('hidden');
-            console.log(`✅ [DEBUG] Résultat affiché dans le DOM`);
-        } else {
-            console.error(`❌ [DEBUG] Conteneurs introuvables pour table-result-${tableIndex}`);
+        // Utiliser la modale de résultat (même méthode que RandomTablesManager)
+        if (window.randomTablesManager) {
+            window.randomTablesManager.showResult(table.name, resultHtml);
         }
 
         console.log(`🎲 Tirage sur "${table.name}":`, result);
@@ -2753,102 +2763,6 @@ class InfoBoxManager {
         console.log(`🗺️ [renderLieuxRegionsTabRead] ========== FIN DU RENDU ==========`);
     }
 
-
-    renderPersonnagesTabEdit() {
-        const personnagesTab = document.getElementById('personnages-tab');
-        if (!personnagesTab) return;
-
-        // Récupérer les IDs des personnages associés et les normaliser en String
-        const associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
-
-        if (!window.charactersManager || !window.charactersManager.characters) {
-            personnagesTab.innerHTML = `
-                <div class="edit-form p-4">
-                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>
-                    <div class="flex space-x-2 mt-4">
-                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-save mr-1"></i>Sauvegarder
-                        </button>
-                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-times mr-1"></i>Annuler
-                        </button>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
-        // Filtrer les personnages de la carte active et trier par ordre alphabétique
-        const activeMapId = window.settingsManager?.activeMapUrl;
-        const availableCharacters = window.charactersManager.characters
-            .filter(char => !char.mapId || !activeMapId || char.mapId === activeMapId)
-            .sort((a, b) => a.name.localeCompare(b.name));
-
-        if (availableCharacters.length === 0) {
-            personnagesTab.innerHTML = `
-                <div class="edit-form p-4">
-                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible sur cette carte</p>
-                    <div class="flex space-x-2 mt-4">
-                        <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-save mr-1"></i>Sauvegarder
-                        </button>
-                        <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
-                            <i class="fas fa-times mr-1"></i>Annuler
-                        </button>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
-        const html = `
-            <div class="edit-form p-4">
-                <div class="space-y-2 mb-4">
-                    ${availableCharacters.map(character => {
-                        const isAssociated = associatedCharacterIds.includes(String(character.id));
-                        const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-                        const type = character.type === 'PJ' ? 'Joueur' : (character.type === 'PNJ' ? 'PNJ' : 'Autre');
-                        const typeClass = character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600';
-                        const borderClass = character.type === 'PJ' ? 'border-blue-500' : 'border-green-500';
-
-                        return `
-                            <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors group">
-                                <input type="checkbox"
-                                       value="${character.id}"
-                                       data-character-id="${character.id}"
-                                       ${isAssociated ? 'checked' : ''}
-                                       class="form-checkbox h-5 w-5 text-blue-600 character-checkbox">
-                                ${thumbnailImage ? `
-                                    <img src="${thumbnailImage.url}" alt="${character.name}"
-                                         class="w-12 h-12 rounded-full object-cover border-2 ${borderClass}">
-                                ` : `
-                                    <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
-                                        <i class="fas fa-user text-xl text-gray-400"></i>
-                                    </div>
-                                `}
-                                <div class="flex-1">
-                                    <div class="font-medium text-white">${character.name}</div>
-                                    <span class="inline-block px-2 py-0.5 text-xs rounded ${typeClass} text-white">
-                                        ${type}
-                                    </span>
-                                </div>
-                            </label>
-                        `;
-                    }).join('')}
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                        <i class="fas fa-save mr-1"></i>Sauvegarder
-                    </button>
-                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
-                        <i class="fas fa-times mr-1"></i>Annuler
-                    </button>
-                </div>
-            </div>
-        `;
-
-        personnagesTab.innerHTML = html;
-    }
 
     renderLieuxRegionsTabEdit() {
         const lieuxRegionsContent = document.getElementById('lieux-regions-content');

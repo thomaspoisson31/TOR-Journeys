@@ -29,6 +29,7 @@ import JournalManager from './managers/journal-manager.js';
 import AdventureManager from './managers/adventure-manager.js';
 import LibraryManager from './managers/library-manager.js';
 import CharactersManager from './managers/characters-manager.js'; // Import du CharactersManager
+import RandomTablesManager from './managers/random-tables-manager.js'; // Import du RandomTablesManager
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -93,6 +94,7 @@ let positionManager;
 let journalManager;
 let adventureManager;
 let charactersManager; // Déclaration du CharactersManager
+let randomTablesManager; // Déclaration du RandomTablesManager
 
 console.log("✅ Global variables initialized");
 
@@ -122,23 +124,32 @@ function updateToolbarButtonsVisibility() {
     // Boutons à masquer quand le mode aventure est INACTIF
     const drawModeBtn = document.getElementById('draw-mode');
     const journalBtn = document.getElementById('journal-btn');
+    const randomRollBtn = document.getElementById('random-roll-btn');
 
     // Boutons à masquer quand le mode aventure est ACTIF
     const addLocationBtn = document.getElementById('add-location-mode');
     const addRegionBtn = document.getElementById('add-region-mode');
+    const filterBtn = document.getElementById('filter-btn');
+    const settingsBtn = document.getElementById('settings-btn');
 
     if (adventureMode) {
-        // Mode aventure ACTIF : masquer ajout lieu/région, afficher tracé/journal
+        // Mode aventure ACTIF : masquer ajout lieu/région/filtres/paramètres, afficher tracé/journal/tirage
         if (drawModeBtn) drawModeBtn.classList.remove('hidden');
         if (journalBtn) journalBtn.classList.remove('hidden');
+        if (randomRollBtn) randomRollBtn.classList.remove('hidden');
         if (addLocationBtn) addLocationBtn.classList.add('hidden');
         if (addRegionBtn) addRegionBtn.classList.add('hidden');
+        if (filterBtn) filterBtn.classList.add('hidden');
+        if (settingsBtn) settingsBtn.classList.add('hidden');
     } else {
-        // Mode aventure INACTIF : masquer tracé/journal, afficher ajout lieu/région
+        // Mode aventure INACTIF : masquer tracé/journal/tirage, afficher ajout lieu/région/filtres/paramètres
         if (drawModeBtn) drawModeBtn.classList.add('hidden');
         if (journalBtn) journalBtn.classList.add('hidden');
+        if (randomRollBtn) randomRollBtn.classList.add('hidden');
         if (addLocationBtn) addLocationBtn.classList.remove('hidden');
         if (addRegionBtn) addRegionBtn.classList.remove('hidden');
+        if (filterBtn) filterBtn.classList.remove('hidden');
+        if (settingsBtn) settingsBtn.classList.remove('hidden');
     }
 
     console.log(`🎮 Visibilité des boutons mise à jour - Mode Aventure: ${adventureMode ? 'Actif' : 'Inactif'}`);
@@ -840,6 +851,12 @@ function initializeMap() {
     charactersManager.init();
     window.charactersManager = charactersManager; // Exposer globalement
     console.log("✅ CharactersManager initialized");
+
+    // Initialiser RandomTablesManager
+    randomTablesManager = new RandomTablesManager();
+    randomTablesManager.init();
+    window.randomTablesManager = randomTablesManager; // Exposer globalement
+    console.log("✅ RandomTablesManager initialized");
 
     // LibraryManager supprimé - fonctionnalité intégrée dans les modales
 
