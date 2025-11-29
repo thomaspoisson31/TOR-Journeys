@@ -1283,41 +1283,56 @@ class InfoBoxManager {
     }
 
     addRumeurInEdit() {
-        const list = document.getElementById('edit-rumeurs-list');
-        if (!list) return;
+        const rumeursList = document.getElementById('edit-rumeurs-list');
+        if (!rumeursList) return;
 
-        // Supprimer le message "Aucune rumeur" s'il existe
-        const emptyMsg = list.querySelector('p.text-gray-400');
-        if (emptyMsg) emptyMsg.remove();
+        // Compter le nombre de rumeurs actuelles
+        const currentRumeurs = rumeursList.querySelectorAll('.edit-rumeur-input');
+        const newIndex = currentRumeurs.length;
 
-        // Compter le nombre de rumeurs existantes
-        const existingRumeurs = list.querySelectorAll('[data-rumeur-index]');
-        const newIndex = existingRumeurs.length;
-
+        // Créer le HTML pour la nouvelle rumeur
         const newRumeurHTML = `
             <div class="flex items-start space-x-2 mb-2" data-rumeur-index="${newIndex}">
-                <textarea rows="3" class="flex-1 p-2 border rounded bg-white text-black text-sm border-gray-600 edit-rumeur-input" data-index="${newIndex}" placeholder="Nouvelle rumeur..."></textarea>
+                <textarea rows="3" class="flex-1 p-2 border rounded bg-white text-black text-sm border-gray-600 edit-rumeur-input" data-index="${newIndex}" placeholder="Entrez une nouvelle rumeur..."></textarea>
                 <button onclick="window.infoBoxManager.deleteRumeurInEdit(${newIndex})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
         `;
-        list.insertAdjacentHTML('beforeend', newRumeurHTML);
+
+        // Supprimer le message "Aucune rumeur" s'il existe
+        const noRumeursMsg = rumeursList.querySelector('.text-gray-400.italic');
+        if (noRumeursMsg) {
+            noRumeursMsg.remove();
+        }
+
+        // Ajouter la nouvelle rumeur
+        rumeursList.insertAdjacentHTML('beforeend', newRumeurHTML);
     }
 
     deleteRumeurInEdit(index) {
-        const list = document.getElementById('edit-rumeurs-list');
-        if (!list) return;
+        const rumeursList = document.getElementById('edit-rumeurs-list');
+        if (!rumeursList) return;
 
-        const rumeurDiv = list.querySelector(`[data-rumeur-index="${index}"]`);
-        if (rumeurDiv) {
-            rumeurDiv.remove();
-        }
+        // Trouver et supprimer l'élément correspondant
+        const rumeurElement = rumeursList.querySelector(`[data-rumeur-index="${index}"]`);
+        if (rumeurElement) {
+            rumeurElement.remove();
 
-        // Si plus aucune rumeur, afficher le message
-        const remainingRumeurs = list.querySelectorAll('[data-rumeur-index]');
-        if (remainingRumeurs.length === 0) {
-            list.innerHTML = '<p class="text-gray-400 italic text-sm">Aucune rumeur. Cliquez sur "Ajouter une rumeur" ci-dessous.</p>';
+            // Réindexer les rumeurs restantes
+            const remainingRumeurs = rumeursList.querySelectorAll('[data-rumeur-index]');
+            remainingRumeurs.forEach((element, newIndex) => {
+                element.setAttribute('data-rumeur-index', newIndex);
+                const textarea = element.querySelector('textarea');
+                const deleteBtn = element.querySelector('button');
+                if (textarea) textarea.setAttribute('data-index', newIndex);
+                if (deleteBtn) deleteBtn.setAttribute('onclick', `window.infoBoxManager.deleteRumeurInEdit(${newIndex})`);
+            });
+
+            // Si plus aucune rumeur, afficher le message
+            if (remainingRumeurs.length === 0) {
+                rumeursList.innerHTML = '<p class="text-gray-400 italic text-sm">Aucune rumeur. Cliquez sur "Ajouter une rumeur" ci-dessous.</p>';
+            }
         }
     }
 
@@ -1329,87 +1344,55 @@ class InfoBoxManager {
         reader.onload = (e) => {
             try {
                 const jsonData = JSON.parse(e.target.result);
+                
+                // Déterminer si c'est un tableau de rumeurs ou un objet avec une propriété "Rumeurs"
+                let importedRumeurs = [];
+                if (Array.isArray(jsonData)) {
+                    importedRumeurs = jsonData;
+                } else if (jsonData.Rumeurs && Array.isArray(jsonData.Rumeurs)) {
+                    importedRumeurs = jsonData.Rumeurs;
+                } else {
+                    throw new Error('Format JSON invalide. Attendu : tableau de rumeurs ou objet avec propriété "Rumeurs"');
+                }
 
-                if (!Array.isArray(jsonData)) {
-                    alert('Format invalide : le fichier doit contenir un tableau JSON');
+                // Filtrer les rumeurs valides
+                const rumeursValides = importedRumeurs.filter(r => r && r !== "A définir");
+
+                if (rumeursValides.length === 0) {
+                    alert('Aucune rumeur valide trouvée dans le fichier JSON.');
                     return;
                 }
 
-                const list = document.getElementById('edit-rumeurs-list');
-                if (!list) return;
+                // Remplacer le contenu de la liste des rumeurs
+                const rumeursList = document.getElementById('edit-rumeurs-list');
+                if (!rumeursList) return;
 
-                // Supprimer le message "Aucune rumeur" s'il existe
-                const emptyMsg = list.querySelector('p.text-gray-400');
-                if (emptyMsg) emptyMsg.remove();
+                const rumeursHTML = rumeursValides.map((rumeur, index) => `
+                    <div class="flex items-start space-x-2 mb-2" data-rumeur-index="${index}">
+                        <textarea rows="3" class="flex-1 p-2 border rounded bg-white text-black text-sm border-gray-600 edit-rumeur-input" data-index="${index}">${rumeur}</textarea>
+                        <button onclick="window.infoBoxManager.deleteRumeurInEdit(${index})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
 
-                // Compter le nombre de rumeurs existantes
-                const existingRumeurs = list.querySelectorAll('[data-rumeur-index]');
-                let startIndex = existingRumeurs.length;
+                rumeursList.innerHTML = rumeursHTML;
 
-                // Extraire les rumeurs du JSON
-                const nouvelles = [];
-                jsonData.forEach(entry => {
-                    let rumeurText = '';
-
-                    // Format table aléatoire : chercher la clé "Résultat"
-                    if (typeof entry === 'object' && entry !== null) {
-                        if (entry.Résultat) {
-                            rumeurText = entry.Résultat;
-                        } else if (entry.Result) {
-                            rumeurText = entry.Result;
-                        } else {
-                            // Prendre la première valeur non-vide qui n'est pas "Dé du destin"
-                            const keys = Object.keys(entry);
-                            for (const key of keys) {
-                                if (!key.toLowerCase().includes('destin') &&
-                                    !key.toLowerCase().includes('fate') &&
-                                    !key.toLowerCase().includes('dé') &&
-                                    entry[key]) {
-                                    rumeurText = entry[key];
-                                    break;
-                                }
-                            }
-                        }
-                    } else if (typeof entry === 'string') {
-                        // Format simple : tableau de strings
-                        rumeurText = entry;
-                    }
-
-                    if (rumeurText && rumeurText.trim()) {
-                        nouvelles.push(rumeurText.trim());
-                    }
-                });
-
-                if (nouvelles.length === 0) {
-                    alert('Aucune rumeur valide trouvée dans le fichier JSON');
-                    return;
-                }
-
-                // Ajouter les nouvelles rumeurs
-                nouvelles.forEach((rumeur, idx) => {
-                    const newIndex = startIndex + idx;
-                    const newRumeurHTML = `
-                        <div class="flex items-start space-x-2 mb-2" data-rumeur-index="${newIndex}">
-                            <textarea rows="3" class="flex-1 p-2 border rounded bg-white text-black text-sm border-gray-600 edit-rumeur-input" data-index="${newIndex}">${rumeur}</textarea>
-                            <button onclick="window.infoBoxManager.deleteRumeurInEdit(${newIndex})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    `;
-                    list.insertAdjacentHTML('beforeend', newRumeurHTML);
-                });
-
-                console.log(`✅ ${nouvelles.length} rumeur(s) importée(s) depuis JSON`);
-                alert(`${nouvelles.length} rumeur(s) ajoutée(s) avec succès`);
-
+                alert(`✅ ${rumeursValides.length} rumeur(s) importée(s) avec succès.`);
+                
             } catch (error) {
-                console.error('❌ Erreur lors de l\'import:', error);
-                alert('Erreur lors de la lecture du fichier JSON: ' + error.message);
+                console.error('❌ Erreur lors de l\'import JSON:', error);
+                alert(`Erreur lors de l'import du fichier JSON: ${error.message}`);
             }
         };
+
+        reader.onerror = () => {
+            alert('Erreur lors de la lecture du fichier.');
+        };
+
         reader.readAsText(file);
 
-        // Reset le champ
+        // Réinitialiser l'input pour permettre de réimporter le même fichier
         event.target.value = '';
     }
 
