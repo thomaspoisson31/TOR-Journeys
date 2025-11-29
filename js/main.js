@@ -227,11 +227,18 @@ async function initializeApp() {
 
         console.log("✅ AuthManager initialized");
 
+        // Initialiser GeminiManager
+        const GeminiManager = (await import('./managers/gemini-manager.js')).default;
+        const geminiManager = new GeminiManager();
+        window.geminiManager = geminiManager; // Exposer globalement
+        window.geminiApi = geminiManager; // Alias pour compatibilité
+        console.log("✅ GeminiManager initialized");
+
         // Initialiser InfoBoxManager
         infoBoxManager = new InfoBoxManager(
             { getElementById: (id) => document.getElementById(id) },
             dataManager,
-            window.geminiManager
+            geminiManager
         );
         window.infoBoxManager = infoBoxManager; // Exposer globalement pour les onclick
         console.log("✅ InfoBoxManager initialized");
@@ -1630,6 +1637,7 @@ function setupLocationAdding() {
     const confirmBtn = document.getElementById('confirm-add-location');
     const generateDescBtn = document.getElementById('generate-add-desc');
     const generateEditDescBtn = document.getElementById('generate-edit-desc'); // Bouton pour la modale d'édition
+    const uploadImageBtn = document.getElementById('upload-location-image'); // Bouton pour uploader une image
 
     if (addLocationBtn) {
         addLocationBtn.addEventListener('click', toggleLocationAddingMode);
@@ -1652,6 +1660,12 @@ function setupLocationAdding() {
     if (generateEditDescBtn) {
         generateEditDescBtn.addEventListener('click', handleGenerateLocationDescription); // Utilise la même fonction
         console.log("✅ Generate edit description button configured");
+    }
+
+    // Gestion de l'upload d'image pour le lieu
+    if (uploadImageBtn) {
+        uploadImageBtn.addEventListener('click', openLibrarySelection);
+        console.log("✅ Upload image button configured");
     }
 
     // Setup de la modale de sélection de bibliothèque
@@ -1735,15 +1749,14 @@ function showLocationCreationModal() {
     const modal = document.getElementById('add-location-modal');
     const nameInput = document.getElementById('location-name-input');
     const descInput = document.getElementById('location-desc-input');
-    const imageInput = document.getElementById('location-image-input');
     const knownInput = document.getElementById('location-known-input');
     const visitedInput = document.getElementById('location-visited-input');
+    const selectedImagesContainer = document.getElementById('selected-library-images');
 
     if (modal) {
         // Réinitialiser les champs
         if (nameInput) nameInput.value = '';
         if (descInput) descInput.value = '';
-        if (imageInput) imageInput.value = '';
         if (knownInput) knownInput.checked = true;
         if (visitedInput) visitedInput.checked = false;
 
@@ -1754,6 +1767,14 @@ function showLocationCreationModal() {
                 swatch.classList.remove('selected');
             });
             firstColorSwatch.classList.add('selected');
+        }
+
+        // Réinitialiser les images sélectionnées
+        window.pendingLocationImages = [];
+        selectedLibraryImages = [];
+        if (selectedImagesContainer) {
+            selectedImagesContainer.classList.add('hidden');
+            document.getElementById('selected-images-list').innerHTML = '';
         }
 
         modal.classList.remove('hidden');
@@ -1783,10 +1804,10 @@ function cancelLocationCreation() {
 function confirmLocationCreation() {
     const nameInput = document.getElementById('location-name-input');
     const descInput = document.getElementById('location-desc-input');
-    const imageInput = document.getElementById('location-image-input');
     const knownInput = document.getElementById('location-known-input');
     const visitedInput = document.getElementById('location-visited-input');
     const selectedColorSwatch = document.querySelector('#add-color-picker .color-swatch.selected');
+    const selectedImagesContainer = document.getElementById('selected-library-images');
 
     if (!nameInput || !nameInput.value.trim()) {
         alert("Veuillez entrer un nom pour le lieu.");
@@ -1861,9 +1882,8 @@ function confirmLocationCreation() {
     selectedLibraryImages = [];
 
     // Cacher le conteneur d'images sélectionnées
-    const container = document.getElementById('selected-library-images');
-    if (container) {
-        container.classList.add('hidden');
+    if (selectedImagesContainer) {
+        selectedImagesContainer.classList.add('hidden');
     }
 
     console.log("✅ Location created successfully:", locationName);
