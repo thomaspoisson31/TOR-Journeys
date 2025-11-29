@@ -530,51 +530,88 @@ class CharactersManager {
             const activeMapName = window.settingsManager?.activeMapName || 'Carte inconnue';
             
             // Obtenir les détails de la carte active (région, lieu)
-            const currentLoc = window.mapManager?.getMarkerPosition() || { x: 0, y: 0 }; // Position du marqueur (50px près)
-            const activeLocation = window.locationsManager?.getLocationAt(currentLoc.x, currentLoc.y, true); // Cherche le lieu le plus proche
-            const activeRegion = activeLocation ? window.regionsManager?.getRegionContaining(activeLocation.id) : null;
+            const currentPos = window.positionManager?.currentPosition || { x: 0, y: 0 }; // Position du marqueur de position
+            
+            // Chercher le lieu le plus proche (à 50 pixels près)
+            let activeLocation = null;
+            let minDistance = 50; // Seuil de proximité
+            
+            if (window.locationsData && window.locationsData.locations) {
+                window.locationsData.locations.forEach(location => {
+                    const dx = location.coordinates.x - currentPos.x;
+                    const dy = location.coordinates.y - currentPos.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        activeLocation = location;
+                    }
+                });
+            }
+            
+            // Chercher la région contenant le lieu ou la position
+            let activeRegion = null;
+            if (window.regionsData && window.regionsData.regions) {
+                window.regionsData.regions.forEach(region => {
+                    if (region.coordinates && Array.isArray(region.coordinates)) {
+                        // Vérifier si le point est dans le polygone
+                        const point = activeLocation ? activeLocation.coordinates : currentPos;
+                        if (this.isPointInPolygon(point, region.coordinates)) {
+                            activeRegion = region;
+                        }
+                    }
+                });
+            }
 
             // 2. Construire le prompt pour Gemini
-            let prompt = `Génère une description pour un personnage de jeu de rôle.\n\n`;
+            let prompt = `Tu es un assistant spécialisé dans la création de personnages pour des jeux de rôle dans l'univers de la Terre du Milieu (Tolkien).\n\n`;
+            prompt += `Génère une description immersive et cohérente pour un personnage avec les informations suivantes :\n\n`;
 
             // a- Type de personnage
-            prompt += `Type de personnage : ${characterType === 'PJ' ? 'Personnage Joueur' : characterType === 'PNJ' ? 'Personnage Non Joueur' : 'Monstre'}.\n`;
+            prompt += `**Type** : ${characterType === 'PJ' ? 'Personnage Joueur' : characterType === 'PNJ' ? 'Personnage Non Joueur' : 'Monstre'}\n\n`;
 
-            // b- Contexte de la carte active
-            prompt += `Contexte actuel :\n`;
-            prompt += `- Carte : ${activeMapName}\n`;
+            // b- Contexte de localisation
+            prompt += `**Contexte géographique** :\n`;
+            prompt += `- Carte actuelle : ${activeMapName}\n`;
             if (activeRegion) {
                 prompt += `- Région : ${activeRegion.name}\n`;
             }
             if (activeLocation) {
-                prompt += `- Lieu : ${activeLocation.name}\n`;
+                prompt += `- Lieu proche : ${activeLocation.name}\n`;
             }
-            prompt += `Position approximative du marqueur : (${currentLoc.x}px, ${currentLoc.y}px).\n`;
+            prompt += `- Position approximative : (${Math.round(currentPos.x)}, ${Math.round(currentPos.y)})\n\n`;
 
             // c- Nom et description existante du personnage
             if (characterName) {
-                prompt += `- Nom du personnage : ${characterName}\n`;
+                prompt += `**Nom** : ${characterName}\n\n`;
             }
             if (characterDescriptionInput) {
-                prompt += `- Description existante : ${characterDescriptionInput}\n`;
+                prompt += `**Description déjà existante** : ${characterDescriptionInput}\n\n`;
             }
 
-            prompt += `\nLa réponse doit être une description de personnage de maximum 3 paragraphes, incluant:\n`;
-            prompt += `- L'origine précise du personnage (ex: "Un Nain des Montagnes Bleues").\n`;
-            prompt += `- Son occupation.\n`;
-            prompt += `- Une idée de ce qu'il cherche / désire actuellement et pourquoi il se trouve là.\n`;
-            prompt += `\nFormat de la réponse attendue (uniquement la description générée) :\n`;
+            prompt += `**Instructions** :\n`;
+            prompt += `- Génère une description de **maximum 3 paragraphes**\n`;
+            prompt += `- Inclus obligatoirement :\n`;
+            prompt += `  1. L'origine précise du personnage (ex: "Un Nain des Montagnes Bleues", "Un Rôdeur du Gondor")\n`;
+            prompt += `  2. Son occupation actuelle\n`;
+            prompt += `  3. Ce qu'il cherche/désire actuellement et pourquoi il se trouve dans cette région\n`;
+            prompt += `- Reste cohérent avec l'univers de Tolkien\n`;
+            prompt += `- Sois concis et immersif\n\n`;
+            prompt += `**Réponds UNIQUEMENT avec la description, sans titre ni formatage supplémentaire.**`;
 
-            // 3. Appeler l'API Gemini (à implémenter ou à supposer qu'elle existe)
-            // Assurez-vous que `window.geminiApi.generateContent` existe et fonctionne
-            const response = await window.geminiApi.generateContent(prompt);
+            // Log du prompt pour debug
+            console.log("🤖 [CharactersManager] Prompt envoyé à Gemini :");
+            console.log(prompt);
 
-            if (response && response.text) {
-                const generatedDescription = response.text.trim();
-                document.getElementById('character-desc-input').value = generatedDescription;
+            // 3. Appeler l'API Gemini
+            const generatedDescription = await window.geminiManager.generateContent(prompt, null, 'character_description');
+
+            if (generatedDescription && typeof generatedDescription === 'string') {
+                document.getElementById('character-desc-input').value = generatedDescription.trim();
                 this.showNotification("Description générée", "La description du personnage a été générée par Gemini.", "success");
+                console.log("✅ Description générée avec succès");
             } else {
-                console.error("❌ Gemini API response invalid:", response);
+                console.error("❌ Gemini API response invalid:", generatedDescription);
                 this.showNotification("Erreur de génération", "Impossible de générer la description avec Gemini. Réponse invalide.", "error");
             }
 
@@ -1020,6 +1057,20 @@ class CharactersManager {
             console.error("❌ Erreur lors de la suppression des personnages:", error);
             this.showNotification("Erreur", "Impossible de supprimer les personnages: " + error.message, "error");
         }
+    }
+
+    // Fonction utilitaire pour vérifier si un point est dans un polygone
+    isPointInPolygon(point, polygon) {
+        let inside = false;
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            const xi = polygon[i].x, yi = polygon[i].y;
+            const xj = polygon[j].x, yj = polygon[j].y;
+            
+            const intersect = ((yi > point.y) !== (yj > point.y))
+                && (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
+        }
+        return inside;
     }
 
     // Méthode pour récupérer toutes les données (pour synchronisation)
