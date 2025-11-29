@@ -756,6 +756,18 @@ class CharactersManager {
             this.showNotification("Import réussi", `${importedCharacters.length} personnage(s) importé(s) (mode: ${mode})`, "success");
             console.log(`✅ Import terminé: ${importedCharacters.length} personnages`);
 
+            // IMPORTANT: Forcer une synchronisation cloud immédiate après l'import
+            if (window.authManager && window.authManager.isAuthenticated) {
+                console.log("☁️ [Import] Synchronisation cloud forcée après import");
+                window.authManager.syncUserData().then(() => {
+                    console.log("✅ [Import] Données synchronisées avec le cloud");
+                    this.showNotification("Sauvegarde cloud", "Personnages sauvegardés dans le cloud", "success");
+                }).catch((error) => {
+                    console.error("❌ [Import] Erreur lors de la synchro cloud:", error);
+                    this.showNotification("Attention", "Import réussi mais erreur de synchro cloud - cliquez sur le bouton cloud", "error");
+                });
+            }
+
         } catch (error) {
             console.error("❌ Erreur lors du traitement de l'import:", error);
             this.showNotification("Erreur d'import", error.message, "error");
