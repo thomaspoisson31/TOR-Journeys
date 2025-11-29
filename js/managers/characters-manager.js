@@ -66,7 +66,10 @@ class CharactersManager {
         // Input file pour l'import
         const importFileInput = document.getElementById('import-characters-input');
         if (importFileInput) {
-            importFileInput.addEventListener('change', (event) => this.handleImportCharacters(event));
+            // Retirer les anciens écouteurs pour éviter les doublons
+            importFileInput.replaceWith(importFileInput.cloneNode(true));
+            const newImportFileInput = document.getElementById('import-characters-input');
+            newImportFileInput.addEventListener('change', (event) => this.handleImportCharacters(event));
         }
 
         // Boutons de la modale d'ajout
@@ -642,10 +645,18 @@ class CharactersManager {
     }
 
     handleImportCharacters(event) {
+        // Vérifier si un import est déjà en cours
+        if (this.isImporting) {
+            console.log("⚠️ Import déjà en cours, ignoré");
+            return;
+        }
+
         const file = event.target.files[0];
         console.log("📥 Fichier sélectionné:", file ? file.name : "aucun");
 
         if (!file) return;
+
+        this.isImporting = true;
 
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -655,6 +666,7 @@ class CharactersManager {
 
                 if (!importedData.characters || !Array.isArray(importedData.characters)) {
                     this.showNotification("Import échoué", "Format de fichier invalide. Attendu: { characters: [...] }", "error");
+                    this.isImporting = false;
                     return;
                 }
 
@@ -667,6 +679,7 @@ class CharactersManager {
             } catch (err) {
                 console.error("❌ Erreur lors de l'import:", err);
                 this.showNotification("Erreur d'import", "Fichier JSON invalide: " + err.message, "error");
+                this.isImporting = false;
             }
 
             // Nettoyer l'input
@@ -677,13 +690,30 @@ class CharactersManager {
     }
 
     showImportCharactersModal(importedCharacters) {
-        const message = `Voulez-vous importer ${importedCharacters.length} personnage(s) ?\n\n` +
-                       `Remplacer : Supprime tous les personnages existants\n` +
-                       `Fusionner : Ajoute les nouveaux personnages`;
+        // Vérifier si les personnages ont des mapId différents de la carte active
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const differentMapIds = new Set();
+        
+        importedCharacters.forEach(char => {
+            if (char.mapId && char.mapId !== activeMapId) {
+                differentMapIds.add(char.mapId);
+            }
+        });
+
+        let message = `Voulez-vous importer ${importedCharacters.length} personnage(s) ?\n\n`;
+        
+        if (differentMapIds.size > 0) {
+            message += `⚠️ ATTENTION : Ces personnages proviennent d'une autre carte.\n`;
+            message += `Ils seront réassignés à la carte active actuelle.\n\n`;
+        }
+        
+        message += `Remplacer : Supprime tous les personnages existants\n`;
+        message += `Fusionner : Ajoute les nouveaux personnages`;
 
         const userChoice = confirm(message + "\n\nOK = Remplacer, Annuler pour choisir Fusionner");
 
         if (userChoice === null) {
+            this.isImporting = false;
             return; // Annulation complète
         }
 
@@ -762,15 +792,20 @@ class CharactersManager {
                 window.authManager.syncUserData().then(() => {
                     console.log("✅ [Import] Données synchronisées avec le cloud");
                     this.showNotification("Sauvegarde cloud", "Personnages sauvegardés dans le cloud", "success");
+                    this.isImporting = false;
                 }).catch((error) => {
                     console.error("❌ [Import] Erreur lors de la synchro cloud:", error);
                     this.showNotification("Attention", "Import réussi mais erreur de synchro cloud - cliquez sur le bouton cloud", "error");
+                    this.isImporting = false;
                 });
+            } else {
+                this.isImporting = false;
             }
 
         } catch (error) {
             console.error("❌ Erreur lors du traitement de l'import:", error);
             this.showNotification("Erreur d'import", error.message, "error");
+            this.isImporting = false;
         }
     }
 
