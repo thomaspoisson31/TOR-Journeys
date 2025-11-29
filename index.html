@@ -463,7 +463,12 @@
                     </div>
                     <div>
                         <label for="character-desc-input" class="block text-sm font-medium text-gray-300">Description</label>
-                        <textarea id="character-desc-input" rows="3" class="mt-1 block w-full bg-gray-800 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                        <div class="flex items-start space-x-2">
+                            <textarea id="character-desc-input" rows="3" class="mt-1 block w-full bg-gray-800 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                            <button id="generate-character-desc" class="mt-1 p-2 bg-purple-600 hover:bg-purple-700 rounded-md flex-shrink-0" title="Générer une description avec Gemini">
+                                <span class="gemini-icon">✨</span>
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Type</label>
