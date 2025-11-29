@@ -513,6 +513,20 @@ class SettingsManager {
                             ${isActive ? '<div class="text-xs text-blue-400 mb-2"><i class="fas fa-check-circle mr-1"></i>Carte active</div>' : '<div class="text-xs text-gray-500 mb-2">Cliquer pour activer</div>'}
 
                             ${isActive ? `
+                            <div class="flex gap-2 mt-2">
+                                <button class="flex-1 px-2 py-1.5 bg-green-600 hover:bg-green-700 rounded text-xs flex items-center justify-center space-x-1"
+                                        onclick="event.stopPropagation(); window.settingsManager.exportMapData(${index})"
+                                        title="Exporter lieux et régions">
+                                    <i class="fas fa-download"></i>
+                                    <span>Export</span>
+                                </button>
+                                <button class="flex-1 px-2 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-xs flex items-center justify-center space-x-1"
+                                        onclick="event.stopPropagation(); window.settingsManager.importMapData(${index})"
+                                        title="Importer lieux et régions">
+                                    <i class="fas fa-upload"></i>
+                                    <span>Import</span>
+                                </button>
+                            </div>
                             <button class="w-full mt-2 px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center justify-center space-x-2 text-xs"
                                     onclick="event.stopPropagation(); window.settingsManager.deleteAllLocationsAndRegions()">
                                 <i class="fas fa-trash-alt"></i>
@@ -1626,43 +1640,6 @@ class SettingsManager {
     setupImportExportListeners() {
         console.log('⚙️ Configuration des listeners Import/Export...');
 
-        // Import/Export Lieux et Régions
-        const exportLocationsRegionsBtn = document.getElementById('export-locations-regions-btn');
-        const importLocationsRegionsBtn = document.getElementById('import-locations-regions-btn');
-        const importLocationsRegionsInput = document.getElementById('import-locations-regions-input');
-
-        console.log('📍 Boutons Lieux/Régions:', {
-            exportBtn: !!exportLocationsRegionsBtn,
-            importBtn: !!importLocationsRegionsBtn,
-            fileInput: !!importLocationsRegionsInput
-        });
-
-        if (exportLocationsRegionsBtn) {
-            exportLocationsRegionsBtn.addEventListener('click', () => {
-                console.log('📤 Export lieux/régions demandé');
-                if (window.importExportManager) {
-                    window.importExportManager.exportUnifiedData();
-                }
-            });
-        }
-
-        if (importLocationsRegionsBtn) {
-            importLocationsRegionsBtn.addEventListener('click', () => {
-                console.log('📥 Import lieux/régions demandé');
-                if (importLocationsRegionsInput) {
-                    importLocationsRegionsInput.click();
-                }
-            });
-        }
-
-        if (importLocationsRegionsInput) {
-            importLocationsRegionsInput.addEventListener('change', (event) => {
-                if (window.importExportManager) {
-                    window.importExportManager.handleImportFile(event);
-                }
-            });
-        }
-
         // Import/Export Personnages
         const exportCharactersBtn = document.getElementById('export-characters-btn');
         const importCharactersBtn = document.getElementById('import-characters-btn');
@@ -2028,6 +2005,34 @@ class SettingsManager {
         }
 
         console.log('✅ Paramètres chargés avec succès');
+    }
+
+    exportMapData(mapIndex) {
+        const map = this.availableMaps[mapIndex];
+        if (!map) return;
+
+        console.log(`📤 Export des données pour la carte: ${map.name}`);
+        
+        // Utiliser la méthode d'export de importExportManager
+        if (window.importExportManager) {
+            window.importExportManager.exportUnifiedData();
+        } else {
+            alert('Gestionnaire d\'import/export non disponible');
+        }
+    }
+
+    importMapData(mapIndex) {
+        const map = this.availableMaps[mapIndex];
+        if (!map) return;
+
+        console.log(`📥 Import des données pour la carte: ${map.name}`);
+        
+        // Déclencher l'import via importExportManager
+        if (window.importExportManager && window.importExportManager.importFileInput) {
+            window.importExportManager.importFileInput.click();
+        } else {
+            alert('Gestionnaire d\'import/export non disponible');
+        }
     }
 
     deleteAllLocationsAndRegions() {
