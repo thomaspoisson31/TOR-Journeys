@@ -515,7 +515,6 @@ class ImportExportManager {
 
         const modal = this.importModal;
         const summaryEl = modal.querySelector('#import-summary');
-        const replaceBtn = modal.querySelector('#import-replace');
         const mergeBtn = modal.querySelector('#import-merge');
         const cancelBtn = modal.querySelector('#import-cancel');
 
@@ -529,20 +528,13 @@ class ImportExportManager {
                         <li>${processedData.regions.length} région(s)</li>
                     </ul>
                     <p class="text-sm text-gray-600 mt-4">
-                        Choisissez comment traiter les données existantes :
+                        Les données importées seront fusionnées avec les données existantes. Les lieux et régions portant le même nom sur la même carte seront mis à jour, les nouveaux seront ajoutés.
                     </p>
                 </div>
             `;
         }
 
         // Configurer les boutons
-        if (replaceBtn) {
-            replaceBtn.onclick = () => {
-                this.processImport(processedData, 'replace');
-                this.hideImportModal();
-            };
-        }
-
         if (mergeBtn) {
             mergeBtn.onclick = () => {
                 this.processImport(processedData, 'merge');
@@ -878,9 +870,6 @@ class ImportExportManager {
                     <h3 class="text-lg font-semibold mb-4">Importer des données</h3>
                     <div id="import-summary" class="mb-6"></div>
                     <div class="flex space-x-3">
-                        <button id="import-replace" class="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                            Remplacer tout
-                        </button>
                         <button id="import-merge" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                             Fusionner
                         </button>
@@ -918,7 +907,6 @@ class ImportExportManager {
     setupImportModal() {
         if (this.importModal) {
             // Setup des event listeners si la modal existe déjà
-            const replaceBtn = this.importModal.querySelector('#import-replace');
             const mergeBtn = this.importModal.querySelector('#import-merge');
             const cancelBtn = this.importModal.querySelector('#import-cancel');
 
