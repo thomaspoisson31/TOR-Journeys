@@ -29,7 +29,6 @@ import JournalManager from './managers/journal-manager.js';
 import AdventureManager from './managers/adventure-manager.js';
 import LibraryManager from './managers/library-manager.js';
 import CharactersManager from './managers/characters-manager.js'; // Import du CharactersManager
-import RandomTablesManager from './managers/random-tables-manager.js'; // Import du RandomTablesManager
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -94,7 +93,6 @@ let positionManager;
 let journalManager;
 let adventureManager;
 let charactersManager; // Déclaration du CharactersManager
-let randomTablesManager; // Déclaration du RandomTablesManager
 
 console.log("✅ Global variables initialized");
 
@@ -842,12 +840,6 @@ function initializeMap() {
     charactersManager.init();
     window.charactersManager = charactersManager; // Exposer globalement
     console.log("✅ CharactersManager initialized");
-
-    // Initialiser RandomTablesManager
-    randomTablesManager = new RandomTablesManager();
-    randomTablesManager.init();
-    window.randomTablesManager = randomTablesManager; // Exposer globalement
-    console.log("✅ RandomTablesManager initialized");
 
     // LibraryManager supprimé - fonctionnalité intégrée dans les modales
 

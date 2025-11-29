@@ -1694,32 +1694,6 @@ body {
     background-color: #f3f4f6 !important;
 }
 
-/* Random Tables Modal */
-#random-tables-modal {
-    background-color: rgba(0, 0, 0, 0.5) !important;
-}
-
-#random-tables-modal .bg-white,
-#random-tables-modal * {
-    color: black !important;
-    font-family: 'Merriweather', serif !important;
-}
-
-#random-tables-modal i.fas,
-#random-tables-modal i.far,
-#random-tables-modal i.fab {
-    font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free' !important;
-    font-weight: 900 !important;
-}
-
-.roll-table-btn {
-    transition: all 0.2s ease;
-}
-
-.roll-table-btn:hover {
-    transform: scale(1.1);
-}
-
 /* Thumbnail inline controls */
 #info-box-thumbnail-circle {
     user-select: none;

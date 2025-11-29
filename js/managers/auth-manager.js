@@ -363,14 +363,12 @@ class AuthManager {
                 activeMapUrl: window.settingsManager?.activeMapUrl || null,
                 availableMaps: window.settingsManager?.availableMaps || []
             },
-            // Journal de voyage, objectifs et rumeurs avec états des cases
-            journal: window.journalManager ? window.journalManager.getAllData() : { journal: [], objectives: [], rumors: [], rumorsCheckboxStates: {} },
+            // Journal de voyage et objectifs
+            journal: window.journalManager ? window.journalManager.getAllData() : { journal: [], objectives: [] },
             position: JSON.parse(localStorage.getItem('adventurers_position') || 'null'),
             filtersByMap: JSON.parse(localStorage.getItem('filtersByMap') || '{}'),
             // Ajouter l'état actuel du mode aventure
-            adventureMode: window.positionManager?.adventureMode || JSON.parse(localStorage.getItem('adventurers_adventure_mode') || 'false'),
-            // Ajouter les états des cases à cocher des tirages aléatoires
-            randomTablesCheckedResults: JSON.parse(localStorage.getItem('randomTablesCheckedResults') || '{}')
+            adventureMode: window.positionManager?.adventureMode || JSON.parse(localStorage.getItem('adventurers_adventure_mode') || 'false')
         };
 
         this.logAuth(`📦 Données collectées pour le contexte`, Object.keys(data));
@@ -503,12 +501,10 @@ class AuthManager {
         // Journal de voyage et objectifs
         if (data.journal) {
             if (data.journal.journal) {
-                // Nouveau format avec journal, objectifs et rumeurs
+                // Nouveau format avec journal et objectifs
                 localStorage.setItem('travelJournal', JSON.stringify(data.journal.journal));
                 localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives || []));
-                localStorage.setItem('adventureRumors', JSON.stringify(data.journal.rumors || []));
-                localStorage.setItem('rumorsCheckboxStates', JSON.stringify(data.journal.rumorsCheckboxStates || {}));
-                console.log('[AuthManager] ✅ Journal, objectifs et rumeurs chargés depuis le cloud');
+                console.log('[AuthManager] ✅ Journal et objectifs chargés depuis le cloud');
             } else {
                 // Ancien format (rétrocompatibilité)
                 localStorage.setItem('travelJournal', JSON.stringify(data.journal));
@@ -585,15 +581,6 @@ class AuthManager {
             // Mettre à jour la visibilité des boutons
             if (window.updateToolbarButtonsVisibility) {
                 window.updateToolbarButtonsVisibility();
-            }
-        }
-
-        // Restaurer les états des cases à cocher des tirages aléatoires
-        if (data.randomTablesCheckedResults) {
-            localStorage.setItem('randomTablesCheckedResults', JSON.stringify(data.randomTablesCheckedResults));
-            if (window.randomTablesManager) {
-                window.randomTablesManager.checkedResults = data.randomTablesCheckedResults;
-                this.logAuth(`✅ ${Object.keys(data.randomTablesCheckedResults).length} état(s) de cases à cocher restauré(s)`);
             }
         }
 
@@ -839,7 +826,7 @@ class AuthManager {
             // Sauvegarder dans localStorage (comme cache uniquement)
             this.saveToLocalStorage(cloudData, true); // true = depuis le cloud
 
-            // Forcer un rendu immédiat après chargement cloud
+            // FORCER un rendu immédiat après chargement cloud
             this.logAuth("🎨 Rendu forcé après chargement cloud");
             if (typeof window.renderLocations === 'function') {
                 window.renderLocations();
@@ -848,12 +835,6 @@ class AuthManager {
             if (typeof window.renderRegions === 'function') {
                 window.renderRegions();
                 this.logAuth(`✅ ${window.regionsData?.regions?.length || 0} régions rendues depuis le cloud`);
-            }
-
-            // Rafraîchir l'onglet Rumeurs après chargement des données
-            if (window.journalManager && typeof window.journalManager.renderRumors === 'function') {
-                console.log('[AuthManager] 📖 Rafraîchissement de l\'onglet Rumeurs après chargement cloud', null);
-                window.journalManager.renderRumors();
             }
 
             // Marquer comme sauvegardé après chargement cloud

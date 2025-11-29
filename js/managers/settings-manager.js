@@ -1887,49 +1887,16 @@ class SettingsManager {
             // Charger le journal existant
             window.journalManager.loadJournal();
 
-            // Le texte du résultat est dans 'result' et non 'text'
-            const resultText = this.currentRandomResult.result || '';
+            // Extraire le champ "Résultat" du texte pour l'utiliser comme titre
+            let eventTitle = this.currentRandomResult.title;
 
-            // Extraire le champ "Résultat" du texte HTML pour l'utiliser comme titre
-            let eventTitle = this.currentRandomResult.tableName;
+            // Chercher le champ "Résultat:" dans le texte HTML ou texte brut
+            const resultMatch = this.currentRandomResult.text.match(/Résultat[:\s]*<\/span>\s*<span[^>]*>([^<]+)<\/span>/i) ||
+                               this.currentRandomResult.text.match(/Résultat[:\s]*([^\n<]+)/i);
 
-            // Parser le HTML pour extraire le texte brut du champ "Résultat"
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = resultText;
-            
-            // Méthode 1 : Chercher dans les span avec font-weight: 600 (résultat principal)
-            const boldSpans = tempDiv.querySelectorAll('span[style*="font-weight: 600"]');
-            for (const span of boldSpans) {
-                let text = span.textContent.trim();
-                // Retirer le dé du destin s'il est présent au début (format: (X/Y) ou (OEIL))
-                text = text.replace(/^\([^)]+\)\s*/, '');
-                
-                // Vérifier si c'est le résultat principal (pas vide et pas trop long)
-                if (text && text.length > 0 && text.length < 100) {
-                    eventTitle = text;
-                    break;
-                }
+            if (resultMatch && resultMatch[1]) {
+                eventTitle = resultMatch[1].trim();
             }
-
-            // Méthode 2 : Si pas trouvé, chercher avec regex dans le HTML brut
-            if (eventTitle === this.currentRandomResult.tableName) {
-                // Pattern pour extraire le texte après le dé du destin
-                const patterns = [
-                    /\([^)]+\)\s*([^<]+)/i,  // (X/Y) Texte
-                    /font-weight:\s*600[^>]*>\s*\([^)]+\)\s*([^<]+)/i,  // span bold avec (X/Y) Texte
-                    /font-weight:\s*600[^>]*>([^<(]+)/i  // span bold avec Texte seul
-                ];
-                
-                for (const pattern of patterns) {
-                    const match = resultText.match(pattern);
-                    if (match && match[1]) {
-                        eventTitle = match[1].trim();
-                        break;
-                    }
-                }
-            }
-
-            console.log(`📖 Titre extrait pour le journal: "${eventTitle}"`);
 
             // Créer une structure de voyage pour l'événement
             const eventJourney = {
@@ -1940,7 +1907,7 @@ class SettingsManager {
                 days: [{
                     dayNumber: 1,
                     calendarDate: currentDate,
-                    description: resultText,
+                    description: this.currentRandomResult.text,
                     discoveries: []
                 }]
             };
