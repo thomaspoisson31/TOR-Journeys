@@ -1654,18 +1654,6 @@ function setupLocationAdding() {
         console.log("✅ Generate edit description button configured");
     }
 
-    // Setup du bouton de bibliothèque
-    const chooseFromLibraryBtn = document.getElementById('choose-from-library-btn');
-    if (chooseFromLibraryBtn) {
-        chooseFromLibraryBtn.addEventListener('click', () => {
-            if (window.infoBoxManager) {
-                window.infoBoxManager.openLibrarySelectionForEdit();
-            } else {
-                openLibrarySelection();
-            }
-        });
-    }
-
     // Setup de la modale de sélection de bibliothèque
     setupLibrarySelectionModal();
 
