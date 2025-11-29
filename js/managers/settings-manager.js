@@ -992,6 +992,56 @@ class SettingsManager {
         }
     }
 
+    updateQuestContent() {
+        const textarea = document.getElementById('quest-description-textarea');
+        if (textarea) {
+            textarea.value = this.questDescription;
+        }
+    }
+
+    saveQuestDescription() {
+        const textarea = document.getElementById('quest-description-textarea');
+        if (textarea) {
+            this.questDescription = textarea.value;
+            this.saveDescriptions();
+
+            // Feedback visuel
+            const saveBtn = document.getElementById('save-quest-description-btn');
+            if (saveBtn) {
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = 'Sauvegardé !';
+                saveBtn.classList.add('bg-green-600');
+                setTimeout(() => {
+                    saveBtn.textContent = originalText;
+                    saveBtn.classList.remove('bg-green-600');
+                }, 2000);
+            }
+        }
+    }
+
+    async generateAdventurersWizard() {
+        const generateBtn = document.getElementById('generate-adventurers-wizard');
+
+        if (!this.geminiManager.isAvailable()) {
+            alert('API Gemini non disponible pour la génération automatique.');
+            return;
+        }
+
+        const prompt = `Génère une description d'un groupe de 2-5 aventuriers pour l'Eriador de la fin du Troisième Âge (Terre du Milieu).
+        Pour chaque aventurier, inclus : nom, peuple (Homme de l\'Eriador, Hobbit, Elfe, Nain), occupation/classe, personnalité brève.
+        Ajoute un objectif commun qui les unit. Style narratif de Tolkien, format Markdown avec des listes.`;
+
+        try {
+            const description = await this.geminiManager.generateContent(prompt, generateBtn, 'adventurers');
+            this.partyDescription = description;
+            this.saveDescriptions();
+            this.updatePartyContent();
+        } catch (error) {
+            console.error('Erreur génération aventuriers:', error);
+            alert('Erreur lors de la génération: ' + error.message);
+        }
+    }
+
     // This setupQuestListeners is duplicated. The first one is used above.
     // This second one is removed to avoid conflicts.
 
@@ -1482,7 +1532,7 @@ class SettingsManager {
             let itemFormattedResult = '';
             if (typeof item.result === 'object' && item.result !== null) {
                 const entries = Object.entries(item.result);
-
+                
                 // Trouver le "Dé du destin" s'il existe
                 const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
                 const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
@@ -1821,42 +1871,82 @@ class SettingsManager {
 
     insertRandomResultToJournal() {
         if (!this.currentRandomResult) {
-            console.log('⚠️ Aucun résultat de tirage à insérer');
+            console.error('❌ Aucun résultat de tirage à insérer');
             return;
         }
 
-        // Obtenir la date calendrier actuelle depuis CalendarManager
-        let currentDate = '1 Hithui'; // Valeur par défaut
+        // Récupérer la date actuelle du calendrier
+        let currentDate = 'Date inconnue';
         if (window.calendarManager && window.calendarManager.currentCalendarDate) {
-            // currentCalendarDate est un objet {month: "Hithui", day: 5}
-            const calDate = window.calendarManager.currentCalendarDate;
-            currentDate = `${calDate.day} ${calDate.month}`;
-            console.log('📅 Date calendrier récupérée pour tirage aléatoire:', currentDate);
-        } else {
-            console.warn('⚠️ CalendarManager non disponible, utilisation de la date par défaut');
+            const date = window.calendarManager.currentCalendarDate;
+            currentDate = `${date.day} ${date.month}`;
         }
 
-        // Créer une nouvelle entrée de journal pour le tirage aléatoire
-        const newEntry = {
-            title: this.currentRandomResult.tableName,
-            totalDays: 1,
-            generatedAt: new Date().toISOString(),
-            journeyType: 'random', // Identifier comme tirage aléatoire
-            days: [{
-                dayNumber: 1,
-                calendarDate: currentDate,
-                weatherSymbol: null,
-                discoveries: [],
-                description: this.currentRandomResult.result, // Utiliser le résultat formaté comme description
-                eventResult: null,
-                startCoordinates: null
-            }]
-        };
-
-        // Ajouter au journal
+        // Ajouter au journal via le JournalManager
         if (window.journalManager) {
+            // Charger le journal existant
             window.journalManager.loadJournal();
-            window.journalManager.journal.push(newEntry); // Ajouter à la fin
+
+            // Le texte du résultat est dans 'result' et non 'text'
+            const resultText = this.currentRandomResult.result || '';
+
+            // Extraire le champ "Résultat" du texte HTML pour l'utiliser comme titre
+            let eventTitle = this.currentRandomResult.tableName;
+
+            // Parser le HTML pour extraire le texte brut du champ "Résultat"
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = resultText;
+            
+            // Méthode 1 : Chercher dans les span avec font-weight: 600 (résultat principal)
+            const boldSpans = tempDiv.querySelectorAll('span[style*="font-weight: 600"]');
+            for (const span of boldSpans) {
+                let text = span.textContent.trim();
+                // Retirer le dé du destin s'il est présent au début (format: (X/Y) ou (OEIL))
+                text = text.replace(/^\([^)]+\)\s*/, '');
+                
+                // Vérifier si c'est le résultat principal (pas vide et pas trop long)
+                if (text && text.length > 0 && text.length < 100) {
+                    eventTitle = text;
+                    break;
+                }
+            }
+
+            // Méthode 2 : Si pas trouvé, chercher avec regex dans le HTML brut
+            if (eventTitle === this.currentRandomResult.tableName) {
+                // Pattern pour extraire le texte après le dé du destin
+                const patterns = [
+                    /\([^)]+\)\s*([^<]+)/i,  // (X/Y) Texte
+                    /font-weight:\s*600[^>]*>\s*\([^)]+\)\s*([^<]+)/i,  // span bold avec (X/Y) Texte
+                    /font-weight:\s*600[^>]*>([^<(]+)/i  // span bold avec Texte seul
+                ];
+                
+                for (const pattern of patterns) {
+                    const match = resultText.match(pattern);
+                    if (match && match[1]) {
+                        eventTitle = match[1].trim();
+                        break;
+                    }
+                }
+            }
+
+            console.log(`📖 Titre extrait pour le journal: "${eventTitle}"`);
+
+            // Créer une structure de voyage pour l'événement
+            const eventJourney = {
+                title: eventTitle,
+                generatedAt: new Date().toISOString(),
+                totalDays: 1,
+                journeyType: 'random_event',
+                days: [{
+                    dayNumber: 1,
+                    calendarDate: currentDate,
+                    description: resultText,
+                    discoveries: []
+                }]
+            };
+
+            // Ajouter au journal
+            window.journalManager.journal.push(eventJourney);
             localStorage.setItem('travelJournal', JSON.stringify(window.journalManager.journal));
 
             // Marquer comme non sauvegardé
@@ -1864,19 +1954,32 @@ class SettingsManager {
                 window.markAsUnsaved();
             }
 
-            // Synchroniser avec le cloud si authentifié
+            // Synchroniser avec le cloud
             if (typeof window.scheduleAutoSync === 'function') {
                 window.scheduleAutoSync();
             }
 
-            console.log('✅ Résultat de tirage inséré dans le journal');
+            console.log('📖 Événement aléatoire ajouté au journal:', eventJourney);
 
-            // Afficher une notification
-            alert('Le résultat a été inséré dans le journal');
+            // Fermer la modale de résultat
+            this.closeRandomRollResult();
+
+            // Afficher une notification de succès
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
+            notification.innerHTML = `
+                <i class="fas fa-check mr-2"></i>
+                Ajouté au Journal d'Aventure
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        } else {
+            console.error('❌ JournalManager non disponible');
+            alert('Erreur : impossible d\'accéder au journal');
         }
-
-        // Fermer la modale de résultat
-        this.closeRandomRollResult();
     }
 
 

@@ -618,6 +618,11 @@ class InfoBoxManager {
                             </button>
                         </div>
                         <div class="text-xs" style="color: #6b7280;">${table.entries?.length || 0} entrée(s)</div>
+
+                        <div id="table-result-${tableIndex}" class="hidden p-3 rounded mt-3" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
+                            <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat :</div>
+                            <div id="table-result-content-${tableIndex}" style="color: #1f2937;"></div>
+                        </div>
                     </div>
                 `).join('');
 
@@ -1993,8 +1998,6 @@ class InfoBoxManager {
 
         // Formater le résultat pour l'affichage
         let formattedResult = '';
-        let rawContent = '';
-        
         if (typeof result === 'object' && result !== null) {
             // Si c'est un objet, formater les propriétés
             const entries = Object.entries(result);
@@ -2005,7 +2008,6 @@ class InfoBoxManager {
 
             if (otherEntries.length > 0) {
                 const [mainKey, mainValue] = otherEntries[0];
-                rawContent = mainValue;
 
                 // Afficher la valeur principale avec le dé du destin entre parenthèses si présent
                 if (fateEntry) {
@@ -2020,39 +2022,32 @@ class InfoBoxManager {
                     formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
                 }
             } else if (fateEntry) {
-                rawContent = fateEntry[1];
                 formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
             }
         } else {
             // Si c'est une chaîne simple
-            rawContent = result;
             formattedResult = `<span style="font-weight: 600;">${result}</span>`;
         }
 
-        // Générer un hash unique pour ce résultat
-        const resultHash = window.randomTablesManager ? 
-            window.randomTablesManager.generateResultHash(table.name, rawContent) : 
-            `result_${Date.now()}`;
-        const isChecked = window.randomTablesManager && window.randomTablesManager.checkedResults[resultHash] || false;
+        // Afficher le résultat dans un conteneur dédié
+        const resultContainer = document.getElementById(`table-result-${tableIndex}`);
+        const resultContent = document.getElementById(`table-result-content-${tableIndex}`);
 
-        // Préparer le HTML du résultat avec checkbox
-        const resultHtml = `
-            <div class="p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
-                <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat (${randomIndex + 1}/${table.entries.length}) :</div>
-                <div class="flex items-start gap-3" style="color: #1f2937;">
-                    <input type="checkbox" 
-                           class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
-                           data-result-hash="${resultHash}"
-                           ${isChecked ? 'checked' : ''}
-                           onchange="window.randomTablesManager && window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
-                    <div class="flex-1">${formattedResult}</div>
-                </div>
-            </div>
-        `;
+        console.log(`📦 [DEBUG] Conteneurs DOM:`, {
+            resultContainer: !!resultContainer,
+            resultContent: !!resultContent
+        });
 
-        // Utiliser la modale de résultat (même méthode que RandomTablesManager)
-        if (window.randomTablesManager) {
-            window.randomTablesManager.showResult(table.name, resultHtml);
+        if (resultContainer && resultContent) {
+            // Formater avec le nom de la table et un saut de ligne
+            resultContent.innerHTML = `
+                <div style="color: #940000; font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">${table.name || 'Table aléatoire'}</div>
+                <div>${formattedResult}</div>
+            `;
+            resultContainer.classList.remove('hidden');
+            console.log(`✅ [DEBUG] Résultat affiché dans le DOM`);
+        } else {
+            console.error(`❌ [DEBUG] Conteneurs introuvables pour table-result-${tableIndex}`);
         }
 
         console.log(`🎲 Tirage sur "${table.name}":`, result);

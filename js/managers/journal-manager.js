@@ -124,8 +124,8 @@ class JournalManager {
         this.renderJournal();
         this.renderRumors(); // Afficher les rumeurs
 
-        // Afficher l'onglet par défaut (Rumeurs)
-        this.switchTab('rumors');
+        // Afficher l'onglet par défaut (Journal)
+        this.switchTab('journal-list');
 
         if (this.journalModal) {
             this.journalModal.classList.remove('hidden');
@@ -175,146 +175,73 @@ class JournalManager {
         this.journalContent.classList.remove('hidden');
         this.journalEmpty.classList.add('hidden');
 
-        // Déstructurer tous les voyages en jours individuels avec métadonnées
-        const allDays = [];
-        this.journal.forEach((journey, journeyIndex) => {
-            const isRandomRoll = journey.journeyType === 'random';
-            const journeyIcon = isRandomRoll ? '🎲' : '⛰️';
-            
-            if (journey.days && journey.days.length > 0) {
-                journey.days.forEach((day) => {
-                    allDays.push({
-                        calendarDate: day.calendarDate || `Jour ${day.dayNumber}`,
-                        weatherSymbol: day.weatherSymbol || '',
-                        description: day.description,
-                        eventResult: day.eventResult,
-                        discoveries: day.discoveries || [],
-                        dayNumber: day.dayNumber,
-                        journeyTitle: journey.title,
-                        journeyIcon: journeyIcon,
-                        journeyIndex: journeyIndex,
-                        isRandomRoll: isRandomRoll
-                    });
-                });
-            }
-        });
+        // Trier le journal par date ascendante
+        const sortedJournal = [...this.journal].sort((a, b) => {
+            const dateA = a.days && a.days.length > 0 && a.days[0].calendarDate
+                ? a.days[0].calendarDate
+                : a.generatedAt;
+            const dateB = b.days && b.days.length > 0 && b.days[0].calendarDate
+                ? b.days[0].calendarDate
+                : b.generatedAt;
 
-        // Trier tous les jours par date calendrier (chronologiquement)
-        allDays.sort((a, b) => {
-            // Extraire le mois et le jour de chaque date
-            const parseDate = (dateStr) => {
-                const parts = dateStr.split(' ');
-                if (parts.length >= 2) {
-                    return {
-                        day: parseInt(parts[0]) || 0,
-                        month: parts.slice(1).join(' ')
-                    };
-                }
-                return { day: 0, month: dateStr };
-            };
-
-            const dateA = parseDate(a.calendarDate);
-            const dateB = parseDate(b.calendarDate);
-
-            // Obtenir l'ordre des mois depuis le calendrier
-            const getMonthIndex = (monthName) => {
-                if (window.calendarManager && window.calendarManager.calendarData) {
-                    const index = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                    return index !== -1 ? index : 999;
-                }
-                return 999;
-            };
-
-            const monthIndexA = getMonthIndex(dateA.month);
-            const monthIndexB = getMonthIndex(dateB.month);
-
-            // Comparer d'abord par mois
-            if (monthIndexA !== monthIndexB) {
-                return monthIndexA - monthIndexB;
+            // Si les deux ont des dates calendrier, comparer par celles-ci
+            if (typeof dateA === 'string' && typeof dateB === 'string') {
+                return dateA.localeCompare(dateB);
             }
 
-            // Si même mois, comparer par jour
-            return dateA.day - dateB.day;
+            // Sinon, comparer par generatedAt
+            return new Date(a.generatedAt) - new Date(b.generatedAt);
         });
 
-        // Générer le HTML pour chaque jour individuellement
-        const journalHTML = allDays.map((day) => {
-            let dayHTML = `<div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-3 p-4">`;
-            
-            // En-tête avec date + badge voyage
-            dayHTML += `
-                <div class="flex items-center gap-3 mb-3 pb-2 border-b border-gray-200">
-                    <div class="text-lg font-bold" style="color: #940000;">
-                        ${day.calendarDate}
-                        ${day.weatherSymbol ? `<span class="ml-2">${day.weatherSymbol}</span>` : ''}
-                    </div>
-                    <div class="flex-1 flex items-center gap-2">
-                        <span class="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-700">
-                            ${day.journeyIcon} ${day.journeyTitle}
-                        </span>
-                    </div>
-                    <button onclick="window.journalManager.deleteJourney(${day.journeyIndex})"
-                            class="text-red-500 hover:text-red-700 p-1"
-                            title="Supprimer ce voyage">
-                        <i class="fas fa-trash text-sm"></i>
-                    </button>
-                </div>
-            `;
+        // Générer le HTML pour chaque voyage (version simplifiée pour la liste)
+        const journalHTML = sortedJournal.map((journey, sortedIndex) => {
+            // Trouver l'index original pour la suppression
+            const originalIndex = this.journal.indexOf(journey);
 
-            // Contenu du jour
-            if (day.isRandomRoll) {
-                // Tirage aléatoire
-                if (day.description) {
-                    dayHTML += `
-                        <div class="text-sm text-gray-700">
-                            ${day.description}
-                        </div>
-                    `;
+            // Déterminer les dates à afficher
+            let displayStartDate = '';
+            let displayEndDate = '';
+
+            // Si c'est un voyage avec des jours et une date calendrier
+            if (journey.days && journey.days.length > 0 && journey.days[0].calendarDate) {
+                displayStartDate = journey.days[0].calendarDate;
+                // Date de fin = dernier jour
+                if (journey.days[journey.days.length - 1].calendarDate) {
+                    displayEndDate = journey.days[journey.days.length - 1].calendarDate;
                 }
             } else {
-                // Voyage normal
-                const discoveryNames = day.discoveries.map(d => d.name).join(' et ');
-                
-                if (discoveryNames) {
-                    dayHTML += `
-                        <div class="text-sm font-semibold text-blue-600 mb-2">
-                            📍 ${discoveryNames}
-                        </div>
-                    `;
-                }
-                
-                // Description
-                if (day.description) {
-                    let filteredDescription = day.description;
-                    filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
-                    filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
-                    
-                    const descriptionHtml = this.simpleMarkdown(filteredDescription);
-                    dayHTML += `
-                        <div class="text-sm text-gray-700 mb-2">
-                            ${descriptionHtml}
-                        </div>
-                    `;
-                }
-                
-                // Événement aléatoire
-                if (day.eventResult) {
-                    const eventHtml = this.simpleMarkdown(day.eventResult);
-                    dayHTML += `
-                        <div class="mt-3 pt-3 border-t border-yellow-200 bg-yellow-50 rounded p-3">
-                            <div class="text-xs font-semibold text-yellow-700 mb-1">
-                                🎲 Événement aléatoire
-                            </div>
-                            <div class="text-sm text-gray-700">
-                                ${eventHtml}
-                            </div>
-                        </div>
-                    `;
-                }
+                // Sinon utiliser la date de génération classique
+                const generatedDate = new Date(journey.generatedAt);
+                displayStartDate = generatedDate.toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
             }
 
-            dayHTML += `</div>`;
-            return dayHTML;
+            // Construire la chaîne de dates
+            const dateDisplay = displayEndDate && displayEndDate !== displayStartDate
+                ? `${displayStartDate} → ${displayEndDate}`
+                : displayStartDate;
+
+            // Toutes les entrées sont cliquables
+            return `
+                <div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-4 hover:shadow-md transition-shadow cursor-pointer" onclick="window.journalManager.openJourneyInVoyageModal(${originalIndex})">
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-1" style="color: #940000;">${journey.title}</h3>
+                                <p class="text-sm text-gray-600">${dateDisplay} • ${journey.totalDays} jour${journey.totalDays > 1 ? 's' : ''}</p>
+                            </div>
+                            <button onclick="event.stopPropagation(); window.journalManager.deleteJourney(${originalIndex})"
+                                    class="text-red-500 hover:text-red-700 p-2"
+                                    title="Supprimer ce voyage">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
         }).join('');
 
         this.journalContent.innerHTML = journalHTML;
@@ -598,17 +525,10 @@ class JournalManager {
 
         objectivesEmpty.style.display = 'none';
 
-        const objectivesHTML = this.objectives.map((objective, index) => {
-            const status = objective.status || 'proposed';
-            const isCompleted = status === 'completed';
-            return `
-            <div class="objective-item ${isCompleted ? 'completed' : ''}" data-index="${index}">
-                <select onchange="window.journalManager.updateObjectiveStatus(${index}, this.value)"
-                        class="bg-gray-700 text-white border border-gray-600 rounded px-2 py-1 mr-2">
-                    <option value="proposed" ${status === 'proposed' ? 'selected' : ''}>Proposé</option>
-                    <option value="in_progress" ${status === 'in_progress' ? 'selected' : ''}>En cours</option>
-                    <option value="completed" ${status === 'completed' ? 'selected' : ''}>Atteint</option>
-                </select>
+        const objectivesHTML = this.objectives.map((objective, index) => `
+            <div class="objective-item ${objective.completed ? 'completed' : ''}" data-index="${index}">
+                <input type="checkbox" ${objective.completed ? 'checked' : ''}
+                       onchange="window.journalManager.toggleObjectiveComplete(${index})">
                 <div class="objective-text">${this.escapeHtml(objective.text)}</div>
                 <button onclick="window.journalManager.deleteObjective(${index})"
                         class="text-red-500 hover:text-red-700 p-2 ml-2"
@@ -616,8 +536,7 @@ class JournalManager {
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
-        `;
-        }).join('');
+        `).join('');
 
         objectivesList.innerHTML = objectivesHTML;
     }
@@ -627,7 +546,6 @@ class JournalManager {
         if (text && text.trim()) {
             this.objectives.push({
                 text: text.trim(),
-                status: 'proposed',
                 completed: false,
                 createdAt: new Date().toISOString()
             });
@@ -636,11 +554,9 @@ class JournalManager {
         }
     }
 
-    updateObjectiveStatus(index, status) {
+    toggleObjectiveComplete(index) {
         if (this.objectives[index]) {
-            this.objectives[index].status = status;
-            // Maintenir la compatibilité avec l'ancien système
-            this.objectives[index].completed = (status === 'completed');
+            this.objectives[index].completed = !this.objectives[index].completed;
             this.saveObjectives();
             this.renderObjectives();
         }

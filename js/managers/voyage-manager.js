@@ -1710,44 +1710,6 @@ class VoyageManager {
             console.log(`📍 Marqueur déplacé à la destination du voyage: (${Math.round(lastPoint.x)}, ${Math.round(lastPoint.y)})`);
         }
 
-        // Mettre à jour la date active avec celle du dernier jour de voyage
-        if (this.dayByDayData.length > 0) {
-            const lastDay = this.dayByDayData[this.dayByDayData.length - 1];
-            if (lastDay.calendarDate && window.calendarManager) {
-                console.log(`📅 Mise à jour de la date active vers la fin du voyage: ${lastDay.calendarDate}`);
-
-                // Parser la date du dernier jour
-                const dateParts = lastDay.calendarDate.split(' ');
-                if (dateParts.length >= 2) {
-                    const dayNumber = parseInt(dateParts[0]);
-                    const monthName = dateParts.slice(1).join(' ');
-
-                    if (dayNumber && monthName && window.calendarManager.calendarData) {
-                        const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                        if (monthIndex >= 0) {
-                            // Mettre à jour la date courante
-                            window.calendarManager.currentCalendarDate = {
-                                month: monthName,
-                                day: dayNumber
-                            };
-                            window.currentCalendarDate = window.calendarManager.currentCalendarDate;
-
-                            // Mettre à jour la saison
-                            const monthSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
-                            window.calendarManager.currentSeason = monthSeason;
-                            window.currentSeason = monthSeason;
-
-                            // Mettre à jour l'affichage
-                            window.calendarManager.updateSeasonDisplay();
-                            window.calendarManager.saveCalendarToLocal();
-
-                            console.log(`✅ Date active mise à jour: ${dayNumber} ${monthName} (${monthSeason})`);
-                        }
-                    }
-                }
-            }
-        }
-
         // Notification de succès
         const notification = document.createElement('div');
         notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
