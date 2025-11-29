@@ -2622,6 +2622,104 @@ class InfoBoxManager {
         personnagesTab.innerHTML = html;
     }
 
+    renderPersonnagesTabEdit() {
+        console.log(`✏️ [renderPersonnagesTabEdit] Début du rendu en mode édition`);
+
+        const personnagesTab = document.getElementById('personnages-tab');
+        if (!personnagesTab) {
+            console.error(`❌ [renderPersonnagesTabEdit] Onglet personnages-tab NON TROUVÉ`);
+            return;
+        }
+
+        console.log(`✅ [renderPersonnagesTabEdit] Onglet personnages-tab trouvé`);
+
+        if (!window.charactersManager || !window.charactersManager.characters) {
+            personnagesTab.innerHTML = `
+                <div class="edit-form p-4">
+                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Récupérer les IDs des personnages associés (normalisés en String)
+        const associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
+
+        console.log(`📋 [renderPersonnagesTabEdit] Lieu/Région: ${this.currentItem.name}`);
+        console.log(`📋 [renderPersonnagesTabEdit] associatedCharacterIds:`, associatedCharacterIds);
+
+        // Filtrer les personnages selon la carte active
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const availableCharacters = window.charactersManager.characters.filter(char => {
+            const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
+            console.log(`🔍 [renderPersonnagesTabEdit] ${char.name} - mapId: ${char.mapId}, activeMapId: ${activeMapId}, isOnCurrentMap: ${isOnCurrentMap}`);
+            return isOnCurrentMap;
+        });
+
+        console.log(`📋 [renderPersonnagesTabEdit] ${availableCharacters.length} personnage(s) disponible(s)`);
+
+        if (availableCharacters.length === 0) {
+            personnagesTab.innerHTML = `
+                <div class="edit-form p-4">
+                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible pour cette carte</p>
+                </div>
+            `;
+            return;
+        }
+
+        const checkboxesHTML = availableCharacters.map(character => {
+            const charIdString = String(character.id);
+            const isChecked = associatedCharacterIds.includes(charIdString);
+            const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+
+            console.log(`🔍 [renderPersonnagesTabEdit] Checkbox pour ${character.name} (ID: ${charIdString}) - checked: ${isChecked}`);
+
+            return `
+                <label class="flex items-center space-x-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                    <input type="checkbox" 
+                           class="character-checkbox w-4 h-4 cursor-pointer" 
+                           value="${charIdString}"
+                           data-character-id="${charIdString}"
+                           ${isChecked ? 'checked' : ''}>
+                    ${thumbnailImage ? `
+                        <img src="${thumbnailImage.url}" alt="${character.name}"
+                             class="w-10 h-10 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                    ` : `
+                        <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                            <i class="fas fa-user text-gray-600"></i>
+                        </div>
+                    `}
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-800">${character.name}</div>
+                        <span class="inline-block px-2 py-0.5 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'} text-white">
+                            ${character.type || 'PNJ'}
+                        </span>
+                    </div>
+                </label>
+            `;
+        }).join('');
+
+        const html = `
+            <div class="edit-form p-4">
+                <div class="space-y-2 mb-4">
+                    ${checkboxesHTML}
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-save mr-1"></i>Sauvegarder
+                    </button>
+                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-times mr-1"></i>Annuler
+                    </button>
+                </div>
+            </div>
+        `;
+
+        personnagesTab.innerHTML = html;
+
+        console.log(`✅ [renderPersonnagesTabEdit] Rendu terminé avec ${availableCharacters.length} personnage(s)`);
+    }
+
     renderLieuxRegionsTabRead() {
         console.log(`🗺️ [renderLieuxRegionsTabRead] ========== DÉBUT DU RENDU ==========`);
 
