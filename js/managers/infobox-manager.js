@@ -1342,57 +1342,70 @@ class InfoBoxManager {
     }
 
     handleRumeursJsonImport(event) {
+        console.log('📥 [handleRumeursJsonImport] Import de rumeurs JSON déclenché');
+
         const file = event.target.files[0];
-        if (!file) return;
+        if (!file) {
+            console.warn('⚠️ [handleRumeursJsonImport] Aucun fichier sélectionné');
+            return;
+        }
 
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
                 const jsonData = JSON.parse(e.target.result);
-                
-                // Déterminer si c'est un tableau de rumeurs ou un objet avec une propriété "Rumeurs"
-                let importedRumeurs = [];
-                if (Array.isArray(jsonData)) {
-                    importedRumeurs = jsonData;
-                } else if (jsonData.Rumeurs && Array.isArray(jsonData.Rumeurs)) {
-                    importedRumeurs = jsonData.Rumeurs;
-                } else {
-                    throw new Error('Format JSON invalide. Attendu : tableau de rumeurs ou objet avec propriété "Rumeurs"');
-                }
+                console.log('✅ [handleRumeursJsonImport] JSON parsé:', jsonData);
 
-                // Filtrer les rumeurs valides
-                const rumeursValides = importedRumeurs.filter(r => r && r !== "A définir");
-
-                if (rumeursValides.length === 0) {
-                    alert('Aucune rumeur valide trouvée dans le fichier JSON.');
+                // Vérifier que c'est un tableau
+                if (!Array.isArray(jsonData)) {
+                    alert('Le fichier JSON doit contenir un tableau de rumeurs.');
                     return;
                 }
 
-                // Remplacer le contenu de la liste des rumeurs
+                // Récupérer la liste de rumeurs actuelle
                 const rumeursList = document.getElementById('edit-rumeurs-list');
-                if (!rumeursList) return;
+                if (!rumeursList) {
+                    console.error('❌ [handleRumeursJsonImport] Liste de rumeurs non trouvée');
+                    return;
+                }
 
-                const rumeursHTML = rumeursValides.map((rumeur, index) => `
-                    <div class="flex items-start space-x-2 mb-2" data-rumeur-index="${index}">
-                        <textarea rows="3" class="flex-1 p-2 border rounded bg-white text-black text-sm border-gray-600 edit-rumeur-input" data-index="${index}">${rumeur}</textarea>
-                        <button onclick="window.infoBoxManager.deleteRumeurInEdit(${index})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
+                // Ajouter chaque rumeur du JSON
+                jsonData.forEach((rumeur, index) => {
+                    const currentIndex = rumeursList.children.length;
+                    const rumeurDiv = document.createElement('div');
+                    rumeurDiv.className = 'flex items-start space-x-2 mb-2';
+                    rumeurDiv.setAttribute('data-rumeur-index', currentIndex);
+
+                    // Extraire le texte de la rumeur
+                    // Si c'est un objet avec une propriété "Description", l'extraire
+                    // Sinon, si c'est une chaîne, l'utiliser directement
+                    let rumeurText = '';
+                    if (typeof rumeur === 'object' && rumeur !== null) {
+                        // Chercher la propriété "Description" ou similaire
+                        rumeurText = rumeur.Description || rumeur.description || rumeur.text || rumeur.content || JSON.stringify(rumeur);
+                    } else if (typeof rumeur === 'string') {
+                        rumeurText = rumeur;
+                    } else {
+                        rumeurText = String(rumeur);
+                    }
+
+                    rumeurDiv.innerHTML = `
+                        <textarea rows="3" class="flex-1 p-2 border rounded bg-white text-black text-sm border-gray-600 edit-rumeur-input" data-index="${currentIndex}">${rumeurText}</textarea>
+                        <button onclick="window.infoBoxManager.deleteRumeurInEdit(${currentIndex})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded flex-shrink-0" title="Supprimer cette rumeur">
                             <i class="fas fa-trash"></i>
                         </button>
-                    </div>
-                `).join('');
+                    `;
 
-                rumeursList.innerHTML = rumeursHTML;
+                    rumeursList.appendChild(rumeurDiv);
+                });
 
-                alert(`✅ ${rumeursValides.length} rumeur(s) importée(s) avec succès.`);
-                
+                console.log(`✅ [handleRumeursJsonImport] ${jsonData.length} rumeur(s) importée(s)`);
+                alert(`${jsonData.length} rumeur(s) importée(s) avec succès !`);
+
             } catch (error) {
-                console.error('❌ Erreur lors de l\'import JSON:', error);
-                alert(`Erreur lors de l'import du fichier JSON: ${error.message}`);
+                console.error('❌ [handleRumeursJsonImport] Erreur lors du parsing JSON:', error);
+                alert('Erreur lors de la lecture du fichier JSON. Vérifiez le format du fichier.');
             }
-        };
-
-        reader.onerror = () => {
-            alert('Erreur lors de la lecture du fichier.');
         };
 
         reader.readAsText(file);
@@ -1982,7 +1995,7 @@ class InfoBoxManager {
         // Formater le résultat pour l'affichage
         let formattedResult = '';
         let rawContent = '';
-        
+
         if (typeof result === 'object' && result !== null) {
             // Si c'est un objet, formater les propriétés
             const entries = Object.entries(result);
@@ -2018,8 +2031,8 @@ class InfoBoxManager {
         }
 
         // Générer un hash unique pour ce résultat
-        const resultHash = window.randomTablesManager ? 
-            window.randomTablesManager.generateResultHash(table.name, rawContent) : 
+        const resultHash = window.randomTablesManager ?
+            window.randomTablesManager.generateResultHash(table.name, rawContent) :
             `result_${Date.now()}`;
         const isChecked = window.randomTablesManager && window.randomTablesManager.checkedResults[resultHash] || false;
 
@@ -2028,8 +2041,8 @@ class InfoBoxManager {
             <div class="p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
                 <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat (${randomIndex + 1}/${table.entries.length}) :</div>
                 <div class="flex items-start gap-3" style="color: #1f2937;">
-                    <input type="checkbox" 
-                           class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
+                    <input type="checkbox"
+                           class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer"
                            data-result-hash="${resultHash}"
                            ${isChecked ? 'checked' : ''}
                            onchange="window.randomTablesManager && window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
@@ -2676,8 +2689,8 @@ class InfoBoxManager {
 
             return `
                 <label class="flex items-center space-x-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
-                    <input type="checkbox" 
-                           class="character-checkbox w-4 h-4 cursor-pointer" 
+                    <input type="checkbox"
+                           class="character-checkbox w-4 h-4 cursor-pointer"
                            value="${charIdString}"
                            data-character-id="${charIdString}"
                            ${isChecked ? 'checked' : ''}>
