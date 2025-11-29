@@ -359,6 +359,14 @@
                         <button id="delete-all-characters-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
                             <i class="fas fa-trash mr-2"></i>Supprimer les personnages
                         </button>
+                        <!-- Boutons Export/Import Personnages -->
+                        <button id="export-characters-btn" class="ml-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-file-download mr-2"></i>Exporter
+                        </button>
+                        <button id="import-characters-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-file-upload mr-2"></i>Importer
+                        </button>
+                        <input type="file" id="import-characters-input" class="hidden" accept=".json">
                     </div>
 
                     <!-- Filtres et Tri -->
@@ -536,7 +544,7 @@
                         <div id="objectives-list" class="space-y-3">
                             <!-- Les objectifs seront générés ici -->
                         </div>
-                        <div id="objectives-empty" class="flex flex-col items-center justify-center text-center py-12 text-gray-500">
+                        <div id="objectives-empty" class="hidden flex flex-col items-center justify-center text-center py-12 text-gray-500">
                             <i class="fas fa-bullseye fa-3x mb-4"></i>
                             <p class="text-lg">Aucun objectif défini</p>
                             <p class="text-sm mt-2">Créez vos objectifs d'aventure</p>
@@ -1200,25 +1208,11 @@
                     </div>
 
                     <!-- Import/Export Tab -->
-                    <div id="import-export-tab" class="settings-tab-content" style="display: none;">
-                        <div class="p-6">
-                            <p class="text-gray-300 mb-4">Gérez vos données d'aventure</p>
+                    <div id="import-export-tab" class="settings-tab-content hidden">
+                        <h3 class="text-lg font-bold mb-4">Import / Export de données</h3>
 
-                            <!-- Section Personnages -->
-                            <div>
-                                <h3 class="text-lg font-bold text-white mb-3">Personnages</h3>
-                                <div class="flex flex-col space-y-2">
-                                    <button id="export-characters-btn" class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center space-x-2">
-                                        <i class="fas fa-file-download"></i>
-                                        <span>Exporter Personnages</span>
-                                    </button>
-                                    <button id="import-characters-btn" class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center space-x-2">
-                                        <i class="fas fa-file-upload"></i>
-                                        <span>Importer Personnages</span>
-                                    </button>
-                                    <input type="file" id="import-characters-input" class="hidden" accept=".json">
-                                </div>
-                            </div>
+                        <div class="space-y-6">
+                            <!-- Section Personnages déplacée dans la modale Personnages -->
                         </div>
                     </div>
 

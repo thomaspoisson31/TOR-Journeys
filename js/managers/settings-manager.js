@@ -1638,53 +1638,8 @@ class SettingsManager {
 
     // === GESTION IMPORT/EXPORT ===
     setupImportExportListeners() {
-        console.log('⚙️ Configuration des listeners Import/Export...');
-
-        // Import/Export Personnages
-        const exportCharactersBtn = document.getElementById('export-characters-btn');
-        const importCharactersBtn = document.getElementById('import-characters-btn');
-        const importCharactersInput = document.getElementById('import-characters-input');
-
-        console.log('👥 Boutons Personnages:', {
-            exportBtn: !!exportCharactersBtn,
-            importBtn: !!importCharactersBtn,
-            fileInput: !!importCharactersInput
-        });
-
-        if (exportCharactersBtn) {
-            exportCharactersBtn.addEventListener('click', () => {
-                console.log('📤 Export personnages demandé');
-                if (window.charactersManager) {
-                    window.charactersManager.exportCharacters();
-                } else {
-                    console.error('❌ charactersManager non disponible');
-                }
-            });
-        }
-
-        if (importCharactersBtn) {
-            importCharactersBtn.addEventListener('click', () => {
-                console.log('📥 Import personnages demandé');
-                if (importCharactersInput) {
-                    importCharactersInput.click();
-                } else {
-                    console.error('❌ import-characters-input non trouvé');
-                }
-            });
-        }
-
-        if (importCharactersInput) {
-            importCharactersInput.addEventListener('change', (event) => {
-                console.log('📄 Fichier personnages sélectionné');
-                if (window.charactersManager) {
-                    window.charactersManager.handleImportCharacters(event);
-                } else {
-                    console.error('❌ charactersManager non disponible');
-                }
-            });
-        }
-
-        console.log('✅ Listeners Import/Export configurés');
+        // Les boutons d'import/export de personnages ont été déplacés dans la modale Personnages
+        // Cette méthode peut être supprimée si elle ne contient plus rien d'autre
     }
 
 
@@ -1983,15 +1938,13 @@ class SettingsManager {
                 }
             };
 
-            // Toujours définir le callback avant de changer src
-            mapImage.onload = onImageLoaded;
-
             // Si l'image est déjà complètement chargée avec cette URL, déclencher manuellement
             if (mapImage.complete && mapImage.naturalWidth > 0 && mapImage.src.endsWith(this.activeMapUrl)) {
                 console.log('⚡ Image déjà chargée, callback immédiat');
                 onImageLoaded();
             } else {
                 // Forcer le rechargement
+                mapImage.onload = onImageLoaded; // Assigner le callback avant de changer src
                 mapImage.src = this.activeMapUrl;
             }
         }
@@ -2012,7 +1965,7 @@ class SettingsManager {
         if (!map) return;
 
         console.log(`📤 Export des données pour la carte: ${map.name}`);
-        
+
         // Utiliser la méthode d'export de importExportManager
         if (window.importExportManager) {
             window.importExportManager.exportUnifiedData();
@@ -2026,7 +1979,7 @@ class SettingsManager {
         if (!map) return;
 
         console.log(`📥 Import des données pour la carte: ${map.name}`);
-        
+
         // Déclencher l'import via importExportManager
         if (window.importExportManager && window.importExportManager.importFileInput) {
             window.importExportManager.importFileInput.click();

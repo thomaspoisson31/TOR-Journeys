@@ -46,6 +46,29 @@ class CharactersManager {
             deleteAllBtn.addEventListener('click', () => this.deleteAllCharactersForActiveMap());
         }
 
+        // Bouton exporter les personnages
+        const exportBtn = document.getElementById('export-characters-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => this.exportCharacters());
+        }
+
+        // Bouton importer les personnages
+        const importBtn = document.getElementById('import-characters-btn');
+        if (importBtn) {
+            importBtn.addEventListener('click', () => {
+                const fileInput = document.getElementById('import-characters-file-input');
+                if (fileInput) {
+                    fileInput.click();
+                }
+            });
+        }
+
+        // Input file pour l'import
+        const importFileInput = document.getElementById('import-characters-file-input');
+        if (importFileInput) {
+            importFileInput.addEventListener('change', (event) => this.handleImportCharacters(event));
+        }
+
         // Boutons de la modale d'ajout
         const cancelAddBtn = document.getElementById('cancel-add-character');
         const confirmAddBtn = document.getElementById('confirm-add-character');
