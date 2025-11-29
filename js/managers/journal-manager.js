@@ -823,8 +823,10 @@ class JournalManager {
         const charactersWithRumors = charactersData
             .filter(character => {
                 const isActiveMap = character.mapId === activeMapUrl;
+                // Les personnages utilisent "Rumeur" (singulier) au lieu de "Rumeurs" (pluriel)
+                const hasRumor = character.Rumeur && typeof character.Rumeur === 'string' && character.Rumeur.trim().length > 0;
                 const hasRumors = character.Rumeurs && Array.isArray(character.Rumeurs) && character.Rumeurs.length > 0;
-                return isActiveMap && hasRumors;
+                return isActiveMap && (hasRumor || hasRumors);
             })
             .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -983,8 +985,17 @@ class JournalManager {
                     <div class="space-y-4">
             `;
             charactersWithRumors.forEach(character => {
+                // Convertir Rumeur (singulier) en tableau pour traitement unifié
+                const rumorsArray = [];
+                if (character.Rumeur && typeof character.Rumeur === 'string') {
+                    rumorsArray.push(character.Rumeur);
+                }
+                if (character.Rumeurs && Array.isArray(character.Rumeurs)) {
+                    rumorsArray.push(...character.Rumeurs);
+                }
+
                 // Vérifier s'il y a au moins une rumeur à afficher selon le filtre
-                const hasVisibleRumors = character.Rumeurs.some((rumor, index) => {
+                const hasVisibleRumors = rumorsArray.some((rumor, index) => {
                     const isChecked = this.isRumorChecked('character', character.name, index);
                     return rumorsFilter === 'all' || isChecked;
                 });
@@ -996,7 +1007,7 @@ class JournalManager {
                         <h4 class="font-bold text-gray-800 mb-2">${this.escapeHtml(character.name)}</h4>
                         <div class="space-y-2">
                 `;
-                character.Rumeurs.forEach((rumor, index) => {
+                rumorsArray.forEach((rumor, index) => {
                     const isChecked = this.isRumorChecked('character', character.name, index);
                     
                     // Filtrer selon le mode sélectionné
