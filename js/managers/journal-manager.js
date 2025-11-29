@@ -1019,7 +1019,7 @@ class JournalManager {
                             <input type="checkbox" 
                                    id="${checkboxId}"
                                    ${isChecked ? 'checked' : ''}
-                                   onchange="window.journalManager.toggleRumorCheckbox('character', '${this.escapeHtml(character.name)}', ${index})"
+                                   onchange="window.journalManager.toggleRumorCheckbox('character', '${character.name.replace(/'/g, "\\'")}', ${index})"
                                    class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
                             <label for="${checkboxId}" class="text-sm cursor-pointer ${isChecked ? 'text-gray-900 font-bold' : 'text-gray-700'}">${this.escapeHtml(rumor)}</label>
                         </div>
