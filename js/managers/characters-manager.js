@@ -11,6 +11,8 @@ class CharactersManager {
             monstre: true
         };
         this.sortBy = 'name';
+        // Added for Gemini integration
+        this.isGeneratingDescription = false;
 
         console.log("👥 CharactersManager initialized");
     }
@@ -75,6 +77,7 @@ class CharactersManager {
         // Boutons de la modale d'ajout
         const cancelAddBtn = document.getElementById('cancel-add-character');
         const confirmAddBtn = document.getElementById('confirm-add-character');
+        const generateDescBtn = document.getElementById('generate-character-desc'); // Ajout du bouton Wizard
 
         if (cancelAddBtn) {
             cancelAddBtn.addEventListener('click', () => this.closeAddCharacterModal());
@@ -82,6 +85,11 @@ class CharactersManager {
 
         if (confirmAddBtn) {
             confirmAddBtn.addEventListener('click', () => this.confirmAddCharacter());
+        }
+
+        // Ajout de l'écouteur pour le bouton Wizard
+        if (generateDescBtn) {
+            generateDescBtn.addEventListener('click', () => this.generateCharacterDescription());
         }
 
         // Filtres par type
@@ -357,6 +365,9 @@ class CharactersManager {
             document.getElementById('character-name-input').value = '';
             document.getElementById('character-desc-input').value = '';
             document.getElementById('character-type-pj').checked = true;
+            
+            // Réinitialiser le bouton Wizard et le champ de description
+            this.resetCharacterDescriptionButton();
 
             // Réinitialiser le composant d'upload
             const uploadContainer = document.getElementById('character-image-upload-container');
@@ -477,6 +488,105 @@ class CharactersManager {
         this.tempCharacterImages.splice(index, 1);
         this.updateImagesList();
     }
+
+    // Méthode pour réinitialiser l'état du bouton Wizard
+    resetCharacterDescriptionButton() {
+        const generateBtn = document.getElementById('generate-character-desc');
+        const descInput = document.getElementById('character-desc-input');
+        if (generateBtn && descInput) {
+            generateBtn.innerHTML = '<span class="gemini-icon">✨</span>';
+            generateBtn.disabled = false;
+            descInput.disabled = false;
+            this.isGeneratingDescription = false;
+        }
+    }
+
+    // Méthode pour mettre à jour l'état du bouton Wizard en mode loader
+    setGeneratingDescriptionState() {
+        const generateBtn = document.getElementById('generate-character-desc');
+        const descInput = document.getElementById('character-desc-input');
+        if (generateBtn) {
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; // Icône de chargement
+            generateBtn.disabled = true;
+        }
+        if (descInput) {
+            descInput.disabled = true;
+        }
+        this.isGeneratingDescription = true;
+    }
+
+    // Méthode pour générer la description avec Gemini
+    async generateCharacterDescription() {
+        if (this.isGeneratingDescription) return;
+
+        this.setGeneratingDescriptionState();
+
+        try {
+            // 1. Récupérer les données contextuelles
+            const characterType = document.querySelector('input[name="character-type"]:checked').value;
+            const characterName = document.getElementById('character-name-input').value.trim();
+            const characterDescriptionInput = document.getElementById('character-desc-input').value.trim(); // Description pré-existante
+            const activeMapUrl = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
+            const activeMapName = window.settingsManager?.activeMapName || 'Carte inconnue';
+            
+            // Obtenir les détails de la carte active (région, lieu)
+            const currentLoc = window.mapManager?.getMarkerPosition() || { x: 0, y: 0 }; // Position du marqueur (50px près)
+            const activeLocation = window.locationsManager?.getLocationAt(currentLoc.x, currentLoc.y, true); // Cherche le lieu le plus proche
+            const activeRegion = activeLocation ? window.regionsManager?.getRegionContaining(activeLocation.id) : null;
+
+            // 2. Construire le prompt pour Gemini
+            let prompt = `Génère une description pour un personnage de jeu de rôle.\n\n`;
+
+            // a- Type de personnage
+            prompt += `Type de personnage : ${characterType === 'PJ' ? 'Personnage Joueur' : characterType === 'PNJ' ? 'Personnage Non Joueur' : 'Monstre'}.\n`;
+
+            // b- Contexte de la carte active
+            prompt += `Contexte actuel :\n`;
+            prompt += `- Carte : ${activeMapName}\n`;
+            if (activeRegion) {
+                prompt += `- Région : ${activeRegion.name}\n`;
+            }
+            if (activeLocation) {
+                prompt += `- Lieu : ${activeLocation.name}\n`;
+            }
+            prompt += `Position approximative du marqueur : (${currentLoc.x}px, ${currentLoc.y}px).\n`;
+
+            // c- Nom et description existante du personnage
+            if (characterName) {
+                prompt += `- Nom du personnage : ${characterName}\n`;
+            }
+            if (characterDescriptionInput) {
+                prompt += `- Description existante : ${characterDescriptionInput}\n`;
+            }
+
+            prompt += `\nLa réponse doit être une description de personnage de maximum 3 paragraphes, incluant:\n`;
+            prompt += `- L'origine précise du personnage (ex: "Un Nain des Montagnes Bleues").\n`;
+            prompt += `- Son occupation.\n`;
+            prompt += `- Une idée de ce qu'il cherche / désire actuellement et pourquoi il se trouve là.\n`;
+            prompt += `\nFormat de la réponse attendue (uniquement la description générée) :\n`;
+
+            // 3. Appeler l'API Gemini (à implémenter ou à supposer qu'elle existe)
+            // Assurez-vous que `window.geminiApi.generateContent` existe et fonctionne
+            const response = await window.geminiApi.generateContent(prompt);
+
+            if (response && response.text) {
+                const generatedDescription = response.text.trim();
+                document.getElementById('character-desc-input').value = generatedDescription;
+                this.showNotification("Description générée", "La description du personnage a été générée par Gemini.", "success");
+            } else {
+                console.error("❌ Gemini API response invalid:", response);
+                this.showNotification("Erreur de génération", "Impossible de générer la description avec Gemini. Réponse invalide.", "error");
+            }
+
+        } catch (error) {
+            console.error("❌ Erreur lors de la génération de la description:", error);
+            this.showNotification("Erreur de génération", `Une erreur est survenue : ${error.message}`, "error");
+        } finally {
+            // 4. Réactiver le bouton et désactiver le loader
+            this.resetCharacterDescriptionButton();
+        }
+    }
+
 
     confirmAddCharacter() {
         const name = document.getElementById('character-name-input').value.trim();
@@ -693,7 +803,7 @@ class CharactersManager {
         // Vérifier si les personnages ont des mapId différents de la carte active
         const activeMapId = window.settingsManager?.activeMapUrl;
         const differentMapIds = new Set();
-        
+
         importedCharacters.forEach(char => {
             if (char.mapId && char.mapId !== activeMapId) {
                 differentMapIds.add(char.mapId);
@@ -701,12 +811,12 @@ class CharactersManager {
         });
 
         let message = `Voulez-vous importer ${importedCharacters.length} personnage(s) ?\n\n`;
-        
+
         if (differentMapIds.size > 0) {
             message += `⚠️ ATTENTION : Ces personnages proviennent d'une autre carte.\n`;
             message += `Ils seront réassignés à la carte active actuelle.\n\n`;
         }
-        
+
         message += `Remplacer : Supprime tous les personnages existants\n`;
         message += `Fusionner : Ajoute les nouveaux personnages`;
 
@@ -926,7 +1036,7 @@ class CharactersManager {
             type: characterData.type || 'PNJ',
             images: characterData.images || [],
             associatedLocations: (characterData.associatedLocations || []).map(id => String(id)),
-            associatedRegions: (characterData.associatedRegions || []).map(id => String(id)),
+            associatedRegions: (characterdata.associatedRegions || []).map(id => String(id)),
             mapId: window.settingsManager?.activeMapUrl || null
         };
 
