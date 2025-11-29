@@ -781,10 +781,15 @@ class InfoBoxManager {
             `;
 
             // Setup event listener pour l'import de rumeurs JSON
-            const rumeursFileInput = document.getElementById('import-rumeurs-json-input');
-            if (rumeursFileInput) {
-                rumeursFileInput.addEventListener('change', (e) => this.handleRumeursJsonImport(e));
-            }
+            setTimeout(() => {
+                const rumeursFileInput = document.getElementById('import-rumeurs-json-input');
+                if (rumeursFileInput) {
+                    rumeursFileInput.addEventListener('change', (e) => this.handleRumeursJsonImport(e));
+                    console.log('✅ Event listener pour import JSON de rumeurs configuré');
+                } else {
+                    console.warn('⚠️ Input file pour import JSON de rumeurs non trouvé');
+                }
+            }, 100);
         }
 
         // Onglet Événements de voyage (mode édition)
