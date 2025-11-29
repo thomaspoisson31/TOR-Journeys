@@ -56,7 +56,7 @@ class CharactersManager {
         const importBtn = document.getElementById('import-characters-btn');
         if (importBtn) {
             importBtn.addEventListener('click', () => {
-                const fileInput = document.getElementById('import-characters-file-input');
+                const fileInput = document.getElementById('import-characters-input');
                 if (fileInput) {
                     fileInput.click();
                 }
@@ -64,7 +64,7 @@ class CharactersManager {
         }
 
         // Input file pour l'import
-        const importFileInput = document.getElementById('import-characters-file-input');
+        const importFileInput = document.getElementById('import-characters-input');
         if (importFileInput) {
             importFileInput.addEventListener('change', (event) => this.handleImportCharacters(event));
         }
