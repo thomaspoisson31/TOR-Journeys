@@ -955,6 +955,48 @@ ENSEIGNEMENTS CLÉS DU DÉVELOPPEMENT
     - ✅ Cleanup explicite des listeners
     - ✅ Messages utilisateur clairs en cas d'erreur
 
+13. DEBUGGING DES DONNÉES MANQUANTES :
+    - Toujours vérifier la SOURCE des données (window.X, dataManager.X, localStorage)
+    - Utiliser console.log pour tracer le flux de données
+    - Pattern de vérification : Existe ? → Type correct ? → Contenu présent ?
+    - Pour les personnages : window.charactersManager.characters
+    - Pour les lieux : window.locationsData.locations
+    - Pour les régions : window.regionsData.regions
+    - Logs recommandés : 📊 pour stats, 🔍 pour recherche, ✅ pour succès, ❌ pour échec
+    - En cas de données manquantes, vérifier TOUTE la chaîne : création → sauvegarde → chargement → affichage
+
+PRINCIPES DE RENDERING RUMEURS JOURNAL
+---------------------------------------
+
+1. SYNCHRONISATION DES DONNÉES PERSONNAGES:
+   
+   Problématique:
+   - Les rumeurs des personnages doivent être affichées dans l'onglet Rumeurs du Journal
+   - Les données proviennent de window.charactersManager.characters
+   - La synchronisation doit être fiable pour garantir l'affichage
+   
+   Solution:
+   - Récupération directe depuis window.charactersManager?.characters || []
+   - Support des deux formats: Rumeur (string) et Rumeurs (array)
+   - Filtrage par carte active (mapId)
+   - Vérification explicite: hasRumor || hasRumors
+   
+   Code concerné:
+   - journal-manager.js: renderRumors() ligne ~848
+   
+   Points de vigilance:
+   - Vérifier que window.charactersManager existe et est initialisé
+   - S'assurer que les personnages ont bien leur mapId défini
+   - Les rumeurs peuvent être stockées soit dans character.Rumeur (string) soit character.Rumeurs (array)
+   - Toujours normaliser en tableau pour traitement unifié
+   
+   Workflow de vérification:
+   a) Ouvrir console navigateur
+   b) Vérifier: window.charactersManager.characters
+   c) Chercher le personnage concerné et vérifier ses propriétés Rumeur/Rumeurs
+   d) Vérifier que mapId correspond à la carte active
+   e) Si données présentes, le problème vient du rendering, sinon du chargement
+
 PRINCIPES DE RENDERING DESCRIPTIONS VOYAGE
 -------------------------------------------
 
