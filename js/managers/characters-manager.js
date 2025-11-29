@@ -677,9 +677,25 @@ class CharactersManager {
     }
 
     showImportCharactersModal(importedCharacters) {
-        const message = `Voulez-vous importer ${importedCharacters.length} personnage(s) ?\n\n` +
-                       `Remplacer : Supprime tous les personnages existants\n` +
-                       `Fusionner : Ajoute les nouveaux personnages`;
+        // Vérifier si les personnages ont des mapId différents de la carte active
+        const activeMapId = window.settingsManager?.activeMapUrl;
+        const differentMapIds = new Set();
+        
+        importedCharacters.forEach(char => {
+            if (char.mapId && char.mapId !== activeMapId) {
+                differentMapIds.add(char.mapId);
+            }
+        });
+
+        let message = `Voulez-vous importer ${importedCharacters.length} personnage(s) ?\n\n`;
+        
+        if (differentMapIds.size > 0) {
+            message += `⚠️ ATTENTION : Ces personnages proviennent d'une autre carte.\n`;
+            message += `Ils seront réassignés à la carte active actuelle.\n\n`;
+        }
+        
+        message += `Remplacer : Supprime tous les personnages existants\n`;
+        message += `Fusionner : Ajoute les nouveaux personnages`;
 
         const userChoice = confirm(message + "\n\nOK = Remplacer, Annuler pour choisir Fusionner");
 
@@ -706,8 +722,9 @@ class CharactersManager {
                     images: char.images || [],
                     associatedLocations: (char.associatedLocations || []).map(id => String(id)),
                     associatedRegions: (char.associatedRegions || []).map(id => String(id)),
-                    mapId: char.mapId || activeMapId
+                    mapId: activeMapId  // TOUJOURS assigner à la carte active lors de l'import
                 }));
+                console.log(`📥 [REPLACE] Tous les personnages réassignés à la carte active: ${activeMapId}`);
             } else {
                 console.log("📥 Mode MERGE - Fusion des personnages");
                 importedCharacters.forEach(importedChar => {
@@ -742,7 +759,7 @@ class CharactersManager {
                             images: normalizedImportedChar.images || [],
                             associatedLocations: normalizedImportedChar.associatedLocations,
                             associatedRegions: normalizedImportedChar.associatedRegions,
-                            mapId: normalizedImportedChar.mapId || activeMapId
+                            mapId: activeMapId  // TOUJOURS assigner à la carte active lors de l'import
                         };
                         this.characters.push(newChar);
                         console.log(`➕ Nouveau personnage ajouté: ${normalizedImportedChar.name} avec mapId: ${newChar.mapId}`);
