@@ -140,9 +140,6 @@ class SettingsManager {
         // Onglet Saison - réutiliser CalendarManager
         this.setupSeasonListeners();
 
-        // Onglet Import/Export
-        this.setupImportExportListeners();
-
         // Bouton de fermeture de la modale de résultat de tirage
         const closeRandomResultBtn = document.getElementById('close-random-roll-result');
         if (closeRandomResultBtn) {
@@ -205,9 +202,6 @@ class SettingsManager {
                 break;
             case 'season':
                 this.updateSeasonContent();
-                break;
-            case 'import-export':
-                // Aucune action spécifique requise ici, juste l'affichage
                 break;
             case 'random-tables':
                 this.renderSettingsRandomTablesTab();
@@ -1635,13 +1629,6 @@ class SettingsManager {
             this.renderSettingsRandomTablesTab();
         });
     }
-
-    // === GESTION IMPORT/EXPORT ===
-    setupImportExportListeners() {
-        // Les boutons d'import/export de personnages ont été déplacés dans la modale Personnages
-        // Cette méthode peut être supprimée si elle ne contient plus rien d'autre
-    }
-
 
     // === GESTION PRINCIPALE ===
     openSettings() {
