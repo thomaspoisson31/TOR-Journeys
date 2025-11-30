@@ -159,7 +159,7 @@ class InfoBoxManager {
                 infoBox.classList.remove('expanded');
                 // Réinitialiser previousInfoBox dans tous les cas
                 this.previousInfoBox = null;
-                
+
                 // Si on ferme une infobox de personnage et que la modale personnages existe, la rouvrir
                 const charactersModal = document.getElementById('characters-modal');
                 if (charactersModal && !charactersModal.classList.contains('hidden')) {
@@ -2791,134 +2791,155 @@ class InfoBoxManager {
     }
 
     renderLieuxRegionsTabRead() {
-        console.log(`🗺️ [renderLieuxRegionsTabRead] ========== DÉBUT DU RENDU ==========`);
-
         const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
+        const character = this.currentItem;
+
+        console.log('🗺️ [renderLieuxRegionsTabRead] ========== DÉBUT DU RENDU ==========');
+
         if (!lieuxRegionsTab) {
-            console.error(`❌ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab NON TROUVÉ !`);
+            console.error('❌ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab non trouvé');
             return;
         }
 
-        console.log(`✅ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab trouvé`);
+        console.log('✅ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab trouvé');
 
-        lieuxRegionsTab.innerHTML = '';
+        const textView = lieuxRegionsTab.querySelector('.text-view');
+        if (!textView) return;
 
-        const character = this.currentItem;
-        console.log(`🗺️ [renderLieuxRegionsTabRead] Personnage complet:`, character);
+        console.log('🗺️ [renderLieuxRegionsTabRead] Personnage complet:', character);
+
+        if (!character) {
+            console.error('❌ [renderLieuxRegionsTabRead] Aucun personnage actuel');
+            return;
+        }
+
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Rendu pour personnage "${character.name}"`);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedLocationIds:`, character.associatedLocations);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedRegionIds:`, character.associatedRegions);
+        console.log(`🗺️ [renderLieuxRegionsTabRead] Type de associatedLocationIds:`, typeof character.associatedLocations, Array.isArray(character.associatedLocations));
 
         const associatedLocationIds = character.associatedLocations || [];
         const associatedRegionIds = character.associatedRegions || [];
 
-        console.log(`🗺️ [renderLieuxRegionsTabRead] Rendu pour personnage "${character.name}"`);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedLocationIds:`, associatedLocationIds);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedRegionIds:`, associatedRegionIds);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] Type de associatedLocationIds:`, typeof associatedLocationIds, Array.isArray(associatedLocationIds));
-
-        // Récupérer les lieux associés
+        // Récupérer les lieux depuis window.locationsData
         const locationsData = window.locationsData || { locations: [] };
-        const associatedLocations = (locationsData.locations || []).filter(loc =>
-            associatedLocationIds.includes(String(loc.id))
-        );
-
-        // Récupérer les régions associées
-        const regionsData = window.regionsData || { regions: [] };
-        const associatedRegions = (regionsData.regions || []).filter(reg =>
-            associatedRegionIds.includes(String(reg.id))
-        );
+        const associatedLocations = associatedLocationIds
+            .map(id => locationsData.locations.find(loc => String(loc.id) === String(id)))
+            .filter(loc => loc !== undefined);
 
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedLocations.length} lieux associés trouvés`);
+
+        // Récupérer les régions depuis window.regionsData
+        const regionsData = window.regionsData || { regions: [] };
+        const associatedRegions = associatedRegionIds
+            .map(id => regionsData.regions.find(reg => String(reg.id) === String(id)))
+            .filter(reg => reg !== undefined);
+
         console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedRegions.length} régions associées trouvées`);
 
-        if (associatedLocations.length === 0 && associatedRegions.length === 0) {
-            lieuxRegionsTab.innerHTML = '<p class="text-gray-500 p-4 italic" style="color: #6b7280 !important;">Aucun lieu ou région associé à ce personnage.</p>';
-            return;
-        }
-
-        let html = '<div class="p-4 space-y-6">';
+        let html = '<div class="p-4 space-y-4">';
 
         // Section Lieux
-        if (associatedLocations.length > 0) {
-            html += `
-                <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
-                        <i class="fas fa-map-marker-alt mr-2" style="color: #940000 !important;"></i>
-                        Lieux associés
-                    </h3>
-                    <div class="space-y-2">
-                        ${associatedLocations.map(location => {
-                            const thumbnailImage = location.images?.find(img => img.type === 'vignette');
-                            return `
-                                <div class="location-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     onclick="window.infoBoxManager.showLocationFromCharacter('${location.id}')"
-                                     style="background-color: white !important;">
-                                    <div class="flex items-center space-x-3">
-                                        ${thumbnailImage ? `
-                                            <img src="${thumbnailImage.url}" alt="${location.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2"
-                                                 style="border-color: #940000 !important;">
-                                        ` : `
-                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
-                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
-                                                <i class="fas fa-map-marker-alt text-sm" style="color: white !important;"></i>
-                                            </div>
-                                        `}
-                                        <div class="flex-1">
-                                            <h4 class="font-medium" style="color: black !important;">${location.name}</h4>
-                                        </div>
-                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-        }
+        html += '<div>';
+        html += '<h3 class="text-lg font-semibold mb-3 flex items-center"><i class="fas fa-map-marker-alt mr-2"></i>Lieux associés</h3>';
 
-        // Section Régions
-        if (associatedRegions.length > 0) {
-            html += `
-                <div>
-                    <h3 class="text-lg font-semibold mb-3 flex items-center" style="color: #940000 !important; font-family: 'Merriweather', serif;">
-                        <i class="fas fa-mountain mr-2" style="color: #940000 !important;"></i>
-                        Régions associées
-                    </h3>
-                    <div class="space-y-2">
-                        ${associatedRegions.map(region => {
-                            const thumbnailImage = region.images?.find(img => img.type === 'vignette');
-                            return `
-                                <div class="region-card-compact bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer border border-gray-200"
-                                     onclick="window.infoBoxManager.showRegionFromCharacter('${region.id}')"
-                                     style="background-color: white !important;">
-                                    <div class="flex items-center space-x-3">
-                                        ${thumbnailImage ? `
-                                            <img src="${thumbnailImage.url}" alt="${region.name}"
-                                                 class="w-10 h-10 rounded-full object-cover border-2"
-                                                 style="border-color: #940000 !important;">
-                                        ` : `
-                                            <div class="w-10 h-10 rounded-full flex items-center justify-center border-2"
-                                                 style="background-color: #940000 !important; border-color: #940000 !important;">
-                                                <i class="fas fa-mountain text-sm" style="color: white !important;"></i>
-                                            </div>
-                                        `}
-                                        <div class="flex-1">
-                                            <h4 class="font-medium" style="color: black !important;">${region.name}</h4>
-                                        </div>
-                                        <i class="fas fa-chevron-right" style="color: #6b7280 !important;"></i>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
+        if (associatedLocations.length > 0) {
+            html += '<div class="space-y-2">';
+            associatedLocations.forEach(location => {
+                const colorClass = location.color ? `bg-${location.color}-100 border-${location.color}-500` : 'bg-gray-100 border-gray-500';
+                html += `
+                    <label class="flex items-center p-3 rounded-lg border-2 ${colorClass} cursor-pointer hover:bg-opacity-80 transition-colors" onclick="window.infoBoxManager.navigateToLocation(event, '${location.id}')">
+                        <span class="text-gray-800 font-medium">${location.name}</span>
+                    </label>
+                `;
+            });
+            html += '</div>';
+        } else {
+            html += '<p class="text-gray-500 italic">Aucun lieu associé</p>';
         }
 
         html += '</div>';
-        lieuxRegionsTab.innerHTML = html;
-        console.log(`🗺️ [renderLieuxRegionsTabRead] ========== FIN DU RENDU ==========`);
+
+        // Section Régions
+        html += '<div>';
+        html += '<h3 class="text-lg font-semibold mb-3 flex items-center"><i class="fas fa-mountain mr-2"></i>Régions associées</h3>';
+
+        if (associatedRegions.length > 0) {
+            html += '<div class="space-y-2">';
+            associatedRegions.forEach(region => {
+                const colorClass = region.color ? `bg-${region.color}-100 border-${region.color}-500` : 'bg-gray-100 border-gray-500';
+                html += `
+                    <label class="flex items-center p-3 rounded-lg border-2 ${colorClass} cursor-pointer hover:bg-opacity-80 transition-colors" onclick="window.infoBoxManager.navigateToRegion(event, '${region.id}')">
+                        <span class="text-gray-800 font-medium">${region.name}</span>
+                    </label>
+                `;
+            });
+            html += '</div>';
+        } else {
+            html += '<p class="text-gray-500 italic">Aucune région associée</p>';
+        }
+
+        html += '</div>';
+        html += '</div>';
+
+        textView.innerHTML = html;
+
+        console.log('🗺️ [renderLieuxRegionsTabRead] ========== FIN DU RENDU ==========');
     }
 
+    navigateToLocation(event, locationId) {
+        console.log(`🔍 [navigateToLocation] Navigation vers le lieu ID: ${locationId}`);
+
+        // Trouver le lieu
+        const locationsData = window.locationsData || { locations: [] };
+        const location = locationsData.locations.find(loc => String(loc.id) === String(locationId));
+
+        if (!location) {
+            console.error(`❌ [navigateToLocation] Lieu non trouvé avec l'ID: ${locationId}`);
+            return;
+        }
+
+        console.log(`✅ [navigateToLocation] Lieu trouvé: ${location.name}`);
+
+        // Sauvegarder le contexte actuel pour le retour
+        this.previousInfoBox = {
+            item: this.currentItem,
+            type: this.currentType,
+            fromInfoBox: true
+        };
+
+        console.log(`💾 [navigateToLocation] Contexte précédent sauvegardé:`, this.previousInfoBox);
+
+        // Afficher l'InfoBox du lieu
+        this.showInfoBox(event, location, 'location');
+    }
+
+    navigateToRegion(event, regionId) {
+        console.log(`🔍 [navigateToRegion] Navigation vers la région ID: ${regionId}`);
+
+        // Trouver la région
+        const regionsData = window.regionsData || { regions: [] };
+        const region = regionsData.regions.find(reg => String(reg.id) === String(regionId));
+
+        if (!region) {
+            console.error(`❌ [navigateToRegion] Région non trouvée avec l'ID: ${regionId}`);
+            return;
+        }
+
+        console.log(`✅ [navigateToRegion] Région trouvée: ${region.name}`);
+
+        // Sauvegarder le contexte actuel pour le retour
+        this.previousInfoBox = {
+            item: this.currentItem,
+            type: this.currentType,
+            fromInfoBox: true
+        };
+
+        console.log(`💾 [navigateToRegion] Contexte précédent sauvegardé:`, this.previousInfoBox);
+
+        // Afficher l'InfoBox de la région
+        this.showInfoBox(event, region, 'region');
+    }
 
     renderLieuxRegionsTabEdit() {
         const lieuxRegionsContent = document.getElementById('lieux-regions-content');
