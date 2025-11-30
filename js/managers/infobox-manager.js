@@ -159,6 +159,13 @@ class InfoBoxManager {
                 infoBox.classList.remove('expanded');
                 // Réinitialiser previousInfoBox dans tous les cas
                 this.previousInfoBox = null;
+                
+                // Si on ferme une infobox de personnage et que la modale personnages existe, la rouvrir
+                const charactersModal = document.getElementById('characters-modal');
+                if (charactersModal && !charactersModal.classList.contains('hidden')) {
+                    console.log("🔙 Retour à la modale Personnages de l'Aventure");
+                    // La modale est déjà visible, pas besoin de la rouvrir
+                }
             }
         }
     }

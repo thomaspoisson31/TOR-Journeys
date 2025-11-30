@@ -797,8 +797,8 @@ class CharactersManager {
             associatedRegions: character.associatedRegions || []
         });
 
-        // Fermer la modale de personnages
-        this.closeCharactersModal();
+        // NE PAS fermer la modale de personnages - elle restera visible en arrière-plan
+        // this.closeCharactersModal(); // SUPPRIMÉ
 
         // Utiliser la même infobox que les lieux
         if (window.infoBoxManager) {
