@@ -1497,6 +1497,31 @@ body {
 
 .filter-color-swatch {
     width: 24px;
+
+
+/* Knowledge checkboxes in text tab */
+#text-tab h3 {
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    color: #940000 !important;
+    margin-bottom: 1rem;
+    font-size: 1.35rem;
+}
+
+#text-tab label {
+    color: black !important;
+    font-size: 0.9rem;
+}
+
+#text-tab input[type="checkbox"] {
+    cursor: pointer;
+}
+
+#text-tab input[type="checkbox"]:checked {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
     height: 24px;
     border-radius: 50%;
     border: 3px solid rgba(255, 255, 255, 0.3);

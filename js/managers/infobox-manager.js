@@ -494,9 +494,59 @@ class InfoBoxManager {
             // Nettoyer complètement l'onglet et créer la structure
             textTab.innerHTML = '';
             const textView = this.createTextView(textTab);
-            textView.innerHTML = `
-                <div class="prose prose-invert">${this.renderMarkdown(item.description || 'Aucune description disponible.')}</div>
+            
+            // Section Description
+            let descriptionHTML = `
+                <h3>Description</h3>
+                <div class="prose prose-invert mb-6">${this.renderMarkdown(item.description || 'Aucune description disponible.')}</div>
             `;
+
+            // Section Connaissance avec cases à cocher
+            let knowledgeHTML = '<h3>Connaissance</h3><div class="flex flex-col space-y-2 mb-4">';
+            
+            if (type === 'character') {
+                // Pour les personnages : Connu et Rencontré
+                const isKnown = item.known || false;
+                const isMet = item.met || false;
+                
+                knowledgeHTML += `
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="char-known-checkbox" ${isKnown ? 'checked' : ''} 
+                               onchange="window.infoBoxManager.toggleCharacterKnowledge('known', this.checked)"
+                               class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                        <span>Connu</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="char-met-checkbox" ${isMet ? 'checked' : ''} 
+                               onchange="window.infoBoxManager.toggleCharacterKnowledge('met', this.checked)"
+                               class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                        <span>Rencontré</span>
+                    </label>
+                `;
+            } else {
+                // Pour les lieux/régions : Connue et Visitée
+                const isKnown = item.known || false;
+                const isVisited = item.visited || false;
+                
+                knowledgeHTML += `
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="location-known-checkbox" ${isKnown ? 'checked' : ''} 
+                               onchange="window.infoBoxManager.toggleLocationKnowledge('known', this.checked)"
+                               class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                        <span>Connue</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="location-visited-checkbox" ${isVisited ? 'checked' : ''} 
+                               onchange="window.infoBoxManager.toggleLocationKnowledge('visited', this.checked)"
+                               class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                        <span>Visitée</span>
+                    </label>
+                `;
+            }
+            
+            knowledgeHTML += '</div>';
+            
+            textView.innerHTML = descriptionHTML + knowledgeHTML;
         }
 
         // Onglet Personnages (uniquement pour les lieux et régions)
@@ -3461,6 +3511,60 @@ class InfoBoxManager {
                 e.stopPropagation();
                 isPanning = true;
                 lastMouseX = e.clientX;
+
+
+    toggleCharacterKnowledge(field, value) {
+        if (!this.currentItem || this.currentType !== 'character') return;
+
+        // Mettre à jour le personnage
+        this.currentItem[field] = value;
+
+        // Sauvegarder dans CharactersManager
+        if (window.charactersManager) {
+            const updates = {};
+            updates[field] = value;
+            window.charactersManager.updateCharacter(this.currentItem.id, updates);
+        }
+
+        console.log(`✅ Personnage "${this.currentItem.name}" - ${field}: ${value}`);
+    }
+
+    toggleLocationKnowledge(field, value) {
+        if (!this.currentItem || (this.currentType !== 'location' && this.currentType !== 'region')) return;
+
+        // Mettre à jour l'item
+        this.currentItem[field] = value;
+
+        // Sauvegarder selon le type
+        if (this.currentType === 'location') {
+            // Mettre à jour dans window.locationsData
+            const location = window.locationsData?.locations.find(loc => String(loc.id) === String(this.currentItem.id));
+            if (location) {
+                location[field] = value;
+                window.dataManager.saveLocationsToLocal();
+                
+                // Rafraîchir l'affichage des marqueurs
+                if (window.renderManager) {
+                    window.renderManager.renderLocations();
+                }
+            }
+        } else if (this.currentType === 'region') {
+            // Mettre à jour dans window.regionsData
+            const region = window.regionsData?.regions.find(reg => String(reg.id) === String(this.currentItem.id));
+            if (region) {
+                region[field] = value;
+                window.dataManager.saveRegionsToLocal();
+                
+                // Rafraîchir l'affichage des régions
+                if (window.renderManager) {
+                    window.renderManager.renderRegions();
+                }
+            }
+        }
+
+        console.log(`✅ ${this.currentType === 'location' ? 'Lieu' : 'Région'} "${this.currentItem.name}" - ${field}: ${value}`);
+    }
+
                 lastMouseY = e.clientY;
                 fullscreenOverlay.classList.add('panning');
             }
