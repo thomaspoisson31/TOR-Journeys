@@ -9,8 +9,8 @@ class CharactersManager {
             pj: true,
             pnj: true,
             monstre: true,
-            known: true,
-            met: true
+            known: false,
+            met: false
         };
         this.sortBy = 'name';
         // Added for Gemini integration
@@ -227,7 +227,7 @@ class CharactersManager {
         
         // Vérifier si au moins un filtre est actif
         const hasActiveFilters = !this.filters.pj || !this.filters.pnj || !this.filters.monstre || 
-                                  !this.filters.known || !this.filters.met;
+                                  this.filters.known || this.filters.met;
         
         if (filtersContainer && hasActiveFilters) {
             filtersContainer.style.opacity = '1';
@@ -241,12 +241,12 @@ class CharactersManager {
     }
 
     disableFilters() {
-        // Activer tous les filtres (= désactiver le filtrage)
+        // Réinitialiser tous les filtres (= désactiver le filtrage)
         this.filters.pj = true;
         this.filters.pnj = true;
         this.filters.monstre = true;
-        this.filters.known = true;
-        this.filters.met = true;
+        this.filters.known = false;
+        this.filters.met = false;
         
         this.syncFiltersUI();
         this.updateFilterUIState();
@@ -313,11 +313,13 @@ class CharactersManager {
 
         // Appliquer les filtres de statut
         filteredCharacters = filteredCharacters.filter(character => {
-            // Si les deux filtres sont cochés, afficher tous
-            if (this.filters.known && this.filters.met) return true;
+            // Si aucun filtre n'est coché, afficher tous les personnages
+            if (!this.filters.known && !this.filters.met) return true;
             
-            // Si aucun filtre n'est coché, ne rien afficher
-            if (!this.filters.known && !this.filters.met) return false;
+            // Si les deux filtres sont cochés, afficher les personnages connus OU rencontrés
+            if (this.filters.known && this.filters.met) {
+                return character.known === true || character.met === true;
+            }
             
             // Si seulement "Connus" est coché
             if (this.filters.known && !this.filters.met) {
