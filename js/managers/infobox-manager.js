@@ -494,7 +494,7 @@ class InfoBoxManager {
             // Nettoyer complètement l'onglet et créer la structure
             textTab.innerHTML = '';
             const textView = this.createTextView(textTab);
-            
+
             // Section Description
             let descriptionHTML = `
                 <h3>Description</h3>
@@ -503,21 +503,21 @@ class InfoBoxManager {
 
             // Section Connaissance avec cases à cocher
             let knowledgeHTML = '<h3>Connaissance</h3><div class="flex flex-col space-y-2 mb-4">';
-            
+
             if (type === 'character') {
                 // Pour les personnages : Connu et Rencontré
                 const isKnown = item.known || false;
                 const isMet = item.met || false;
-                
+
                 knowledgeHTML += `
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" id="char-known-checkbox" ${isKnown ? 'checked' : ''} 
+                        <input type="checkbox" id="char-known-checkbox" ${isKnown ? 'checked' : ''}
                                onchange="window.infoBoxManager.toggleCharacterKnowledge('known', this.checked)"
                                class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                         <span>Connu</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" id="char-met-checkbox" ${isMet ? 'checked' : ''} 
+                        <input type="checkbox" id="char-met-checkbox" ${isMet ? 'checked' : ''}
                                onchange="window.infoBoxManager.toggleCharacterKnowledge('met', this.checked)"
                                class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                         <span>Rencontré</span>
@@ -527,25 +527,25 @@ class InfoBoxManager {
                 // Pour les lieux/régions : Connue et Visitée
                 const isKnown = item.known || false;
                 const isVisited = item.visited || false;
-                
+
                 knowledgeHTML += `
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" id="location-known-checkbox" ${isKnown ? 'checked' : ''} 
+                        <input type="checkbox" id="location-known-checkbox" ${isKnown ? 'checked' : ''}
                                onchange="window.infoBoxManager.toggleLocationKnowledge('known', this.checked)"
                                class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                         <span>Connue</span>
                     </label>
                     <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" id="location-visited-checkbox" ${isVisited ? 'checked' : ''} 
+                        <input type="checkbox" id="location-visited-checkbox" ${isVisited ? 'checked' : ''}
                                onchange="window.infoBoxManager.toggleLocationKnowledge('visited', this.checked)"
                                class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                         <span>Visitée</span>
                     </label>
                 `;
             }
-            
+
             knowledgeHTML += '</div>';
-            
+
             textView.innerHTML = descriptionHTML + knowledgeHTML;
         }
 
@@ -1869,7 +1869,7 @@ class InfoBoxManager {
 
     async generateDescription() {
         const nameField = document.getElementById('edit-name');
-        const descTextarea = document.getElementById('edit-description');
+        const descField = document.getElementById('edit-description'); // Correction : utiliser descField
 
         if (!nameField || !nameField.value.trim()) {
             alert("Veuillez d'abord entrer un nom.");
@@ -1900,7 +1900,7 @@ class InfoBoxManager {
 
             const generatedDescription = await this.geminiManager.generateText(prompt);
 
-            if (descField) {
+            if (descField) { // Utilisation de descField corrigée
                 descField.value = generatedDescription;
             }
 
@@ -2738,7 +2738,7 @@ class InfoBoxManager {
             console.log(`🔍 [renderPersonnagesTabEdit] Checkbox pour ${character.name} (ID: ${charIdString}) - checked: ${isChecked}`);
 
             return `
-                <label class="flex items-center space-x-3 p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
                     <input type="checkbox"
                            class="character-checkbox w-4 h-4 cursor-pointer"
                            value="${charIdString}"
@@ -3511,60 +3511,6 @@ class InfoBoxManager {
                 e.stopPropagation();
                 isPanning = true;
                 lastMouseX = e.clientX;
-
-
-    toggleCharacterKnowledge(field, value) {
-        if (!this.currentItem || this.currentType !== 'character') return;
-
-        // Mettre à jour le personnage
-        this.currentItem[field] = value;
-
-        // Sauvegarder dans CharactersManager
-        if (window.charactersManager) {
-            const updates = {};
-            updates[field] = value;
-            window.charactersManager.updateCharacter(this.currentItem.id, updates);
-        }
-
-        console.log(`✅ Personnage "${this.currentItem.name}" - ${field}: ${value}`);
-    }
-
-    toggleLocationKnowledge(field, value) {
-        if (!this.currentItem || (this.currentType !== 'location' && this.currentType !== 'region')) return;
-
-        // Mettre à jour l'item
-        this.currentItem[field] = value;
-
-        // Sauvegarder selon le type
-        if (this.currentType === 'location') {
-            // Mettre à jour dans window.locationsData
-            const location = window.locationsData?.locations.find(loc => String(loc.id) === String(this.currentItem.id));
-            if (location) {
-                location[field] = value;
-                window.dataManager.saveLocationsToLocal();
-                
-                // Rafraîchir l'affichage des marqueurs
-                if (window.renderManager) {
-                    window.renderManager.renderLocations();
-                }
-            }
-        } else if (this.currentType === 'region') {
-            // Mettre à jour dans window.regionsData
-            const region = window.regionsData?.regions.find(reg => String(reg.id) === String(this.currentItem.id));
-            if (region) {
-                region[field] = value;
-                window.dataManager.saveRegionsToLocal();
-                
-                // Rafraîchir l'affichage des régions
-                if (window.renderManager) {
-                    window.renderManager.renderRegions();
-                }
-            }
-        }
-
-        console.log(`✅ ${this.currentType === 'location' ? 'Lieu' : 'Région'} "${this.currentItem.name}" - ${field}: ${value}`);
-    }
-
                 lastMouseY = e.clientY;
                 fullscreenOverlay.classList.add('panning');
             }
