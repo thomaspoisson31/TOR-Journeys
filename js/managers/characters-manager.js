@@ -151,6 +151,24 @@ class CharactersManager {
                 this.renderCharactersList();
             });
         }
+
+        // Clic sur l'icône d'entonnoir pour désactiver tous les filtres
+        const filterIcon = document.getElementById('filter-status-icon');
+        if (filterIcon) {
+            filterIcon.addEventListener('click', () => {
+                // Vérifier si des filtres sont actifs
+                const hasActiveFilters = !this.filters.pj || !this.filters.pnj || !this.filters.monstre || 
+                                          this.filters.known || this.filters.met;
+                
+                // Si des filtres sont actifs, les désactiver tous
+                if (hasActiveFilters) {
+                    this.disableFilters();
+                }
+            });
+            
+            // Ajouter un style de curseur pointer sur l'icône
+            filterIcon.style.cursor = 'pointer';
+        }
     }
 
     loadCharactersFromLocal() {
