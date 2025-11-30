@@ -94,6 +94,12 @@ class CharactersManager {
             generateDescBtn.addEventListener('click', () => this.generateCharacterDescription());
         }
 
+        // Bouton désactiver les filtres
+        const disableFiltersBtn = document.getElementById('disable-filters-btn');
+        if (disableFiltersBtn) {
+            disableFiltersBtn.addEventListener('click', () => this.disableFilters());
+        }
+
         // Filtres par type
         const filterPJ = document.getElementById('filter-pj');
         const filterPNJ = document.getElementById('filter-pnj');
@@ -102,6 +108,7 @@ class CharactersManager {
         if (filterPJ) {
             filterPJ.addEventListener('change', (e) => {
                 this.filters.pj = e.target.checked;
+                this.updateFilterUIState();
                 this.renderCharactersList();
             });
         }
@@ -109,6 +116,7 @@ class CharactersManager {
         if (filterPNJ) {
             filterPNJ.addEventListener('change', (e) => {
                 this.filters.pnj = e.target.checked;
+                this.updateFilterUIState();
                 this.renderCharactersList();
             });
         }
@@ -116,6 +124,7 @@ class CharactersManager {
         if (filterMonstre) {
             filterMonstre.addEventListener('change', (e) => {
                 this.filters.monstre = e.target.checked;
+                this.updateFilterUIState();
                 this.renderCharactersList();
             });
         }
@@ -127,6 +136,7 @@ class CharactersManager {
         if (filterKnown) {
             filterKnown.addEventListener('change', (e) => {
                 this.filters.known = e.target.checked;
+                this.updateFilterUIState();
                 this.renderCharactersList();
             });
         }
@@ -134,6 +144,7 @@ class CharactersManager {
         if (filterMet) {
             filterMet.addEventListener('change', (e) => {
                 this.filters.met = e.target.checked;
+                this.updateFilterUIState();
                 this.renderCharactersList();
             });
         }
@@ -189,8 +200,57 @@ class CharactersManager {
         const modal = document.getElementById('characters-modal');
         if (modal) {
             modal.classList.remove('hidden');
+            this.syncFiltersUI();
+            this.updateFilterUIState();
             this.renderCharactersList();
         }
+    }
+
+    syncFiltersUI() {
+        // Synchroniser l'UI avec l'état des filtres
+        const filterPJ = document.getElementById('filter-pj');
+        const filterPNJ = document.getElementById('filter-pnj');
+        const filterMonstre = document.getElementById('filter-monstre');
+        const filterKnown = document.getElementById('filter-known');
+        const filterMet = document.getElementById('filter-met');
+
+        if (filterPJ) filterPJ.checked = this.filters.pj;
+        if (filterPNJ) filterPNJ.checked = this.filters.pnj;
+        if (filterMonstre) filterMonstre.checked = this.filters.monstre;
+        if (filterKnown) filterKnown.checked = this.filters.known;
+        if (filterMet) filterMet.checked = this.filters.met;
+    }
+
+    updateFilterUIState() {
+        const filtersContainer = document.querySelector('#characters-modal .bg-gray-700.rounded-lg');
+        const disableBtn = document.getElementById('disable-filters-btn');
+        
+        // Vérifier si au moins un filtre est actif
+        const hasActiveFilters = !this.filters.pj || !this.filters.pnj || !this.filters.monstre || 
+                                  !this.filters.known || !this.filters.met;
+        
+        if (filtersContainer && hasActiveFilters) {
+            filtersContainer.style.opacity = '1';
+        } else if (filtersContainer) {
+            filtersContainer.style.opacity = '0.5';
+        }
+
+        if (disableBtn) {
+            disableBtn.textContent = hasActiveFilters ? '✕ Désactiver les filtres' : '✓ Filtres désactivés';
+        }
+    }
+
+    disableFilters() {
+        // Activer tous les filtres (= désactiver le filtrage)
+        this.filters.pj = true;
+        this.filters.pnj = true;
+        this.filters.monstre = true;
+        this.filters.known = true;
+        this.filters.met = true;
+        
+        this.syncFiltersUI();
+        this.updateFilterUIState();
+        this.renderCharactersList();
     }
 
     closeCharactersModal() {
