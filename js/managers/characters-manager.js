@@ -94,12 +94,6 @@ class CharactersManager {
             generateDescBtn.addEventListener('click', () => this.generateCharacterDescription());
         }
 
-        // Bouton désactiver les filtres
-        const disableFiltersBtn = document.getElementById('disable-filters-btn');
-        if (disableFiltersBtn) {
-            disableFiltersBtn.addEventListener('click', () => this.disableFilters());
-        }
-
         // Filtres par type
         const filterPJ = document.getElementById('filter-pj');
         const filterPNJ = document.getElementById('filter-pnj');
@@ -222,21 +216,23 @@ class CharactersManager {
     }
 
     updateFilterUIState() {
-        const filtersContainer = document.querySelector('#characters-modal .bg-gray-700.rounded-lg');
-        const disableBtn = document.getElementById('disable-filters-btn');
+        const filterIcon = document.getElementById('filter-status-icon');
         
         // Vérifier si au moins un filtre est actif
         const hasActiveFilters = !this.filters.pj || !this.filters.pnj || !this.filters.monstre || 
                                   this.filters.known || this.filters.met;
         
-        if (filtersContainer && hasActiveFilters) {
-            filtersContainer.style.opacity = '1';
-        } else if (filtersContainer) {
-            filtersContainer.style.opacity = '0.5';
-        }
-
-        if (disableBtn) {
-            disableBtn.textContent = hasActiveFilters ? '✕ Désactiver les filtres' : '✓ Filtres désactivés';
+        // Mettre à jour l'icône d'entonnoir
+        if (filterIcon) {
+            if (hasActiveFilters) {
+                filterIcon.classList.remove('text-gray-500');
+                filterIcon.classList.add('text-orange-500');
+                filterIcon.title = 'Filtres actifs';
+            } else {
+                filterIcon.classList.remove('text-orange-500');
+                filterIcon.classList.add('text-gray-500');
+                filterIcon.title = 'Aucun filtre actif';
+            }
         }
     }
 

@@ -340,8 +340,8 @@
         </div>
 
         <!-- Characters Modal -->
-        <div id="characters-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div id="characters-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center z-[60]" style="align-items: flex-start; padding-top: 5vh;">
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[85vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold">
                         <i class="fas fa-users mr-2"></i>Personnages de l'Aventure
@@ -371,8 +371,11 @@
 
                     <!-- Filtres et Tri -->
                     <div class="bg-gray-700 rounded-lg p-3 flex flex-wrap gap-3 items-center">
+                        <div class="flex items-center">
+                            <i id="filter-status-icon" class="fas fa-filter text-gray-500 text-lg mr-3 transition-colors" title="État des filtres"></i>
+                        </div>
+                        
                         <div class="flex items-center space-x-2">
-                            <label class="text-sm text-gray-300">Filtrer par type:</label>
                             <label class="flex items-center text-sm">
                                 <input type="checkbox" id="filter-pj" class="mr-1" checked>
                                 <span class="text-white">PJ</span>
@@ -388,7 +391,6 @@
                         </div>
 
                         <div class="flex items-center space-x-2 border-l border-gray-600 pl-3">
-                            <label class="text-sm text-gray-300">Statut:</label>
                             <label class="flex items-center text-sm">
                                 <input type="checkbox" id="filter-known" class="mr-1">
                                 <span class="text-white">Connus</span>
@@ -404,16 +406,8 @@
                             <select id="sort-characters" class="bg-gray-600 text-white px-3 py-1 rounded text-sm">
                                 <option value="name">Nom (A-Z)</option>
                                 <option value="name-desc">Nom (Z-A)</option>
-                                <option value="id">ID (croissant)</option>
-                                <option value="id-desc">ID (décroissant)</option>
                                 <option value="type">Type</option>
                             </select>
-                        </div>
-
-                        <div class="flex items-center ml-auto">
-                            <button id="disable-filters-btn" class="text-xs px-3 py-1.5 bg-gray-600 hover:bg-gray-500 rounded text-white transition-colors">
-                                ✕ Désactiver les filtres
-                            </button>
                         </div>
                     </div>
                 </div>
