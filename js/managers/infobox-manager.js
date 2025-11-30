@@ -3316,240 +3316,69 @@ class InfoBoxManager {
     // --- Zoom pour les images en plein écran ---
     setupFullscreenImageListeners() {
         const fullscreenOverlay = document.getElementById('fullscreen-overlay');
-        if (!fullscreenOverlay) return;
+        const fullscreenImage = document.getElementById('fullscreen-image');
 
-        let zoomScale = 1;
-        let panX = 0;
-        let panY = 0;
+        if (!fullscreenOverlay || !fullscreenImage) {
+            console.warn('⚠️ Fullscreen overlay ou image non trouvé');
+            return;
+        }
+
+        let scale = 1;
         let isPanning = false;
+        let startX = 0;
+        let startY = 0;
+        let translateX = 0;
+        let translateY = 0;
         let lastMouseX = 0;
         let lastMouseY = 0;
-        const minZoom = 1;
-        const maxZoom = 5;
+    }
 
-        // Créer le conteneur pour le zoom
-        const container = document.createElement('div');
-        container.className = 'fullscreen-overlay-container';
+    toggleCharacterKnowledge(field, value) {
+        if (!this.currentItem || this.currentType !== 'character') return;
 
-        // Créer les contrôles de zoom
-        const controls = document.createElement('div');
-        controls.className = 'fullscreen-zoom-controls';
-        controls.innerHTML = `
-            <button class="fullscreen-zoom-btn" id="fullscreen-zoom-out" title="Dézoomer">
-                <i class="fas fa-minus"></i>
-            </button>
-            <button class="fullscreen-zoom-btn" id="fullscreen-zoom-reset" title="Réinitialiser">
-                <i class="fas fa-expand-arrows-alt"></i>
-            </button>
-            <button class="fullscreen-zoom-btn" id="fullscreen-zoom-in" title="Zoomer">
-                <i class="fas fa-plus"></i>
-            </button>
-        `;
+        console.log(`📋 [toggleCharacterKnowledge] ${field} = ${value} pour ${this.currentItem.name}`);
 
-        // Indicateur de niveau de zoom (masqué sur PC, visible sur mobile)
-        const zoomLevel = document.createElement('div');
-        zoomLevel.className = 'fullscreen-zoom-level';
-        zoomLevel.textContent = '100%';
+        // Mettre à jour le personnage
+        this.currentItem[field] = value;
 
-        // Détecter si on est sur mobile
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        if (!isMobile) {
-            zoomLevel.style.display = 'none';
+        // Sauvegarder dans CharactersManager
+        if (window.charactersManager) {
+            const updates = {};
+            updates[field] = value;
+            window.charactersManager.updateCharacter(this.currentItem.id, updates);
         }
 
-        const resetZoom = () => {
-            zoomScale = 1;
-            panX = 0;
-            panY = 0;
-            container.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
-            zoomLevel.textContent = '100%';
-            fullscreenOverlay.classList.remove('zooming', 'panning'); // Nettoyer les classes
-        };
+        console.log(`✅ [toggleCharacterKnowledge] Mise à jour sauvegardée`);
+    }
 
-        // Fonction de fermeture réutilisable
-        const closeFullscreen = () => {
-            console.log('🚪 [closeFullscreen] Fermeture de l\'overlay');
-            fullscreenOverlay.classList.add('hidden');
-            this.resetZoomForFullscreen();
-            // Remettre le focus sur l'InfoBox pour permettre la navigation
-            const infoBox = document.getElementById('info-box');
-            if (infoBox && infoBox.style.display === 'block') {
-                infoBox.focus();
+    toggleLocationKnowledge(field, value) {
+        if (!this.currentItem || (this.currentType !== 'location' && this.currentType !== 'region')) return;
+
+        console.log(`📋 [toggleLocationKnowledge] ${field} = ${value} pour ${this.currentItem.name}`);
+
+        // Mettre à jour le lieu/région
+        this.currentItem[field] = value;
+
+        // Sauvegarder dans le dataManager approprié
+        if (this.currentType === 'location') {
+            const location = window.locationsData.locations.find(l => String(l.id) === String(this.currentItem.id));
+            if (location) {
+                location[field] = value;
+                this.dataManager.saveLocationsToLocal();
             }
-        };
-
-        // Ajouter l'écouteur d'événement pour Échap
-        const handleEscape = (e) => {
-            if (e.key === 'Escape' && !fullscreenOverlay.classList.contains('hidden')) {
-                console.log('⌨️ [handleEscape] Touche Échap détectée');
-                closeFullscreen();
+        } else if (this.currentType === 'region') {
+            const region = window.regionsData.regions.find(r => String(r.id) === String(this.currentItem.id));
+            if (region) {
+                region[field] = value;
+                this.dataManager.saveRegionsToLocal();
             }
-        };
-
-        // Ajouter l'écouteur d'événement pour Échap
-        document.addEventListener('keydown', handleEscape);
-
-        // Fermeture en cliquant sur l'overlay (zone noire)
-        fullscreenOverlay.addEventListener('click', (e) => {
-            console.log('🖱️ [overlay click] Target:', e.target.id || e.target.className);
-            // Si on clique directement sur l'overlay (pas sur l'image ou les contrôles)
-            if (e.target === fullscreenOverlay) {
-                console.log('🖱️ [overlay click] Clic sur fond noir - fermeture');
-                closeFullscreen();
-            } else {
-                console.log('🖱️ [overlay click] Clic sur autre élément - pas de fermeture');
-            }
-        });
-
-        // Clic gauche sur l'image = fermeture
-        container.addEventListener('click', (e) => {
-            console.log('🖱️ [container click] Clic sur image/conteneur');
-            // Seulement si c'est un clic gauche (button 0) et pas un drag
-            if (e.button === 0 || e.button === undefined) {
-                console.log('🖱️ [container click] Clic gauche détecté - fermeture');
-                closeFullscreen();
-            }
-        });
-
-        // Fonction pour réinitialiser le zoom, appelée lors de la fermeture de l'overlay
-        this.resetZoomForFullscreen = resetZoom;
-
-        const updateTransform = () => {
-            container.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
-            zoomLevel.textContent = `${Math.round(zoomScale * 100)}%`;
-
-            if (zoomScale > 1) {
-                fullscreenOverlay.classList.add('zooming');
-            } else {
-                fullscreenOverlay.classList.remove('zooming');
-            }
-        };
-
-        const zoom = (delta, centerX = null, centerY = null) => {
-            const oldScale = zoomScale;
-            zoomScale = Math.max(minZoom, Math.min(maxZoom, zoomScale * (1 + delta)));
-
-            if (centerX !== null && centerY !== null && zoomScale > 1) {
-                const rect = fullscreenOverlay.getBoundingClientRect();
-                const offsetX = centerX - rect.left - rect.width / 2;
-                const offsetY = centerY - rect.top - rect.height / 2;
-
-                const scaleDiff = zoomScale / oldScale - 1;
-                panX -= offsetX * scaleDiff;
-                panY -= offsetY * scaleDiff;
-            }
-
-            updateTransform();
-        };
-
-        // Gestion de la molette (PC)
-        fullscreenOverlay.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            zoom(delta, e.clientX, e.clientY);
-        }, { passive: false });
-
-        // Gestion du pinch (mobile)
-        let touchDist = 0;
-        let touchCenterX = 0;
-        let touchCenterY = 0;
-
-        fullscreenOverlay.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                touchDist = Math.sqrt(dx * dx + dy * dy);
-                touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-            } else if (e.touches.length === 1 && zoomScale > 1) {
-                isPanning = true;
-                lastMouseX = e.touches[0].clientX;
-                lastMouseY = e.touches[0].clientY;
-                fullscreenOverlay.classList.add('panning');
-            }
-        }, { passive: false });
-
-        fullscreenOverlay.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                const newDist = Math.sqrt(dx * dx + dy * dy);
-
-                if (touchDist > 0) {
-                    const delta = (newDist / touchDist - 1);
-                    zoom(delta, touchCenterX, touchCenterY);
-                }
-
-                touchDist = newDist;
-                touchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                touchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-            } else if (e.touches.length === 1 && isPanning && zoomScale > 1) {
-                e.preventDefault();
-                const deltaX = e.touches[0].clientX - lastMouseX;
-                const deltaY = e.touches[0].clientY - lastMouseY;
-                panX += deltaX;
-                panY += deltaY;
-                updateTransform();
-                lastMouseX = e.touches[0].clientX;
-                lastMouseY = e.touches[0].clientY;
-            }
-        }, { passive: false });
-
-        fullscreenOverlay.addEventListener('touchend', () => {
-            isPanning = false;
-            touchDist = 0;
-            fullscreenOverlay.classList.remove('panning');
-        });
-
-        // Gestion du drag (PC) - uniquement sur l'image
-        container.addEventListener('mousedown', (e) => {
-            // Bouton 2 = clic droit
-            if (e.button === 2 && zoomScale > 1) {
-                e.preventDefault();
-                e.stopPropagation();
-                isPanning = true;
-                lastMouseX = e.clientX;
-                lastMouseY = e.clientY;
-                fullscreenOverlay.classList.add('panning');
-            }
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isPanning && zoomScale > 1) {
-                e.preventDefault();
-                const deltaX = e.clientX - lastMouseX;
-                const deltaY = e.clientY - lastMouseY;
-                panX += deltaX;
-                panY += deltaY;
-                updateTransform();
-                lastMouseX = e.clientX;
-                lastMouseY = e.clientY;
-            }
-        });
-
-        document.addEventListener('mouseup', (e) => {
-            if (isPanning) {
-                isPanning = false;
-                fullscreenOverlay.classList.remove('panning');
-            }
-        });
-
-        // Masquer les contrôles de zoom (inutiles avec molette/pinch)
-        controls.style.display = 'none';
-
-        // Appliquer le conteneur, les contrôles et le niveau de zoom une seule fois
-        // On suppose que l'image est ajoutée dynamiquement après le chargement des listeners
-        const fullscreenImage = fullscreenOverlay.querySelector('#fullscreen-image');
-        if (fullscreenImage) {
-            // Déplacer l'image dans le conteneur
-            fullscreenOverlay.insertBefore(container, fullscreenImage);
-            container.appendChild(fullscreenImage);
-            fullscreenOverlay.appendChild(controls);
-            fullscreenOverlay.appendChild(zoomLevel);
-            resetZoom(); // Initialiser à l'état par défaut
         }
+
+        console.log(`✅ [toggleLocationKnowledge] Mise à jour sauvegardée`);
+    }
+
+    resetZoomForFullscreen() {
+        // Cette méthode sera définie dans setupFullscreenImageListeners
     }
 }
 
