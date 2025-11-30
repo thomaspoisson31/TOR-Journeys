@@ -8,7 +8,9 @@ class CharactersManager {
         this.filters = {
             pj: true,
             pnj: true,
-            monstre: true
+            monstre: true,
+            known: true,
+            met: true
         };
         this.sortBy = 'name';
         // Added for Gemini integration
@@ -114,6 +116,24 @@ class CharactersManager {
         if (filterMonstre) {
             filterMonstre.addEventListener('change', (e) => {
                 this.filters.monstre = e.target.checked;
+                this.renderCharactersList();
+            });
+        }
+
+        // Filtres par statut
+        const filterKnown = document.getElementById('filter-known');
+        const filterMet = document.getElementById('filter-met');
+
+        if (filterKnown) {
+            filterKnown.addEventListener('change', (e) => {
+                this.filters.known = e.target.checked;
+                this.renderCharactersList();
+            });
+        }
+
+        if (filterMet) {
+            filterMet.addEventListener('change', (e) => {
+                this.filters.met = e.target.checked;
                 this.renderCharactersList();
             });
         }
@@ -228,6 +248,27 @@ class CharactersManager {
             if (type === 'PJ') return this.filters.pj;
             if (type === 'PNJ') return this.filters.pnj;
             if (type === 'Monstre') return this.filters.monstre;
+            return true;
+        });
+
+        // Appliquer les filtres de statut
+        filteredCharacters = filteredCharacters.filter(character => {
+            // Si les deux filtres sont cochés, afficher tous
+            if (this.filters.known && this.filters.met) return true;
+            
+            // Si aucun filtre n'est coché, ne rien afficher
+            if (!this.filters.known && !this.filters.met) return false;
+            
+            // Si seulement "Connus" est coché
+            if (this.filters.known && !this.filters.met) {
+                return character.known === true;
+            }
+            
+            // Si seulement "Rencontrés" est coché
+            if (!this.filters.known && this.filters.met) {
+                return character.met === true;
+            }
+            
             return true;
         });
 
