@@ -2888,31 +2888,38 @@ class InfoBoxManager {
     }
 
     navigateToLocation(event, locationId) {
-        console.log(`🔍 [navigateToLocation] Navigation vers le lieu ID: ${locationId}`);
+        event.preventDefault();
+        event.stopPropagation();
 
-        // Trouver le lieu
-        const locationsData = window.locationsData || { locations: [] };
-        const location = locationsData.locations.find(loc => String(loc.id) === String(locationId));
-
-        if (!location) {
-            console.error(`❌ [navigateToLocation] Lieu non trouvé avec l'ID: ${locationId}`);
+        if (!window.dataManager || !window.dataManager.locationsData) {
+            console.error("❌ DataManager ou locationsData non disponible");
             return;
         }
 
-        console.log(`✅ [navigateToLocation] Lieu trouvé: ${location.name}`);
+        const location = window.dataManager.locationsData.locations.find(
+            loc => String(loc.id) === String(locationId)
+        );
 
-        // Sauvegarder le contexte actuel pour le retour
+        if (!location) {
+            console.error(`❌ Lieu non trouvé avec l'ID: ${locationId}`);
+            return;
+        }
+
+        console.log(`🔗 Navigation vers le lieu "${location.name}" depuis personnage "${this.currentItem.name}"`);
+
+        // Sauvegarder le contexte actuel AVANT de changer d'InfoBox
         this.previousInfoBox = {
-            item: this.currentItem,
+            item: { ...this.currentItem },
             type: this.currentType,
-            fromInfoBox: true
+            fromInfoBox: true,
+            shouldShowPersonnagesTab: false // On vient de l'onglet Lieux/Régions
         };
 
-        console.log(`💾 [navigateToLocation] Contexte précédent sauvegardé:`, this.previousInfoBox);
+        console.log(`💾 Contexte sauvegardé - retour vers personnage "${this.previousInfoBox.item.name}"`);
 
         // Afficher l'InfoBox du lieu
         this.showInfoBox(event, location, 'location');
-        
+
         // Forcer l'affichage de l'onglet Description
         setTimeout(() => {
             this.switchTab('text');
@@ -2920,31 +2927,38 @@ class InfoBoxManager {
     }
 
     navigateToRegion(event, regionId) {
-        console.log(`🔍 [navigateToRegion] Navigation vers la région ID: ${regionId}`);
+        event.preventDefault();
+        event.stopPropagation();
 
-        // Trouver la région
-        const regionsData = window.regionsData || { regions: [] };
-        const region = regionsData.regions.find(reg => String(reg.id) === String(regionId));
-
-        if (!region) {
-            console.error(`❌ [navigateToRegion] Région non trouvée avec l'ID: ${regionId}`);
+        if (!window.dataManager || !window.dataManager.regionsData) {
+            console.error("❌ DataManager ou regionsData non disponible");
             return;
         }
 
-        console.log(`✅ [navigateToRegion] Région trouvée: ${region.name}`);
+        const region = window.dataManager.regionsData.regions.find(
+            reg => String(reg.id) === String(regionId)
+        );
 
-        // Sauvegarder le contexte actuel pour le retour
+        if (!region) {
+            console.error(`❌ Région non trouvée avec l'ID: ${regionId}`);
+            return;
+        }
+
+        console.log(`🔗 Navigation vers la région "${region.name}" depuis personnage "${this.currentItem.name}"`);
+
+        // Sauvegarder le contexte actuel AVANT de changer d'InfoBox
         this.previousInfoBox = {
-            item: this.currentItem,
+            item: { ...this.currentItem },
             type: this.currentType,
-            fromInfoBox: true
+            fromInfoBox: true,
+            shouldShowPersonnagesTab: false // On vient de l'onglet Lieux/Régions
         };
 
-        console.log(`💾 [navigateToRegion] Contexte précédent sauvegardé:`, this.previousInfoBox);
+        console.log(`💾 Contexte sauvegardé - retour vers personnage "${this.previousInfoBox.item.name}"`);
 
         // Afficher l'InfoBox de la région
         this.showInfoBox(event, region, 'region');
-        
+
         // Forcer l'affichage de l'onglet Description
         setTimeout(() => {
             this.switchTab('text');
