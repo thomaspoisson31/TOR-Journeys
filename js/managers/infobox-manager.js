@@ -2912,6 +2912,11 @@ class InfoBoxManager {
 
         // Afficher l'InfoBox du lieu
         this.showInfoBox(event, location, 'location');
+        
+        // Forcer l'affichage de l'onglet Description
+        setTimeout(() => {
+            this.switchTab('text');
+        }, 100);
     }
 
     navigateToRegion(event, regionId) {
@@ -2939,6 +2944,11 @@ class InfoBoxManager {
 
         // Afficher l'InfoBox de la région
         this.showInfoBox(event, region, 'region');
+        
+        // Forcer l'affichage de l'onglet Description
+        setTimeout(() => {
+            this.switchTab('text');
+        }, 100);
     }
 
     renderLieuxRegionsTabEdit() {
