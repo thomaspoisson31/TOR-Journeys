@@ -562,7 +562,22 @@ class ImportExportManager {
                 locations: processedData.locations.length,
                 regions: processedData.regions.length
             });
-            console.log(`📥 [processImport] Données ACTUELLES:`, {
+            
+            const activeMapUrl = window.settingsManager?.activeMapUrl;
+            
+            // Compter les éléments existants sur la carte ACTIVE
+            const existingLocationsOnMap = this.dataManager.locationsData?.locations?.filter(loc => 
+                !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl)
+            ) || [];
+            const existingRegionsOnMap = this.dataManager.regionsData?.regions?.filter(reg => 
+                !reg.mapId || (activeMapUrl && reg.mapId === activeMapUrl)
+            ) || [];
+            
+            console.log(`📥 [processImport] Données ACTUELLES sur carte active:`, {
+                locations: existingLocationsOnMap.length,
+                regions: existingRegionsOnMap.length
+            });
+            console.log(`📥 [processImport] Données TOTALES:`, {
                 locations: this.dataManager.locationsData?.locations?.length || 0,
                 regions: this.dataManager.regionsData?.regions?.length || 0
             });
@@ -597,11 +612,33 @@ class ImportExportManager {
                 });
             } else if (mode === 'merge') {
                 console.log(`📥 [processImport] Mode MERGE - Fusion des données`);
+                
+                // Compter AVANT fusion sur carte active
+                const beforeMergeLocationsCount = existingLocationsOnMap.length;
+                const beforeMergeRegionsCount = existingRegionsOnMap.length;
+                
                 // Fusionner les données
                 this.mergeLocations(processedData.locations);
                 this.mergeRegions(processedData.regions);
 
-                console.log(`📥 [processImport] Données APRÈS fusion:`, {
+                // Compter APRÈS fusion sur carte active
+                const afterMergeLocationsOnMap = this.dataManager.locationsData?.locations?.filter(loc => 
+                    !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl)
+                ) || [];
+                const afterMergeRegionsOnMap = this.dataManager.regionsData?.regions?.filter(reg => 
+                    !reg.mapId || (activeMapUrl && reg.mapId === activeMapUrl)
+                ) || [];
+                
+                console.log(`📥 [processImport] Données APRÈS fusion (carte active):`, {
+                    locations: afterMergeLocationsOnMap.length,
+                    regions: afterMergeRegionsOnMap.length
+                });
+                console.log(`📥 [processImport] Bilan fusion sur carte active:`, {
+                    locations: `${beforeMergeLocationsCount} → ${afterMergeLocationsOnMap.length} (${afterMergeLocationsOnMap.length >= beforeMergeLocationsCount ? '+' : ''}${afterMergeLocationsOnMap.length - beforeMergeLocationsCount})`,
+                    regions: `${beforeMergeRegionsCount} → ${afterMergeRegionsOnMap.length} (${afterMergeRegionsOnMap.length >= beforeMergeRegionsCount ? '+' : ''}${afterMergeRegionsOnMap.length - beforeMergeRegionsCount})`
+                });
+                
+                console.log(`📥 [processImport] Données TOTALES après fusion:`, {
                     locations: this.dataManager.locationsData?.locations?.length || 0,
                     regions: this.dataManager.regionsData?.regions?.length || 0
                 });
@@ -743,27 +780,39 @@ class ImportExportManager {
 
         console.log(`🔄 [mergeLocations] Lieux conservés des autres cartes: ${locationsFromOtherMaps.length}`);
 
+        // ÉTAPE 1.5: Récupérer les lieux existants de la carte ACTIVE
+        const existingLocationsOnActiveMap = this.dataManager.locationsData.locations.filter(loc => {
+            return !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl);
+        });
+        console.log(`🔄 [mergeLocations] Lieux existants sur carte active: ${existingLocationsOnActiveMap.length}`);
+
         // ÉTAPE 2: Traiter les lieux importés
         const processedImportedLocations = [];
+        let addedCount = 0;
+        let updatedCount = 0;
+        
         importedLocations.forEach(importedLocation => {
             // Chercher un lieu existant avec le même nom SUR LA MÊME CARTE
-            const existingLocation = this.dataManager.locationsData.locations.find(
-                loc => loc.name === importedLocation.name && 
-                       (!loc.mapId || !activeMapUrl || loc.mapId === activeMapUrl)
+            const existingLocation = existingLocationsOnActiveMap.find(
+                loc => loc.name === importedLocation.name
             );
 
             if (existingLocation) {
                 // Mettre à jour le lieu existant
                 const updatedLocation = { ...existingLocation, ...importedLocation };
                 processedImportedLocations.push(updatedLocation);
+                updatedCount++;
                 console.log(`🔄 Lieu mis à jour: ${importedLocation.name}`);
             } else {
                 // Ajouter le nouveau lieu avec un ID unique
                 this.ensureUniqueId(importedLocation, [...locationsFromOtherMaps, ...processedImportedLocations]);
                 processedImportedLocations.push(importedLocation);
+                addedCount++;
                 console.log(`➕ Nouveau lieu ajouté: ${importedLocation.name}`);
             }
         });
+
+        console.log(`📊 [mergeLocations] Bilan fusion: ${addedCount} ajoutés, ${updatedCount} mis à jour`);
 
         // ÉTAPE 3: Fusionner les lieux des autres cartes + lieux importés
         const mergedLocations = [...locationsFromOtherMaps, ...processedImportedLocations];
