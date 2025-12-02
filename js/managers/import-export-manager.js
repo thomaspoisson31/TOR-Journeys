@@ -518,17 +518,77 @@ class ImportExportManager {
         const mergeBtn = modal.querySelector('#import-merge');
         const cancelBtn = modal.querySelector('#import-cancel');
 
+        // Compter les éléments existants sur la carte ACTIVE
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        const existingLocationsOnMap = this.dataManager.locationsData?.locations?.filter(loc => 
+            !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl)
+        ) || [];
+        const existingRegionsOnMap = this.dataManager.regionsData?.regions?.filter(reg => 
+            !reg.mapId || (activeMapUrl && reg.mapId === activeMapUrl)
+        ) || [];
+
+        console.log(`📥 [showImportModal] Carte active: ${activeMapUrl}`);
+        console.log(`📥 [showImportModal] Lieux existants sur carte active: ${existingLocationsOnMap.length}`);
+        console.log(`📥 [showImportModal] Régions existantes sur carte active: ${existingRegionsOnMap.length}`);
+
+        // Estimer combien seront ajoutés vs mis à jour (approximatif car basé sur les noms)
+        let estimatedNewLocations = 0;
+        let estimatedUpdatedLocations = 0;
+        processedData.locations.forEach(importedLoc => {
+            const exists = existingLocationsOnMap.find(loc => loc.name === importedLoc.name);
+            if (exists) {
+                estimatedUpdatedLocations++;
+            } else {
+                estimatedNewLocations++;
+            }
+        });
+
+        let estimatedNewRegions = 0;
+        let estimatedUpdatedRegions = 0;
+        processedData.regions.forEach(importedReg => {
+            const exists = existingRegionsOnMap.find(reg => reg.name === importedReg.name);
+            if (exists) {
+                estimatedUpdatedRegions++;
+            } else {
+                estimatedNewRegions++;
+            }
+        });
+
+        const totalAfterMerge = existingLocationsOnMap.length + estimatedNewLocations;
+        const totalRegionsAfterMerge = existingRegionsOnMap.length + estimatedNewRegions;
+
         // Mettre à jour le résumé
         if (summaryEl) {
             summaryEl.innerHTML = `
                 <div class="space-y-2">
-                    <p class="text-white"><strong>Données à importer :</strong></p>
-                    <ul class="list-disc list-inside space-y-1 text-gray-200">
-                        <li>${processedData.locations.length} lieu(x)</li>
-                        <li>${processedData.regions.length} région(s)</li>
-                    </ul>
-                    <p class="text-sm text-gray-400 mt-4">
-                        Les données importées seront fusionnées avec les données existantes. Les lieux et régions portant le même nom sur la même carte seront mis à jour, les nouveaux seront ajoutés.
+                    <p class="text-white"><strong>Import en mode FUSION :</strong></p>
+                    
+                    <div class="bg-blue-900/30 p-3 rounded">
+                        <p class="text-sm text-blue-200 mb-2"><strong>📊 Situation actuelle sur cette carte :</strong></p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
+                            <li>${existingLocationsOnMap.length} lieu(x) existant(s)</li>
+                            <li>${existingRegionsOnMap.length} région(s) existante(s)</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-900/30 p-3 rounded">
+                        <p class="text-sm text-green-200 mb-2"><strong>📥 Données à importer :</strong></p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
+                            <li>${processedData.locations.length} lieu(x) - dont ${estimatedNewLocations} nouveau(x) et ${estimatedUpdatedLocations} à mettre à jour</li>
+                            <li>${processedData.regions.length} région(s) - dont ${estimatedNewRegions} nouvelle(s) et ${estimatedUpdatedRegions} à mettre à jour</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-purple-900/30 p-3 rounded">
+                        <p class="text-sm text-purple-200 mb-2"><strong>✅ Résultat après fusion :</strong></p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
+                            <li>${totalAfterMerge} lieu(x) au total sur cette carte</li>
+                            <li>${totalRegionsAfterMerge} région(s) au total sur cette carte</li>
+                        </ul>
+                    </div>
+
+                    <p class="text-xs text-gray-400 mt-3 italic">
+                        ℹ️ Les lieux/régions avec le même nom seront mis à jour, les nouveaux seront ajoutés. Les données des autres cartes ne seront pas affectées.
                     </p>
                 </div>
             `;
