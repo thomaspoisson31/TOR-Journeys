@@ -3416,6 +3416,53 @@ class InfoBoxManager {
             this.switchTab('text');
         }, 50);
     }
+
+    navigateToCharacter(event, characterId) {
+        console.log(`👤 [navigateToCharacter] Navigation vers le personnage ID: ${characterId}`);
+
+        if (!window.charactersManager || !window.charactersManager.characters) {
+            console.error("❌ [navigateToCharacter] charactersManager non disponible");
+            return;
+        }
+
+        // Normaliser l'ID
+        const normalizedId = String(characterId);
+
+        // Trouver le personnage
+        const character = window.charactersManager.characters.find(char => String(char.id) === normalizedId);
+
+        if (!character) {
+            console.warn(`⚠️ [navigateToCharacter] Personnage non trouvé avec l'ID: ${normalizedId}`);
+            return;
+        }
+
+        console.log(`✅ [navigateToCharacter] Personnage trouvé: ${character.name}`);
+
+        // Sauvegarder l'infobox actuelle pour pouvoir y revenir
+        this.previousInfoBox = {
+            item: this.currentItem,
+            type: this.currentType,
+            fromInfoBox: true,
+            shouldShowPersonnagesTab: true // Retourner à l'onglet Personnages
+        };
+
+        console.log(`💾 [navigateToCharacter] InfoBox précédente sauvegardée:`, this.previousInfoBox);
+
+        // Créer un événement simulé pour le positionnement
+        const fakeEvent = event || {
+            clientX: window.innerWidth / 2,
+            clientY: window.innerHeight / 2,
+            type: 'click'
+        };
+
+        // Ouvrir l'infobox du personnage avec l'onglet Description activé par défaut
+        this.showInfoBox(fakeEvent, character, 'character');
+
+        // Forcer l'affichage de l'onglet Description
+        setTimeout(() => {
+            this.switchTab('text');
+        }, 50);
+    }
 }
 
 // Export pour utilisation en module
