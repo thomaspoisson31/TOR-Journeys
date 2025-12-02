@@ -31,6 +31,9 @@ class AuthManager {
         this.quickSyncBtn = null; // Bouton de sync rapide
         this.modalSyncBtn = null; // Bouton de sync dans la modale
         this.lastSyncDateDiv = null; // Div pour la date de dernière sync
+
+        // Nouvelle propriété pour stocker le préfixe d'environnement
+        this.envPrefix = null;
     }
 
     init() {
@@ -348,7 +351,7 @@ class AuthManager {
         this.logAuth("📦 Collecte des données du contexte actuel...");
 
         // Collecter les personnages avec leurs relations
-        const charactersData = window.charactersManager?.charactersData || 
+        const charactersData = window.charactersManager?.charactersData ||
                               JSON.parse(localStorage.getItem('middleEarthCharacters') || '{"characters":[]}');
 
         const data = {
@@ -385,7 +388,7 @@ class AuthManager {
             console.log(`📦 [collectCurrentContextData] Locations collectées:`, {
                 total: window.locationsData.locations.length,
                 activeMapUrl: window.settingsManager?.activeMapUrl,
-                onActiveMap: window.locationsData.locations.filter(loc => 
+                onActiveMap: window.locationsData.locations.filter(loc =>
                     !loc.mapId || (window.settingsManager?.activeMapUrl && loc.mapId === window.settingsManager.activeMapUrl)
                 ).length,
                 sampleMapIds: window.locationsData.locations.slice(0, 5).map(l => ({
@@ -655,8 +658,8 @@ class AuthManager {
 
     async getEnvironmentPrefix() {
         // Cache pour éviter les appels répétés
-        if (this._cachedEnvPrefix) {
-            return this._cachedEnvPrefix;
+        if (this.envPrefix) { // Utiliser la propriété de classe mise en cache
+            return this.envPrefix;
         }
 
         try {
@@ -668,9 +671,9 @@ class AuthManager {
 
             if (response.ok) {
                 const data = await response.json();
-                this._cachedEnvPrefix = data.prefix;
+                this.envPrefix = data.prefix; // Stocker dans la propriété de classe
                 this.logAuth(`🌍 Environnement détecté: ${data.environment} (préfixe: ${data.prefix})`);
-                return this._cachedEnvPrefix;
+                return this.envPrefix;
             }
         } catch (error) {
             this.logAuth(`⚠️ Erreur lors de la détection d'environnement: ${error.message}`);
@@ -679,9 +682,9 @@ class AuthManager {
         // Fallback sur la détection côté client si l'API échoue
         const hostname = window.location.hostname;
         const fallbackPrefix = hostname.includes('replit.dev') ? 'dev_' : 'prod_';
-        this._cachedEnvPrefix = fallbackPrefix;
+        this.envPrefix = fallbackPrefix; // Stocker dans la propriété de classe
         this.logAuth(`⚠️ Utilisation du fallback pour l'environnement: ${fallbackPrefix}`);
-        return fallbackPrefix;
+        return this.envPrefix;
     }
 
     async loadUserData() {
@@ -690,19 +693,19 @@ class AuthManager {
             return;
         }
 
-        const envPrefix = await this.getEnvironmentPrefix();
-        this.logAuth(`📥 Chargement des données depuis le cloud (environnement: ${envPrefix})`);
+        this.envPrefix = await this.getEnvironmentPrefix(); // Assurer que envPrefix est chargé
+        this.logAuth(`📥 Chargement des données depuis le cloud (environnement: ${this.envPrefix})`);
 
         try {
-            const response = await fetch(`/api/user/data?env=${envPrefix}`, {
+            const response = await fetch(`/api/user/data?env=${this.envPrefix}`, {
                 method: 'GET',
                 credentials: 'include'
             });
 
             if (response.status === 404) {
                 // Pas de données cloud encore - vérifier si on a des données dans l'autre environnement
-                const otherEnv = envPrefix === 'dev_' ? 'prod_' : 'dev_';
-                this.logAuth(`ℹ️ Aucune donnée trouvée pour ${envPrefix}, vérification de ${otherEnv}...`);
+                const otherEnv = this.envPrefix === 'dev_' ? 'prod_' : 'dev_';
+                this.logAuth(`ℹ️ Aucune donnée trouvée pour ${this.envPrefix}, vérification de ${otherEnv}...`);
 
                 const otherResponse = await fetch(`/api/user/data?env=${otherEnv}`, {
                     method: 'GET',
@@ -717,18 +720,18 @@ class AuthManager {
                     if (hasData) {
                         const shouldMigrate = confirm(
                             `⚠️ INCOHÉRENCE DÉTECTÉE\n\n` +
-                            `Environnement actuel: ${envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n` +
+                            `Environnement actuel: ${this.envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n` +
                             `Données trouvées dans: ${otherEnv === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n\n` +
                             `Vous avez ${otherData.locations?.locations?.length || 0} lieux et ${otherData.regions?.regions?.length || 0} régions dans l'autre environnement.\n\n` +
-                            `Voulez-vous copier ces données vers l'environnement ${envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'} actuel ?\n\n` +
+                            `Voulez-vous copier ces données vers l'environnement ${this.envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'} actuel ?\n\n` +
                             `✅ OK = Copier les données\n` +
                             `❌ ANNULER = Démarrer avec des données vides`
                         );
 
                         if (shouldMigrate) {
-                            this.logAuth(`🔄 Migration des données de ${otherEnv} vers ${envPrefix}`);
+                            this.logAuth(`🔄 Migration des données de ${otherEnv} vers ${this.envPrefix}`);
                             // Marquer les données avec le nouvel environnement
-                            otherData._environment = envPrefix;
+                            otherData._environment = this.envPrefix;
                             otherData._migrated_from = otherEnv;
                             otherData._migrated_at = new Date().toISOString();
 
@@ -795,15 +798,15 @@ class AuthManager {
             this.logAuth("✅ Données cloud récupérées", cloudData);
 
             // Vérifier la cohérence de l'environnement
-            if (cloudData._environment && cloudData._environment !== envPrefix) {
+            if (cloudData._environment && cloudData._environment !== this.envPrefix) {
                 this.logAuth(`⚠️ ATTENTION: Incohérence environnement détectée!`);
                 this.logAuth(`   Données stockées avec: ${cloudData._environment}`);
-                this.logAuth(`   Environnement actuel: ${envPrefix}`);
+                this.logAuth(`   Environnement actuel: ${this.envPrefix}`);
 
                 const shouldContinue = confirm(
                     `⚠️ INCOHÉRENCE D'ENVIRONNEMENT\n\n` +
                     `Les données ont été sauvegardées dans: ${cloudData._environment === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n` +
-                    `Environnement actuel: ${envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n\n` +
+                    `Environnement actuel: ${this.envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n\n` +
                     `Voulez-vous quand même charger ces données ?\n` +
                     `(Elles seront automatiquement réenregistrées dans l'environnement actuel)\n\n` +
                     `✅ OK = Charger et migrer\n` +
@@ -822,7 +825,7 @@ class AuthManager {
                         adventure: { quest: '', rumors: [], threats: [] },
                         position: null,
                         filtersByMap: {},
-                        _environment: envPrefix,
+                        _environment: this.envPrefix,
                         adventureMode: false // Initialiser adventureMode à false
                     };
                     await this.applyContextData(emptyData);
@@ -838,8 +841,8 @@ class AuthManager {
                 }
 
                 // Mettre à jour l'environnement dans les données
-                cloudData._environment = envPrefix;
-                cloudData._migrated_from = cloudData._environment;
+                cloudData._environment = this.envPrefix;
+                cloudData._migrated_from = cloudData._environment; // Correction: doit pointer vers l'ancien environnement cloud
                 cloudData._migrated_at = new Date().toISOString();
             }
 
@@ -1053,8 +1056,8 @@ class AuthManager {
             return;
         }
 
-        const envPrefix = await this.getEnvironmentPrefix();
-        this.logAuth(`🔄 Synchronisation manuelle vers cloud (environnement: ${envPrefix})`);
+        this.envPrefix = await this.getEnvironmentPrefix(); // Assurer que envPrefix est chargé
+        this.logAuth(`🔄 Synchronisation manuelle vers cloud (environnement: ${this.envPrefix})`);
 
         try {
             // 1. Collecter les données locales (ce sont les données à sauvegarder)
@@ -1062,7 +1065,7 @@ class AuthManager {
             this.logAuth("📦 Données locales collectées");
 
             // 2. NOUVEAU: Vérifier s'il y a des suppressions de lieux
-            const deletionWarning = await this.checkForLocationDeletions(localData, envPrefix);
+            const deletionWarning = await this.checkForLocationDeletions(localData, this.envPrefix); // Passer envPrefix
             if (deletionWarning.hasDeleted) {
                 const userConfirmed = await this.showDeletionWarning(deletionWarning);
                 if (!userConfirmed) {
@@ -1152,7 +1155,7 @@ class AuthManager {
             console.log("📤 [CLOUD] Envoi vers serveur...");
             console.log("📤 [CLOUD] PAYLOAD COMPLET:", JSON.stringify(localData, null, 2));
 
-            const response = await fetch(`/api/user/data?env=${envPrefix}`, {
+            const response = await fetch(`/api/user/data?env=${this.envPrefix}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1266,21 +1269,17 @@ class AuthManager {
         this.logAuth("🔄 Gestion du conflit de synchronisation");
 
         // NOUVEAU: Vérifier les suppressions avant de proposer le conflit
-        const cloudLocations = cloudData.locations?.locations || [];
-        const localLocations = localData.locations?.locations || [];
-        const localLocationIds = new Set(localLocations.map(loc => loc.id));
-        const deletedLocations = cloudLocations.filter(cloudLoc => !localLocationIds.has(cloudLoc.id));
-
+        const deletionWarning = await this.checkForLocationDeletions(localData, this.envPrefix); // Passer envPrefix
         let conflictMessage = "⚠️ CONFLIT DE SYNCHRONISATION DÉTECTÉ\n\n" +
             "Des modifications ont été effectuées sur un autre appareil.\n\n";
 
-        if (deletedLocations.length > 0) {
-            conflictMessage += `⚠️ ATTENTION: ${deletedLocations.length} lieu(x) seraient supprimé(s) si vous gardez vos données locales:\n`;
-            deletedLocations.slice(0, 5).forEach(loc => {
+        if (deletionWarning.hasDeleted) {
+            conflictMessage += `⚠️ ATTENTION: ${deletionWarning.deletedLocations.length} lieu(x) de la carte "${deletionWarning.activeMapId}" seraient supprimé(s) si vous gardez vos données locales:\n`;
+            deletionWarning.deletedLocations.slice(0, 5).forEach(loc => {
                 conflictMessage += `  - ${loc.name}\n`;
             });
-            if (deletedLocations.length > 5) {
-                conflictMessage += `  ... et ${deletedLocations.length - 5} autres\n`;
+            if (deletionWarning.deletedLocations.length > 5) {
+                conflictMessage += `  ... et ${deletionWarning.deletedLocations.length - 5} autres\n`;
             }
             conflictMessage += "\n";
         }
@@ -1298,8 +1297,7 @@ class AuthManager {
             // Forcer la synchronisation avec un flag
             localData._force_overwrite = true;
 
-            const envPrefix = await this.getEnvironmentPrefix();
-            const response = await fetch(`/api/user/data?env=${envPrefix}`, {
+            const response = await fetch(`/api/user/data?env=${this.envPrefix}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1365,12 +1363,12 @@ class AuthManager {
         }
     }
 
-    async checkForLocationDeletions(localData, envPrefix) {
+    async checkForLocationDeletions(localData, envPrefix) { // Ajouter envPrefix en paramètre
         this.logAuth("🔍 Vérification des suppressions de lieux...");
 
         try {
             // Récupérer les données actuelles du cloud
-            const response = await fetch(`/api/user/data?env=${envPrefix}`, {
+            const response = await fetch(`/api/user/data?env=${envPrefix}`, { // Utiliser envPrefix
                 method: 'GET',
                 credentials: 'include'
             });
@@ -1391,12 +1389,13 @@ class AuthManager {
             // Récupérer l'ID de la carte active
             const activeMapId = localData.settings?.activeMapUrl || window.settingsManager?.activeMapUrl || localStorage.getItem('activeMapUrl');
             this.logAuth(`🗺️ Carte active pour comparaison: ${activeMapId}`);
+            this.logAuth(`🌍 Environnement de synchronisation: ${envPrefix}`); // Log de l'environnement
 
             // IMPORTANT: Filtrer les lieux par carte active uniquement - CLOUD ET LOCAL
-            const cloudLocations = (cloudData.locations?.locations || []).filter(loc => 
+            const cloudLocations = (cloudData.locations?.locations || []).filter(loc =>
                 loc.mapId === activeMapId
             );
-            const localLocations = (localData.locations?.locations || []).filter(loc => 
+            const localLocations = (localData.locations?.locations || []).filter(loc =>
                 loc.mapId === activeMapId
             );
 
@@ -1416,17 +1415,23 @@ class AuthManager {
                     this.logAuth(`   - ${loc.name} (ID: ${loc.id}, Carte: ${loc.mapId || 'global'})`);
                 });
 
-                return {
+                const shouldContinue = await this.showDeletionWarning({ // Utilisation de showDeletionWarning
                     hasDeleted: true,
                     deletedLocations: deletedLocations,
                     cloudTotal: cloudLocations.length,
                     localTotal: localLocations.length,
                     activeMapId: activeMapId
-                };
+                });
+
+                if (!shouldContinue) {
+                    this.logAuth("❌ Synchronisation annulée par l'utilisateur suite à détection de suppressions");
+                    return { hasDeleted: true, deletedLocations: deletedLocations, activeMapId: activeMapId, cancelled: true }; // Indiquer annulation
+                }
             } else {
                 this.logAuth(`✅ Aucune suppression détectée pour la carte active (Cloud: ${cloudLocations.length}, Local: ${localLocations.length})`);
                 return { hasDeleted: false, deletedLocations: [] };
             }
+            return { hasDeleted: true, deletedLocations: deletedLocations, activeMapId: activeMapId }; // Retourner les infos si non annulé
 
         } catch (error) {
             this.logAuth(`⚠️ Erreur lors de la vérification des suppressions: ${error.message}`);
@@ -1438,15 +1443,17 @@ class AuthManager {
         return new Promise((resolve) => {
             // Log détaillé pour expliquer pourquoi l'alerte s'affiche
             console.log("⚠️ [SUPPRESSION] ALERTE DE SUPPRESSION AFFICHÉE - Raisons:");
+            console.log(`🌍 [SUPPRESSION] Environnement actuel: ${this.envPrefix || 'NON DÉFINI'}`);
             console.log(`📊 [SUPPRESSION] Cloud actuel: ${deletionInfo.cloudTotal} lieu(x) pour la carte "${deletionInfo.activeMapId}"`);
             console.log(`📊 [SUPPRESSION] Local actuel: ${deletionInfo.localTotal} lieu(x) pour la carte "${deletionInfo.activeMapId}"`);
             console.log(`🗑️ [SUPPRESSION] Différence détectée: ${deletionInfo.deletedLocations.length} lieu(x) seraient SUPPRIMÉS du cloud`);
             console.log(`📝 [SUPPRESSION] Liste des lieux qui seraient supprimés:`);
             deletionInfo.deletedLocations.forEach((loc, index) => {
-                console.log(`   ${index + 1}. "${loc.name}" (ID: ${loc.id}, mapId: ${loc.mapId || 'aucun'})`);
+                console.log(`   ${index + 1}. "${loc.name}" (ID: ${loc.id}, mapId: ${loc.mapId})`);
             });
-            console.log(`💡 [SUPPRESSION] Explication: Ces lieux existent dans le cloud mais PAS dans vos données locales.`);
+            console.log(`💡 [SUPPRESSION] Explication: Ces lieux existent dans le cloud ${this.envPrefix || ''} mais PAS dans vos données locales.`);
             console.log(`💡 [SUPPRESSION] Si cette suppression est INATTENDUE, cliquez sur ANNULER et vérifiez vos données avant de synchroniser.`);
+            console.log(`⚠️ [SUPPRESSION] ATTENTION: Vérifiez que vous synchronisez le bon environnement (dev_ ou prod_)!`);
 
             // Récupérer le nom de la carte active pour l'affichage
             const activeMapName = window.settingsManager?.activeMapName || 'la carte active';
@@ -1464,6 +1471,9 @@ class AuthManager {
                     <div class="bg-red-800 border-2 border-red-600 rounded p-4 mb-6">
                         <p class="text-white text-lg mb-4">
                             <strong class="text-yellow-300">ATTENTION:</strong> Cette synchronisation va <strong class="underline">SUPPRIMER ${deletionInfo.deletedLocations.length} lieu(x)</strong> de "${activeMapName}" dans votre sauvegarde cloud !
+                        </p>
+                        <p class="text-gray-200 text-sm mb-2">
+                            <strong>Environnement:</strong> ${this.envPrefix === 'dev_' ? 'DEVELOPMENT' : this.envPrefix === 'prod_' ? 'PRODUCTION' : 'INCONNU'} (${this.envPrefix})
                         </p>
                         <p class="text-gray-200 text-sm mb-2">
                             <strong>Carte:</strong> ${activeMapName}
@@ -1490,7 +1500,7 @@ class AuthManager {
                     <div class="bg-yellow-900 border-2 border-yellow-600 rounded p-4 mb-6">
                         <p class="text-yellow-200 text-sm">
                             <i class="fas fa-info-circle mr-2"></i>
-                            Si ces suppressions sont inattendues, cliquez sur <strong>ANNULER</strong> et vérifiez vos données avant de synchroniser.
+                            Si ces suppressions sont inattendues, cliquez sur <strong>ANNULER</strong> et vérifiez vos données avant de synchroniser. Assurez-vous que vous synchronisez le bon environnement (Dev/Prod).
                         </p>
                     </div>
 
@@ -1615,7 +1625,7 @@ class AuthManager {
             // Synchroniser immédiatement avec les variables globales si CharactersManager existe
             if (window.charactersManager) {
                 // Assurez-vous que la structure correspond à ce que CharactersManager attend
-                window.charactersManager.charactersData = data.characters; 
+                window.charactersManager.charactersData = data.characters;
                 this.logAuth("✅ CharactersManager.charactersData mis à jour.");
             }
         }
@@ -1712,10 +1722,10 @@ class AuthManager {
     async debugCloudData() {
         this.logAuth("🔍 Ouverture du debug des données cloud");
 
-        const envPrefix = await this.getEnvironmentPrefix();
+        const envPrefix = await this.getEnvironmentPrefix(); // Assurer que envPrefix est chargé
         try {
             // Récupérer les données de debug
-            const response = await fetch(`/api/user/data/debug?env=${envPrefix}`, {
+            const response = await fetch(`/api/user/data/debug?env=${envPrefix}`, { // Utiliser envPrefix
                 method: 'GET',
                 credentials: 'include'
             });
