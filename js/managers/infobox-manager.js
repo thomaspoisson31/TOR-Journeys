@@ -2623,7 +2623,7 @@ class InfoBoxManager {
                 const zoom = crop.zoom || 1;
                 const offsetX = crop.offsetX || 0;
                 const offsetY = crop.offsetY || 0;
-                thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
+                thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%);"`;
             }
 
             return `
@@ -3324,10 +3324,10 @@ class InfoBoxManager {
     }
 
     navigateToLocation(event, locationId) {
-        console.log(`🗺️ [navigateToLocation] Navigation vers le lieu ID: ${locationId}`);
+        console.log(`📍 [navigateToLocation] Navigation vers le lieu ID: ${locationId}`);
 
-        if (!window.locationsData || !window.locationsData.locations) {
-            console.error("❌ [navigateToLocation] locationsData non disponible");
+        if (!window.dataManager || !window.locationsData || !window.locationsData.locations) {
+            console.error("❌ [navigateToLocation] dataManager ou locationsData non disponible");
             return;
         }
 
@@ -3349,7 +3349,7 @@ class InfoBoxManager {
             item: this.currentItem,
             type: this.currentType,
             fromInfoBox: true,
-            shouldShowPersonnagesTab: false
+            shouldShowPersonnagesTab: false // Ne pas retourner à l'onglet Personnages par défaut
         };
 
         console.log(`💾 [navigateToLocation] InfoBox précédente sauvegardée:`, this.previousInfoBox);
@@ -3361,20 +3361,23 @@ class InfoBoxManager {
             type: 'click'
         };
 
-        // Ouvrir l'infobox du lieu avec l'onglet Description activé par défaut
+        // Ouvrir l'infobox du lieu
         this.showInfoBox(fakeEvent, location, 'location');
 
-        // Forcer l'affichage de l'onglet Description
+        // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
         setTimeout(() => {
+            console.log(`📋 [navigateToLocation] Affichage forcé de l'onglet Description pour ${location.name}`);
             this.switchTab('text');
-        }, 50);
+            // Forcer le re-render du contenu de l'onglet Description
+            this.renderReadMode();
+        }, 100);
     }
 
     navigateToRegion(event, regionId) {
         console.log(`🗺️ [navigateToRegion] Navigation vers la région ID: ${regionId}`);
 
-        if (!window.regionsData || !window.regionsData.regions) {
-            console.error("❌ [navigateToRegion] regionsData non disponible");
+        if (!window.dataManager || !window.regionsData || !window.regionsData.regions) {
+            console.error("❌ [navigateToRegion] dataManager ou regionsData non disponible");
             return;
         }
 
@@ -3396,7 +3399,7 @@ class InfoBoxManager {
             item: this.currentItem,
             type: this.currentType,
             fromInfoBox: true,
-            shouldShowPersonnagesTab: false
+            shouldShowPersonnagesTab: false // Ne pas retourner à l'onglet Personnages par défaut
         };
 
         console.log(`💾 [navigateToRegion] InfoBox précédente sauvegardée:`, this.previousInfoBox);
@@ -3408,13 +3411,16 @@ class InfoBoxManager {
             type: 'click'
         };
 
-        // Ouvrir l'infobox de la région avec l'onglet Description activé par défaut
+        // Ouvrir l'infobox de la région
         this.showInfoBox(fakeEvent, region, 'region');
 
-        // Forcer l'affichage de l'onglet Description
+        // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
         setTimeout(() => {
+            console.log(`📋 [navigateToRegion] Affichage forcé de l'onglet Description pour ${region.name}`);
             this.switchTab('text');
-        }, 50);
+            // Forcer le re-render du contenu de l'onglet Description
+            this.renderReadMode();
+        }, 100);
     }
 
     navigateToCharacter(event, characterId) {
@@ -3455,13 +3461,16 @@ class InfoBoxManager {
             type: 'click'
         };
 
-        // Ouvrir l'infobox du personnage avec l'onglet Description activé par défaut
+        // Ouvrir l'infobox du personnage
         this.showInfoBox(fakeEvent, character, 'character');
 
-        // Forcer l'affichage de l'onglet Description
+        // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
         setTimeout(() => {
+            console.log(`📋 [navigateToCharacter] Affichage forcé de l'onglet Description pour ${character.name}`);
             this.switchTab('text');
-        }, 50);
+            // Forcer le re-render du contenu de l'onglet Description
+            this.renderReadMode();
+        }, 100);
     }
 }
 
