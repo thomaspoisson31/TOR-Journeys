@@ -378,6 +378,22 @@ class AuthManager {
             currentDate: data.calendar.currentDate,
             isCalendarMode: data.calendar.isCalendarMode
         } : "NON PRÉSENT");
+
+        // Locations
+        if (window.locationsData && window.locationsData.locations) {
+            data.locations = window.locationsData;
+            console.log(`📦 [collectCurrentContextData] Locations collectées:`, {
+                total: window.locationsData.locations.length,
+                activeMapUrl: window.settingsManager?.activeMapUrl,
+                onActiveMap: window.locationsData.locations.filter(loc => 
+                    !loc.mapId || (window.settingsManager?.activeMapUrl && loc.mapId === window.settingsManager.activeMapUrl)
+                ).length,
+                sampleMapIds: window.locationsData.locations.slice(0, 5).map(l => ({
+                    name: l.name,
+                    mapId: l.mapId
+                }))
+            });
+        }
         return data;
     }
 
@@ -1430,9 +1446,8 @@ class AuthManager {
                 console.log(`   ${index + 1}. "${loc.name}" (ID: ${loc.id}, mapId: ${loc.mapId || 'aucun'})`);
             });
             console.log(`💡 [SUPPRESSION] Explication: Ces lieux existent dans le cloud mais PAS dans vos données locales.`);
-            console.log(`💡 [SUPPRESSION] Si vous synchronisez, ils seront SUPPRIMÉS du cloud de manière DÉFINITIVE.`);
-            console.log(`⚠️ [SUPPRESSION] Si cette suppression est INATTENDUE, cliquez sur ANNULER et vérifiez vos données avant de synchroniser.`);
-            
+            console.log(`💡 [SUPPRESSION] Si cette suppression est INATTENDUE, cliquez sur ANNULER et vérifiez vos données avant de synchroniser.`);
+
             // Récupérer le nom de la carte active pour l'affichage
             const activeMapName = window.settingsManager?.activeMapName || 'la carte active';
 
