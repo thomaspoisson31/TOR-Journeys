@@ -2627,7 +2627,7 @@ class InfoBoxManager {
             }
 
             return `
-                <div class="character-card bg-gray-700 rounded-lg p-3 mb-3 hover:bg-gray-600 transition-colors cursor-pointer"
+                <div class="character-card-infobox hover:bg-gray-100 p-3 rounded-lg cursor-pointer transition-colors flex items-center space-x-3"
                      onclick="window.infoBoxManager.navigateToCharacter(event, '${character.id}')">
                     <div class="flex items-center space-x-3">
                         ${thumbnailImage ? `
@@ -2853,116 +2853,6 @@ class InfoBoxManager {
         textView.innerHTML = html;
 
         console.log('🗺️ [renderLieuxRegionsTabRead] ========== FIN DU RENDU ==========');
-    }
-
-    navigateToLocation(event, locationId) {
-        console.log(`🔍 [navigateToLocation] Navigation vers le lieu ID: ${locationId}`);
-
-        // Trouver le lieu
-        const locationsData = window.locationsData || { locations: [] };
-        const location = locationsData.locations.find(loc => String(loc.id) === String(locationId));
-
-        if (!location) {
-            console.error(`❌ [navigateToLocation] Lieu non trouvé avec l'ID: ${locationId}`);
-            return;
-        }
-
-        console.log(`✅ [navigateToLocation] Lieu trouvé: ${location.name}`);
-
-        // Sauvegarder le contexte actuel pour le retour
-        this.previousInfoBox = {
-            item: this.currentItem,
-            type: this.currentType,
-            fromInfoBox: true
-        };
-
-        console.log(`💾 [navigateToLocation] Contexte précédent sauvegardé:`, this.previousInfoBox);
-
-        // Afficher l'InfoBox du lieu
-        this.showInfoBox(event, location, 'location');
-
-        // Forcer l'affichage de l'onglet Description
-        setTimeout(() => {
-            this.switchTab('text');
-        }, 100);
-    }
-
-    navigateToRegion(event, regionId) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (!window.dataManager || !window.dataManager.regionsData) {
-            console.error("❌ DataManager ou regionsData non disponible");
-            return;
-        }
-
-        const region = window.dataManager.regionsData.regions.find(
-            reg => String(reg.id) === String(regionId)
-        );
-
-        if (!region) {
-            console.error(`❌ Région non trouvée avec l'ID: ${regionId}`);
-            return;
-        }
-
-        console.log(`🔗 Navigation vers la région "${region.name}" depuis personnage "${this.currentItem.name}"`);
-
-        // Sauvegarder le contexte actuel AVANT de changer d'InfoBox
-        this.previousInfoBox = {
-            item: { ...this.currentItem },
-            type: this.currentType,
-            fromInfoBox: true,
-            shouldShowPersonnagesTab: false // On vient de l'onglet Lieux/Régions
-        };
-
-        console.log(`💾 Contexte sauvegardé - retour vers personnage "${this.previousInfoBox.item.name}"`);
-
-        // Afficher l'InfoBox de la région
-        this.showInfoBox(event, region, 'region');
-
-        // Forcer l'affichage de l'onglet Description
-        setTimeout(() => {
-            this.switchTab('text');
-        }, 100);
-    }
-
-    navigateToCharacter(event, characterId) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (!window.charactersManager) {
-            console.error("❌ CharactersManager non disponible");
-            return;
-        }
-
-        const character = window.charactersManager.characters.find(
-            char => String(char.id) === String(characterId)
-        );
-
-        if (!character) {
-            console.error(`❌ Personnage non trouvé avec l'ID: ${characterId}`);
-            return;
-        }
-
-        console.log(`🔗 Navigation vers le personnage "${character.name}" depuis ${this.currentType} "${this.currentItem.name}"`);
-
-        // Sauvegarder le contexte actuel AVANT de changer d'InfoBox
-        this.previousInfoBox = {
-            item: { ...this.currentItem },
-            type: this.currentType,
-            fromInfoBox: true,
-            shouldShowPersonnagesTab: true // On vient de l'onglet Personnages
-        };
-
-        console.log(`💾 Contexte sauvegardé - retour vers ${this.currentType} "${this.previousInfoBox.item.name}"`);
-
-        // Afficher l'InfoBox du personnage
-        this.showInfoBox(event, character, 'character');
-
-        // Forcer l'affichage de l'onglet Description
-        setTimeout(() => {
-            this.switchTab('text');
-        }, 100);
     }
 
     renderLieuxRegionsTabEdit() {
@@ -3430,7 +3320,7 @@ class InfoBoxManager {
     }
 
     resetZoomForFullscreen() {
-        // Cette méthode sera définie dans setupFullscreenImageListeners
+        // Cette méthode sera définie dans setupFullscreenImageListeners()
     }
 }
 
