@@ -633,6 +633,22 @@ class ImportExportManager {
             });
             
             const activeMapUrl = window.settingsManager?.activeMapUrl;
+
+            // CRITIQUE: Attribuer le mapId de la carte active aux lieux/régions importés IMMÉDIATEMENT
+            if (activeMapUrl) {
+                processedData.locations.forEach(loc => {
+                    if (!loc.mapId) {
+                        loc.mapId = activeMapUrl;
+                        console.log(`🗺️ [processImport] Attribution mapId "${activeMapUrl}" au lieu "${loc.name}"`);
+                    }
+                });
+                processedData.regions.forEach(reg => {
+                    if (!reg.mapId) {
+                        reg.mapId = activeMapUrl;
+                        console.log(`🗺️ [processImport] Attribution mapId "${activeMapUrl}" à la région "${reg.name}"`);
+                    }
+                });
+            }
             
             // Compter les éléments existants sur la carte ACTIVE
             const existingLocationsOnMap = this.dataManager.locationsData?.locations?.filter(loc => 
