@@ -2577,119 +2577,87 @@ class InfoBoxManager {
         const personnagesTab = document.getElementById('personnages-tab');
         if (!personnagesTab) return;
 
-        // IMPORTANT: Recharger l'objet depuis window.locationsData/regionsData pour avoir les associations à jour
-        if (this.currentType === 'location' && window.locationsData?.locations) {
-            const updatedLocation = window.locationsData.locations.find(
-                loc => String(loc.id) === String(this.currentItem.id)
-            );
-            if (updatedLocation) {
-                this.currentItem = updatedLocation;
-                console.log(`🔄 [renderPersonnagesTabRead] Objet lieu rechargé depuis window.locationsData`);
-            }
-        } else if (this.currentType === 'region' && window.regionsData?.regions) {
-            const updatedRegion = window.regionsData.regions.find(
-                reg => String(reg.id) === String(this.currentItem.id)
-            );
-            if (updatedRegion) {
-                this.currentItem = updatedRegion;
-                console.log(`🔄 [renderPersonnagesTabRead] Objet région rechargé depuis window.regionsData`);
-            }
-        }
+        console.log(`📋 [renderPersonnagesTabRead] Rendu de l'onglet Personnages pour ${this.currentType} "${this.currentItem.name}"`);
 
-        // Récupérer les IDs des personnages associés et les normaliser en String
-        let associatedCharacterIds = (this.currentItem.associatedCharacters || []).map(id => String(id));
+        // Nettoyer l'onglet
+        personnagesTab.innerHTML = '';
 
-        // NETTOYAGE : Retirer les personnages qui n'existent plus
-        if (window.charactersManager && associatedCharacterIds.length > 0) {
-            const validCharacterIds = associatedCharacterIds.filter(charId => {
-                const exists = window.charactersManager.characters.some(c => String(c.id) === charId);
-                if (!exists) {
-                    console.warn(`🧹 [renderPersonnagesTabRead] Personnage orphelin détecté et retiré: ${charId}`);
-                }
-                return exists;
-            });
+        // Créer la vue lecture
+        const textView = this.createTextView(personnagesTab);
 
-            // Si des personnages ont été retirés, mettre à jour et sauvegarder
-            if (validCharacterIds.length !== associatedCharacterIds.length) {
-                console.log(`🧹 [renderPersonnagesTabRead] Nettoyage: ${associatedCharacterIds.length - validCharacterIds.length} association(s) orpheline(s) supprimée(s)`);
-                this.currentItem.associatedCharacters = validCharacterIds;
-                associatedCharacterIds = validCharacterIds;
+        // Récupérer les personnages associés
+        const associatedCharacterIds = this.currentItem.associatedCharacters || [];
+        console.log(`📋 [renderPersonnagesTabRead] ${associatedCharacterIds.length} personnage(s) associé(s):`, associatedCharacterIds);
 
-                // Sauvegarder les modifications
-                if (this.currentType === 'location' && window.dataManager) {
-                    window.dataManager.saveLocationsToLocal();
-                } else if (this.currentType === 'region' && window.dataManager) {
-                    window.dataManager.saveRegionsToLocal();
-                }
-            }
-        }
-
-        console.log(`📋 [renderPersonnagesTabRead] Lieu/Région: ${this.currentItem.name}`);
-        console.log(`📋 [renderPersonnagesTabRead] associatedCharacterIds (normalisés):`, associatedCharacterIds);
-
-        if (!window.charactersManager || !window.charactersManager.characters) {
-            personnagesTab.innerHTML = `
-                <div class="text-view p-4">
-                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible</p>
-                </div>
-            `;
+        if (!window.charactersManager) {
+            textView.innerHTML = '<p class="text-gray-500 italic">CharactersManager non disponible</p>';
             return;
         }
 
-        // Filtrer les personnages associés à ce lieu/région
-        const activeMapId = window.settingsManager?.activeMapUrl;
-        const associatedCharacters = window.charactersManager.characters.filter(char => {
-            const charIdString = String(char.id);
-            const isAssociated = associatedCharacterIds.includes(charIdString);
-            const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
+        // Filtrer les personnages existants
+        const associatedCharacters = associatedCharacterIds
+            .map(charId => {
+                const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
+                if (!char) {
+                    console.warn(`⚠️ [renderPersonnagesTabRead] Personnage non trouvé: ${charId}`);
+                }
+                return char;
+            })
+            .filter(char => char !== undefined);
 
-            if (isAssociated) {
-                console.log(`📋 [renderPersonnagesTabRead] Personnage ${char.name} (ID: ${charIdString}) - associé: ${isAssociated}, sur carte: ${isOnCurrentMap}`);
-            }
-
-            return isAssociated && isOnCurrentMap;
-        });
+        console.log(`📋 [renderPersonnagesTabRead] ${associatedCharacters.length} personnage(s) trouvé(s)`);
 
         if (associatedCharacters.length === 0) {
-            personnagesTab.innerHTML = `
-                <div class="text-view p-4">
-                    <p class="text-gray-400 italic text-sm">Aucun personnage associé à ce lieu</p>
-                </div>
-            `;
+            textView.innerHTML = '<p class="text-gray-500 italic">Aucun personnage associé</p>';
             return;
         }
 
-        const html = `
-            <div class="text-view p-4">
-                ${associatedCharacters.map(character => {
-                    const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-                    return `
-                        <div class="character-card-infobox bg-gray-700 hover:bg-gray-600 rounded-lg p-3 mb-3 cursor-pointer transition-colors"
-                             onclick="window.infoBoxManager.showCharacterFromLocation('${character.id}')">
-                            <div class="flex items-center space-x-3">
-                                ${thumbnailImage ? `
-                                    <img src="${thumbnailImage.url}" alt="${character.name}"
-                                         class="w-12 h-12 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
-                                ` : `
-                                    <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
-                                        <i class="fas fa-user text-gray-400"></i>
-                                    </div>
-                                `}
-                                <div class="flex-1">
-                                    <div class="font-semibold text-white">${character.name}</div>
-                                    <span class="inline-block px-2 py-0.5 text-xs rounded ${character.type === 'PJ' ? 'bg-blue-600' : 'bg-green-600'} text-white">
-                                        ${character.type || 'PNJ'}
-                                    </span>
-                                </div>
-                                <i class="fas fa-chevron-right text-gray-400"></i>
+        // Générer le HTML pour chaque personnage
+        const personnagesHTML = associatedCharacters.map(character => {
+            const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+
+            // Calculer le transform CSS pour la vignette
+            let thumbnailStyle = '';
+            if (thumbnailImage?.thumbnailCrop) {
+                const crop = thumbnailImage.thumbnailCrop;
+                const zoom = crop.zoom || 1;
+                const offsetX = crop.offsetX || 0;
+                const offsetY = crop.offsetY || 0;
+                thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
+            }
+
+            return `
+                <div class="character-card bg-gray-700 rounded-lg p-3 mb-3 hover:bg-gray-600 transition-colors cursor-pointer"
+                     onclick="window.infoBoxManager.navigateToCharacter(event, '${character.id}')">
+                    <div class="flex items-center space-x-3">
+                        ${thumbnailImage ? `
+                            <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500 flex-shrink-0">
+                                <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                     class="w-full h-full object-cover" ${thumbnailStyle}>
                             </div>
+                        ` : `
+                            <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
+                                <i class="fas fa-user text-xl text-gray-400"></i>
+                            </div>
+                        `}
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-white truncate">${character.name}</h4>
+                            <p class="text-sm text-gray-300">${character.type || 'PNJ'}</p>
                         </div>
-                    `;
-                }).join('')}
+                        <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        textView.innerHTML = `
+            <h3 class="mb-3">Personnages associés</h3>
+            <div class="space-y-2">
+                ${personnagesHTML}
             </div>
         `;
 
-        personnagesTab.innerHTML = html;
+        console.log(`✅ [renderPersonnagesTabRead] Rendu terminé avec ${associatedCharacters.length} personnage(s)`);
     }
 
     renderPersonnagesTabEdit() {
@@ -2756,7 +2724,7 @@ class InfoBoxManager {
                              class="w-10 h-10 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
                     ` : `
                         <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
-                            <i class="fas fa-user text-gray-600"></i>
+                            <i class="fas fa-user text-sm text-gray-600"></i>
                         </div>
                     `}
                     <div class="flex-1">
@@ -2912,7 +2880,7 @@ class InfoBoxManager {
 
         // Afficher l'InfoBox du lieu
         this.showInfoBox(event, location, 'location');
-        
+
         // Forcer l'affichage de l'onglet Description
         setTimeout(() => {
             this.switchTab('text');
@@ -2920,31 +2888,77 @@ class InfoBoxManager {
     }
 
     navigateToRegion(event, regionId) {
-        console.log(`🔍 [navigateToRegion] Navigation vers la région ID: ${regionId}`);
+        event.preventDefault();
+        event.stopPropagation();
 
-        // Trouver la région
-        const regionsData = window.regionsData || { regions: [] };
-        const region = regionsData.regions.find(reg => String(reg.id) === String(regionId));
-
-        if (!region) {
-            console.error(`❌ [navigateToRegion] Région non trouvée avec l'ID: ${regionId}`);
+        if (!window.dataManager || !window.dataManager.regionsData) {
+            console.error("❌ DataManager ou regionsData non disponible");
             return;
         }
 
-        console.log(`✅ [navigateToRegion] Région trouvée: ${region.name}`);
+        const region = window.dataManager.regionsData.regions.find(
+            reg => String(reg.id) === String(regionId)
+        );
 
-        // Sauvegarder le contexte actuel pour le retour
+        if (!region) {
+            console.error(`❌ Région non trouvée avec l'ID: ${regionId}`);
+            return;
+        }
+
+        console.log(`🔗 Navigation vers la région "${region.name}" depuis personnage "${this.currentItem.name}"`);
+
+        // Sauvegarder le contexte actuel AVANT de changer d'InfoBox
         this.previousInfoBox = {
-            item: this.currentItem,
+            item: { ...this.currentItem },
             type: this.currentType,
-            fromInfoBox: true
+            fromInfoBox: true,
+            shouldShowPersonnagesTab: false // On vient de l'onglet Lieux/Régions
         };
 
-        console.log(`💾 [navigateToRegion] Contexte précédent sauvegardé:`, this.previousInfoBox);
+        console.log(`💾 Contexte sauvegardé - retour vers personnage "${this.previousInfoBox.item.name}"`);
 
         // Afficher l'InfoBox de la région
         this.showInfoBox(event, region, 'region');
-        
+
+        // Forcer l'affichage de l'onglet Description
+        setTimeout(() => {
+            this.switchTab('text');
+        }, 100);
+    }
+
+    navigateToCharacter(event, characterId) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (!window.charactersManager) {
+            console.error("❌ CharactersManager non disponible");
+            return;
+        }
+
+        const character = window.charactersManager.characters.find(
+            char => String(char.id) === String(characterId)
+        );
+
+        if (!character) {
+            console.error(`❌ Personnage non trouvé avec l'ID: ${characterId}`);
+            return;
+        }
+
+        console.log(`🔗 Navigation vers le personnage "${character.name}" depuis ${this.currentType} "${this.currentItem.name}"`);
+
+        // Sauvegarder le contexte actuel AVANT de changer d'InfoBox
+        this.previousInfoBox = {
+            item: { ...this.currentItem },
+            type: this.currentType,
+            fromInfoBox: true,
+            shouldShowPersonnagesTab: true // On vient de l'onglet Personnages
+        };
+
+        console.log(`💾 Contexte sauvegardé - retour vers ${this.currentType} "${this.previousInfoBox.item.name}"`);
+
+        // Afficher l'InfoBox du personnage
+        this.showInfoBox(event, character, 'character');
+
         // Forcer l'affichage de l'onglet Description
         setTimeout(() => {
             this.switchTab('text');
