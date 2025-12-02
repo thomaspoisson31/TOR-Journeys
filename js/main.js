@@ -499,6 +499,13 @@ function renderLocations() {
                 // Tap simple : ouvrir l'infobox
                 console.log(`📱 [TOUCH] Opening infobox for ${location.name}`);
                 infoBoxManager.showInfoBox(e, location, 'location');
+                
+                // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+                setTimeout(() => {
+                    console.log(`📋 [TOUCH] Affichage forcé de l'onglet Description pour ${location.name}`);
+                    infoBoxManager.switchTab('text');
+                    infoBoxManager.renderReadMode();
+                }, 100);
             } else if (!touchHasMoved && touchDuration >= 500) {
                 // Long press : ouvrir le menu de couleur
                 console.log(`📱 [TOUCH] Opening color modal for ${location.name}`);
@@ -627,6 +634,13 @@ function renderRegions() {
         polygon.addEventListener('click', (e) => {
             e.stopPropagation();
             infoBoxManager.showInfoBox(e, region, 'region');
+            
+            // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+            setTimeout(() => {
+                console.log(`📋 [CLICK] Affichage forcé de l'onglet Description pour ${region.name}`);
+                infoBoxManager.switchTab('text');
+                infoBoxManager.renderReadMode();
+            }, 100);
         });
 
         // Événements tactiles pour mobile
@@ -652,6 +666,13 @@ function renderRegions() {
             if (!regionTouchHasMoved && touchDuration < 500) {
                 // Tap simple : ouvrir l'infobox
                 infoBoxManager.showInfoBox(e, region, 'region');
+                
+                // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+                setTimeout(() => {
+                    console.log(`📋 [TOUCH] Affichage forcé de l'onglet Description pour ${region.name}`);
+                    infoBoxManager.switchTab('text');
+                    infoBoxManager.renderReadMode();
+                }, 100);
             } else if (!regionTouchHasMoved && touchDuration >= 500) {
                 // Long press : ouvrir le menu de couleur
                 showColorChangeModal(e, region, 'region');
@@ -1191,6 +1212,13 @@ function setupMapNavigation() {
                     e.stopPropagation();
                     e.preventDefault();
                     infoBoxManager.showInfoBox(e, draggedLocation, 'location');
+                    
+                    // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+                    setTimeout(() => {
+                        console.log(`📋 [CLICK] Affichage forcé de l'onglet Description pour ${draggedLocation.name}`);
+                        infoBoxManager.switchTab('text');
+                        infoBoxManager.renderReadMode();
+                    }, 100);
                 } else if (isDraggingLocation) {
                     // Fin du drag : sauvegarder
                     handleLocationDragEnd(e);

@@ -812,6 +812,14 @@ class CharactersManager {
                 type: 'click'
             };
             window.infoBoxManager.showInfoBox(fakeEvent, character, 'character');
+
+            // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+            setTimeout(() => {
+                console.log(`📋 [showCharacterInfoBox] Affichage forcé de l'onglet Description pour ${character.name}`);
+                window.infoBoxManager.switchTab('text');
+                // Forcer le re-render du contenu de l'onglet Description
+                window.infoBoxManager.renderReadMode();
+            }, 100);
         }
     }
 
