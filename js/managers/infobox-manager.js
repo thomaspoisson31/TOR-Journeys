@@ -3174,6 +3174,14 @@ class InfoBoxManager {
 
         // Afficher l'InfoBox du personnage
         this.showInfoBox(fakeEvent, character, 'character');
+
+        // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+        setTimeout(() => {
+            console.log(`📋 [showCharacterFromLocation] Affichage forcé de l'onglet Description pour ${character.name}`);
+            this.switchTab('text');
+            // Forcer le re-render du contenu de l'onglet Description
+            this.renderReadMode();
+        }, 100);
     }
 
     deleteItem() {
@@ -3326,30 +3334,28 @@ class InfoBoxManager {
     navigateToLocation(event, locationId) {
         console.log(`📍 [navigateToLocation] Navigation vers le lieu ID: ${locationId}`);
 
-        if (!window.dataManager || !window.locationsData || !window.locationsData.locations) {
-            console.error("❌ [navigateToLocation] dataManager ou locationsData non disponible");
+        // Vérifier que locationsData est disponible via window.locationsData
+        if (!window.locationsData || !window.locationsData.locations) {
+            console.error('❌ [navigateToLocation] window.locationsData non disponible');
             return;
         }
 
-        // Normaliser l'ID
-        const normalizedId = String(locationId);
-
-        // Trouver le lieu
-        const location = window.locationsData.locations.find(loc => String(loc.id) === normalizedId);
+        // Chercher le lieu
+        const location = window.locationsData.locations.find(loc => String(loc.id) === String(locationId));
 
         if (!location) {
-            console.warn(`⚠️ [navigateToLocation] Lieu non trouvé avec l'ID: ${normalizedId}`);
+            console.warn(`⚠️ [navigateToLocation] Lieu non trouvé avec l'ID: ${locationId}`);
             return;
         }
 
         console.log(`✅ [navigateToLocation] Lieu trouvé: ${location.name}`);
 
-        // Sauvegarder l'infobox actuelle pour pouvoir y revenir
+        // Sauvegarder l'InfoBox actuelle dans previousInfoBox avec un flag pour afficher l'onglet Personnages
         this.previousInfoBox = {
             item: this.currentItem,
             type: this.currentType,
-            fromInfoBox: true,
-            shouldShowPersonnagesTab: false // Ne pas retourner à l'onglet Personnages par défaut
+            fromInfoBox: true, // FLAG IMPORTANT : indique qu'on vient d'une InfoBox
+            shouldShowPersonnagesTab: true // FLAG pour afficher l'onglet Personnages au retour
         };
 
         console.log(`💾 [navigateToLocation] InfoBox précédente sauvegardée:`, this.previousInfoBox);
@@ -3376,30 +3382,28 @@ class InfoBoxManager {
     navigateToRegion(event, regionId) {
         console.log(`🗺️ [navigateToRegion] Navigation vers la région ID: ${regionId}`);
 
-        if (!window.dataManager || !window.regionsData || !window.regionsData.regions) {
-            console.error("❌ [navigateToRegion] dataManager ou regionsData non disponible");
+        // Vérifier que regionsData est disponible via window.regionsData
+        if (!window.regionsData || !window.regionsData.regions) {
+            console.error('❌ [navigateToRegion] window.regionsData non disponible');
             return;
         }
 
-        // Normaliser l'ID
-        const normalizedId = String(regionId);
-
-        // Trouver la région
-        const region = window.regionsData.regions.find(reg => String(reg.id) === normalizedId);
+        // Chercher la région
+        const region = window.regionsData.regions.find(reg => String(reg.id) === String(regionId));
 
         if (!region) {
-            console.warn(`⚠️ [navigateToRegion] Région non trouvée avec l'ID: ${normalizedId}`);
+            console.warn(`⚠️ [navigateToRegion] Région non trouvée avec l'ID: ${regionId}`);
             return;
         }
 
         console.log(`✅ [navigateToRegion] Région trouvée: ${region.name}`);
 
-        // Sauvegarder l'infobox actuelle pour pouvoir y revenir
+        // Sauvegarder l'InfoBox actuelle dans previousInfoBox avec un flag pour afficher l'onglet Personnages
         this.previousInfoBox = {
             item: this.currentItem,
             type: this.currentType,
-            fromInfoBox: true,
-            shouldShowPersonnagesTab: false // Ne pas retourner à l'onglet Personnages par défaut
+            fromInfoBox: true, // FLAG IMPORTANT : indique qu'on vient d'une InfoBox
+            shouldShowPersonnagesTab: true // FLAG pour afficher l'onglet Personnages au retour
         };
 
         console.log(`💾 [navigateToRegion] InfoBox précédente sauvegardée:`, this.previousInfoBox);
