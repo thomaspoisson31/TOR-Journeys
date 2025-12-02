@@ -417,23 +417,14 @@ class ImportExportManager {
             console.log("🔍 [PROCESS DEBUG] Détecté comme LIEU");
             console.log("🔍 [PROCESS DEBUG] Coordonnées brutes:", item.coordinates);
 
-            // Vérifier que les coordonnées sont valides et les convertir si nécessaire
-            let x = item.coordinates?.x;
-            let y = item.coordinates?.y;
-
-            // Convertir les chaînes en nombres si nécessaire
-            if (typeof x === 'string') {
-                x = parseFloat(x);
-            }
-            if (typeof y === 'string') {
-                y = parseFloat(y);
-            }
+            // Vérifier que les coordonnées sont valides
+            const x = item.coordinates?.x;
+            const y = item.coordinates?.y;
 
             console.log("🔍 [PROCESS DEBUG] x =", x, "type:", typeof x);
             console.log("🔍 [PROCESS DEBUG] y =", y, "type:", typeof y);
 
-            // Vérifier que les coordonnées sont des nombres valides
-            if (typeof x !== 'number' || typeof y !== 'number' || isNaN(x) || isNaN(y)) {
+            if (typeof x !== 'number' || typeof y !== 'number') {
                 console.warn(`⚠️ [PROCESS DEBUG] Lieu "${item.name}" ignoré : coordonnées invalides x=${x}(${typeof x}), y=${y}(${typeof y})`, item.coordinates);
                 return;
             }
@@ -527,77 +518,17 @@ class ImportExportManager {
         const mergeBtn = modal.querySelector('#import-merge');
         const cancelBtn = modal.querySelector('#import-cancel');
 
-        // Compter les éléments existants sur la carte ACTIVE
-        const activeMapUrl = window.settingsManager?.activeMapUrl;
-        const existingLocationsOnMap = this.dataManager.locationsData?.locations?.filter(loc => 
-            !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl)
-        ) || [];
-        const existingRegionsOnMap = this.dataManager.regionsData?.regions?.filter(reg => 
-            !reg.mapId || (activeMapUrl && reg.mapId === activeMapUrl)
-        ) || [];
-
-        console.log(`📥 [showImportModal] Carte active: ${activeMapUrl}`);
-        console.log(`📥 [showImportModal] Lieux existants sur carte active: ${existingLocationsOnMap.length}`);
-        console.log(`📥 [showImportModal] Régions existantes sur carte active: ${existingRegionsOnMap.length}`);
-
-        // Estimer combien seront ajoutés vs mis à jour (approximatif car basé sur les noms)
-        let estimatedNewLocations = 0;
-        let estimatedUpdatedLocations = 0;
-        processedData.locations.forEach(importedLoc => {
-            const exists = existingLocationsOnMap.find(loc => loc.name === importedLoc.name);
-            if (exists) {
-                estimatedUpdatedLocations++;
-            } else {
-                estimatedNewLocations++;
-            }
-        });
-
-        let estimatedNewRegions = 0;
-        let estimatedUpdatedRegions = 0;
-        processedData.regions.forEach(importedReg => {
-            const exists = existingRegionsOnMap.find(reg => reg.name === importedReg.name);
-            if (exists) {
-                estimatedUpdatedRegions++;
-            } else {
-                estimatedNewRegions++;
-            }
-        });
-
-        const totalAfterMerge = existingLocationsOnMap.length + estimatedNewLocations;
-        const totalRegionsAfterMerge = existingRegionsOnMap.length + estimatedNewRegions;
-
         // Mettre à jour le résumé
         if (summaryEl) {
             summaryEl.innerHTML = `
                 <div class="space-y-2">
-                    <p class="text-white"><strong>Import en mode FUSION :</strong></p>
-                    
-                    <div class="bg-blue-900/30 p-3 rounded">
-                        <p class="text-sm text-blue-200 mb-2"><strong>📊 Situation actuelle sur cette carte :</strong></p>
-                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
-                            <li>${existingLocationsOnMap.length} lieu(x) existant(s)</li>
-                            <li>${existingRegionsOnMap.length} région(s) existante(s)</li>
-                        </ul>
-                    </div>
-
-                    <div class="bg-green-900/30 p-3 rounded">
-                        <p class="text-sm text-green-200 mb-2"><strong>📥 Données à importer :</strong></p>
-                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
-                            <li>${processedData.locations.length} lieu(x) - dont ${estimatedNewLocations} nouveau(x) et ${estimatedUpdatedLocations} à mettre à jour</li>
-                            <li>${processedData.regions.length} région(s) - dont ${estimatedNewRegions} nouvelle(s) et ${estimatedUpdatedRegions} à mettre à jour</li>
-                        </ul>
-                    </div>
-
-                    <div class="bg-purple-900/30 p-3 rounded">
-                        <p class="text-sm text-purple-200 mb-2"><strong>✅ Résultat après fusion :</strong></p>
-                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
-                            <li>${totalAfterMerge} lieu(x) au total sur cette carte</li>
-                            <li>${totalRegionsAfterMerge} région(s) au total sur cette carte</li>
-                        </ul>
-                    </div>
-
-                    <p class="text-xs text-gray-400 mt-3 italic">
-                        ℹ️ Les lieux/régions avec le même nom seront mis à jour, les nouveaux seront ajoutés. Les données des autres cartes ne seront pas affectées.
+                    <p class="text-white"><strong>Données à importer :</strong></p>
+                    <ul class="list-disc list-inside space-y-1 text-gray-200">
+                        <li>${processedData.locations.length} lieu(x)</li>
+                        <li>${processedData.regions.length} région(s)</li>
+                    </ul>
+                    <p class="text-sm text-gray-400 mt-4">
+                        Les données importées seront fusionnées avec les données existantes. Les lieux et régions portant le même nom sur la même carte seront mis à jour, les nouveaux seront ajoutés.
                     </p>
                 </div>
             `;
@@ -633,33 +564,6 @@ class ImportExportManager {
             });
             
             const activeMapUrl = window.settingsManager?.activeMapUrl;
-
-            // CRITIQUE: Attribuer le mapId de la carte active aux lieux/régions importés IMMÉDIATEMENT
-            if (activeMapUrl) {
-                processedData.locations.forEach(loc => {
-                    if (!loc.mapId) {
-                        loc.mapId = activeMapUrl;
-                        console.log(`🗺️ [processImport] Attribution mapId "${activeMapUrl}" au lieu "${loc.name}"`);
-                    }
-                });
-                processedData.regions.forEach(reg => {
-                    if (!reg.mapId) {
-                        reg.mapId = activeMapUrl;
-                        console.log(`🗺️ [processImport] Attribution mapId "${activeMapUrl}" à la région "${reg.name}"`);
-                    }
-                });
-                
-                // LOG DEBUG: Vérifier l'attribution
-                console.log(`🔍 [processImport] Vérification attribution mapId:`, {
-                    activeMapUrl,
-                    processedLocationsCount: processedData.locations.length,
-                    processedLocationsWithMapId: processedData.locations.filter(l => l.mapId === activeMapUrl).length,
-                    sampleLocation: processedData.locations[0] ? {
-                        name: processedData.locations[0].name,
-                        mapId: processedData.locations[0].mapId
-                    } : null
-                });
-            }
             
             // Compter les éléments existants sur la carte ACTIVE
             const existingLocationsOnMap = this.dataManager.locationsData?.locations?.filter(loc => 
@@ -762,20 +666,6 @@ class ImportExportManager {
             console.log(`📥 [processImport] Mise à jour finale des références globales...`);
             window.locationsData = this.dataManager.locationsData;
             window.regionsData = this.dataManager.regionsData;
-            
-            // LOG DEBUG: Vérifier l'état AVANT sync
-            const locationsOnActiveMap = this.dataManager.locationsData?.locations?.filter(loc => 
-                !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl)
-            ) || [];
-            console.log(`🔍 [processImport] État AVANT sync cloud:`, {
-                activeMapUrl,
-                totalLocations: this.dataManager.locationsData?.locations?.length || 0,
-                locationsOnActiveMap: locationsOnActiveMap.length,
-                sampleLocationMapIds: this.dataManager.locationsData?.locations?.slice(0, 5).map(l => ({
-                    name: l.name,
-                    mapId: l.mapId
-                }))
-            });
 
             // Re-render immédiatement les lieux
             const locationCount = this.dataManager.locationsData?.locations?.length || 0;
