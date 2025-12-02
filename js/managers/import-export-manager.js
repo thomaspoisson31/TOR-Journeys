@@ -713,6 +713,16 @@ class ImportExportManager {
             
             const activeMapUrl = window.settingsManager?.activeMapUrl;
 
+            // CRITIQUE: Synchroniser avec window.locationsData AVANT de compter
+            if (window.locationsData && window.locationsData.locations) {
+                this.dataManager.locationsData = window.locationsData;
+                console.log(`🔄 [processImport] Synchronisation avec window.locationsData: ${window.locationsData.locations.length} lieux`);
+            }
+            if (window.regionsData && window.regionsData.regions) {
+                this.dataManager.regionsData = window.regionsData;
+                console.log(`🔄 [processImport] Synchronisation avec window.regionsData: ${window.regionsData.regions.length} régions`);
+            }
+
             // CRITIQUE: Attribuer le mapId de la carte active aux lieux/régions importés IMMÉDIATEMENT
             if (activeMapUrl) {
                 processedData.locations.forEach(loc => {
@@ -740,7 +750,7 @@ class ImportExportManager {
                 });
             }
             
-            // Compter les éléments existants sur la carte ACTIVE
+            // Compter les éléments existants sur la carte ACTIVE (après synchronisation)
             const existingLocationsOnMap = this.dataManager.locationsData?.locations?.filter(loc => 
                 !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl)
             ) || [];
