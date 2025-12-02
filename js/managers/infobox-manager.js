@@ -296,7 +296,7 @@ class InfoBoxManager {
             console.log('🎨 [Rumeurs] Bouton non trouvé');
         }
 
-        // Onglet Personnages (pour lieux/régions)
+        // Onglet Personnages (pour lieux et régions)
         const personnagesTabButton = document.querySelector('.tab-button[data-tab="personnages"]');
         if (personnagesTabButton && (this.currentType === 'location' || this.currentType === 'region')) {
             const hasPersonnages = item.associatedCharacters && item.associatedCharacters.length > 0;
@@ -2632,7 +2632,7 @@ class InfoBoxManager {
                     <div class="flex items-center space-x-3">
                         ${thumbnailImage ? `
                             <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500 flex-shrink-0">
-                                <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                <img src="${thumbnailImage.url}" alt="${character.name}"
                                      class="w-full h-full object-cover" ${thumbnailStyle}>
                             </div>
                         ` : `
@@ -2699,7 +2699,7 @@ class InfoBoxManager {
         if (availableCharacters.length === 0) {
             personnagesTab.innerHTML = `
                 <div class="edit-form p-4">
-                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible pour cette carte</p>
+                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible sur cette carte</p>
                 </div>
             `;
             return;
@@ -3321,6 +3321,100 @@ class InfoBoxManager {
 
     resetZoomForFullscreen() {
         // Cette méthode sera définie dans setupFullscreenImageListeners()
+    }
+
+    navigateToLocation(event, locationId) {
+        console.log(`🗺️ [navigateToLocation] Navigation vers le lieu ID: ${locationId}`);
+
+        if (!window.locationsData || !window.locationsData.locations) {
+            console.error("❌ [navigateToLocation] locationsData non disponible");
+            return;
+        }
+
+        // Normaliser l'ID
+        const normalizedId = String(locationId);
+
+        // Trouver le lieu
+        const location = window.locationsData.locations.find(loc => String(loc.id) === normalizedId);
+
+        if (!location) {
+            console.warn(`⚠️ [navigateToLocation] Lieu non trouvé avec l'ID: ${normalizedId}`);
+            return;
+        }
+
+        console.log(`✅ [navigateToLocation] Lieu trouvé: ${location.name}`);
+
+        // Sauvegarder l'infobox actuelle pour pouvoir y revenir
+        this.previousInfoBox = {
+            item: this.currentItem,
+            type: this.currentType,
+            fromInfoBox: true,
+            shouldShowPersonnagesTab: false
+        };
+
+        console.log(`💾 [navigateToLocation] InfoBox précédente sauvegardée:`, this.previousInfoBox);
+
+        // Créer un événement simulé pour le positionnement
+        const fakeEvent = event || {
+            clientX: window.innerWidth / 2,
+            clientY: window.innerHeight / 2,
+            type: 'click'
+        };
+
+        // Ouvrir l'infobox du lieu avec l'onglet Description activé par défaut
+        this.showInfoBox(fakeEvent, location, 'location');
+
+        // Forcer l'affichage de l'onglet Description
+        setTimeout(() => {
+            this.switchTab('text');
+        }, 50);
+    }
+
+    navigateToRegion(event, regionId) {
+        console.log(`🗺️ [navigateToRegion] Navigation vers la région ID: ${regionId}`);
+
+        if (!window.regionsData || !window.regionsData.regions) {
+            console.error("❌ [navigateToRegion] regionsData non disponible");
+            return;
+        }
+
+        // Normaliser l'ID
+        const normalizedId = String(regionId);
+
+        // Trouver la région
+        const region = window.regionsData.regions.find(reg => String(reg.id) === normalizedId);
+
+        if (!region) {
+            console.warn(`⚠️ [navigateToRegion] Région non trouvée avec l'ID: ${normalizedId}`);
+            return;
+        }
+
+        console.log(`✅ [navigateToRegion] Région trouvée: ${region.name}`);
+
+        // Sauvegarder l'infobox actuelle pour pouvoir y revenir
+        this.previousInfoBox = {
+            item: this.currentItem,
+            type: this.currentType,
+            fromInfoBox: true,
+            shouldShowPersonnagesTab: false
+        };
+
+        console.log(`💾 [navigateToRegion] InfoBox précédente sauvegardée:`, this.previousInfoBox);
+
+        // Créer un événement simulé pour le positionnement
+        const fakeEvent = event || {
+            clientX: window.innerWidth / 2,
+            clientY: window.innerHeight / 2,
+            type: 'click'
+        };
+
+        // Ouvrir l'infobox de la région avec l'onglet Description activé par défaut
+        this.showInfoBox(fakeEvent, region, 'region');
+
+        // Forcer l'affichage de l'onglet Description
+        setTimeout(() => {
+            this.switchTab('text');
+        }, 50);
     }
 }
 
