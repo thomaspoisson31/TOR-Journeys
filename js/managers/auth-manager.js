@@ -1420,6 +1420,19 @@ class AuthManager {
 
     async showDeletionWarning(deletionInfo) {
         return new Promise((resolve) => {
+            // Log détaillé pour expliquer pourquoi l'alerte s'affiche
+            console.log("⚠️ [SUPPRESSION] ALERTE DE SUPPRESSION AFFICHÉE - Raisons:");
+            console.log(`📊 [SUPPRESSION] Cloud actuel: ${deletionInfo.cloudTotal} lieu(x) pour la carte "${deletionInfo.activeMapId}"`);
+            console.log(`📊 [SUPPRESSION] Local actuel: ${deletionInfo.localTotal} lieu(x) pour la carte "${deletionInfo.activeMapId}"`);
+            console.log(`🗑️ [SUPPRESSION] Différence détectée: ${deletionInfo.deletedLocations.length} lieu(x) seraient SUPPRIMÉS du cloud`);
+            console.log(`📝 [SUPPRESSION] Liste des lieux qui seraient supprimés:`);
+            deletionInfo.deletedLocations.forEach((loc, index) => {
+                console.log(`   ${index + 1}. "${loc.name}" (ID: ${loc.id}, mapId: ${loc.mapId || 'aucun'})`);
+            });
+            console.log(`💡 [SUPPRESSION] Explication: Ces lieux existent dans le cloud mais PAS dans vos données locales.`);
+            console.log(`💡 [SUPPRESSION] Si vous synchronisez, ils seront SUPPRIMÉS du cloud de manière DÉFINITIVE.`);
+            console.log(`⚠️ [SUPPRESSION] Si cette suppression est INATTENDUE, cliquez sur ANNULER et vérifiez vos données avant de synchroniser.`);
+            
             // Récupérer le nom de la carte active pour l'affichage
             const activeMapName = window.settingsManager?.activeMapName || 'la carte active';
 
