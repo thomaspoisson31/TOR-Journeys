@@ -648,6 +648,17 @@ class ImportExportManager {
                         console.log(`🗺️ [processImport] Attribution mapId "${activeMapUrl}" à la région "${reg.name}"`);
                     }
                 });
+                
+                // LOG DEBUG: Vérifier l'attribution
+                console.log(`🔍 [processImport] Vérification attribution mapId:`, {
+                    activeMapUrl,
+                    processedLocationsCount: processedData.locations.length,
+                    processedLocationsWithMapId: processedData.locations.filter(l => l.mapId === activeMapUrl).length,
+                    sampleLocation: processedData.locations[0] ? {
+                        name: processedData.locations[0].name,
+                        mapId: processedData.locations[0].mapId
+                    } : null
+                });
             }
             
             // Compter les éléments existants sur la carte ACTIVE
@@ -751,6 +762,20 @@ class ImportExportManager {
             console.log(`📥 [processImport] Mise à jour finale des références globales...`);
             window.locationsData = this.dataManager.locationsData;
             window.regionsData = this.dataManager.regionsData;
+            
+            // LOG DEBUG: Vérifier l'état AVANT sync
+            const locationsOnActiveMap = this.dataManager.locationsData?.locations?.filter(loc => 
+                !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl)
+            ) || [];
+            console.log(`🔍 [processImport] État AVANT sync cloud:`, {
+                activeMapUrl,
+                totalLocations: this.dataManager.locationsData?.locations?.length || 0,
+                locationsOnActiveMap: locationsOnActiveMap.length,
+                sampleLocationMapIds: this.dataManager.locationsData?.locations?.slice(0, 5).map(l => ({
+                    name: l.name,
+                    mapId: l.mapId
+                }))
+            });
 
             // Re-render immédiatement les lieux
             const locationCount = this.dataManager.locationsData?.locations?.length || 0;
