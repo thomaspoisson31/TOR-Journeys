@@ -417,14 +417,23 @@ class ImportExportManager {
             console.log("🔍 [PROCESS DEBUG] Détecté comme LIEU");
             console.log("🔍 [PROCESS DEBUG] Coordonnées brutes:", item.coordinates);
 
-            // Vérifier que les coordonnées sont valides
-            const x = item.coordinates?.x;
-            const y = item.coordinates?.y;
+            // Vérifier que les coordonnées sont valides et les convertir si nécessaire
+            let x = item.coordinates?.x;
+            let y = item.coordinates?.y;
+
+            // Convertir les chaînes en nombres si nécessaire
+            if (typeof x === 'string') {
+                x = parseFloat(x);
+            }
+            if (typeof y === 'string') {
+                y = parseFloat(y);
+            }
 
             console.log("🔍 [PROCESS DEBUG] x =", x, "type:", typeof x);
             console.log("🔍 [PROCESS DEBUG] y =", y, "type:", typeof y);
 
-            if (typeof x !== 'number' || typeof y !== 'number') {
+            // Vérifier que les coordonnées sont des nombres valides
+            if (typeof x !== 'number' || typeof y !== 'number' || isNaN(x) || isNaN(y)) {
                 console.warn(`⚠️ [PROCESS DEBUG] Lieu "${item.name}" ignoré : coordonnées invalides x=${x}(${typeof x}), y=${y}(${typeof y})`, item.coordinates);
                 return;
             }
