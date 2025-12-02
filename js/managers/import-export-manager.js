@@ -340,6 +340,29 @@ class ImportExportManager {
         console.log("🔍 [PROCESS DEBUG] Début traitement item:", item.name);
         console.log("🔍 [PROCESS DEBUG] Item complet:", JSON.stringify(item, null, 2).substring(0, 500));
 
+        // DÉTECTION DE CONFLIT : Vérifier si un lieu/région avec ce nom existe déjà
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        const existingLocations = window.locationsData?.locations || [];
+        const existingRegions = window.regionsData?.regions || [];
+        
+        const conflictLocation = existingLocations.find(loc => loc.name === item.name);
+        const conflictRegion = existingRegions.find(reg => reg.name === item.name);
+        
+        if (conflictLocation || conflictRegion) {
+            const conflict = conflictLocation || conflictRegion;
+            console.warn(`⚠️ [CONFLIT DÉTECTÉ] "${item.name}" existe déjà:`, {
+                existant: {
+                    mapId: conflict.mapId,
+                    type: conflictLocation ? 'location' : 'region'
+                },
+                nouveau: {
+                    mapId: item.mapId || 'sera défini par carte active',
+                    type: item.type || (item.coordinates?.points ? 'region' : 'location')
+                },
+                carteActive: activeMapUrl
+            });
+        }
+
         // Vérifier si c'est une région (a des points de coordonnées)
         if (item.type === 'region' || (item.coordinates && item.coordinates.points)) {
             console.log("🔍 [PROCESS DEBUG] Détecté comme RÉGION");
@@ -530,6 +553,35 @@ class ImportExportManager {
         // Compter les éléments existants sur la carte ACTIVE
         const activeMapUrl = window.settingsManager?.activeMapUrl;
         
+        // DÉTECTER LES CONFLITS DE NOMS
+        const conflicts = [];
+        processedData.locations.forEach(importedLoc => {
+            const existing = (window.locationsData?.locations || []).find(loc => loc.name === importedLoc.name);
+            if (existing && existing.mapId && existing.mapId !== activeMapUrl) {
+                conflicts.push({
+                    name: importedLoc.name,
+                    type: 'lieu',
+                    existingMapId: existing.mapId,
+                    newMapId: activeMapUrl
+                });
+            }
+        });
+        processedData.regions.forEach(importedReg => {
+            const existing = (window.regionsData?.regions || []).find(reg => reg.name === importedReg.name);
+            if (existing && existing.mapId && existing.mapId !== activeMapUrl) {
+                conflicts.push({
+                    name: importedReg.name,
+                    type: 'région',
+                    existingMapId: existing.mapId,
+                    newMapId: activeMapUrl
+                });
+            }
+        });
+        
+        if (conflicts.length > 0) {
+            console.warn(`⚠️ [showImportModal] ${conflicts.length} conflit(s) détecté(s):`, conflicts);
+        }
+        
         // IMPORTANT: Utiliser window.locationsData et window.regionsData qui sont la source de vérité
         const existingLocationsOnMap = (window.locationsData?.locations || []).filter(loc => 
             !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl)
@@ -572,9 +624,32 @@ class ImportExportManager {
 
         // Mettre à jour le résumé
         if (summaryEl) {
+            let conflictsHtml = '';
+            if (conflicts.length > 0) {
+                const conflictsList = conflicts.map(c => `
+                    <li class="text-xs">
+                        <strong>${c.name}</strong> (${c.type}) existe sur une autre carte
+                    </li>
+                `).join('');
+                
+                conflictsHtml = `
+                    <div class="bg-red-900/30 p-3 rounded border border-red-500/50">
+                        <p class="text-sm text-red-200 mb-2"><strong>⚠️ CONFLITS DÉTECTÉS :</strong></p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm max-h-32 overflow-y-auto">
+                            ${conflictsList}
+                        </ul>
+                        <p class="text-xs text-red-300 mt-2 italic">
+                            Ces éléments existent déjà sur d'autres cartes. L'import créera des doublons avec un mapId différent.
+                        </p>
+                    </div>
+                `;
+            }
+            
             summaryEl.innerHTML = `
                 <div class="space-y-2">
                     <p class="text-white"><strong>Import en mode FUSION :</strong></p>
+                    
+                    ${conflictsHtml}
                     
                     <div class="bg-blue-900/30 p-3 rounded">
                         <p class="text-sm text-blue-200 mb-2"><strong>📊 Situation actuelle sur cette carte :</strong></p>
