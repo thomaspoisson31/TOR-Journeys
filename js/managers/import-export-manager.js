@@ -529,15 +529,19 @@ class ImportExportManager {
 
         // Compter les éléments existants sur la carte ACTIVE
         const activeMapUrl = window.settingsManager?.activeMapUrl;
-        const existingLocationsOnMap = this.dataManager.locationsData?.locations?.filter(loc => 
+        
+        // IMPORTANT: Utiliser window.locationsData et window.regionsData qui sont la source de vérité
+        const existingLocationsOnMap = (window.locationsData?.locations || []).filter(loc => 
             !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl)
-        ) || [];
-        const existingRegionsOnMap = this.dataManager.regionsData?.regions?.filter(reg => 
+        );
+        const existingRegionsOnMap = (window.regionsData?.regions || []).filter(reg => 
             !reg.mapId || (activeMapUrl && reg.mapId === activeMapUrl)
-        ) || [];
+        );
 
         console.log(`📥 [showImportModal] Carte active: ${activeMapUrl}`);
+        console.log(`📥 [showImportModal] Total lieux dans window.locationsData: ${window.locationsData?.locations?.length || 0}`);
         console.log(`📥 [showImportModal] Lieux existants sur carte active: ${existingLocationsOnMap.length}`);
+        console.log(`📥 [showImportModal] Total régions dans window.regionsData: ${window.regionsData?.regions?.length || 0}`);
         console.log(`📥 [showImportModal] Régions existantes sur carte active: ${existingRegionsOnMap.length}`);
 
         // Estimer combien seront ajoutés vs mis à jour (approximatif car basé sur les noms)
