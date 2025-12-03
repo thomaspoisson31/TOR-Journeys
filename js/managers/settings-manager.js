@@ -858,7 +858,7 @@ class SettingsManager {
             : 'Êtes-vous sûr de vouloir supprimer cette carte ?';
 
         if (locationsCount > 0 || regionsCount > 0) {
-            confirmMessage += `\n\n⚠️ ATTENTION : Cette carte contient :\n- ${locationsCount} lieu(x)\n- ${regionsCount} région(s)\n\nTous ces éléments seront DÉFINITIVEMENT supprimés !`;
+            confirmMessage += `\n\n⚠️ ATTENTION : Cette carte contient :\n- ${locationsCount} lieu${locationsCount > 1 ? 'x' : ''}\n- ${regionsCount} région${regionsCount > 1 ? 's' : ''}\n\nTous ces éléments seront DÉFINITIVEMENT supprimés !`;
         }
 
         if (confirm(confirmMessage)) {
@@ -2027,12 +2027,116 @@ class SettingsManager {
         }
     }
 
+    calculateOrphanStats() {
+        // Récupérer toutes les URLs de cartes existantes
+        const validMapIds = this.availableMaps.map(m => m.url);
+
+        let orphanLocations = 0;
+        let orphanRegions = 0;
+
+        // Compter les lieux orphelins
+        if (window.locationsData && window.locationsData.locations) {
+            orphanLocations = window.locationsData.locations.filter(loc => {
+                // Un lieu est orphelin si :
+                // - Il n'a pas de mapId
+                // - Son mapId ne correspond à aucune carte existante
+                return !loc.mapId || !validMapIds.includes(loc.mapId);
+            }).length;
+        }
+
+        // Compter les régions orphelines
+        if (window.regionsData && window.regionsData.regions) {
+            orphanRegions = window.regionsData.regions.filter(reg => {
+                return !reg.mapId || !validMapIds.includes(reg.mapId);
+            }).length;
+        }
+
+        return {
+            orphanLocations,
+            orphanRegions,
+            totalOrphans: orphanLocations + orphanRegions
+        };
+    }
+
+    deleteOrphanElements() {
+        const orphanStats = this.calculateOrphanStats();
+
+        if (orphanStats.totalOrphans === 0) {
+            alert('Aucun élément orphelin à supprimer.');
+            return;
+        }
+
+        const confirmMessage = `Voulez-vous vraiment supprimer les éléments orphelins ?\n\n` +
+            `⚠️ ATTENTION : Cette action supprimera définitivement :\n` +
+            `- ${orphanStats.orphanLocations} lieu${orphanStats.orphanLocations > 1 ? 'x' : ''}\n` +
+            `- ${orphanStats.orphanRegions} région${orphanStats.orphanRegions > 1 ? 's' : ''}\n\n` +
+            `Ces éléments ne sont associés à aucune carte existante.`;
+
+        if (!confirm(confirmMessage)) {
+            console.log('🚫 Suppression des orphelins annulée par l\'utilisateur');
+            return;
+        }
+
+        console.log(`🗑️ Suppression des éléments orphelins...`);
+
+        // Récupérer toutes les URLs de cartes valides
+        const validMapIds = this.availableMaps.map(m => m.url);
+
+        // Supprimer les lieux orphelins
+        if (window.locationsData && window.locationsData.locations) {
+            const beforeCount = window.locationsData.locations.length;
+            window.locationsData.locations = window.locationsData.locations.filter(loc => {
+                return loc.mapId && validMapIds.includes(loc.mapId);
+            });
+            const deletedLocations = beforeCount - window.locationsData.locations.length;
+            console.log(`🗑️ Lieux orphelins supprimés : ${deletedLocations}`);
+        }
+
+        // Supprimer les régions orphelines
+        if (window.regionsData && window.regionsData.regions) {
+            const beforeCount = window.regionsData.regions.length;
+            window.regionsData.regions = window.regionsData.regions.filter(reg => {
+                return reg.mapId && validMapIds.includes(reg.mapId);
+            });
+            const deletedRegions = beforeCount - window.regionsData.regions.length;
+            console.log(`🗑️ Régions orphelines supprimées : ${deletedRegions}`);
+        }
+
+        // Sauvegarder les modifications
+        if (window.dataManager) {
+            window.dataManager.saveLocationsToLocal();
+            window.dataManager.saveRegionsToLocal();
+        }
+
+        // Re-render les lieux et régions
+        if (typeof window.renderLocations === 'function') {
+            window.renderLocations();
+        }
+        if (typeof window.renderRegions === 'function') {
+            window.renderRegions();
+        }
+
+        // Rafraîchir l'affichage de la grille
+        this.renderMapsGrid();
+
+        console.log(`✅ Éléments orphelins supprimés avec succès`);
+        alert(`Éléments orphelins supprimés :\n- ${orphanStats.orphanLocations} lieu${orphanStats.orphanLocations > 1 ? 'x' : ''}\n- ${orphanStats.orphanRegions} région${orphanStats.orphanRegions > 1 ? 's' : ''}`);
+    }
+
     deleteAllLocationsAndRegions() {
+        const activeMapUrl = this.activeMapUrl;
         const activeMapName = this.activeMapName || 'cette carte';
+
+        // Calculer les statistiques des orphelins AVANT la suppression
+        const orphanStats = this.calculateOrphanStats();
+        let orphanMessage = '';
+        if (orphanStats.totalOrphans > 0) {
+            orphanMessage = `\n\nDe plus, il y a ${orphanStats.totalOrphans} élément(s) orphelin(s) (non associé(s) à une carte valide).`;
+        }
 
         const confirmed = confirm(
             `⚠️ ATTENTION : Cette action va supprimer TOUS les lieux et TOUTES les régions de "${activeMapName}".\n\n` +
-            'Les lieux et régions des autres cartes seront conservés.\n\n' +
+            `Les lieux et régions des autres cartes seront conservés.` + orphanMessage + `\n\n` +
             'Cette action est IRRÉVERSIBLE.\n\n' +
             'Êtes-vous absolument sûr de vouloir continuer ?'
         );
@@ -2043,8 +2147,9 @@ class SettingsManager {
 
         // Double confirmation pour éviter les erreurs
         const doubleConfirm = confirm(
-            '🚨 DERNIÈRE CONFIRMATION 🚨\n\n' +
-            `Vous allez supprimer DÉFINITIVEMENT tous les lieux et régions de "${activeMapName}".\n\n` +
+            `🚨 DERNIÈRE CONFIRMATION 🚨\n\n` +
+            `Vous allez supprimer DÉFINITIVEMENT tous les lieux et régions de "${activeMapName}"` +
+            `${orphanStats.totalOrphans > 0 ? ' et tous les éléments orphelins' : ''}.\n\n` +
             'Confirmez-vous cette suppression ?'
         );
 
@@ -2053,14 +2158,13 @@ class SettingsManager {
         }
 
         try {
-            const activeMapId = this.activeMapUrl;
-            console.log(`🗑️ Suppression de tous les lieux et régions de la carte active: ${activeMapId}`);
+            console.log(`🗑️ Suppression de tous les lieux et régions de la carte: ${activeMapUrl}`);
 
             // Supprimer uniquement les lieux de la carte active
             if (window.locationsData && window.locationsData.locations) {
                 const initialCount = window.locationsData.locations.length;
                 window.locationsData.locations = window.locationsData.locations.filter(loc =>
-                    loc.mapId && loc.mapId !== activeMapId
+                    loc.mapId && loc.mapId !== activeMapUrl
                 );
                 const deletedCount = initialCount - window.locationsData.locations.length;
                 console.log(`✅ ${deletedCount} lieu(x) supprimé(s) de la carte active`);
@@ -2070,41 +2174,46 @@ class SettingsManager {
             if (window.regionsData && window.regionsData.regions) {
                 const initialCount = window.regionsData.regions.length;
                 window.regionsData.regions = window.regionsData.regions.filter(reg =>
-                    reg.mapId && reg.mapId !== activeMapId
+                    reg.mapId && reg.mapId !== activeMapUrl
                 );
                 const deletedCount = initialCount - window.regionsData.regions.length;
                 console.log(`✅ ${deletedCount} région(s) supprimée(s) de la carte active`);
             }
 
-            // Sauvegarder dans localStorage
-            if (window.dataManager) {
-                window.dataManager.saveLocationsToLocal();
-                window.dataManager.saveRegionsToLocal();
+            // Si des orphelins existent, les supprimer aussi
+            if (orphanStats.totalOrphans > 0) {
+                this.deleteOrphanElements(); // Ceci sauvegarde et re-render
             } else {
-                localStorage.setItem('middleEarthLocations', JSON.stringify(window.locationsData));
-                localStorage.setItem('middleEarthRegions', JSON.stringify(window.regionsData));
+                // Sauvegarder uniquement les modifications de la carte active si pas d'orphelins
+                if (window.dataManager) {
+                    window.dataManager.saveLocationsToLocal();
+                    window.dataManager.saveRegionsToLocal();
+                } else {
+                    localStorage.setItem('middleEarthLocations', JSON.stringify(window.locationsData));
+                    localStorage.setItem('middleEarthRegions', JSON.stringify(window.regionsData));
+                }
+
+                // Re-render la carte
+                if (typeof window.renderLocations === 'function') {
+                    window.renderLocations();
+                }
+                if (typeof window.renderRegions === 'function') {
+                    window.renderRegions();
+                }
+
+                // Marquer comme non sauvegardé
+                if (typeof window.markAsUnsaved === 'function') {
+                    window.markAsUnsaved();
+                }
+
+                // Synchroniser
+                if (typeof window.scheduleAutoSync === 'function') {
+                    window.scheduleAutoSync();
+                }
             }
 
-            // Re-render la carte
-            if (typeof window.renderLocations === 'function') {
-                window.renderLocations();
-            }
-            if (typeof window.renderRegions === 'function') {
-                window.renderRegions();
-            }
-
-            // Marquer comme non sauvegardé
-            if (typeof window.markAsUnsaved === 'function') {
-                window.markAsUnsaved();
-            }
-
-            // Synchroniser
-            if (typeof window.scheduleAutoSync === 'function') {
-                window.scheduleAutoSync();
-            }
-
-            alert(`✅ Tous les lieux et régions de "${activeMapName}" ont été supprimés avec succès.`);
-            console.log(`✅ Suppression complète terminée pour la carte: ${activeMapId}`);
+            alert(`✅ Tous les lieux et régions de "${activeMapName}" ont été supprimés avec succès.${orphanStats.totalOrphans > 0 ? ' Les éléments orphelins ont également été supprimés.' : ''}`);
+            console.log(`✅ Suppression complète terminée pour la carte: ${activeMapUrl}`);
 
         } catch (error) {
             console.error('❌ Erreur lors de la suppression:', error);
