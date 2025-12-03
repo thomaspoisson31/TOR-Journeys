@@ -450,6 +450,229 @@ Principe de double stockage:
    - _saved_at: timestamp ISO format
    - _sync_timestamp: milliseconds epoch pour conflits
 
+GESTION DES MAPID ET ATTRIBUTION AUTOMATIQUE
+--------------------------------------------
+
+1. PRINCIPE DU MAPID:
+   
+   Chaque élément (lieu, région, personnage) possède un attribut `mapId`:
+   - Identifie la carte d'appartenance de l'élément
+   - Permet le filtrage et l'affichage par carte active
+   - Format: URL de l'image de la carte (ex: "/uploads/user_id/maps/carte.webp")
+   - Éléments sans mapId: affichés sur TOUTES les cartes (rétrocompatibilité)
+
+2. ATTRIBUTION AUTOMATIQUE DU MAPID:
+   
+   Lors de la sauvegarde cloud (syncUserData):
+   a) Détection de la carte active (activeMapUrl)
+   b) Parcours de tous les lieux/régions
+   c) Attribution du mapId aux éléments qui n'en ont pas:
+      - location.mapId = activeMapUrl (si absent)
+      - region.mapId = activeMapUrl (si absent)
+   d) Synchronisation immédiate:
+      - Variables globales (window.locationsData, window.regionsData)
+      - DataManager (dataManager.locationsData, dataManager.regionsData)
+      - localStorage
+   e) Sauvegarde cloud avec les mapId mis à jour
+   
+   Code concerné: auth-manager.js (syncUserData, ligne ~630-680)
+
+3. FILTRAGE PAR CARTE ACTIVE:
+   
+   Lors du rendering (renderLocations, renderRegions):
+   - Filtrage automatique par mapId === activeMapUrl
+   - Éléments sans mapId toujours affichés (rétrocompatibilité)
+   - Exemple:
+     ```javascript
+     const locationsOnActiveMap = locations.filter(loc => 
+         !loc.mapId || loc.mapId === activeMapUrl
+     );
+     ```
+   
+   Code concerné: main.js (renderLocations, renderRegions)
+
+4. PRÉSERVATION DES DONNÉES MULTI-CARTES:
+   
+   Lors de l'import/export et des suppressions:
+   - TOUJOURS filtrer par carte active avant opération
+   - TOUJOURS préserver les éléments d'autres cartes
+   - TOUJOURS préserver les éléments sans mapId
+   - Pattern de fusion:
+     ```javascript
+     const autresCartes = elements.filter(e => 
+         e.mapId && e.mapId !== activeMapUrl
+     );
+     const merged = [...autresCartes, ...nouveauxElements];
+     ```
+
+IMPORT / EXPORT DE DONNÉES
+--------------------------
+
+1. FORMAT D'EXPORT:
+   
+   Structure JSON unifiée:
+   ```json
+   {
+     "locations": [
+       {
+         "id": "location_123",
+         "name": "Nom du lieu",
+         "mapId": "/uploads/user_id/maps/carte.webp",
+         "coordinates": {"x": 1000, "y": 500},
+         "type": "custom",
+         ...autres propriétés
+       }
+     ]
+   }
+   ```
+   
+   Principes d'export:
+   - Export UNIQUEMENT des éléments de la carte active
+   - Filtrage par mapId avant export
+   - Préservation de TOUS les attributs (mapId, associatedCharacters, etc.)
+   - Nom de fichier: "{NomCarte}_Lieux_Regions.json"
+   
+   Code concerné: import-export-manager.js (exportUnifiedData)
+
+2. MODES D'IMPORT:
+   
+   Mode MERGE (fusion intelligente):
+   a) Identification des éléments à conserver:
+      - Lieux/régions d'AUTRES cartes → conservés intacts
+      - Éléments sans mapId → conservés (rétrocompatibilité)
+   
+   b) Traitement des éléments importés:
+      - Comparaison par ID uniquement (PAS par nom)
+      - Si ID existe: mise à jour des données
+      - Si ID nouveau: ajout à la liste
+   
+   c) Fusion finale:
+      ```javascript
+      const autresCartes = existants.filter(e => 
+          e.mapId && e.mapId !== activeMapUrl
+      );
+      const sansMapId = existants.filter(e => !e.mapId);
+      const merged = [...autresCartes, ...sansMapId, ...importés];
+      ```
+   
+   d) Synchronisation triple:
+      - window.locationsData/regionsData
+      - dataManager.locationsData/regionsData
+      - localStorage
+   
+   e) Sauvegarde cloud automatique
+   
+   Code concerné: import-export-manager.js (mergeLocations, mergeRegions, processImport)
+
+3. WORKFLOW D'IMPORT COMPLET:
+   
+   1. Sélection du fichier JSON
+   2. Validation et parsing des données
+   3. Affichage modale de confirmation avec statistiques:
+      - Nombre de lieux/régions existants sur carte active
+      - Nombre d'éléments à importer (nouveaux vs mises à jour)
+      - Résultat après fusion
+   4. Confirmation utilisateur
+   5. Fusion intelligente (préservation autres cartes)
+   6. Triple synchronisation (window → dataManager → localStorage)
+   7. Re-render immédiat des éléments
+   8. Sauvegarde cloud automatique
+   9. Alert de confirmation à l'utilisateur
+
+4. DÉTECTION DES SUPPRESSIONS:
+   
+   Avant toute sauvegarde cloud (syncUserData):
+   a) Récupération des données actuelles du cloud
+   b) Filtrage par carte active (cloud ET local)
+   c) Comparaison des IDs:
+      - Lieux présents dans cloud mais absents localement = suppressions
+   d) Si suppressions détectées:
+      - Affichage modale d'alerte détaillée:
+        * Nombre de suppressions
+        * Liste des noms (max 5 + "... et X autres")
+        * Carte concernée
+        * Environnement (dev/prod)
+      - Demande de confirmation utilisateur
+      - Si annulation: arrêt de la synchronisation
+   
+   Code concerné: auth-manager.js (checkForLocationDeletions, showDeletionWarning)
+
+5. GESTION DES ATTRIBUTS SPÉCIAUX:
+   
+   Lors de l'import/export, préservation de:
+   - mapId: attribution automatique si absent
+   - associatedCharacters: relations bidirectionnelles
+   - Rumeurs: support format simple (string) et multiple (array)
+   - images: conversion automatique des anciens formats
+   - Tradition_Ancienne: champ optionnel
+   - evenements_voyage: événements liés aux voyages
+   
+   Conversion automatique:
+   - image_url (ancien) → images (nouveau)
+   - Rumeur (string) → Rumeurs (array)
+
+6. LOGS DE VALIDATION:
+   
+   Tous les imports/exports loggent:
+   - 📤 Export: nombre d'éléments, carte source
+   - 📥 Import: validation, parsing, fusion
+   - 🔄 Fusion: compteurs AVANT/APRÈS, préservation autres cartes
+   - ✅ Succès: confirmation avec statistiques
+   - ❌ Erreur: message détaillé + stack trace
+   
+   Pattern de validation:
+   ```javascript
+   console.log(`🔄 [mergeLocations] Carte active: ${activeMapUrl}`);
+   console.log(`🔄 [mergeLocations] AVANT: ${existants.length} lieux`);
+   console.log(`✅ Conservation: ${autresCartes.length} autres cartes`);
+   console.log(`🔄 [mergeLocations] APRÈS: ${merged.length} lieux`);
+   console.log(`🔄 Détail: ${autresCartes.length} conservés + ${importés.length} importés = ${merged.length} total`);
+   ```
+
+7. SYNCHRONISATION POST-IMPORT:
+   
+   Ordre critique après import:
+   1. Fusion des données (mergeLocations, mergeRegions)
+   2. Sauvegarde localStorage
+   3. Mise à jour window.locationsData/regionsData
+   4. Mise à jour dataManager.locationsData/regionsData
+   5. Re-render immédiat (renderLocations, renderRegions)
+   6. Marquage unsaved
+   7. Sauvegarde cloud automatique (sans rechargement)
+   8. Alert de confirmation utilisateur
+   
+   Pattern de sauvegarde:
+   ```javascript
+   // 1. Fusion
+   this.mergeLocations(importedData.locations);
+   
+   // 2. localStorage
+   localStorage.setItem('middleEarthLocations', JSON.stringify(merged));
+   
+   // 3. Variables globales
+   window.locationsData = merged;
+   dataManager.locationsData = merged;
+   
+   // 4. Render
+   window.renderLocations();
+   
+   // 5. Cloud
+   window.authManager.manualSync();
+   ```
+
+8. COMPATIBILITÉ FORMATS:
+   
+   L'import supporte plusieurs formats JSON:
+   - Format actuel: { locations: [...], regions: [...] }
+   - Ancien format: tableau direct [...]
+   - Format legacy: avec propriétés obsolètes (auto-conversion)
+   
+   Validation robuste:
+   - Vérification structure (Array.isArray, propriétés requises)
+   - Conversion coordonnées (string → number si nécessaire)
+   - Validation minimale (3 points pour régions, x/y valides pour lieux)
+   - Messages d'erreur détaillés en cas d'échec
+
 PRINCIPES D'AFFICHAGE ET RENDERING
 ----------------------------------
 
