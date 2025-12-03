@@ -1008,7 +1008,8 @@ class CharactersManager {
                     images: char.images || [],
                     associatedLocations: (char.associatedLocations || []).map(id => String(id)),
                     associatedRegions: (char.associatedRegions || []).map(id => String(id)),
-                    mapId: char.mapId || activeMapId
+                    mapId: char.mapId || activeMapId,
+                    Rumeurs: char.Rumeurs || (char.Rumeur ? [char.Rumeur] : [])
                 }));
             } else {
                 console.log("📥 Mode MERGE - Fusion des personnages");
@@ -1019,6 +1020,7 @@ class CharactersManager {
                         id: String(importedChar.id || Date.now() + Math.random()),
                         associatedLocations: (importedChar.associatedLocations || []).map(id => String(id)),
                         associatedRegions: (importedChar.associatedRegions || []).map(id => String(id)),
+                        Rumeurs: importedChar.Rumeurs || (importedChar.Rumeur ? [importedChar.Rumeur] : [])
                     };
 
                     const existingChar = this.characters.find(c => String(c.id) === normalizedImportedChar.id);
@@ -1031,7 +1033,8 @@ class CharactersManager {
                             images: normalizedImportedChar.images || existingChar.images,
                             associatedLocations: normalizedImportedChar.associatedLocations || existingChar.associatedLocations,
                             associatedRegions: normalizedImportedChar.associatedRegions || existingChar.associatedRegions,
-                            mapId: normalizedImportedChar.mapId || existingChar.mapId || activeMapId
+                            mapId: normalizedImportedChar.mapId || existingChar.mapId || activeMapId,
+                            Rumeurs: normalizedImportedChar.Rumeurs || existingChar.Rumeurs
                         });
                         console.log(`🔄 Personnage mis à jour: ${normalizedImportedChar.name} (ID: ${normalizedImportedChar.id})`);
                     } else {
@@ -1044,7 +1047,8 @@ class CharactersManager {
                             images: normalizedImportedChar.images || [],
                             associatedLocations: normalizedImportedChar.associatedLocations,
                             associatedRegions: normalizedImportedChar.associatedRegions,
-                            mapId: normalizedImportedChar.mapId || activeMapId
+                            mapId: normalizedImportedChar.mapId || activeMapId,
+                            Rumeurs: normalizedImportedChar.Rumeurs
                         };
                         this.characters.push(newChar);
                         console.log(`➕ Nouveau personnage ajouté: ${normalizedImportedChar.name} avec mapId: ${newChar.mapId}`);

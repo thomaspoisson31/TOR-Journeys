@@ -2577,87 +2577,121 @@ class InfoBoxManager {
         const personnagesTab = document.getElementById('personnages-tab');
         if (!personnagesTab) return;
 
-        console.log(`📋 [renderPersonnagesTabRead] Rendu de l'onglet Personnages pour ${this.currentType} "${this.currentItem.name}"`);
+        // Cacher le formulaire d'édition s'il existe
+        const editForm = personnagesTab.querySelector('.edit-form');
+        if (editForm) {
+            editForm.style.display = 'none';
+            editForm.classList.add('hidden');
+        }
 
-        // Nettoyer l'onglet
-        personnagesTab.innerHTML = '';
+        // Créer ou afficher la vue lecture
+        let textView = personnagesTab.querySelector('.text-view');
+        if (!textView) {
+            textView = document.createElement('div');
+            textView.className = 'text-view p-4';
+            personnagesTab.appendChild(textView);
+        }
 
-        // Créer la vue lecture
-        const textView = this.createTextView(personnagesTab);
+        textView.style.display = 'block';
+        textView.classList.remove('hidden');
 
-        // Récupérer les personnages associés
-        const associatedCharacterIds = this.currentItem.associatedCharacters || [];
-        console.log(`📋 [renderPersonnagesTabRead] ${associatedCharacterIds.length} personnage(s) associé(s):`, associatedCharacterIds);
+        const item = this.currentItem;
+        const associatedCharacterIds = item.associatedCharacters || [];
+
+        console.log(`🔍 [renderPersonnagesTabRead] ${this.currentType} "${item.name}" - associatedCharacters:`, associatedCharacterIds);
 
         if (!window.charactersManager) {
-            textView.innerHTML = '<p class="text-gray-500 italic">CharactersManager non disponible</p>';
+            textView.innerHTML = '<p class="text-gray-400 italic">Aucun personnage disponible.</p>';
             return;
         }
 
-        // Filtrer les personnages existants
-        const associatedCharacters = associatedCharacterIds
+        // 1. Créer un Set avec les IDs déjà présents dans associatedCharacters
+        const directAssociationIds = new Set(associatedCharacterIds.map(id => String(id)));
+
+        // 2. Rechercher les personnages qui ont ce lieu/région dans leurs associations
+        const reverseAssociatedCharacters = [];
+        window.charactersManager.characters.forEach(character => {
+            const charId = String(character.id);
+
+            // Si déjà dans les associations directes, skip
+            if (directAssociationIds.has(charId)) return;
+
+            // Vérifier les associations inversées
+            let isReverseAssociated = false;
+
+            if (this.currentType === 'location') {
+                isReverseAssociated = (character.associatedLocations || []).some(
+                    locId => String(locId) === String(item.id)
+                );
+            } else if (this.currentType === 'region') {
+                isReverseAssociated = (character.associatedRegions || []).some(
+                    regId => String(regId) === String(item.id)
+                );
+            }
+
+            if (isReverseAssociated) {
+                reverseAssociatedCharacters.push({ character, isReverse: true });
+            }
+        });
+
+        // 3. Récupérer les personnages des associations directes
+        const directAssociatedCharacters = associatedCharacterIds
             .map(charId => {
                 const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
                 if (!char) {
-                    console.warn(`⚠️ [renderPersonnagesTabRead] Personnage non trouvé: ${charId}`);
+                    console.warn(`⚠️ Personnage non trouvé: ${charId}`);
                 }
-                return char;
+                return char ? { character: char, isReverse: false } : null;
             })
-            .filter(char => char !== undefined);
+            .filter(item => item !== null);
 
-        console.log(`📋 [renderPersonnagesTabRead] ${associatedCharacters.length} personnage(s) trouvé(s)`);
+        // 4. Fusionner les deux listes
+        const allAssociatedCharacters = [...directAssociatedCharacters, ...reverseAssociatedCharacters];
 
-        if (associatedCharacters.length === 0) {
-            textView.innerHTML = '<p class="text-gray-500 italic">Aucun personnage associé</p>';
+        console.log(`✅ [renderPersonnagesTabRead] ${directAssociatedCharacters.length} association(s) directe(s), ${reverseAssociatedCharacters.length} association(s) inversée(s)`);
+
+        if (allAssociatedCharacters.length === 0) {
+            textView.innerHTML = '<p class="text-gray-400 italic">Aucun personnage associé à ce lieu.</p>';
             return;
         }
 
-        // Générer le HTML pour chaque personnage
-        const personnagesHTML = associatedCharacters.map(character => {
-            const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+        // Afficher les personnages
+        const html = allAssociatedCharacters.map(({ character, isReverse }) => {
+            // Déterminer la couleur du cartouche selon le type
+            let typeClass = 'bg-green-600';
+            const type = character.type || 'PNJ';
 
-            // Calculer le transform CSS pour la vignette
-            let thumbnailStyle = '';
-            if (thumbnailImage?.thumbnailCrop) {
-                const crop = thumbnailImage.thumbnailCrop;
-                const zoom = crop.zoom || 1;
-                const offsetX = crop.offsetX || 0;
-                const offsetY = crop.offsetY || 0;
-                thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%);"`;
+            if (type === 'PJ') {
+                typeClass = 'bg-blue-600';
+            } else if (type === 'Monstre') {
+                typeClass = 'bg-red-600';
             }
 
+            // Badge pour indiquer l'association inversée
+            const reverseBadge = isReverse ? '<i class="fas fa-link text-xs text-blue-400 ml-1" title="Association créée depuis le personnage"></i>' : '';
+
             return `
-                <div class="character-card-infobox hover:bg-gray-100 p-3 rounded-lg cursor-pointer transition-colors flex items-center space-x-3"
-                     onclick="window.infoBoxManager.navigateToCharacter(event, '${character.id}')">
+                <div class="character-card-compact bg-gray-700 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer mb-2"
+                     onclick="window.infoBoxManager.showCharacterFromLocationInfoBox('${character.id}')">
                     <div class="flex items-center space-x-3">
-                        ${thumbnailImage ? `
-                            <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500 flex-shrink-0">
-                                <img src="${thumbnailImage.url}" alt="${character.name}"
-                                     class="w-full h-full object-cover" ${thumbnailStyle}>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-white">${character.name}${reverseBadge}</h4>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="inline-block px-2 py-1 text-xs rounded ${typeClass}">
+                                    ${type}
+                                </span>
                             </div>
-                        ` : `
-                            <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
-                                <i class="fas fa-user text-xl text-gray-400"></i>
-                            </div>
-                        `}
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-semibold text-white truncate">${character.name}</h4>
-                            <p class="text-sm text-gray-300">${character.type || 'PNJ'}</p>
                         </div>
-                        <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
                     </div>
                 </div>
             `;
         }).join('');
 
         textView.innerHTML = `
-            <h3 class="mb-3">Personnages associés</h3>
-            <div class="space-y-2">
-                ${personnagesHTML}
-            </div>
+            <h3 class="text-lg font-semibold mb-3">Personnages associés</h3>
+            ${html}
         `;
-
-        console.log(`✅ [renderPersonnagesTabRead] Rendu terminé avec ${associatedCharacters.length} personnage(s)`);
     }
 
     renderPersonnagesTabEdit() {
