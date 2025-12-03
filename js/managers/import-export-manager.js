@@ -721,32 +721,18 @@ class ImportExportManager {
                 console.log(`🔄 [processImport] Synchronisation avec window.regionsData: ${window.regionsData.regions.length} régions`);
             }
 
-            // CRITIQUE: Attribuer le mapId de la carte active aux lieux/régions importés IMMÉDIATEMENT
-            if (activeMapUrl) {
-                processedData.locations.forEach(loc => {
-                    if (!loc.mapId) {
-                        loc.mapId = activeMapUrl;
-                        console.log(`🗺️ [processImport] Attribution mapId "${activeMapUrl}" au lieu "${loc.name}"`);
-                    }
-                });
-                processedData.regions.forEach(reg => {
-                    if (!reg.mapId) {
-                        reg.mapId = activeMapUrl;
-                        console.log(`🗺️ [processImport] Attribution mapId "${activeMapUrl}" à la région "${reg.name}"`);
-                    }
-                });
-                
-                // LOG DEBUG: Vérifier l'attribution
-                console.log(`🔍 [processImport] Vérification attribution mapId:`, {
-                    activeMapUrl,
-                    processedLocationsCount: processedData.locations.length,
-                    processedLocationsWithMapId: processedData.locations.filter(l => l.mapId === activeMapUrl).length,
-                    sampleLocation: processedData.locations[0] ? {
-                        name: processedData.locations[0].name,
-                        mapId: processedData.locations[0].mapId
-                    } : null
-                });
-            }
+            // IMPORTANT: Ne PAS modifier les mapId lors de l'import
+            // Les lieux/régions gardent leur mapId d'origine du fichier JSON
+            console.log(`🔍 [processImport] Préservation des mapId d'origine:`, {
+                activeMapUrl,
+                processedLocationsCount: processedData.locations.length,
+                locationsWithMapId: processedData.locations.filter(l => l.mapId).length,
+                locationsWithoutMapId: processedData.locations.filter(l => !l.mapId).length,
+                sampleLocation: processedData.locations[0] ? {
+                    name: processedData.locations[0].name,
+                    mapId: processedData.locations[0].mapId || 'AUCUN'
+                } : null
+            });
             
             // Compter les éléments existants sur la carte ACTIVE (après synchronisation)
             const existingLocationsOnMap = this.dataManager.locationsData?.locations?.filter(loc => 
