@@ -968,6 +968,11 @@ class ImportExportManager {
             return !loc.mapId || (activeMapUrl && loc.mapId === activeMapUrl);
         });
         console.log(`🔄 [mergeLocations] Lieux existants sur carte active: ${existingLocationsOnActiveMap.length}`);
+        
+        // LOG: Afficher les noms des lieux existants pour debug
+        if (existingLocationsOnActiveMap.length > 0) {
+            console.log(`📋 [mergeLocations] Noms des lieux existants:`, existingLocationsOnActiveMap.map(l => l.name).join(', '));
+        }
 
         // ÉTAPE 2: Traiter les lieux importés
         const processedImportedLocations = [];
@@ -975,23 +980,26 @@ class ImportExportManager {
         let updatedCount = 0;
         
         importedLocations.forEach(importedLocation => {
-            // Chercher un lieu existant avec le même nom SUR LA MÊME CARTE
+            // COMPARAISON PAR NOM: Chercher un lieu existant avec le même nom SUR LA MÊME CARTE
             const existingLocation = existingLocationsOnActiveMap.find(
-                loc => loc.name === importedLocation.name
+                loc => loc.name.trim().toLowerCase() === importedLocation.name.trim().toLowerCase()
             );
 
             if (existingLocation) {
-                // Mettre à jour le lieu existant
-                const updatedLocation = { ...existingLocation, ...importedLocation };
+                // Mettre à jour le lieu existant EN GARDANT SON ID ORIGINAL
+                const updatedLocation = { 
+                    ...existingLocation, 
+                    ...importedLocation,
+                    id: existingLocation.id // IMPORTANT: Garder l'ID existant
+                };
                 processedImportedLocations.push(updatedLocation);
                 updatedCount++;
-                console.log(`🔄 Lieu mis à jour: ${importedLocation.name}`);
+                console.log(`🔄 Lieu mis à jour: "${importedLocation.name}" (ID conservé: ${existingLocation.id})`);
             } else {
-                // Ajouter le nouveau lieu avec un ID unique
-                this.ensureUniqueId(importedLocation, [...locationsFromOtherMaps, ...processedImportedLocations]);
+                // Ajouter le nouveau lieu (garder son ID ou en générer un nouveau)
                 processedImportedLocations.push(importedLocation);
                 addedCount++;
-                console.log(`➕ Nouveau lieu ajouté: ${importedLocation.name}`);
+                console.log(`➕ Nouveau lieu ajouté: "${importedLocation.name}" (ID: ${importedLocation.id})`);
             }
         });
 
@@ -1038,28 +1046,43 @@ class ImportExportManager {
         });
 
         console.log(`🔄 [mergeRegions] Régions conservées des autres cartes: ${regionsFromOtherMaps.length}`);
+        
+        // ÉTAPE 1.5: Récupérer les régions existantes de la carte ACTIVE
+        const existingRegionsOnActiveMap = this.dataManager.regionsData.regions.filter(reg => {
+            return !reg.mapId || (activeMapUrl && reg.mapId === activeMapUrl);
+        });
+        console.log(`🔄 [mergeRegions] Régions existantes sur carte active: ${existingRegionsOnActiveMap.length}`);
 
         // ÉTAPE 2: Traiter les régions importées
         const processedImportedRegions = [];
+        let addedCount = 0;
+        let updatedCount = 0;
+        
         importedRegions.forEach(importedRegion => {
-            // Chercher une région existante avec le même nom SUR LA MÊME CARTE
-            const existingRegion = this.dataManager.regionsData.regions.find(
-                reg => reg.name === importedRegion.name && 
-                       (!reg.mapId || !activeMapUrl || reg.mapId === activeMapUrl)
+            // COMPARAISON PAR NOM: Chercher une région existante avec le même nom SUR LA MÊME CARTE
+            const existingRegion = existingRegionsOnActiveMap.find(
+                reg => reg.name.trim().toLowerCase() === importedRegion.name.trim().toLowerCase()
             );
 
             if (existingRegion) {
-                // Mettre à jour la région existante
-                const updatedRegion = { ...existingRegion, ...importedRegion };
+                // Mettre à jour la région existante EN GARDANT SON ID ORIGINAL
+                const updatedRegion = { 
+                    ...existingRegion, 
+                    ...importedRegion,
+                    id: existingRegion.id // IMPORTANT: Garder l'ID existant
+                };
                 processedImportedRegions.push(updatedRegion);
-                console.log(`🔄 Région mise à jour: ${importedRegion.name}`);
+                updatedCount++;
+                console.log(`🔄 Région mise à jour: "${importedRegion.name}" (ID conservé: ${existingRegion.id})`);
             } else {
-                // Ajouter la nouvelle région avec un ID unique
-                this.ensureUniqueId(importedRegion, [...regionsFromOtherMaps, ...processedImportedRegions]);
+                // Ajouter la nouvelle région (garder son ID ou en générer un nouveau)
                 processedImportedRegions.push(importedRegion);
-                console.log(`➕ Nouvelle région ajoutée: ${importedRegion.name}`);
+                addedCount++;
+                console.log(`➕ Nouvelle région ajoutée: "${importedRegion.name}" (ID: ${importedRegion.id})`);
             }
         });
+
+        console.log(`📊 [mergeRegions] Bilan fusion: ${addedCount} ajoutées, ${updatedCount} mises à jour`);
 
         // ÉTAPE 3: Fusionner les régions des autres cartes + régions importées
         const mergedRegions = [...regionsFromOtherMaps, ...processedImportedRegions];
