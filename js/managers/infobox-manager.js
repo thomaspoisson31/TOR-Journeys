@@ -2575,111 +2575,129 @@ class InfoBoxManager {
 
     renderPersonnagesTabRead() {
         const personnagesTab = document.getElementById('personnages-tab');
-        if (!personnagesTab) return;
-
-        // Cacher le formulaire d'édition s'il existe
-        const editForm = personnagesTab.querySelector('.edit-form');
-        if (editForm) {
-            editForm.style.display = 'none';
-            editForm.classList.add('hidden');
+        if (!personnagesTab) {
+            console.warn('❌ Onglet personnages-tab non trouvé');
+            return;
         }
-
-        // Créer ou afficher la vue lecture
-        let textView = personnagesTab.querySelector('.text-view');
-        if (!textView) {
-            textView = document.createElement('div');
-            textView.className = 'text-view p-4';
-            personnagesTab.appendChild(textView);
-        }
-
-        textView.style.display = 'block';
-        textView.classList.remove('hidden');
 
         const item = this.currentItem;
+        const type = this.currentType;
+
+        console.log(`📋 [renderPersonnagesTabRead] Rendu de l'onglet Personnages pour ${type} "${item.name}"`);
+
+        // Récupérer les personnages associés directement
         const associatedCharacterIds = item.associatedCharacters || [];
+        console.log(`📋 [renderPersonnagesTabRead] ${associatedCharacterIds.length} personnage(s) directement associé(s):`, associatedCharacterIds);
 
-        console.log(`🔍 [renderPersonnagesTabRead] ${this.currentType} "${item.name}" - associatedCharacters:`, associatedCharacterIds);
-
-        if (!window.charactersManager) {
-            textView.innerHTML = '<p class="text-gray-400 italic">Aucun personnage disponible.</p>';
+        // Récupérer les données des personnages depuis le CharactersManager
+        const charactersManager = window.charactersManager;
+        if (!charactersManager) {
+            console.warn('❌ CharactersManager non trouvé');
+            personnagesTab.innerHTML = '<div class="p-4 text-gray-500 italic">Erreur: CharactersManager non disponible</div>';
             return;
         }
 
-        // 1. Créer un Set avec les IDs déjà présents dans associatedCharacters
-        const directAssociationIds = new Set(associatedCharacterIds.map(id => String(id)));
+        // Créer un Set avec les IDs déjà associés directement (pour éviter les doublons)
+        const directCharacterIds = new Set(associatedCharacterIds.map(id => String(id)));
 
-        // 2. Rechercher les personnages qui ont ce lieu/région dans leurs associations
-        const reverseAssociatedCharacters = [];
-        window.charactersManager.characters.forEach(character => {
-            const charId = String(character.id);
-
-            // Si déjà dans les associations directes, skip
-            if (directAssociationIds.has(charId)) return;
-
-            // Vérifier les associations inversées
-            let isReverseAssociated = false;
-
-            if (this.currentType === 'location') {
-                isReverseAssociated = (character.associatedLocations || []).some(
-                    locId => String(locId) === String(item.id)
-                );
-            } else if (this.currentType === 'region') {
-                isReverseAssociated = (character.associatedRegions || []).some(
-                    regId => String(regId) === String(item.id)
-                );
+        // Recherche inversée : trouver les personnages qui ont ce lieu/région dans leurs associations
+        const reverseAssociatedCharacters = charactersManager.characters.filter(char => {
+            // Ne pas inclure si déjà dans les associations directes
+            if (directCharacterIds.has(String(char.id))) {
+                return false;
             }
 
-            if (isReverseAssociated) {
-                reverseAssociatedCharacters.push({ character, isReverse: true });
+            // Vérifier si le personnage a ce lieu dans ses associatedLocations
+            if (type === 'location' && char.associatedLocations) {
+                if (char.associatedLocations.includes(String(item.id))) {
+                    console.log(`🔗 [renderPersonnagesTabRead] Personnage "${char.name}" trouvé via associatedLocations`);
+                    return true;
+                }
             }
+
+            // Vérifier si le personnage a cette région dans ses associatedRegions
+            if (type === 'region' && char.associatedRegions) {
+                if (char.associatedRegions.includes(String(item.id))) {
+                    console.log(`🔗 [renderPersonnagesTabRead] Personnage "${char.name}" trouvé via associatedRegions`);
+                    return true;
+                }
+            }
+
+            return false;
         });
 
-        // 3. Récupérer les personnages des associations directes
-        const directAssociatedCharacters = associatedCharacterIds
-            .map(charId => {
-                const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
-                if (!char) {
-                    console.warn(`⚠️ Personnage non trouvé: ${charId}`);
-                }
-                return char ? { character: char, isReverse: false } : null;
-            })
-            .filter(item => item !== null);
+        console.log(`📋 [renderPersonnagesTabRead] ${reverseAssociatedCharacters.length} personnage(s) trouvé(s) via recherche inversée`);
 
-        // 4. Fusionner les deux listes
-        const allAssociatedCharacters = [...directAssociatedCharacters, ...reverseAssociatedCharacters];
+        // Combiner les deux listes
+        const directCharacters = charactersManager.characters.filter(char => 
+            associatedCharacterIds.includes(String(char.id))
+        );
 
-        console.log(`✅ [renderPersonnagesTabRead] ${directAssociatedCharacters.length} association(s) directe(s), ${reverseAssociatedCharacters.length} association(s) inversée(s)`);
+        const allCharacters = [...directCharacters, ...reverseAssociatedCharacters];
 
-        if (allAssociatedCharacters.length === 0) {
-            textView.innerHTML = '<p class="text-gray-400 italic">Aucun personnage associé à ce lieu.</p>';
+        console.log(`📋 [renderPersonnagesTabRead] TOTAL: ${allCharacters.length} personnage(s) à afficher`);
+
+        if (allCharacters.length === 0) {
+            personnagesTab.innerHTML = '<div class="p-4 text-gray-500 italic">Aucun personnage associé à ce lieu</div>';
             return;
         }
 
-        // Afficher les personnages
-        const html = allAssociatedCharacters.map(({ character, isReverse }) => {
+        // Générer le HTML pour chaque personnage
+        const html = allCharacters.map((character, index) => {
+            // Déterminer si c'est une association directe ou inversée
+            const isDirect = directCharacterIds.has(String(character.id));
+
+            // Afficher UNIQUEMENT l'image de type "vignette"
+            const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+
             // Déterminer la couleur du cartouche selon le type
             let typeClass = 'bg-green-600';
-            const type = character.type || 'PNJ';
+            let borderClass = 'border-green-500';
+            const charType = character.type || 'PNJ';
 
-            if (type === 'PJ') {
+            if (charType === 'PJ') {
                 typeClass = 'bg-blue-600';
-            } else if (type === 'Monstre') {
+                borderClass = 'border-blue-500';
+            } else if (charType === 'Monstre') {
                 typeClass = 'bg-red-600';
+                borderClass = 'border-red-500';
             }
 
-            // Badge pour indiquer l'association inversée
-            const reverseBadge = isReverse ? '<i class="fas fa-link text-xs text-blue-400 ml-1" title="Association créée depuis le personnage"></i>' : '';
+            // Calculer le transform CSS pour la vignette
+            let thumbnailStyle = '';
+            if (thumbnailImage?.thumbnailCrop) {
+                const crop = thumbnailImage.thumbnailCrop;
+                const zoom = crop.zoom || 1;
+                const offsetX = crop.offsetX || 0;
+                const offsetY = crop.offsetY || 0;
+                thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
+            }
 
             return `
-                <div class="character-card-compact bg-gray-700 rounded-lg p-3 hover:bg-gray-600 transition-colors cursor-pointer mb-2"
-                     onclick="window.infoBoxManager.showCharacterFromLocationInfoBox('${character.id}')">
-                    <div class="flex items-center space-x-3">
+                <div class="character-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer mb-3" 
+                     onclick="window.infoBoxManager.showCharacterFromLocation('${character.id}')">
+                    <div class="flex items-center space-x-4">
+                        ${thumbnailImage ? `
+                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass}">
+                                <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                     class="w-full h-full object-cover" ${thumbnailStyle}>
+                            </div>
+                        ` : `
+                            <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
+                                <i class="fas fa-user text-2xl text-gray-400"></i>
+                            </div>
+                        `}
                         <div class="flex-1">
-                            <h4 class="font-semibold text-white">${character.name}${reverseBadge}</h4>
-                            <div class="flex items-center space-x-2 mt-1">
+                            <h3 class="text-lg font-bold">${character.name}</h3>
+                            <div class="flex flex-wrap gap-2 mt-1">
                                 <span class="inline-block px-2 py-1 text-xs rounded ${typeClass}">
-                                    ${type}
+                                    ${charType}
                                 </span>
+                                ${!isDirect ? `
+                                    <span class="inline-block px-2 py-1 text-xs rounded bg-purple-600" title="Association depuis le personnage">
+                                        <i class="fas fa-link mr-1"></i>Lié
+                                    </span>
+                                ` : ''}
                             </div>
                         </div>
                         <i class="fas fa-chevron-right text-gray-400"></i>
@@ -2688,10 +2706,7 @@ class InfoBoxManager {
             `;
         }).join('');
 
-        textView.innerHTML = `
-            <h3 class="text-lg font-semibold mb-3">Personnages associés</h3>
-            ${html}
-        `;
+        personnagesTab.innerHTML = `<div class="p-4">${html}</div>`;
     }
 
     renderPersonnagesTabEdit() {
