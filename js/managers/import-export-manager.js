@@ -925,7 +925,16 @@ class ImportExportManager {
             console.log(`📋 [mergeLocations] Noms des lieux existants:`, existingLocationsOnActiveMap.map(l => l.name).join(', '));
         }
 
-        // ÉTAPE 2: Traiter les lieux importés
+        // ÉTAPE 2: Créer un Set des IDs importés pour identification rapide
+        const importedLocationIds = new Set(importedLocations.map(loc => loc.id));
+        
+        // ÉTAPE 2.5: Conserver les lieux existants NON présents dans l'import
+        const preservedLocations = existingLocationsOnActiveMap.filter(
+            existingLoc => !importedLocationIds.has(existingLoc.id)
+        );
+        console.log(`🔄 [mergeLocations] ${preservedLocations.length} lieu(x) existant(s) conservé(s) sur carte active`);
+        
+        // ÉTAPE 3: Traiter les lieux importés
         const processedImportedLocations = [];
         let addedCount = 0;
         let updatedCount = 0;
@@ -955,8 +964,8 @@ class ImportExportManager {
 
         console.log(`📊 [mergeLocations] Bilan fusion: ${addedCount} ajoutés, ${updatedCount} mis à jour`);
 
-        // ÉTAPE 3: Fusionner les lieux des autres cartes + lieux importés
-        const mergedLocations = [...locationsFromOtherMaps, ...processedImportedLocations];
+        // ÉTAPE 4: Fusionner TOUS les lieux : autres cartes + existants conservés + importés
+        const mergedLocations = [...locationsFromOtherMaps, ...preservedLocations, ...processedImportedLocations];
         console.log(`🔄 [mergeLocations] Total lieux APRÈS fusion: ${mergedLocations.length}`);
         console.log(`🔄 [mergeLocations] Détail fusion: ${locationsFromOtherMaps.length} conservés + ${processedImportedLocations.length} importés = ${mergedLocations.length} total`);
 
@@ -1003,7 +1012,16 @@ class ImportExportManager {
         });
         console.log(`🔄 [mergeRegions] Régions existantes sur carte active: ${existingRegionsOnActiveMap.length}`);
 
-        // ÉTAPE 2: Traiter les régions importées
+        // ÉTAPE 2: Créer un Set des IDs importés pour identification rapide
+        const importedRegionIds = new Set(importedRegions.map(reg => reg.id));
+        
+        // ÉTAPE 2.5: Conserver les régions existantes NON présentes dans l'import
+        const preservedRegions = existingRegionsOnActiveMap.filter(
+            existingReg => !importedRegionIds.has(existingReg.id)
+        );
+        console.log(`🔄 [mergeRegions] ${preservedRegions.length} région(s) existante(s) conservée(s) sur carte active`);
+        
+        // ÉTAPE 3: Traiter les régions importées
         const processedImportedRegions = [];
         let addedCount = 0;
         let updatedCount = 0;
@@ -1033,8 +1051,8 @@ class ImportExportManager {
 
         console.log(`📊 [mergeRegions] Bilan fusion: ${addedCount} ajoutées, ${updatedCount} mises à jour`);
 
-        // ÉTAPE 3: Fusionner les régions des autres cartes + régions importées
-        const mergedRegions = [...regionsFromOtherMaps, ...processedImportedRegions];
+        // ÉTAPE 4: Fusionner TOUTES les régions : autres cartes + existantes conservées + importées
+        const mergedRegions = [...regionsFromOtherMaps, ...preservedRegions, ...processedImportedRegions];
         console.log(`🔄 [mergeRegions] Total régions APRÈS fusion: ${mergedRegions.length}`);
         console.log(`🔄 [mergeRegions] Détail fusion: ${regionsFromOtherMaps.length} conservées + ${processedImportedRegions.length} importées = ${mergedRegions.length} total`);
 
