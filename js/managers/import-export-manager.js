@@ -388,6 +388,8 @@ class ImportExportManager {
                 return;
             }
 
+            const activeMapUrl = window.settingsManager?.activeMapUrl;
+            
             const region = {
                 id: item.id || `region_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 name: item.name || 'Région sans nom',
@@ -396,13 +398,10 @@ class ImportExportManager {
                 known: item.known !== undefined ? item.known : true,
                 visited: item.visited !== undefined ? item.visited : false,
                 type: 'region',
-                points: points  // Utiliser points directement
+                points: points,  // Utiliser points directement
+                // Attribuer le mapId de la carte active si absent du fichier importé
+                mapId: item.mapId || activeMapUrl
             };
-
-            // Ajouter mapId SEULEMENT s'il existe dans le fichier importé
-            if (item.mapId) {
-                region.mapId = item.mapId;
-            }
 
             // Ajouter les images si présentes
             if (item.imageUrl) region.imageUrl = item.imageUrl;
@@ -463,6 +462,8 @@ class ImportExportManager {
 
             console.log("🔍 [PROCESS DEBUG] Coordonnées valides, création du lieu");
 
+            const activeMapUrl = window.settingsManager?.activeMapUrl;
+            
             const location = {
                 id: item.id || `location_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 name: item.name || 'Lieu sans nom',
@@ -474,13 +475,10 @@ class ImportExportManager {
                 coordinates: {
                     x: x,
                     y: y
-                }
+                },
+                // Attribuer le mapId de la carte active si absent du fichier importé
+                mapId: item.mapId || activeMapUrl
             };
-
-            // Ajouter mapId SEULEMENT s'il existe dans le fichier importé
-            if (item.mapId) {
-                location.mapId = item.mapId;
-            }
 
             // Ajouter les images si présentes
             if (item.imageUrl) location.imageUrl = item.imageUrl;
