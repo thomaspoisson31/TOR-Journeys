@@ -1188,6 +1188,112 @@ ENSEIGNEMENTS CLÉS DU DÉVELOPPEMENT
     - Logs recommandés : 📊 pour stats, 🔍 pour recherche, ✅ pour succès, ❌ pour échec
     - En cas de données manquantes, vérifier TOUTE la chaîne : création → sauvegarde → chargement → affichage
 
+PRINCIPES DE COLORATION DES ICÔNES D'ONGLETS INFOBOX
+-----------------------------------------------------
+
+1. MISE À JOUR DES COULEURS SELON LE CONTENU:
+   
+   Objectif:
+   - Chaque onglet de l'InfoBox affiche une icône rouge (#940000) si du contenu existe
+   - Icône grise par défaut (#666666) si aucun contenu
+   - Mise à jour automatique lors du rendu et des changements d'onglet
+   
+   Méthode updateTabIconColors():
+   - Appelée dans renderReadMode() après chaque affichage
+   - Appelée dans switchTab() lors du changement d'onglet
+   - Vérification exhaustive du contenu pour chaque type d'onglet
+   
+   Vérifications par onglet:
+   
+   a) Onglet Description (text):
+      - Vérifie: item.description && item.description.trim() !== ''
+      - Rouge si description présente, gris sinon
+   
+   b) Onglet Images (image):
+      - Vérifie: item.images && item.images.length > 0
+      - Rouge si au moins une image, gris sinon
+   
+   c) Onglet Rumeurs et Traditions (rumeurs-traditions):
+      - Vérifie rumeurs: item.Rumeurs || item.Rumeur (support ancien format)
+      - Filtre les rumeurs valides: !== "A définir"
+      - Vérifie tradition: item.Tradition_Ancienne && item.Tradition_Ancienne.trim() !== ''
+      - Rouge si au moins une rumeur valide OU une tradition, gris sinon
+   
+   d) Onglet Personnages (pour lieux/régions):
+      - Compte les personnages de window.charactersManager.characters
+      - Filtre par associatedLocations ou associatedRegions selon le type
+      - Compare les IDs normalisés en String
+      - Rouge si au moins un personnage associé, gris sinon
+      - Code:
+        ```javascript
+        const itemId = String(item.id);
+        const propertyName = this.currentType === 'location' ? 'associatedLocations' : 'associatedRegions';
+        personnagesCount = window.charactersManager.characters.filter(char => {
+            const associations = char[propertyName] || [];
+            return associations.some(id => String(id) === itemId);
+        }).length;
+        ```
+   
+   e) Onglet Lieux/Régions (pour personnages):
+      - Vérifie: item.associatedLocations.length > 0 OU item.associatedRegions.length > 0
+      - Rouge si au moins une association, gris sinon
+   
+   f) Onglet Tables Aléatoires (evenements-voyage):
+      - Vérifie: item.RandomTables && item.RandomTables.length > 0
+      - Rouge si au moins une table, gris sinon
+
+2. APPLICATION DE LA COULEUR:
+   
+   Pattern systématique:
+   ```javascript
+   const icon = tabButton.querySelector('i');
+   if (icon) {
+       const targetColor = hasContent ? '#940000' : '#666666';
+       icon.style.setProperty('color', targetColor, '!important');
+   }
+   ```
+   
+   Points clés:
+   - Utilisation de setProperty() avec '!important' pour forcer la couleur
+   - Sélection de l'icône <i> à l'intérieur du bouton d'onglet
+   - Vérification de l'existence de l'icône avant application
+   - Logs détaillés avec emoji 🎨 pour traçabilité
+
+3. LOGS DE DÉBOGAGE:
+   
+   Pattern de logs pour chaque onglet:
+   ```javascript
+   console.log('🎨 [Personnages] hasPersonnages:', hasPersonnages, 'count:', personnagesCount);
+   console.log('🎨 [Personnages] icon trouvée:', !!icon);
+   console.log('🎨 [Personnages] Couleur appliquée avec !important:', targetColor);
+   ```
+   
+   Informations tracées:
+   - État du contenu (hasContent: true/false)
+   - Nombre d'éléments si applicable (count, length)
+   - Existence de l'icône (!!icon)
+   - Couleur appliquée (targetColor)
+   - Extraits de contenu pour vérification (substring(0, 50))
+
+4. GESTION DES CAS SPÉCIAUX:
+   
+   - Personnages sans window.charactersManager: vérification défensive
+   - Support des deux formats Rumeur/Rumeurs
+   - Normalisation des IDs en String pour comparaisons
+   - Filtrage par type (location vs region) pour associations
+   - Compatibilité avec onglets conditionnels (personnages/lieux-regions)
+
+5. TIMING ET SYNCHRONISATION:
+   
+   - updateTabIconColors() appelée APRÈS le rendu du contenu
+   - Mise à jour lors du switchTab() pour rafraîchir après édition
+   - Pas de timeout nécessaire, exécution synchrone immédiate
+   - Pas de conflit avec updateTabsVisibility() (gestion de l'affichage)
+
+Code concerné:
+- infobox-manager.js: updateTabIconColors() (ligne ~170-310)
+- Appelée depuis renderReadMode() et switchTab()
+
 PRINCIPES DE RENDERING RUMEURS JOURNAL
 ---------------------------------------
 
@@ -1446,7 +1552,19 @@ SUCCÈS TECHNIQUES CONFIRMÉS
 PROBLÈMES RÉSOLUS
 -----------------
 
-1. Fermeture de l'overlay plein écran des images (v1.3.9):
+1. Coloration icône Personnages selon contenu (v1.3.11):
+   - Problème: L'icône "Personnages" restait grise alors que des personnages étaient associés au lieu/région
+   - Cause: updateTabIconColors() ne vérifiait pas correctement les associations bidirectionnelles
+   - Impact: Aucun indicateur visuel de la présence de personnages associés
+   - Solution: 
+     * Vérification dans window.charactersManager.characters (source de vérité)
+     * Filtrage par associatedLocations ou associatedRegions selon le type
+     * Comptage des personnages dont l'ID correspond à l'item actuel
+     * Application couleur rouge (#940000) si count > 0
+   - Bénéfices: Indicateur visuel immédiat de la présence de personnages
+   - Fichier concerné: infobox-manager.js (updateTabIconColors, ligne ~240-265)
+
+2. Fermeture de l'overlay plein écran des images (v1.3.9):
    - Problème: Impossible de fermer l'overlay après avoir activé le zoom/pan avec clic droit
    - Cause: Event listeners mal configurés, clic sur l'image empêchait la fermeture
    - Impact: Utilisateur bloqué dans la visualisation plein écran, surtout sur mobile
