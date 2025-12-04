@@ -2582,24 +2582,9 @@ class InfoBoxManager {
 
         console.log(`📋 [renderPersonnagesTabRead] Début du rendu pour ${this.currentType} "${this.currentItem.name}"`);
 
-        // Nettoyer complètement l'onglet
-        personnagesTab.innerHTML = '';
-
-        // Créer la structure de base
-        const textView = document.createElement('div');
-        textView.className = 'text-view';
-        textView.style.cssText = 'flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;';
-        personnagesTab.appendChild(textView);
-
-        // Conteneur scrollable avec fond blanc et padding cohérent
-        const personnagesContent = document.createElement('div');
-        personnagesContent.id = 'personnages-content';
-        personnagesContent.style.cssText = 'flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 1rem; background-color: white;';
-        textView.appendChild(personnagesContent);
-
         // Récupérer les personnages associés DIRECTEMENT (depuis le lieu/région vers les personnages)
         const directAssociatedIds = this.currentItem.associatedCharacters || [];
-        console.log(`🔍 [renderPersonnagesTabRead] Associations DIRECTES (${directAssociatedIds.length}):`, directAssociatedIds);
+        console.log(`📋 [renderPersonnagesTabRead] Associations DIRECTES (${directAssociatedIds.length}):`, directAssociatedIds);
 
         // Récupérer les personnages associés INVERSEMENT (depuis les personnages vers le lieu/région)
         const reverseAssociatedIds = [];
@@ -2634,6 +2619,21 @@ class InfoBoxManager {
         // Fusionner les deux listes en évitant les doublons (directAssociatedIds en premier)
         const allAssociatedIds = [...new Set([...directAssociatedIds, ...reverseAssociatedIds])];
         console.log(`🔍 [renderPersonnagesTabRead] Total personnages (${allAssociatedIds.length}):`, allAssociatedIds);
+
+        // Nettoyer complètement l'onglet
+        personnagesTab.innerHTML = '';
+
+        // Créer la structure de base
+        const textView = document.createElement('div');
+        textView.className = 'text-view';
+        textView.style.cssText = 'flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;';
+        personnagesTab.appendChild(textView);
+
+        // Conteneur scrollable avec fond blanc et padding cohérent
+        const personnagesContent = document.createElement('div');
+        personnagesContent.id = 'personnages-content';
+        personnagesContent.style.cssText = 'flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 1rem; background-color: white;';
+        textView.appendChild(personnagesContent);
 
         if (allAssociatedIds.length === 0) {
             personnagesContent.innerHTML = `
@@ -2818,6 +2818,7 @@ class InfoBoxManager {
 
         console.log(`✅ [renderPersonnagesTabEdit] Rendu terminé avec ${availableCharacters.length} personnage(s)`);
     }
+
 
     renderLieuxRegionsTabRead() {
         const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
@@ -3199,50 +3200,26 @@ class InfoBoxManager {
         this.renderLieuxRegionsTabEdit();
     }
 
-    showCharacterFromLocation(characterId) {
-        console.log(`🔗 [showCharacterFromLocation] Ouverture personnage ID: ${characterId} depuis l'InfoBox d'un lieu/région`);
+    showCharacterFromLocationInfoBox(characterId) {
+        console.log(`👁️ [showCharacterFromLocationInfoBox] Ouverture du personnage ${characterId} depuis InfoBox`);
 
-        if (!window.charactersManager) {
-            console.error("❌ CharactersManager non disponible");
-            return;
-        }
-
-        // Recharger les données pour avoir les infos à jour
-        window.charactersManager.loadCharactersFromLocal();
-
-        const character = window.charactersManager.characters.find(c => String(c.id) === String(characterId));
-        if (!character) {
-            console.error(`❌ Personnage non trouvé: ${characterId}`);
-            return;
-        }
-
-        // Sauvegarder l'InfoBox actuelle pour pouvoir y revenir
+        // Sauvegarder l'InfoBox actuelle pour permettre le retour
         this.previousInfoBox = {
             item: this.currentItem,
             type: this.currentType,
-            fromInfoBox: true, // Flag pour indiquer qu'on vient d'une InfoBox (pas de la liste)
-            shouldShowPersonnagesTab: true // Flag pour réafficher l'onglet Personnages au retour
+            fromInfoBox: true,
+            shouldShowPersonnagesTab: true
         };
 
-        console.log(`✅ [showCharacterFromLocation] previousInfoBox sauvegardée:`, this.previousInfoBox);
+        console.log(`💾 [showCharacterFromLocationInfoBox] previousInfoBox sauvegardé:`, this.previousInfoBox);
 
-        // Créer un événement simulé pour le positionnement
-        const fakeEvent = {
-            clientX: window.innerWidth / 2,
-            clientY: window.innerHeight / 2,
-            type: 'click'
-        };
-
-        // Afficher l'InfoBox du personnage
-        this.showInfoBox(fakeEvent, character, 'character');
-
-        // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
-        setTimeout(() => {
-            console.log(`📋 [showCharacterFromLocation] Affichage forcé de l'onglet Description pour ${character.name}`);
-            this.switchTab('text');
-            // Forcer le re-render du contenu de l'onglet Description
-            this.renderReadMode();
-        }, 100);
+        // Charger le personnage via CharactersManager
+        if (window.charactersManager) {
+            // Appel à la méthode dédiée pour afficher l'infobox du personnage
+            window.charactersManager.showCharacterInfoBox(characterId);
+        } else {
+            console.error("❌ CharactersManager non disponible");
+        }
     }
 
     deleteItem() {
