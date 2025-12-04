@@ -299,9 +299,24 @@ class InfoBoxManager {
         // Onglet Personnages (pour lieux et régions)
         const personnagesTabButton = document.querySelector('.tab-button[data-tab="personnages"]');
         if (personnagesTabButton && (this.currentType === 'location' || this.currentType === 'region')) {
-            const hasPersonnages = item.associatedCharacters && item.associatedCharacters.length > 0;
+            // Compter les personnages qui référencent ce lieu/région
+            let hasPersonnages = false;
+            let personnagesCount = 0;
+            
+            if (window.charactersManager && window.charactersManager.characters) {
+                const itemId = String(item.id);
+                const propertyName = this.currentType === 'location' ? 'associatedLocations' : 'associatedRegions';
+                
+                personnagesCount = window.charactersManager.characters.filter(char => {
+                    const associations = char[propertyName] || [];
+                    return associations.some(id => String(id) === itemId);
+                }).length;
+                
+                hasPersonnages = personnagesCount > 0;
+            }
+            
             const icon = personnagesTabButton.querySelector('i');
-            console.log('🎨 [Personnages] hasPersonnages:', hasPersonnages, 'count:', item.associatedCharacters?.length || 0);
+            console.log('🎨 [Personnages] hasPersonnages:', hasPersonnages, 'count:', personnagesCount);
             console.log('🎨 [Personnages] icon trouvée:', !!icon);
             if (icon) {
                 const targetColor = hasPersonnages ? redColor : defaultColor;
