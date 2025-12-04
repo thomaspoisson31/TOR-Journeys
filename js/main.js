@@ -1155,7 +1155,7 @@ function setupMapNavigation() {
     // Zoom avec la molette (PRÉSERVÉ pour desktop)
     viewport.addEventListener('wheel', (e) => {
         e.preventDefault();
-        const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        const zoomFactor = e.deltaY > 0 ? 0.95 : 1.05;
         console.log(`🔍 [main.js] wheel event: deltaY=${e.deltaY}, zoomFactor=${zoomFactor}`);
         zoomToPoint(zoomFactor, e.clientX, e.clientY);
 
