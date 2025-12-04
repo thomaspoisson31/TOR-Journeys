@@ -159,13 +159,13 @@ class CharactersManager {
                 // Vérifier si des filtres sont actifs
                 const hasActiveFilters = !this.filters.pj || !this.filters.pnj || !this.filters.monstre || 
                                           this.filters.known || this.filters.met;
-                
+
                 // Si des filtres sont actifs, les désactiver tous
                 if (hasActiveFilters) {
                     this.disableFilters();
                 }
             });
-            
+
             // Ajouter un style de curseur pointer sur l'icône
             filterIcon.style.cursor = 'pointer';
         }
@@ -235,11 +235,11 @@ class CharactersManager {
 
     updateFilterUIState() {
         const filterIcon = document.getElementById('filter-status-icon');
-        
+
         // Vérifier si au moins un filtre est actif
         const hasActiveFilters = !this.filters.pj || !this.filters.pnj || !this.filters.monstre || 
                                   this.filters.known || this.filters.met;
-        
+
         // Mettre à jour l'icône d'entonnoir
         if (filterIcon) {
             if (hasActiveFilters) {
@@ -261,7 +261,7 @@ class CharactersManager {
         this.filters.monstre = true;
         this.filters.known = false;
         this.filters.met = false;
-        
+
         this.syncFiltersUI();
         this.updateFilterUIState();
         this.renderCharactersList();
@@ -329,22 +329,22 @@ class CharactersManager {
         filteredCharacters = filteredCharacters.filter(character => {
             // Si aucun filtre n'est coché, afficher tous les personnages
             if (!this.filters.known && !this.filters.met) return true;
-            
+
             // Si les deux filtres sont cochés, afficher les personnages connus OU rencontrés
             if (this.filters.known && this.filters.met) {
                 return character.known === true || character.met === true;
             }
-            
+
             // Si seulement "Connus" est coché
             if (this.filters.known && !this.filters.met) {
                 return character.known === true;
             }
-            
+
             // Si seulement "Rencontrés" est coché
             if (!this.filters.known && this.filters.met) {
                 return character.met === true;
             }
-            
+
             return true;
         });
 
@@ -482,7 +482,7 @@ class CharactersManager {
             document.getElementById('character-name-input').value = '';
             document.getElementById('character-desc-input').value = '';
             document.getElementById('character-type-pj').checked = true;
-            
+
             // Réinitialiser le bouton Wizard et le champ de description
             this.resetCharacterDescriptionButton();
 
@@ -645,27 +645,27 @@ class CharactersManager {
             const characterDescriptionInput = document.getElementById('character-desc-input').value.trim(); // Description pré-existante
             const activeMapUrl = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
             const activeMapName = window.settingsManager?.activeMapName || 'Carte inconnue';
-            
+
             // Obtenir les détails de la carte active (région, lieu)
             const currentPos = window.positionManager?.currentPosition || { x: 0, y: 0 }; // Position du marqueur de position
-            
+
             // Chercher le lieu le plus proche (à 50 pixels près)
             let activeLocation = null;
             let minDistance = 50; // Seuil de proximité
-            
+
             if (window.locationsData && window.locationsData.locations) {
                 window.locationsData.locations.forEach(location => {
                     const dx = location.coordinates.x - currentPos.x;
                     const dy = location.coordinates.y - currentPos.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
-                    
+
                     if (distance < minDistance) {
                         minDistance = distance;
                         activeLocation = location;
                     }
                 });
             }
-            
+
             // Chercher la région contenant le lieu ou la position
             let activeRegion = null;
             if (window.regionsData && window.regionsData.regions) {
@@ -1062,20 +1062,17 @@ class CharactersManager {
             this.showNotification("Import réussi", `${importedCharacters.length} personnage(s) importé(s) (mode: ${mode})`, "success");
             console.log(`✅ Import terminé: ${importedCharacters.length} personnages`);
 
-            // IMPORTANT: Forcer une synchronisation cloud immédiate après l'import
-            if (window.authManager && window.authManager.isAuthenticated) {
-                console.log("☁️ [Import] Synchronisation cloud forcée après import");
-                window.authManager.syncUserData().then(() => {
-                    console.log("✅ [Import] Données synchronisées avec le cloud");
-                    this.showNotification("Sauvegarde cloud", "Personnages sauvegardés dans le cloud", "success");
-                    this.isImporting = false;
-                }).catch((error) => {
-                    console.error("❌ [Import] Erreur lors de la synchro cloud:", error);
-                    this.showNotification("Attention", "Import réussi mais erreur de synchro cloud - cliquez sur le bouton cloud", "error");
-                    this.isImporting = false;
-                });
-            } else {
-                this.isImporting = false;
+            // Synchronisation bidirectionnelle Lieux ↔ PNJ
+            console.log("🔄 [Import] Synchronisation automatique Lieux ↔ PNJ");
+            this.syncCharacterLocationsFromLocationData();
+
+            // Auto-sync cloud
+            console.log("☁️ [Import] Synchronisation cloud forcée après import");
+            if (typeof scheduleAutoSync === 'function') {
+                scheduleAutoSync();
+            }
+            if (typeof window.authManager?.syncUserData === 'function') {
+                window.authManager.syncUserData();
             }
 
         } catch (error) {
@@ -1084,6 +1081,67 @@ class CharactersManager {
             this.isImporting = false;
         }
     }
+
+    // Nouvelle méthode pour synchroniser les associations entre lieux et personnages
+    syncCharacterLocationsFromLocationData() {
+        if (!window.locationsData || !window.locationsData.locations) {
+            console.warn("⚠️ Pas de données de localisation disponibles pour la synchronisation bidirectionnelle.");
+            return;
+        }
+
+        // 1. Mettre à jour les personnages à partir des lieux
+        window.locationsData.locations.forEach(location => {
+            const associatedCharacterIds = location.associatedCharacters || [];
+            const locationId = String(location.id);
+
+            associatedCharacterIds.forEach(charId => {
+                const character = this.characters.find(c => String(c.id) === String(charId));
+                if (character) {
+                    // Ajouter le lieu au personnage s'il n'y est pas déjà
+                    if (!character.associatedLocations.includes(locationId)) {
+                        character.associatedLocations.push(locationId);
+                        console.log(`➕ Lieu "${location.name}" ajouté à "${character.name}"`);
+                    }
+                } else {
+                    // Si le personnage n'existe pas encore, on pourrait le créer ici si nécessaire,
+                    // mais pour l'instant, on ignore car on se concentre sur la mise à jour des existants.
+                    console.log(`ℹ️ Personnage ${charId} associé au lieu "${location.name}" mais non trouvé dans la liste des personnages.`);
+                }
+            });
+        });
+
+        // 2. Mettre à jour les lieux à partir des personnages
+        this.characters.forEach(character => {
+            const associatedLocationIds = character.associatedLocations || [];
+            const characterId = String(character.id);
+
+            associatedLocationIds.forEach(locationId => {
+                const location = window.locationsData.locations.find(loc => String(loc.id) === String(locationId));
+                if (location) {
+                    // Ajouter le personnage au lieu s'il n'y est pas déjà
+                    if (!location.associatedCharacters.includes(characterId)) {
+                        if (!location.associatedCharacters) {
+                            location.associatedCharacters = [];
+                        }
+                        location.associatedCharacters.push(characterId);
+                        console.log(`➕ Personnage "${character.name}" ajouté au lieu "${location.name}"`);
+
+                        // Si les données de lieux sont modifiables (par exemple, dans un cache en mémoire ou via un manager dédié),
+                        // il faudrait ici déclencher une sauvegarde ou une mise à jour.
+                        // Pour l'instant, on assume que window.locationsData.locations est une référence modifiable.
+                        // Une sauvegarde locale ou une mise à jour via un appel API serait nécessaire pour persister ces changements.
+                    }
+                } else {
+                    console.warn(`⚠️ Lieu ${locationId} associé au personnage "${character.name}" mais non trouvé dans les données de lieux.`);
+                }
+            });
+        });
+
+        // Sauvegarder les modifications des personnages (les changements sur les lieux dépendent de leur gestion)
+        this.saveCharactersToLocal();
+        console.log("🔄 Synchronisation bidirectionnelle Lieux ↔ Personnages terminée.");
+    }
+
 
     showNotification(title, message, type = 'info') {
         // Créer une notification simple
@@ -1194,7 +1252,7 @@ class CharactersManager {
         for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
             const xi = polygon[i].x, yi = polygon[i].y;
             const xj = polygon[j].x, yj = polygon[j].y;
-            
+
             const intersect = ((yi > point.y) !== (yj > point.y))
                 && (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
             if (intersect) inside = !inside;
