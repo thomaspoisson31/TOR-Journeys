@@ -2576,137 +2576,149 @@ class InfoBoxManager {
     renderPersonnagesTabRead() {
         const personnagesTab = document.getElementById('personnages-tab');
         if (!personnagesTab) {
-            console.warn('❌ Onglet personnages-tab non trouvé');
+            console.log('⚠️ [renderPersonnagesTabRead] Onglet personnages non trouvé');
             return;
         }
 
-        const item = this.currentItem;
-        const type = this.currentType;
+        console.log(`📋 [renderPersonnagesTabRead] Début du rendu pour ${this.currentType} "${this.currentItem.name}"`);
 
-        console.log(`📋 [renderPersonnagesTabRead] Rendu de l'onglet Personnages pour ${type} "${item.name}"`);
+        // Nettoyer complètement l'onglet
+        personnagesTab.innerHTML = '';
 
-        // Récupérer les personnages associés directement
-        const associatedCharacterIds = item.associatedCharacters || [];
-        console.log(`📋 [renderPersonnagesTabRead] ${associatedCharacterIds.length} personnage(s) directement associé(s):`, associatedCharacterIds);
+        // Créer la structure de base
+        const textView = document.createElement('div');
+        textView.className = 'text-view';
+        textView.style.cssText = 'flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;';
+        personnagesTab.appendChild(textView);
 
-        // Récupérer les données des personnages depuis le CharactersManager
-        const charactersManager = window.charactersManager;
-        if (!charactersManager) {
-            console.warn('❌ CharactersManager non trouvé');
-            personnagesTab.innerHTML = '<div class="p-4 text-gray-500 italic">Erreur: CharactersManager non disponible</div>';
-            return;
-        }
+        // Conteneur scrollable avec fond blanc et padding cohérent
+        const personnagesContent = document.createElement('div');
+        personnagesContent.id = 'personnages-content';
+        personnagesContent.style.cssText = 'flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 1rem; background-color: white;';
+        textView.appendChild(personnagesContent);
 
-        // Créer un Set avec les IDs déjà associés directement (pour éviter les doublons)
-        const directCharacterIds = new Set(associatedCharacterIds.map(id => String(id)));
+        // Récupérer les personnages associés DIRECTEMENT (depuis le lieu/région vers les personnages)
+        const directAssociatedIds = this.currentItem.associatedCharacters || [];
+        console.log(`🔍 [renderPersonnagesTabRead] Associations DIRECTES (${directAssociatedIds.length}):`, directAssociatedIds);
 
-        // Recherche inversée : trouver les personnages qui ont ce lieu/région dans leurs associations
-        const reverseAssociatedCharacters = charactersManager.characters.filter(char => {
-            // Ne pas inclure si déjà dans les associations directes
-            if (directCharacterIds.has(String(char.id))) {
-                return false;
-            }
+        // Récupérer les personnages associés INVERSEMENT (depuis les personnages vers le lieu/région)
+        const reverseAssociatedIds = [];
+        const currentItemId = String(this.currentItem.id);
 
-            // Vérifier si le personnage a ce lieu dans ses associatedLocations
-            if (type === 'location' && char.associatedLocations) {
-                if (char.associatedLocations.includes(String(item.id))) {
-                    console.log(`🔗 [renderPersonnagesTabRead] Personnage "${char.name}" trouvé via associatedLocations`);
-                    return true;
+        if (window.charactersManager && window.charactersManager.characters) {
+            window.charactersManager.characters.forEach(character => {
+                const charId = String(character.id);
+
+                // Vérifier si ce personnage n'est PAS déjà dans les associations directes
+                if (!directAssociatedIds.includes(charId)) {
+                    // Vérifier si le personnage a ce lieu/région dans ses associations
+                    if (this.currentType === 'location') {
+                        const associatedLocations = character.associatedLocations || [];
+                        if (associatedLocations.includes(currentItemId)) {
+                            reverseAssociatedIds.push(charId);
+                            console.log(`  ↔️ [REVERSE] Personnage "${character.name}" (${charId}) associé au lieu via son associatedLocations`);
+                        }
+                    } else if (this.currentType === 'region') {
+                        const associatedRegions = character.associatedRegions || [];
+                        if (associatedRegions.includes(currentItemId)) {
+                            reverseAssociatedIds.push(charId);
+                            console.log(`  ↔️ [REVERSE] Personnage "${character.name}" (${charId}) associé à la région via son associatedRegions`);
+                        }
+                    }
                 }
-            }
-
-            // Vérifier si le personnage a cette région dans ses associatedRegions
-            if (type === 'region' && char.associatedRegions) {
-                if (char.associatedRegions.includes(String(item.id))) {
-                    console.log(`🔗 [renderPersonnagesTabRead] Personnage "${char.name}" trouvé via associatedRegions`);
-                    return true;
-                }
-            }
-
-            return false;
-        });
-
-        console.log(`📋 [renderPersonnagesTabRead] ${reverseAssociatedCharacters.length} personnage(s) trouvé(s) via recherche inversée`);
-
-        // Combiner les deux listes
-        const directCharacters = charactersManager.characters.filter(char => 
-            associatedCharacterIds.includes(String(char.id))
-        );
-
-        const allCharacters = [...directCharacters, ...reverseAssociatedCharacters];
-
-        console.log(`📋 [renderPersonnagesTabRead] TOTAL: ${allCharacters.length} personnage(s) à afficher`);
-
-        if (allCharacters.length === 0) {
-            personnagesTab.innerHTML = '<div class="p-4 text-gray-500 italic">Aucun personnage associé à ce lieu</div>';
-            return;
+            });
         }
 
-        // Générer le HTML pour chaque personnage
-        const html = allCharacters.map((character, index) => {
-            // Déterminer si c'est une association directe ou inversée
-            const isDirect = directCharacterIds.has(String(character.id));
+        console.log(`🔍 [renderPersonnagesTabRead] Associations INVERSES (${reverseAssociatedIds.length}):`, reverseAssociatedIds);
 
-            // Afficher UNIQUEMENT l'image de type "vignette"
-            const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+        // Fusionner les deux listes en évitant les doublons (directAssociatedIds en premier)
+        const allAssociatedIds = [...new Set([...directAssociatedIds, ...reverseAssociatedIds])];
+        console.log(`🔍 [renderPersonnagesTabRead] Total personnages (${allAssociatedIds.length}):`, allAssociatedIds);
 
-            // Déterminer la couleur du cartouche selon le type
-            let typeClass = 'bg-green-600';
-            let borderClass = 'border-green-500';
-            const charType = character.type || 'PNJ';
-
-            if (charType === 'PJ') {
-                typeClass = 'bg-blue-600';
-                borderClass = 'border-blue-500';
-            } else if (charType === 'Monstre') {
-                typeClass = 'bg-red-600';
-                borderClass = 'border-red-500';
-            }
-
-            // Calculer le transform CSS pour la vignette
-            let thumbnailStyle = '';
-            if (thumbnailImage?.thumbnailCrop) {
-                const crop = thumbnailImage.thumbnailCrop;
-                const zoom = crop.zoom || 1;
-                const offsetX = crop.offsetX || 0;
-                const offsetY = crop.offsetY || 0;
-                thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
-            }
-
-            return `
-                <div class="character-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer mb-3" 
-                     onclick="window.infoBoxManager.showCharacterFromLocation('${character.id}')">
-                    <div class="flex items-center space-x-4">
-                        ${thumbnailImage ? `
-                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass}">
-                                <img src="${thumbnailImage.url}" alt="${character.name}" 
-                                     class="w-full h-full object-cover" ${thumbnailStyle}>
-                            </div>
-                        ` : `
-                            <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
-                                <i class="fas fa-user text-2xl text-gray-400"></i>
-                            </div>
-                        `}
-                        <div class="flex-1">
-                            <h3 class="text-lg font-bold">${character.name}</h3>
-                            <div class="flex flex-wrap gap-2 mt-1">
-                                <span class="inline-block px-2 py-1 text-xs rounded ${typeClass}">
-                                    ${charType}
-                                </span>
-                                ${!isDirect ? `
-                                    <span class="inline-block px-2 py-1 text-xs rounded bg-purple-600" title="Association depuis le personnage">
-                                        <i class="fas fa-link mr-1"></i>Lié
-                                    </span>
-                                ` : ''}
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </div>
+        if (allAssociatedIds.length === 0) {
+            personnagesContent.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                    <i class="fas fa-users fa-3x mb-4"></i>
+                    <p class="text-sm">Aucun personnage associé</p>
                 </div>
             `;
-        }).join('');
+            return;
+        }
 
-        personnagesTab.innerHTML = `<div class="p-4">${html}</div>`;
+        // Afficher le titre et la liste des personnages (style cohérent avec Lieux/Régions)
+        let html = '<h3 style="color: #940000; font-family: \'Merriweather\', serif; font-weight: 700; margin-bottom: 1rem; font-size: 1.35rem;"><i class="fas fa-users" style="margin-right: 0.5rem;"></i>Personnages associés</h3>';
+
+        // Parcourir tous les personnages associés (directs + inverses)
+        allAssociatedIds.forEach(characterId => {
+            const character = window.charactersManager.characters.find(c => String(c.id) === String(characterId));
+
+            if (character) {
+                const isDirect = directAssociatedIds.includes(characterId);
+                const isReverse = reverseAssociatedIds.includes(characterId);
+
+                // Badge de type d'association
+                let associationBadge = '';
+                if (isReverse) {
+                    associationBadge = '<span class="inline-block px-2 py-1 text-xs rounded bg-purple-600 text-white ml-2">Lié</span>';
+                }
+
+                // Thumbnail
+                const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+                let thumbnailStyle = '';
+                if (thumbnailImage?.thumbnailCrop) {
+                    const crop = thumbnailImage.thumbnailCrop;
+                    const zoom = crop.zoom || 1;
+                    const offsetX = crop.offsetX || 0;
+                    const offsetY = crop.offsetY || 0;
+                    thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
+                }
+
+                // Type de personnage (PJ, PNJ, Monstre)
+                const type = character.type || 'PNJ';
+                let typeClass = 'bg-green-600';
+                let borderClass = 'border-green-500';
+
+                if (type === 'PJ') {
+                    typeClass = 'bg-blue-600';
+                    borderClass = 'border-blue-500';
+                } else if (type === 'Monstre') {
+                    typeClass = 'bg-red-600';
+                    borderClass = 'border-red-500';
+                }
+
+                html += `
+                    <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
+                         onclick="window.infoBoxManager.showCharacterFromLocationInfoBox('${character.id}')">
+                        <div class="flex items-center space-x-3">
+                            ${thumbnailImage ? `
+                                <div class="w-12 h-12 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0">
+                                    <img src="${thumbnailImage.url}" alt="${character.name}"
+                                         class="w-full h-full object-cover" ${thumbnailStyle}>
+                                </div>
+                            ` : `
+                                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center border-2 ${borderClass} flex-shrink-0">
+                                    <i class="fas fa-user text-xl text-gray-400"></i>
+                                </div>
+                            `}
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center flex-wrap gap-2">
+                                    <h4 class="font-semibold text-gray-800 truncate text-sm">${character.name}</h4>
+                                    <span class="inline-block px-2 py-1 text-xs rounded ${typeClass} text-white">${type}</span>
+                                    ${associationBadge}
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
+                        </div>
+                    </div>
+                `;
+            } else {
+                console.warn(`⚠️ Personnage non trouvé avec l'ID: ${characterId}`);
+            }
+        });
+
+        personnagesContent.innerHTML = html;
+
+        console.log(`✅ [renderPersonnagesTabRead] Rendu terminé - ${allAssociatedIds.length} personnage(s) affiché(s)`);
     }
 
     renderPersonnagesTabEdit() {
