@@ -783,39 +783,43 @@ class CharactersManager {
     }
 
     showCharacterInfoBox(characterId) {
+        // Recharger les données depuis localStorage pour avoir les associations à jour
+        this.loadCharactersFromLocal();
+
         const character = this.characters.find(c => String(c.id) === String(characterId));
         if (!character) {
-            console.error(`❌ Personnage ${characterId} introuvable`);
+            console.warn(`Personnage non trouvé avec l'ID: ${characterId}`);
             return;
         }
 
-        console.log(`📋 [showCharacterInfoBox] Affichage personnage:`, character.name, {
-            id: character.id,
-            associatedLocations: character.associatedLocations,
-            locationsDataExists: !!window.locationsData,
-            locationsCount: window.locationsData?.locations?.length || 0
+        console.log(`👁️ [showCharacterInfoBox] Affichage de "${character.name}" avec:`, {
+            associatedLocations: character.associatedLocations || [],
+            associatedRegions: character.associatedRegions || []
         });
 
-        // Vérification de sécurité : window.locationsData doit être chargé
-        if (!window.locationsData || !window.locationsData.locations) {
-            console.warn(`⚠️ [showCharacterInfoBox] window.locationsData non chargé, attente...`);
-            setTimeout(() => this.showCharacterInfoBox(characterId), 100);
-            return;
-        }
+        // NE PAS fermer la modale de personnages - elle restera visible en arrière-plan
+        // this.closeCharactersModal(); // SUPPRIMÉ
 
-        // Fermer la modale des personnages
-        this.closeCharactersModal();
-
-        // Afficher l'InfoBox du personnage
+        // Utiliser la même infobox que les lieux
         if (window.infoBoxManager) {
+            // Réinitialiser previousInfoBox car on vient de la liste des personnages, pas d'une InfoBox
+            window.infoBoxManager.previousInfoBox = null;
+
             // Créer un événement simulé pour le positionnement
             const fakeEvent = {
                 clientX: window.innerWidth / 2,
                 clientY: window.innerHeight / 2,
                 type: 'click'
             };
-
             window.infoBoxManager.showInfoBox(fakeEvent, character, 'character');
+
+            // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+            setTimeout(() => {
+                console.log(`📋 [showCharacterInfoBox] Affichage forcé de l'onglet Description pour ${character.name}`);
+                window.infoBoxManager.switchTab('text');
+                // Forcer le re-render du contenu de l'onglet Description
+                window.infoBoxManager.renderReadMode();
+            }, 100);
         }
     }
 
