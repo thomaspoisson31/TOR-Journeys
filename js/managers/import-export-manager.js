@@ -340,6 +340,15 @@ class ImportExportManager {
         console.log("🔍 [PROCESS DEBUG] Début traitement item:", item.name);
         console.log("🔍 [PROCESS DEBUG] Item complet:", JSON.stringify(item, null, 2).substring(0, 500));
 
+        // NETTOYAGE : Retirer les balises [cite_start] et [cite: xxx] de la description
+        if (item.description && typeof item.description === 'string') {
+            item.description = item.description
+                .replace(/\[cite_start\]/g, '')
+                .replace(/\[cite:\s*\d+\]/g, '')
+                .trim();
+            console.log("🧹 [PROCESS DEBUG] Description nettoyée des balises [cite]");
+        }
+
         // DÉTECTION DE CONFLIT : Vérifier si un lieu/région avec ce nom existe déjà
         const activeMapUrl = window.settingsManager?.activeMapUrl;
         const existingLocations = window.locationsData?.locations || [];
