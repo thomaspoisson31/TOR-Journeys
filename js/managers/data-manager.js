@@ -20,14 +20,24 @@ class DataManager {
         this.locationsData = window.locationsData || this.locationsData;
         
         if (this.locationsData) {
+            // FORCER une copie profonde pour s'assurer que toutes les modifications sont capturées
+            const dataToSave = JSON.parse(JSON.stringify(this.locationsData));
+            
             // Sauvegarder dans localStorage
-            localStorage.setItem('middleEarthLocations', JSON.stringify(this.locationsData));
+            localStorage.setItem('middleEarthLocations', JSON.stringify(dataToSave));
 
             // IMPORTANT: Synchroniser avec window.locationsData pour cohérence globale
-            window.locationsData = this.locationsData;
+            window.locationsData = dataToSave;
+            this.locationsData = dataToSave;
 
-            console.log('💾 [DataManager]', this.locationsData.locations?.length || 0, 'lieux sauvegardés dans localStorage');
+            console.log('💾 [DataManager]', dataToSave.locations?.length || 0, 'lieux sauvegardés dans localStorage');
             console.log('✅ [DataManager] window.locationsData synchronisé:', window.locationsData.locations?.length || 0, 'lieux');
+            
+            // Log de vérification des coordonnées
+            const lastLocation = dataToSave.locations[dataToSave.locations.length - 1];
+            if (lastLocation) {
+                console.log('🔍 [DataManager] Dernier lieu sauvegardé:', lastLocation.name, 'coords:', lastLocation.coordinates);
+            }
         }
 
         // Marquer comme non sauvegardé et déclencher la synchronisation
@@ -44,14 +54,18 @@ class DataManager {
         this.regionsData = window.regionsData || this.regionsData;
         
         if (this.regionsData) {
+            // FORCER une copie profonde pour s'assurer que toutes les modifications sont capturées
+            const dataToSave = JSON.parse(JSON.stringify(this.regionsData));
+            
             // Sauvegarder dans localStorage
-            localStorage.setItem('middleEarthRegions', JSON.stringify(this.regionsData));
+            localStorage.setItem('middleEarthRegions', JSON.stringify(dataToSave));
 
             // IMPORTANT: Synchroniser avec window.regionsData pour cohérence globale
-            window.regionsData = this.regionsData;
+            window.regionsData = dataToSave;
+            this.regionsData = dataToSave;
 
-            console.log('💾 [DataManager]', this.regionsData.regions?.length || 0, 'régions sauvegardées dans localStorage');
-            console.log('✅ [DataManager] window.regionsData synchronisé:', this.regionsData.regions?.length || 0, 'régions');
+            console.log('💾 [DataManager]', dataToSave.regions?.length || 0, 'régions sauvegardées dans localStorage');
+            console.log('✅ [DataManager] window.regionsData synchronisé:', window.regionsData.regions?.length || 0, 'régions');
         }
 
         // Marquer comme non sauvegardé et déclencher la synchronisation
