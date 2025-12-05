@@ -302,19 +302,19 @@ class InfoBoxManager {
             // Compter les personnages qui référencent ce lieu/région
             let hasPersonnages = false;
             let personnagesCount = 0;
-            
+
             if (window.charactersManager && window.charactersManager.characters) {
                 const itemId = String(item.id);
                 const propertyName = this.currentType === 'location' ? 'associatedLocations' : 'associatedRegions';
-                
+
                 personnagesCount = window.charactersManager.characters.filter(char => {
                     const associations = char[propertyName] || [];
                     return associations.some(id => String(id) === itemId);
                 }).length;
-                
+
                 hasPersonnages = personnagesCount > 0;
             }
-            
+
             const icon = personnagesTabButton.querySelector('i');
             console.log('🎨 [Personnages] hasPersonnages:', hasPersonnages, 'count:', personnagesCount);
             console.log('🎨 [Personnages] icon trouvée:', !!icon);
@@ -575,12 +575,6 @@ class InfoBoxManager {
         const personnagesTab = document.getElementById('personnages-tab');
         if (personnagesTab && (type === 'location' || type === 'region')) {
             this.renderPersonnagesTabRead();
-        }
-
-        // Onglet Lieux / Régions (pour les personnages)
-        const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
-        if (lieuxRegionsTab && type === 'character') {
-            this.renderLieuxRegionsTabRead();
         }
 
         // Onglet Rumeurs et Traditions
@@ -2685,7 +2679,7 @@ class InfoBoxManager {
                     const zoom = crop.zoom || 1;
                     const offsetX = crop.offsetX || 0;
                     const offsetY = crop.offsetY || 0;
-                    thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
+                    thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%);"`;
                 }
 
                 // Type de personnage (PJ, PNJ, Monstre)
