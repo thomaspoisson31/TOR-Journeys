@@ -2781,40 +2781,54 @@ function handleLocationDrag(e) {
     dragStartY = e.clientY;
 }
 
-function handleLocationDragEnd(event) {
-    if (!isDraggingLocation || !draggedLocationMarker) return;
+function handleLocationDragEnd(e) {
+    if (!draggedLocationMarker || !draggedLocation) return;
 
-    const locationId = draggedLocationMarker.dataset.id;
-    const locationIndex = locationsData.locations.findIndex(loc => String(loc.id) === String(locationId));
+    const rect = viewport.getBoundingClientRect();
+    const viewportX = (e?.clientX || dragStartX) - rect.left;
+    const viewportY = (e?.clientY || dragStartY) - rect.top;
 
-    if (locationIndex !== -1) {
-        const newX = parseInt(draggedLocationMarker.style.left);
-        const newY = parseInt(draggedLocationMarker.style.top);
+    // Convertir les coordonnées du viewport vers les coordonnées de la carte
+    const mapX = (viewportX - panX) / scale;
+    const mapY = (viewportY - panY) / scale;
 
-        const originalLocation = locationsData.locations[locationIndex];
+    // Mettre à jour les coordonnées du lieu
+    draggedLocation.coordinates = {
+        x: Math.round(mapX),
+        y: Math.round(mapY)
+    };
 
-        console.log(`📍 Moved location ${originalLocation.name}: (${originalLocation.coordinates.x}, ${originalLocation.coordinates.y}) → (${newX}, ${newY})`);
+    console.log(`📍 Lieu déplacé: ${draggedLocation.name} vers (${Math.round(mapX)}, ${Math.round(mapY)})`);
 
-        // Mettre à jour l'objet dans locationsData.locations
-        locationsData.locations[locationIndex].coordinates.x = newX;
-        locationsData.locations[locationIndex].coordinates.y = newY;
-
-        // Synchroniser avec window.locationsData ET dataManager
-        window.locationsData = locationsData;
-        dataManager.locationsData = locationsData;
-
-        // Sauvegarder les modifications
-        dataManager.saveLocationsToLocal();
-
-        // Marquer comme non sauvegardé pour sync cloud
-        if (typeof window.markAsUnsaved === 'function') {
-            window.markAsUnsaved();
+    // IMPORTANT: Mettre à jour window.locationsData pour que la sauvegarde fonctionne
+    if (window.locationsData && window.locationsData.locations) {
+        const locationIndex = window.locationsData.locations.findIndex(loc => loc.id === draggedLocation.id);
+        if (locationIndex !== -1) {
+            window.locationsData.locations[locationIndex] = { ...draggedLocation };
+            console.log(`🔄 window.locationsData mis à jour pour ${draggedLocation.name}`);
         }
-
-        console.log("✅ Position du lieu mise à jour et sauvegardée");
     }
 
-    viewport.style.cursor = 'grab';
+    // Sauvegarder via DataManager
+    if (dataManager) {
+        dataManager.saveLocationsToLocal();
+        console.log("💾 Coordonnées du lieu sauvegardées");
+    }
+
+    // Marquer comme non sauvegardé pour sync cloud
+    if (typeof window.markAsUnsaved === 'function') {
+        window.markAsUnsaved();
+        console.log("☁️ Marqué comme non sauvegardé pour sync cloud");
+    }
+
+    // Réinitialiser les variables de drag
+    draggedLocationMarker = null;
+    draggedLocation = null;
+    isDraggingLocation = false;
+    hasDraggedLocation = false;
+
+    // Re-render pour afficher la nouvelle position
+    renderLocations();
 }
 
 // --- Fonctions utilitaires pour la compatibilité ---
