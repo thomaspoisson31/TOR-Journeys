@@ -499,7 +499,7 @@ function renderLocations() {
                 // Tap simple : ouvrir l'infobox
                 console.log(`📱 [TOUCH] Opening infobox for ${location.name}`);
                 infoBoxManager.showInfoBox(e, location, 'location');
-                
+
                 // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
                 setTimeout(() => {
                     console.log(`📋 [TOUCH] Affichage forcé de l'onglet Description pour ${location.name}`);
@@ -634,7 +634,7 @@ function renderRegions() {
         polygon.addEventListener('click', (e) => {
             e.stopPropagation();
             infoBoxManager.showInfoBox(e, region, 'region');
-            
+
             // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
             setTimeout(() => {
                 console.log(`📋 [CLICK] Affichage forcé de l'onglet Description pour ${region.name}`);
@@ -666,7 +666,7 @@ function renderRegions() {
             if (!regionTouchHasMoved && touchDuration < 500) {
                 // Tap simple : ouvrir l'infobox
                 infoBoxManager.showInfoBox(e, region, 'region');
-                
+
                 // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
                 setTimeout(() => {
                     console.log(`📋 [TOUCH] Affichage forcé de l'onglet Description pour ${region.name}`);
@@ -1212,7 +1212,7 @@ function setupMapNavigation() {
                     e.stopPropagation();
                     e.preventDefault();
                     infoBoxManager.showInfoBox(e, draggedLocation, 'location');
-                    
+
                     // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
                     setTimeout(() => {
                         console.log(`📋 [CLICK] Affichage forcé de l'onglet Description pour ${draggedLocation.name}`);
@@ -2554,7 +2554,7 @@ function deleteFromColorChangeModal() {
 
     if (currentColorChangeType === 'location') {
         // Supprimer le lieu
-        const locationIndex = locationsData.locations.findIndex(loc => 
+        const locationIndex = locationsData.locations.findIndex(loc =>
             String(loc.id) === String(currentColorChangeTarget.id)
         );
 
@@ -2576,7 +2576,7 @@ function deleteFromColorChangeModal() {
         }
     } else if (currentColorChangeType === 'region') {
         // Supprimer la région
-        const regionIndex = regionsData.regions.findIndex(reg => 
+        const regionIndex = regionsData.regions.findIndex(reg =>
             String(reg.id) === String(currentColorChangeTarget.id)
         );
 
@@ -2676,7 +2676,7 @@ function confirmColorChange() {
 
     if (currentColorChangeType === 'location') {
         // IMPORTANT: Mettre à jour l'objet dans locationsData.locations
-        const locationIndex = locationsData.locations.findIndex(loc => 
+        const locationIndex = locationsData.locations.findIndex(loc =>
             String(loc.id) === String(currentColorChangeTarget.id)
         );
 
@@ -2701,7 +2701,7 @@ function confirmColorChange() {
         renderLocations();
     } else if (currentColorChangeType === 'region') {
         // IMPORTANT: Mettre à jour l'objet dans regionsData.regions
-        const regionIndex = regionsData.regions.findIndex(reg => 
+        const regionIndex = regionsData.regions.findIndex(reg =>
             String(reg.id) === String(currentColorChangeTarget.id)
         );
 
