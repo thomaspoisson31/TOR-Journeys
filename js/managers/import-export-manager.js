@@ -340,14 +340,38 @@ class ImportExportManager {
         console.log("🔍 [PROCESS DEBUG] Début traitement item:", item.name);
         console.log("🔍 [PROCESS DEBUG] Item complet:", JSON.stringify(item, null, 2).substring(0, 500));
 
-        // NETTOYAGE : Retirer les balises [cite_start] et [cite: xxx] de la description
-        if (item.description && typeof item.description === 'string') {
-            item.description = item.description
+        // NETTOYAGE : Retirer les balises [cite_start] et [cite: xxx] de tous les champs textuels
+        const cleanCiteTags = (text) => {
+            if (!text || typeof text !== 'string') return text;
+            return text
                 .replace(/\[cite_start\]/g, '')
                 .replace(/\[cite:\s*\d+\]/g, '')
                 .trim();
-            console.log("🧹 [PROCESS DEBUG] Description nettoyée des balises [cite]");
+        };
+
+        // Nettoyer tous les champs textuels principaux
+        if (item.description) {
+            item.description = cleanCiteTags(item.description);
         }
+        if (item.occupation) {
+            item.occupation = cleanCiteTags(item.occupation);
+        }
+        if (item.particularités) {
+            item.particularités = cleanCiteTags(item.particularités);
+        }
+        
+        // Nettoyer les rumeurs si présentes
+        if (item.Rumeurs && Array.isArray(item.Rumeurs)) {
+            item.Rumeurs = item.Rumeurs.map(r => cleanCiteTags(r));
+        }
+        if (item.Rumeur) {
+            item.Rumeur = cleanCiteTags(item.Rumeur);
+        }
+        if (item.Tradition_Ancienne) {
+            item.Tradition_Ancienne = cleanCiteTags(item.Tradition_Ancienne);
+        }
+        
+        console.log("🧹 [PROCESS DEBUG] Tous les champs nettoyés des balises [cite]");
 
         // DÉTECTION DE CONFLIT : Vérifier si un lieu/région avec ce nom existe déjà
         const activeMapUrl = window.settingsManager?.activeMapUrl;
