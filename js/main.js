@@ -1939,11 +1939,12 @@ function confirmLocationCreation() {
         console.log(`🔍 [confirmLocationCreation] Filtres actifs:`, window.filterManager.activeFilters);
         console.log(`📊 Total locations: ${window.locationsData.locations.length}`);
         
-        // Forcer un délai pour s'assurer que le DOM est mis à jour
-        setTimeout(() => {
-            window.filterManager.applyFilters();
-            console.log(`✅ Filtres réappliqués - ${window.filterManager.filteredLocations.length} lieux visibles`);
-        }, 50);
+        // IMPORTANT: Re-render d'abord pour créer les marqueurs DOM
+        renderLocations();
+        
+        // Puis réappliquer les filtres pour masquer/afficher selon les règles
+        window.filterManager.applyFilters();
+        console.log(`✅ Nouveau lieu rendu - ${window.filterManager.filteredLocations.length} lieux visibles sur ${window.locationsData.locations.length} total`);
     } else {
         // Fallback si filterManager n'est pas disponible
         renderLocations();
