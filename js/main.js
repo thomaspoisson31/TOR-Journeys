@@ -350,7 +350,7 @@ function renderLocations() {
         if (window.filterManager) {
             const isFiltered = window.filterManager.filteredLocations.some(loc => loc.id === location.id);
             const shouldShowLocations = window.filterManager.activeFilters.showLocations;
-            
+
             if (!shouldShowLocations || !isFiltered) {
                 // Le lieu ne passe pas les filtres actifs, ne pas l'afficher
                 return;
@@ -487,14 +487,14 @@ function renderLocations() {
         marker.addEventListener('touchstart', (e) => {
             touchStartTime = Date.now();
             touchHasMoved = false;
-            
+
             // Bloquer le drag tactile en mode Aventure (mais permettre le tap pour ouvrir l'infobox)
             if (window.positionManager && window.positionManager.adventureMode) {
                 // On laisse passer pour détecter le tap, mais on ne permet pas le drag
                 e.stopPropagation();
                 return;
             }
-            
+
             console.log(`📱 [TOUCH] touchstart on marker ${location.name}:`, {
                 timeStamp: e.timeStamp,
                 touches: e.touches.length,
@@ -1882,53 +1882,50 @@ function confirmLocationCreation() {
 
     const locationName = nameInput.value.trim();
     const locationDesc = descInput ? descInput.value.trim() : '';
-    const locationKnown = knownInput ? knownInput.checked : true;
-    const locationVisited = visitedInput ? visitedInput.checked : false;
+    const knownStatus = knownInput ? knownInput.checked : true;
+    const visitedStatus = visitedInput ? visitedInput.checked : false;
     const selectedColor = selectedColorSwatch ? selectedColorSwatch.dataset.color : 'blue';
 
     // Récupérer les données d'images potentiellement sélectionnées dans la bibliothèque
-    const imageData = window.pendingLocationImages || [];
+    const uploadedImages = window.pendingLocationImages || [];
 
     // Ajout du mapId
     const activeMapId = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
 
+    const tempMarkerX = window.pendingLocationCoordinates.x;
+    const tempMarkerY = window.pendingLocationCoordinates.y;
+
     const newLocation = {
-        id: `location_${Date.now()}`,
+        id: Date.now(),
         name: locationName,
-        coordinates: { x: window.pendingLocationCoordinates.x, y: window.pendingLocationCoordinates.y },
-        description: locationDesc,
+        description: locationDesc || '',
+        coordinates: { x: tempMarkerX, y: tempMarkerY },
         color: selectedColor,
-        known: locationKnown,
-        visited: locationVisited,
-        type: 'custom',
-        images: imageData,
-        mapId: activeMapId
+        // En mode Aventure, marquer automatiquement comme connu pour éviter que le lieu disparaisse
+        known: window.positionManager?.adventureMode ? true : knownStatus,
+        visited: visitedStatus,
+        images: uploadedImages,
+        type: 'custom'
     };
 
-    console.log("💾 Creating new location:", newLocation);
-
-    // Ajouter à la liste des lieux
-    if (!locationsData.locations) {
-        locationsData.locations = [];
-    }
-    locationsData.locations.push(newLocation);
-
-    // Mettre à jour les données globales
-    locationsData = { ...locationsData };
-    dataManager.locationsData = locationsData;
-
-    // Sauvegarder via DataManager
-    if (dataManager) {
-        dataManager.saveLocationsToLocal();
+    // IMPORTANT: Appliquer le mapId de la carte active
+    if (activeMapId) {
+        newLocation.mapId = activeMapId;
+        console.log(`📍 [confirmLocationCreation] mapId appliqué au nouveau lieu: ${newLocation.mapId}`);
     }
 
-    // Marquer comme non sauvegardé pour afficher l'icône cloud
-    if (typeof window.markAsUnsaved === 'function') {
-        window.markAsUnsaved();
+    // IMPORTANT: Synchroniser avec window.locationsData
+    if (!window.locationsData) {
+        window.locationsData = locationsData;
     }
+    window.locationsData.locations.push(newLocation);
+    locationsData = window.locationsData;
 
-    // Re-render les lieux
     renderLocations();
+    dataManager.saveLocationsToLocal();
+
+    console.log(`✅ New location added: ${newLocation.name}`, newLocation);
+    console.log(`📊 Total locations: ${window.locationsData.locations.length}`);
 
     // Fermer la modal
     const modal = document.getElementById('add-location-modal');
@@ -1946,8 +1943,6 @@ function confirmLocationCreation() {
     if (selectedImagesContainer) {
         selectedImagesContainer.classList.add('hidden');
     }
-
-    console.log("✅ Location created successfully:", locationName);
 }
 
 // --- Fonctions de génération de description Gemini ---
