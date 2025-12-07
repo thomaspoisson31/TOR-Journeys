@@ -468,9 +468,11 @@ class CalendarManager {
             };
 
             // Update season based on exact calendar season - use the season directly from CSV
-            // Convertir en minuscules pour matcher les clés de seasonNames
-            const calendarSeason = month.season.toLowerCase();
-            console.log("📅 [updateCalendarDate] Saison du calendrier CSV:", calendarSeason, "pour le mois:", month.name);
+            // Convertir en minuscules et normaliser les caractères accentués pour matcher les clés de seasonNames
+            const calendarSeason = month.season.toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, ''); // Retire les accents
+            console.log("📅 [updateCalendarDate] Saison du calendrier CSV:", month.season, "→ normalisée:", calendarSeason, "pour le mois:", month.name);
 
             // Use the exact season from the CSV as-is
             this.currentSeason = calendarSeason;
