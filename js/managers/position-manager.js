@@ -341,6 +341,10 @@ class PositionManager {
             // Ne pas permettre le drag si le mode dessin est actif OU si le mode aventure est actif
             if (e.button === 0 && !window.isDrawingMode && !this.adventureMode) {
                 this.handleDragStart(e);
+            } else if (this.adventureMode) {
+                // En mode aventure, empêcher complètement le drag
+                e.preventDefault();
+                e.stopPropagation();
             }
         });
 
@@ -364,7 +368,15 @@ class PositionManager {
         let touchHasMoved = false;
 
         this.positionMarker.addEventListener('touchstart', (e) => {
-            if (window.isDrawingMode || this.adventureMode) return; // Ne pas démarrer si mode dessin ou mode aventure
+            if (window.isDrawingMode || this.adventureMode) {
+                // Ne pas démarrer si mode dessin ou mode aventure
+                if (this.adventureMode) {
+                    // Sauvegarder le temps pour le long press modal
+                    touchStartTime = Date.now();
+                    touchHasMoved = false;
+                }
+                return;
+            }
 
             touchStartTime = Date.now();
             touchHasMoved = false;
@@ -382,7 +394,7 @@ class PositionManager {
         }, { passive: false });
 
         this.positionMarker.addEventListener('touchmove', (e) => {
-            if (!this.isDragging) return;
+            if (!this.isDragging || this.adventureMode) return;
 
             touchHasMoved = true;
             e.preventDefault();
