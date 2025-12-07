@@ -346,6 +346,17 @@ function renderLocations() {
             return;
         }
 
+        // IMPORTANT: Vérifier si le lieu passe les filtres actifs (incluant mode Aventure)
+        if (window.filterManager) {
+            const isFiltered = window.filterManager.filteredLocations.some(loc => loc.id === location.id);
+            const shouldShowLocations = window.filterManager.activeFilters.showLocations;
+            
+            if (!shouldShowLocations || !isFiltered) {
+                // Le lieu ne passe pas les filtres actifs, ne pas l'afficher
+                return;
+            }
+        }
+
         // Créer le marqueur
         const marker = document.createElement('div');
         marker.className = 'location-marker';
