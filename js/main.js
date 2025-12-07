@@ -1921,8 +1921,21 @@ function confirmLocationCreation() {
     window.locationsData.locations.push(newLocation);
     locationsData = window.locationsData;
 
-    renderLocations();
+    // Synchroniser avec window.locationsData ET dataManager
+    window.locationsData = locationsData;
+    dataManager.locationsData = locationsData;
+
+    // Sauvegarder d'abord
     dataManager.saveLocationsToLocal();
+
+    // IMPORTANT: Réappliquer les filtres pour inclure le nouveau lieu
+    if (window.filterManager) {
+        console.log("🔍 [confirmLocationCreation] Réapplication des filtres après création");
+        window.filterManager.applyFilters();
+    } else {
+        // Fallback si filterManager n'est pas disponible
+        renderLocations();
+    }
 
     console.log(`✅ New location added: ${newLocation.name}`, newLocation);
     console.log(`📊 Total locations: ${window.locationsData.locations.length}`);
