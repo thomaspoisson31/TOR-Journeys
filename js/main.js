@@ -1818,7 +1818,11 @@ function showLocationCreationModal() {
         // Réinitialiser les champs
         if (nameInput) nameInput.value = '';
         if (descInput) descInput.value = '';
-        if (knownInput) knownInput.checked = true;
+        // FORCER la case "Connu" à être cochée pour éviter que le lieu soit masqué par les filtres
+        if (knownInput) {
+            knownInput.checked = true;
+            console.log("📍 [showLocationCreationModal] Case 'Connu' forcée à true");
+        }
         if (visitedInput) visitedInput.checked = false;
 
         // Sélectionner la première couleur par défaut
@@ -1931,6 +1935,8 @@ function confirmLocationCreation() {
     // IMPORTANT: Réappliquer les filtres pour inclure le nouveau lieu
     if (window.filterManager) {
         console.log("🔍 [confirmLocationCreation] Réapplication des filtres après création");
+        console.log(`🔍 [confirmLocationCreation] Nouveau lieu - known: ${newLocation.known}, visited: ${newLocation.visited}`);
+        console.log(`🔍 [confirmLocationCreation] Filtres actifs:`, window.filterManager.activeFilters);
         window.filterManager.applyFilters();
     } else {
         // Fallback si filterManager n'est pas disponible
