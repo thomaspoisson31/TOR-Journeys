@@ -759,19 +759,21 @@ function initializeMap() {
     setupLocationAdding(); // Nouveau : ajout de lieux
 
     // Configurer le système de filtres
-    if (filterManager) {
-        console.log("🔍 Setting up FilterManager...");
-        filterManager.setupFilterListeners();
-        // N'appliquer les filtres initiaux que si aucun filtre sauvegardé n'existe
-        // (les filtres sauvegardés seront restaurés par AuthManager si nécessaire)
-        const hasSavedFilters = localStorage.getItem('middleEarthLocations') !== null;
-        if (!hasSavedFilters) {
-            filterManager.applyFilters();
+        if (filterManager) {
+            console.log("🔍 Setting up FilterManager...");
+            // Exposer filterManager globalement AVANT setupFilterListeners
+            window.filterManager = filterManager;
+            filterManager.setupFilterListeners();
+            // N'appliquer les filtres initiaux que si aucun filtre sauvegardé n'existe
+            // (les filtres sauvegardés seront restaurés par AuthManager si nécessaire)
+            const hasSavedFilters = localStorage.getItem('middleEarthLocations') !== null;
+            if (!hasSavedFilters) {
+                filterManager.applyFilters();
+            }
+            console.log("✅ FilterManager setup complete");
+        } else {
+            console.error("❌ FilterManager not initialized");
         }
-        console.log("✅ FilterManager setup complete");
-    } else {
-        console.error("❌ FilterManager not initialized");
-    }
 
     // Initialiser les gestionnaires après chargement de la carte
     if (voyageManager) {

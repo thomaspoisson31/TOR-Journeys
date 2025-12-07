@@ -56,57 +56,66 @@ class PositionManager {
     }
 
     saveFiltersBeforeAdventureMode() {
-        if (!window.filterManager) {
-            console.warn('⚠️ FilterManager non disponible');
+        // Utiliser this.dom.filterManager si window.filterManager n'est pas encore disponible
+        const filterManager = window.filterManager;
+        if (!filterManager) {
+            console.warn('⚠️ [PositionManager] FilterManager non encore initialisé');
             return;
         }
 
         // Sauvegarder l'état actuel des filtres
-        this.savedFilters = window.filterManager.getActiveFilters();
+        this.savedFilters = filterManager.getActiveFilters();
         console.log('💾 [PositionManager] Filtres sauvegardés avant mode Aventure:', this.savedFilters);
     }
 
     applyAdventureModeFilters() {
-        if (!window.filterManager) {
-            console.warn('⚠️ FilterManager non disponible');
+        const filterManager = window.filterManager;
+        if (!filterManager) {
+            console.warn('⚠️ [PositionManager] FilterManager non encore initialisé');
             return;
         }
 
         console.log('🎮 [PositionManager] Application des filtres du mode Aventure');
 
         // Forcer les filtres : Régions non affichées + Lieux Connus uniquement
-        window.filterManager.activeFilters = {
-            ...window.filterManager.activeFilters,
+        filterManager.activeFilters = {
+            ...filterManager.activeFilters,
             showRegions: false,  // Masquer les régions
             showLocations: true, // Afficher les lieux
             known: ['known']     // Uniquement les lieux connus
         };
 
         // Mettre à jour l'interface des filtres
-        window.filterManager.updateFilterUI();
+        filterManager.updateFilterUI();
 
         // Appliquer les filtres
-        window.filterManager.applyFilters();
+        filterManager.applyFilters();
 
-        console.log('✅ [PositionManager] Filtres du mode Aventure appliqués');
+        console.log('✅ [PositionManager] Filtres du mode Aventure appliqués:', filterManager.activeFilters);
     }
 
     restoreFiltersAfterAdventureMode() {
-        if (!window.filterManager || !this.savedFilters) {
-            console.warn('⚠️ FilterManager non disponible ou pas de filtres sauvegardés');
+        const filterManager = window.filterManager;
+        if (!filterManager) {
+            console.warn('⚠️ [PositionManager] FilterManager non encore initialisé');
+            return;
+        }
+        
+        if (!this.savedFilters) {
+            console.warn('⚠️ [PositionManager] Pas de filtres sauvegardés à restaurer');
             return;
         }
 
         console.log('🔄 [PositionManager] Restauration des filtres précédents:', this.savedFilters);
 
         // Restaurer les filtres sauvegardés
-        window.filterManager.activeFilters = { ...this.savedFilters };
+        filterManager.activeFilters = { ...this.savedFilters };
 
         // Mettre à jour l'interface des filtres
-        window.filterManager.updateFilterUI();
+        filterManager.updateFilterUI();
 
         // Appliquer les filtres restaurés
-        window.filterManager.applyFilters();
+        filterManager.applyFilters();
 
         // Nettoyer la sauvegarde
         this.savedFilters = null;
