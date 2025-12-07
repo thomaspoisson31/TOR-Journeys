@@ -245,11 +245,15 @@ class PathManager {
         if (this.isDrawing) {
             console.log("🛑 Drawing stopped (touch)");
             this.isDrawing = false;
-            // Auto-sync sera géré par le main.js
+            
             console.log("🔄 Drawing segment completed (touch)");
 
             // Recalculer les informations du voyage
             this.updatePathData();
+
+            // ⚡ OPTIMISATION: Détecter les découvertes UNIQUEMENT en fin de tracé
+            console.log('🔍 Détection des lieux et régions traversés (fin de tracé)...');
+            this.detectDiscoveries();
 
             // Déplacer le marqueur de position au début du tracé avec animation
             if (window.positionManager && window.journeyPath.length > 0) {
@@ -436,9 +440,8 @@ class PathManager {
         this.calculateTotalDistance();
         console.log('🔄 [updatePathData] totalDistance:', this.totalDistance);
 
-        // Détecter les découvertes
-        this.detectDiscoveries();
-        console.log('🔄 [updatePathData] discoveries après détection:', this.discoveries);
+        // ⚡ OPTIMISATION: Ne plus détecter les découvertes ici (sera fait en fin de tracé uniquement)
+        // this.detectDiscoveries(); // SUPPRIMÉ pour performance
 
         // Mettre à jour les variables globales
         window.journeyPath = this.path;
