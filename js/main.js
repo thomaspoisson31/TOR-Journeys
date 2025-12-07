@@ -429,6 +429,13 @@ function renderLocations() {
         // Événements de souris pour le glisser-déplacer
         marker.addEventListener('mousedown', (e) => {
             if (e.button === 0) { // Clic gauche seulement
+                // Bloquer le drag en mode Aventure
+                if (window.positionManager && window.positionManager.adventureMode) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+
                 e.stopPropagation();
                 e.preventDefault();
 
@@ -447,7 +454,12 @@ function renderLocations() {
         // Survol pour montrer le curseur de déplacement
         marker.addEventListener('mouseenter', () => {
             if (!isDraggingLocation && !window.isDrawingMode) {
-                marker.style.cursor = 'move';
+                // Ne pas afficher le curseur "move" en mode Aventure
+                if (window.positionManager && window.positionManager.adventureMode) {
+                    marker.style.cursor = 'pointer';
+                } else {
+                    marker.style.cursor = 'move';
+                }
             }
         });
 
@@ -464,6 +476,14 @@ function renderLocations() {
         marker.addEventListener('touchstart', (e) => {
             touchStartTime = Date.now();
             touchHasMoved = false;
+            
+            // Bloquer le drag tactile en mode Aventure (mais permettre le tap pour ouvrir l'infobox)
+            if (window.positionManager && window.positionManager.adventureMode) {
+                // On laisse passer pour détecter le tap, mais on ne permet pas le drag
+                e.stopPropagation();
+                return;
+            }
+            
             console.log(`📱 [TOUCH] touchstart on marker ${location.name}:`, {
                 timeStamp: e.timeStamp,
                 touches: e.touches.length,
