@@ -8,6 +8,7 @@ class PositionManager {
         this.dragStartY = 0;
         this.currentPosition = this.loadPosition();
         this.adventureMode = this.loadAdventureMode(); // Nouvel état pour le mode aventure
+        this.savedFilters = null; // Sauvegarde des filtres avant activation du mode Aventure
     }
 
     loadAdventureMode() {
@@ -22,9 +23,26 @@ class PositionManager {
 
     toggleAdventureMode() {
         this.adventureMode = !this.adventureMode;
-        this.saveAdventureMode();
-        this.updateMarkerCursor(); // Mettre à jour le curseur
-        this.updatePositionModal(); // Mettre à jour la modal avec le nouvel état
+        console.log(`🎮 Mode Aventure ${this.adventureMode ? 'activé' : 'désactivé'}`);
+
+        if (this.adventureMode) {
+            // Sauvegarder les filtres actuels avant de les forcer
+            this.saveFiltersBeforeAdventureMode();
+            // Appliquer les filtres du mode Aventure
+            this.applyAdventureModeFilters();
+        } else {
+            // Restaurer les filtres sauvegardés
+            this.restoreFiltersAfterAdventureMode();
+        }
+
+        // Mettre à jour l'indicateur visuel
+        this.updateAdventureModeIndicator();
+
+        // Mettre à jour la visibilité des boutons
+        this.updateButtonsVisibility();
+
+        // Sauvegarder l'état
+        localStorage.setItem('adventureModeActive', JSON.stringify(this.adventureMode));
 
         // Si le mode aventure est activé, désactiver le glissement manuel immédiatement
         if (this.adventureMode) {
@@ -43,6 +61,65 @@ class PositionManager {
         if (typeof window.updateToolbarButtonsVisibility === 'function') {
             window.updateToolbarButtonsVisibility();
         }
+    }
+
+    saveFiltersBeforeAdventureMode() {
+        if (!window.filterManager) {
+            console.warn('⚠️ FilterManager non disponible');
+            return;
+        }
+
+        // Sauvegarder l'état actuel des filtres
+        this.savedFilters = window.filterManager.getActiveFilters();
+        console.log('💾 [PositionManager] Filtres sauvegardés avant mode Aventure:', this.savedFilters);
+    }
+
+    applyAdventureModeFilters() {
+        if (!window.filterManager) {
+            console.warn('⚠️ FilterManager non disponible');
+            return;
+        }
+
+        console.log('🎮 [PositionManager] Application des filtres du mode Aventure');
+
+        // Forcer les filtres : Régions non affichées + Lieux Connus uniquement
+        window.filterManager.activeFilters = {
+            ...window.filterManager.activeFilters,
+            showRegions: false,  // Masquer les régions
+            showLocations: true, // Afficher les lieux
+            known: ['known']     // Uniquement les lieux connus
+        };
+
+        // Mettre à jour l'interface des filtres
+        window.filterManager.updateFilterUI();
+
+        // Appliquer les filtres
+        window.filterManager.applyFilters();
+
+        console.log('✅ [PositionManager] Filtres du mode Aventure appliqués');
+    }
+
+    restoreFiltersAfterAdventureMode() {
+        if (!window.filterManager || !this.savedFilters) {
+            console.warn('⚠️ FilterManager non disponible ou pas de filtres sauvegardés');
+            return;
+        }
+
+        console.log('🔄 [PositionManager] Restauration des filtres précédents:', this.savedFilters);
+
+        // Restaurer les filtres sauvegardés
+        window.filterManager.activeFilters = { ...this.savedFilters };
+
+        // Mettre à jour l'interface des filtres
+        window.filterManager.updateFilterUI();
+
+        // Appliquer les filtres restaurés
+        window.filterManager.applyFilters();
+
+        // Nettoyer la sauvegarde
+        this.savedFilters = null;
+
+        console.log('✅ [PositionManager] Filtres restaurés');
     }
 
     updateMarkerCursor() {
@@ -261,7 +338,7 @@ class PositionManager {
         // --- Gestion du glisser-déposer (souris) ---
         this.positionMarker.addEventListener('mousedown', (e) => {
             // Ne pas permettre le drag si le mode dessin est actif OU si le mode aventure est actif
-            if (e.button === 0 && !window.isDrawingMode && !this.adventureMode) { 
+            if (e.button === 0 && !window.isDrawingMode && !this.adventureMode) {
                 this.handleDragStart(e);
             }
         });
