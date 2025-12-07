@@ -431,7 +431,7 @@ class PathManager {
     updatePathData() {
         console.log('🔄 [updatePathData] DÉBUT');
         console.log('🔄 [updatePathData] path.length:', this.path.length);
-        
+
         // Calculer la distance totale
         this.calculateTotalDistance();
         console.log('🔄 [updatePathData] totalDistance:', this.totalDistance);
@@ -444,7 +444,7 @@ class PathManager {
         window.journeyPath = this.path;
         window.journeyDiscoveries = this.discoveries;
         window.totalPathPixels = this.totalDistance;
-        
+
         console.log('🔄 [updatePathData] Variables globales mises à jour:');
         console.log('🔄 [updatePathData] - window.journeyPath.length:', window.journeyPath.length);
         console.log('🔄 [updatePathData] - window.journeyDiscoveries.length:', window.journeyDiscoveries.length);
@@ -457,7 +457,7 @@ class PathManager {
         if (this.path.length > 10) {
             this.showVoyageButton();
         }
-        
+
         console.log('🔄 [updatePathData] FIN');
     }
 
@@ -475,16 +475,16 @@ class PathManager {
 
     detectDiscoveries() {
         console.log('🔍 [detectDiscoveries] DÉBUT de la détection');
-        
+
         // IMPORTANT: Synchroniser avec les données globales avant détection
         if (this.dataManager && typeof this.dataManager.syncFromGlobalData === 'function') {
             this.dataManager.syncFromGlobalData();
         }
-        
+
         console.log('🔍 [detectDiscoveries] dataManager.locationsData:', this.dataManager.locationsData);
         console.log('🔍 [detectDiscoveries] dataManager.regionsData:', this.dataManager.regionsData);
         console.log('🔍 [detectDiscoveries] path.length:', this.path.length);
-        
+
         if (!this.dataManager.locationsData && !this.dataManager.regionsData) {
             console.log('❌ [detectDiscoveries] Pas de données - ABANDON');
             return;
@@ -509,7 +509,7 @@ class PathManager {
         console.log('📍 [detectNearbyLocations] DÉBUT');
         console.log('📍 [detectNearbyLocations] locationsData:', this.dataManager.locationsData);
         console.log('📍 [detectNearbyLocations] locations array:', this.dataManager.locationsData?.locations);
-        
+
         if (!this.dataManager.locationsData?.locations) {
             console.log('❌ [detectNearbyLocations] Pas de données de lieux - ABANDON');
             return;
@@ -517,7 +517,7 @@ class PathManager {
 
         const PROXIMITY_THRESHOLD = 80; // pixels
         const activeMapUrl = window.settingsManager?.activeMapUrl;
-        
+
         console.log('📍 [detectNearbyLocations] activeMapUrl:', activeMapUrl);
         console.log('📍 [detectNearbyLocations] PROXIMITY_THRESHOLD:', PROXIMITY_THRESHOLD);
         console.log('📍 [detectNearbyLocations] Nombre total de lieux:', this.dataManager.locationsData.locations.length);
@@ -532,7 +532,7 @@ class PathManager {
             console.log(`📍 [detectNearbyLocations] Traitement lieu ${index + 1}/${this.dataManager.locationsData.locations.length}: "${location.name}"`);
             console.log(`📍 [detectNearbyLocations] - coordinates:`, location.coordinates);
             console.log(`📍 [detectNearbyLocations] - mapId:`, location.mapId);
-            
+
             if (!location.coordinates) {
                 console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" ignoré: pas de coordonnées`);
                 skippedNoCoords++;
@@ -557,6 +557,13 @@ class PathManager {
                 }
             }
 
+            // Vérifier si en mode Aventure et si le lieu est non connu
+            if (window.positionManager && window.positionManager.adventureMode && location.known === false) {
+                console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" ignoré (non connu en mode Aventure)`);
+                return;
+            }
+
+            // Calculer la distance minimale entre ce lieu et tous les points du tracé
             let minDistance = Infinity;
             let closestIndex = -1;
 
@@ -592,7 +599,7 @@ class PathManager {
                 skippedTooFar++;
             }
         });
-        
+
         console.log('📍 [detectNearbyLocations] FIN - Statistiques:');
         console.log('📍 [detectNearbyLocations] - Lieux ajoutés:', processedCount);
         console.log('📍 [detectNearbyLocations] - Ignorés (pas de coords):', skippedNoCoords);
@@ -604,14 +611,14 @@ class PathManager {
         console.log('🗺️ [detectTraversedRegions] DÉBUT');
         console.log('🗺️ [detectTraversedRegions] regionsData:', this.dataManager.regionsData);
         console.log('🗺️ [detectTraversedRegions] regions array:', this.dataManager.regionsData?.regions);
-        
+
         if (!this.dataManager.regionsData?.regions) {
             console.log('❌ [detectTraversedRegions] Pas de données de régions - ABANDON');
             return;
         }
 
         const activeMapUrl = window.settingsManager?.activeMapUrl;
-        
+
         console.log('🗺️ [detectTraversedRegions] activeMapUrl:', activeMapUrl);
         console.log('🗺️ [detectTraversedRegions] Nombre total de régions:', this.dataManager.regionsData.regions.length);
         console.log('🗺️ [detectTraversedRegions] Nombre de points du tracé:', this.path.length);
@@ -623,12 +630,12 @@ class PathManager {
 
         this.dataManager.regionsData.regions.forEach((region, index) => {
             console.log(`🗺️ [detectTraversedRegions] Traitement région ${index + 1}/${this.dataManager.regionsData.regions.length}: "${region.name}"`);
-            
+
             // Utiliser 'coordinates' au lieu de 'points' pour le nouveau format
             const regionCoords = region.coordinates || region.points;
             console.log(`🗺️ [detectTraversedRegions] - regionCoords:`, regionCoords);
             console.log(`🗺️ [detectTraversedRegions] - mapId:`, region.mapId);
-            
+
             if (!regionCoords || regionCoords.length < 3) {
                 console.log(`⏭️ [detectTraversedRegions] - Région "${region.name}" ignorée: pas assez de coordonnées (${regionCoords?.length || 0} points)`);
                 skippedNoCoords++;
@@ -695,7 +702,7 @@ class PathManager {
                 skippedNoIntersection++;
             }
         });
-        
+
         console.log('🗺️ [detectTraversedRegions] FIN - Statistiques:');
         console.log('🗺️ [detectTraversedRegions] - Régions ajoutées:', processedCount);
         console.log('🗺️ [detectTraversedRegions] - Ignorées (pas de coords):', skippedNoCoords);
