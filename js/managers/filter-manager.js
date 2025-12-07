@@ -412,10 +412,11 @@ export default class FilterManager {
     }
 
     filterLocations(locations) {
-        return locations.filter(location => {
+        const filtered = locations.filter(location => {
             // Filtre par couleur unifiée
             if (this.activeFilters.colors?.length > 0 && 
                 !this.activeFilters.colors.includes(location.color)) {
+                console.log(`🔍 [filterLocations] "${location.name}" filtré par couleur (${location.color})`);
                 return false;
             }
 
@@ -425,8 +426,14 @@ export default class FilterManager {
                 const showVisited = this.activeFilters.visited.includes('visited');
                 const showNotVisited = this.activeFilters.visited.includes('not_visited');
                 
-                if (isVisited && !showVisited) return false;
-                if (!isVisited && !showNotVisited) return false;
+                if (isVisited && !showVisited) {
+                    console.log(`🔍 [filterLocations] "${location.name}" filtré : visité mais showVisited=${showVisited}`);
+                    return false;
+                }
+                if (!isVisited && !showNotVisited) {
+                    console.log(`🔍 [filterLocations] "${location.name}" filtré : non visité mais showNotVisited=${showNotVisited}`);
+                    return false;
+                }
             }
 
             // Filtre par statut connu
@@ -435,18 +442,28 @@ export default class FilterManager {
                 const showKnown = this.activeFilters.known.includes('known');
                 const showUnknown = this.activeFilters.known.includes('unknown');
                 
-                if (isKnown && !showKnown) return false;
-                if (!isKnown && !showUnknown) return false;
+                if (isKnown && !showKnown) {
+                    console.log(`🔍 [filterLocations] "${location.name}" filtré : connu mais showKnown=${showKnown}`);
+                    return false;
+                }
+                if (!isKnown && !showUnknown) {
+                    console.log(`🔍 [filterLocations] "${location.name}" filtré : inconnu (known=${location.known}) mais showUnknown=${showUnknown}`);
+                    return false;
+                }
             }
 
             // Filtre par type
             if (this.activeFilters.types?.length > 0 && 
                 !this.activeFilters.types.includes(location.type || 'default')) {
+                console.log(`🔍 [filterLocations] "${location.name}" filtré par type (${location.type})`);
                 return false;
             }
 
             return true;
         });
+        
+        console.log(`🔍 [filterLocations] ${filtered.length}/${locations.length} lieux passent les filtres`);
+        return filtered;
     }
 
     filterRegions(regions) {

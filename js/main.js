@@ -1937,7 +1937,13 @@ function confirmLocationCreation() {
         console.log("🔍 [confirmLocationCreation] Réapplication des filtres après création");
         console.log(`🔍 [confirmLocationCreation] Nouveau lieu - known: ${newLocation.known}, visited: ${newLocation.visited}`);
         console.log(`🔍 [confirmLocationCreation] Filtres actifs:`, window.filterManager.activeFilters);
-        window.filterManager.applyFilters();
+        console.log(`📊 Total locations: ${window.locationsData.locations.length}`);
+        
+        // Forcer un délai pour s'assurer que le DOM est mis à jour
+        setTimeout(() => {
+            window.filterManager.applyFilters();
+            console.log(`✅ Filtres réappliqués - ${window.filterManager.filteredLocations.length} lieux visibles`);
+        }, 50);
     } else {
         // Fallback si filterManager n'est pas disponible
         renderLocations();
