@@ -468,10 +468,8 @@ class CalendarManager {
             };
 
             // Update season based on exact calendar season - use the season directly from CSV
-            // Convertir la première lettre de chaque mot en majuscule pour matcher seasonNames
-            const calendarSeason = month.season.split('-').map(part => 
-                part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-            ).join('-');
+            // Convertir en minuscules pour matcher les clés de seasonNames
+            const calendarSeason = month.season.toLowerCase();
             console.log("📅 [updateCalendarDate] Saison du calendrier CSV:", calendarSeason, "pour le mois:", month.name);
 
             // Use the exact season from the CSV as-is
