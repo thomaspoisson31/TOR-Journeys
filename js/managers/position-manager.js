@@ -38,9 +38,6 @@ class PositionManager {
         // Mettre à jour l'indicateur visuel
         this.updateAdventureModeIndicator();
 
-        // Mettre à jour la visibilité des boutons
-        this.updateButtonsVisibility();
-
         // Sauvegarder l'état
         localStorage.setItem('adventureModeActive', JSON.stringify(this.adventureMode));
 
@@ -51,11 +48,6 @@ class PositionManager {
         } else {
             this.updateMarkerCursor(); // Réinitialiser le curseur si le mode aventure est désactivé
         }
-
-        console.log(`🎮 Mode Aventure ${this.adventureMode ? 'activé' : 'désactivé'}`);
-
-        // Mettre à jour l'affichage de l'indicateur dans le cartouche de date
-        this.updateAdventureModeIndicator();
 
         // Mettre à jour la visibilité des boutons de la toolbar
         if (typeof window.updateToolbarButtonsVisibility === 'function') {
