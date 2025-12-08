@@ -284,32 +284,60 @@ class VoyageManager {
             return { start: null, end: null };
         }
 
-        const totalPathPoints = journeyPath.length;
+        // Calculer la distance totale et les distances cumulées
+        const segmentDistances = [];
+        let totalDistance = 0;
+        
+        for (let i = 1; i < journeyPath.length; i++) {
+            const prev = journeyPath[i - 1];
+            const curr = journeyPath[i];
+            const segmentDist = Math.sqrt(
+                Math.pow(curr.x - prev.x, 2) + Math.pow(curr.y - prev.y, 2)
+            );
+            totalDistance += segmentDist;
+            segmentDistances.push(totalDistance);
+        }
 
-        // Calculer les indices dans le tracé pour ce jour
+        // Calculer les distances pour ce jour
         const startRatio = (day - 1) / this.totalJourneyDays;
         const endRatio = day / this.totalJourneyDays;
+        
+        const startDist = startRatio * totalDistance;
+        const endDist = endRatio * totalDistance;
 
-        const startIndex = Math.floor(startRatio * (totalPathPoints - 1));
-        const endIndex = Math.min(
-            Math.floor(endRatio * (totalPathPoints - 1)),
-            totalPathPoints - 1
-        );
-
-        // Récupérer les coordonnées
-        const startCoordinates = journeyPath[startIndex] ? {
-            x: Math.round(journeyPath[startIndex].x),
-            y: Math.round(journeyPath[startIndex].y)
-        } : null;
-
-        const endCoordinates = journeyPath[endIndex] ? {
-            x: Math.round(journeyPath[endIndex].x),
-            y: Math.round(journeyPath[endIndex].y)
-        } : null;
+        // Interpoler sur les segments pour trouver les coordonnées
+        const startCoordinates = this.interpolateOnPath(startDist, segmentDistances);
+        const endCoordinates = this.interpolateOnPath(endDist, segmentDistances);
 
         return {
             start: startCoordinates,
             end: endCoordinates
+        };
+    }
+
+    interpolateOnPath(targetDistance, segmentDistances) {
+        // Trouver le segment contenant cette distance
+        let segmentIndex = 0;
+        let prevCumulDist = 0;
+
+        for (let i = 0; i < segmentDistances.length; i++) {
+            if (targetDistance <= segmentDistances[i]) {
+                segmentIndex = i;
+                if (i > 0) prevCumulDist = segmentDistances[i - 1];
+                break;
+            }
+        }
+
+        // Interpoler linéairement sur le segment
+        const segmentStart = journeyPath[segmentIndex];
+        const segmentEnd = journeyPath[segmentIndex + 1];
+        const segmentLength = segmentDistances[segmentIndex] - prevCumulDist;
+        const distInSegment = targetDistance - prevCumulDist;
+        const ratio = segmentLength > 0 ? distInSegment / segmentLength : 0;
+
+        return {
+            x: Math.round(segmentStart.x + ratio * (segmentEnd.x - segmentStart.x)),
+            y: Math.round(segmentStart.y + ratio * (segmentEnd.y - segmentStart.y))
         };
     }
 

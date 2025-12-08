@@ -13,6 +13,8 @@ class PathManager {
         this.isDrawing = false;
         this.regionSegments = new Map();
         this.discoveries = [];
+        this.touchStartTime = 0;
+        this.touchHasMoved = false;
     }
 
     init() {
@@ -81,6 +83,7 @@ class PathManager {
             viewport.addEventListener('mousemove', (e) => this.handleViewportMouseMove(e));
             viewport.addEventListener('mouseup', (e) => this.handleViewportMouseUp(e));
             viewport.addEventListener('mouseleave', (e) => this.handleViewportMouseUp(e));
+            viewport.addEventListener('dblclick', (e) => this.handleViewportDoubleClick(e));
 
             // Gestionnaires tactiles (mobile)
             viewport.addEventListener('touchstart', (e) => this.handleViewportTouchStart(e), { passive: false });
@@ -92,7 +95,7 @@ class PathManager {
     handleViewportMouseDown(event) {
         console.log("🖱️ Viewport mousedown event fired, isDrawingMode:", this.isDrawingMode);
 
-        // Handle drawing mode specifically - logique de l'ancienne version
+        // Handle drawing mode specifically - système waypoints
         if (this.isDrawingMode) {
             // Vérifier qu'on ne clique pas sur un marqueur ou autre élément
             if (event.target.closest('.location-marker, #info-box')) {
@@ -100,32 +103,81 @@ class PathManager {
                 return;
             }
 
-            console.log("🎨 Starting drawing...");
             event.preventDefault();
             event.stopPropagation();
 
-            // Clear canvas et reset comme dans l'ancienne version
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.isDrawing = true;
-            this.totalDistance = 0;
+            const clickPoint = this.getCanvasCoordinates(event);
 
-            // Reset journey tracking
-            this.path = [];
-            this.regionSegments.clear();
-            this.discoveries = [];
+            // Si c'est le premier waypoint (début du voyage)
+            if (this.path.length === 0) {
+                console.log("🎨 Starting waypoint journey...");
+                
+                // Clear canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.totalDistance = 0;
+                this.regionSegments.clear();
+                this.discoveries = [];
 
-            this.startPoint = this.getCanvasCoordinates(event);
-            this.lastPoint = this.startPoint;
+                // Utiliser la position du marqueur comme waypoint 0
+                let startWaypoint;
+                if (window.positionManager && window.positionManager.currentPosition) {
+                    startWaypoint = {
+                        x: window.positionManager.currentPosition.x,
+                        y: window.positionManager.currentPosition.y
+                    };
+                    console.log("📍 Waypoint 0 (marqueur position):", startWaypoint);
+                } else {
+                    startWaypoint = clickPoint;
+                    console.log("📍 Waypoint 0 (clic):", startWaypoint);
+                }
 
-            // Add start point to journey path
-            this.path.push({x: this.startPoint.x, y: this.startPoint.y});
+                this.path.push(startWaypoint);
+                this.lastPoint = startWaypoint;
 
-            console.log("📍 Start point:", this.startPoint);
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
-            this.updatePathData();
-            this.showDistanceContainer();
-            console.log("✅ Drawing initialized");
+                // Dessiner un point de départ
+                this.ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+                this.ctx.beginPath();
+                this.ctx.arc(startWaypoint.x, startWaypoint.y, 6, 0, 2 * Math.PI);
+                this.ctx.fill();
+
+                this.showDistanceContainer();
+                this.updateDistanceDisplay();
+                console.log("✅ Waypoint journey initialized");
+            } else {
+                // Ajouter un nouveau waypoint
+                console.log(`📍 Adding waypoint ${this.path.length}:`, clickPoint);
+                
+                this.path.push(clickPoint);
+
+                // Dessiner la ligne depuis le dernier waypoint
+                this.ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
+                this.ctx.lineWidth = 5;
+                this.ctx.lineCap = 'round';
+                this.ctx.lineJoin = 'round';
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
+                this.ctx.lineTo(clickPoint.x, clickPoint.y);
+                this.ctx.stroke();
+
+                // Dessiner le waypoint
+                this.ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+                this.ctx.beginPath();
+                this.ctx.arc(clickPoint.x, clickPoint.y, 6, 0, 2 * Math.PI);
+                this.ctx.fill();
+
+                this.lastPoint = clickPoint;
+
+                // Calculer la distance totale
+                this.calculateTotalDistance();
+                this.updateDistanceDisplay();
+                
+                if (this.path.length > 1) {
+                    this.showVoyageButton();
+                }
+
+                console.log(`✅ Waypoint ${this.path.length} added - Total distance: ${this.totalDistance.toFixed(0)}px`);
+            }
+
             return;
         }
 
@@ -134,44 +186,26 @@ class PathManager {
     }
 
     handleViewportMouseMove(event) {
-        if (!this.isDrawing || !this.isDrawingMode || !this.lastPoint) return;
-
-        console.log("✏️ Mouse move during drawing");
-        const currentPoint = this.getCanvasCoordinates(event);
-        const segmentLength = Math.sqrt(
-            Math.pow(currentPoint.x - this.lastPoint.x, 2) +
-            Math.pow(currentPoint.y - this.lastPoint.y, 2)
-        );
-        this.totalDistance += segmentLength;
-
-        // Add current point to journey path for region/location detection
-        this.path.push({x: currentPoint.x, y: currentPoint.y});
-
-        this.lastPoint = currentPoint;
-        this.ctx.lineTo(currentPoint.x, currentPoint.y);
-        this.ctx.stroke();
-        this.updatePathData();
-        console.log("✏️ Drawing segment, total pixels:", this.totalDistance.toFixed(1));
+        // Pas de mousemove handling dans le système waypoints
+        // L'affichage se fait uniquement lors des clics
+        return;
     }
 
     handleViewportMouseUp(event) {
+        // Pas nécessaire dans le système waypoints
+        return;
+    }
+
+    handleViewportDoubleClick(event) {
         if (!this.isDrawingMode) return;
+        if (this.path.length < 2) return; // Il faut au moins 2 waypoints
 
-        if (this.isDrawing) {
-            console.log('🛑 Drawing stopped');
+        console.log('🏁 Double-clic détecté - Fin du voyage');
+        event.preventDefault();
+        event.stopPropagation();
 
-            // Finalize the current segment
-            console.log('🔄 Drawing segment completed');
-            this.updateJourneyStats();
-
-            // Détecter les découvertes APRÈS avoir finalisé le tracé
-            console.log('🔍 Détection des lieux et régions traversés...');
-            this.detectDiscoveries();
-
-            // Reset drawing state
-            console.log('🏁 Drawing mode ended - journey path created');
-            this.isDrawing = false;
-        }
+        // Finaliser le voyage
+        this.finalizeJourney();
     }
 
     // Gestionnaires d'événements tactiles
@@ -179,7 +213,6 @@ class PathManager {
         console.log("👆 Viewport touchstart event fired, isDrawingMode:", this.isDrawingMode);
 
         if (this.isDrawingMode) {
-            // Empêcher le comportement par défaut (scroll, zoom)
             event.preventDefault();
             event.stopPropagation();
 
@@ -189,80 +222,50 @@ class PathManager {
                 return;
             }
 
-            console.log("🎨 Starting drawing (touch)...");
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.isDrawing = true;
-            this.totalDistance = 0;
+            this.touchStartTime = Date.now();
+            this.touchHasMoved = false;
 
-            // Reset journey tracking
-            this.path = [];
-            this.regionSegments.clear();
-            this.discoveries = [];
+            // Simuler un mousedown pour ajouter un waypoint
+            // (la logique est gérée par handleViewportMouseDown)
+            const fakeMouseEvent = {
+                target: event.target,
+                clientX: event.touches[0].clientX,
+                clientY: event.touches[0].clientY,
+                preventDefault: () => event.preventDefault(),
+                stopPropagation: () => event.stopPropagation()
+            };
 
-            this.startPoint = this.getCanvasCoordinates(event);
-            this.lastPoint = this.startPoint;
-
-            // Add start point to journey path
-            this.path.push({x: this.startPoint.x, y: this.startPoint.y});
-
-            console.log("📍 Start point (touch):", this.startPoint);
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
-            this.updatePathData();
-            this.showDistanceContainer();
-            console.log("✅ Drawing initialized (touch)");
+            this.handleViewportMouseDown(fakeMouseEvent);
             return;
         }
     }
 
     handleViewportTouchMove(event) {
-        if (!this.isDrawing || !this.isDrawingMode || !this.lastPoint) return;
+        if (!this.isDrawingMode) return;
 
-        console.log("✏️ Touch move during drawing");
-        event.preventDefault(); // Empêcher le scroll pendant le dessin
-        event.stopPropagation();
-
-        const currentPoint = this.getCanvasCoordinates(event);
-        const segmentLength = Math.sqrt(
-            Math.pow(currentPoint.x - this.lastPoint.x, 2) +
-            Math.pow(currentPoint.y - this.lastPoint.y, 2)
-        );
-        this.totalDistance += segmentLength;
-
-        // Add current point to journey path for region/location detection
-        this.path.push({x: currentPoint.x, y: currentPoint.y});
-
-        this.lastPoint = currentPoint;
-        this.ctx.lineTo(currentPoint.x, currentPoint.y);
-        this.ctx.stroke();
-        this.updatePathData();
-        console.log("✏️ Drawing segment (touch), total pixels:", this.totalDistance.toFixed(1));
+        // Tracker si le doigt bouge (pour détecter appui long vs tap)
+        this.touchHasMoved = true;
     }
 
     handleViewportTouchEnd(event) {
         if (!this.isDrawingMode) return;
+        if (this.path.length === 0) return;
 
-        if (this.isDrawing) {
-            console.log("🛑 Drawing stopped (touch)");
-            this.isDrawing = false;
-            
-            console.log("🔄 Drawing segment completed (touch)");
+        const touchDuration = Date.now() - this.touchStartTime;
+        
+        event.preventDefault();
+        event.stopPropagation();
 
-            // Recalculer les informations du voyage
-            this.updatePathData();
-
-            // ⚡ OPTIMISATION: Détecter les découvertes UNIQUEMENT en fin de tracé
-            console.log('🔍 Détection des lieux et régions traversés (fin de tracé)...');
-            this.detectDiscoveries();
-
-            // Déplacer le marqueur de position au début du tracé avec animation
-            if (window.positionManager && window.journeyPath.length > 0) {
-                const startPoint = window.journeyPath[0];
-                window.positionManager.animateToPosition(startPoint.x, startPoint.y);
+        // Appui long = fin du voyage (>500ms)
+        if (!this.touchHasMoved && touchDuration >= 500) {
+            if (this.path.length >= 2) {
+                console.log('🏁 Appui long détecté - Fin du voyage');
+                this.finalizeJourney();
+            } else {
+                console.log('⚠️ Il faut au moins 2 waypoints pour terminer un voyage');
             }
-
-            console.log("🏁 Drawing mode ended (touch) - journey path created");
         }
+        // Sinon, c'est un tap normal qui sera géré par handleViewportTouchStart -> mousedown
     }
 
     getCanvasCoordinates(event) {
@@ -457,11 +460,43 @@ class PathManager {
         this.updateDistanceDisplay();
 
         // Afficher le bouton de voyage si le chemin est suffisant
-        if (this.path.length > 10) {
+        if (this.path.length > 1) {
             this.showVoyageButton();
         }
 
         console.log('🔄 [updatePathData] FIN');
+    }
+
+    finalizeJourney() {
+        console.log('🏁 [finalizeJourney] Finalisation du voyage');
+        console.log(`🏁 Voyage avec ${this.path.length} waypoints`);
+
+        // Calculer la distance totale finale
+        this.calculateTotalDistance();
+
+        // Détecter les découvertes (lieux et régions)
+        console.log('🔍 Détection des lieux et régions traversés...');
+        this.detectDiscoveries();
+
+        // Mettre à jour les variables globales
+        window.journeyPath = this.path;
+        window.journeyDiscoveries = this.discoveries;
+        window.totalPathPixels = this.totalDistance;
+
+        // Mettre à jour l'affichage
+        this.updateDistanceDisplay();
+        this.showVoyageButton();
+
+        console.log('✅ [finalizeJourney] Voyage finalisé:');
+        console.log(`  - ${this.path.length} waypoints`);
+        console.log(`  - ${this.totalDistance.toFixed(0)} pixels`);
+        console.log(`  - ${this.discoveries.length} découvertes`);
+
+        // Déplacer le marqueur au début du voyage
+        if (window.positionManager && this.path.length > 0) {
+            const startPoint = this.path[0];
+            window.positionManager.animateToPosition(startPoint.x, startPoint.y);
+        }
     }
 
     calculateTotalDistance() {
@@ -566,22 +601,27 @@ class PathManager {
                 return;
             }
 
-            // Calculer la distance minimale entre ce lieu et tous les points du tracé
+            // Calculer la distance minimale entre ce lieu et tous les SEGMENTS du tracé
             let minDistance = Infinity;
             let closestIndex = -1;
 
-            // Vérifier la proximité avec chaque point du tracé
-            this.path.forEach((point, index) => {
-                const distance = Math.sqrt(
-                    Math.pow(point.x - location.coordinates.x, 2) +
-                    Math.pow(point.y - location.coordinates.y, 2)
+            // Vérifier la proximité avec chaque segment
+            for (let i = 1; i < this.path.length; i++) {
+                const segmentStart = this.path[i - 1];
+                const segmentEnd = this.path[i];
+                
+                // Distance point-segment (perpendiculaire)
+                const distance = this.pointToSegmentDistance(
+                    location.coordinates,
+                    segmentStart,
+                    segmentEnd
                 );
 
                 if (distance < minDistance) {
                     minDistance = distance;
-                    closestIndex = index;
+                    closestIndex = i; // Index du segment
                 }
-            });
+            }
 
             console.log(`📍 [detectNearbyLocations] - Distance minimale pour "${location.name}": ${minDistance.toFixed(2)}px (seuil: ${PROXIMITY_THRESHOLD}px)`);
 
@@ -665,12 +705,23 @@ class PathManager {
 
             const intersections = [];
 
-            // Vérifier les intersections du tracé avec la région
-            for (let i = 1; i < this.path.length; i++) {
-                const point = this.path[i];
+            // Vérifier si les waypoints ou les segments traversent la région
+            for (let i = 0; i < this.path.length; i++) {
+                const waypoint = this.path[i];
 
-                if (this.isPointInPolygon(point, regionCoords)) {
+                if (this.isPointInPolygon(waypoint, regionCoords)) {
                     intersections.push(i);
+                }
+            }
+
+            // Vérifier aussi les intersections segment/polygone
+            for (let i = 1; i < this.path.length; i++) {
+                const segmentStart = this.path[i - 1];
+                const segmentEnd = this.path[i];
+                
+                if (this.segmentIntersectsPolygon(segmentStart, segmentEnd, regionCoords)) {
+                    if (!intersections.includes(i - 1)) intersections.push(i - 1);
+                    if (!intersections.includes(i)) intersections.push(i);
                 }
             }
 
@@ -730,6 +781,69 @@ class PathManager {
         }
 
         return inside;
+    }
+
+    pointToSegmentDistance(point, segmentStart, segmentEnd) {
+        // Distance du point au segment (perpendiculaire la plus courte)
+        const px = point.x;
+        const py = point.y;
+        const x1 = segmentStart.x;
+        const y1 = segmentStart.y;
+        const x2 = segmentEnd.x;
+        const y2 = segmentEnd.y;
+
+        const A = px - x1;
+        const B = py - y1;
+        const C = x2 - x1;
+        const D = y2 - y1;
+
+        const dot = A * C + B * D;
+        const lenSq = C * C + D * D;
+        let param = -1;
+
+        if (lenSq !== 0) {
+            param = dot / lenSq;
+        }
+
+        let xx, yy;
+
+        if (param < 0) {
+            xx = x1;
+            yy = y1;
+        } else if (param > 1) {
+            xx = x2;
+            yy = y2;
+        } else {
+            xx = x1 + param * C;
+            yy = y1 + param * D;
+        }
+
+        const dx = px - xx;
+        const dy = py - yy;
+
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    segmentIntersectsPolygon(segmentStart, segmentEnd, polygon) {
+        // Vérifier si le segment intersecte un des côtés du polygone
+        for (let i = 0; i < polygon.length; i++) {
+            const polyStart = polygon[i];
+            const polyEnd = polygon[(i + 1) % polygon.length];
+            
+            if (this.segmentsIntersect(segmentStart, segmentEnd, polyStart, polyEnd)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    segmentsIntersect(p1, p2, p3, p4) {
+        // Vérifier si deux segments s'intersectent
+        const ccw = (A, B, C) => {
+            return (C.y - A.y) * (B.x - A.x) > (B.y - A.y) * (C.x - A.x);
+        };
+        
+        return ccw(p1, p3, p4) !== ccw(p2, p3, p4) && ccw(p1, p2, p3) !== ccw(p1, p2, p4);
     }
 
     updateDistanceDisplay() {
