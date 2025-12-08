@@ -676,6 +676,58 @@ IMPORT / EXPORT DE DONNÉES
 PRINCIPES D'AFFICHAGE ET RENDERING
 ----------------------------------
 
+0. SYNCHRONISATION FILTERLOCATIONS/RENDERLOCATIONS:
+   
+   Problématique:
+   - Après création d'un nouveau lieu, il doit apparaître immédiatement sans rechargement
+   - Le nouveau lieu doit respecter les filtres actifs (connu/inconnu, couleur, etc.)
+   - Le FilterManager et le rendering doivent être synchronisés
+   
+   Architecture critique:
+   a) filterManager.filterLocations(array) → calcul logique
+      - Fonction PURE qui prend un tableau de lieux en entrée
+      - Retourne un nouveau tableau filtré selon les règles actives
+      - NE touche PAS au DOM, uniquement du calcul
+      - Stocke le résultat dans filterManager.filteredLocations
+   
+   b) filterManager.applyFilters() → affichage DOM
+      - Appelle filterLocations() pour recalculer la liste filtrée
+      - Puis appelle updateDisplay() pour masquer/afficher les marqueurs existants
+      - Suppose que les marqueurs DOM existent déjà
+      - Fonctionne en modifiant display: none/block
+   
+   c) renderLocations() → création marqueurs DOM
+      - Crée les éléments <div> des marqueurs dans le DOM
+      - Vérifie si chaque lieu est dans filterManager.filteredLocations
+      - Crée UNIQUEMENT les marqueurs des lieux filtrés
+      - Applique les styles, événements, vignettes
+   
+   Ordre d'exécution IMPÉRATIF après création lieu:
+   1. Ajouter le nouveau lieu à window.locationsData.locations
+   2. Synchroniser: window.locationsData = locationsData
+   3. Synchroniser: dataManager.locationsData = locationsData
+   4. Sauvegarder: dataManager.saveLocationsToLocal()
+   5. **Recalculer filtres: filterManager.filteredLocations = filterManager.filterLocations(window.locationsData.locations)**
+   6. **Créer marqueurs: renderLocations()** (utilise filteredLocations pour savoir quoi créer)
+   7. Marquer unsaved: window.authManager.markAsUnsaved()
+   
+   Erreur à éviter:
+   ❌ Appeler applyFilters() avant renderLocations()
+      → updateDisplay() tente de masquer/afficher des marqueurs qui n'existent pas encore
+   
+   ✅ Appeler filterLocations() puis renderLocations()
+      → renderLocations() sait exactement quels marqueurs créer
+   
+   Code concerné:
+   - main.js: confirmLocationCreation() ligne ~1937-1945
+   - filter-manager.js: filterLocations(), applyFilters(), updateDisplay()
+   
+   Règle impérative:
+   - filterLocations() = CALCUL (données → données)
+   - renderLocations() = CRÉATION DOM (données → marqueurs)
+   - applyFilters() = AFFICHAGE DOM (marqueurs existants → visible/caché)
+   - TOUJOURS dans cet ordre: calcul → création → affichage
+
 1. DÉTECTION DES LIEUX ET RÉGIONS À PROXIMITÉ DU TRACÉ:
    
    Contexte:
@@ -899,7 +951,20 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Correction détection lieux/régions à proximité du tracé (v1.3.7)
+1. Correction affichage immédiat nouveau lieu après création (v1.3.8)
+   - Fix nouveau lieu non visible immédiatement après création
+   - Problème: renderLocations() créait les marqueurs DOM mais applyFilters() ne savait pas quoi filtrer
+   - Cause: filterManager.applyFilters() appelé AVANT renderLocations(), tentait de filtrer des marqueurs inexistants
+   - Solution finale: 
+     * Recalculer filterManager.filteredLocations AVANT renderLocations()
+     * Appeler filterManager.filterLocations() pour mettre à jour la liste filtrée
+     * Puis renderLocations() crée UNIQUEMENT les marqueurs des lieux filtrés
+   - Ordre critique: filterLocations() → renderLocations() (pas d'applyFilters)
+   - Impact: Le nouveau lieu apparaît instantanément s'il passe les filtres actifs
+   - Enseignement clé: filterLocations() (calcul) ≠ applyFilters() (affichage DOM)
+   - Fichiers concernés: main.js (confirmLocationCreation ligne ~1940)
+
+2. Correction détection lieux/régions à proximité du tracé (v1.3.7)
    - Fix détection des lieux et régions lors du tracé d'un voyage
    - Problème: dataManager.locationsData/regionsData non synchronisés avec window.locationsData/regionsData
    - Cause: PathManager utilisait des données obsolètes après chargement cloud
