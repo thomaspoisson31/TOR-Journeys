@@ -223,11 +223,27 @@ class VoyageManager {
         }
 
         // Calculate total journey duration using global variables
-        const miles = totalPathPixels * (this.MAP_DISTANCE_MILES / actualMapWidth);
+        // Si totalPathPixels est 0, le recalculer depuis journeyPath
+        let pathDistance = totalPathPixels;
+        if (pathDistance === 0 && journeyPath && journeyPath.length > 1) {
+            console.log(`⚠️ totalPathPixels = 0, recalcul depuis journeyPath (${journeyPath.length} points)`);
+            pathDistance = 0;
+            for (let i = 1; i < journeyPath.length; i++) {
+                const prev = journeyPath[i - 1];
+                const curr = journeyPath[i];
+                const segmentDist = Math.sqrt(
+                    Math.pow(curr.x - prev.x, 2) + Math.pow(curr.y - prev.y, 2)
+                );
+                pathDistance += segmentDist;
+            }
+            console.log(`✅ Distance recalculée: ${pathDistance.toFixed(0)}px`);
+        }
+        
+        const miles = pathDistance * (this.MAP_DISTANCE_MILES / actualMapWidth);
         const days = Math.ceil(miles / milesPerDay);
         this.totalJourneyDays = Math.max(1, days);
 
-        console.log(`🗺️ VoyageManager calcul: ${totalPathPixels.toFixed(0)}px × (${this.MAP_DISTANCE_MILES} miles / ${actualMapWidth}px) = ${miles.toFixed(0)} miles ÷ ${milesPerDay} mi/j = ${days} jours`);
+        console.log(`🗺️ VoyageManager calcul: ${pathDistance.toFixed(0)}px × (${this.MAP_DISTANCE_MILES} miles / ${actualMapWidth}px) = ${miles.toFixed(0)} miles ÷ ${milesPerDay} mi/j = ${days} jours`);
 
         // Récupérer ou définir la date de début du voyage
         this.journeyStartDate = this.getJourneyStartDate();
