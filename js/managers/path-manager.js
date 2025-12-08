@@ -171,9 +171,8 @@ class PathManager {
                 this.calculateTotalDistance();
                 this.updateDistanceDisplay();
                 
-                if (this.path.length > 1) {
-                    this.showVoyageButton();
-                }
+                // Ne PAS afficher le bouton Voyage pendant le tracé
+                // Il sera affiché uniquement lors de la finalisation
 
                 console.log(`✅ Waypoint ${this.path.length} added - Total distance: ${this.totalDistance.toFixed(0)}px`);
             }
@@ -459,10 +458,8 @@ class PathManager {
         // Mettre à jour l'affichage
         this.updateDistanceDisplay();
 
-        // Afficher le bouton de voyage si le chemin est suffisant
-        if (this.path.length > 1) {
-            this.showVoyageButton();
-        }
+        // Ne PAS afficher le bouton de voyage ici
+        // Il sera affiché uniquement lors de la finalisation
 
         console.log('🔄 [updatePathData] FIN');
     }
@@ -486,6 +483,8 @@ class PathManager {
 
         // Mettre à jour l'affichage
         this.updateDistanceDisplay();
+        
+        // Afficher le bouton Voyage UNIQUEMENT après finalisation
         this.showVoyageButton();
 
         console.log('✅ [finalizeJourney] Voyage finalisé:');
