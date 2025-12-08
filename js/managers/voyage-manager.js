@@ -192,6 +192,7 @@ class VoyageManager {
             this.updateMapScale();
             this.generateJourneyData();
             this.loadDescriptionsForMap();
+            console.log(`📅 updateDisplay: Rendu de ${this.totalJourneyDays} jours`);
             this.renderAllDays();
         }
     }

@@ -482,6 +482,7 @@ class PathManager {
         window.journeyPath = this.path;
         window.journeyDiscoveries = this.discoveries;
         window.totalPathPixels = this.totalDistance;
+        window.regionSegments = this.regionSegments;
 
         // Mettre à jour l'affichage
         this.updateDistanceDisplay();
@@ -497,6 +498,30 @@ class PathManager {
             const startPoint = this.path[0];
             window.positionManager.animateToPosition(startPoint.x, startPoint.y);
         }
+
+        // Désactiver le mode dessin
+        this.isDrawingMode = false;
+        window.isDrawingMode = false;
+        
+        const drawModeBtn = document.getElementById('draw-mode');
+        if (drawModeBtn) {
+            drawModeBtn.classList.remove('btn-active');
+            drawModeBtn.title = 'Tracer un voyage';
+        }
+        
+        const viewport = document.getElementById('viewport');
+        if (viewport) {
+            viewport.classList.remove('drawing');
+        }
+        
+        if (this.canvas) {
+            this.canvas.style.pointerEvents = 'none';
+        }
+        
+        this.enablePanHandlers();
+
+        // Informer l'utilisateur
+        console.log('✅ Mode dessin désactivé - voyage finalisé');
     }
 
     calculateTotalDistance() {
