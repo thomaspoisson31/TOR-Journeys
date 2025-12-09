@@ -15,6 +15,7 @@ class PathManager {
         this.discoveries = [];
         this.touchStartTime = 0;
         this.touchHasMoved = false;
+        this.lastTapTime = 0;
     }
 
     init() {
@@ -108,7 +109,7 @@ class PathManager {
 
             const clickPoint = this.getCanvasCoordinates(event);
 
-            // Si c'est le premier waypoint (début du voyage)
+            // Si c'est le premier clic (initialisation du voyage)
             if (this.path.length === 0) {
                 console.log("🎨 Starting waypoint journey...");
                 
@@ -140,9 +141,33 @@ class PathManager {
                 this.ctx.arc(startWaypoint.x, startWaypoint.y, 6, 0, 2 * Math.PI);
                 this.ctx.fill();
 
+                // Le premier clic ajoute le waypoint 1 immédiatement
+                console.log(`📍 Adding waypoint 1:`, clickPoint);
+                
+                this.path.push(clickPoint);
+
+                // Dessiner la ligne depuis le marqueur
+                this.ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
+                this.ctx.lineWidth = 5;
+                this.ctx.lineCap = 'round';
+                this.ctx.lineJoin = 'round';
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
+                this.ctx.lineTo(clickPoint.x, clickPoint.y);
+                this.ctx.stroke();
+
+                // Dessiner le waypoint
+                this.ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+                this.ctx.beginPath();
+                this.ctx.arc(clickPoint.x, clickPoint.y, 6, 0, 2 * Math.PI);
+                this.ctx.fill();
+
+                this.lastPoint = clickPoint;
+
                 this.showDistanceContainer();
+                this.calculateTotalDistance();
                 this.updateDistanceDisplay();
-                console.log("✅ Waypoint journey initialized");
+                console.log("✅ Waypoint journey initialized with first waypoint");
             } else {
                 // Ajouter un nouveau waypoint
                 console.log(`📍 Adding waypoint ${this.path.length}:`, clickPoint);
@@ -255,13 +280,24 @@ class PathManager {
         event.preventDefault();
         event.stopPropagation();
 
-        // Appui long = fin du voyage (>500ms)
-        if (!this.touchHasMoved && touchDuration >= 500) {
-            if (this.path.length >= 2) {
-                console.log('🏁 Appui long détecté - Fin du voyage');
-                this.finalizeJourney();
+        // Double tap = fin du voyage
+        if (!this.touchHasMoved && touchDuration < 500) {
+            // Détecter le double tap
+            const now = Date.now();
+            const timeSinceLastTap = now - (this.lastTapTime || 0);
+            
+            if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
+                // C'est un double tap
+                if (this.path.length >= 2) {
+                    console.log('🏁 Double tap détecté - Fin du voyage');
+                    this.finalizeJourney();
+                    this.lastTapTime = 0; // Reset
+                } else {
+                    console.log('⚠️ Il faut au moins 2 waypoints pour terminer un voyage');
+                }
             } else {
-                console.log('⚠️ Il faut au moins 2 waypoints pour terminer un voyage');
+                // Premier tap, enregistrer le timestamp
+                this.lastTapTime = now;
             }
         }
         // Sinon, c'est un tap normal qui sera géré par handleViewportTouchStart -> mousedown
@@ -354,10 +390,13 @@ class PathManager {
                 console.log("❌ Canvas pointer events disabled");
             }
 
+            // Nettoyer le tracé et l'affichage
+            this.clearPath();
+
             // Réactiver les gestionnaires de pan
             this.enablePanHandlers();
 
-            console.log('✏️ Mode dessin désactivé - pan réactivé');
+            console.log('✏️ Mode dessin désactivé - pan réactivé - tracé effacé');
         }
 
         // Mettre à jour les variables globales pour compatibilité
