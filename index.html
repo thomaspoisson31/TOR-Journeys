@@ -158,10 +158,13 @@
                     <div id="calendar-date-indicator" class="text-sm text-gray-300 cursor-pointer hover:text-white transition-colors" title="Cliquez pour ouvrir les paramètres de saison">1 Gwaeron</div>
                 </div>
             </div>
-            <div class="flex items-center space-x-2 mb-2">
+            <div class="space-y-2">
                 <div id="distance-display" class="text-sm"></div>
-                <button id="voyage-segments-btn" title="Gérer le voyage" class="hidden bg-green-600 hover:bg-green-700 rounded-full w-8 h-8 flex items-center justify-center text-white">
-                    <i class="fas fa-route"></i>
+                <button id="finish-journey-btn" title="Terminer le voyage" class="hidden w-full px-3 py-2 bg-red-800 hover:bg-red-900 rounded-lg text-white text-sm font-medium transition-colors">
+                    Terminer le voyage
+                </button>
+                <button id="view-journey-btn" title="Voir le voyage" class="hidden w-full px-3 py-2 bg-green-800 hover:bg-green-900 rounded-lg text-white text-sm font-medium transition-colors">
+                    Voir le voyage
                 </button>
             </div>
             <!-- Détail du voyage masqué mais conservé pour réactivation ultérieure -->

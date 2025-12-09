@@ -64,6 +64,8 @@ class PathManager {
     setupEventListeners() {
         const drawModeBtn = this.dom.getElementById('draw-mode');
         const eraseBtn = this.dom.getElementById('erase');
+        const finishBtn = this.dom.getElementById('finish-journey-btn');
+        const viewBtn = this.dom.getElementById('view-journey-btn');
 
         if (drawModeBtn) {
             drawModeBtn.addEventListener('click', () => {
@@ -74,6 +76,31 @@ class PathManager {
         if (eraseBtn) {
             eraseBtn.addEventListener('click', () => {
                 this.clearPath();
+            });
+        }
+
+        if (finishBtn) {
+            finishBtn.addEventListener('click', () => {
+                console.log('🏁 Bouton Terminer le voyage cliqué');
+                if (this.path.length >= 2) {
+                    this.finalizeJourney();
+                } else {
+                    console.log('⚠️ Il faut au moins 2 waypoints pour terminer un voyage');
+                }
+            });
+        }
+
+        if (viewBtn) {
+            viewBtn.addEventListener('click', () => {
+                console.log('👁️ Bouton Voir le voyage cliqué');
+                const modal = this.dom.getElementById('voyage-segments-modal');
+                if (modal && window.voyageManager) {
+                    modal.classList.remove('hidden');
+                    window.voyageManager.updateDisplay();
+                    setTimeout(() => {
+                        window.voyageManager.centerMapOnJourney();
+                    }, 100);
+                }
             });
         }
 
@@ -174,6 +201,7 @@ class PathManager {
                 this.showDistanceContainer();
                 this.calculateTotalDistance();
                 this.updateDistanceDisplay();
+                this.showFinishButton();
                 console.log("✅ Waypoint journey initialized with first waypoint");
             } else {
                 // Ajouter un nouveau waypoint
@@ -480,7 +508,8 @@ class PathManager {
 
         // Mettre à jour l'affichage
         this.updateDistanceDisplay();
-        this.hideVoyageButton();
+        this.hideFinishButton();
+        this.hideViewJourneyButton();
 
         console.log('🧹 Chemin effacé');
     }
@@ -538,8 +567,9 @@ class PathManager {
         // Mettre à jour l'affichage
         this.updateDistanceDisplay();
         
-        // Afficher le bouton Voyage UNIQUEMENT après finalisation
-        this.showVoyageButton();
+        // Masquer le bouton Terminer et afficher le bouton Voir
+        this.hideFinishButton();
+        this.showViewJourneyButton();
 
         console.log('✅ [finalizeJourney] Voyage finalisé:');
         console.log(`  - ${this.path.length} waypoints`);
@@ -959,17 +989,31 @@ class PathManager {
         }
     }
 
-    showVoyageButton() {
-        const voyageBtn = this.dom.getElementById('voyage-segments-btn');
-        if (voyageBtn) {
-            voyageBtn.classList.remove('hidden');
+    showFinishButton() {
+        const finishBtn = this.dom.getElementById('finish-journey-btn');
+        if (finishBtn) {
+            finishBtn.classList.remove('hidden');
         }
     }
 
-    hideVoyageButton() {
-        const voyageBtn = this.dom.getElementById('voyage-segments-btn');
-        if (voyageBtn) {
-            voyageBtn.classList.add('hidden');
+    hideFinishButton() {
+        const finishBtn = this.dom.getElementById('finish-journey-btn');
+        if (finishBtn) {
+            finishBtn.classList.add('hidden');
+        }
+    }
+
+    showViewJourneyButton() {
+        const viewBtn = this.dom.getElementById('view-journey-btn');
+        if (viewBtn) {
+            viewBtn.classList.remove('hidden');
+        }
+    }
+
+    hideViewJourneyButton() {
+        const viewBtn = this.dom.getElementById('view-journey-btn');
+        if (viewBtn) {
+            viewBtn.classList.add('hidden');
         }
     }
 
