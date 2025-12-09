@@ -951,7 +951,18 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Correction affichage immédiat nouveau lieu après création (v1.3.8)
+1. Système de voyage waypoints avec boutons contextuels (v1.3.12)
+   - Refonte complète du système de tracé de voyage
+   - Waypoint 0 = position du marqueur, premier clic ajoute waypoint 1
+   - Double-clic ou double-tap pour finaliser le voyage
+   - Bouton "Terminer le voyage" (rouge) pendant le tracé
+   - Bouton "Voir le voyage" (vert) après finalisation
+   - Blocage de l'ajout de waypoints après finalisation (flag isJourneyFinalized)
+   - Fichiers concernés: path-manager.js, index.html
+   - Logs détaillés pour traçabilité complète du workflow
+   - Impact: Workflow intuitif et robuste pour la gestion des voyages
+
+2. Correction affichage immédiat nouveau lieu après création (v1.3.8)
    - Fix nouveau lieu non visible immédiatement après création
    - Problème: renderLocations() créait les marqueurs DOM mais applyFilters() ne savait pas quoi filtrer
    - Cause: filterManager.applyFilters() appelé AVANT renderLocations(), tentait de filtrer des marqueurs inexistants
@@ -1492,6 +1503,109 @@ PRINCIPES GESTION OVERLAY PLEIN ÉCRAN IMAGES
    - Event listeners: wheel, touchstart/move/end, mousedown/move/up
    - Fonction closeFullscreen() réutilisable
 
+PRINCIPES SYSTÈME DE VOYAGE WAYPOINTS
+--------------------------------------
+
+1. ARCHITECTURE DU SYSTÈME:
+   
+   Principe:
+   - Le tracé de voyage utilise un système de waypoints (points d'étape)
+   - Le premier waypoint (waypoint 0) est TOUJOURS la position du marqueur Position.png
+   - Le premier clic ajoute simultanément le waypoint 0 (marqueur) ET le waypoint 1 (clic)
+   - Les clics suivants ajoutent des waypoints consécutifs
+   - Le voyage se termine par double-clic (desktop) ou double-tap (mobile)
+   
+   Workflow:
+   a) Activation du mode voyage (icône "Tracer un voyage")
+   b) Premier clic:
+      - Waypoint 0 = position du marqueur (window.positionManager.currentPosition)
+      - Waypoint 1 = position du clic
+      - Tracé de la ligne entre les deux points
+   c) Clics suivants:
+      - Ajout de waypoints consécutifs (2, 3, 4, ...)
+      - Tracé de lignes depuis le dernier waypoint
+   d) Finalisation:
+      - Double-clic (desktop) ou double-tap (mobile)
+      - Blocage de l'ajout de nouveaux waypoints (flag isJourneyFinalized)
+      - Détection des lieux/régions traversés
+      - Affichage du bouton "Voir le voyage"
+   
+   Code concerné:
+   - path-manager.js: handleViewportMouseDown(), handleViewportTouchEnd(), finalizeJourney()
+   - voyage-manager.js: calculateDayCoordinates(), buildAbsoluteTimeline()
+
+2. GESTION DES BOUTONS D'ACTION DANS LA ZONE DATE:
+   
+   Principe:
+   - La zone "Date" (distance-container) affiche des boutons contextuels selon l'état du voyage
+   - Ces boutons sont mutuellement exclusifs (un seul visible à la fois)
+   - Ils permettent des actions immédiates sans ouvrir de modale supplémentaire
+   
+   États et boutons:
+   a) Voyage en cours de tracé (isJourneyFinalized = false):
+      - Bouton "Terminer le voyage" visible (fond rouge)
+      - Clic = finalizeJourney() (comme un double-clic)
+      - Masque le bouton après finalisation
+   
+   b) Voyage terminé (isJourneyFinalized = true):
+      - Bouton "Voir le voyage" visible (fond vert)
+      - Clic = ouverture modale voyage-segments-modal
+      - Centrage automatique de la carte sur le tracé
+   
+   c) Mode dessin désactivé:
+      - Les deux boutons sont masqués
+      - Seules les informations de distance/jours restent visibles
+   
+   Méthodes de contrôle:
+   - showFinishButton() / hideFinishButton()
+   - showViewJourneyButton() / hideViewJourneyButton()
+   - Appelées dans finalizeJourney(), toggleDrawingMode(), clearPath()
+   
+   Code concerné:
+   - path-manager.js: setupEventListeners(), finalizeJourney()
+   - index.html: boutons finish-journey-btn et view-journey-btn
+
+3. BLOCAGE DES WAYPOINTS APRÈS FINALISATION:
+   
+   Problématique:
+   - Après finalisation d'un voyage, l'utilisateur peut continuer à cliquer sur la carte
+   - Sans blocage, de nouveaux waypoints s'ajoutent au voyage terminé
+   - Cela corrompt les données du voyage (descriptions, découvertes)
+   
+   Solution:
+   - Flag isJourneyFinalized dans PathManager
+   - Vérification au début de handleViewportMouseDown():
+     ```javascript
+     if (this.isJourneyFinalized) {
+         console.log("⚠️ Voyage finalisé - impossible d'ajouter des waypoints");
+         return;
+     }
+     ```
+   - Réinitialisation du flag lors de toggleDrawingMode() ou clearPath()
+   
+   Impact:
+   - Garantit l'intégrité des données de voyage
+   - Force l'utilisateur à commencer un nouveau voyage pour tracer un autre chemin
+   - Évite les incohérences entre tracé et descriptions générées
+   
+   Code concerné:
+   - path-manager.js: finalizeJourney(), handleViewportMouseDown(), toggleDrawingMode()
+
+4. RÈGLES IMPÉRATIVES:
+   
+   ✅ TOUJOURS:
+   - Utiliser window.positionManager.currentPosition comme waypoint 0
+   - Vérifier isJourneyFinalized avant d'autoriser l'ajout de waypoints
+   - Masquer le bouton "Terminer" et afficher "Voir le voyage" après finalisation
+   - Bloquer le mode dessin après finalisation (isJourneyFinalized = true)
+   - Calculer les coordonnées de chaque jour basées sur les waypoints
+   
+   ❌ NE JAMAIS:
+   - Permettre l'ajout de waypoints après finalisation du voyage
+   - Afficher simultanément les boutons "Terminer" et "Voir le voyage"
+   - Finaliser un voyage avec moins de 2 waypoints (0 + 1 minimum)
+   - Oublier de réinitialiser isJourneyFinalized lors du clearPath()
+
 PRINCIPES EVENT DELEGATION POUR ÉLÉMENTS DYNAMIQUES
 ----------------------------------------------------
 
@@ -1575,7 +1689,31 @@ PRINCIPES EVENT DELEGATION POUR ÉLÉMENTS DYNAMIQUES
 SUCCÈS TECHNIQUES CONFIRMÉS
 ---------------------------
 
-1. Fusion intelligente par mapId lors de l'import (v1.3.10) :
+1. Système de voyage waypoints avec boutons contextuels (v1.3.12):
+   - Problématique: Besoin d'un workflow intuitif pour tracer, finaliser et consulter les voyages
+   - Solution implémentée:
+     * Système de waypoints avec waypoint 0 = position du marqueur
+     * Premier clic ajoute waypoint 0 + waypoint 1 simultanément
+     * Double-clic (desktop) ou double-tap (mobile) pour finaliser
+     * Bouton "Terminer le voyage" pendant le tracé (fond rouge)
+     * Bouton "Voir le voyage" après finalisation (fond vert)
+     * Flag isJourneyFinalized pour bloquer l'ajout de waypoints après finalisation
+   - Validation logs:
+     ```
+     🎨 Starting waypoint journey...
+     📍 Waypoint 0 (marqueur position): {x: 2500, y: 1937.5}
+     📍 Adding waypoint 1: {x: 3200, y: 2100}
+     ✅ Waypoint journey initialized with first waypoint
+     🏁 Double-clic détecté - Fin du voyage
+     ✅ Voyage finalisé - mode dessin reste actif mais bloqué pour ajout de waypoints
+     ```
+   - Impact: Workflow complet et intuitif pour la gestion des voyages
+   - Fichiers concernés:
+     * path-manager.js (handleViewportMouseDown, finalizeJourney, handleViewportTouchEnd)
+     * index.html (finish-journey-btn, view-journey-btn)
+   - Test validé: Tracé voyage 5 waypoints → finalisation → blocage nouveaux waypoints ✅
+
+2. Fusion intelligente par mapId lors de l'import (v1.3.10) :
    - Problématique : Lors de l'import de lieux/régions, garantir que les données des autres cartes sont préservées
    - Solution implémentée : 
      * Mode MERGE : conservation des lieux/régions dont le mapId diffère de la carte active
