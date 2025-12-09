@@ -100,7 +100,7 @@ class PositionManager {
             console.warn('⚠️ [PositionManager] FilterManager non encore initialisé');
             return;
         }
-        
+
         if (!this.savedFilters) {
             console.warn('⚠️ [PositionManager] Pas de filtres sauvegardés à restaurer');
             return;
@@ -156,6 +156,20 @@ class PositionManager {
         this.setupEventListeners();
         this.updateMarkerCursor(); // Initialiser le curseur
         this.updateAdventureModeIndicator(); // Afficher l'indicateur dès le chargement
+
+        // IMPORTANT: Appliquer les filtres du mode Aventure si actif au chargement
+        if (this.adventureMode) {
+            console.log("🎮 [PositionManager.init] Mode Aventure actif au chargement - application des filtres");
+            // Attendre que FilterManager soit disponible
+            setTimeout(() => {
+                if (window.filterManager) {
+                    this.applyAdventureModeFilters();
+                } else {
+                    console.warn("⚠️ [PositionManager.init] FilterManager non disponible");
+                }
+            }, 100);
+        }
+
         console.log("✅ PositionManager initialized with position:", this.currentPosition);
         console.log("✅ Mode Aventure initial:", this.adventureMode ? "Actif" : "Inactif");
     }
