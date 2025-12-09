@@ -1172,6 +1172,21 @@ function setupMapNavigation() {
                 if (zoomManager) {
                     zoomManager.updateDisplay();
                 }
+
+                // Forcer la position des éléments UI sur mobile
+                if (window.innerWidth <= 768) {
+                    requestAnimationFrame(() => {
+                        const toolbar = document.getElementById('toolbar');
+                        const distanceContainer = document.getElementById('distance-container');
+                        const zoomControl = document.getElementById('zoom-control');
+                        
+                        if (toolbar) toolbar.style.transform = 'none';
+                        if (distanceContainer) distanceContainer.style.transform = 'none';
+                        if (zoomControl && window.innerWidth <= 480) {
+                            zoomControl.style.transform = 'translateX(-50%)';
+                        }
+                    });
+                }
             }
         }, { passive: true });
 
