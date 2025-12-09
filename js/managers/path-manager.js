@@ -16,6 +16,7 @@ class PathManager {
         this.touchStartTime = 0;
         this.touchHasMoved = false;
         this.lastTapTime = 0;
+        this.isJourneyFinalized = false; // Flag pour bloquer l'ajout de waypoints après finalisation
     }
 
     init() {
@@ -98,6 +99,12 @@ class PathManager {
 
         // Handle drawing mode specifically - système waypoints
         if (this.isDrawingMode) {
+            // Bloquer l'ajout de waypoints si le voyage est finalisé
+            if (this.isJourneyFinalized) {
+                console.log("⚠️ Voyage finalisé - impossible d'ajouter des waypoints. Recommencez un nouveau voyage.");
+                return;
+            }
+
             // Vérifier qu'on ne clique pas sur un marqueur ou autre élément
             if (event.target.closest('.location-marker, #info-box')) {
                 console.log("❌ Clicked on marker or info box, ignoring");
@@ -354,6 +361,9 @@ class PathManager {
         console.log("🎨 Drawing mode is now:", this.isDrawingMode);
 
         if (this.isDrawingMode) {
+            // Réinitialiser le flag de finalisation pour permettre un nouveau voyage
+            this.isJourneyFinalized = false;
+
             if (drawModeBtn) {
                 drawModeBtn.classList.add('btn-active');
                 drawModeBtn.title = 'Arrêter le voyage';
@@ -376,6 +386,7 @@ class PathManager {
             // Arrêter tout tracé en cours
             this.isDrawing = false;
             this.lastPoint = null;
+            this.isJourneyFinalized = false;
 
             if (drawModeBtn) {
                 drawModeBtn.classList.remove('btn-active');
@@ -455,6 +466,7 @@ class PathManager {
         this.totalDistance = 0;
         this.lastPoint = null;
         this.startPoint = null;
+        this.isJourneyFinalized = false;
 
         // Nettoyer le canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -507,6 +519,9 @@ class PathManager {
         console.log('🏁 [finalizeJourney] Finalisation du voyage');
         console.log(`🏁 Voyage avec ${this.path.length} waypoints`);
 
+        // Marquer le voyage comme finalisé pour bloquer l'ajout de waypoints
+        this.isJourneyFinalized = true;
+
         // Calculer la distance totale finale
         this.calculateTotalDistance();
 
@@ -542,7 +557,7 @@ class PathManager {
         // Elle se désactivera uniquement par un clic manuel ou l'activation d'une autre icône
 
         // Informer l'utilisateur
-        console.log('✅ Voyage finalisé - mode dessin reste actif');
+        console.log('✅ Voyage finalisé - mode dessin reste actif mais bloqué pour ajout de waypoints');
     }
 
     calculateTotalDistance() {

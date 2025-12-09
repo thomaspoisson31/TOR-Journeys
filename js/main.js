@@ -1948,14 +1948,14 @@ function confirmLocationCreation() {
         console.log(`🔍 [confirmLocationCreation] Nouveau lieu - known: ${newLocation.known}, visited: ${newLocation.visited}`);
         console.log(`🔍 [confirmLocationCreation] Filtres actifs:`, window.filterManager.activeFilters);
         console.log(`📊 Total locations: ${window.locationsData.locations.length}`);
-        
+
         // IMPORTANT: D'abord recalculer les lieux filtrés (sans toucher au DOM)
         window.filterManager.filteredLocations = window.filterManager.filterLocations(window.locationsData.locations || []);
         console.log(`🔍 [confirmLocationCreation] Après filterLocations: ${window.filterManager.filteredLocations.length} lieux passent les filtres`);
-        
+
         // Puis re-render pour créer UNIQUEMENT les marqueurs filtrés
         renderLocations();
-        
+
         console.log(`✅ Nouveau lieu rendu - ${window.filterManager.filteredLocations.length} lieux visibles sur ${window.locationsData.locations.length} total`);
     } else {
         // Fallback si filterManager n'est pas disponible
