@@ -1449,6 +1449,11 @@ function toggleRegionDrawingMode() {
         regionPoints = [];
         clearTempRegionPolygon();
 
+        // Sortir du mode dessin si actif
+        if (pathManager && pathManager.isDrawingMode) {
+            pathManager.toggleDrawingMode();
+        }
+
         // Changer l'apparence du bouton
         if (addRegionBtn) {
             addRegionBtn.classList.add('btn-active');
@@ -1751,6 +1756,11 @@ function toggleLocationAddingMode() {
         // Sortir du mode région si actif
         if (isRegionDrawingMode) {
             exitRegionDrawingMode();
+        }
+
+        // Sortir du mode dessin si actif
+        if (pathManager && pathManager.isDrawingMode) {
+            pathManager.toggleDrawingMode();
         }
 
         // Changer l'apparence du bouton

@@ -537,29 +537,12 @@ class PathManager {
             window.positionManager.animateToPosition(startPoint.x, startPoint.y);
         }
 
-        // Désactiver le mode dessin
-        this.isDrawingMode = false;
-        window.isDrawingMode = false;
-        
-        const drawModeBtn = document.getElementById('draw-mode');
-        if (drawModeBtn) {
-            drawModeBtn.classList.remove('btn-active');
-            drawModeBtn.title = 'Tracer un voyage';
-        }
-        
-        const viewport = document.getElementById('viewport');
-        if (viewport) {
-            viewport.classList.remove('drawing');
-        }
-        
-        if (this.canvas) {
-            this.canvas.style.pointerEvents = 'none';
-        }
-        
-        this.enablePanHandlers();
+        // NE PAS désactiver le mode dessin après finalisation
+        // L'icône reste active pour permettre de tracer un nouveau voyage immédiatement
+        // Elle se désactivera uniquement par un clic manuel ou l'activation d'une autre icône
 
         // Informer l'utilisateur
-        console.log('✅ Mode dessin désactivé - voyage finalisé');
+        console.log('✅ Voyage finalisé - mode dessin reste actif');
     }
 
     calculateTotalDistance() {
