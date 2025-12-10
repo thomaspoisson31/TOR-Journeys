@@ -1167,6 +1167,69 @@ PRINCIPES DE VALIDATION TECHNIQUE
    - Comparaison des mapId lors des opérations de filtrage
    - Validation des structures (locations: [], regions: [])
 
+GESTION DU MODE AVENTURE ET DES FILTRES
+----------------------------------------
+
+1. PRINCIPE DE SAUVEGARDE/RESTAURATION DES FILTRES :
+   
+   Problématique :
+   - Le mode Aventure force des filtres spécifiques (known=['known'], showRegions=false)
+   - Ces filtres doivent être temporaires et ne pas écraser les filtres utilisateur
+   - Après désactivation, l'utilisateur doit retrouver son état de filtrage initial
+   
+   Architecture implémentée (PositionManager) :
+   
+   a) Sauvegarde AVANT activation mode Aventure :
+      - Copie profonde des filtres actifs : JSON.parse(JSON.stringify(filterManager.getActiveFilters()))
+      - Stockage dans this.savedFilters (variable d'instance)
+      - Garantit l'isolation des modifications ultérieures
+   
+   b) Application des filtres mode Aventure :
+      - Modification directe de filterManager.activeFilters
+      - Mise à jour UI via updateFilterUI()
+      - **CRITIQUE** : Désactivation temporaire de saveFiltersForCurrentMap() pendant applyFilters()
+      - Raison : Éviter d'écraser les filtres sauvegardés dans filtersByMap
+      - Pattern :
+        ```javascript
+        const originalSaveMethod = filterManager.saveFiltersForCurrentMap;
+        filterManager.saveFiltersForCurrentMap = () => { console.log('Sauvegarde désactivée'); };
+        filterManager.applyFilters();
+        filterManager.saveFiltersForCurrentMap = originalSaveMethod;
+        ```
+   
+   c) Restauration APRÈS désactivation mode Aventure :
+      - Si savedFilters existe : restaurer copie profonde
+      - Si savedFilters null : appliquer configuration par défaut
+      - **Configuration par défaut critique** :
+        ```javascript
+        {
+          colors: [],
+          visited: [],
+          known: [],  // Vide = afficher TOUT (connus ET inconnus)
+          types: [],
+          showLocations: true,
+          showRegions: false,
+          regionsOpacity: 0.5
+        }
+        ```
+      - Mise à jour UI + applyFilters() AVEC sauvegarde cette fois
+   
+   d) Bug critique évité :
+      - ❌ ERREUR : Restaurer known=[] mais ne pas réappliquer les filtres correctement
+      - ❌ ERREUR : Restaurer les filtres APRÈS que le mode Aventure les a écrasés dans filtersByMap
+      - ✅ SOLUTION : Bloquer saveFiltersForCurrentMap() pendant l'application des filtres temporaires
+      - ✅ SOLUTION : Garantir que known=[] affiche bien connus ET inconnus (pas seulement connus)
+   
+   Fichiers concernés :
+   - position-manager.js : saveFiltersBeforeAdventureMode(), applyAdventureModeFilters(), restoreFiltersAfterAdventureMode()
+   - filter-manager.js : filterLocations() (logique de filtrage avec known=[])
+   
+   Règle impérative :
+   - TOUJOURS faire une copie profonde (JSON.parse/stringify) des filtres avant modification
+   - TOUJOURS désactiver la sauvegarde automatique pendant l'application de filtres temporaires
+   - TOUJOURS prévoir une configuration par défaut si aucun filtre sauvegardé
+   - known=[] signifie "aucun filtre actif" = afficher connus ET inconnus
+
 ENSEIGNEMENTS CLÉS DU DÉVELOPPEMENT
 ------------------------------------
 
@@ -1689,7 +1752,28 @@ PRINCIPES EVENT DELEGATION POUR ÉLÉMENTS DYNAMIQUES
 SUCCÈS TECHNIQUES CONFIRMÉS
 ---------------------------
 
-1. Système de voyage waypoints avec boutons contextuels (v1.3.12):
+1. Restauration correcte des filtres après mode Aventure (v1.3.13):
+   - Problématique: Lieux "CONNUS : inactif" ne s'affichaient plus après désactivation du mode Aventure
+   - Cause: Filtres sauvegardés écrasés par applyFilters() pendant le mode Aventure
+   - Solution implémentée:
+     * Copie profonde des filtres avant activation (JSON.parse/stringify)
+     * Désactivation temporaire de saveFiltersForCurrentMap() pendant applyAdventureModeFilters()
+     * Configuration par défaut explicite si savedFilters null (known=[] pour tout afficher)
+     * Restauration avec réapplication complète des filtres
+   - Validation logs:
+     ```
+     💾 [PositionManager] Filtres sauvegardés avant mode Aventure: {known: [], visited: []}
+     🎮 [PositionManager] Application des filtres du mode Aventure
+     ⚠️ [PositionManager] Sauvegarde des filtres désactivée pendant mode Aventure
+     ✅ [PositionManager] Filtres du mode Aventure appliqués: {known: ["known"]}
+     🔄 [PositionManager] Restauration des filtres précédents: {known: []}
+     ✅ [PositionManager] Filtres restaurés avec succès
+     ```
+   - Impact: Lieux inconnus réapparaissent correctement après désactivation du mode Aventure
+   - Fichiers concernés: position-manager.js (saveFiltersBeforeAdventureMode, applyAdventureModeFilters, restoreFiltersAfterAdventureMode)
+   - Test validé: Mode Aventure ON (28 lieux cachés) → OFF (81 lieux affichés) ✅
+
+2. Système de voyage waypoints avec boutons contextuels (v1.3.12):
    - Problématique: Besoin d'un workflow intuitif pour tracer, finaliser et consulter les voyages
    - Solution implémentée:
      * Système de waypoints avec waypoint 0 = position du marqueur
