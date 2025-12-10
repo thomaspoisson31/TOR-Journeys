@@ -132,9 +132,9 @@ class PathManager {
                 return;
             }
 
-            // Vérifier qu'on ne clique pas sur un marqueur, infobox OU si on est en mode tracé de région
-            if (event.target.closest('.location-marker, #info-box') || window.isRegionDrawingMode) {
-                console.log("❌ Clicked on marker, info box or region drawing mode active, ignoring");
+            // Vérifier qu'on ne clique pas sur un marqueur ou autre élément
+            if (event.target.closest('.location-marker, #info-box')) {
+                console.log("❌ Clicked on marker or info box, ignoring");
                 return;
             }
 

@@ -493,11 +493,6 @@ function renderLocations() {
             touchStartTime = Date.now();
             touchHasMoved = false;
 
-            // Bloquer les interactions en mode dessin de région ou tracé de voyage
-            if (isRegionDrawingMode || window.isDrawingMode) {
-                return;
-            }
-
             // Bloquer le drag tactile en mode Aventure (mais permettre le tap pour ouvrir l'infobox)
             if (window.positionManager && window.positionManager.adventureMode) {
                 // On laisse passer pour détecter le tap, mais on ne permet pas le drag
@@ -525,8 +520,8 @@ function renderLocations() {
         }, { passive: true });
 
         marker.addEventListener('touchend', (e) => {
-            // Bloquer les interactions si on est en mode dessin de région ou tracé de voyage
-            if (isRegionDrawingMode || window.isDrawingMode) {
+            // Bloquer les interactions si on est en mode dessin de région
+            if (isRegionDrawingMode) {
                 return; // Laisser le clic se propager au viewport pour le tracé
             }
             
@@ -561,10 +556,6 @@ function renderLocations() {
 
         // Ajouter l'événement de clic droit pour changer la couleur (desktop)
         marker.addEventListener('contextmenu', (e) => {
-            // Bloquer si on est en mode dessin de région ou tracé de voyage
-            if (isRegionDrawingMode || window.isDrawingMode) {
-                return;
-            }
             e.preventDefault();
             e.stopPropagation();
             showColorChangeModal(e, location, 'location');
