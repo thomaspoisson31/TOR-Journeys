@@ -580,57 +580,7 @@ class InfoBoxManager {
         // Onglet Lieux/Régions (uniquement pour les personnages)
         const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
         if (lieuxRegionsTab && type === 'character') {
-            // Afficher les lieux et régions associés en mode lecture
-            lieuxRegionsTab.innerHTML = '';
-            const textView = this.createTextView(lieuxRegionsTab);
-
-            let html = '';
-
-            // Section Lieux associés
-            const associatedLocationIds = item.associatedLocations || [];
-            if (associatedLocationIds.length > 0) {
-                html += '<h3>Lieux associés</h3>';
-                html += '<div class="space-y-2 mb-6">';
-                
-                associatedLocationIds.forEach(locationId => {
-                    const location = window.locationsData?.locations?.find(loc => String(loc.id) === String(locationId));
-                    if (location) {
-                        html += `
-                            <div class="flex items-center justify-between p-2 bg-gray-700 rounded">
-                                <span>${location.name}</span>
-                            </div>
-                        `;
-                    }
-                });
-                
-                html += '</div>';
-            }
-
-            // Section Régions associées
-            const associatedRegionIds = item.associatedRegions || [];
-            if (associatedRegionIds.length > 0) {
-                html += '<h3>Régions associées</h3>';
-                html += '<div class="space-y-2 mb-6">';
-                
-                associatedRegionIds.forEach(regionId => {
-                    const region = window.regionsData?.regions?.find(reg => String(reg.id) === String(regionId));
-                    if (region) {
-                        html += `
-                            <div class="flex items-center justify-between p-2 bg-gray-700 rounded">
-                                <span>${region.name}</span>
-                            </div>
-                        `;
-                    }
-                });
-                
-                html += '</div>';
-            }
-
-            if (associatedLocationIds.length === 0 && associatedRegionIds.length === 0) {
-                html = '<p class="text-gray-400 italic">Aucun lieu ou région associé</p>';
-            }
-
-            textView.innerHTML = html;
+            this.renderLieuxRegionsTabRead();
         }
 
         // Onglet Rumeurs et Traditions
