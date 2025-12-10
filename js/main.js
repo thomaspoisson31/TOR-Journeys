@@ -1499,6 +1499,14 @@ function toggleRegionDrawingMode() {
         viewport.style.cursor = 'crosshair';
         viewport.classList.add('adding-region');
 
+        // Désactiver les pointer-events des régions existantes pour permettre le tracé
+        const regionsLayer = document.getElementById('regions-layer');
+        if (regionsLayer) {
+            regionsLayer.querySelectorAll('polygon').forEach(polygon => {
+                polygon.style.pointerEvents = 'none';
+            });
+        }
+
         // Désactiver le pan temporairement
         viewport.removeEventListener('mousedown', handlePanStart);
     } else {
@@ -1521,6 +1529,14 @@ function exitRegionDrawingMode() {
     // Restaurer le curseur normal
     viewport.style.cursor = 'grab';
     viewport.classList.remove('adding-region');
+
+    // Réactiver les pointer-events des régions existantes
+    const regionsLayer = document.getElementById('regions-layer');
+    if (regionsLayer) {
+        regionsLayer.querySelectorAll('polygon').forEach(polygon => {
+            polygon.style.pointerEvents = 'auto';
+        });
+    }
 
     // Réactiver le pan
     setupMapNavigation();

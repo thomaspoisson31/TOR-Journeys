@@ -12,7 +12,8 @@ body {
     cursor: crosshair !important;
 }
 
-#viewport.drawing * {
+#viewport.drawing *,
+#viewport.adding-region * {
     cursor: crosshair !important;
 }
 
