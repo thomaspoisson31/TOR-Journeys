@@ -1317,8 +1317,13 @@ function setupMapNavigation() {
         }
     });
 
-    // Double-clic pour centrer et zoomer
+    // Double-clic pour centrer et zoomer (désactivé en mode tracé de région)
     viewport.addEventListener('dblclick', (e) => {
+        // Ne pas zoomer si on est en mode tracé de région
+        if (isRegionDrawingMode) {
+            return;
+        }
+        
         e.preventDefault();
         zoomToPoint(1.5, viewport.clientWidth / 2, viewport.clientHeight / 2);
     });
