@@ -63,8 +63,8 @@ class PositionManager {
             return;
         }
 
-        // Sauvegarder l'état actuel des filtres
-        this.savedFilters = filterManager.getActiveFilters();
+        // Sauvegarder une COPIE PROFONDE des filtres actuels
+        this.savedFilters = JSON.parse(JSON.stringify(filterManager.getActiveFilters()));
         console.log('💾 [PositionManager] Filtres sauvegardés avant mode Aventure:', this.savedFilters);
     }
 
@@ -88,8 +88,17 @@ class PositionManager {
         // Mettre à jour l'interface des filtres
         filterManager.updateFilterUI();
 
-        // Appliquer les filtres
+        // NE PAS sauvegarder dans filtersByMap pendant le mode Aventure
+        // Appliquer les filtres SANS sauvegarder
+        const originalSaveMethod = filterManager.saveFiltersForCurrentMap;
+        filterManager.saveFiltersForCurrentMap = () => {
+            console.log('⚠️ [PositionManager] Sauvegarde des filtres désactivée pendant mode Aventure');
+        };
+
         filterManager.applyFilters();
+
+        // Restaurer la méthode de sauvegarde
+        filterManager.saveFiltersForCurrentMap = originalSaveMethod;
 
         console.log('✅ [PositionManager] Filtres du mode Aventure appliqués:', filterManager.activeFilters);
     }
@@ -103,24 +112,29 @@ class PositionManager {
 
         if (!this.savedFilters) {
             console.warn('⚠️ [PositionManager] Pas de filtres sauvegardés à restaurer');
-            return;
+            // Par défaut, afficher tous les lieux (connus ET inconnus)
+            filterManager.activeFilters = {
+                colors: [],
+                visited: [],
+                known: [], // Vide = afficher tout
+                types: [],
+                showLocations: true,
+                showRegions: false,
+                regionsOpacity: 0.5
+            };
+        } else {
+            console.log('🔄 [PositionManager] Restauration des filtres précédents:', this.savedFilters);
+            // Restaurer les filtres sauvegardés
+            filterManager.activeFilters = JSON.parse(JSON.stringify(this.savedFilters));
         }
-
-        console.log('🔄 [PositionManager] Restauration des filtres précédents:', this.savedFilters);
-
-        // Restaurer les filtres sauvegardés
-        filterManager.activeFilters = { ...this.savedFilters };
 
         // Mettre à jour l'interface des filtres
         filterManager.updateFilterUI();
 
-        // Appliquer les filtres restaurés
+        // Appliquer les filtres restaurés (cette fois avec sauvegarde)
         filterManager.applyFilters();
 
-        // Nettoyer la sauvegarde
-        this.savedFilters = null;
-
-        console.log('✅ [PositionManager] Filtres restaurés');
+        console.log('✅ [PositionManager] Filtres restaurés avec succès:', filterManager.activeFilters);
     }
 
     updateMarkerCursor() {
