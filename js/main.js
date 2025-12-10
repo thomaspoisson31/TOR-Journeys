@@ -1590,6 +1590,7 @@ function updateTempRegionDisplay() {
     // Créer un polygone temporaire
     const tempGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     tempGroup.id = 'temp-region-polygon';
+    tempGroup.style.pointerEvents = 'none'; // Permettre aux clics de traverser le polygone temporaire
 
     // Ligne temporaire pour montrer la forme en cours
     if (regionPoints.length >= 2) {
