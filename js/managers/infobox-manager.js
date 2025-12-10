@@ -2991,7 +2991,7 @@ class InfoBoxManager {
                 <button onclick="window.infoBoxManager.saveAssociatedCharactersForCharacter()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
                     <i class="fas fa-save mr-1"></i>Sauvegarder
                 </button>
-                <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-600 text-white px-3 py-1 rounded">
                     <i class="fas fa-times mr-1"></i>Annuler
                 </button>
             </div>
