@@ -440,11 +440,16 @@ function renderLocations() {
         // Événements de souris pour le glisser-déplacer
         marker.addEventListener('mousedown', (e) => {
             if (e.button === 0) { // Clic gauche seulement
-                // Bloquer le drag en mode Aventure
+                // Bloquer le drag en mode Aventure ou en mode dessin de région
                 if (window.positionManager && window.positionManager.adventureMode) {
                     e.preventDefault();
                     e.stopPropagation();
                     return;
+                }
+                
+                // Bloquer le drag en mode dessin de région
+                if (isRegionDrawingMode) {
+                    return; // Laisser le clic se propager au viewport pour le tracé
                 }
 
                 e.stopPropagation();
@@ -515,6 +520,11 @@ function renderLocations() {
         }, { passive: true });
 
         marker.addEventListener('touchend', (e) => {
+            // Bloquer les interactions si on est en mode dessin de région
+            if (isRegionDrawingMode) {
+                return; // Laisser le clic se propager au viewport pour le tracé
+            }
+            
             const touchDuration = Date.now() - touchStartTime;
             console.log(`📱 [TOUCH] touchend on marker ${location.name}:`, {
                 duration: touchDuration,
@@ -663,6 +673,11 @@ function renderRegions() {
 
         // Ajouter l'événement de clic pour afficher la modal commune
         polygon.addEventListener('click', (e) => {
+            // Bloquer l'affichage de l'infobox si on est en mode dessin de région
+            if (isRegionDrawingMode) {
+                return; // Laisser le clic se propager au viewport pour le tracé
+            }
+            
             e.stopPropagation();
             infoBoxManager.showInfoBox(e, region, 'region');
 
@@ -689,6 +704,11 @@ function renderRegions() {
         }, { passive: true });
 
         polygon.addEventListener('touchend', (e) => {
+            // Bloquer l'affichage de l'infobox si on est en mode dessin de région
+            if (isRegionDrawingMode) {
+                return; // Laisser le clic se propager au viewport pour le tracé
+            }
+            
             e.preventDefault();
             e.stopPropagation();
 
@@ -1280,7 +1300,7 @@ function setupMapNavigation() {
                 draggedLocation = null;
                 isDraggingLocation = false;
                 hasDraggedLocation = false;
-            } else if (!window.isDrawingMode) {
+            } else if (!window.isDrawingMode && !isRegionDrawingMode) {
                 isPanning = false;
                 viewport.style.cursor = 'grab';
             }
