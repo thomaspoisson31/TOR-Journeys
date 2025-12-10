@@ -673,8 +673,8 @@ function renderRegions() {
 
         // Ajouter l'événement de clic pour afficher la modal commune
         polygon.addEventListener('click', (e) => {
-            // Bloquer l'affichage de l'infobox si on est en mode dessin de région
-            if (isRegionDrawingMode) {
+            // Bloquer l'affichage de l'infobox si on est en mode dessin de région OU en mode tracé de voyage
+            if (isRegionDrawingMode || window.isDrawingMode) {
                 return; // Laisser le clic se propager au viewport pour le tracé
             }
             
@@ -704,8 +704,8 @@ function renderRegions() {
         }, { passive: true });
 
         polygon.addEventListener('touchend', (e) => {
-            // Bloquer l'affichage de l'infobox si on est en mode dessin de région
-            if (isRegionDrawingMode) {
+            // Bloquer l'affichage de l'infobox si on est en mode dessin de région OU en mode tracé de voyage
+            if (isRegionDrawingMode || window.isDrawingMode) {
                 return; // Laisser le clic se propager au viewport pour le tracé
             }
             
