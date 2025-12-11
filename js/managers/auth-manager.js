@@ -1747,6 +1747,9 @@ class AuthManager {
                 storageStatus = await storageResponse.json();
             }
 
+            // Analyser les doublons
+            const duplicatesAnalysis = this.analyzeDuplicates(debugData.full_data);
+
             // Afficher dans la console
             console.log("=== DEBUG DONNÉES CLOUD ===");
             console.log("Environnement actuel:", envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION', `(${envPrefix})`);
@@ -1757,6 +1760,7 @@ class AuthManager {
             console.log("Created:", debugData.created_at);
             console.log("Updated:", debugData.updated_at);
             console.log("Summary:", debugData.data_summary);
+            console.log("Duplicates:", duplicatesAnalysis);
             console.log("Full Data:", debugData.full_data);
             console.log("Raw JSON Size:", debugData.raw_json_size, "bytes");
             console.log("=========================");
@@ -1784,6 +1788,29 @@ class AuthManager {
             const mapsCount = debugData.data_summary?.maps_count ||
                             debugData.full_data?.settings?.availableMaps?.length || 0;
 
+            // Préparer les infos de doublons
+            const hasDuplicates = duplicatesAnalysis.locations.duplicates > 0 || duplicatesAnalysis.regions.duplicates > 0;
+            const duplicatesInfo = hasDuplicates ? `
+                <div class="mb-4 p-3 rounded bg-red-900/20 border border-red-500">
+                    <div class="font-bold text-red-400 mb-2">
+                        ⚠️ DOUBLONS DÉTECTÉS
+                    </div>
+                    <div class="text-sm text-gray-300 grid grid-cols-2 gap-2 mb-2">
+                        <div>🗺️ Lieux dupliqués: ${duplicatesAnalysis.locations.duplicates}</div>
+                        <div>🌍 Régions dupliquées: ${duplicatesAnalysis.regions.duplicates}</div>
+                    </div>
+                    <button id="view-duplicates-btn" class="w-full px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-sm">
+                        <i class="fas fa-eye mr-1"></i>Voir les doublons
+                    </button>
+                </div>
+            ` : `
+                <div class="mb-4 p-3 rounded bg-green-900/20 border border-green-500">
+                    <div class="font-bold text-green-400 mb-2">
+                        ✅ Aucun doublon détecté
+                    </div>
+                </div>
+            `;
+
             const modal = document.createElement('div');
             modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[100]';
             modal.innerHTML = `
@@ -1794,6 +1821,8 @@ class AuthManager {
                     </div>
 
                     ${storageInfo}
+
+                    ${duplicatesInfo}
 
                     <div class="mb-4 p-3 rounded ${envMatch ? 'bg-green-900/20 border border-green-500' : 'bg-red-900/20 border border-red-500'}">
                         <div class="font-bold ${envMatch ? 'text-green-400' : 'text-red-400'} mb-2">
@@ -1833,10 +1862,215 @@ class AuthManager {
 
             document.body.appendChild(modal);
 
+            // Ajouter l'événement pour le bouton de visualisation des doublons
+            const viewDuplicatesBtn = modal.querySelector('#view-duplicates-btn');
+            if (viewDuplicatesBtn) {
+                viewDuplicatesBtn.addEventListener('click', () => {
+                    this.showDuplicatesModal(duplicatesAnalysis);
+                });
+            }
+
         } catch (error) {
             this.logAuth(`❌ Erreur debug cloud: ${error.message}`);
             alert(`Erreur lors du debug: ${error.message}`);
         }
+    }
+
+    showDuplicatesModal(duplicatesAnalysis) {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[110]';
+        
+        let duplicatesContent = '<div class="space-y-4">';
+        
+        // Section Lieux
+        if (duplicatesAnalysis.locations.duplicatedItems.length > 0) {
+            duplicatesContent += `
+                <div class="bg-red-900/20 border border-red-500 rounded p-4">
+                    <h4 class="text-red-400 font-bold mb-3">
+                        🗺️ Lieux dupliqués (${duplicatesAnalysis.locations.duplicates} doublons)
+                    </h4>
+                    <div class="space-y-3">
+            `;
+            
+            duplicatesAnalysis.locations.duplicatedItems.forEach(dup => {
+                duplicatesContent += `
+                    <div class="bg-gray-900 rounded p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-white">${this.escapeHtml(dup.name)}</span>
+                            <span class="text-xs bg-red-600 px-2 py-1 rounded">${dup.count}x</span>
+                        </div>
+                        <div class="text-xs text-gray-400 mb-2">ID: ${dup.id}</div>
+                        <details class="text-sm">
+                            <summary class="cursor-pointer text-blue-400 hover:text-blue-300">Voir les ${dup.count} occurrences</summary>
+                            <div class="mt-2 space-y-2 pl-4">
+                `;
+                
+                dup.items.forEach((item, index) => {
+                    duplicatesContent += `
+                        <div class="bg-gray-800 rounded p-2 border-l-2 ${index === 0 ? 'border-green-500' : 'border-red-500'}">
+                            <div class="text-xs text-gray-500 mb-1">${index === 0 ? '✓ Original' : '⚠️ Doublon #' + index}</div>
+                            <div class="text-xs">MapId: ${item.mapId || 'non défini'}</div>
+                            <div class="text-xs">Coords: (${item.coordinates?.x || 'N/A'}, ${item.coordinates?.y || 'N/A'})</div>
+                            <div class="text-xs">Connu: ${item.known ? 'Oui' : 'Non'} | Visité: ${item.visited ? 'Oui' : 'Non'}</div>
+                        </div>
+                    `;
+                });
+                
+                duplicatesContent += `
+                            </div>
+                        </details>
+                    </div>
+                `;
+            });
+            
+            duplicatesContent += '</div></div>';
+        }
+        
+        // Section Régions
+        if (duplicatesAnalysis.regions.duplicatedItems.length > 0) {
+            duplicatesContent += `
+                <div class="bg-orange-900/20 border border-orange-500 rounded p-4">
+                    <h4 class="text-orange-400 font-bold mb-3">
+                        🌍 Régions dupliquées (${duplicatesAnalysis.regions.duplicates} doublons)
+                    </h4>
+                    <div class="space-y-3">
+            `;
+            
+            duplicatesAnalysis.regions.duplicatedItems.forEach(dup => {
+                duplicatesContent += `
+                    <div class="bg-gray-900 rounded p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-white">${this.escapeHtml(dup.name)}</span>
+                            <span class="text-xs bg-orange-600 px-2 py-1 rounded">${dup.count}x</span>
+                        </div>
+                        <div class="text-xs text-gray-400 mb-2">ID: ${dup.id}</div>
+                        <details class="text-sm">
+                            <summary class="cursor-pointer text-blue-400 hover:text-blue-300">Voir les ${dup.count} occurrences</summary>
+                            <div class="mt-2 space-y-2 pl-4">
+                `;
+                
+                dup.items.forEach((item, index) => {
+                    duplicatesContent += `
+                        <div class="bg-gray-800 rounded p-2 border-l-2 ${index === 0 ? 'border-green-500' : 'border-orange-500'}">
+                            <div class="text-xs text-gray-500 mb-1">${index === 0 ? '✓ Original' : '⚠️ Doublon #' + index}</div>
+                            <div class="text-xs">MapId: ${item.mapId || 'non défini'}</div>
+                            <div class="text-xs">Points: ${item.points?.length || 0}</div>
+                        </div>
+                    `;
+                });
+                
+                duplicatesContent += `
+                            </div>
+                        </details>
+                    </div>
+                `;
+            });
+            
+            duplicatesContent += '</div></div>';
+        }
+        
+        duplicatesContent += '</div>';
+        
+        modal.innerHTML = `
+            <div class="bg-gray-800 rounded-lg p-6 max-w-3xl w-full mx-4 max-h-[90vh] flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-white">🔍 Analyse des Doublons</h3>
+                    <button class="close-duplicates-modal text-gray-400 hover:text-white text-2xl">×</button>
+                </div>
+                
+                <div class="flex-1 overflow-auto">
+                    ${duplicatesContent}
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-700 flex justify-end">
+                    <button class="close-duplicates-modal px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Ajouter les événements de fermeture
+        modal.querySelectorAll('.close-duplicates-modal').forEach(btn => {
+            btn.addEventListener('click', () => modal.remove());
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+
+    analyzeDuplicates(data) {
+        const result = {
+            locations: {
+                total: 0,
+                duplicates: 0,
+                duplicatedItems: []
+            },
+            regions: {
+                total: 0,
+                duplicates: 0,
+                duplicatedItems: []
+            }
+        };
+
+        // Analyser les lieux
+        if (data?.locations?.locations) {
+            const locations = data.locations.locations;
+            result.locations.total = locations.length;
+            
+            const idCount = {};
+            locations.forEach(loc => {
+                if (loc.id) {
+                    idCount[loc.id] = (idCount[loc.id] || 0) + 1;
+                }
+            });
+
+            Object.entries(idCount).forEach(([id, count]) => {
+                if (count > 1) {
+                    result.locations.duplicates += count - 1;
+                    const duplicatedLocs = locations.filter(loc => loc.id === id);
+                    result.locations.duplicatedItems.push({
+                        id: id,
+                        name: duplicatedLocs[0]?.name || 'Inconnu',
+                        count: count,
+                        items: duplicatedLocs
+                    });
+                }
+            });
+        }
+
+        // Analyser les régions
+        if (data?.regions?.regions) {
+            const regions = data.regions.regions;
+            result.regions.total = regions.length;
+            
+            const idCount = {};
+            regions.forEach(reg => {
+                if (reg.id) {
+                    idCount[reg.id] = (idCount[reg.id] || 0) + 1;
+                }
+            });
+
+            Object.entries(idCount).forEach(([id, count]) => {
+                if (count > 1) {
+                    result.regions.duplicates += count - 1;
+                    const duplicatedRegs = regions.filter(reg => reg.id === id);
+                    result.regions.duplicatedItems.push({
+                        id: id,
+                        name: duplicatedRegs[0]?.name || 'Inconnu',
+                        count: count,
+                        items: duplicatedRegs
+                    });
+                }
+            });
+        }
+
+        return result;
     }
 
     escapeHtml(text) {
