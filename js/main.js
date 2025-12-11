@@ -1868,6 +1868,14 @@ function toggleLocationAddingMode() {
         // Changer le curseur
         viewport.style.cursor = 'crosshair';
         viewport.classList.add('adding-location');
+
+        // Désactiver les pointer-events des régions existantes pour permettre l'ajout
+        const regionsLayer = document.getElementById('regions-layer');
+        if (regionsLayer) {
+            regionsLayer.querySelectorAll('polygon').forEach(polygon => {
+                polygon.style.pointerEvents = 'none';
+            });
+        }
     } else {
         console.log("📍 Exiting location adding mode");
         exitLocationAddingMode();
@@ -1886,6 +1894,14 @@ function exitLocationAddingMode() {
     // Restaurer le curseur normal
     viewport.style.cursor = 'grab';
     viewport.classList.remove('adding-location');
+
+    // Réactiver les pointer-events des régions existantes
+    const regionsLayer = document.getElementById('regions-layer');
+    if (regionsLayer) {
+        regionsLayer.querySelectorAll('polygon').forEach(polygon => {
+            polygon.style.pointerEvents = 'auto';
+        });
+    }
 }
 
 function handleLocationClick(event) {
