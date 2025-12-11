@@ -13,6 +13,7 @@ body {
 }
 
 #viewport.drawing *,
+#viewport.adding-location *,
 #viewport.adding-region * {
     cursor: crosshair !important;
 }

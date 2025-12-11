@@ -440,6 +440,11 @@ function renderLocations() {
         // Événements de souris pour le glisser-déplacer
         marker.addEventListener('mousedown', (e) => {
             if (e.button === 0) { // Clic gauche seulement
+                // Bloquer en mode ajout de lieu - priorité absolue
+                if (isLocationAddingMode) {
+                    return; // Laisser le clic se propager au viewport pour l'ajout
+                }
+                
                 // Bloquer le drag en mode Aventure ou en mode dessin de région
                 if (window.positionManager && window.positionManager.adventureMode) {
                     e.preventDefault();
@@ -470,8 +475,12 @@ function renderLocations() {
         // Survol pour montrer le curseur de déplacement
         marker.addEventListener('mouseenter', () => {
             if (!isDraggingLocation && !window.isDrawingMode) {
+                // Curseur croix en mode ajout de lieu
+                if (isLocationAddingMode) {
+                    marker.style.cursor = 'crosshair';
+                }
                 // Ne pas afficher le curseur "move" en mode Aventure
-                if (window.positionManager && window.positionManager.adventureMode) {
+                else if (window.positionManager && window.positionManager.adventureMode) {
                     marker.style.cursor = 'pointer';
                 } else {
                     marker.style.cursor = 'move';
@@ -481,7 +490,12 @@ function renderLocations() {
 
         marker.addEventListener('mouseleave', () => {
             if (!isDraggingLocation && !window.isDrawingMode) {
-                marker.style.cursor = 'pointer';
+                // Garder la croix en mode ajout de lieu
+                if (isLocationAddingMode) {
+                    marker.style.cursor = 'crosshair';
+                } else {
+                    marker.style.cursor = 'pointer';
+                }
             }
         });
 
@@ -520,6 +534,11 @@ function renderLocations() {
         }, { passive: true });
 
         marker.addEventListener('touchend', (e) => {
+            // Bloquer les interactions si on est en mode ajout de lieu - priorité absolue
+            if (isLocationAddingMode) {
+                return; // Laisser le clic se propager au viewport pour l'ajout
+            }
+            
             // Bloquer les interactions si on est en mode dessin de région
             if (isRegionDrawingMode) {
                 return; // Laisser le clic se propager au viewport pour le tracé
@@ -556,6 +575,11 @@ function renderLocations() {
 
         // Ajouter l'événement de clic droit pour changer la couleur (desktop)
         marker.addEventListener('contextmenu', (e) => {
+            // Bloquer en mode ajout de lieu
+            if (isLocationAddingMode) {
+                return;
+            }
+            
             e.preventDefault();
             e.stopPropagation();
             showColorChangeModal(e, location, 'location');
@@ -673,6 +697,11 @@ function renderRegions() {
 
         // Ajouter l'événement de clic pour afficher la modal commune
         polygon.addEventListener('click', (e) => {
+            // Bloquer l'affichage de l'infobox si on est en mode ajout de lieu - priorité absolue
+            if (isLocationAddingMode) {
+                return; // Laisser le clic se propager au viewport pour l'ajout
+            }
+            
             // Bloquer l'affichage de l'infobox si on est en mode dessin de région OU en mode tracé de voyage
             if (isRegionDrawingMode || window.isDrawingMode) {
                 return; // Laisser le clic se propager au viewport pour le tracé
@@ -704,6 +733,11 @@ function renderRegions() {
         }, { passive: true });
 
         polygon.addEventListener('touchend', (e) => {
+            // Bloquer l'affichage de l'infobox si on est en mode ajout de lieu - priorité absolue
+            if (isLocationAddingMode) {
+                return; // Laisser le clic se propager au viewport pour l'ajout
+            }
+            
             // Bloquer l'affichage de l'infobox si on est en mode dessin de région OU en mode tracé de voyage
             if (isRegionDrawingMode || window.isDrawingMode) {
                 return; // Laisser le clic se propager au viewport pour le tracé
@@ -732,6 +766,11 @@ function renderRegions() {
 
         // Ajouter l'événement de clic droit pour changer la couleur (desktop)
         polygon.addEventListener('contextmenu', (e) => {
+            // Bloquer en mode ajout de lieu
+            if (isLocationAddingMode) {
+                return;
+            }
+            
             e.preventDefault();
             e.stopPropagation();
             showColorChangeModal(e, region, 'region');
