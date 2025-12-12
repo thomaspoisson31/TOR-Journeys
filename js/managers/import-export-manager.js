@@ -134,6 +134,8 @@ class ImportExportManager {
 
             // Ajouter les régions comme lieux avec type "region" (filtrées par carte active)
             if (regionsData?.regions) {
+                console.log(`📊 [exportUnifiedData] Nombre total de régions dans regionsData: ${regionsData.regions.length}`);
+                
                 regionsData.regions.forEach(region => {
                     // Filtrer par carte active - comparer en tant que strings
                     if (region.mapId && String(region.mapId) !== String(activeMapUrl)) {
@@ -141,7 +143,7 @@ class ImportExportManager {
                         return; // Ignorer cette région
                     }
                     
-                    console.log(`✅ [exportUnifiedData] Région "${region.name}" ajoutée (mapId: ${region.mapId})`);
+                    console.log(`✅ [exportUnifiedData] Région "${region.name}" ajoutée (mapId: ${region.mapId || 'AUCUN'})`);
 
                     // Extraire les points depuis la structure existante
                     let points = [];
@@ -153,6 +155,8 @@ class ImportExportManager {
                         points = region.coordinates;
                     }
 
+                    console.log(`📍 [exportUnifiedData] Région "${region.name}" a ${points.length} points`);
+
                     // Exporter TOUS les paramètres de la région
                     const regionAsLocation = {
                         id: region.id,
@@ -162,7 +166,7 @@ class ImportExportManager {
                         known: region.known !== undefined ? region.known : true,
                         visited: region.visited !== undefined ? region.visited : false,
                         type: "region",
-                        mapId: region.mapId,
+                        mapId: region.mapId || activeMapUrl, // Assurer qu'il y a toujours un mapId
                         coordinates: {
                             points: points
                         }
