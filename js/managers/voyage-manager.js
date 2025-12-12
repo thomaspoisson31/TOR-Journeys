@@ -2046,8 +2046,9 @@ class VoyageManager {
 
         // Récupérer les personnages de la communauté (PJ uniquement)
         let charactersInfo = '';
+        let playerCharacters = [];
         if (window.charactersManager && window.charactersManager.characters) {
-            const playerCharacters = window.charactersManager.characters.filter(char => char.type === 'PJ');
+            playerCharacters = window.charactersManager.characters.filter(char => char.type === 'PJ');
             if (playerCharacters.length > 0) {
                 charactersInfo = '\n\nCOMMUNAUTÉ DES AVENTURIERS :\n';
                 playerCharacters.forEach(char => {
@@ -2060,6 +2061,13 @@ class VoyageManager {
             }
         }
 
+        // Déterminer si on utilise singulier ou pluriel
+        const isSingular = playerCharacters.length === 1;
+        const personnePronom = isSingular ? 
+            'il/elle (selon le personnage)' : 
+            'ils/elles';
+        const examplePronom = isSingular ? 'il' : 'ils';
+
         let prompt = `Tu es un narrateur expert dans l'univers de la Terre du Milieu de J.R.R. Tolkien. 
 
 Ta mission est de créer des descriptions immersives pour chaque jour d'un voyage, en tenant compte du contexte global du périple.
@@ -2068,14 +2076,15 @@ CONTEXTE DU VOYAGE :${adventurersGroup ? `\nGroupe : ${adventurersGroup}` : ''}$
 
 INSTRUCTIONS IMPORTANTES :
 1. Génère une description UNIQUE pour chaque jour
-2. Écris TOUJOURS à la TROISIÈME PERSONNE DU PLURIEL (ils, elles, leur groupe, les compagnons, etc.)
-3. Varie le style et le focus d'une journée à l'autre (paysages, rencontres, réflexions, actions, détails culturels)
-4. Chaque description doit faire environ 50-80 mots
-5. Utilise un style évocateur et poétique, inspiré de Tolkien
-6. Intègre les éléments météorologiques et les lieux traversés naturellement
-7. ÉVITE ABSOLUMENT les répétitions entre les jours - change de perspective, d'angle et de vocabulaire
-8. Utilise les descriptions des lieux/régions pour enrichir ta narration
-9. Alterne entre : action, contemplation, danger, découverte, repos, mystère
+2. Écris TOUJOURS à la TROISIÈME PERSONNE ${isSingular ? 'DU SINGULIER' : 'DU PLURIEL'} (${personnePronom}, ${isSingular ? 'son/sa, le/la' : 'leur, les'} ${isSingular ? 'voyageur, l\'aventurier' : 'compagnons, le groupe'}, etc.)
+3. Utilise le PRÉSENT DE NARRATION (${examplePronom} chemine, ${examplePronom} découvre, ${examplePronom} traverse, etc.)
+4. Varie le style et le focus d'une journée à l'autre (paysages, rencontres, réflexions, actions, détails culturels)
+5. Chaque description doit faire environ 50-80 mots
+6. Utilise un style évocateur et poétique, inspiré de Tolkien
+7. Intègre les éléments météorologiques et les lieux traversés naturellement
+8. ÉVITE ABSOLUMENT les répétitions entre les jours - change de perspective, d'angle et de vocabulaire
+9. Utilise les descriptions des lieux/régions pour enrichir ta narration
+10. Alterne entre : action, contemplation, danger, découverte, repos, mystère
 
 RÈGLES POUR LES TRANSITIONS :
 - Mentionne le fait de QUITTER un lieu/région SEULEMENT si la journée suivante se déroule dans un lieu/région DIFFÉRENT
@@ -2148,7 +2157,7 @@ Réponds EXACTEMENT dans ce format JSON (et rien d'autre) :
 }
 
 EXEMPLE DE RÉPONSE ATTENDUE (respecte ce format EXACT) :
-{"descriptions":[{"day":1,"description":"Ils cheminaient sous la pluie..."},{"day":2,"description":"Les compagnons atteignirent les Hauts Reculés..."}]}
+{"descriptions":[{"day":1,"description":"${examplePronom === 'il' ? 'Il chemine' : 'Ils cheminent'} sous la pluie..."},{"day":2,"description":"${examplePronom === 'il' ? 'L\'aventurier atteint' : 'Les compagnons atteignent'} les Hauts Reculés..."}]}
 
 ⚠️ RAPPEL CRITIQUE : Commence ta réponse DIRECTEMENT par le caractère "{" (accolade ouvrante).
 Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclusion.`;
