@@ -2080,14 +2080,27 @@ CONSIGNES DE GÉNÉRATION :
 - Varie le vocabulaire : évite de réutiliser les mêmes adjectifs ou tournures
 - Crée une vraie progression narrative avec des hauts et des bas
 
-FORMAT DE RÉPONSE :
-Jour 1 :
-[description du jour 1]
+⚠️ FORMAT DE RÉPONSE OBLIGATOIRE - CRUCIAL ⚠️
 
-Jour 2 :
-[description du jour 2]
+Tu DOIS répondre UNIQUEMENT avec un objet JSON valide, sans AUCUN texte avant ou après.
+Ne commence PAS ta réponse par "Absolument !", "Voici", ou tout autre texte.
+Ne mets PAS de commentaires, d'explications ou de formatage markdown.
 
-... et ainsi de suite pour tous les jours.`;
+Réponds EXACTEMENT dans ce format JSON (et rien d'autre) :
+
+{
+  "descriptions": [
+    {"day": 1, "description": "..."},
+    {"day": 2, "description": "..."},
+    {"day": 3, "description": "..."}
+  ]
+}
+
+EXEMPLE DE RÉPONSE ATTENDUE (respecte ce format EXACT) :
+{"descriptions":[{"day":1,"description":"La pluie fouettait nos visages..."},{"day":2,"description":"Les Hauts Reculés s'étendaient..."}]}
+
+⚠️ RAPPEL CRITIQUE : Commence ta réponse DIRECTEMENT par le caractère "{" (accolade ouvrante).
+Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclusion.`;
 
         return prompt;
     }
