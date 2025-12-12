@@ -571,22 +571,32 @@ class SettingsManager {
             `;
         }).join('');
 
-        // Section d'analyse des problèmes
-        if (orphanLocations > 0 || orphanRegions > 0 || invalidMapIdLocations > 0 || invalidMapIdRegions > 0) {
-            mapsGrid.innerHTML += `
-                <div class="col-span-full mt-4 p-4 bg-yellow-900/20 border border-yellow-600 rounded-lg">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex-1">
-                            <div class="text-yellow-400 font-semibold mb-2">
-                                <i class="fas fa-exclamation-triangle mr-2"></i>Analyse des Doublons
-                            </div>
-                            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2 text-sm"
-                                    onclick="window.settingsManager.showDuplicatesAnalysis()">
-                                <i class="fas fa-search"></i>
-                                <span>Afficher l'analyse détaillée</span>
-                            </button>
+        // Section d'analyse des doublons - toujours affichée
+        const hasProblems = orphanLocations > 0 || orphanRegions > 0 || invalidMapIdLocations > 0 || invalidMapIdRegions > 0;
+        const bgClass = hasProblems ? 'bg-yellow-900/20 border-yellow-600' : 'bg-gray-900/20 border-gray-600';
+        const textClass = hasProblems ? 'text-yellow-400' : 'text-gray-400';
+        const iconClass = hasProblems ? 'fa-exclamation-triangle' : 'fa-check-circle';
+        
+        mapsGrid.innerHTML += `
+            <div class="col-span-full mt-4 p-4 ${bgClass} border rounded-lg">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex-1">
+                        <div class="${textClass} font-semibold mb-2">
+                            <i class="fas ${iconClass} mr-2"></i>${hasProblems ? 'Problèmes détectés' : 'Analyse des Doublons'}
                         </div>
+                        ${hasProblems ? `
+                        <div class="text-sm text-gray-300 mb-2">
+                            ${orphanLocations + orphanRegions} élément(s) sans mapID • 
+                            ${invalidMapIdLocations + invalidMapIdRegions} élément(s) avec mapID invalide
+                        </div>
+                        ` : ''}
+                        <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2 text-sm"
+                                onclick="window.settingsManager.showDuplicatesAnalysis()">
+                            <i class="fas fa-search"></i>
+                            <span>Afficher l'analyse détaillée</span>
+                        </button>
                     </div>
+                </div>
                     
                     ${orphanLocations > 0 || orphanRegions > 0 ? `
                     <div class="mb-3 p-3 bg-red-900/20 border border-red-600 rounded">
@@ -620,8 +630,8 @@ class SettingsManager {
                     </div>
                     ` : ''}
                 </div>
-            `;
-        }
+            </div>
+        `;
 
         // Charger les dimensions réelles pour chaque carte
         this.loadRealMapDimensions();
