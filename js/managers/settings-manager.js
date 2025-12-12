@@ -468,6 +468,27 @@ class SettingsManager {
         // Appliquer la classe grid pour 2 colonnes
         mapsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
 
+        // Analyser les orphelins et invalides
+        const validMapIds = this.availableMaps.map(m => m.url);
+        let orphanLocations = 0;
+        let orphanRegions = 0;
+        let invalidMapIdLocations = 0;
+        let invalidMapIdRegions = 0;
+
+        if (window.locationsData && window.locationsData.locations) {
+            orphanLocations = window.locationsData.locations.filter(loc => !loc.mapId).length;
+            invalidMapIdLocations = window.locationsData.locations.filter(loc =>
+                loc.mapId && !validMapIds.includes(loc.mapId)
+            ).length;
+        }
+
+        if (window.regionsData && window.regionsData.regions) {
+            orphanRegions = window.regionsData.regions.filter(reg => !reg.mapId).length;
+            invalidMapIdRegions = window.regionsData.regions.filter(reg =>
+                reg.mapId && !validMapIds.includes(reg.mapId)
+            ).length;
+        }
+
         mapsGrid.innerHTML = this.availableMaps.map((map, index) => {
             const isActive = this.activeMapUrl === map.url;
             const mapWidth = map.width || 5103;
@@ -479,13 +500,13 @@ class SettingsManager {
 
             if (window.locationsData && window.locationsData.locations) {
                 locationsCount = window.locationsData.locations.filter(loc =>
-                    !loc.mapId || loc.mapId === map.url
+                    loc.mapId === map.url
                 ).length;
             }
 
             if (window.regionsData && window.regionsData.regions) {
                 regionsCount = window.regionsData.regions.filter(reg =>
-                    !reg.mapId || reg.mapId === map.url
+                    reg.mapId === map.url
                 ).length;
             }
 
@@ -550,41 +571,54 @@ class SettingsManager {
             `;
         }).join('');
 
-        // Ajouter l'avertissement des orphelins après toutes les cartes
-        const validMapIds = this.availableMaps.map(m => m.url);
-        let orphanLocations = 0;
-        let orphanRegions = 0;
-
-        if (window.locationsData && window.locationsData.locations) {
-            orphanLocations = window.locationsData.locations.filter(loc =>
-                !loc.mapId || !validMapIds.includes(loc.mapId)
-            ).length;
-        }
-
-        if (window.regionsData && window.regionsData.regions) {
-            orphanRegions = window.regionsData.regions.filter(reg =>
-                !reg.mapId || !validMapIds.includes(reg.mapId)
-            ).length;
-        }
-
-        if (orphanLocations > 0 || orphanRegions > 0) {
+        // Section d'analyse des problèmes
+        if (orphanLocations > 0 || orphanRegions > 0 || invalidMapIdLocations > 0 || invalidMapIdRegions > 0) {
             mapsGrid.innerHTML += `
                 <div class="col-span-full mt-4 p-4 bg-yellow-900/20 border border-yellow-600 rounded-lg">
-                    <div class="flex items-start justify-between">
+                    <div class="flex items-start justify-between mb-4">
                         <div class="flex-1">
                             <div class="text-yellow-400 font-semibold mb-2">
-                                <i class="fas fa-exclamation-triangle mr-2"></i>Éléments orphelins détectés
+                                <i class="fas fa-exclamation-triangle mr-2"></i>Analyse des Doublons
                             </div>
-                            <div class="text-sm text-gray-300 mb-3">
-                                ${orphanLocations} lieu${orphanLocations > 1 ? 'x' : ''} et ${orphanRegions} région${orphanRegions > 1 ? 's' : ''} n'appartiennent à aucune carte existante.
-                            </div>
+                            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2 text-sm"
+                                    onclick="window.settingsManager.showDuplicatesAnalysis()">
+                                <i class="fas fa-search"></i>
+                                <span>Afficher l'analyse détaillée</span>
+                            </button>
                         </div>
                     </div>
-                    <button class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm"
-                            onclick="window.settingsManager.deleteOrphanElements()">
-                        <i class="fas fa-trash-alt"></i>
-                        <span>Supprimer les éléments orphelins</span>
-                    </button>
+                    
+                    ${orphanLocations > 0 || orphanRegions > 0 ? `
+                    <div class="mb-3 p-3 bg-red-900/20 border border-red-600 rounded">
+                        <div class="text-red-400 font-medium mb-2">
+                            <i class="fas fa-unlink mr-2"></i>Éléments sans mapID
+                        </div>
+                        <div class="text-sm text-gray-300 mb-2">
+                            ${orphanLocations} lieu${orphanLocations > 1 ? 'x' : ''} et ${orphanRegions} région${orphanRegions > 1 ? 's' : ''} sans mapID associé
+                        </div>
+                        <button class="w-full px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded transition-colors flex items-center justify-center space-x-2 text-xs"
+                                onclick="window.settingsManager.deleteOrphanElements()">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Supprimer les éléments sans mapID</span>
+                        </button>
+                    </div>
+                    ` : ''}
+                    
+                    ${invalidMapIdLocations > 0 || invalidMapIdRegions > 0 ? `
+                    <div class="p-3 bg-orange-900/20 border border-orange-600 rounded">
+                        <div class="text-orange-400 font-medium mb-2">
+                            <i class="fas fa-map-marked-alt mr-2"></i>Éléments avec mapID invalide
+                        </div>
+                        <div class="text-sm text-gray-300 mb-2">
+                            ${invalidMapIdLocations} lieu${invalidMapIdLocations > 1 ? 'x' : ''} et ${invalidMapIdRegions} région${invalidMapIdRegions > 1 ? 's' : ''} avec un mapID qui ne correspond à aucune carte
+                        </div>
+                        <button class="w-full px-3 py-1.5 bg-orange-600 hover:bg-orange-700 rounded transition-colors flex items-center justify-center space-x-2 text-xs"
+                                onclick="window.settingsManager.deleteInvalidMapIdElements()">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Supprimer les éléments avec mapID invalide</span>
+                        </button>
+                    </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -1047,20 +1081,147 @@ class SettingsManager {
     }
 
 
+    showDuplicatesAnalysis() {
+        const validMapIds = this.availableMaps.map(m => m.url);
+        const orphanLocs = [];
+        const invalidLocs = [];
+        const orphanRegs = [];
+        const invalidRegs = [];
+
+        // Analyser les lieux
+        if (window.locationsData && window.locationsData.locations) {
+            window.locationsData.locations.forEach(loc => {
+                if (!loc.mapId) {
+                    orphanLocs.push(loc);
+                } else if (!validMapIds.includes(loc.mapId)) {
+                    invalidLocs.push(loc);
+                }
+            });
+        }
+
+        // Analyser les régions
+        if (window.regionsData && window.regionsData.regions) {
+            window.regionsData.regions.forEach(reg => {
+                if (!reg.mapId) {
+                    orphanRegs.push(reg);
+                } else if (!validMapIds.includes(reg.mapId)) {
+                    invalidRegs.push(reg);
+                }
+            });
+        }
+
+        // Créer la modale d'analyse
+        const modal = document.createElement('div');
+        modal.id = 'duplicates-analysis-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]';
+
+        modal.innerHTML = `
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[80vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-white">
+                        <i class="fas fa-search mr-2"></i>Analyse des Doublons
+                    </h3>
+                    <button onclick="this.closest('#duplicates-analysis-modal').remove()" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+
+                ${orphanLocs.length > 0 || orphanRegs.length > 0 ? `
+                <div class="mb-6 p-4 bg-red-900/20 border border-red-600 rounded-lg">
+                    <h4 class="text-red-400 font-semibold mb-3">
+                        <i class="fas fa-unlink mr-2"></i>Éléments sans mapID (${orphanLocs.length + orphanRegs.length})
+                    </h4>
+                    ${orphanLocs.length > 0 ? `
+                    <div class="mb-3">
+                        <div class="text-sm text-gray-300 font-medium mb-2">Lieux (${orphanLocs.length}):</div>
+                        <div class="space-y-1 max-h-40 overflow-y-auto">
+                            ${orphanLocs.map(loc => `
+                                <div class="text-xs bg-gray-700 p-2 rounded">
+                                    <strong>${loc.name}</strong>
+                                    <div class="text-gray-400">ID: ${loc.id} • Coords: (${loc.coordinates?.x || 'N/A'}, ${loc.coordinates?.y || 'N/A'})</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    ${orphanRegs.length > 0 ? `
+                    <div>
+                        <div class="text-sm text-gray-300 font-medium mb-2">Régions (${orphanRegs.length}):</div>
+                        <div class="space-y-1 max-h-40 overflow-y-auto">
+                            ${orphanRegs.map(reg => `
+                                <div class="text-xs bg-gray-700 p-2 rounded">
+                                    <strong>${reg.name}</strong>
+                                    <div class="text-gray-400">ID: ${reg.id}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+
+                ${invalidLocs.length > 0 || invalidRegs.length > 0 ? `
+                <div class="p-4 bg-orange-900/20 border border-orange-600 rounded-lg">
+                    <h4 class="text-orange-400 font-semibold mb-3">
+                        <i class="fas fa-map-marked-alt mr-2"></i>Éléments avec mapID invalide (${invalidLocs.length + invalidRegs.length})
+                    </h4>
+                    ${invalidLocs.length > 0 ? `
+                    <div class="mb-3">
+                        <div class="text-sm text-gray-300 font-medium mb-2">Lieux (${invalidLocs.length}):</div>
+                        <div class="space-y-1 max-h-40 overflow-y-auto">
+                            ${invalidLocs.map(loc => `
+                                <div class="text-xs bg-gray-700 p-2 rounded">
+                                    <strong>${loc.name}</strong>
+                                    <div class="text-gray-400">ID: ${loc.id}</div>
+                                    <div class="text-orange-300">MapID invalide: ${loc.mapId}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    ${invalidRegs.length > 0 ? `
+                    <div>
+                        <div class="text-sm text-gray-300 font-medium mb-2">Régions (${invalidRegs.length}):</div>
+                        <div class="space-y-1 max-h-40 overflow-y-auto">
+                            ${invalidRegs.map(reg => `
+                                <div class="text-xs bg-gray-700 p-2 rounded">
+                                    <strong>${reg.name}</strong>
+                                    <div class="text-gray-400">ID: ${reg.id}</div>
+                                    <div class="text-orange-300">MapID invalide: ${reg.mapId}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+
+                ${orphanLocs.length === 0 && orphanRegs.length === 0 && invalidLocs.length === 0 && invalidRegs.length === 0 ? `
+                <div class="p-8 text-center text-gray-400">
+                    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+                    <p class="text-lg">Aucun problème détecté</p>
+                    <p class="text-sm mt-2">Tous les lieux et régions ont un mapID valide</p>
+                </div>
+                ` : ''}
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+    }
+
     deleteOrphanElements() {
-        if (!confirm('Voulez-vous vraiment supprimer tous les lieux et régions orphelins ?\n\nCes éléments n\'appartiennent à aucune carte existante.\n\nCette action est irréversible.')) {
+        if (!confirm('Voulez-vous vraiment supprimer tous les lieux et régions SANS mapID ?\n\nCette action est irréversible.')) {
             return;
         }
 
-        const validMapIds = this.availableMaps.map(m => m.url);
         let deletedLocations = 0;
         let deletedRegions = 0;
 
-        // Supprimer les lieux orphelins
+        // Supprimer les lieux sans mapID
         if (window.locationsData && window.locationsData.locations) {
             const beforeCount = window.locationsData.locations.length;
             window.locationsData.locations = window.locationsData.locations.filter(loc => {
-                if (!loc.mapId || !validMapIds.includes(loc.mapId)) {
+                if (!loc.mapId) {
                     return false; // Supprimer
                 }
                 return true; // Garder
@@ -1068,11 +1229,11 @@ class SettingsManager {
             deletedLocations = beforeCount - window.locationsData.locations.length;
         }
 
-        // Supprimer les régions orphelines
+        // Supprimer les régions sans mapID
         if (window.regionsData && window.regionsData.regions) {
             const beforeCount = window.regionsData.regions.length;
             window.regionsData.regions = window.regionsData.regions.filter(reg => {
-                if (!reg.mapId || !validMapIds.includes(reg.mapId)) {
+                if (!reg.mapId) {
                     return false; // Supprimer
                 }
                 return true; // Garder
@@ -1097,8 +1258,62 @@ class SettingsManager {
             window.renderRegions();
         }
 
-        console.log(`✅ Éléments orphelins supprimés: ${deletedLocations} lieux, ${deletedRegions} régions`);
-        alert(`${deletedLocations} lieu${deletedLocations > 1 ? 'x' : ''} et ${deletedRegions} région${deletedRegions > 1 ? 's' : ''} orphelin${deletedLocations + deletedRegions > 1 ? 's' : ''} supprimé${deletedLocations + deletedRegions > 1 ? 's' : ''}.`);
+        console.log(`✅ Éléments sans mapID supprimés: ${deletedLocations} lieux, ${deletedRegions} régions`);
+        alert(`${deletedLocations} lieu${deletedLocations > 1 ? 'x' : ''} et ${deletedRegions} région${deletedRegions > 1 ? 's' : ''} sans mapID supprimé${deletedLocations + deletedRegions > 1 ? 's' : ''}.`);
+    }
+
+    deleteInvalidMapIdElements() {
+        if (!confirm('Voulez-vous vraiment supprimer tous les lieux et régions avec un mapID invalide ?\n\nCes éléments ont un mapID qui ne correspond à aucune carte du profil.\n\nCette action est irréversible.')) {
+            return;
+        }
+
+        const validMapIds = this.availableMaps.map(m => m.url);
+        let deletedLocations = 0;
+        let deletedRegions = 0;
+
+        // Supprimer les lieux avec mapID invalide
+        if (window.locationsData && window.locationsData.locations) {
+            const beforeCount = window.locationsData.locations.length;
+            window.locationsData.locations = window.locationsData.locations.filter(loc => {
+                if (loc.mapId && !validMapIds.includes(loc.mapId)) {
+                    return false; // Supprimer
+                }
+                return true; // Garder
+            });
+            deletedLocations = beforeCount - window.locationsData.locations.length;
+        }
+
+        // Supprimer les régions avec mapID invalide
+        if (window.regionsData && window.regionsData.regions) {
+            const beforeCount = window.regionsData.regions.length;
+            window.regionsData.regions = window.regionsData.regions.filter(reg => {
+                if (reg.mapId && !validMapIds.includes(reg.mapId)) {
+                    return false; // Supprimer
+                }
+                return true; // Garder
+            });
+            deletedRegions = beforeCount - window.regionsData.regions.length;
+        }
+
+        // Sauvegarder les modifications
+        if (window.dataManager) {
+            window.dataManager.saveLocationsToLocal();
+            window.dataManager.saveRegionsToLocal();
+        }
+
+        // Re-render la grille pour mettre à jour l'affichage
+        this.renderMapsGrid();
+
+        // Re-render les lieux et régions sur la carte
+        if (typeof window.renderLocations === 'function') {
+            window.renderLocations();
+        }
+        if (typeof window.renderRegions === 'function') {
+            window.renderRegions();
+        }
+
+        console.log(`✅ Éléments avec mapID invalide supprimés: ${deletedLocations} lieux, ${deletedRegions} régions`);
+        alert(`${deletedLocations} lieu${deletedLocations > 1 ? 'x' : ''} et ${deletedRegions} région${deletedRegions > 1 ? 's' : ''} avec mapID invalide supprimé${deletedLocations + deletedRegions > 1 ? 's' : ''}.`);
     }
 
 
