@@ -6,6 +6,7 @@ class JournalManager {
         this.journalContent = null;
         this.journalEmpty = null;
         this.currentTab = 'journal-list';
+        this.exportJournalMarkdownBtn = null; // Added reference for the new button
     }
 
     init() {
@@ -23,11 +24,13 @@ class JournalManager {
         this.journalEmpty = document.getElementById('journal-empty');
         this.journalBtn = document.getElementById('journal-btn');
         this.closeJournalBtn = document.getElementById('close-journal-btn');
+        this.exportJournalMarkdownBtn = document.getElementById('export-journal-markdown-btn'); // Get reference to the new button
 
         console.log('📖 [setupDOMReferences] Éléments trouvés:', {
             journalModal: !!this.journalModal,
             journalContent: !!this.journalContent,
-            journalEmpty: !!this.journalEmpty
+            journalEmpty: !!this.journalEmpty,
+            exportJournalMarkdownBtn: !!this.exportJournalMarkdownBtn // Log the new button reference
         });
     }
 
@@ -60,6 +63,12 @@ class JournalManager {
         const addObjectiveBtn = document.getElementById('add-objective-btn');
         if (addObjectiveBtn) {
             addObjectiveBtn.addEventListener('click', () => this.addObjective());
+        }
+
+        // Écouteur pour le bouton d'export Markdown
+        if (this.exportJournalMarkdownBtn) {
+            this.exportJournalMarkdownBtn.addEventListener('click', () => this.exportJournalAsMarkdown());
+            console.log("📖 Écouteur d'événement ajouté pour le bouton d'export Markdown.");
         }
     }
 
@@ -157,7 +166,7 @@ class JournalManager {
                 return match.trim() ? `<p>${match}</p>` : '';
             })
             .replace(/<p><\/p>/g, '')
-            .replace(/<p>(<h[1-6]>)/g, '$1')
+            .replace(/<p>(<h[1-6]>)>/g, '$1')
             .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
             .replace(/<p>(<ul>)/g, '$1')
             .replace(/(<\/ul>)<\/p>/g, '$1');
@@ -180,7 +189,7 @@ class JournalManager {
         this.journal.forEach((journey, journeyIndex) => {
             const isRandomRoll = journey.journeyType === 'random';
             const journeyIcon = isRandomRoll ? '🎲' : '⛰️';
-            
+
             if (journey.days && journey.days.length > 0) {
                 journey.days.forEach((day) => {
                     allDays.push({
@@ -240,7 +249,7 @@ class JournalManager {
         // Générer le HTML pour chaque jour individuellement
         const journalHTML = allDays.map((day) => {
             let dayHTML = `<div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-3 p-4">`;
-            
+
             // En-tête avec date + badge voyage
             dayHTML += `
                 <div class="flex items-center gap-3 mb-3 pb-2 border-b border-gray-200">
@@ -274,7 +283,7 @@ class JournalManager {
             } else {
                 // Voyage normal
                 const discoveryNames = day.discoveries.map(d => d.name).join(' et ');
-                
+
                 if (discoveryNames) {
                     dayHTML += `
                         <div class="text-sm font-semibold text-blue-600 mb-2">
@@ -282,13 +291,13 @@ class JournalManager {
                         </div>
                     `;
                 }
-                
+
                 // Description
                 if (day.description) {
                     let filteredDescription = day.description;
                     filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
                     filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
-                    
+
                     const descriptionHtml = this.simpleMarkdown(filteredDescription);
                     dayHTML += `
                         <div class="text-sm text-gray-700 mb-2">
@@ -296,7 +305,7 @@ class JournalManager {
                         </div>
                     `;
                 }
-                
+
                 // Événement aléatoire
                 if (day.eventResult) {
                     const eventHtml = this.simpleMarkdown(day.eventResult);
@@ -525,7 +534,10 @@ class JournalManager {
 
         let markdown = "# Journal de Voyage - Terre du Milieu\n\n";
 
-        this.journal.forEach(journey => {
+        // Trier le journal par date de génération pour un export chronologique
+        const sortedJournal = [...this.journal].sort((a, b) => new Date(a.generatedAt) - new Date(b.generatedAt));
+
+        sortedJournal.forEach(journey => {
             const generatedDate = new Date(journey.generatedAt);
             const formattedDate = generatedDate.toLocaleDateString('fr-FR', {
                 year: 'numeric',
@@ -533,38 +545,160 @@ class JournalManager {
                 day: 'numeric'
             });
 
-            markdown += `## ${journey.title}\n`;
+            markdown += `## ${this.escapeHtml(journey.title)}\n`;
             markdown += `*Généré le ${formattedDate}*\n\n`;
 
-            journey.days.forEach(day => {
+            // Trier les jours du voyage par date calendrier (si disponible)
+            const sortedDays = [...journey.days].sort((a, b) => {
+                const parseDate = (dateStr) => {
+                    const parts = dateStr.split(' ');
+                    if (parts.length >= 2) {
+                        return {
+                            day: parseInt(parts[0]) || 0,
+                            month: parts.slice(1).join(' ')
+                        };
+                    }
+                    return { day: 0, month: dateStr };
+                };
+
+                const dateA = parseDate(a.calendarDate || `Jour ${a.dayNumber}`);
+                const dateB = parseDate(b.calendarDate || `Jour ${b.dayNumber}`);
+
+                const getMonthIndex = (monthName) => {
+                    if (window.calendarManager && window.calendarManager.calendarData) {
+                        const index = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
+                        return index !== -1 ? index : 999;
+                    }
+                    return 999;
+                };
+
+                const monthIndexA = getMonthIndex(dateA.month);
+                const monthIndexB = getMonthIndex(dateB.month);
+
+                if (monthIndexA !== monthIndexB) return monthIndexA - monthIndexB;
+                return dateA.day - dateB.day;
+            });
+
+
+            sortedDays.forEach(day => {
                 markdown += `### Jour ${day.dayNumber} / ${journey.totalDays} - ${day.calendarDate}`;
                 if (day.weatherSymbol) {
                     markdown += ` ${day.weatherSymbol}`;
                 }
                 markdown += `\n\n`;
 
-                if (day.eventResult) {
-                    markdown += `**Événement :** ${day.eventResult}\n\n`;
+                // Formatage pour Markdown
+                let dayContent = '';
+
+                // Découvertes
+                const discoveryNames = day.discoveries.map(d => d.name).join(' et ');
+                if (discoveryNames) {
+                    dayContent += `**Lieux visités :** ${this.escapeHtml(discoveryNames)}\n\n`;
                 }
 
+                // Description
                 if (day.description) {
-                    markdown += `${day.description}\n\n`;
+                    let filteredDescription = day.description;
+                    filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
+                    filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
+                    dayContent += `${filteredDescription.trim()}\n\n`;
                 }
+
+                // Événement aléatoire
+                if (day.eventResult) {
+                    // Simplifier le rendu Markdown pour les événements
+                    let eventResultMarkdown = day.eventResult;
+                    eventResultMarkdown = eventResultMarkdown.replace(/<[^>]*>/g, ''); // Supprimer les balises HTML
+                    eventResultMarkdown = eventResultMarkdown.replace(/\n\n+/g, '\n\n'); // Normaliser les sauts de ligne
+                    dayContent += `**Événement aléatoire :**\n${eventResultMarkdown.trim()}\n\n`;
+                }
+
+                markdown += `${dayContent.trim()}\n`;
             });
 
             markdown += `---\n\n`;
         });
 
-        // Télécharger le fichier
-        const blob = new Blob([markdown], { type: 'text/markdown' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `journal-voyage-${new Date().toISOString().split('T')[0]}.md`;
-        a.click();
-        URL.revokeObjectURL(url);
+        // Créer une modale pour afficher le Markdown et le bouton copier
+        this.createMarkdownExportModal(markdown);
 
-        console.log("📖 Journal exporté en Markdown");
+        console.log("📖 Journal prêt à être exporté en Markdown");
+    }
+
+    // Nouvelle fonction pour créer et afficher la modale d'export
+    createMarkdownExportModal(markdownContent) {
+        // Vérifier si la modale existe déjà, sinon la créer
+        let exportModal = document.getElementById('markdown-export-modal');
+        if (!exportModal) {
+            exportModal = document.createElement('div');
+            exportModal.id = 'markdown-export-modal';
+            exportModal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden';
+            exportModal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-lg p-6 w-4/5 max-w-3xl max-h-[80vh] flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold">Export Journal (Markdown)</h3>
+                        <button id="close-markdown-export-modal" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto mb-4 p-4 border border-gray-300 rounded-md bg-gray-50 text-sm font-mono whitespace-pre-wrap" id="markdown-export-content">
+                        <!-- Le contenu Markdown sera ici -->
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button id="copy-markdown-to-clipboard-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-copy"></i>
+                            <span>Copier</span>
+                        </button>
+                        <button id="download-markdown-file-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center space-x-2">
+                            <i class="fas fa-file-download"></i>
+                            <span>Télécharger</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(exportModal);
+        }
+
+        const modalContent = exportModal.querySelector('#markdown-export-content');
+        const closeBtn = exportModal.querySelector('#close-markdown-export-modal');
+        const copyBtn = exportModal.querySelector('#copy-markdown-to-clipboard-btn');
+        const downloadBtn = exportModal.querySelector('#download-markdown-file-btn');
+
+        modalContent.textContent = markdownContent;
+
+        // Ajouter les écouteurs d'événements pour les boutons de la modale
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                exportModal.classList.add('hidden');
+            };
+        }
+
+        if (copyBtn) {
+            copyBtn.onclick = async () => {
+                try {
+                    await navigator.clipboard.writeText(markdownContent);
+                    alert('Contenu du journal copié dans le presse-papiers !');
+                } catch (err) {
+                    console.error('Erreur lors de la copie du presse-papiers:', err);
+                    alert('Échec de la copie du presse-papiers.');
+                }
+            };
+        }
+
+        if (downloadBtn) {
+            downloadBtn.onclick = () => {
+                const blob = new Blob([markdownContent], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `journal-voyage-${new Date().toISOString().split('T')[0]}.md`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+        }
+
+        // Afficher la modale
+        exportModal.classList.remove('hidden');
     }
 
     loadObjectives() {
@@ -681,7 +815,7 @@ class JournalManager {
         const savedRumors = localStorage.getItem('adventureRumors');
         if (savedRumors && savedRumors !== 'null' && savedRumors !== 'undefined') {
             try {
-                const parsed = JSON.parse(savedRumors);
+                const parsed = JSON.JSON.parse(savedRumors);
                 this.rumors = Array.isArray(parsed) ? parsed : [];
                 console.log(`📖 ${this.rumors.length} rumeur(s) chargée(s) depuis le localStorage`);
             } catch (e) {
@@ -735,7 +869,7 @@ class JournalManager {
         this.rumorsCheckboxStates[key] = !this.rumorsCheckboxStates[key];
         this.saveRumorsCheckboxStates();
         console.log(`📖 Case à cocher rumeur ${key} mise à jour:`, this.rumorsCheckboxStates[key]);
-        
+
         // Re-render si on est en mode "Sélection" pour mettre à jour l'affichage
         const rumorsFilter = localStorage.getItem('rumorsFilter') || 'selection';
         if (rumorsFilter === 'selection') {
@@ -860,7 +994,7 @@ class JournalManager {
         const rumorsFilter = localStorage.getItem('rumorsFilter') || 'selection';
 
         let rumorsHTML = '<div class="p-6 space-y-6">';
-        
+
         // Ajouter le bouton de filtre
         rumorsHTML += `
             <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-300">
@@ -900,14 +1034,14 @@ class JournalManager {
                 `;
                 region.Rumeurs.forEach((rumor, index) => {
                     const isChecked = this.isRumorChecked('region', region.name, index);
-                    
+
                     // Filtrer selon le mode sélectionné
                     if (rumorsFilter === 'selection' && !isChecked) return;
 
                     const checkboxId = `rumor-region-${region.name.replace(/\s+/g, '_')}-${index}`;
                     rumorsHTML += `
                         <div class="flex items-start space-x-2">
-                            <input type="checkbox" 
+                            <input type="checkbox"
                                    id="${checkboxId}"
                                    ${isChecked ? 'checked' : ''}
                                    onchange="window.journalManager.toggleRumorCheckbox('region', '${this.escapeHtml(region.name)}', ${index})"
@@ -950,14 +1084,14 @@ class JournalManager {
                 `;
                 location.Rumeurs.forEach((rumor, index) => {
                     const isChecked = this.isRumorChecked('location', location.name, index);
-                    
+
                     // Filtrer selon le mode sélectionné
                     if (rumorsFilter === 'selection' && !isChecked) return;
 
                     const checkboxId = `rumor-location-${location.name.replace(/\s+/g, '_')}-${index}`;
                     rumorsHTML += `
                         <div class="flex items-start space-x-2">
-                            <input type="checkbox" 
+                            <input type="checkbox"
                                    id="${checkboxId}"
                                    ${isChecked ? 'checked' : ''}
                                    onchange="window.journalManager.toggleRumorCheckbox('location', '${this.escapeHtml(location.name)}', ${index})"
@@ -1009,14 +1143,14 @@ class JournalManager {
                 `;
                 rumorsArray.forEach((rumor, index) => {
                     const isChecked = this.isRumorChecked('character', character.name, index);
-                    
+
                     // Filtrer selon le mode sélectionné
                     if (rumorsFilter === 'selection' && !isChecked) return;
 
                     const checkboxId = `rumor-character-${character.name.replace(/\s+/g, '_')}-${index}`;
                     rumorsHTML += `
                         <div class="flex items-start space-x-2">
-                            <input type="checkbox" 
+                            <input type="checkbox"
                                    id="${checkboxId}"
                                    ${isChecked ? 'checked' : ''}
                                    onchange="window.journalManager.toggleRumorCheckbox('character', '${character.name.replace(/'/g, "\\'")}', ${index})"
