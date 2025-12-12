@@ -2040,22 +2040,51 @@ class VoyageManager {
     }
 
     createAllJourneyDescriptionPrompt(allJourneyData) {
+        // Récupérer les données du groupe d'aventuriers
+        const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
+        const adventurersQuest = localStorage.getItem('adventurersQuest') || '';
+
+        // Récupérer les personnages de la communauté (PJ uniquement)
+        let charactersInfo = '';
+        if (window.charactersManager && window.charactersManager.characters) {
+            const playerCharacters = window.charactersManager.characters.filter(char => char.type === 'PJ');
+            if (playerCharacters.length > 0) {
+                charactersInfo = '\n\nCOMMUNAUTÉ DES AVENTURIERS :\n';
+                playerCharacters.forEach(char => {
+                    charactersInfo += `- ${char.name}`;
+                    if (char.description) {
+                        charactersInfo += `: ${char.description}`;
+                    }
+                    charactersInfo += '\n';
+                });
+            }
+        }
+
         let prompt = `Tu es un narrateur expert dans l'univers de la Terre du Milieu de J.R.R. Tolkien. 
 
 Ta mission est de créer des descriptions immersives pour chaque jour d'un voyage, en tenant compte du contexte global du périple.
 
+CONTEXTE DU VOYAGE :${adventurersGroup ? `\nGroupe : ${adventurersGroup}` : ''}${adventurersQuest ? `\nQuête : ${adventurersQuest}` : ''}${charactersInfo}
+
 INSTRUCTIONS IMPORTANTES :
 1. Génère une description UNIQUE pour chaque jour
-2. Varie le style et le focus d'une journée à l'autre (paysages, rencontres, réflexions, actions, détails culturels)
-3. Chaque description doit faire environ 50-80 mots
-4. Utilise un style évocateur et poétique, inspiré de Tolkien
-5. Intègre les éléments météorologiques et les lieux traversés naturellement
-6. ÉVITE ABSOLUMENT les répétitions entre les jours - change de perspective, d'angle et de vocabulaire
-7. Utilise les descriptions des lieux/régions pour enrichir ta narration
-8. Alterne entre : action, contemplation, danger, découverte, repos, mystère
+2. Écris TOUJOURS à la TROISIÈME PERSONNE DU PLURIEL (ils, elles, leur groupe, les compagnons, etc.)
+3. Varie le style et le focus d'une journée à l'autre (paysages, rencontres, réflexions, actions, détails culturels)
+4. Chaque description doit faire environ 50-80 mots
+5. Utilise un style évocateur et poétique, inspiré de Tolkien
+6. Intègre les éléments météorologiques et les lieux traversés naturellement
+7. ÉVITE ABSOLUMENT les répétitions entre les jours - change de perspective, d'angle et de vocabulaire
+8. Utilise les descriptions des lieux/régions pour enrichir ta narration
+9. Alterne entre : action, contemplation, danger, découverte, repos, mystère
+
+RÈGLES POUR LES TRANSITIONS :
+- Mentionne le fait de QUITTER un lieu/région SEULEMENT si la journée suivante se déroule dans un lieu/région DIFFÉRENT
+- Mentionne le fait de REJOINDRE un nouveau lieu/région SEULEMENT si la journée précédente se déroulait dans un lieu/région DIFFÉRENT
+- Ne fais référence qu'aux lieux/régions EXPLICITEMENT listés dans les découvertes du jour
+- N'invente PAS de lieux qui ne sont pas mentionnés dans les données
 
 VOYAGE COMPLET (${this.totalJourneyDays} jours) :
-${allJourneyData.map(dayData => {
+${allJourneyData.map((dayData, index) => {
     const discoveries = dayData.discoveries.length > 0 
         ? dayData.discoveries.map(d => {
             let detail = `${d.name} (${d.type})`;
@@ -2068,7 +2097,28 @@ ${allJourneyData.map(dayData => {
 
     const weather = dayData.weather ? ` - Météo: ${dayData.weather}` : '';
 
-    return `Jour ${dayData.day} (${dayData.calendarDate})${weather}\nDécouvertes:\n  - ${discoveries}`;
+    // Analyser les transitions pour aider l'IA
+    let transitionInfo = '';
+    if (index > 0) {
+        const prevDay = allJourneyData[index - 1];
+        const prevLocations = new Set(prevDay.discoveries.map(d => d.name));
+        const currentLocations = new Set(dayData.discoveries.map(d => d.name));
+        const hasNewLocation = [...currentLocations].some(loc => !prevLocations.has(loc));
+        if (hasNewLocation) {
+            transitionInfo += '\n  ⚠️ Nouveau(x) lieu(x)/région(s) par rapport à la veille';
+        }
+    }
+    if (index < allJourneyData.length - 1) {
+        const nextDay = allJourneyData[index + 1];
+        const nextLocations = new Set(nextDay.discoveries.map(d => d.name));
+        const currentLocations = new Set(dayData.discoveries.map(d => d.name));
+        const willLeaveLocation = [...currentLocations].some(loc => !nextLocations.has(loc));
+        if (willLeaveLocation) {
+            transitionInfo += '\n  ⚠️ Quitte ce(s) lieu(x)/région(s) demain';
+        }
+    }
+
+    return `Jour ${dayData.day} (${dayData.calendarDate})${weather}\nDécouvertes:\n  - ${discoveries}${transitionInfo}`;
 }).join('\n\n')}
 
 CONSIGNES DE GÉNÉRATION :
@@ -2079,6 +2129,7 @@ CONSIGNES DE GÉNÉRATION :
 - Intègre subtilement les lieux et la météo sans formules répétitives
 - Varie le vocabulaire : évite de réutiliser les mêmes adjectifs ou tournures
 - Crée une vraie progression narrative avec des hauts et des bas
+- UTILISE UNIQUEMENT les lieux/régions listés dans les découvertes - n'en invente pas
 
 ⚠️ FORMAT DE RÉPONSE OBLIGATOIRE - CRUCIAL ⚠️
 
@@ -2097,7 +2148,7 @@ Réponds EXACTEMENT dans ce format JSON (et rien d'autre) :
 }
 
 EXEMPLE DE RÉPONSE ATTENDUE (respecte ce format EXACT) :
-{"descriptions":[{"day":1,"description":"La pluie fouettait nos visages..."},{"day":2,"description":"Les Hauts Reculés s'étendaient..."}]}
+{"descriptions":[{"day":1,"description":"Ils cheminaient sous la pluie..."},{"day":2,"description":"Les compagnons atteignirent les Hauts Reculés..."}]}
 
 ⚠️ RAPPEL CRITIQUE : Commence ta réponse DIRECTEMENT par le caractère "{" (accolade ouvrante).
 Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclusion.`;
