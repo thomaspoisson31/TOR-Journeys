@@ -1820,36 +1820,115 @@ class VoyageManager {
             return;
         }
 
-        // Récupérer le bouton et sauvegarder son contenu original
-        const button = this.dom.getElementById('describe-journey-header-btn');
-        if (!button) return;
+        // Collecter les données pour toutes les journées
+        const allJourneyData = this.collectAllJourneyDataForPrompt();
 
-        const originalContent = button.innerHTML;
+        // Créer le prompt pour Gemini
+        const prompt = this.createAllJourneyDescriptionPrompt(allJourneyData);
 
-        // Afficher le loader
-        button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin text-white"></i>';
-        button.style.cursor = 'not-allowed';
+        // Afficher le prompt dans une modale pour prévisualisation/édition
+        this.showPromptPreviewModal(prompt, allJourneyData);
+    }
 
-        try {
-            // Collecter les données pour toutes les journées
-            const allJourneyData = this.collectAllJourneyDataForPrompt();
+    showPromptPreviewModal(initialPrompt, journeyData) {
+        // Créer une modale pour afficher et éditer le prompt
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-lg font-bold" style="color: #940000;">
+                        <i class="fas fa-eye mr-2"></i>Prévisualisation du prompt Gemini
+                    </h3>
+                    <button id="close-prompt-preview" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-4">
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-2">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Vous pouvez modifier le prompt ci-dessous avant de l'envoyer à Gemini.
+                        </p>
+                    </div>
+                    <textarea id="prompt-editor" class="w-full h-96 p-3 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                    <div class="mt-3 text-xs text-gray-500">
+                        <i class="fas fa-ruler mr-1"></i>
+                        <span id="prompt-length"></span> caractères
+                    </div>
+                </div>
+                <div class="p-4 border-t border-gray-200 flex justify-end gap-3">
+                    <button id="cancel-prompt" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
+                        <i class="fas fa-times mr-2"></i>Annuler
+                    </button>
+                    <button id="send-prompt" class="px-4 py-2 text-white rounded hover:opacity-90 transition-colors" style="background-color: #940000;">
+                        <i class="fas fa-paper-plane mr-2"></i>Envoyer à Gemini
+                    </button>
+                </div>
+            </div>
+        `;
 
-            // Créer le prompt pour Gemini
-            const prompt = this.createAllJourneyDescriptionPrompt(allJourneyData);
+        document.body.appendChild(modal);
 
-            // Appeler Gemini
-            const response = await this.geminiManager.generateContent(prompt, button, 'journey');
-            this.parseAndDisplayAllJourneyDescriptions(response);
-        } catch (error) {
-            console.error('Erreur lors de la génération de la description:', error);
-            alert(`Erreur lors de la génération de la description de voyage: ${error.message}`);
-        } finally {
-            // Restaurer le bouton à son état original
-            button.disabled = false;
-            button.innerHTML = originalContent;
-            button.style.cursor = 'pointer';
-        }
+        const textarea = modal.querySelector('#prompt-editor');
+        const lengthIndicator = modal.querySelector('#prompt-length');
+        const closeBtn = modal.querySelector('#close-prompt-preview');
+        const cancelBtn = modal.querySelector('#cancel-prompt');
+        const sendBtn = modal.querySelector('#send-prompt');
+
+        // Initialiser le textarea avec le prompt
+        textarea.value = initialPrompt;
+        lengthIndicator.textContent = initialPrompt.length;
+
+        // Mettre à jour le compteur de caractères
+        textarea.addEventListener('input', () => {
+            lengthIndicator.textContent = textarea.value.length;
+        });
+
+        // Fermer la modale
+        const closeModal = () => {
+            document.body.removeChild(modal);
+        };
+
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        // Envoyer le prompt (modifié ou non)
+        sendBtn.addEventListener('click', async () => {
+            const editedPrompt = textarea.value.trim();
+            if (!editedPrompt) {
+                alert('Le prompt ne peut pas être vide.');
+                return;
+            }
+
+            // Fermer la modale
+            closeModal();
+
+            // Afficher le loader sur le bouton principal
+            const button = this.dom.getElementById('describe-journey-header-btn');
+            if (!button) return;
+
+            const originalContent = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin text-white"></i>';
+            button.style.cursor = 'not-allowed';
+
+            try {
+                console.log('🤖 Envoi du prompt à Gemini (longueur: ' + editedPrompt.length + ' caractères)');
+                
+                // Appeler Gemini avec le prompt édité
+                const response = await this.geminiManager.generateContent(editedPrompt, null, 'journey');
+                this.parseAndDisplayAllJourneyDescriptions(response);
+            } catch (error) {
+                console.error('Erreur lors de la génération de la description:', error);
+                alert(`Erreur lors de la génération de la description de voyage: ${error.message}`);
+            } finally {
+                // Restaurer le bouton à son état original
+                button.disabled = false;
+                button.innerHTML = originalContent;
+                button.style.cursor = 'pointer';
+            }
+        });
     }
 
     collectJourneyDataForPrompt(currentDay) {
@@ -1958,13 +2037,13 @@ class VoyageManager {
             const discoveriesWithDescriptions = dayData.discoveries.map(discovery => {
                 let description = '';
 
-                if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
-                    const location = locationsData.locations.find(loc => loc.name === discovery.name);
+                if (discovery.type === 'location' && typeof window.locationsData !== 'undefined') {
+                    const location = window.locationsData.locations.find(loc => loc.name === discovery.name);
                     if (location) {
                         description = location.description || '';
                     }
-                } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
-                    const region = regionsData.regions.find(reg => reg.name === discovery.name);
+                } else if (discovery.type === 'region' && typeof window.regionsData !== 'undefined') {
+                    const region = window.regionsData.regions.find(reg => reg.name === discovery.name);
                     if (region) {
                         description = region.description || '';
                     }
@@ -2020,8 +2099,20 @@ Le voyage commence à "${journeyData.adventurersGroup}" et se termine à "${jour
 Distance totale: ${journeyData.totalDays} miles.
 
 ${journeyData.allDays && journeyData.allDays.length > 0 ?
-`Détail des journées:
-${journeyData.allDays.map(d => `- Jour ${d.dayNumber} (${d.calendarDate}) - Saison: ${d.season} - Météo: ${d.weatherSymbol || ''} ${d.weather || 'Non spécifiée'}`).join('\n')}` : ''}
+`Détail des journées avec lieux/régions et leurs descriptions:
+${journeyData.allDays.map(d => {
+    let dayInfo = `- Jour ${d.dayNumber} (${d.calendarDate}) - Saison: ${d.season} - Météo: ${d.weatherSymbol || ''} ${d.weather || 'Non spécifiée'}`;
+    if (d.discoveries && d.discoveries.length > 0) {
+        dayInfo += '\n  Découvertes:';
+        d.discoveries.forEach(disc => {
+            dayInfo += `\n  * ${disc.name} (${disc.type}) - ${disc.action}`;
+            if (disc.description && disc.description.trim()) {
+                dayInfo += `\n    Description: ${disc.description.substring(0, 200)}${disc.description.length > 200 ? '...' : ''}`;
+            }
+        });
+    }
+    return dayInfo;
+}).join('\n')}` : ''}
 
 INSTRUCTIONS CRITIQUES - RESPECTE CE FORMAT STRICTEMENT:
 1. Retourne UNIQUEMENT un objet JSON valide
@@ -2086,13 +2177,21 @@ Ta réponse doit commencer par { et se terminer par } sans rien d'autre.`;
 
         prompt += `
 **Instructions importantes :**
-- Assure-toi que chaque description intègre subtilement la météo et la saison, en les traduisant en sensations et détails atmosphériques.
-- Ne répète pas littéralement le texte météo fourni.
-- Adapte la description des paysages selon la saison (couleurs, végétation, ambiance).
-- Montre l'impact de la météo sur le voyage sans la mentionner explicitement.
-- Le ton doit être immersif et narratif, adapté à une lecture en jeu de rôle.
-- Évite les redondances entre les descriptions des différentes journées.
-- Assure-toi que chaque description soit unique et apporte sa propre atmosphère.
+- Utilise les descriptions fournies pour chaque lieu/région pour enrichir le récit de voyage
+- Intègre subtilement les éléments des descriptions dans ta narration sans les citer textuellement
+- Assure-toi que chaque description intègre subtilement la météo et la saison, en les traduisant en sensations et détails atmosphériques
+- Ne répète pas littéralement le texte météo fourni
+- Adapte la description des paysages selon la saison (couleurs, végétation, ambiance)
+- Montre l'impact de la météo sur le voyage sans la mentionner explicitement
+- Le ton doit être immersif et narratif, adapté à une lecture en jeu de rôle
+
+**VARIÉTÉ ET NON-RÉPÉTITION (CRUCIAL) :**
+- Évite absolument les redondances entre les descriptions des différentes journées
+- Chaque jour doit avoir un angle narratif différent et une atmosphère unique
+- Varie le point focal : tantôt le paysage, tantôt les personnages, tantôt une rencontre, tantôt une sensation
+- Alterne entre descriptions externes (ce qu'on voit) et internes (ce qu'on ressent)
+- Ne réutilise jamais les mêmes tournures de phrases ou structures narratives
+- Chaque description doit surprendre et apporter quelque chose de nouveau
 
 ${styleInstructions}
 
@@ -2103,6 +2202,9 @@ ${styleInstructions}
   • Tantôt les impressions de voyage
   • Tantôt l'accumulation de la fatigue
   • Tantôt l'attitude de certains membres du groupe
+  • Tantôt un détail marquant du lieu/région traversé(e)
+  • Tantôt une observation naturaliste
+  • Tantôt une réflexion sur la destination
 
 - Rédigez au présent de la 2ème personne du pluriel ("Vous traversez...")
 - Faites appel à plusieurs sens (vue, ouïe, odorat, toucher) pour une immersion totale
