@@ -532,21 +532,13 @@ class JournalManager {
             return;
         }
 
-        let markdown = "# Journal de Voyage - Terre du Milieu\n\n";
+        let markdown = "";
 
         // Trier le journal par date de génération pour un export chronologique
         const sortedJournal = [...this.journal].sort((a, b) => new Date(a.generatedAt) - new Date(b.generatedAt));
 
         sortedJournal.forEach(journey => {
-            const generatedDate = new Date(journey.generatedAt);
-            const formattedDate = generatedDate.toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-
-            markdown += `## ${this.escapeHtml(journey.title)}\n`;
-            markdown += `*Généré le ${formattedDate}*\n\n`;
+            markdown += `## ${this.escapeHtml(journey.title)}\n\n`;
 
             // Trier les jours du voyage par date calendrier (si disponible)
             const sortedDays = [...journey.days].sort((a, b) => {
@@ -579,44 +571,50 @@ class JournalManager {
                 return dateA.day - dateB.day;
             });
 
-
             sortedDays.forEach(day => {
-                markdown += `### Jour ${day.dayNumber} / ${journey.totalDays} - ${day.calendarDate}`;
-                if (day.weatherSymbol) {
-                    markdown += ` ${day.weatherSymbol}`;
-                }
-                markdown += `\n\n`;
+                // Date en gras
+                markdown += `**${day.calendarDate}** - `;
 
-                // Formatage pour Markdown
-                let dayContent = '';
-
-                // Découvertes
-                const discoveryNames = day.discoveries.map(d => d.name).join(' et ');
-                if (discoveryNames) {
-                    dayContent += `**Lieux visités :** ${this.escapeHtml(discoveryNames)}\n\n`;
-                }
-
-                // Description
+                // Description nettoyée (sans balises HTML, sans émojis, sans mentions de "Dé du destin")
                 if (day.description) {
-                    let filteredDescription = day.description;
-                    filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
-                    filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
-                    dayContent += `${filteredDescription.trim()}\n\n`;
+                    let cleanDescription = day.description;
+                    // Supprimer les balises HTML
+                    cleanDescription = cleanDescription.replace(/<[^>]*>/g, '');
+                    // Supprimer "Dé du destin"
+                    cleanDescription = cleanDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
+                    // Supprimer les retours à la ligne multiples
+                    cleanDescription = cleanDescription.replace(/\n\n+/g, ' ');
+                    cleanDescription = cleanDescription.replace(/\n/g, ' ');
+                    // Nettoyer les espaces multiples
+                    cleanDescription = cleanDescription.replace(/\s+/g, ' ');
+                    cleanDescription = cleanDescription.trim();
+                    
+                    markdown += `${cleanDescription}`;
                 }
 
-                // Événement aléatoire
+                // Événement aléatoire (si présent)
                 if (day.eventResult) {
-                    // Simplifier le rendu Markdown pour les événements
-                    let eventResultMarkdown = day.eventResult;
-                    eventResultMarkdown = eventResultMarkdown.replace(/<[^>]*>/g, ''); // Supprimer les balises HTML
-                    eventResultMarkdown = eventResultMarkdown.replace(/\n\n+/g, '\n\n'); // Normaliser les sauts de ligne
-                    dayContent += `**Événement aléatoire :**\n${eventResultMarkdown.trim()}\n\n`;
+                    let cleanEvent = day.eventResult;
+                    // Supprimer les balises HTML
+                    cleanEvent = cleanEvent.replace(/<[^>]*>/g, '');
+                    // Supprimer les retours à la ligne multiples
+                    cleanEvent = cleanEvent.replace(/\n\n+/g, ' ');
+                    cleanEvent = cleanEvent.replace(/\n/g, ' ');
+                    // Nettoyer les espaces multiples
+                    cleanEvent = cleanEvent.replace(/\s+/g, ' ');
+                    cleanEvent = cleanEvent.trim();
+                    
+                    if (day.description) {
+                        markdown += ` ${cleanEvent}`;
+                    } else {
+                        markdown += cleanEvent;
+                    }
                 }
 
-                markdown += `${dayContent.trim()}\n`;
+                markdown += `\n\n`;
             });
 
-            markdown += `---\n\n`;
+            markdown += `\n`;
         });
 
         // Créer une modale pour afficher le Markdown et le bouton copier
