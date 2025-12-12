@@ -641,7 +641,7 @@ class JournalManager {
                             <i class="fas fa-times text-lg"></i>
                         </button>
                     </div>
-                    <div class="flex-1 overflow-y-auto mb-4 p-4 border border-gray-300 rounded-md bg-gray-50 text-sm font-mono whitespace-pre-wrap" id="markdown-export-content">
+                    <div class="flex-1 overflow-y-auto mb-4 p-4 border border-gray-300 rounded-md bg-gray-50 text-sm font-mono whitespace-pre-wrap text-black" id="markdown-export-content">
                         <!-- Le contenu Markdown sera ici -->
                     </div>
                     <div class="flex justify-end space-x-4">
