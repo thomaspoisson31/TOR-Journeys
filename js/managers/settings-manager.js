@@ -576,7 +576,7 @@ class SettingsManager {
         const bgClass = hasProblems ? 'bg-yellow-900/20 border-yellow-600' : 'bg-gray-900/20 border-gray-600';
         const textClass = hasProblems ? 'text-yellow-400' : 'text-gray-400';
         const iconClass = hasProblems ? 'fa-exclamation-triangle' : 'fa-check-circle';
-        
+
         mapsGrid.innerHTML += `
             <div class="col-span-full mt-4 p-4 ${bgClass} border rounded-lg">
                 <div class="flex items-start justify-between mb-4">
@@ -586,7 +586,7 @@ class SettingsManager {
                         </div>
                         ${hasProblems ? `
                         <div class="text-sm text-gray-300 mb-2">
-                            ${orphanLocations + orphanRegions} élément(s) sans mapID • 
+                            ${orphanLocations + orphanRegions} élément(s) sans mapID •
                             ${invalidMapIdLocations + invalidMapIdRegions} élément(s) avec mapID invalide
                         </div>
                         ` : ''}
@@ -597,7 +597,7 @@ class SettingsManager {
                         </button>
                     </div>
                 </div>
-                    
+
                     ${orphanLocations > 0 || orphanRegions > 0 ? `
                     <div class="mb-3 p-3 bg-red-900/20 border border-red-600 rounded">
                         <div class="text-red-400 font-medium mb-2">
@@ -613,7 +613,7 @@ class SettingsManager {
                         </button>
                     </div>
                     ` : ''}
-                    
+
                     ${invalidMapIdLocations > 0 || invalidMapIdRegions > 0 ? `
                     <div class="p-3 bg-orange-900/20 border border-orange-600 rounded">
                         <div class="text-orange-400 font-medium mb-2">
@@ -1103,7 +1103,7 @@ class SettingsManager {
         // Analyser les lieux
         if (window.locationsData && window.locationsData.locations) {
             const locationIds = {};
-            
+
             window.locationsData.locations.forEach(loc => {
                 // Vérifier les doublons d'ID
                 if (locationIds[loc.id]) {
@@ -1111,7 +1111,7 @@ class SettingsManager {
                 } else {
                     locationIds[loc.id] = true;
                 }
-                
+
                 // Vérifier les orphelins et invalides
                 if (!loc.mapId) {
                     orphanLocs.push(loc);
@@ -1124,7 +1124,7 @@ class SettingsManager {
         // Analyser les régions
         if (window.regionsData && window.regionsData.regions) {
             const regionIds = {};
-            
+
             window.regionsData.regions.forEach(reg => {
                 // Vérifier les doublons d'ID
                 if (regionIds[reg.id]) {
@@ -1132,7 +1132,7 @@ class SettingsManager {
                 } else {
                     regionIds[reg.id] = true;
                 }
-                
+
                 // Vérifier les orphelins et invalides
                 if (!reg.mapId) {
                     orphanRegs.push(reg);
@@ -1399,7 +1399,7 @@ class SettingsManager {
         if (window.locationsData && window.locationsData.locations) {
             const beforeCount = window.locationsData.locations.length;
             const seenIds = new Set();
-            
+
             window.locationsData.locations = window.locationsData.locations.filter(loc => {
                 if (seenIds.has(loc.id)) {
                     return false; // Doublon, supprimer
@@ -1407,7 +1407,7 @@ class SettingsManager {
                 seenIds.add(loc.id);
                 return true; // Première occurrence, garder
             });
-            
+
             deletedLocations = beforeCount - window.locationsData.locations.length;
         }
 
@@ -1415,7 +1415,7 @@ class SettingsManager {
         if (window.regionsData && window.regionsData.regions) {
             const beforeCount = window.regionsData.regions.length;
             const seenIds = new Set();
-            
+
             window.regionsData.regions = window.regionsData.regions.filter(reg => {
                 if (seenIds.has(reg.id)) {
                     return false; // Doublon, supprimer
@@ -1423,7 +1423,7 @@ class SettingsManager {
                 seenIds.add(reg.id);
                 return true; // Première occurrence, garder
             });
-            
+
             deletedRegions = beforeCount - window.regionsData.regions.length;
         }
 
@@ -1449,7 +1449,7 @@ class SettingsManager {
     }
 
 
-    async generatePartyDescription() {
+    generatePartyDescription() {
         const generateBtn = document.getElementById('generate-party-description-btn');
         const textarea = document.getElementById('party-description-textarea');
 
@@ -1463,7 +1463,7 @@ class SettingsManager {
         Style narratif, environ 200 mots.`;
 
         try {
-            const description = await this.geminiManager.generateContent(prompt, generateBtn, 'party');
+            const description = this.geminiManager.generateContent(prompt, generateBtn, 'party');
             if (textarea) {
                 textarea.value = description;
                 this.partyDescription = description;
