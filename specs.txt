@@ -951,7 +951,16 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Système de voyage waypoints avec boutons contextuels (v1.3.12)
+1. Protection des filtres utilisateur en mode Aventure (v1.3.14)
+   - Fix écrasement des filtres utilisateur par le mode Aventure
+   - Désactivation temporaire de saveFiltersForCurrentMap() pendant applyAdventureModeFilters()
+   - Sauvegarde préalable dans savedFilters (copie profonde JSON)
+   - Restauration complète avec réapplication des filtres
+   - Impact : Les filtres utilisateur sont maintenant totalement protégés
+   - Fichiers concernés : position-manager.js
+   - Logs détaillés pour traçabilité (💾, ⚠️, 🎮, 🔄, ✅)
+
+2. Système de voyage waypoints avec boutons contextuels (v1.3.12)
    - Refonte complète du système de tracé de voyage
    - Waypoint 0 = position du marqueur, premier clic ajoute waypoint 1
    - Double-clic ou double-tap pour finaliser le voyage
@@ -1230,6 +1239,75 @@ GESTION DU MODE AVENTURE ET DES FILTRES
    - TOUJOURS prévoir une configuration par défaut si aucun filtre sauvegardé
    - known=[] signifie "aucun filtre actif" = afficher connus ET inconnus
 
+PRINCIPES DE GESTION DES FILTRES EN MODE AVENTURE
+-------------------------------------------------
+
+1. SAUVEGARDE/RESTAURATION DES FILTRES :
+   
+   Problématique :
+   - Le mode Aventure applique des filtres temporaires (known=['known'], showRegions=false)
+   - Ces filtres ne doivent PAS écraser les filtres utilisateur dans filtersByMap
+   - Après désactivation, l'utilisateur doit retrouver exactement son état initial
+   
+   Architecture implémentée (PositionManager) :
+   
+   a) Sauvegarde AVANT activation :
+      - Copie profonde des filtres : JSON.parse(JSON.stringify(filterManager.getActiveFilters()))
+      - Stockage dans this.savedFilters (variable d'instance PositionManager)
+      - Garantit isolation complète des modifications ultérieures
+   
+   b) Application filtres mode Aventure :
+      - **CRITIQUE** : Désactivation temporaire de saveFiltersForCurrentMap()
+      - Pattern obligatoire :
+        ```javascript
+        const originalSaveMethod = filterManager.saveFiltersForCurrentMap;
+        filterManager.saveFiltersForCurrentMap = () => { console.log('⚠️ Sauvegarde désactivée'); };
+        filterManager.applyFilters();
+        filterManager.saveFiltersForCurrentMap = originalSaveMethod;
+        ```
+      - Raison : Éviter que les filtres temporaires écrasent filtersByMap[activeMapUrl]
+      - Mise à jour UI via updateFilterUI() après modification activeFilters
+   
+   c) Restauration APRÈS désactivation :
+      - Copie profonde depuis savedFilters si existant
+      - Sinon configuration par défaut : known=[] (affiche connus ET inconnus)
+      - **CRITIQUE** : Réappliquer applyFilters() AVEC sauvegarde cette fois
+      - Garantit synchronisation localStorage + UI + rendering
+   
+   d) Configuration par défaut si aucun filtre sauvegardé :
+      ```javascript
+      {
+        colors: [],
+        visited: [],
+        known: [],  // ❌ PAS ['known'] - [] = afficher tout
+        types: [],
+        showLocations: true,
+        showRegions: false,
+        regionsOpacity: 0.5
+      }
+      ```
+   
+   e) Logs de validation :
+      ```
+      💾 [PositionManager] Filtres sauvegardés avant mode Aventure: {known: []}
+      🎮 [PositionManager] Application des filtres du mode Aventure
+      ⚠️ [PositionManager] Sauvegarde désactivée pendant mode Aventure
+      ✅ [PositionManager] Filtres appliqués: {known: ["known"]}
+      🔄 [PositionManager] Restauration des filtres précédents
+      ✅ [PositionManager] Filtres restaurés avec succès
+      ```
+   
+   Fichiers concernés :
+   - position-manager.js : saveFiltersBeforeAdventureMode(), applyAdventureModeFilters(), restoreFiltersAfterAdventureMode()
+   - filter-manager.js : filterLocations() (logique known=[])
+   
+   Règle impérative :
+   - ❌ NE JAMAIS permettre à un mode temporaire d'écraser filtersByMap
+   - ✅ TOUJOURS faire une copie profonde avant modification
+   - ✅ TOUJOURS désactiver la sauvegarde automatique pendant application de filtres temporaires
+   - ✅ TOUJOURS prévoir une config par défaut cohérente (known=[] = tout afficher)
+   - ✅ known=[] signifie "aucun filtre actif" = afficher connus ET inconnus
+
 ENSEIGNEMENTS CLÉS DU DÉVELOPPEMENT
 ------------------------------------
 
@@ -1317,7 +1395,23 @@ ENSEIGNEMENTS CLÉS DU DÉVELOPPEMENT
     - ✅ Cleanup explicite des listeners
     - ✅ Messages utilisateur clairs en cas d'erreur
 
-13. DEBUGGING DES DONNÉES MANQUANTES :
+13. GESTION DES MODES TEMPORAIRES :
+    - ❌ NE JAMAIS permettre à un mode temporaire d'écraser des données persistantes
+    - ✅ TOUJOURS sauvegarder l'état initial avant activation du mode
+    - ✅ TOUJOURS désactiver les sauvegardes automatiques pendant l'application de changements temporaires
+    - ✅ TOUJOURS restaurer l'état initial ET réappliquer les filtres/rendering après désactivation
+    - ✅ Utiliser des copies profondes (JSON.parse/stringify) pour isolation complète
+    - Pattern de désactivation temporaire :
+      ```javascript
+      const original = manager.method;
+      manager.method = () => { /* no-op */ };
+      // ... opérations temporaires ...
+      manager.method = original;
+      ```
+    - Exemples : mode Aventure (filtres), mode édition (données), mode prévisualisation
+    - Logs obligatoires : ⚠️ pour désactivation, 🔄 pour restauration, ✅ pour confirmation
+
+14. DEBUGGING DES DONNÉES MANQUANTES :
     - Toujours vérifier la SOURCE des données (window.X, dataManager.X, localStorage)
     - Utiliser console.log pour tracer le flux de données
     - Pattern de vérification : Existe ? → Type correct ? → Contenu présent ?
@@ -1752,7 +1846,27 @@ PRINCIPES EVENT DELEGATION POUR ÉLÉMENTS DYNAMIQUES
 SUCCÈS TECHNIQUES CONFIRMÉS
 ---------------------------
 
-1. Restauration correcte des filtres après mode Aventure (v1.3.13):
+1. Désactivation temporaire de la sauvegarde des filtres en mode Aventure (v1.3.14):
+   - Problématique : Les filtres du mode Aventure écrasaient les filtres utilisateur dans filtersByMap
+   - Cause : applyFilters() appelait saveFiltersForCurrentMap() qui sauvegardait les filtres temporaires
+   - Solution implémentée :
+     * Sauvegarde préalable dans savedFilters (copie profonde)
+     * Désactivation temporaire de saveFiltersForCurrentMap() pendant applyAdventureModeFilters()
+     * Pattern : sauvegarder méthode → remplacer par no-op → applyFilters() → restaurer méthode
+     * Restauration complète avec réapplication applyFilters() qui sauvegarde cette fois
+   - Validation logs :
+     ```
+     💾 Filtres sauvegardés avant mode Aventure: {known: []}
+     ⚠️ Sauvegarde désactivée pendant mode Aventure
+     ✅ Filtres du mode Aventure appliqués: {known: ["known"]}
+     🔄 Restauration des filtres précédents: {known: []}
+     ✅ Filtres restaurés avec succès
+     ```
+   - Impact : Les filtres utilisateur ne sont plus écrasés, restauration complète après désactivation
+   - Test validé : Mode ON (filtres temporaires) → OFF (filtres utilisateur restaurés) ✅
+   - Fichiers concernés : position-manager.js (saveFiltersBeforeAdventureMode, applyAdventureModeFilters, restoreFiltersAfterAdventureMode)
+
+2. Restauration correcte des filtres après mode Aventure (v1.3.13):
    - Problématique: Lieux "CONNUS : inactif" ne s'affichaient plus après désactivation du mode Aventure
    - Cause: Filtres sauvegardés écrasés par applyFilters() pendant le mode Aventure
    - Solution implémentée:
