@@ -238,7 +238,7 @@ class VoyageManager {
             }
             console.log(`✅ Distance recalculée: ${pathDistance.toFixed(0)}px`);
         }
-        
+
         const miles = pathDistance * (this.MAP_DISTANCE_MILES / actualMapWidth);
         const days = Math.ceil(miles / milesPerDay);
         this.totalJourneyDays = Math.max(1, days);
@@ -304,7 +304,7 @@ class VoyageManager {
         // Calculer la distance totale et les distances cumulées
         const segmentDistances = [];
         let totalDistance = 0;
-        
+
         for (let i = 1; i < journeyPath.length; i++) {
             const prev = journeyPath[i - 1];
             const curr = journeyPath[i];
@@ -318,7 +318,7 @@ class VoyageManager {
         // Calculer les distances pour ce jour
         const startRatio = (day - 1) / this.totalJourneyDays;
         const endRatio = day / this.totalJourneyDays;
-        
+
         const startDist = startRatio * totalDistance;
         const endDist = endRatio * totalDistance;
 
@@ -669,7 +669,7 @@ class VoyageManager {
             const headerDiscoveries = dayData.discoveries.slice(0, 2);
             const discoveriesHtml = headerDiscoveries.map(discovery => {
                 const name = discovery.name.length > 15 ? discovery.name.substring(0, 12) + '...' : discovery.name;
-                
+
                 // Vérifier si ce lieu/région a des tables d'événements aléatoires
                 let hasRandomTables = false;
                 if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
@@ -679,10 +679,10 @@ class VoyageManager {
                     const region = regionsData.regions.find(reg => reg.name === discovery.name);
                     hasRandomTables = region && region.RandomTables && Array.isArray(region.RandomTables) && region.RandomTables.length > 0;
                 }
-                
+
                 // Icône de dé si des tables existent
                 const diceIcon = hasRandomTables ? ' <i class="fas fa-dice text-xs" style="color: #940000;" title="Tables d\'événements disponibles"></i>' : '';
-                
+
                 return `<span class="discovery-badge text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" onclick="event.stopPropagation(); window.voyageManager.openDiscoveryFromHeader('${discovery.name}', '${discovery.type}')">${name}${diceIcon}</span>`;
             }).join('');
 
@@ -852,7 +852,7 @@ class VoyageManager {
             // Parser la date du calendrier (format "15 Nórui")
             const dateParts = dayData.calendarDate.split(' ');
             if (dateParts.length >= 2) {
-                const dayNumber = dateParts[0];
+                const dayNumber = parseInt(dateParts[0]);
                 const monthName = dateParts[1];
                 const parsedDay = parseInt(dayNumber);
 
@@ -1375,7 +1375,7 @@ class VoyageManager {
         });
     }
 
-    
+
 
     setupExtendDayButtons() {
         const extendDayBtns = document.querySelectorAll('.extend-day-btn');
@@ -1915,7 +1915,7 @@ class VoyageManager {
 
             try {
                 console.log('🤖 Envoi du prompt à Gemini (longueur: ' + editedPrompt.length + ' caractères)');
-                
+
                 // Appeler Gemini avec le prompt édité
                 const response = await this.geminiManager.generateContent(editedPrompt, null, 'journey');
                 this.parseAndDisplayAllJourneyDescriptions(response);
@@ -1998,219 +1998,96 @@ class VoyageManager {
     }
 
     collectAllJourneyDataForPrompt() {
-        // Récupérer les données du groupe d'aventuriers et de la quête
-        const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
-        const adventurersQuest = localStorage.getItem('adventurersQuest') || '';
+        const allJourneyData = [];
 
-        // Collecter les données pour toutes les journées avec saison dynamique
-        const allDaysData = this.dayByDayData.map((dayData, index) => {
-            // Calculer la saison spécifique de ce jour
-            let daySeason = 'printemps-debut';
-            if (window.calendarData && this.journeyStartDate) {
-                let monthIndex = this.journeyStartDate.monthIndex;
-                let calendarDay = this.journeyStartDate.day + (index + 1) - 1;
+        for (let i = 0; i < this.dayByDayData.length; i++) {
+            const dayData = this.dayByDayData[i];
+            const weatherData = this.getWeatherForDay(dayData.day);
 
-                // Naviguer à travers les mois si nécessaire
-                while (calendarDay > window.calendarData[monthIndex].days.length) {
-                    calendarDay -= window.calendarData[monthIndex].days.length;
-                    monthIndex = (monthIndex + 1) % window.calendarData.length;
-                }
-
-                daySeason = window.calendarData[monthIndex].season.toLowerCase();
-            }
-
-            const seasonNames = {
-                'printemps-debut': 'Printemps-début',
-                'printemps-milieu': 'Printemps-milieu',
-                'printemps-fin': 'Printemps-fin',
-                'ete-debut': 'Été-début',
-                'ete-milieu': 'Été-milieu',
-                'ete-fin': 'Été-fin',
-                'automne-debut': 'Automne-début',
-                'automne-milieu': 'Automne-milieu',
-                'automne-fin': 'Automne-fin',
-                'hiver-debut': 'Hiver-début',
-                'hiver-milieu': 'Hiver-milieu',
-                'hiver-fin': 'Hiver-fin'
-            };
-
-            const discoveriesWithDescriptions = dayData.discoveries.map(discovery => {
+            // Collecter les découvertes pour ce jour avec leurs descriptions
+            const discoveries = dayData.discoveries.map(d => {
                 let description = '';
 
-                if (discovery.type === 'location' && typeof window.locationsData !== 'undefined') {
-                    const location = window.locationsData.locations.find(loc => loc.name === discovery.name);
-                    if (location) {
-                        description = location.description || '';
+                // Récupérer la description depuis les données
+                if (d.type === 'location' && typeof locationsData !== 'undefined') {
+                    const location = locationsData.locations.find(loc => loc.name === d.name);
+                    if (location && location.description) {
+                        description = location.description;
                     }
-                } else if (discovery.type === 'region' && typeof window.regionsData !== 'undefined') {
-                    const region = window.regionsData.regions.find(reg => reg.name === discovery.name);
-                    if (region) {
-                        description = region.description || '';
+                } else if (d.type === 'region' && typeof regionsData !== 'undefined') {
+                    const region = regionsData.regions.find(reg => reg.name === d.name);
+                    if (region && region.description) {
+                        description = region.description;
                     }
-                }
-
-                let actionText = '';
-                if (discovery.proximityType) {
-                    actionText = discovery.proximityType === 'traversed' ? 'traversé' : 'passage à proximité';
-                } else if (discovery.type === 'region') {
-                    actionText = 'traversé';
-                } else {
-                    actionText = 'découvert';
                 }
 
                 return {
-                    name: discovery.name,
-                    type: discovery.type === 'region' ? 'Région' : 'Lieu',
-                    action: actionText,
+                    name: d.name,
+                    type: d.type,
                     description: description
                 };
             });
 
-            // Ajouter les données météo du jour
-            const weatherData = this.getWeatherForDay(index + 1);
-
-            return {
-                dayNumber: index + 1,
+            allJourneyData.push({
+                day: dayData.day,
                 calendarDate: dayData.calendarDate,
-                season: seasonNames[daySeason] || daySeason,
                 weather: weatherData ? weatherData.weather : null,
-                weatherSymbol: weatherData ? weatherData.symbol : null,
-                discoveries: discoveriesWithDescriptions
-            };
-        });
-
-        return {
-            adventurersGroup,
-            adventurersQuest,
-            totalDays: this.totalJourneyDays,
-            allDays: allDaysData
-        };
-    }
-
-    createAllJourneyDescriptionPrompt(journeyData) {
-        // Récupérer le style de narration
-        const narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
-        console.log('📖 Style de narration pour le voyage complet:', narrationStyle);
-
-        let prompt = `Tu es un narrateur pour un jeu de rôle dans l'univers du Seigneur des Anneaux.
-Génère des descriptions courtes (2-3 phrases max) pour chaque jour d'un voyage de ${journeyData.totalDays} jours.
-
-Le voyage commence à "${journeyData.adventurersGroup}" et se termine à "${journeyData.adventurersQuest}".
-Distance totale: ${journeyData.totalDays} miles.
-
-${journeyData.allDays && journeyData.allDays.length > 0 ?
-`Détail des journées avec lieux/régions et leurs descriptions:
-${journeyData.allDays.map(d => {
-    let dayInfo = `- Jour ${d.dayNumber} (${d.calendarDate}) - Saison: ${d.season} - Météo: ${d.weatherSymbol || ''} ${d.weather || 'Non spécifiée'}`;
-    if (d.discoveries && d.discoveries.length > 0) {
-        dayInfo += '\n  Découvertes:';
-        d.discoveries.forEach(disc => {
-            dayInfo += `\n  * ${disc.name} (${disc.type}) - ${disc.action}`;
-            if (disc.description && disc.description.trim()) {
-                dayInfo += `\n    Description: ${disc.description.substring(0, 200)}${disc.description.length > 200 ? '...' : ''}`;
-            }
-        });
-    }
-    return dayInfo;
-}).join('\n')}` : ''}
-
-INSTRUCTIONS CRITIQUES - RESPECTE CE FORMAT STRICTEMENT:
-1. Retourne UNIQUEMENT un objet JSON valide
-2. Ne mets AUCUN texte avant ou après le JSON
-3. N'utilise PAS de balises markdown comme \`\`\`json
-4. Le JSON doit être directement parsable
-5. Génère exactement ${journeyData.totalDays} descriptions
-
-Format EXACT à respecter:
-{
-  "descriptions": [
-    {
-      "day": 1,
-      "description": "Description du jour 1..."
-    },
-    {
-      "day": 2,
-      "description": "Description du jour 2..."
-    }
-  ]
-}
-
-Ta réponse doit commencer par { et se terminer par } sans rien d'autre.`;
-
-        // Ajouter les instructions spécifiques selon le style de narration
-        let styleInstructions = '';
-        switch (narrationStyle) {
-            case 'detailed':
-                styleInstructions = `
-
-**STYLE DE NARRATION : DÉTAILLÉE**
-- Rédigez des descriptions riches et immersives de plusieurs paragraphes par journée
-- Rédigez au présent de la deuxième personne du pluriel ("Vous traversez...")
-- Développez l'atmosphère avec des détails sensoriels précis
-- Explorez les émotions et réflexions intimes des personnages
-- Utilisez un style littéraire évocateur et poétique
-- Chaque description doit faire 3-4 paragraphes pour une immersion maximale
-- Variez les tons : contemplatif, aventureux, mélancolique selon les découvertes`;
-                break;
-            case 'brief':
-                styleInstructions = `
-
-**STYLE DE NARRATION : BRÈVE**
-- Rédigez des descriptions concises mais évocatrices (1-2 paragraphes par journée)
-- Rédigez au présent de la deuxième personne du pluriel ("Vous traversez...")
-- Concentrez-vous sur l'essentiel : ambiance, découvertes importantes, ressenti général
-- Style narratif fluide et accessible, idéal pour une lecture rapide en jeu
-- Capturez l'essence de chaque journée sans s'attarder sur les détails`;
-                break;
-            case 'keywords':
-                styleInstructions = `
-
-**STYLE DE NARRATION : POINTS CLÉS**
-- Organisez l'information sous forme de listes structurées de mots-clés thématiques
-- Ne faites pas de phrases complètes, mais des listes de mots-clés et expressions évocatrices
-- Utilisez des puces et des catégories claires (Paysage, Météo, Ambiance, Événements, etc.)
-- Présentez les informations de manière synthétique et facilement exploitable
-- Optimisé pour une consultation rapide et une improvisation en jeu
-- Format : utilisez des tirets et des catégories courtes pour structurer l'information`;
-                break;
+                discoveries: discoveries
+            });
         }
 
-        prompt += `
-**Instructions importantes :**
-- Utilise les descriptions fournies pour chaque lieu/région pour enrichir le récit de voyage
-- Intègre subtilement les éléments des descriptions dans ta narration sans les citer textuellement
-- Assure-toi que chaque description intègre subtilement la météo et la saison, en les traduisant en sensations et détails atmosphériques
-- Ne répète pas littéralement le texte météo fourni
-- Adapte la description des paysages selon la saison (couleurs, végétation, ambiance)
-- Montre l'impact de la météo sur le voyage sans la mentionner explicitement
-- Le ton doit être immersif et narratif, adapté à une lecture en jeu de rôle
+        return allJourneyData;
+    }
 
-**VARIÉTÉ ET NON-RÉPÉTITION (CRUCIAL) :**
-- Évite absolument les redondances entre les descriptions des différentes journées
-- Chaque jour doit avoir un angle narratif différent et une atmosphère unique
-- Varie le point focal : tantôt le paysage, tantôt les personnages, tantôt une rencontre, tantôt une sensation
-- Alterne entre descriptions externes (ce qu'on voit) et internes (ce qu'on ressent)
-- Ne réutilise jamais les mêmes tournures de phrases ou structures narratives
-- Chaque description doit surprendre et apporter quelque chose de nouveau
+    createAllJourneyDescriptionPrompt(allJourneyData) {
+        let prompt = `Tu es un narrateur expert dans l'univers de la Terre du Milieu de J.R.R. Tolkien. 
 
-${styleInstructions}
+Ta mission est de créer des descriptions immersives pour chaque jour d'un voyage, en tenant compte du contexte global du périple.
 
-**Règles générales :**
-- Variez les descriptions selon les jours en mettant en avant :
-  • Tantôt des descriptions de paysages
-  • Tantôt le temps qu'il fait
-  • Tantôt les impressions de voyage
-  • Tantôt l'accumulation de la fatigue
-  • Tantôt l'attitude de certains membres du groupe
-  • Tantôt un détail marquant du lieu/région traversé(e)
-  • Tantôt une observation naturaliste
-  • Tantôt une réflexion sur la destination
+INSTRUCTIONS IMPORTANTES :
+1. Génère une description UNIQUE pour chaque jour
+2. Varie le style et le focus d'une journée à l'autre (paysages, rencontres, réflexions, actions, détails culturels)
+3. Chaque description doit faire environ 50-80 mots
+4. Utilise un style évocateur et poétique, inspiré de Tolkien
+5. Intègre les éléments météorologiques et les lieux traversés naturellement
+6. ÉVITE ABSOLUMENT les répétitions entre les jours - change de perspective, d'angle et de vocabulaire
+7. Utilise les descriptions des lieux/régions pour enrichir ta narration
+8. Alterne entre : action, contemplation, danger, découverte, repos, mystère
 
-- Rédigez au présent de la 2ème personne du pluriel ("Vous traversez...")
-- Faites appel à plusieurs sens (vue, ouïe, odorat, toucher) pour une immersion totale
-- Évoquez l'état physique et mental des personnages en tenant compte du nombre de jours de voyage accumulés
+VOYAGE COMPLET (${this.totalJourneyDays} jours) :
+${allJourneyData.map(dayData => {
+    const discoveries = dayData.discoveries.length > 0 
+        ? dayData.discoveries.map(d => {
+            let detail = `${d.name} (${d.type})`;
+            if (d.description) {
+                detail += `\n  Description: ${d.description.substring(0, 200)}${d.description.length > 200 ? '...' : ''}`;
+            }
+            return detail;
+        }).join('\n  - ')
+        : 'aucune découverte particulière';
 
-Répondez UNIQUEMENT avec le JSON, sans texte d'introduction ni de conclusion.`;
+    const weather = dayData.weather ? ` - Météo: ${dayData.weather}` : '';
+
+    return `Jour ${dayData.day} (${dayData.calendarDate})${weather}\nDécouvertes:\n  - ${discoveries}`;
+}).join('\n\n')}
+
+CONSIGNES DE GÉNÉRATION :
+- Pour chaque jour, génère une description UNIQUE avec un angle narratif différent
+- Jours impairs (1,3,5...) : focus sur l'action et les événements
+- Jours pairs (2,4,6...) : focus sur l'atmosphère, les paysages et les réflexions
+- Utilise les descriptions fournies pour enrichir le contexte mais ne les recopie pas
+- Intègre subtilement les lieux et la météo sans formules répétitives
+- Varie le vocabulaire : évite de réutiliser les mêmes adjectifs ou tournures
+- Crée une vraie progression narrative avec des hauts et des bas
+
+FORMAT DE RÉPONSE :
+Jour 1 :
+[description du jour 1]
+
+Jour 2 :
+[description du jour 2]
+
+... et ainsi de suite pour tous les jours.`;
 
         return prompt;
     }
