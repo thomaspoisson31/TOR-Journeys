@@ -1097,10 +1097,22 @@ class SettingsManager {
         const invalidLocs = [];
         const orphanRegs = [];
         const invalidRegs = [];
+        const duplicateLocs = [];
+        const duplicateRegs = [];
 
         // Analyser les lieux
         if (window.locationsData && window.locationsData.locations) {
+            const locationIds = {};
+            
             window.locationsData.locations.forEach(loc => {
+                // Vérifier les doublons d'ID
+                if (locationIds[loc.id]) {
+                    duplicateLocs.push(loc);
+                } else {
+                    locationIds[loc.id] = true;
+                }
+                
+                // Vérifier les orphelins et invalides
                 if (!loc.mapId) {
                     orphanLocs.push(loc);
                 } else if (!validMapIds.includes(loc.mapId)) {
@@ -1111,7 +1123,17 @@ class SettingsManager {
 
         // Analyser les régions
         if (window.regionsData && window.regionsData.regions) {
+            const regionIds = {};
+            
             window.regionsData.regions.forEach(reg => {
+                // Vérifier les doublons d'ID
+                if (regionIds[reg.id]) {
+                    duplicateRegs.push(reg);
+                } else {
+                    regionIds[reg.id] = true;
+                }
+                
+                // Vérifier les orphelins et invalides
                 if (!reg.mapId) {
                     orphanRegs.push(reg);
                 } else if (!validMapIds.includes(reg.mapId)) {
@@ -1135,6 +1157,45 @@ class SettingsManager {
                         <i class="fas fa-times fa-lg"></i>
                     </button>
                 </div>
+
+                ${duplicateLocs.length > 0 || duplicateRegs.length > 0 ? `
+                <div class="mb-6 p-4 bg-purple-900/20 border border-purple-600 rounded-lg">
+                    <h4 class="text-purple-400 font-semibold mb-3">
+                        <i class="fas fa-clone mr-2"></i>Doublons d'ID (${duplicateLocs.length + duplicateRegs.length})
+                    </h4>
+                    ${duplicateLocs.length > 0 ? `
+                    <div class="mb-3">
+                        <div class="text-sm text-gray-300 font-medium mb-2">Lieux (${duplicateLocs.length}):</div>
+                        <div class="space-y-1 max-h-40 overflow-y-auto">
+                            ${duplicateLocs.map(loc => `
+                                <div class="text-xs bg-gray-700 p-2 rounded">
+                                    <strong>${loc.name}</strong>
+                                    <div class="text-gray-400">ID: ${loc.id} • MapID: ${loc.mapId || 'N/A'}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    ${duplicateRegs.length > 0 ? `
+                    <div>
+                        <div class="text-sm text-gray-300 font-medium mb-2">Régions (${duplicateRegs.length}):</div>
+                        <div class="space-y-1 max-h-40 overflow-y-auto">
+                            ${duplicateRegs.map(reg => `
+                                <div class="text-xs bg-gray-700 p-2 rounded">
+                                    <strong>${reg.name}</strong>
+                                    <div class="text-gray-400">ID: ${reg.id} • MapID: ${reg.mapId || 'N/A'}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    <button class="w-full mt-3 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 rounded transition-colors flex items-center justify-center space-x-2 text-xs"
+                            onclick="window.settingsManager.deleteDuplicateElements()">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Supprimer les doublons</span>
+                    </button>
+                </div>
+                ` : ''}
 
                 ${orphanLocs.length > 0 || orphanRegs.length > 0 ? `
                 <div class="mb-6 p-4 bg-red-900/20 border border-red-600 rounded-lg">
@@ -1206,11 +1267,11 @@ class SettingsManager {
                 </div>
                 ` : ''}
 
-                ${orphanLocs.length === 0 && orphanRegs.length === 0 && invalidLocs.length === 0 && invalidRegs.length === 0 ? `
+                ${orphanLocs.length === 0 && orphanRegs.length === 0 && invalidLocs.length === 0 && invalidRegs.length === 0 && duplicateLocs.length === 0 && duplicateRegs.length === 0 ? `
                 <div class="p-8 text-center text-gray-400">
                     <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
                     <p class="text-lg">Aucun problème détecté</p>
-                    <p class="text-sm mt-2">Tous les lieux et régions ont un mapID valide</p>
+                    <p class="text-sm mt-2">Tous les lieux et régions ont un mapID valide et aucun doublon détecté</p>
                 </div>
                 ` : ''}
             </div>
@@ -1324,6 +1385,67 @@ class SettingsManager {
 
         console.log(`✅ Éléments avec mapID invalide supprimés: ${deletedLocations} lieux, ${deletedRegions} régions`);
         alert(`${deletedLocations} lieu${deletedLocations > 1 ? 'x' : ''} et ${deletedRegions} région${deletedRegions > 1 ? 's' : ''} avec mapID invalide supprimé${deletedLocations + deletedRegions > 1 ? 's' : ''}.`);
+    }
+
+    deleteDuplicateElements() {
+        if (!confirm('Voulez-vous vraiment supprimer tous les doublons (éléments avec le même ID) ?\n\nSeule la première occurrence de chaque ID sera conservée.\n\nCette action est irréversible.')) {
+            return;
+        }
+
+        let deletedLocations = 0;
+        let deletedRegions = 0;
+
+        // Supprimer les doublons de lieux
+        if (window.locationsData && window.locationsData.locations) {
+            const beforeCount = window.locationsData.locations.length;
+            const seenIds = new Set();
+            
+            window.locationsData.locations = window.locationsData.locations.filter(loc => {
+                if (seenIds.has(loc.id)) {
+                    return false; // Doublon, supprimer
+                }
+                seenIds.add(loc.id);
+                return true; // Première occurrence, garder
+            });
+            
+            deletedLocations = beforeCount - window.locationsData.locations.length;
+        }
+
+        // Supprimer les doublons de régions
+        if (window.regionsData && window.regionsData.regions) {
+            const beforeCount = window.regionsData.regions.length;
+            const seenIds = new Set();
+            
+            window.regionsData.regions = window.regionsData.regions.filter(reg => {
+                if (seenIds.has(reg.id)) {
+                    return false; // Doublon, supprimer
+                }
+                seenIds.add(reg.id);
+                return true; // Première occurrence, garder
+            });
+            
+            deletedRegions = beforeCount - window.regionsData.regions.length;
+        }
+
+        // Sauvegarder les modifications
+        if (window.dataManager) {
+            window.dataManager.saveLocationsToLocal();
+            window.dataManager.saveRegionsToLocal();
+        }
+
+        // Re-render la grille pour mettre à jour l'affichage
+        this.renderMapsGrid();
+
+        // Re-render les lieux et régions sur la carte
+        if (typeof window.renderLocations === 'function') {
+            window.renderLocations();
+        }
+        if (typeof window.renderRegions === 'function') {
+            window.renderRegions();
+        }
+
+        console.log(`✅ Doublons supprimés: ${deletedLocations} lieux, ${deletedRegions} régions`);
+        alert(`${deletedLocations} lieu${deletedLocations > 1 ? 'x' : ''} et ${deletedRegions} région${deletedRegions > 1 ? 's' : ''} en doublon supprimé${deletedLocations + deletedRegions > 1 ? 's' : ''}.`);
     }
 
 
