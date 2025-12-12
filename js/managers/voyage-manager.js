@@ -2060,7 +2060,7 @@ ${allJourneyData.map(dayData => {
         ? dayData.discoveries.map(d => {
             let detail = `${d.name} (${d.type})`;
             if (d.description) {
-                detail += `\n  Description: ${d.description.substring(0, 200)}${d.description.length > 200 ? '...' : ''}`;
+                detail += `\n  Description: ${d.description}`;
             }
             return detail;
         }).join('\n  - ')
