@@ -1093,62 +1093,242 @@ class SettingsManager {
 
     showDuplicatesAnalysis() {
         const validMapIds = this.availableMaps.map(m => m.url);
-        const orphanLocs = [];
-        const invalidLocs = [];
-        const orphanRegs = [];
-        const invalidRegs = [];
-        const duplicateLocs = [];
-        const duplicateRegs = [];
-
-        // Analyser les lieux
+        
+        // Analyser les doublons de lieux par ID et par nom
+        const duplicatesByIdLocs = new Map();
+        const duplicatesByNameLocs = new Map();
+        
         if (window.locationsData && window.locationsData.locations) {
-            const locationIds = {};
-
-            window.locationsData.locations.forEach(loc => {
-                // Vérifier les doublons d'ID
-                if (locationIds[loc.id]) {
-                    duplicateLocs.push(loc);
-                } else {
-                    locationIds[loc.id] = true;
+            window.locationsData.locations.forEach((loc, index) => {
+                // Doublons par ID
+                if (!duplicatesByIdLocs.has(loc.id)) {
+                    duplicatesByIdLocs.set(loc.id, []);
                 }
-
-                // Vérifier les orphelins et invalides
-                if (!loc.mapId) {
-                    orphanLocs.push(loc);
-                } else if (!validMapIds.includes(loc.mapId)) {
-                    invalidLocs.push(loc);
+                duplicatesByIdLocs.get(loc.id).push({...loc, arrayIndex: index});
+                
+                // Doublons par nom
+                if (!duplicatesByNameLocs.has(loc.name)) {
+                    duplicatesByNameLocs.set(loc.name, []);
                 }
+                duplicatesByNameLocs.get(loc.name).push({...loc, arrayIndex: index});
             });
         }
-
-        // Analyser les régions
+        
+        // Analyser les doublons de régions par ID et par nom
+        const duplicatesByIdRegs = new Map();
+        const duplicatesByNameRegs = new Map();
+        
         if (window.regionsData && window.regionsData.regions) {
-            const regionIds = {};
-
-            window.regionsData.regions.forEach(reg => {
-                // Vérifier les doublons d'ID
-                if (regionIds[reg.id]) {
-                    duplicateRegs.push(reg);
-                } else {
-                    regionIds[reg.id] = true;
+            window.regionsData.regions.forEach((reg, index) => {
+                // Doublons par ID
+                if (!duplicatesByIdRegs.has(reg.id)) {
+                    duplicatesByIdRegs.set(reg.id, []);
                 }
-
-                // Vérifier les orphelins et invalides
-                if (!reg.mapId) {
-                    orphanRegs.push(reg);
-                } else if (!validMapIds.includes(reg.mapId)) {
-                    invalidRegs.push(reg);
+                duplicatesByIdRegs.get(reg.id).push({...reg, arrayIndex: index});
+                
+                // Doublons par nom
+                if (!duplicatesByNameRegs.has(reg.name)) {
+                    duplicatesByNameRegs.set(reg.name, []);
                 }
+                duplicatesByNameRegs.get(reg.name).push({...reg, arrayIndex: index});
             });
         }
-
+        
+        // Filtrer pour ne garder que les doublons réels
+        const locIdDuplicates = Array.from(duplicatesByIdLocs.entries()).filter(([id, items]) => items.length > 1);
+        const locNameDuplicates = Array.from(duplicatesByNameLocs.entries()).filter(([name, items]) => items.length > 1);
+        const regIdDuplicates = Array.from(duplicatesByIdRegs.entries()).filter(([id, items]) => items.length > 1);
+        const regNameDuplicates = Array.from(duplicatesByNameRegs.entries()).filter(([name, items]) => items.length > 1);
+        
         // Créer la modale d'analyse
         const modal = document.createElement('div');
         modal.id = 'duplicates-analysis-modal';
         modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]';
 
+        let duplicatesHTML = '';
+        
+        // Doublons de lieux par ID
+        if (locIdDuplicates.length > 0) {
+            duplicatesHTML += `
+                <div class="mb-6 p-4 bg-purple-900/20 border border-purple-600 rounded-lg">
+                    <h4 class="text-purple-400 font-semibold mb-3">
+                        <i class="fas fa-clone mr-2"></i>Lieux avec ID dupliqué (${locIdDuplicates.length} groupes)
+                    </h4>
+                    <div class="space-y-4">
+                        ${locIdDuplicates.map(([id, items]) => {
+                            return `
+                                <div class="bg-gray-900/50 p-3 rounded border border-purple-500/30">
+                                    <div class="text-sm font-semibold text-purple-300 mb-2">ID: ${id} (${items.length} occurrences)</div>
+                                    <div class="space-y-2">
+                                        ${items.map(loc => {
+                                            const associatedChars = window.charactersData?.characters?.filter(c => 
+                                                c.associatedLocations?.includes(String(loc.id))
+                                            ) || [];
+                                            
+                                            return `
+                                                <div class="bg-gray-800 p-2 rounded flex justify-between items-start">
+                                                    <div class="flex-1">
+                                                        <div class="text-white font-medium">${loc.name}</div>
+                                                        <div class="text-xs text-gray-400 mt-1">
+                                                            MapID: ${loc.mapId || 'N/A'}<br>
+                                                            Coords: (${loc.coordinates?.x || 'N/A'}, ${loc.coordinates?.y || 'N/A'})<br>
+                                                            ${associatedChars.length > 0 ? `Personnages: ${associatedChars.map(c => c.name).join(', ')}<br>` : ''}
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        class="ml-2 px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-xs text-white"
+                                                        onclick="window.settingsManager.deleteSingleLocation(${loc.arrayIndex})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Doublons de lieux par nom
+        if (locNameDuplicates.length > 0) {
+            duplicatesHTML += `
+                <div class="mb-6 p-4 bg-blue-900/20 border border-blue-600 rounded-lg">
+                    <h4 class="text-blue-400 font-semibold mb-3">
+                        <i class="fas fa-tag mr-2"></i>Lieux avec nom dupliqué (${locNameDuplicates.length} groupes)
+                    </h4>
+                    <div class="space-y-4">
+                        ${locNameDuplicates.map(([name, items]) => {
+                            return `
+                                <div class="bg-gray-900/50 p-3 rounded border border-blue-500/30">
+                                    <div class="text-sm font-semibold text-blue-300 mb-2">${name} (${items.length} occurrences)</div>
+                                    <div class="space-y-2">
+                                        ${items.map(loc => {
+                                            const associatedChars = window.charactersData?.characters?.filter(c => 
+                                                c.associatedLocations?.includes(String(loc.id))
+                                            ) || [];
+                                            
+                                            return `
+                                                <div class="bg-gray-800 p-2 rounded flex justify-between items-start">
+                                                    <div class="flex-1">
+                                                        <div class="text-white font-medium">ID: ${loc.id}</div>
+                                                        <div class="text-xs text-gray-400 mt-1">
+                                                            MapID: ${loc.mapId || 'N/A'}<br>
+                                                            Coords: (${loc.coordinates?.x || 'N/A'}, ${loc.coordinates?.y || 'N/A'})<br>
+                                                            ${associatedChars.length > 0 ? `Personnages: ${associatedChars.map(c => c.name).join(', ')}<br>` : ''}
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        class="ml-2 px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-xs text-white"
+                                                        onclick="window.settingsManager.deleteSingleLocation(${loc.arrayIndex})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Doublons de régions par ID
+        if (regIdDuplicates.length > 0) {
+            duplicatesHTML += `
+                <div class="mb-6 p-4 bg-purple-900/20 border border-purple-600 rounded-lg">
+                    <h4 class="text-purple-400 font-semibold mb-3">
+                        <i class="fas fa-clone mr-2"></i>Régions avec ID dupliqué (${regIdDuplicates.length} groupes)
+                    </h4>
+                    <div class="space-y-4">
+                        ${regIdDuplicates.map(([id, items]) => {
+                            return `
+                                <div class="bg-gray-900/50 p-3 rounded border border-purple-500/30">
+                                    <div class="text-sm font-semibold text-purple-300 mb-2">ID: ${id} (${items.length} occurrences)</div>
+                                    <div class="space-y-2">
+                                        ${items.map(reg => {
+                                            return `
+                                                <div class="bg-gray-800 p-2 rounded flex justify-between items-start">
+                                                    <div class="flex-1">
+                                                        <div class="text-white font-medium">${reg.name}</div>
+                                                        <div class="text-xs text-gray-400 mt-1">
+                                                            MapID: ${reg.mapId || 'N/A'}<br>
+                                                            Points: ${reg.points?.length || 0}
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        class="ml-2 px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-xs text-white"
+                                                        onclick="window.settingsManager.deleteSingleRegion(${reg.arrayIndex})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Doublons de régions par nom
+        if (regNameDuplicates.length > 0) {
+            duplicatesHTML += `
+                <div class="mb-6 p-4 bg-blue-900/20 border border-blue-600 rounded-lg">
+                    <h4 class="text-blue-400 font-semibold mb-3">
+                        <i class="fas fa-tag mr-2"></i>Régions avec nom dupliqué (${regNameDuplicates.length} groupes)
+                    </h4>
+                    <div class="space-y-4">
+                        ${regNameDuplicates.map(([name, items]) => {
+                            return `
+                                <div class="bg-gray-900/50 p-3 rounded border border-blue-500/30">
+                                    <div class="text-sm font-semibold text-blue-300 mb-2">${name} (${items.length} occurrences)</div>
+                                    <div class="space-y-2">
+                                        ${items.map(reg => {
+                                            return `
+                                                <div class="bg-gray-800 p-2 rounded flex justify-between items-start">
+                                                    <div class="flex-1">
+                                                        <div class="text-white font-medium">ID: ${reg.id}</div>
+                                                        <div class="text-xs text-gray-400 mt-1">
+                                                            MapID: ${reg.mapId || 'N/A'}<br>
+                                                            Points: ${reg.points?.length || 0}
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        class="ml-2 px-2 py-1 bg-red-600 hover:bg-red-700 rounded text-xs text-white"
+                                                        onclick="window.settingsManager.deleteSingleRegion(${reg.arrayIndex})">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (!duplicatesHTML) {
+            duplicatesHTML = `
+                <div class="p-8 text-center text-gray-400">
+                    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+                    <p class="text-lg">Aucun doublon détecté</p>
+                    <p class="text-sm mt-2">Tous les lieux et régions ont des IDs et noms uniques</p>
+                </div>
+            `;
+        }
+
         modal.innerHTML = `
-            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[80vh] overflow-y-auto">
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-5xl mx-4 max-h-[80vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-white">
                         <i class="fas fa-search mr-2"></i>Analyse des Doublons
@@ -1157,127 +1337,99 @@ class SettingsManager {
                         <i class="fas fa-times fa-lg"></i>
                     </button>
                 </div>
-
-                ${duplicateLocs.length > 0 || duplicateRegs.length > 0 ? `
-                <div class="mb-6 p-4 bg-purple-900/20 border border-purple-600 rounded-lg">
-                    <h4 class="text-purple-400 font-semibold mb-3">
-                        <i class="fas fa-clone mr-2"></i>Doublons d'ID (${duplicateLocs.length + duplicateRegs.length})
-                    </h4>
-                    ${duplicateLocs.length > 0 ? `
-                    <div class="mb-3">
-                        <div class="text-sm text-gray-300 font-medium mb-2">Lieux (${duplicateLocs.length}):</div>
-                        <div class="space-y-1 max-h-40 overflow-y-auto">
-                            ${duplicateLocs.map(loc => `
-                                <div class="text-xs bg-gray-700 p-2 rounded">
-                                    <strong>${loc.name}</strong>
-                                    <div class="text-gray-400">ID: ${loc.id} • MapID: ${loc.mapId || 'N/A'}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                    ${duplicateRegs.length > 0 ? `
-                    <div>
-                        <div class="text-sm text-gray-300 font-medium mb-2">Régions (${duplicateRegs.length}):</div>
-                        <div class="space-y-1 max-h-40 overflow-y-auto">
-                            ${duplicateRegs.map(reg => `
-                                <div class="text-xs bg-gray-700 p-2 rounded">
-                                    <strong>${reg.name}</strong>
-                                    <div class="text-gray-400">ID: ${reg.id} • MapID: ${reg.mapId || 'N/A'}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                    <button class="w-full mt-3 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 rounded transition-colors flex items-center justify-center space-x-2 text-xs"
-                            onclick="window.settingsManager.deleteDuplicateElements()">
-                        <i class="fas fa-trash-alt"></i>
-                        <span>Supprimer les doublons</span>
-                    </button>
-                </div>
-                ` : ''}
-
-                ${orphanLocs.length > 0 || orphanRegs.length > 0 ? `
-                <div class="mb-6 p-4 bg-red-900/20 border border-red-600 rounded-lg">
-                    <h4 class="text-red-400 font-semibold mb-3">
-                        <i class="fas fa-unlink mr-2"></i>Éléments sans mapID (${orphanLocs.length + orphanRegs.length})
-                    </h4>
-                    ${orphanLocs.length > 0 ? `
-                    <div class="mb-3">
-                        <div class="text-sm text-gray-300 font-medium mb-2">Lieux (${orphanLocs.length}):</div>
-                        <div class="space-y-1 max-h-40 overflow-y-auto">
-                            ${orphanLocs.map(loc => `
-                                <div class="text-xs bg-gray-700 p-2 rounded">
-                                    <strong>${loc.name}</strong>
-                                    <div class="text-gray-400">ID: ${loc.id} • Coords: (${loc.coordinates?.x || 'N/A'}, ${loc.coordinates?.y || 'N/A'})</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                    ${orphanRegs.length > 0 ? `
-                    <div>
-                        <div class="text-sm text-gray-300 font-medium mb-2">Régions (${orphanRegs.length}):</div>
-                        <div class="space-y-1 max-h-40 overflow-y-auto">
-                            ${orphanRegs.map(reg => `
-                                <div class="text-xs bg-gray-700 p-2 rounded">
-                                    <strong>${reg.name}</strong>
-                                    <div class="text-gray-400">ID: ${reg.id}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                </div>
-                ` : ''}
-
-                ${invalidLocs.length > 0 || invalidRegs.length > 0 ? `
-                <div class="p-4 bg-orange-900/20 border border-orange-600 rounded-lg">
-                    <h4 class="text-orange-400 font-semibold mb-3">
-                        <i class="fas fa-map-marked-alt mr-2"></i>Éléments avec mapID invalide (${invalidLocs.length + invalidRegs.length})
-                    </h4>
-                    ${invalidLocs.length > 0 ? `
-                    <div class="mb-3">
-                        <div class="text-sm text-gray-300 font-medium mb-2">Lieux (${invalidLocs.length}):</div>
-                        <div class="space-y-1 max-h-40 overflow-y-auto">
-                            ${invalidLocs.map(loc => `
-                                <div class="text-xs bg-gray-700 p-2 rounded">
-                                    <strong>${loc.name}</strong>
-                                    <div class="text-gray-400">ID: ${loc.id}</div>
-                                    <div class="text-orange-300">MapID invalide: ${loc.mapId}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                    ${invalidRegs.length > 0 ? `
-                    <div>
-                        <div class="text-sm text-gray-300 font-medium mb-2">Régions (${invalidRegs.length}):</div>
-                        <div class="space-y-1 max-h-40 overflow-y-auto">
-                            ${invalidRegs.map(reg => `
-                                <div class="text-xs bg-gray-700 p-2 rounded">
-                                    <strong>${reg.name}</strong>
-                                    <div class="text-gray-400">ID: ${reg.id}</div>
-                                    <div class="text-orange-300">MapID invalide: ${reg.mapId}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    ` : ''}
-                </div>
-                ` : ''}
-
-                ${orphanLocs.length === 0 && orphanRegs.length === 0 && invalidLocs.length === 0 && invalidRegs.length === 0 && duplicateLocs.length === 0 && duplicateRegs.length === 0 ? `
-                <div class="p-8 text-center text-gray-400">
-                    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
-                    <p class="text-lg">Aucun problème détecté</p>
-                    <p class="text-sm mt-2">Tous les lieux et régions ont un mapID valide et aucun doublon détecté</p>
-                </div>
-                ` : ''}
+                ${duplicatesHTML}
             </div>
         `;
 
         document.body.appendChild(modal);
+    }
+    
+    deleteSingleLocation(arrayIndex) {
+        if (!window.locationsData || !window.locationsData.locations[arrayIndex]) {
+            console.error('❌ Lieu introuvable à l\'index:', arrayIndex);
+            return;
+        }
+        
+        const location = window.locationsData.locations[arrayIndex];
+        const confirmMessage = `Voulez-vous vraiment supprimer le lieu suivant ?\n\nNom: ${location.name}\nID: ${location.id}\nMapID: ${location.mapId || 'N/A'}`;
+        
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+        
+        console.log(`🗑️ Suppression du lieu: ${location.name} (index: ${arrayIndex})`);
+        
+        // Supprimer le lieu
+        window.locationsData.locations.splice(arrayIndex, 1);
+        
+        // Sauvegarder
+        if (window.dataManager) {
+            window.dataManager.saveLocationsToLocal();
+        }
+        
+        // Re-render la carte
+        if (typeof window.renderLocations === 'function') {
+            window.renderLocations();
+        }
+        
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+        
+        // Fermer et ré-ouvrir la modale d'analyse
+        document.getElementById('duplicates-analysis-modal')?.remove();
+        
+        // Petit délai pour laisser le temps au DOM de se mettre à jour
+        setTimeout(() => {
+            this.showDuplicatesAnalysis();
+        }, 100);
+        
+        console.log(`✅ Lieu supprimé avec succès`);
+    }
+    
+    deleteSingleRegion(arrayIndex) {
+        if (!window.regionsData || !window.regionsData.regions[arrayIndex]) {
+            console.error('❌ Région introuvable à l\'index:', arrayIndex);
+            return;
+        }
+        
+        const region = window.regionsData.regions[arrayIndex];
+        const confirmMessage = `Voulez-vous vraiment supprimer la région suivante ?\n\nNom: ${region.name}\nID: ${region.id}\nMapID: ${region.mapId || 'N/A'}`;
+        
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+        
+        console.log(`🗑️ Suppression de la région: ${region.name} (index: ${arrayIndex})`);
+        
+        // Supprimer la région
+        window.regionsData.regions.splice(arrayIndex, 1);
+        
+        // Sauvegarder
+        if (window.dataManager) {
+            window.dataManager.saveRegionsToLocal();
+        }
+        
+        // Re-render la carte
+        if (typeof window.renderRegions === 'function') {
+            window.renderRegions();
+        }
+        
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+        
+        // Fermer et ré-ouvrir la modale d'analyse
+        document.getElementById('duplicates-analysis-modal')?.remove();
+        
+        // Petit délai pour laisser le temps au DOM de se mettre à jour
+        setTimeout(() => {
+            this.showDuplicatesAnalysis();
+        }, 100);
+        
+        console.log(`✅ Région supprimée avec succès`);
     }
 
     deleteOrphanElements() {
