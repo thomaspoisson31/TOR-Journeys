@@ -81,17 +81,34 @@ class ImportExportManager {
                     
                     console.log(`✅ [exportUnifiedData] Lieu "${location.name}" ajouté (mapId: ${location.mapId})`);
 
+                    // Exporter TOUS les paramètres du lieu
                     const exportLocation = {
-                        ...location,
-                        type: location.type || "custom"
-                    };
-
-                    // Assurer la structure des coordonnées pour les lieux normaux
-                    if (location.coordinates && typeof location.coordinates.x === 'number' && typeof location.coordinates.y === 'number') {
-                        exportLocation.coordinates = {
+                        id: location.id,
+                        name: location.name,
+                        description: location.description || "",
+                        color: location.color,
+                        known: location.known !== undefined ? location.known : true,
+                        visited: location.visited !== undefined ? location.visited : false,
+                        type: location.type || "custom",
+                        mapId: location.mapId,
+                        coordinates: {
                             x: location.coordinates.x,
                             y: location.coordinates.y
-                        };
+                        }
+                    };
+
+                    // Ajouter imageUrl si présent
+                    if (location.imageUrl) {
+                        exportLocation.imageUrl = location.imageUrl;
+                    }
+
+                    // Ajouter images si présent (avec type de vignette)
+                    if (location.images && location.images.length > 0) {
+                        exportLocation.images = location.images.map(img => ({
+                            url: img.url,
+                            type: img.type || null,
+                            thumbnailCrop: img.thumbnailCrop || null
+                        }));
                     }
 
                     // Exporter les rumeurs en tant que tableau
@@ -136,24 +153,54 @@ class ImportExportManager {
                         points = region.coordinates;
                     }
 
+                    // Exporter TOUS les paramètres de la région
                     const regionAsLocation = {
                         id: region.id,
                         name: region.name,
                         description: region.description || "",
-                        imageUrl: region.imageUrl || "",
                         color: region.color,
                         known: region.known !== undefined ? region.known : true,
                         visited: region.visited !== undefined ? region.visited : false,
                         type: "region",
+                        mapId: region.mapId,
                         coordinates: {
                             points: points
                         }
                     };
 
-                    // Ajouter les champs optionnels s'ils existent
-                    if (region.Rumeur) regionAsLocation.Rumeur = region.Rumeur;
-                    if (region.Tradition_Ancienne) regionAsLocation.Tradition_Ancienne = region.Tradition_Ancienne;
-                    if (region.images) regionAsLocation.images = region.images;
+                    // Ajouter imageUrl si présent
+                    if (region.imageUrl) {
+                        regionAsLocation.imageUrl = region.imageUrl;
+                    }
+
+                    // Ajouter images si présent (avec type de vignette)
+                    if (region.images && region.images.length > 0) {
+                        regionAsLocation.images = region.images.map(img => ({
+                            url: img.url,
+                            type: img.type || null,
+                            thumbnailCrop: img.thumbnailCrop || null
+                        }));
+                    }
+
+                    // Ajouter la rumeur (une seule pour les régions)
+                    if (region.Rumeur && region.Rumeur !== "A définir") {
+                        regionAsLocation.Rumeur = region.Rumeur;
+                    }
+
+                    // Ajouter les rumeurs multiples si présentes
+                    if (region.Rumeurs && Array.isArray(region.Rumeurs)) {
+                        const rumeursValides = region.Rumeurs.filter(r => r && r !== "A définir");
+                        if (rumeursValides.length > 0) {
+                            regionAsLocation.Rumeurs = rumeursValides;
+                        }
+                    }
+
+                    // Ajouter la tradition ancienne
+                    if (region.Tradition_Ancienne && region.Tradition_Ancienne !== "A définir") {
+                        regionAsLocation.Tradition_Ancienne = region.Tradition_Ancienne;
+                    }
+
+                    // Ajouter les personnages associés
                     if (region.associatedCharacters && region.associatedCharacters.length > 0) {
                         regionAsLocation.associatedCharacters = region.associatedCharacters;
                     }
