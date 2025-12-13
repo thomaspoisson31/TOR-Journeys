@@ -797,8 +797,11 @@ class PathManager {
             return;
         }
 
-        // Utiliser le tracé densifié si fourni, sinon le tracé original
-        const pathToUse = densePath || this.path;
+        // CORRECTION: Toujours utiliser le tracé densifié pour avoir des indices cohérents
+        const pathToUse = densePath || this.densifyPath(this.path, 25);
+        
+        // Sauvegarder le tracé densifié globalement pour que VoyageManager puisse l'utiliser
+        window.densifiedPath = pathToUse;
 
         const activeMapUrl = window.settingsManager?.activeMapUrl;
 
