@@ -528,13 +528,13 @@ class InfoBoxManager {
             if (type === 'region') {
                 const regionType = item.regionType || null;
                 const regionTypes = window.constants?.regionTypes || {};
-                
+
                 if (regionType && regionTypes[regionType]) {
                     const typeInfo = regionTypes[regionType];
                     regionTypeHTML = `
                         <h3>Type de région</h3>
                         <div class="mb-6">
-                            <div class="inline-flex items-center space-x-2 px-3 py-2 rounded-lg border-2" 
+                            <div class="inline-flex items-center space-x-2 px-3 py-2 rounded-lg border-2"
                                  style="background-color: ${typeInfo.bgColor}; border-color: ${typeInfo.color};">
                                 <div class="w-4 h-4 rounded-full" style="background-color: ${typeInfo.color};"></div>
                                 <span style="color: ${typeInfo.color}; font-weight: 600;">${typeInfo.name}</span>
@@ -772,28 +772,28 @@ class InfoBoxManager {
             if (type === 'region') {
                 const regionTypes = window.constants?.regionTypes || {};
                 const currentType = item.regionType || '';
-                
+
                 const typeOptions = Object.keys(regionTypes).map(key => {
                     const typeInfo = regionTypes[key];
                     const isSelected = currentType === key;
                     return `
-                        <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg border transition-all hover:bg-gray-700" 
+                        <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg border transition-all hover:bg-gray-700"
                                style="border-color: ${isSelected ? typeInfo.color : '#4b5563'}; background-color: ${isSelected ? typeInfo.bgColor : 'transparent'};">
-                            <input type="radio" name="region-type" value="${key}" ${isSelected ? 'checked' : ''} 
+                            <input type="radio" name="region-type" value="${key}" ${isSelected ? 'checked' : ''}
                                    class="w-4 h-4 cursor-pointer">
                             <div class="w-4 h-4 rounded-full" style="background-color: ${typeInfo.color};"></div>
                             <span class="text-white text-sm">${typeInfo.name}</span>
                         </label>
                     `;
                 }).join('');
-                
+
                 regionTypeHTML = `
                     <div class="mb-3">
                         <label class="block text-sm font-medium mb-2 text-white">Type de région :</label>
                         <div class="space-y-2">
-                            <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg border transition-all hover:bg-gray-700" 
+                            <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg border transition-all hover:bg-gray-700"
                                    style="border-color: #4b5563;">
-                                <input type="radio" name="region-type" value="" ${!currentType ? 'checked' : ''} 
+                                <input type="radio" name="region-type" value="" ${!currentType ? 'checked' : ''}
                                        class="w-4 h-4 cursor-pointer">
                                 <span class="text-gray-400 text-sm italic">Aucun type</span>
                             </label>
@@ -802,7 +802,7 @@ class InfoBoxManager {
                     </div>
                 `;
             }
-            
+
             // Nettoyer complètement l'onglet
             textTab.innerHTML = `
                 <div class="edit-form p-4">
@@ -1567,13 +1567,18 @@ class InfoBoxManager {
         // Mettre à jour l'objet
         if (nameInput) this.currentItem.name = nameInput.value.trim();
         if (descTextarea) this.currentItem.description = descTextarea.value.trim();
-        
-        // Sauvegarder le type de région (uniquement pour les régions)
+
+        // Pour les régions: sauvegarder le type et synchroniser la couleur
         if (this.currentType === 'region') {
             const selectedType = document.querySelector('input[name="region-type"]:checked');
             if (selectedType) {
-                this.currentItem.regionType = selectedType.value || null;
-                console.log(`💾 Type de région sauvegardé: ${this.currentItem.regionType}`);
+                const newType = selectedType.value || 'wild';
+                this.currentItem.regionType = newType;
+                // Synchroniser automatiquement la couleur selon le type
+                if (window.constants?.getColorFromRegionType) {
+                    this.currentItem.color = window.constants.getColorFromRegionType(newType);
+                    console.log(`🎨 Couleur synchronisée pour région ${this.currentItem.name}: ${this.currentItem.color} (type: ${newType})`);
+                }
             }
         }
 

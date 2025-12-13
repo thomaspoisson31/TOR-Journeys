@@ -18,12 +18,15 @@ import {
 } from './utils/constants.js';
 
 // Exposer les constantes globalement
+import { getColorFromRegionType } from './utils/constants.js';
+
 window.constants = {
     colorMap,
     regionColorMap,
     regionTypes,
     seasonSymbols,
-    seasonNames
+    seasonNames,
+    getColorFromRegionType
 };
 
 // --- Import des managers ---
@@ -683,8 +686,9 @@ function renderRegions() {
         polygon.setAttribute('data-id', region.id);
         polygon.setAttribute('data-name', region.name);
 
-        // Définir les styles du polygone
-        const fillColor = regionColorMap[region.color] || regionColorMap.gray;
+        // Définir les styles du polygone - couleur dérivée du type
+        const colorKey = window.constants?.getColorFromRegionType?.(region.regionType) || 'yellow';
+        const fillColor = regionColorMap[colorKey] || regionColorMap.yellow;
         const strokeColor = fillColor.replace(/0\.\d+\)$/, '0.8)'); // Bordure plus opaque
         polygon.setAttribute('fill', fillColor);
         polygon.setAttribute('stroke', strokeColor);
@@ -771,21 +775,16 @@ function renderRegions() {
                     infoBoxManager.renderReadMode();
                 }, 100);
             } else if (!regionTouchHasMoved && touchDuration >= 500) {
-                // Long press : ouvrir le menu de couleur
-                showColorChangeModal(e, region, 'region');
+                // Long press désactivé pour les régions (couleur dérivée du type)
+                // Ne rien faire
             }
         }, { passive: false });
 
-        // Ajouter l'événement de clic droit pour changer la couleur (desktop)
+        // Désactivation du clic droit pour les régions (couleur dérivée du type)
         polygon.addEventListener('contextmenu', (e) => {
-            // Bloquer en mode ajout de lieu
-            if (isLocationAddingMode) {
-                return;
-            }
-
             e.preventDefault();
             e.stopPropagation();
-            showColorChangeModal(e, region, 'region');
+            // Ne rien faire - la couleur est maintenant dérivée du type de région
         });
 
         // Ajouter à la couche des régions

@@ -439,6 +439,30 @@ class AuthManager {
             this.logAuth(`📊 Structure locationsData:`, data.locations);
         }
         if (data.regions) {
+            // MIGRATION AUTOMATIQUE: régions sans regionType → 'wild'
+            let migratedCount = 0;
+            if (data.regions.regions && Array.isArray(data.regions.regions)) {
+                data.regions.regions = data.regions.regions.map(region => {
+                    if (!region.regionType) {
+                        migratedCount++;
+                        return {
+                            ...region,
+                            regionType: 'wild',
+                            color: 'yellow' // Synchroniser la couleur
+                        };
+                    }
+                    // Synchroniser la couleur selon le type pour toutes les régions
+                    const colorFromType = window.constants?.getColorFromRegionType?.(region.regionType) || 'yellow';
+                    return {
+                        ...region,
+                        color: colorFromType
+                    };
+                });
+            }
+            if (migratedCount > 0) {
+                this.logAuth(`🔄 Migration automatique: ${migratedCount} région(s) sans type → 'wild' (Terres Sauvages)`);
+            }
+            
             window.regionsData = data.regions;
             // IMPORTANT: Synchroniser aussi la variable locale dans main.js
             if (typeof regionsData !== 'undefined') {

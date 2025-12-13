@@ -5,7 +5,8 @@ export const colorMap = {
     green: 'rgba(34, 197, 94, 0.8)',
     violet: 'rgba(139, 92, 246, 0.8)',
     orange: 'rgba(252, 169, 3, 0.8)',
-    black: 'rgba(17, 24, 39, 0.8)'
+    black: 'rgba(17, 24, 39, 0.8)',
+    yellow: 'rgba(251, 191, 36, 0.8)' // Jaune clair
 };
 
 // === TYPES DE RÉGIONS ===
@@ -49,6 +50,18 @@ export const regionColorMap = {
     purple: 'rgba(147, 51, 234, 0.2)',
     gray: 'rgba(107, 114, 128, 0.2)'
 };
+
+// Fonction de mapping Type de région → Couleur
+export function getColorFromRegionType(regionType) {
+    const mapping = {
+        'border': 'green',      // Terres Frontalières
+        'wild': 'yellow',       // Terres Sauvages (défaut)
+        'dark': 'orange',       // Terres Ténébreuses
+        'impassable': 'black',  // Terres Infranchissables
+        'perilous': 'red'       // Terres Périlleuses
+    };
+    return mapping[regionType] || 'yellow'; // Défaut: Terres Sauvages
+}
 
 // === DONNÉES PAR DÉFAUT ===
 export const getDefaultLocations = () => ({ "locations": [] }); // Fallback to empty if fetch fails
