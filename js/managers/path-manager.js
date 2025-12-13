@@ -602,6 +602,46 @@ class PathManager {
         }
     }
 
+    densifyPath(path, spacing = 25) {
+        if (path.length < 2) return path;
+
+        const densePath = [path[0]]; // Commencer avec le premier waypoint
+
+        for (let i = 1; i < path.length; i++) {
+            const start = path[i - 1];
+            const end = path[i];
+
+            // Calculer la distance du segment
+            const dx = end.x - start.x;
+            const dy = end.y - start.y;
+            const segmentLength = Math.sqrt(dx * dx + dy * dy);
+
+            // Si le segment est court, juste ajouter le point final
+            if (segmentLength <= spacing) {
+                densePath.push(end);
+                continue;
+            }
+
+            // Nombre de points intermédiaires à ajouter
+            const numPoints = Math.floor(segmentLength / spacing);
+
+            // Ajouter les points intermédiaires
+            for (let j = 1; j <= numPoints; j++) {
+                const ratio = (j * spacing) / segmentLength;
+                densePath.push({
+                    x: start.x + dx * ratio,
+                    y: start.y + dy * ratio
+                });
+            }
+
+            // Ajouter le point final du segment
+            densePath.push(end);
+        }
+
+        console.log(`🔍 [densifyPath] Tracé densifié: ${path.length} waypoints → ${densePath.length} points (espacement: ${spacing}px)`);
+        return densePath;
+    }
+
     detectDiscoveries() {
         console.log('🔍 [detectDiscoveries] DÉBUT de la détection');
 
@@ -622,19 +662,22 @@ class PathManager {
         this.discoveries = [];
         this.regionSegments.clear();
 
+        // Densifier le tracé pour une meilleure détection
+        const densePath = this.densifyPath(this.path, 25);
+
         console.log('🔍 [detectDiscoveries] Appel de detectNearbyLocations...');
-        // Détecter les lieux proches du tracé
-        this.detectNearbyLocations();
+        // Détecter les lieux proches du tracé (avec tracé densifié)
+        this.detectNearbyLocations(densePath);
         console.log('🔍 [detectDiscoveries] Après detectNearbyLocations - discoveries.length:', this.discoveries.length);
 
         console.log('🔍 [detectDiscoveries] Appel de detectTraversedRegions...');
-        // Détecter les régions traversées
-        this.detectTraversedRegions();
+        // Détecter les régions traversées (avec tracé densifié)
+        this.detectTraversedRegions(densePath);
         console.log('🔍 [detectDiscoveries] Après detectTraversedRegions - discoveries.length:', this.discoveries.length);
         console.log('🔍 [detectDiscoveries] FIN - Total découvertes:', this.discoveries.length);
     }
 
-    detectNearbyLocations() {
+    detectNearbyLocations(densePath = null) {
         console.log('📍 [detectNearbyLocations] DÉBUT');
         console.log('📍 [detectNearbyLocations] locationsData:', this.dataManager.locationsData);
         console.log('📍 [detectNearbyLocations] locations array:', this.dataManager.locationsData?.locations);
@@ -644,13 +687,16 @@ class PathManager {
             return;
         }
 
+        // Utiliser le tracé densifié si fourni, sinon le tracé original
+        const pathToUse = densePath || this.path;
+
         const PROXIMITY_THRESHOLD = 80; // pixels
         const activeMapUrl = window.settingsManager?.activeMapUrl;
 
         console.log('📍 [detectNearbyLocations] activeMapUrl:', activeMapUrl);
         console.log('📍 [detectNearbyLocations] PROXIMITY_THRESHOLD:', PROXIMITY_THRESHOLD);
         console.log('📍 [detectNearbyLocations] Nombre total de lieux:', this.dataManager.locationsData.locations.length);
-        console.log('📍 [detectNearbyLocations] Nombre de points du tracé:', this.path.length);
+        console.log('📍 [detectNearbyLocations] Nombre de points du tracé:', pathToUse.length);
 
         let processedCount = 0;
         let skippedNoCoords = 0;
@@ -697,9 +743,9 @@ class PathManager {
             let closestIndex = -1;
 
             // Vérifier la proximité avec chaque segment
-            for (let i = 1; i < this.path.length; i++) {
-                const segmentStart = this.path[i - 1];
-                const segmentEnd = this.path[i];
+            for (let i = 1; i < pathToUse.length; i++) {
+                const segmentStart = pathToUse[i - 1];
+                const segmentEnd = pathToUse[i];
                 
                 // Distance point-segment (perpendiculaire)
                 const distance = this.pointToSegmentDistance(
@@ -741,7 +787,7 @@ class PathManager {
         console.log('📍 [detectNearbyLocations] - Ignorés (trop loin):', skippedTooFar);
     }
 
-    detectTraversedRegions() {
+    detectTraversedRegions(densePath = null) {
         console.log('🗺️ [detectTraversedRegions] DÉBUT');
         console.log('🗺️ [detectTraversedRegions] regionsData:', this.dataManager.regionsData);
         console.log('🗺️ [detectTraversedRegions] regions array:', this.dataManager.regionsData?.regions);
@@ -751,11 +797,14 @@ class PathManager {
             return;
         }
 
+        // Utiliser le tracé densifié si fourni, sinon le tracé original
+        const pathToUse = densePath || this.path;
+
         const activeMapUrl = window.settingsManager?.activeMapUrl;
 
         console.log('🗺️ [detectTraversedRegions] activeMapUrl:', activeMapUrl);
         console.log('🗺️ [detectTraversedRegions] Nombre total de régions:', this.dataManager.regionsData.regions.length);
-        console.log('🗺️ [detectTraversedRegions] Nombre de points du tracé:', this.path.length);
+        console.log('🗺️ [detectTraversedRegions] Nombre de points du tracé:', pathToUse.length);
 
         let processedCount = 0;
         let skippedNoCoords = 0;
@@ -796,19 +845,19 @@ class PathManager {
 
             const intersections = [];
 
-            // Vérifier si les waypoints ou les segments traversent la région
-            for (let i = 0; i < this.path.length; i++) {
-                const waypoint = this.path[i];
+            // Vérifier si les points du tracé traversent la région
+            for (let i = 0; i < pathToUse.length; i++) {
+                const point = pathToUse[i];
 
-                if (this.isPointInPolygon(waypoint, regionCoords)) {
+                if (this.isPointInPolygon(point, regionCoords)) {
                     intersections.push(i);
                 }
             }
 
             // Vérifier aussi les intersections segment/polygone
-            for (let i = 1; i < this.path.length; i++) {
-                const segmentStart = this.path[i - 1];
-                const segmentEnd = this.path[i];
+            for (let i = 1; i < pathToUse.length; i++) {
+                const segmentStart = pathToUse[i - 1];
+                const segmentEnd = pathToUse[i];
                 
                 if (this.segmentIntersectsPolygon(segmentStart, segmentEnd, regionCoords)) {
                     if (!intersections.includes(i - 1)) intersections.push(i - 1);
