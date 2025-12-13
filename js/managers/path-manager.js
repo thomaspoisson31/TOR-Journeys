@@ -797,8 +797,11 @@ class PathManager {
             return;
         }
 
-        // CORRECTION: Toujours utiliser le tracé densifié pour avoir des indices cohérents
+        // CORRECTION: Toujours densifier le tracé pour garantir des indices cohérents
+        // Si un tracé densifié est fourni, l'utiliser, sinon densifier le tracé original
         const pathToUse = densePath || this.densifyPath(this.path, 25);
+        
+        console.log(`🗺️ [detectTraversedRegions] Tracé utilisé: ${pathToUse.length} points (original: ${this.path.length} waypoints)`);
         
         // Sauvegarder le tracé densifié globalement pour que VoyageManager puisse l'utiliser
         window.densifiedPath = pathToUse;
@@ -905,18 +908,29 @@ class PathManager {
                 console.log(`🗺️ [detectTraversedRegions] - Région "${region.name}" TRAVERSÉE et AJOUTÉE aux découvertes:`, regionDiscovery);
                 console.log(`🗺️ [detectTraversedRegions] - Points dans région: ${intersections.length}, Entry: ${realEntryIndex}, Exit: ${realExitIndex}`);
 
+                // CORRECTION: Valider les indices avant de les stocker
+                const maxIndex = pathToUse.length - 1;
+                const safeEntryIndex = Math.max(0, Math.min(realEntryIndex >= 0 ? realEntryIndex : firstIntersectionIndex, maxIndex));
+                const safeExitIndex = Math.max(0, Math.min(realExitIndex >= 0 ? realExitIndex : lastIntersectionIndex, maxIndex));
+                
+                // S'assurer que entry <= exit
+                const finalEntryIndex = Math.min(safeEntryIndex, safeExitIndex);
+                const finalExitIndex = Math.max(safeEntryIndex, safeExitIndex);
+
+                console.log(`🗺️ [detectTraversedRegions] - Validation: entry=${finalEntryIndex}, exit=${finalExitIndex} (max=${maxIndex})`);
+
                 // Enregistrer le segment de région dans window.regionSegments
                 if (!window.regionSegments) {
                     window.regionSegments = new Map();
                 }
 
                 window.regionSegments.set(region.name, {
-                    entryIndex: realEntryIndex >= 0 ? realEntryIndex : firstIntersectionIndex,
-                    exitIndex: realExitIndex >= 0 ? realExitIndex : lastIntersectionIndex,
+                    entryIndex: finalEntryIndex,
+                    exitIndex: finalExitIndex,
                     region: region // Stocker l'objet région complet pour référence ultérieure
                 });
 
-                console.log(`✅ [detectTraversedRegions] - Entry index: ${realEntryIndex >= 0 ? realEntryIndex : firstIntersectionIndex}, Exit index: ${realExitIndex >= 0 ? realExitIndex : lastIntersectionIndex}`);
+                console.log(`✅ [detectTraversedRegions] - Entry index validé: ${finalEntryIndex}, Exit index validé: ${finalExitIndex}`);
 
                 this.discoveries.push(regionDiscovery);
                 processedCount++;
