@@ -673,6 +673,154 @@ IMPORT / EXPORT DE DONNÉES
    - Validation minimale (3 points pour régions, x/y valides pour lieux)
    - Messages d'erreur détaillés en cas d'échec
 
+DÉTECTION DES RÉGIONS TRAVERSÉES MULTIPLES FOIS
+-----------------------------------------------
+
+1. PROBLÉMATIQUE :
+   
+   Un voyage peut traverser une même région plusieurs fois :
+   - Aller-retour dans la même région
+   - Boucle qui repasse par la même région
+   - Sortie temporaire puis retour
+   
+   Exemple : "Au sud de la Comté"
+   - Entrée à l'index 0, sortie à l'index 43
+   - Re-entrée à l'index 94, sortie à l'index 104
+
+2. ARCHITECTURE DE STOCKAGE :
+   
+   Structure de données `window.regionSegments` :
+   ```javascript
+   Map<regionName, Array<{entryIndex, exitIndex, region}>>
+   ```
+   
+   Exemple :
+   ```javascript
+   window.regionSegments.set("Au sud de la Comté", [
+       {entryIndex: 0, exitIndex: 43, region: regionObject},
+       {entryIndex: 94, exitIndex: 104, region: regionObject}
+   ]);
+   ```
+
+3. ALGORITHME DE DÉTECTION (PathManager.detectTraversedRegions) :
+   
+   ```javascript
+   const segments = [];
+   let inRegion = false;
+   let currentSegmentStart = -1;
+   
+   for (let i = 0; i < pathToUse.length; i++) {
+       const isInside = isPointInPolygon(point, regionCoords);
+       
+       if (isInside && !inRegion) {
+           // ENTRÉE dans la région
+           currentSegmentStart = i;
+           inRegion = true;
+       } else if (!isInside && inRegion) {
+           // SORTIE de la région
+           segments.push({
+               entryIndex: currentSegmentStart,
+               exitIndex: i - 1,
+               region: region
+           });
+           inRegion = false;
+       }
+   }
+   
+   // Cas spécial : encore dans la région à la fin du tracé
+   if (inRegion) {
+       segments.push({
+           entryIndex: currentSegmentStart,
+           exitIndex: pathToUse.length - 1,
+           region: region
+       });
+   }
+   ```
+
+4. DENSIFICATION DU TRACÉ :
+   
+   **CRITIQUE** : Tous les indices (`entryIndex`, `exitIndex`, `discoveryIndex`) 
+   doivent référencer le **tracé densifié**, pas les waypoints originaux.
+   
+   ```javascript
+   // PathManager.detectTraversedRegions
+   const pathToUse = densePath || this.densifyPath(this.path, 25);
+   window.densifiedPath = pathToUse; // Sauvegarder globalement
+   
+   // VoyageManager.buildAbsoluteTimeline
+   const totalPathPoints = window.densifiedPath ? 
+       window.densifiedPath.length : journeyPath.length;
+   ```
+   
+   Exemple :
+   - 10 waypoints → 105 points densifiés (espacement 25px)
+   - `entryIndex=0, exitIndex=43` sur 105 points
+   - `ratio = 43/105 = 0.41` → Jour 6 sur 15 jours
+
+5. CALCUL DES JOURS DANS VoyageManager.buildAbsoluteTimeline :
+   
+   Pour chaque segment de région :
+   ```javascript
+   const startRatio = segment.entryIndex / totalPathPoints;
+   const endRatio = segment.exitIndex / totalPathPoints;
+   
+   const regionStartDay = Math.max(1, Math.ceil(startRatio × totalJourneyDays));
+   const regionEndDay = Math.max(regionStartDay, Math.ceil(endRatio × totalJourneyDays));
+   
+   absoluteTimeline.push({
+       discovery: discovery,
+       absoluteStartDay: regionStartDay,
+       absoluteEndDay: regionEndDay,
+       type: 'region',
+       segmentIndex: segmentIndex
+   });
+   ```
+
+6. AFFICHAGE DANS LA TIMELINE :
+   
+   - Une région avec 2 segments apparaît dans 2 plages de jours différentes
+   - Exemple : "Au sud de la Comté"
+     * Segment 1 : Jours 1-6
+     * Segment 2 : Jours 13-15
+   
+   - Le `VoyageManager.buildAbsoluteTimeline` crée une entrée par segment
+   - Le rendering affiche la région sur tous les jours concernés
+
+7. LOGS DE VALIDATION :
+   
+   ```
+   🗺️ [detectTraversedRegions] - "Au sud de la Comté" ENTRÉE à l'index 0
+   🗺️ [detectTraversedRegions] - "Au sud de la Comté" SORTIE à l'index 43 (segment 1)
+   🗺️ [detectTraversedRegions] - "Au sud de la Comté" ENTRÉE à l'index 94
+   🗺️ [detectTraversedRegions] - "Au sud de la Comté" FIN du tracé dans la région (segment 2)
+   🗺️ [detectTraversedRegions] - Région "Au sud de la Comté" traversée 2 fois
+   ✅ [detectTraversedRegions] - "Au sud de la Comté" 2 segment(s) stocké(s)
+   
+   🗺️ [buildAbsoluteTimeline] Région "Au sud de la Comté": 2 segment(s)
+   🗺️ [buildAbsoluteTimeline] - Segment 1: entry=0, exit=43/105, jours=1-6
+   🗺️ [buildAbsoluteTimeline] - Segment 2: entry=94, exit=104/105, jours=13-15
+   ```
+
+8. FICHIERS CONCERNÉS :
+   
+   - `js/managers/path-manager.js` : 
+     * `detectTraversedRegions()` : détection des segments multiples
+     * `densifyPath()` : création du tracé densifié
+   
+   - `js/managers/voyage-manager.js` :
+     * `buildAbsoluteTimeline()` : utilisation de `densifiedPath.length`
+     * `renderAllDays()` : affichage des régions sur plusieurs plages de jours
+
+9. RÈGLES IMPÉRATIVES :
+   
+   - ✅ TOUJOURS densifier le tracé avant détection
+   - ✅ TOUJOURS sauvegarder `window.densifiedPath`
+   - ✅ TOUJOURS utiliser `densifiedPath.length` pour les ratios
+   - ✅ TOUJOURS stocker un **tableau** de segments par région
+   - ✅ TOUJOURS créer une entrée de timeline par segment
+   - ❌ JAMAIS utiliser `journeyPath.length` pour les calculs de jours
+   - ❌ JAMAIS écraser les segments précédents d'une région
+
 PRINCIPES D'AFFICHAGE ET RENDERING
 ----------------------------------
 
@@ -951,7 +1099,19 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Protection des filtres utilisateur en mode Aventure (v1.3.14)
+1. Détection correcte des régions traversées plusieurs fois (v1.3.15)
+   - Fix région apparaissant sur tous les jours au lieu de segments spécifiques
+   - Problème : Map.set() écrasait les segments précédents avec la même clé (nom de région)
+   - Cause : Architecture ne supportait qu'un seul segment par région
+   - Solution : Stockage d'un **tableau de segments** par région
+   - Algorithme : Détection de toutes les transitions entrée/sortie pour chaque région
+   - Calcul jours : Une entrée de timeline par segment (avec segmentIndex)
+   - Impact : Voyages complexes (aller-retour, boucles) maintenant correctement gérés
+   - Exemple : "Au sud de la Comté" affichée jours 1-6 ET 13-15 au lieu de 1-15
+   - Fichiers concernés : path-manager.js (detectTraversedRegions), voyage-manager.js (buildAbsoluteTimeline)
+   - Documentation ajoutée dans specs.txt (section DÉTECTION DES RÉGIONS TRAVERSÉES MULTIPLES FOIS)
+
+2. Protection des filtres utilisateur en mode Aventure (v1.3.14)
    - Fix écrasement des filtres utilisateur par le mode Aventure
    - Désactivation temporaire de saveFiltersForCurrentMap() pendant applyAdventureModeFilters()
    - Sauvegarde préalable dans savedFilters (copie profonde JSON)
@@ -1310,6 +1470,28 @@ PRINCIPES DE GESTION DES FILTRES EN MODE AVENTURE
 
 ENSEIGNEMENTS CLÉS DU DÉVELOPPEMENT
 ------------------------------------
+
+0. GESTION DES DONNÉES MULTIPLES (RÉGION TRAVERSÉE PLUSIEURS FOIS) :
+   
+   Problématique rencontrée :
+   - Une région peut être traversée plusieurs fois par le même voyage
+   - Map.set() écrase la valeur précédente si on utilise la même clé
+   
+   Solution implémentée :
+   - Stocker un **tableau de segments** au lieu d'un objet unique
+   - Algorithme de détection : tracker les transitions in/out de région
+   - Créer une entrée de timeline pour **chaque segment**
+   
+   Impact :
+   - Architecture plus robuste pour les voyages complexes (boucles, aller-retour)
+   - Affichage correct des régions sur plusieurs plages de jours
+   - Cohérence totale entre indices (densifié) et calcul des jours
+   
+   Leçon apprise :
+   - **TOUJOURS** anticiper les données multiples dès la conception
+   - **TOUJOURS** vérifier si un élément peut apparaître plusieurs fois
+   - **JAMAIS** supposer qu'une clé unique = une seule occurrence
+   - Pattern robuste : `Map<key, Array<value>>` au lieu de `Map<key, value>`
 
 1. ARCHITECTURE ET MODULARITÉ :
    - Privilégier la CONSOLIDATION des indicateurs visuels plutôt que leur multiplication
