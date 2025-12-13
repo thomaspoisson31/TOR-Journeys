@@ -554,6 +554,11 @@ class PathManager {
         // Calculer la distance totale finale
         this.calculateTotalDistance();
 
+        // Densifier le tracé et le stocker pour usage dans VoyageManager
+        const densifiedPath = this.densifyPath(this.path, 25);
+        window.densifiedPath = densifiedPath;
+        console.log(`✅ [finalizeJourney] Tracé densifié stocké: ${densifiedPath.length} points`);
+
         // Détecter les découvertes (lieux et régions)
         console.log('🔍 Détection des lieux et régions traversés...');
         this.detectDiscoveries();
@@ -690,7 +695,7 @@ class PathManager {
         // Utiliser le tracé densifié si fourni, sinon le tracé original
         const pathToUse = densePath || this.path;
 
-        const PROXIMITY_THRESHOLD = 80; // pixels
+        const PROXIMITY_THRESHOLD = 150; // AUGMENTÉ de 80 à 150 pixels pour mieux détecter
         const activeMapUrl = window.settingsManager?.activeMapUrl;
 
         console.log('📍 [detectNearbyLocations] activeMapUrl:', activeMapUrl);
@@ -704,12 +709,7 @@ class PathManager {
         let skippedTooFar = 0;
 
         this.dataManager.locationsData.locations.forEach((location, index) => {
-            console.log(`📍 [detectNearbyLocations] Traitement lieu ${index + 1}/${this.dataManager.locationsData.locations.length}: "${location.name}"`);
-            console.log(`📍 [detectNearbyLocations] - coordinates:`, location.coordinates);
-            console.log(`📍 [detectNearbyLocations] - mapId:`, location.mapId);
-
             if (!location.coordinates) {
-                console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" ignoré: pas de coordonnées`);
                 skippedNoCoords++;
                 return;
             }
@@ -721,46 +721,35 @@ class PathManager {
                 // Si le lieu a un mapId défini et qu'il ne correspond pas à la carte active, l'ignorer
                 if (locationMapId && locationMapId !== null && locationMapId !== undefined) {
                     if (String(locationMapId) !== String(activeMapUrl)) {
-                        console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" ignoré (mapId: ${locationMapId} ≠ ${activeMapUrl})`);
                         skippedMapId++;
                         return; // Ignorer ce lieu
-                    } else {
-                        console.log(`✅ [detectNearbyLocations] - Lieu "${location.name}" mapId compatible: ${locationMapId}`);
                     }
-                } else {
-                    console.log(`✅ [detectNearbyLocations] - Lieu "${location.name}" sans mapId (compatible avec toutes cartes)`);
                 }
             }
 
             // Vérifier si en mode Aventure et si le lieu est non connu
             if (window.positionManager && window.positionManager.adventureMode && location.known === false) {
-                console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" ignoré (non connu en mode Aventure)`);
                 return;
             }
 
-            // Calculer la distance minimale entre ce lieu et tous les SEGMENTS du tracé
+            // Calculer la distance minimale entre ce lieu et tous les POINTS du tracé (plus simple et plus fiable)
             let minDistance = Infinity;
             let closestIndex = -1;
 
-            // Vérifier la proximité avec chaque segment
-            for (let i = 1; i < pathToUse.length; i++) {
-                const segmentStart = pathToUse[i - 1];
-                const segmentEnd = pathToUse[i];
-
-                // Distance point-segment (perpendiculaire)
-                const distance = this.pointToSegmentDistance(
-                    location.coordinates,
-                    segmentStart,
-                    segmentEnd
-                );
+            // Vérifier la distance directe avec chaque point du tracé
+            for (let i = 0; i < pathToUse.length; i++) {
+                const point = pathToUse[i];
+                const dx = location.coordinates.x - point.x;
+                const dy = location.coordinates.y - point.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance < minDistance) {
                     minDistance = distance;
-                    closestIndex = i; // Index du segment
+                    closestIndex = i;
                 }
             }
 
-            console.log(`📍 [detectNearbyLocations] - Distance minimale pour "${location.name}": ${minDistance.toFixed(2)}px (seuil: ${PROXIMITY_THRESHOLD}px)`);
+            console.log(`📍 [detectNearbyLocations] "${location.name}": distance=${minDistance.toFixed(0)}px, seuil=${PROXIMITY_THRESHOLD}px`);
 
             if (minDistance <= PROXIMITY_THRESHOLD) {
                 const discovery = {
@@ -768,14 +757,13 @@ class PathManager {
                     name: location.name,
                     discoveryIndex: closestIndex,
                     distance: minDistance,
-                    proximityType: minDistance <= 20 ? 'traversed' : 'nearby',
+                    proximityType: minDistance <= 30 ? 'traversed' : 'nearby',
                     mapId: location.mapId || null
                 };
-                console.log(`✅ [detectNearbyLocations] - Lieu "${location.name}" DÉTECTÉ et AJOUTÉ aux découvertes:`, discovery);
+                console.log(`✅ [detectNearbyLocations] - Lieu "${location.name}" DÉTECTÉ (distance: ${minDistance.toFixed(0)}px)`);
                 this.discoveries.push(discovery);
                 processedCount++;
             } else {
-                console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" trop éloigné (${minDistance.toFixed(2)}px > ${PROXIMITY_THRESHOLD}px)`);
                 skippedTooFar++;
             }
         });
