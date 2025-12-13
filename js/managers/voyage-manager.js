@@ -444,22 +444,30 @@ class VoyageManager {
             } else if (discovery.type === 'region') {
                 // Utiliser les segments de région s'ils existent
                 if (window.regionSegments && window.regionSegments.has(discovery.name)) {
-                    const regionSegment = window.regionSegments.get(discovery.name);
+                    const regionSegments = window.regionSegments.get(discovery.name);
 
-                    // Calculer les jours basés sur les indices du tracé densifié
-                    const startRatio = regionSegment.entryIndex / totalPathPoints;
-                    const endRatio = regionSegment.exitIndex / totalPathPoints;
+                    // Vérifier si c'est un tableau de segments ou un seul segment (ancien format)
+                    const segmentsArray = Array.isArray(regionSegments) ? regionSegments : [regionSegments];
 
-                    const regionStartDay = Math.max(1, Math.ceil(startRatio * this.totalJourneyDays));
-                    const regionEndDay = Math.max(regionStartDay, Math.ceil(endRatio * this.totalJourneyDays));
+                    console.log(`🗺️ [buildAbsoluteTimeline] Région "${discovery.name}": ${segmentsArray.length} segment(s)`);
 
-                    console.log(`🗺️ [buildAbsoluteTimeline] Région "${discovery.name}": entry=${regionSegment.entryIndex}, exit=${regionSegment.exitIndex}/${totalPathPoints}, jours=${regionStartDay}-${regionEndDay}`);
+                    // Créer une entrée de timeline pour chaque segment
+                    segmentsArray.forEach((segment, segmentIndex) => {
+                        const startRatio = segment.entryIndex / totalPathPoints;
+                        const endRatio = segment.exitIndex / totalPathPoints;
 
-                    absoluteTimeline.push({
-                        discovery: discovery,
-                        absoluteStartDay: regionStartDay,
-                        absoluteEndDay: regionEndDay,
-                        type: 'region'
+                        const regionStartDay = Math.max(1, Math.ceil(startRatio * this.totalJourneyDays));
+                        const regionEndDay = Math.max(regionStartDay, Math.ceil(endRatio * this.totalJourneyDays));
+
+                        console.log(`🗺️ [buildAbsoluteTimeline] - Segment ${segmentIndex + 1}: entry=${segment.entryIndex}, exit=${segment.exitIndex}/${totalPathPoints}, jours=${regionStartDay}-${regionEndDay}`);
+
+                        absoluteTimeline.push({
+                            discovery: discovery,
+                            absoluteStartDay: regionStartDay,
+                            absoluteEndDay: regionEndDay,
+                            type: 'region',
+                            segmentIndex: segmentIndex // Identifier le segment
+                        });
                     });
                 } else {
                     // Fallback si pas de segment

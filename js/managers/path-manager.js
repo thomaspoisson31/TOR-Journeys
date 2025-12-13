@@ -798,12 +798,11 @@ class PathManager {
         }
 
         // CORRECTION: Toujours densifier le tracé pour garantir des indices cohérents
-        // Si un tracé densifié est fourni, l'utiliser, sinon densifier le tracé original
         const pathToUse = densePath || this.densifyPath(this.path, 25);
         
         console.log(`🗺️ [detectTraversedRegions] Tracé utilisé: ${pathToUse.length} points (original: ${this.path.length} waypoints)`);
         
-        // Sauvegarder le tracé densifié globalement pour que VoyageManager puisse l'utiliser
+        // Sauvegarder le tracé densifié globalement
         window.densifiedPath = pathToUse;
 
         const activeMapUrl = window.settingsManager?.activeMapUrl;
@@ -820,7 +819,6 @@ class PathManager {
         this.dataManager.regionsData.regions.forEach((region, index) => {
             console.log(`🗺️ [detectTraversedRegions] Traitement région ${index + 1}/${this.dataManager.regionsData.regions.length}: "${region.name}"`);
 
-            // Utiliser 'coordinates' au lieu de 'points' pour le nouveau format
             const regionCoords = region.coordinates || region.points;
             console.log(`🗺️ [detectTraversedRegions] - regionCoords:`, regionCoords);
             console.log(`🗺️ [detectTraversedRegions] - mapId:`, region.mapId);
@@ -831,16 +829,14 @@ class PathManager {
                 return;
             }
 
-            // Filtrer par mapId : n'afficher que les régions compatibles avec la carte active
+            // Filtrer par mapId
             if (activeMapUrl) {
                 const regionMapId = region.mapId;
-
-                // Si la région a un mapId défini et qu'il ne correspond pas à la carte active, l'ignorer
                 if (regionMapId && regionMapId !== null && regionMapId !== undefined) {
                     if (String(regionMapId) !== String(activeMapUrl)) {
                         console.log(`⏭️ [detectTraversedRegions] - Région "${region.name}" ignorée (mapId: ${regionMapId} ≠ ${activeMapUrl})`);
                         skippedMapId++;
-                        return; // Ignorer cette région
+                        return;
                     } else {
                         console.log(`✅ [detectTraversedRegions] - Région "${region.name}" mapId compatible: ${regionMapId}`);
                     }
@@ -849,93 +845,65 @@ class PathManager {
                 }
             }
 
-            const intersections = [];
+            // Détecter tous les segments de traversée pour cette région
+            const segments = [];
+            let inRegion = false;
+            let currentSegmentStart = -1;
 
-            // Vérifier si les points du tracé traversent la région
             for (let i = 0; i < pathToUse.length; i++) {
                 const point = pathToUse[i];
+                const isInside = this.isPointInPolygon(point, regionCoords);
 
-                if (this.isPointInPolygon(point, regionCoords)) {
-                    intersections.push(i);
+                if (isInside && !inRegion) {
+                    // Entrée dans la région
+                    currentSegmentStart = i;
+                    inRegion = true;
+                    console.log(`🗺️ [detectTraversedRegions] - "${region.name}" ENTRÉE à l'index ${i}`);
+                } else if (!isInside && inRegion) {
+                    // Sortie de la région
+                    segments.push({
+                        entryIndex: currentSegmentStart,
+                        exitIndex: i - 1,
+                        region: region
+                    });
+                    console.log(`🗺️ [detectTraversedRegions] - "${region.name}" SORTIE à l'index ${i - 1} (segment ${segments.length})`);
+                    inRegion = false;
                 }
             }
 
-            // Vérifier aussi les intersections segment/polygone
-            for (let i = 1; i < pathToUse.length; i++) {
-                const segmentStart = pathToUse[i - 1];
-                const segmentEnd = pathToUse[i];
-
-                if (this.segmentIntersectsPolygon(segmentStart, segmentEnd, regionCoords)) {
-                    if (!intersections.includes(i - 1)) intersections.push(i - 1);
-                    if (!intersections.includes(i)) intersections.push(i);
-                }
+            // Si encore dans la région à la fin du tracé
+            if (inRegion) {
+                segments.push({
+                    entryIndex: currentSegmentStart,
+                    exitIndex: pathToUse.length - 1,
+                    region: region
+                });
+                console.log(`🗺️ [detectTraversedRegions] - "${region.name}" FIN du tracé dans la région (segment ${segments.length})`);
             }
 
-            console.log(`🗺️ [detectTraversedRegions] - Nombre d'intersections pour "${region.name}": ${intersections.length}`);
+            if (segments.length > 0) {
+                console.log(`🗺️ [detectTraversedRegions] - Région "${region.name}" traversée ${segments.length} fois`);
 
-            if (intersections.length > 0) {
-                const firstIntersectionIndex = Math.min(...intersections);
-                const lastIntersectionIndex = Math.max(...intersections);
-
+                // Ajouter la découverte (une seule fois, basée sur le premier segment)
                 const regionDiscovery = {
                     type: 'region',
                     name: region.name,
-                    discoveryIndex: firstIntersectionIndex, // Utiliser le premier point d'intersection comme index de découverte
+                    discoveryIndex: segments[0].entryIndex,
                     proximityType: 'traversed',
                     mapId: region.mapId || null
                 };
+                this.discoveries.push(regionDiscovery);
 
-                // CORRECTION: Trouver les vrais points d'entrée et de sortie (premier et dernier points DANS la région)
-                let realEntryIndex = -1;
-                let realExitIndex = -1;
-
-                // Parcourir le tracé pour trouver le premier point dans la région
-                for (let i = 0; i < pathToUse.length; i++) {
-                    if (this.isPointInPolygon(pathToUse[i], regionCoords)) {
-                        realEntryIndex = i;
-                        break;
-                    }
-                }
-
-                // Parcourir le tracé à l'envers pour trouver le dernier point dans la région
-                for (let i = pathToUse.length - 1; i >= 0; i--) {
-                    if (this.isPointInPolygon(pathToUse[i], regionCoords)) {
-                        realExitIndex = i;
-                        break;
-                    }
-                }
-
-                console.log(`🗺️ [detectTraversedRegions] - Région "${region.name}" TRAVERSÉE et AJOUTÉE aux découvertes:`, regionDiscovery);
-                console.log(`🗺️ [detectTraversedRegions] - Points dans région: ${intersections.length}, Entry: ${realEntryIndex}, Exit: ${realExitIndex}`);
-
-                // CORRECTION: Valider les indices avant de les stocker
-                const maxIndex = pathToUse.length - 1;
-                const safeEntryIndex = Math.max(0, Math.min(realEntryIndex >= 0 ? realEntryIndex : firstIntersectionIndex, maxIndex));
-                const safeExitIndex = Math.max(0, Math.min(realExitIndex >= 0 ? realExitIndex : lastIntersectionIndex, maxIndex));
-                
-                // S'assurer que entry <= exit
-                const finalEntryIndex = Math.min(safeEntryIndex, safeExitIndex);
-                const finalExitIndex = Math.max(safeEntryIndex, safeExitIndex);
-
-                console.log(`🗺️ [detectTraversedRegions] - Validation: entry=${finalEntryIndex}, exit=${finalExitIndex} (max=${maxIndex})`);
-
-                // Enregistrer le segment de région dans window.regionSegments
+                // Stocker TOUS les segments pour cette région
                 if (!window.regionSegments) {
                     window.regionSegments = new Map();
                 }
+                window.regionSegments.set(region.name, segments);
 
-                window.regionSegments.set(region.name, {
-                    entryIndex: finalEntryIndex,
-                    exitIndex: finalExitIndex,
-                    region: region // Stocker l'objet région complet pour référence ultérieure
-                });
-
-                console.log(`✅ [detectTraversedRegions] - Entry index validé: ${finalEntryIndex}, Exit index validé: ${finalExitIndex}`);
-
-                this.discoveries.push(regionDiscovery);
+                console.log(`✅ [detectTraversedRegions] - "${region.name}" ${segments.length} segment(s) stocké(s):`, segments);
                 processedCount++;
             } else {
-                console.log(`⏭️ [detectTraversedRegions] - Région "${region.name}" non traversée (0 intersections)`);
+                console.log(`⏭️ [detectTraversedRegions] - Région "${region.name}" non traversée`);
                 skippedNoIntersection++;
             }
         });
