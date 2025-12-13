@@ -146,7 +146,7 @@ class PathManager {
             // Si c'est le premier clic (initialisation du voyage)
             if (this.path.length === 0) {
                 console.log("🎨 Starting waypoint journey...");
-                
+
                 // Clear canvas
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 this.totalDistance = 0;
@@ -177,7 +177,7 @@ class PathManager {
 
                 // Le premier clic ajoute le waypoint 1 immédiatement
                 console.log(`📍 Adding waypoint 1:`, clickPoint);
-                
+
                 this.path.push(clickPoint);
 
                 // Dessiner la ligne depuis le marqueur
@@ -206,7 +206,7 @@ class PathManager {
             } else {
                 // Ajouter un nouveau waypoint
                 console.log(`📍 Adding waypoint ${this.path.length}:`, clickPoint);
-                
+
                 this.path.push(clickPoint);
 
                 // Dessiner la ligne depuis le dernier waypoint
@@ -230,7 +230,7 @@ class PathManager {
                 // Calculer la distance totale
                 this.calculateTotalDistance();
                 this.updateDistanceDisplay();
-                
+
                 // Ne PAS afficher le bouton Voyage pendant le tracé
                 // Il sera affiché uniquement lors de la finalisation
 
@@ -311,7 +311,7 @@ class PathManager {
         if (this.path.length === 0) return;
 
         const touchDuration = Date.now() - this.touchStartTime;
-        
+
         event.preventDefault();
         event.stopPropagation();
 
@@ -320,7 +320,7 @@ class PathManager {
             // Détecter le double tap
             const now = Date.now();
             const timeSinceLastTap = now - (this.lastTapTime || 0);
-            
+
             if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
                 // C'est un double tap
                 if (this.path.length >= 2) {
@@ -566,7 +566,7 @@ class PathManager {
 
         // Mettre à jour l'affichage
         this.updateDistanceDisplay();
-        
+
         // Masquer le bouton Terminer et afficher le bouton Voir
         this.hideFinishButton();
         this.showViewJourneyButton();
@@ -746,7 +746,7 @@ class PathManager {
             for (let i = 1; i < pathToUse.length; i++) {
                 const segmentStart = pathToUse[i - 1];
                 const segmentEnd = pathToUse[i];
-                
+
                 // Distance point-segment (perpendiculaire)
                 const distance = this.pointToSegmentDistance(
                     location.coordinates,
@@ -858,7 +858,7 @@ class PathManager {
             for (let i = 1; i < pathToUse.length; i++) {
                 const segmentStart = pathToUse[i - 1];
                 const segmentEnd = pathToUse[i];
-                
+
                 if (this.segmentIntersectsPolygon(segmentStart, segmentEnd, regionCoords)) {
                     if (!intersections.includes(i - 1)) intersections.push(i - 1);
                     if (!intersections.includes(i)) intersections.push(i);
@@ -868,28 +868,54 @@ class PathManager {
             console.log(`🗺️ [detectTraversedRegions] - Nombre d'intersections pour "${region.name}": ${intersections.length}`);
 
             if (intersections.length > 0) {
-                const entryIndex = Math.min(...intersections);
-                const exitIndex = Math.max(...intersections);
+                const firstIntersectionIndex = Math.min(...intersections);
+                const lastIntersectionIndex = Math.max(...intersections);
 
-                const discovery = {
+                const regionDiscovery = {
                     type: 'region',
                     name: region.name,
-                    discoveryIndex: entryIndex,
+                    discoveryIndex: firstIntersectionIndex, // Utiliser le premier point d'intersection comme index de découverte
                     proximityType: 'traversed',
                     mapId: region.mapId || null
                 };
 
-                console.log(`✅ [detectTraversedRegions] - Région "${region.name}" TRAVERSÉE et AJOUTÉE aux découvertes:`, discovery);
-                console.log(`✅ [detectTraversedRegions] - Entry index: ${entryIndex}, Exit index: ${exitIndex}`);
+                // CORRECTION: Trouver les vrais points d'entrée et de sortie (premier et dernier points DANS la région)
+                let realEntryIndex = -1;
+                let realExitIndex = -1;
 
-                // Stocker le segment de région
-                this.regionSegments.set(region.name, {
-                    entryIndex: entryIndex,
-                    exitIndex: exitIndex,
-                    region: region
+                // Parcourir le tracé pour trouver le premier point dans la région
+                for (let i = 0; i < pathToUse.length; i++) {
+                    if (this.isPointInPolygon(pathToUse[i], regionCoords)) {
+                        realEntryIndex = i;
+                        break;
+                    }
+                }
+
+                // Parcourir le tracé à l'envers pour trouver le dernier point dans la région
+                for (let i = pathToUse.length - 1; i >= 0; i--) {
+                    if (this.isPointInPolygon(pathToUse[i], regionCoords)) {
+                        realExitIndex = i;
+                        break;
+                    }
+                }
+
+                console.log(`🗺️ [detectTraversedRegions] - Région "${region.name}" TRAVERSÉE et AJOUTÉE aux découvertes:`, regionDiscovery);
+                console.log(`🗺️ [detectTraversedRegions] - Points dans région: ${intersections.length}, Entry: ${realEntryIndex}, Exit: ${realExitIndex}`);
+
+                // Enregistrer le segment de région dans window.regionSegments
+                if (!window.regionSegments) {
+                    window.regionSegments = new Map();
+                }
+
+                window.regionSegments.set(region.name, {
+                    entryIndex: realEntryIndex >= 0 ? realEntryIndex : firstIntersectionIndex,
+                    exitIndex: realExitIndex >= 0 ? realExitIndex : lastIntersectionIndex,
+                    region: region // Stocker l'objet région complet pour référence ultérieure
                 });
 
-                this.discoveries.push(discovery);
+                console.log(`✅ [detectTraversedRegions] - Entry index: ${realEntryIndex >= 0 ? realEntryIndex : firstIntersectionIndex}, Exit index: ${realExitIndex >= 0 ? realExitIndex : lastIntersectionIndex}`);
+
+                this.discoveries.push(regionDiscovery);
                 processedCount++;
             } else {
                 console.log(`⏭️ [detectTraversedRegions] - Région "${region.name}" non traversée (0 intersections)`);
@@ -969,7 +995,7 @@ class PathManager {
         for (let i = 0; i < polygon.length; i++) {
             const polyStart = polygon[i];
             const polyEnd = polygon[(i + 1) % polygon.length];
-            
+
             if (this.segmentsIntersect(segmentStart, segmentEnd, polyStart, polyEnd)) {
                 return true;
             }
@@ -982,7 +1008,7 @@ class PathManager {
         const ccw = (A, B, C) => {
             return (C.y - A.y) * (B.x - A.x) > (B.y - A.y) * (C.x - A.x);
         };
-        
+
         return ccw(p1, p3, p4) !== ccw(p2, p3, p4) && ccw(p1, p2, p3) !== ccw(p1, p2, p4);
     }
 
