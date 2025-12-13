@@ -523,6 +523,34 @@ class InfoBoxManager {
                 <div class="prose prose-invert mb-6">${this.renderMarkdown(item.description || 'Aucune description disponible.')}</div>
             `;
 
+            // Section Type de région (uniquement pour les régions)
+            let regionTypeHTML = '';
+            if (type === 'region') {
+                const regionType = item.regionType || null;
+                const regionTypes = window.constants?.regionTypes || {};
+                
+                if (regionType && regionTypes[regionType]) {
+                    const typeInfo = regionTypes[regionType];
+                    regionTypeHTML = `
+                        <h3>Type de région</h3>
+                        <div class="mb-6">
+                            <div class="inline-flex items-center space-x-2 px-3 py-2 rounded-lg border-2" 
+                                 style="background-color: ${typeInfo.bgColor}; border-color: ${typeInfo.color};">
+                                <div class="w-4 h-4 rounded-full" style="background-color: ${typeInfo.color};"></div>
+                                <span style="color: ${typeInfo.color}; font-weight: 600;">${typeInfo.name}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    regionTypeHTML = `
+                        <h3>Type de région</h3>
+                        <div class="mb-6">
+                            <span class="text-gray-400 italic text-sm">Aucun type défini</span>
+                        </div>
+                    `;
+                }
+            }
+
             // Section Connaissance avec cases à cocher
             let knowledgeHTML = '<h3>Connaissance</h3><div class="flex flex-col space-y-2 mb-4">';
 
@@ -568,7 +596,7 @@ class InfoBoxManager {
 
             knowledgeHTML += '</div>';
 
-            textView.innerHTML = descriptionHTML + knowledgeHTML;
+            textView.innerHTML = descriptionHTML + regionTypeHTML + knowledgeHTML;
         }
 
         // Onglet Personnages (uniquement pour les lieux et régions)
@@ -739,6 +767,42 @@ class InfoBoxManager {
         // Onglet Texte (mode édition)
         const textTab = document.getElementById('text-tab');
         if (textTab) {
+            // HTML pour la sélection du type de région (uniquement pour les régions)
+            let regionTypeHTML = '';
+            if (type === 'region') {
+                const regionTypes = window.constants?.regionTypes || {};
+                const currentType = item.regionType || '';
+                
+                const typeOptions = Object.keys(regionTypes).map(key => {
+                    const typeInfo = regionTypes[key];
+                    const isSelected = currentType === key;
+                    return `
+                        <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg border transition-all hover:bg-gray-700" 
+                               style="border-color: ${isSelected ? typeInfo.color : '#4b5563'}; background-color: ${isSelected ? typeInfo.bgColor : 'transparent'};">
+                            <input type="radio" name="region-type" value="${key}" ${isSelected ? 'checked' : ''} 
+                                   class="w-4 h-4 cursor-pointer">
+                            <div class="w-4 h-4 rounded-full" style="background-color: ${typeInfo.color};"></div>
+                            <span class="text-white text-sm">${typeInfo.name}</span>
+                        </label>
+                    `;
+                }).join('');
+                
+                regionTypeHTML = `
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium mb-2 text-white">Type de région :</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer p-2 rounded-lg border transition-all hover:bg-gray-700" 
+                                   style="border-color: #4b5563;">
+                                <input type="radio" name="region-type" value="" ${!currentType ? 'checked' : ''} 
+                                       class="w-4 h-4 cursor-pointer">
+                                <span class="text-gray-400 text-sm italic">Aucun type</span>
+                            </label>
+                            ${typeOptions}
+                        </div>
+                    </div>
+                `;
+            }
+            
             // Nettoyer complètement l'onglet
             textTab.innerHTML = `
                 <div class="edit-form p-4">
@@ -753,6 +817,7 @@ class InfoBoxManager {
                             <i class="fas fa-magic mr-1"></i>Générer avec IA
                         </button>
                     </div>
+                    ${regionTypeHTML}
 
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
@@ -1502,6 +1567,15 @@ class InfoBoxManager {
         // Mettre à jour l'objet
         if (nameInput) this.currentItem.name = nameInput.value.trim();
         if (descTextarea) this.currentItem.description = descTextarea.value.trim();
+        
+        // Sauvegarder le type de région (uniquement pour les régions)
+        if (this.currentType === 'region') {
+            const selectedType = document.querySelector('input[name="region-type"]:checked');
+            if (selectedType) {
+                this.currentItem.regionType = selectedType.value || null;
+                console.log(`💾 Type de région sauvegardé: ${this.currentItem.regionType}`);
+            }
+        }
 
         // Gérer les rumeurs - récupérer depuis les textareas individuels
         const rumeurInputs = document.querySelectorAll('.edit-rumeur-input');

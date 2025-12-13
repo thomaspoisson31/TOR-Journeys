@@ -8,6 +8,35 @@ export const colorMap = {
     black: 'rgba(17, 24, 39, 0.8)'
 };
 
+// === TYPES DE RÉGIONS ===
+export const regionTypes = {
+    border: {
+        name: 'Terres Frontalières',
+        color: '#22c55e', // Vert
+        bgColor: 'rgba(34, 197, 94, 0.15)'
+    },
+    wild: {
+        name: 'Terres Sauvages',
+        color: '#fbbf24', // Jaune clair
+        bgColor: 'rgba(251, 191, 36, 0.15)'
+    },
+    dark: {
+        name: 'Terres Ténébreuses',
+        color: '#ea580c', // Orange foncé
+        bgColor: 'rgba(234, 88, 12, 0.15)'
+    },
+    impassable: {
+        name: 'Terres Infranchissables',
+        color: '#4b5563', // Gris foncé
+        bgColor: 'rgba(75, 85, 99, 0.15)'
+    },
+    perilous: {
+        name: 'Terres Périlleuses',
+        color: '#dc2626', // Rouge
+        bgColor: 'rgba(220, 38, 38, 0.15)'
+    }
+};
+
 // Mapping des couleurs pour les régions (avec transparence)
 export const regionColorMap = {
     green: 'rgba(34, 197, 94, 0.2)',

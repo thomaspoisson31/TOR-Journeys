@@ -11,8 +11,20 @@ import {
     PROXIMITY_DISTANCE,
     SYNC_DELAY,
     seasonSymbols,
-    seasonNames
+    seasonNames,
+    mapStyles,
+    defaultFilterState,
+    regionTypes
 } from './utils/constants.js';
+
+// Exposer les constantes globalement
+window.constants = {
+    colorMap,
+    regionColorMap,
+    regionTypes,
+    seasonSymbols,
+    seasonNames
+};
 
 // --- Import des managers ---
 import DataManager from './managers/data-manager.js';
@@ -444,14 +456,14 @@ function renderLocations() {
                 if (isLocationAddingMode) {
                     return; // Laisser le clic se propager au viewport pour l'ajout
                 }
-                
+
                 // Bloquer le drag en mode Aventure ou en mode dessin de région
                 if (window.positionManager && window.positionManager.adventureMode) {
                     e.preventDefault();
                     e.stopPropagation();
                     return;
                 }
-                
+
                 // Bloquer le drag en mode dessin de région
                 if (isRegionDrawingMode) {
                     return; // Laisser le clic se propager au viewport pour le tracé
@@ -538,12 +550,12 @@ function renderLocations() {
             if (isLocationAddingMode) {
                 return; // Laisser le clic se propager au viewport pour l'ajout
             }
-            
+
             // Bloquer les interactions si on est en mode dessin de région
             if (isRegionDrawingMode) {
                 return; // Laisser le clic se propager au viewport pour le tracé
             }
-            
+
             const touchDuration = Date.now() - touchStartTime;
             console.log(`📱 [TOUCH] touchend on marker ${location.name}:`, {
                 duration: touchDuration,
@@ -579,7 +591,7 @@ function renderLocations() {
             if (isLocationAddingMode) {
                 return;
             }
-            
+
             e.preventDefault();
             e.stopPropagation();
             showColorChangeModal(e, location, 'location');
@@ -701,12 +713,12 @@ function renderRegions() {
             if (isLocationAddingMode) {
                 return; // Laisser le clic se propager au viewport pour l'ajout
             }
-            
+
             // Bloquer l'affichage de l'infobox si on est en mode dessin de région OU en mode tracé de voyage
             if (isRegionDrawingMode || window.isDrawingMode) {
                 return; // Laisser le clic se propager au viewport pour le tracé
             }
-            
+
             e.stopPropagation();
             infoBoxManager.showInfoBox(e, region, 'region');
 
@@ -737,12 +749,12 @@ function renderRegions() {
             if (isLocationAddingMode) {
                 return; // Laisser le clic se propager au viewport pour l'ajout
             }
-            
+
             // Bloquer l'affichage de l'infobox si on est en mode dessin de région OU en mode tracé de voyage
             if (isRegionDrawingMode || window.isDrawingMode) {
                 return; // Laisser le clic se propager au viewport pour le tracé
             }
-            
+
             e.preventDefault();
             e.stopPropagation();
 
@@ -770,7 +782,7 @@ function renderRegions() {
             if (isLocationAddingMode) {
                 return;
             }
-            
+
             e.preventDefault();
             e.stopPropagation();
             showColorChangeModal(e, region, 'region');
@@ -1238,7 +1250,7 @@ function setupMapNavigation() {
                         const toolbar = document.getElementById('toolbar');
                         const distanceContainer = document.getElementById('distance-container');
                         const zoomControl = document.getElementById('zoom-control');
-                        
+
                         if (toolbar) toolbar.style.transform = 'none';
                         if (distanceContainer) distanceContainer.style.transform = 'none';
                         if (zoomControl && window.innerWidth <= 480) {
@@ -1362,7 +1374,7 @@ function setupMapNavigation() {
         if (isRegionDrawingMode) {
             return;
         }
-        
+
         e.preventDefault();
         zoomToPoint(1.5, viewport.clientWidth / 2, viewport.clientHeight / 2);
     });
