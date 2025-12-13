@@ -419,8 +419,11 @@ class VoyageManager {
 
         console.log(`🗺️ [buildAbsoluteTimeline] Découvertes après filtrage: ${discoveries.length}`);
 
+        // CORRECTION: Utiliser le tracé densifié au lieu des waypoints originaux
         const totalMiles = totalPathPixels * (this.MAP_DISTANCE_MILES / this.MAP_WIDTH);
-        const totalPathPoints = journeyPath.length;
+        const totalPathPoints = window.densifiedPath ? window.densifiedPath.length : journeyPath.length;
+
+        console.log(`🗺️ [buildAbsoluteTimeline] Utilisation du tracé densifié: ${totalPathPoints} points (au lieu de ${journeyPath.length} waypoints)`);
 
         const absoluteTimeline = [];
         let currentAbsoluteDay = 1;
@@ -430,6 +433,8 @@ class VoyageManager {
                 // Calculer le jour où le lieu est atteint
                 const discoveryRatio = discovery.discoveryIndex / totalPathPoints;
                 const discoveryDay = Math.max(1, Math.ceil(discoveryRatio * this.totalJourneyDays));
+
+                console.log(`📍 [buildAbsoluteTimeline] Lieu "${discovery.name}": index=${discovery.discoveryIndex}/${totalPathPoints}, ratio=${discoveryRatio.toFixed(3)}, jour=${discoveryDay}`);
 
                 absoluteTimeline.push({
                     discovery: discovery,
@@ -441,12 +446,14 @@ class VoyageManager {
                 if (window.regionSegments && window.regionSegments.has(discovery.name)) {
                     const regionSegment = window.regionSegments.get(discovery.name);
 
-                    // Calculer les jours basés sur les indices
+                    // Calculer les jours basés sur les indices du tracé densifié
                     const startRatio = regionSegment.entryIndex / totalPathPoints;
                     const endRatio = regionSegment.exitIndex / totalPathPoints;
 
                     const regionStartDay = Math.max(1, Math.ceil(startRatio * this.totalJourneyDays));
                     const regionEndDay = Math.max(regionStartDay, Math.ceil(endRatio * this.totalJourneyDays));
+
+                    console.log(`🗺️ [buildAbsoluteTimeline] Région "${discovery.name}": entry=${regionSegment.entryIndex}, exit=${regionSegment.exitIndex}/${totalPathPoints}, jours=${regionStartDay}-${regionEndDay}`);
 
                     absoluteTimeline.push({
                         discovery: discovery,
@@ -458,6 +465,8 @@ class VoyageManager {
                     // Fallback si pas de segment
                     const discoveryRatio = discovery.discoveryIndex / totalPathPoints;
                     const discoveryDay = Math.max(1, Math.ceil(discoveryRatio * this.totalJourneyDays));
+
+                    console.log(`🗺️ [buildAbsoluteTimeline] Région "${discovery.name}" (fallback): index=${discovery.discoveryIndex}/${totalPathPoints}, jour=${discoveryDay}`);
 
                     absoluteTimeline.push({
                         discovery: discovery,
