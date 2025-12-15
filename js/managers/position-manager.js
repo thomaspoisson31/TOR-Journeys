@@ -366,8 +366,15 @@ class PositionManager {
 
         // --- Gestion du glisser-déposer (souris) ---
         this.positionMarker.addEventListener('mousedown', (e) => {
+            // En mode dessin, laisser passer l'événement pour PathManager
+            if (window.isDrawingMode) {
+                console.log("📍 [PositionManager] Mode dessin actif - propagation du clic vers PathManager");
+                // Ne pas empêcher la propagation - laisser PathManager gérer
+                return;
+            }
+            
             // Ne pas permettre le drag si le mode dessin est actif OU si le mode aventure est actif
-            if (e.button === 0 && !window.isDrawingMode && !this.adventureMode) {
+            if (e.button === 0 && !this.adventureMode) {
                 this.handleDragStart(e);
             } else if (this.adventureMode) {
                 // En mode aventure, empêcher complètement le drag
@@ -396,13 +403,17 @@ class PositionManager {
         let touchHasMoved = false;
 
         this.positionMarker.addEventListener('touchstart', (e) => {
-            if (window.isDrawingMode || this.adventureMode) {
-                // Ne pas démarrer si mode dessin ou mode aventure
-                if (this.adventureMode) {
-                    // Sauvegarder le temps pour le long press modal
-                    touchStartTime = Date.now();
-                    touchHasMoved = false;
-                }
+            if (window.isDrawingMode) {
+                // En mode dessin, laisser passer l'événement pour PathManager
+                console.log("📍 [PositionManager] Mode dessin actif - propagation du touch vers PathManager");
+                // Ne pas bloquer la propagation
+                return;
+            }
+            
+            if (this.adventureMode) {
+                // Sauvegarder le temps pour le long press modal
+                touchStartTime = Date.now();
+                touchHasMoved = false;
                 return;
             }
 
