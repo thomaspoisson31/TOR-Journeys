@@ -132,8 +132,12 @@ class PathManager {
                 return;
             }
 
-            // Vérifier qu'on ne clique pas sur un marqueur ou autre élément
-            if (event.target.closest('.location-marker, #info-box')) {
+            // Vérifier qu'on ne clique pas sur un marqueur de lieu/région ou l'infobox
+            // MAIS permettre le clic sur le marqueur de position
+            const clickedElement = event.target.closest('.location-marker, #info-box');
+            const clickedPositionMarker = event.target.closest('.position-marker');
+            
+            if (clickedElement && !clickedPositionMarker) {
                 console.log("❌ Clicked on marker or info box, ignoring");
                 return;
             }
@@ -141,7 +145,17 @@ class PathManager {
             event.preventDefault();
             event.stopPropagation();
 
-            const clickPoint = this.getCanvasCoordinates(event);
+            // Si on clique sur le marqueur de position, utiliser ses coordonnées
+            let clickPoint;
+            if (clickedPositionMarker && window.positionManager && window.positionManager.currentPosition) {
+                clickPoint = {
+                    x: window.positionManager.currentPosition.x,
+                    y: window.positionManager.currentPosition.y
+                };
+                console.log("📍 Waypoint ajouté à l'emplacement du marqueur de position:", clickPoint);
+            } else {
+                clickPoint = this.getCanvasCoordinates(event);
+            }
 
             // Si c'est le premier clic (initialisation du voyage)
             if (this.path.length === 0) {
@@ -259,6 +273,15 @@ class PathManager {
         if (!this.isDrawingMode) return;
         if (this.path.length < 2) return; // Il faut au moins 2 waypoints
 
+        // Vérifier si on double-clique sur un marqueur de lieu/région
+        const clickedElement = event.target.closest('.location-marker, #info-box');
+        const clickedPositionMarker = event.target.closest('.position-marker');
+        
+        // Ignorer le double-clic sur les marqueurs de lieu/région (mais pas sur le marqueur de position)
+        if (clickedElement && !clickedPositionMarker) {
+            return;
+        }
+
         console.log('🏁 Double-clic détecté - Fin du voyage');
         event.preventDefault();
         event.stopPropagation();
@@ -272,14 +295,18 @@ class PathManager {
         console.log("👆 Viewport touchstart event fired, isDrawingMode:", this.isDrawingMode);
 
         if (this.isDrawingMode) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Vérifier qu'on ne touche pas un marqueur ou autre élément
-            if (event.target.closest('.location-marker, #info-box')) {
+            // Vérifier qu'on ne touche pas un marqueur de lieu/région
+            // MAIS permettre le touch sur le marqueur de position
+            const touchedElement = event.target.closest('.location-marker, #info-box');
+            const touchedPositionMarker = event.target.closest('.position-marker');
+            
+            if (touchedElement && !touchedPositionMarker) {
                 console.log("❌ Touched on marker or info box, ignoring");
                 return;
             }
+
+            event.preventDefault();
+            event.stopPropagation();
 
             this.touchStartTime = Date.now();
             this.touchHasMoved = false;
@@ -311,6 +338,15 @@ class PathManager {
         if (this.path.length === 0) return;
 
         const touchDuration = Date.now() - this.touchStartTime;
+
+        // Vérifier si on touche un marqueur de lieu/région
+        const touchedElement = event.target.closest('.location-marker, #info-box');
+        const touchedPositionMarker = event.target.closest('.position-marker');
+        
+        // Ignorer les touches sur les marqueurs de lieu/région (mais pas sur le marqueur de position)
+        if (touchedElement && !touchedPositionMarker) {
+            return;
+        }
 
         event.preventDefault();
         event.stopPropagation();
