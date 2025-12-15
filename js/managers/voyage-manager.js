@@ -676,7 +676,8 @@ class VoyageManager {
                         <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="text-lg font-bold whitespace-nowrap" style="color: #940000;">${calendarDate}${isShortened ? ' (raccourci)' : ''}</span>
-                                ${!isShortened && weatherSymbol ? `<span class="text-xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
+                                ${!isShortened && weatherSymbol ? `<span class="text-xl">${weatherSymbol}</span>` : ''}
+                                ${!isShortened && weatherTooltip ? `<span class="text-sm italic" style="color: #6b7280; font-size: 80%;">${weatherTooltip}</span>` : ''}
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
                                 <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="${isShortened ? 'Annuler raccourci' : 'Raccourcir (durée 0)'}" data-day-index="${i}">
