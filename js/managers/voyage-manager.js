@@ -651,42 +651,8 @@ class VoyageManager {
                 weatherTooltip = weatherData.weather || '';
             }
 
-            // Collecter toutes les tables aléatoires disponibles pour ce jour
-            let randomTablesForDay = [];
-            if (dayData.discoveries && dayData.discoveries.length > 0) {
-                dayData.discoveries.forEach(discovery => {
-                    if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
-                        const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                        if (location && location.RandomTables && Array.isArray(location.RandomTables) && location.RandomTables.length > 0) {
-                            location.RandomTables.forEach(table => {
-                                randomTablesForDay.push({
-                                    tableName: table.name || 'Table sans nom',
-                                    discoveryName: discovery.name,
-                                    discoveryType: discovery.type
-                                });
-                            });
-                        }
-                    } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
-                        const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                        if (region && region.RandomTables && Array.isArray(region.RandomTables) && region.RandomTables.length > 0) {
-                            region.RandomTables.forEach(table => {
-                                randomTablesForDay.push({
-                                    tableName: table.name || 'Table sans nom',
-                                    discoveryName: discovery.name,
-                                    discoveryType: discovery.type
-                                });
-                            });
-                        }
-                    }
-                });
-            }
-            const hasRandomEvents = randomTablesForDay.length > 0;
-
-            // Préparer les découvertes pour le header (max 2)
-            const headerDiscoveries = dayData.discoveries.slice(0, 2);
-            const discoveriesHtml = headerDiscoveries.map(discovery => {
-                const name = discovery.name.length > 15 ? discovery.name.substring(0, 12) + '...' : discovery.name;
-
+            // Préparer les découvertes complètes pour la ligne dédiée
+            const fullDiscoveriesHtml = dayData.discoveries.map(discovery => {
                 // Vérifier si ce lieu/région a des tables d'événements aléatoires
                 let hasRandomTables = false;
                 if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
@@ -700,20 +666,17 @@ class VoyageManager {
                 // Icône de dé si des tables existent
                 const diceIcon = hasRandomTables ? ' <i class="fas fa-dice text-xs" style="color: #940000;" title="Tables d\'événements disponibles"></i>' : '';
 
-                return `<span class="discovery-badge text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" onclick="event.stopPropagation(); window.voyageManager.openDiscoveryFromHeader('${discovery.name}', '${discovery.type}')">${name}${diceIcon}</span>`;
+                return `<span class="discovery-badge text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" onclick="event.stopPropagation(); window.voyageManager.openDiscoveryFromHeader('${discovery.name}', '${discovery.type}')">${discovery.name}${diceIcon}</span>`;
             }).join('');
 
             // Carte du jour avec en-tête cliquable
-            // Ne pas afficher "Jour X" et météo si le jour est raccourci
             allDaysHtml += `
                 <div class="day-card mb-4 border border-gray-300 rounded-lg overflow-hidden ${isShortened ? 'opacity-75' : ''}" data-day-index="${i}">
                     <div class="day-header bg-gray-50 p-3 cursor-pointer hover:bg-gray-100 transition-colors">
-                        <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2 mb-2">
                             <div class="flex items-center gap-2 flex-wrap">
-                                ${!isShortened ? `<span class="text-base font-bold whitespace-nowrap" style="color: #940000;">Jour ${dayNumber}</span>` : ''}
-                                <span class="text-xs ${isShortened ? 'italic' : ''} text-gray-600 whitespace-nowrap">${calendarDate}${isShortened ? ' (raccourci)' : ''}</span>
+                                <span class="text-lg font-bold whitespace-nowrap" style="color: #940000;">${calendarDate}${isShortened ? ' (raccourci)' : ''}</span>
                                 ${!isShortened && weatherSymbol ? `<span class="text-xl" title="${weatherTooltip}">${weatherSymbol}</span>` : ''}
-                                ${discoveriesHtml}
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
                                 <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="${isShortened ? 'Annuler raccourci' : 'Raccourcir (durée 0)'}" data-day-index="${i}">
@@ -724,6 +687,7 @@ class VoyageManager {
                                 </button>
                             </div>
                         </div>
+                        ${fullDiscoveriesHtml ? `<div class="flex items-center gap-2 flex-wrap">${fullDiscoveriesHtml}</div>` : ''}
                     </div>
                     <div class="day-content p-4 bg-white">
                         ${this.renderDayContent(dayData, weatherData)}
@@ -804,11 +768,7 @@ class VoyageManager {
             `;
         }
 
-        // Message si pas de contenu
-        if (!dayDescription && !randomEvent) {
-            contentHtml += '<p class="text-gray-400 text-sm italic text-center py-2">Voyage tranquille...</p>';
-        }
-
+        // Ne rien afficher si pas de contenu (supprimer le message "Voyage tranquille...")
         return contentHtml;
     }
 
