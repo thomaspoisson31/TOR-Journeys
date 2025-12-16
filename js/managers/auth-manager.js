@@ -376,8 +376,20 @@ class AuthManager {
             filtersByMap: JSON.parse(localStorage.getItem('filtersByMap') || '{}'),
             // Ajouter l'état actuel du mode aventure
             adventureMode: window.positionManager?.adventureMode || JSON.parse(localStorage.getItem('adventurers_adventure_mode') || 'false'),
-            // ✅ CORRECTION : Tables aléatoires depuis adventureData
-            randomTables: window.adventureManager?.adventureData?.randomTables || [],
+            // ✅ CORRECTION : Tables aléatoires depuis adventureData ou localStorage
+            randomTables: window.adventureManager?.adventureData?.randomTables || 
+                         (function() {
+                             const saved = localStorage.getItem('adventureData');
+                             if (saved) {
+                                 try {
+                                     const data = JSON.parse(saved);
+                                     return data.randomTables || [];
+                                 } catch (e) {
+                                     return [];
+                                 }
+                             }
+                             return [];
+                         })(),
             // Ajouter les états des cases à cocher des tirages aléatoires
             randomTablesCheckedResults: JSON.parse(localStorage.getItem('randomTablesCheckedResults') || '{}')
         };
@@ -533,14 +545,24 @@ class AuthManager {
             this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (flag actif)");
         }
 
-        // ✅ AJOUT : Restaurer les tables aléatoires (avec vérification complète)
-        if (data.randomTables && window.adventureManager) {
+        // ✅ AJOUT : Restaurer les tables aléatoires depuis le cloud
+        if (data.randomTables) {
             this.logAuth("🎲 [applyContextData] Restauration des tables aléatoires depuis le cloud");
             this.logAuth(`🎲 [applyContextData] Données reçues: ${data.randomTables.length} table(s)`);
             
-            // S'assurer que adventureData existe
-            if (!window.adventureManager.adventureData) {
-                window.adventureManager.adventureData = {
+            // Charger les données d'aventure existantes ou créer une structure vide
+            let adventureData = null;
+            const savedAdventure = localStorage.getItem('adventureData');
+            if (savedAdventure) {
+                try {
+                    adventureData = JSON.parse(savedAdventure);
+                } catch (e) {
+                    this.logAuth("⚠️ [applyContextData] Erreur parsing adventureData, création nouvelle structure");
+                }
+            }
+            
+            if (!adventureData) {
+                adventureData = {
                     quest: '',
                     rumors: [],
                     threats: [],
@@ -550,15 +572,20 @@ class AuthManager {
             }
             
             // Restaurer les tables aléatoires
-            window.adventureManager.adventureData.randomTables = data.randomTables;
+            adventureData.randomTables = data.randomTables;
             
-            // Sauvegarder dans localStorage
-            localStorage.setItem('adventureData', JSON.stringify(window.adventureManager.adventureData));
+            // Sauvegarder dans localStorage IMMÉDIATEMENT
+            localStorage.setItem('adventureData', JSON.stringify(adventureData));
             
-            this.logAuth(`✅ ${data.randomTables.length} table(s) aléatoire(s) restaurée(s)`);
-            this.logAuth(`🎲 [applyContextData] Vérification: adventureManager contient ${window.adventureManager.adventureData.randomTables.length} table(s)`);
+            this.logAuth(`✅ ${data.randomTables.length} table(s) aléatoire(s) restaurée(s) dans localStorage`);
+            
+            // Si adventureManager existe déjà, mettre à jour aussi sa référence
+            if (window.adventureManager) {
+                window.adventureManager.adventureData.randomTables = data.randomTables;
+                this.logAuth(`🎲 [applyContextData] AdventureManager mis à jour: ${window.adventureManager.adventureData.randomTables.length} table(s)`);
+            }
         } else {
-            this.logAuth(`⚠️ [applyContextData] Pas de tables aléatoires à restaurer (data: ${!!data.randomTables}, adventureManager: ${!!window.adventureManager})`);
+            this.logAuth(`⚠️ [applyContextData] Pas de tables aléatoires dans les données cloud`);
         }
 
         if (data.settings && window.settingsManager) {
