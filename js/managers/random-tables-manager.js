@@ -122,8 +122,8 @@ class RandomTablesManager {
         };
 
         // 1. Tables des paramètres
-        if (window.adventureManager && window.adventureManager.randomTables) {
-            tables.settings = window.adventureManager.randomTables.map(table => ({
+        if (window.adventureManager && window.adventureManager.adventureData && window.adventureManager.adventureData.randomTables) {
+            tables.settings = window.adventureManager.adventureData.randomTables.map(table => ({
                 ...table,
                 source: 'Paramètres',
                 sourceType: 'settings'
