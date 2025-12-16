@@ -920,17 +920,28 @@ body {
 .journal-edit-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
     flex: 1;
     min-height: 0;
 }
 
 #journal-edit-textarea {
-    flex: 1 1 auto;
+    flex: 1;
     min-height: 0;
-    height: 100%;
     color: black !important;
     background-color: white !important;
+}
+
+/* Onglet Journal - structure flex complète */
+#journal-list-tab {
+    display: flex;
+    flex-direction: column;
+}
+
+#journal-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
 }
 
 #journal-edit-textarea::placeholder {
