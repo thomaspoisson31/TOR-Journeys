@@ -717,7 +717,7 @@ class JournalManager {
         const savedRumors = localStorage.getItem('adventureRumors');
         if (savedRumors && savedRumors !== 'null' && savedRumors !== 'undefined') {
             try {
-                const parsed = JSON.JSON.parse(savedRumors);
+                const parsed = JSON.parse(savedRumors);
                 this.rumors = Array.isArray(parsed) ? parsed : [];
                 console.log(`📖 ${this.rumors.length} rumeur(s) chargée(s) depuis le localStorage`);
             } catch (e) {
