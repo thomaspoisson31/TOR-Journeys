@@ -377,7 +377,7 @@
                         <div class="flex items-center">
                             <i id="filter-status-icon" class="fas fa-filter text-gray-500 text-lg mr-3 transition-colors" title="État des filtres"></i>
                         </div>
-                        
+
                         <div class="flex items-center space-x-2">
                             <label class="flex items-center text-sm">
                                 <input type="checkbox" id="filter-pj" class="mr-1" checked>
@@ -522,12 +522,20 @@
             <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col mr-5" style="font-family: 'Merriweather', serif;">
                 <!-- Header -->
                 <div class="flex justify-between items-center p-6 border-b border-gray-300">
-                    <div class="flex-1">
-                        <h3 class="text-2xl font-bold" style="color: #940000;">Journal d'Aventure</h3>
+                    <h2 class="text-2xl font-bold">
+                        <i class="fas fa-book mr-2"></i>Journal d'Aventure
+                    </h2>
+                    <div class="flex items-center space-x-2">
+                        <button id="edit-journal-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors" title="Éditer le journal">
+                            <i class="fas fa-pencil-alt mr-2"></i>Éditer
+                        </button>
+                        <button id="export-journal-markdown-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-file-export mr-2"></i>Exporter
+                        </button>
+                        <button id="close-journal-btn" class="text-gray-400 hover:text-white">
+                            <i class="fas fa-times fa-lg"></i>
+                        </button>
                     </div>
-                    <button id="close-journal-btn" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times fa-lg"></i>
-                    </button>
                 </div>
 
                 <!-- Tabs -->

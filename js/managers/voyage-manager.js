@@ -1716,75 +1716,62 @@ class VoyageManager {
     }
 
     finishJourney() {
-        console.log('🏁 Fin du voyage - Génération du journal');
+        console.log('🏁 Fin du voyage - Sauvegarde dans le journal');
 
-        if (!this.dayByDayData || this.dayByDayData.length === 0) {
-            console.warn('⚠️ Pas de données de voyage à enregistrer');
-            return;
-        }
+        // Récupérer les informations nécessaires
+        const startLocation = journeyPath && journeyPath.length > 0 ?
+            this.findNearestLocationName(journeyPath[0]) : 'Point de départ';
+        const endLocation = journeyPath && journeyPath.length > 0 ?
+            this.findNearestLocationName(journeyPath[journeyPath.length - 1]) : 'Point d\'arrivée';
 
-        // Sauvegarder le voyage dans le journal
-        this.saveJourneyToJournal();
+        // Construire le texte du voyage
+        let voyageText = `\n## ${startLocation} → ${endLocation}\n\n`;
 
-        // Déplacer le marqueur de position à la destination (dernier point du tracé)
-        if (window.journeyPath && window.journeyPath.length > 0 && window.positionManager) {
-            const lastPoint = window.journeyPath[window.journeyPath.length - 1];
-            window.positionManager.animateToPosition(lastPoint.x, lastPoint.y, 1000);
-            console.log(`📍 Marqueur déplacé à la destination du voyage: (${Math.round(lastPoint.x)}, ${Math.round(lastPoint.y)})`);
-        }
+        this.dayByDayData.forEach(dayData => {
+            // Date en gras
+            voyageText += `**${dayData.calendarDate}** - `;
 
-        // Mettre à jour la date active avec celle du dernier jour de voyage
-        if (this.dayByDayData.length > 0) {
-            const lastDay = this.dayByDayData[this.dayByDayData.length - 1];
-            if (lastDay.calendarDate && window.calendarManager) {
-                console.log(`📅 Mise à jour de la date active vers la fin du voyage: ${lastDay.calendarDate}`);
-
-                // Parser la date du dernier jour
-                const dateParts = lastDay.calendarDate.split(' ');
-                if (dateParts.length >= 2) {
-                    const dayNumber = parseInt(dateParts[0]);
-                    const monthName = dateParts.slice(1).join(' ');
-
-                    if (dayNumber && monthName && window.calendarManager.calendarData) {
-                        const monthIndex = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                        if (monthIndex >= 0) {
-                            // Mettre à jour la date courante
-                            window.calendarManager.currentCalendarDate = {
-                                month: monthName,
-                                day: dayNumber
-                            };
-                            window.currentCalendarDate = window.calendarManager.currentCalendarDate;
-
-                            // Mettre à jour la saison
-                            const monthSeason = window.calendarManager.calendarData[monthIndex].season.toLowerCase();
-                            window.calendarManager.currentSeason = monthSeason;
-                            window.currentSeason = monthSeason;
-
-                            // Mettre à jour l'affichage
-                            window.calendarManager.updateSeasonDisplay();
-                            window.calendarManager.saveCalendarToLocal();
-
-                            console.log(`✅ Date active mise à jour: ${dayNumber} ${monthName} (${monthSeason})`);
-                        }
-                    }
-                }
+            // Découvertes
+            const discoveryNames = dayData.discoveries.map(d => d.name).join(' et ');
+            if (discoveryNames) {
+                voyageText += `${discoveryNames}. `;
             }
+
+            // Description (nettoyée)
+            const description = this.journeyDescriptions[dayData.day];
+            if (description) {
+                let cleanDesc = description.replace(/<[^>]*>/g, '').replace(/Dé du destin:\s*\d+\s*/gi, '').trim();
+                voyageText += cleanDesc;
+            }
+
+            // Événement aléatoire
+            const event = this.randomEvents[dayData.day];
+            if (event) {
+                let cleanEvent = event.replace(/<[^>]*>/g, '').trim();
+                voyageText += ` ${cleanEvent}`;
+            }
+
+            voyageText += '\n\n';
+        });
+
+        // Ajouter au journal via appendContent
+        if (window.journalManager) {
+            window.journalManager.appendContent(voyageText.trim());
+
+            console.log('✅ Voyage ajouté au journal');
+            alert('Voyage enregistré dans le journal !');
         }
 
-        // Notification de succès
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-        notification.innerHTML = '<i class="fas fa-check mr-2"></i>Voyage enregistré dans le journal';
-        document.body.appendChild(notification);
-        setTimeout(() => notification.remove(), 3000);
-
-        // Fermer la modale
+        // Fermer la modale et réinitialiser
         const modal = this.dom.getElementById('voyage-segments-modal');
         if (modal) {
             modal.classList.add('hidden');
         }
 
-        console.log('✅ Voyage enregistré avec succès');
+        // Effacer le tracé
+        if (window.pathManager) {
+            window.pathManager.clearPath();
+        }
     }
 
     async generateJourneyDescription() {
@@ -2041,12 +2028,12 @@ class VoyageManager {
 
         // Déterminer si on utilise singulier ou pluriel
         const isSingular = playerCharacters.length === 1;
-        const personnePronom = isSingular ? 
-            'il/elle (selon le personnage)' : 
+        const personnePronom = isSingular ?
+            'il/elle (selon le personnage)' :
             'ils/elles';
         const examplePronom = isSingular ? 'il' : 'ils';
 
-        let prompt = `Tu es un narrateur expert dans l'univers de la Terre du Milieu de J.R.R. Tolkien. 
+        let prompt = `Tu es un narrateur expert dans l'univers de la Terre du Milieu de J.R.R. Tolkien.
 
 Ta mission est de créer des descriptions immersives pour chaque jour d'un voyage, en tenant compte du contexte global du périple.
 
@@ -2068,45 +2055,45 @@ RÈGLES POUR LES TRANSITIONS :
 - Mentionne le fait de QUITTER un lieu/région SEULEMENT si la journée suivante se déroule dans un lieu/région DIFFÉRENT
 - Mentionne le fait de REJOINDRE un nouveau lieu/région SEULEMENT si la journée précédente se déroulait dans un lieu/région DIFFÉRENT
 - Ne fais référence qu'aux lieux/régions EXPLICITEMENT listés dans les découvertes du jour
-- N'invente PAS de lieux qui ne sont pas mentionnés dans les données
+- Ne invente PAS de lieux qui ne sont pas mentionnés dans les données
 
 VOYAGE COMPLET (${this.totalJourneyDays} jours) :
 ${allJourneyData.map((dayData, index) => {
-    const discoveries = dayData.discoveries.length > 0 
-        ? dayData.discoveries.map(d => {
-            let detail = `${d.name} (${d.type})`;
-            if (d.description) {
-                detail += `\n  Description: ${d.description}`;
+            const discoveries = dayData.discoveries.length > 0
+                ? dayData.discoveries.map(d => {
+                    let detail = `${d.name} (${d.type})`;
+                    if (d.description) {
+                        detail += `\n  Description: ${d.description}`;
+                    }
+                    return detail;
+                }).join('\n  - ')
+                : 'aucune découverte particulière';
+
+            const weather = dayData.weather ? ` - Météo: ${dayData.weather}` : '';
+
+            // Analyser les transitions pour aider l'IA
+            let transitionInfo = '';
+            if (index > 0) {
+                const prevDay = allJourneyData[index - 1];
+                const prevLocations = new Set(prevDay.discoveries.map(d => d.name));
+                const currentLocations = new Set(dayData.discoveries.map(d => d.name));
+                const hasNewLocation = [...currentLocations].some(loc => !prevLocations.has(loc));
+                if (hasNewLocation) {
+                    transitionInfo += '\n  ⚠️ Nouveau(x) lieu(x)/région(s) par rapport à la veille';
+                }
             }
-            return detail;
-        }).join('\n  - ')
-        : 'aucune découverte particulière';
+            if (index < allJourneyData.length - 1) {
+                const nextDay = allJourneyData[index + 1];
+                const nextLocations = new Set(nextDay.discoveries.map(d => d.name));
+                const currentLocations = new Set(dayData.discoveries.map(d => d.name));
+                const willLeaveLocation = [...currentLocations].some(loc => !nextLocations.has(loc));
+                if (willLeaveLocation) {
+                    transitionInfo += '\n  ⚠️ Quitte ce(s) lieu(x)/région(s) demain';
+                }
+            }
 
-    const weather = dayData.weather ? ` - Météo: ${dayData.weather}` : '';
-
-    // Analyser les transitions pour aider l'IA
-    let transitionInfo = '';
-    if (index > 0) {
-        const prevDay = allJourneyData[index - 1];
-        const prevLocations = new Set(prevDay.discoveries.map(d => d.name));
-        const currentLocations = new Set(dayData.discoveries.map(d => d.name));
-        const hasNewLocation = [...currentLocations].some(loc => !prevLocations.has(loc));
-        if (hasNewLocation) {
-            transitionInfo += '\n  ⚠️ Nouveau(x) lieu(x)/région(s) par rapport à la veille';
-        }
-    }
-    if (index < allJourneyData.length - 1) {
-        const nextDay = allJourneyData[index + 1];
-        const nextLocations = new Set(nextDay.discoveries.map(d => d.name));
-        const currentLocations = new Set(dayData.discoveries.map(d => d.name));
-        const willLeaveLocation = [...currentLocations].some(loc => !nextLocations.has(loc));
-        if (willLeaveLocation) {
-            transitionInfo += '\n  ⚠️ Quitte ce(s) lieu(x)/région(s) demain';
-        }
-    }
-
-    return `Jour ${dayData.day} (${dayData.calendarDate})${weather}\nDécouvertes:\n  - ${discoveries}${transitionInfo}`;
-}).join('\n\n')}
+            return `Jour ${dayData.day} (${dayData.calendarDate})${weather}\nDécouvertes:\n  - ${discoveries}${transitionInfo}`;
+        }).join('\n\n')}
 
 CONSIGNES DE GÉNÉRATION :
 - Pour chaque jour, génère une description UNIQUE avec un angle narratif différent
@@ -2224,6 +2211,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
             title: `Voyage de ${this.totalJourneyDays} jours`,
             totalDays: this.totalJourneyDays,
             generatedAt: new Date().toISOString(),
+            journeyType: 'journey',
             days: this.dayByDayData.map((dayData, index) => {
                 const dayNumber = index + 1;
                 const weatherData = this.getWeatherForDay(dayNumber);
@@ -2232,6 +2220,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
                     dayNumber: dayNumber,
                     calendarDate: dayData.calendarDate,
                     weatherSymbol: weatherData?.symbol || null,
+                    weatherText: weatherData?.weather || null,
                     discoveries: dayData.discoveries || [],
                     description: this.journeyDescriptions[dayNumber] || null,
                     eventResult: this.randomEvents[dayNumber] || null
@@ -2258,7 +2247,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
         localStorage.setItem('travelJournal', JSON.stringify(journal));
         console.log(`📖 Voyage ajouté au journal (${journal.length} voyage(s) au total)`);
 
-        // Marquer comme non sauvegardé pour sync cloud
+        // Marquer comme non sauvegardé lors de la génération d'une nouvelle entrée dans le journal
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
@@ -2420,7 +2409,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
                 // S'assurer que c'est bien un tableau
                 journal = Array.isArray(parsed) ? parsed : [];
             } catch (e) {
-                console.error("Erreur lors du parsing du journal:", e);
+                console.error("Erreur lors du chargement du journal:", e);
                 journal = [];
             }
         }
@@ -2799,10 +2788,14 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
         return dayData.discoveries.some(discovery => {
             if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
                 const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                return location && location.RandomTables && Array.isArray(location.RandomTables) && location.RandomTables.length > 0;
+                const hasTables = location && location.RandomTables && Array.isArray(location.RandomTables) && location.RandomTables.length > 0;
+                console.log(`🔍 Lieu "${discovery.name}" - a des tables:`, hasTables);
+                return hasTables;
             } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
                 const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                return region && region.RandomTables && Array.isArray(region.RandomTables) && region.RandomTables.length > 0;
+                const hasTables = region && region.RandomTables && Array.isArray(region.RandomTables) && region.RandomTables.length > 0;
+                console.log(`🔍 Région "${discovery.name}" - a des tables:`, hasTables);
+                return hasTables;
             }
             return false;
         });

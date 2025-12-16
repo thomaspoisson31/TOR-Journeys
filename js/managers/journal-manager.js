@@ -1,12 +1,19 @@
 class JournalManager {
     constructor() {
-        this.journal = [];
+        this.journal = {
+            content: '', // Texte continu du journal
+            metadata: {
+                lastModified: null,
+                wordCount: 0
+            }
+        };
         this.objectives = [];
         this.journalModal = null;
         this.journalContent = null;
         this.journalEmpty = null;
         this.currentTab = 'journal-list';
-        this.exportJournalMarkdownBtn = null; // Added reference for the new button
+        this.exportJournalMarkdownBtn = null;
+        this.isEditMode = false; // Mode édition activé/désactivé
     }
 
     init() {
@@ -65,6 +72,12 @@ class JournalManager {
             addObjectiveBtn.addEventListener('click', () => this.addObjective());
         }
 
+        // Bouton d'édition du journal
+        const editJournalBtn = document.getElementById('edit-journal-btn');
+        if (editJournalBtn) {
+            editJournalBtn.addEventListener('click', () => this.toggleEditMode());
+        }
+
         // Écouteur pour le bouton d'export Markdown
         if (this.exportJournalMarkdownBtn) {
             this.exportJournalMarkdownBtn.addEventListener('click', () => this.exportJournalAsMarkdown());
@@ -112,17 +125,47 @@ class JournalManager {
         if (savedJournal && savedJournal !== 'null' && savedJournal !== 'undefined') {
             try {
                 const parsed = JSON.parse(savedJournal);
-                // S'assurer que c'est bien un tableau
-                this.journal = Array.isArray(parsed) ? parsed : [];
-                console.log(`📖 ${this.journal.length} voyage(s) chargé(s) depuis le localStorage`);
+                // Gérer la migration de l'ancien format (tableau) vers le nouveau (objet)
+                if (Array.isArray(parsed)) {
+                    console.log(`📖 Migration de ${parsed.length} voyage(s) depuis l'ancien format`);
+                    this.journal = {
+                        content: '',
+                        metadata: {
+                            lastModified: new Date().toISOString(),
+                            wordCount: 0
+                        }
+                    };
+                } else if (parsed.content !== undefined) {
+                    this.journal = parsed;
+                    console.log(`📖 Journal chargé : ${this.journal.metadata.wordCount} mots`);
+                } else {
+                    this.journal = {
+                        content: '',
+                        metadata: {
+                            lastModified: null,
+                            wordCount: 0
+                        }
+                    };
+                }
             } catch (e) {
                 console.error("Erreur lors du chargement du journal:", e);
-                this.journal = [];
+                this.journal = {
+                    content: '',
+                    metadata: {
+                        lastModified: null,
+                        wordCount: 0
+                    }
+                };
             }
         } else {
-            // Initialiser avec un tableau vide si rien n'est sauvegardé
-            this.journal = [];
-            console.log("📖 Aucun voyage trouvé dans le localStorage");
+            this.journal = {
+                content: '',
+                metadata: {
+                    lastModified: null,
+                    wordCount: 0
+                }
+            };
+            console.log("📖 Nouveau journal initialisé");
         }
     }
 
@@ -175,7 +218,7 @@ class JournalManager {
     renderJournal() {
         if (!this.journalContent || !this.journalEmpty) return;
 
-        if (this.journal.length === 0) {
+        if (!this.journal.content || this.journal.content.trim() === '') {
             this.journalContent.classList.add('hidden');
             this.journalEmpty.classList.remove('hidden');
             return;
@@ -184,149 +227,50 @@ class JournalManager {
         this.journalContent.classList.remove('hidden');
         this.journalEmpty.classList.add('hidden');
 
-        // Déstructurer tous les voyages en jours individuels avec métadonnées
-        const allDays = [];
-        this.journal.forEach((journey, journeyIndex) => {
-            const isRandomRoll = journey.journeyType === 'random';
-            const journeyIcon = isRandomRoll ? '🎲' : '⛰️';
-
-            if (journey.days && journey.days.length > 0) {
-                journey.days.forEach((day) => {
-                    allDays.push({
-                        calendarDate: day.calendarDate || `Jour ${day.dayNumber}`,
-                        weatherSymbol: day.weatherSymbol || '',
-                        description: day.description,
-                        eventResult: day.eventResult,
-                        discoveries: day.discoveries || [],
-                        dayNumber: day.dayNumber,
-                        journeyTitle: journey.title,
-                        journeyIcon: journeyIcon,
-                        journeyIndex: journeyIndex,
-                        isRandomRoll: isRandomRoll
-                    });
-                });
-            }
-        });
-
-        // Trier tous les jours par date calendrier (chronologiquement)
-        allDays.sort((a, b) => {
-            // Extraire le mois et le jour de chaque date
-            const parseDate = (dateStr) => {
-                const parts = dateStr.split(' ');
-                if (parts.length >= 2) {
-                    return {
-                        day: parseInt(parts[0]) || 0,
-                        month: parts.slice(1).join(' ')
-                    };
-                }
-                return { day: 0, month: dateStr };
-            };
-
-            const dateA = parseDate(a.calendarDate);
-            const dateB = parseDate(b.calendarDate);
-
-            // Obtenir l'ordre des mois depuis le calendrier
-            const getMonthIndex = (monthName) => {
-                if (window.calendarManager && window.calendarManager.calendarData) {
-                    const index = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                    return index !== -1 ? index : 999;
-                }
-                return 999;
-            };
-
-            const monthIndexA = getMonthIndex(dateA.month);
-            const monthIndexB = getMonthIndex(dateB.month);
-
-            // Comparer d'abord par mois
-            if (monthIndexA !== monthIndexB) {
-                return monthIndexA - monthIndexB;
-            }
-
-            // Si même mois, comparer par jour
-            return dateA.day - dateB.day;
-        });
-
-        // Générer le HTML pour chaque jour individuellement
-        const journalHTML = allDays.map((day) => {
-            let dayHTML = `<div class="border border-gray-300 rounded-lg bg-white shadow-sm mb-3 p-4">`;
-
-            // En-tête avec date + badge voyage
-            dayHTML += `
-                <div class="flex items-center gap-3 mb-3 pb-2 border-b border-gray-200">
-                    <div class="text-lg font-bold" style="color: #940000;">
-                        ${day.calendarDate}
-                        ${day.weatherSymbol ? `<span class="ml-2">${day.weatherSymbol}</span>` : ''}
+        if (this.isEditMode) {
+            // Mode édition : afficher une textarea
+            this.journalContent.innerHTML = `
+                <div class="journal-edit-container" style="height: 100%; display: flex; flex-direction: column;">
+                    <textarea id="journal-edit-textarea" 
+                              class="w-full flex-1 p-4 border border-gray-300 rounded-lg resize-none"
+                              style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6;"
+                              placeholder="Écrivez votre journal d'aventure...">${this.escapeHtml(this.journal.content)}</textarea>
+                    <div class="mt-3 flex justify-between items-center text-sm text-gray-500">
+                        <span>${this.journal.metadata.wordCount} mots</span>
+                        <button id="save-journal-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                            <i class="fas fa-save mr-2"></i>Enregistrer
+                        </button>
                     </div>
-                    <div class="flex-1 flex items-center gap-2">
-                        <span class="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-700">
-                            ${day.journeyIcon} ${day.journeyTitle}
-                        </span>
-                    </div>
-                    <button onclick="window.journalManager.deleteJourney(${day.journeyIndex})"
-                            class="text-red-500 hover:text-red-700 p-1"
-                            title="Supprimer ce voyage">
-                        <i class="fas fa-trash text-sm"></i>
-                    </button>
                 </div>
             `;
 
-            // Contenu du jour
-            if (day.isRandomRoll) {
-                // Tirage aléatoire
-                if (day.description) {
-                    dayHTML += `
-                        <div class="text-sm text-gray-700">
-                            ${day.description}
-                        </div>
-                    `;
-                }
-            } else {
-                // Voyage normal
-                const discoveryNames = day.discoveries.map(d => d.name).join(' et ');
-
-                if (discoveryNames) {
-                    dayHTML += `
-                        <div class="text-sm font-semibold text-blue-600 mb-2">
-                            📍 ${discoveryNames}
-                        </div>
-                    `;
-                }
-
-                // Description
-                if (day.description) {
-                    let filteredDescription = day.description;
-                    filteredDescription = filteredDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
-                    filteredDescription = filteredDescription.replace(/<div[^>]*>\s*<span[^>]*>Dé du destin:<\/span>[\s\S]*?<\/div>/gi, '');
-
-                    const descriptionHtml = this.simpleMarkdown(filteredDescription);
-                    dayHTML += `
-                        <div class="text-sm text-gray-700 mb-2">
-                            ${descriptionHtml}
-                        </div>
-                    `;
-                }
-
-                // Événement aléatoire
-                if (day.eventResult) {
-                    const eventHtml = this.simpleMarkdown(day.eventResult);
-                    dayHTML += `
-                        <div class="mt-3 pt-3 border-t border-yellow-200 bg-yellow-50 rounded p-3">
-                            <div class="text-xs font-semibold text-yellow-700 mb-1">
-                                🎲 Événement aléatoire
-                            </div>
-                            <div class="text-sm text-gray-700">
-                                ${eventHtml}
-                            </div>
-                        </div>
-                    `;
-                }
+            // Ajouter l'événement de sauvegarde
+            const saveBtn = document.getElementById('save-journal-btn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => this.saveJournalContent());
             }
 
-            dayHTML += `</div>`;
-            return dayHTML;
-        }).join('');
-
-        this.journalContent.innerHTML = journalHTML;
+            // Auto-update word count
+            const textarea = document.getElementById('journal-edit-textarea');
+            if (textarea) {
+                textarea.addEventListener('input', () => {
+                    const words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+                    this.journalContent.querySelector('.text-sm.text-gray-500 span').textContent = `${words} mots`;
+                });
+            }
+        } else {
+            // Mode lecture : afficher le texte formaté en Markdown
+            const htmlContent = this.simpleMarkdown(this.journal.content);
+            this.journalContent.innerHTML = `
+                <div class="journal-read-container prose prose-sm max-w-none p-4" style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6; color: #1f2937;">
+                    ${htmlContent}
+                </div>
+                <div class="mt-3 text-sm text-gray-500 px-4">
+                    ${this.journal.metadata.wordCount} mots
+                    ${this.journal.metadata.lastModified ? `• Dernière modification : ${new Date(this.journal.metadata.lastModified).toLocaleDateString('fr-FR')}` : ''}
+                </div>
+            `;
+        }
     }
 
     openJourneyInVoyageModal(journeyIndex) {
@@ -506,116 +450,76 @@ class JournalManager {
         }
     }
 
-    deleteJourney(index) {
-        if (confirm("Êtes-vous sûr de vouloir supprimer ce voyage du journal ?")) {
-            this.journal.splice(index, 1);
-            localStorage.setItem('travelJournal', JSON.stringify(this.journal));
+    toggleEditMode() {
+        this.isEditMode = !this.isEditMode;
+        this.renderJournal();
+        console.log(`📖 Mode édition : ${this.isEditMode ? 'activé' : 'désactivé'}`);
+    }
 
-            // Marquer comme non sauvegardé
-            if (typeof window.markAsUnsaved === 'function') {
-                window.markAsUnsaved();
-            }
+    saveJournalContent() {
+        const textarea = document.getElementById('journal-edit-textarea');
+        if (!textarea) return;
 
-            // Synchroniser avec le cloud si authentifié
-            if (typeof window.scheduleAutoSync === 'function') {
-                window.scheduleAutoSync();
-            }
+        this.journal.content = textarea.value;
+        this.journal.metadata.lastModified = new Date().toISOString();
+        this.journal.metadata.wordCount = textarea.value.trim().split(/\s+/).filter(w => w.length > 0).length;
 
-            this.renderJournal();
-            console.log("📖 Voyage supprimé du journal");
+        localStorage.setItem('travelJournal', JSON.stringify(this.journal));
+
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        // Synchroniser avec le cloud si authentifié
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+
+        this.isEditMode = false;
+        this.renderJournal();
+        console.log("📖 Journal sauvegardé");
+    }
+
+    appendContent(newContent) {
+        // Ajouter du contenu en fin de journal avec la date calendrier
+        const calendarDate = window.calendarManager?.currentCalendarDate;
+        const dateStr = calendarDate ? `**${calendarDate.day} ${calendarDate.month}**` : "**Date inconnue**";
+        
+        if (this.journal.content.trim() !== '') {
+            this.journal.content += '\n\n';
+        }
+        
+        this.journal.content += `${dateStr} - ${newContent}`;
+        this.journal.metadata.lastModified = new Date().toISOString();
+        this.journal.metadata.wordCount = this.journal.content.trim().split(/\s+/).filter(w => w.length > 0).length;
+        
+        this.saveJournal();
+        console.log("📖 Contenu ajouté au journal");
+    }
+
+    saveJournal() {
+        localStorage.setItem('travelJournal', JSON.stringify(this.journal));
+
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        // Synchroniser avec le cloud si authentifié
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
         }
     }
 
     exportJournalAsMarkdown() {
-        if (this.journal.length === 0) {
+        if (!this.journal.content || this.journal.content.trim() === '') {
             alert("Le journal est vide");
             return;
         }
 
-        let markdown = "";
-
-        // Trier le journal par date de génération pour un export chronologique
-        const sortedJournal = [...this.journal].sort((a, b) => new Date(a.generatedAt) - new Date(b.generatedAt));
-
-        sortedJournal.forEach(journey => {
-            markdown += `## ${this.escapeHtml(journey.title)}\n\n`;
-
-            // Trier les jours du voyage par date calendrier (si disponible)
-            const sortedDays = [...journey.days].sort((a, b) => {
-                const parseDate = (dateStr) => {
-                    const parts = dateStr.split(' ');
-                    if (parts.length >= 2) {
-                        return {
-                            day: parseInt(parts[0]) || 0,
-                            month: parts.slice(1).join(' ')
-                        };
-                    }
-                    return { day: 0, month: dateStr };
-                };
-
-                const dateA = parseDate(a.calendarDate || `Jour ${a.dayNumber}`);
-                const dateB = parseDate(b.calendarDate || `Jour ${b.dayNumber}`);
-
-                const getMonthIndex = (monthName) => {
-                    if (window.calendarManager && window.calendarManager.calendarData) {
-                        const index = window.calendarManager.calendarData.findIndex(m => m.name === monthName);
-                        return index !== -1 ? index : 999;
-                    }
-                    return 999;
-                };
-
-                const monthIndexA = getMonthIndex(dateA.month);
-                const monthIndexB = getMonthIndex(dateB.month);
-
-                if (monthIndexA !== monthIndexB) return monthIndexA - monthIndexB;
-                return dateA.day - dateB.day;
-            });
-
-            sortedDays.forEach(day => {
-                // Date en gras
-                markdown += `**${day.calendarDate}** - `;
-
-                // Description nettoyée (sans balises HTML, sans émojis, sans mentions de "Dé du destin")
-                if (day.description) {
-                    let cleanDescription = day.description;
-                    // Supprimer les balises HTML
-                    cleanDescription = cleanDescription.replace(/<[^>]*>/g, '');
-                    // Supprimer "Dé du destin"
-                    cleanDescription = cleanDescription.replace(/Dé du destin:\s*\d+\s*/gi, '');
-                    // Supprimer les retours à la ligne multiples
-                    cleanDescription = cleanDescription.replace(/\n\n+/g, ' ');
-                    cleanDescription = cleanDescription.replace(/\n/g, ' ');
-                    // Nettoyer les espaces multiples
-                    cleanDescription = cleanDescription.replace(/\s+/g, ' ');
-                    cleanDescription = cleanDescription.trim();
-                    
-                    markdown += `${cleanDescription}`;
-                }
-
-                // Événement aléatoire (si présent)
-                if (day.eventResult) {
-                    let cleanEvent = day.eventResult;
-                    // Supprimer les balises HTML
-                    cleanEvent = cleanEvent.replace(/<[^>]*>/g, '');
-                    // Supprimer les retours à la ligne multiples
-                    cleanEvent = cleanEvent.replace(/\n\n+/g, ' ');
-                    cleanEvent = cleanEvent.replace(/\n/g, ' ');
-                    // Nettoyer les espaces multiples
-                    cleanEvent = cleanEvent.replace(/\s+/g, ' ');
-                    cleanEvent = cleanEvent.trim();
-                    
-                    if (day.description) {
-                        markdown += ` ${cleanEvent}`;
-                    } else {
-                        markdown += cleanEvent;
-                    }
-                }
-
-                markdown += `\n\n`;
-            });
-
-            markdown += `\n`;
-        });
+        // Le contenu est déjà en Markdown
+        const markdown = this.journal.content;
 
         // Créer une modale pour afficher le Markdown et le bouton copier
         this.createMarkdownExportModal(markdown);

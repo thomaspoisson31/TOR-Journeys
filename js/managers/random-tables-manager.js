@@ -496,31 +496,32 @@ class RandomTablesManager {
     insertRandomResultToJournal() {
         console.log('📖 [insertRandomResultToJournal] Début insertion dans le journal');
 
-        if (!this.lastRandomResult) {
+        // Récupérer le résultat depuis settingsManager
+        const result = window.settingsManager?.currentRandomResult;
+        if (!result) {
             console.warn('⚠️ Aucun résultat aléatoire à insérer');
             return;
         }
 
-        // Récupérer la date calendrier actuelle avec vérifications robustes
-        let calendarDate = 'Date inconnue';
+        // Nettoyer le HTML du résultat
+        let cleanResult = result.result.replace(/<[^>]*>/g, '').trim();
 
-        // Vérifier d'abord les variables globales (utilisées par le système de calendrier)
-        if (window.isCalendarMode && window.currentCalendarDate) {
-            calendarDate = `${window.currentCalendarDate.day} ${window.currentCalendarDate.month}`;
-            console.log('📅 Date récupérée depuis window.currentCalendarDate:', calendarDate);
+        // Construire le texte à insérer
+        const textToInsert = `🎲 ${result.tableName} : ${cleanResult}`;
+
+        // Insérer dans le journal via appendContent
+        if (window.journalManager) {
+            window.journalManager.appendContent(textToInsert);
+            console.log('✅ Résultat de tirage inséré dans le journal');
+            
+            // Fermer la modale de résultat
+            const resultModal = document.getElementById('random-roll-result-modal');
+            if (resultModal) {
+                resultModal.classList.add('hidden');
+            }
+            
+            alert('Résultat ajouté au journal !');
         }
-        // Fallback sur calendarManager si les variables globales ne sont pas disponibles
-        else if (window.calendarManager && window.calendarManager.currentCalendarDate) {
-            const currentDate = window.calendarManager.currentCalendarDate;
-            calendarDate = `${currentDate.day} ${currentDate.month}`;
-            console.log('📅 Date récupérée depuis calendarManager:', calendarDate);
-        }
-
-        console.log('📅 Date calendrier finale pour le tirage:', calendarDate);
-
-        // L'insertion réelle dans le journal se ferait ici, en utilisant 'calendarDate'
-        // et les informations de 'this.lastRandomResult'.
-        // Pour l'instant, nous nous concentrons sur la récupération correcte de la date.
     }
 }
 
