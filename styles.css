@@ -921,9 +921,12 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: 0;
 }
 
 #journal-edit-textarea {
+    flex: 1;
+    min-height: 0;
     color: black !important;
     background-color: white !important;
 }

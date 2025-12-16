@@ -230,9 +230,9 @@ class JournalManager {
         if (this.isEditMode) {
             // Mode édition : afficher une textarea
             this.journalContent.innerHTML = `
-                <div class="journal-edit-container" style="height: 100%; display: flex; flex-direction: column;">
+                <div class="journal-edit-container">
                     <textarea id="journal-edit-textarea" 
-                              class="w-full flex-1 p-4 border border-gray-300 rounded-lg resize-none"
+                              class="w-full p-4 border border-gray-300 rounded-lg resize-none"
                               style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6; color: black; background-color: white;"
                               placeholder="Écrivez votre journal d'aventure...">${this.escapeHtml(this.journal.content)}</textarea>
                     <div class="mt-3 flex justify-between items-center text-sm text-gray-500 flex-shrink-0">
