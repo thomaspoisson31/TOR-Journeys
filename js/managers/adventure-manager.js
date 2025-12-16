@@ -398,8 +398,12 @@ class AdventureManager {
         localStorage.setItem('adventureData', JSON.stringify(this.adventureData));
         console.log("💾 Adventure data saved to localStorage");
 
-        if (typeof window.markAsUnsaved === 'function') {
-            window.markAsUnsaved();
+        // Marquer comme non sauvegardé pour sync cloud
+        if (window.authManager && window.authManager.isAuthenticated) {
+            window.authManager.markAsUnsaved();
+        }
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
         }
     }
 

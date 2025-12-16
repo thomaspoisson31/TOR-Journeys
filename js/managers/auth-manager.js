@@ -533,14 +533,32 @@ class AuthManager {
             this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (flag actif)");
         }
 
-        // ✅ AJOUT : Restaurer les tables aléatoires
+        // ✅ AJOUT : Restaurer les tables aléatoires (avec vérification complète)
         if (data.randomTables && window.adventureManager) {
             this.logAuth("🎲 [applyContextData] Restauration des tables aléatoires depuis le cloud");
+            this.logAuth(`🎲 [applyContextData] Données reçues: ${data.randomTables.length} table(s)`);
             
+            // S'assurer que adventureData existe
+            if (!window.adventureManager.adventureData) {
+                window.adventureManager.adventureData = {
+                    quest: '',
+                    rumors: [],
+                    threats: [],
+                    randomTables: [],
+                    compositeTables: []
+                };
+            }
+            
+            // Restaurer les tables aléatoires
             window.adventureManager.adventureData.randomTables = data.randomTables;
+            
+            // Sauvegarder dans localStorage
             localStorage.setItem('adventureData', JSON.stringify(window.adventureManager.adventureData));
             
             this.logAuth(`✅ ${data.randomTables.length} table(s) aléatoire(s) restaurée(s)`);
+            this.logAuth(`🎲 [applyContextData] Vérification: adventureManager contient ${window.adventureManager.adventureData.randomTables.length} table(s)`);
+        } else {
+            this.logAuth(`⚠️ [applyContextData] Pas de tables aléatoires à restaurer (data: ${!!data.randomTables}, adventureManager: ${!!window.adventureManager})`);
         }
 
         if (data.settings && window.settingsManager) {
