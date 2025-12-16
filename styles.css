@@ -1881,3 +1881,6 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
+
+/* Random Roll Result Modal */
+        <div id="random-roll-result-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[90]">
