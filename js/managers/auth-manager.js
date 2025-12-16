@@ -360,7 +360,11 @@ class AuthManager {
             characters: charactersData,
             calendar: {
                 currentDate: localStorage.getItem('currentDate') || null,
-                isCalendarMode: localStorage.getItem('isCalendarMode') === 'true'
+                isCalendarMode: localStorage.getItem('isCalendarMode') === 'true',
+                // ✅ AJOUT : Calendrier complet avec météo
+                calendarData: window.calendarManager?.calendarData || null,
+                currentCalendarDate: window.calendarManager?.currentCalendarDate || null,
+                currentSeason: window.calendarManager?.currentSeason || 'printemps-debut'
             },
             settings: {
                 activeMapUrl: window.settingsManager?.activeMapUrl || null,
@@ -372,6 +376,8 @@ class AuthManager {
             filtersByMap: JSON.parse(localStorage.getItem('filtersByMap') || '{}'),
             // Ajouter l'état actuel du mode aventure
             adventureMode: window.positionManager?.adventureMode || JSON.parse(localStorage.getItem('adventurers_adventure_mode') || 'false'),
+            // ✅ CORRECTION : Tables aléatoires depuis adventureData
+            randomTables: window.adventureManager?.adventureData?.randomTables || [],
             // Ajouter les états des cases à cocher des tirages aléatoires
             randomTablesCheckedResults: JSON.parse(localStorage.getItem('randomTablesCheckedResults') || '{}')
         };
@@ -489,17 +495,29 @@ class AuthManager {
         // 4. Autres données (calendrier, paramètres, journal)
         if (data.calendar && window.calendarManager) {
             this.logAuth("📅 [applyContextData] Application des données de calendrier depuis le cloud");
-
             this.logAuth("📅 [applyContextData] Données calendar reçues:", data.calendar);
 
             // IMPORTANT: Poser le flag AVANT toute opération
             localStorage.setItem('calendar_from_cloud', 'true');
 
-            // Appliquer directement au CalendarManager d'abord
-            if (data.calendar.currentDate) {
-                window.calendarManager.currentCalendarDate = data.calendar.currentDate; // Utiliser currentCalendarDate pour la cohérence
+            // ✅ AJOUT : Restaurer calendarData complet
+            if (data.calendar.calendarData) {
+                window.calendarManager.calendarData = data.calendar.calendarData;
+                localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
+                this.logAuth(`📅 [applyContextData] CalendarData restauré: ${data.calendar.calendarData.length} mois`);
+            }
+
+            // Appliquer directement au CalendarManager
+            if (data.calendar.currentCalendarDate) {
+                window.calendarManager.currentCalendarDate = data.calendar.currentCalendarDate;
                 localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
                 this.logAuth(`📅 [applyContextData] Date appliquée:`, data.calendar.currentCalendarDate);
+            }
+
+            if (data.calendar.currentSeason) {
+                window.calendarManager.currentSeason = data.calendar.currentSeason;
+                localStorage.setItem('currentSeason', data.calendar.currentSeason);
+                this.logAuth(`📅 [applyContextData] Saison appliquée: ${data.calendar.currentSeason}`);
             }
 
             if (data.calendar.isCalendarMode !== undefined) {
@@ -508,12 +526,21 @@ class AuthManager {
                 this.logAuth(`📅 [applyContextData] Mode calendrier appliqué: ${data.calendar.isCalendarMode}`);
             }
 
-            // Forcer la mise à jour complète de l'interface avec les nouvelles données
-            this.logAuth("📅 [applyContextData] Mise à jour UI du calendrier");
-            window.calendarManager.updateSeasonDisplay(); // Cette fonction peut être vide si pas de saison
-            window.calendarManager.exposeGlobalData(); // Pour s'assurer que les données globales sont à jour
+            // Forcer la mise à jour complète de l'interface
+            window.calendarManager.updateSeasonDisplay();
+            window.calendarManager.exposeGlobalData();
 
-            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (updateUI différé)");
+            this.logAuth("✅ [applyContextData] Calendrier restauré depuis le cloud (flag actif)");
+        }
+
+        // ✅ AJOUT : Restaurer les tables aléatoires
+        if (data.randomTables && window.adventureManager) {
+            this.logAuth("🎲 [applyContextData] Restauration des tables aléatoires depuis le cloud");
+            
+            window.adventureManager.adventureData.randomTables = data.randomTables;
+            localStorage.setItem('adventureData', JSON.stringify(window.adventureManager.adventureData));
+            
+            this.logAuth(`✅ ${data.randomTables.length} table(s) aléatoire(s) restaurée(s)`);
         }
 
         if (data.settings && window.settingsManager) {
