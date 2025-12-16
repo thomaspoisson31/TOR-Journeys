@@ -912,7 +912,24 @@ body {
 }
 
 .journal-tab-content.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Journal edit container */
+.journal-edit-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#journal-edit-textarea {
+    color: black !important;
+    background-color: white !important;
+}
+
+#journal-edit-textarea::placeholder {
+    color: #9ca3af !important;
 }
 
 /* Objectives styling */

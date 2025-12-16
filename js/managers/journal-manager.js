@@ -233,9 +233,9 @@ class JournalManager {
                 <div class="journal-edit-container" style="height: 100%; display: flex; flex-direction: column;">
                     <textarea id="journal-edit-textarea" 
                               class="w-full flex-1 p-4 border border-gray-300 rounded-lg resize-none"
-                              style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6;"
+                              style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6; color: black; background-color: white;"
                               placeholder="Écrivez votre journal d'aventure...">${this.escapeHtml(this.journal.content)}</textarea>
-                    <div class="mt-3 flex justify-between items-center text-sm text-gray-500">
+                    <div class="mt-3 flex justify-between items-center text-sm text-gray-500 flex-shrink-0">
                         <span>${this.journal.metadata.wordCount} mots</span>
                         <button id="save-journal-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
                             <i class="fas fa-save mr-2"></i>Enregistrer
