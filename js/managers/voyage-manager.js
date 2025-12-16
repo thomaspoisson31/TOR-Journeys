@@ -1715,6 +1715,31 @@ class VoyageManager {
         }
     }
 
+    findNearestLocationName(point) {
+        if (!point || typeof locationsData === 'undefined' || !locationsData.locations) {
+            return 'Lieu inconnu';
+        }
+
+        let nearestLocation = null;
+        let minDistance = Infinity;
+
+        locationsData.locations.forEach(location => {
+            if (!location.coordinates) return;
+
+            const distance = Math.sqrt(
+                Math.pow(location.coordinates.x - point.x, 2) +
+                Math.pow(location.coordinates.y - point.y, 2)
+            );
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestLocation = location;
+            }
+        });
+
+        return nearestLocation ? nearestLocation.name : 'Lieu inconnu';
+    }
+
     finishJourney() {
         console.log('🏁 Fin du voyage - Sauvegarde dans le journal');
 
