@@ -1,4 +1,3 @@
-replit_final_file>
 import { MAP_DISTANCE_MILES } from '../utils/constants.js';
 import GeminiManager from './gemini-manager.js';
 
