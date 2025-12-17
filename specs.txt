@@ -1099,7 +1099,13 @@ Stockage:
 ÉVOLUTIONS RÉCENTES
 -------------------
 
-1. Détection correcte des régions traversées plusieurs fois (v1.3.15)
+1. Correction z-index modale de résultat de tirage aléatoire (v1.3.16)
+   - Fix affichage modale derrière l'InfoBox
+   - Augmentation z-index de 70 à 90
+   - Documentation hiérarchie z-index complète
+   - Fichier concerné : styles.css
+
+2. Détection correcte des régions traversées plusieurs fois (v1.3.15)
    - Fix région apparaissant sur tous les jours au lieu de segments spécifiques
    - Problème : Map.set() écrasait les segments précédents avec la même clé (nom de région)
    - Cause : Architecture ne supportait qu'un seul segment par région
@@ -1398,6 +1404,83 @@ GESTION DU MODE AVENTURE ET DES FILTRES
    - TOUJOURS désactiver la sauvegarde automatique pendant l'application de filtres temporaires
    - TOUJOURS prévoir une configuration par défaut si aucun filtre sauvegardé
    - known=[] signifie "aucun filtre actif" = afficher connus ET inconnus
+
+PRINCIPES DE GESTION DES Z-INDEX POUR MODALES ET OVERLAYS
+-----------------------------------------------------------
+
+1. HIÉRARCHIE STRICTE DES Z-INDEX :
+   
+   Problématique :
+   - Les modales peuvent se superposer et créer des conflits d'affichage
+   - Une modale importante peut être cachée derrière une autre
+   
+   Architecture implémentée :
+   
+   Niveaux de z-index standards :
+   - Interface de base (toolbars, panels) : z-index 10-50
+   - InfoBox : z-index 80
+   - Modales de résultats/actions : z-index 90+
+   - Overlays plein écran : z-index 9999
+   
+   Règles obligatoires :
+   - ✅ TOUJOURS vérifier le z-index des éléments parents avant d'ajouter une modale
+   - ✅ TOUJOURS documenter le z-index dans les commentaires CSS
+   - ✅ Utiliser des valeurs espacées (70, 80, 90) pour faciliter les insertions futures
+   - ❌ JAMAIS utiliser de z-index arbitraire sans vérifier la hiérarchie
+   
+   Exemple corrigé :
+   ```css
+   /* InfoBox : conteneur principal */
+   #info-box {
+       z-index: 80;
+   }
+   
+   /* Modale de résultat de tirage : doit être au-dessus de l'InfoBox */
+   #random-roll-result-modal {
+       z-index: 90;
+   }
+   
+   /* Overlay plein écran : au-dessus de tout */
+   #fullscreen-overlay {
+       z-index: 9999;
+   }
+   ```
+   
+   Fichiers concernés :
+   - styles.css : Définition des z-index
+   - Tous les managers créant des modales
+   
+   Pattern de validation :
+   - Ouvrir DevTools → Inspector
+   - Vérifier la hiérarchie des éléments superposés
+   - Ajuster les z-index si nécessaire
+   - Tester avec plusieurs modales ouvertes simultanément
+
+2. MODALES CONTEXTUELLES DANS L'INFOBOX :
+   
+   Cas d'usage :
+   - Affichage de résultats de tirage aléatoire
+   - Confirmation d'actions
+   - Sélection d'options
+   
+   Règles spécifiques :
+   - Ces modales doivent TOUJOURS avoir un z-index > InfoBox (80)
+   - Utiliser z-index: 90 par défaut pour les modales de résultat
+   - Prévoir de la marge pour les modales secondaires (95, 100, etc.)
+   
+   Exemple type :
+   ```html
+   <!-- Modale affichée depuis l'InfoBox -->
+   <div id="random-roll-result-modal" 
+        class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[90]">
+       <!-- Contenu -->
+   </div>
+   ```
+   
+   Code concerné :
+   - random-tables-manager.js : Gestion des tirages aléatoires
+   - infobox-manager.js : Gestion de l'InfoBox principale
+   - styles.css : Définition des z-index
 
 PRINCIPES DE GESTION DES FILTRES EN MODE AVENTURE
 -------------------------------------------------
@@ -2028,7 +2111,21 @@ PRINCIPES EVENT DELEGATION POUR ÉLÉMENTS DYNAMIQUES
 SUCCÈS TECHNIQUES CONFIRMÉS
 ---------------------------
 
-1. Désactivation temporaire de la sauvegarde des filtres en mode Aventure (v1.3.14):
+1. Correction z-index modale de résultat de tirage aléatoire (v1.3.16):
+   - Problématique : La modale `random-roll-result-modal` s'affichait derrière l'InfoBox
+   - Cause : z-index de 70 inférieur au z-index de l'InfoBox (80)
+   - Solution implémentée :
+     * Augmentation du z-index à 90 dans styles.css
+     * Validation de la hiérarchie complète des z-index
+     * Documentation des niveaux standards dans specs.txt
+   - Validation visuelle :
+     * Ouverture InfoBox → tirage aléatoire → modale visible au premier plan ✅
+     * Pas de conflit avec les autres overlays ✅
+   - Impact : Les résultats de tirage sont maintenant correctement visibles
+   - Fichiers concernés : styles.css
+   - Principe général ajouté : Hiérarchie stricte des z-index documentée
+
+2. Désactivation temporaire de la sauvegarde des filtres en mode Aventure (v1.3.14):
    - Problématique : Les filtres du mode Aventure écrasaient les filtres utilisateur dans filtersByMap
    - Cause : applyFilters() appelait saveFiltersForCurrentMap() qui sauvegardait les filtres temporaires
    - Solution implémentée :
