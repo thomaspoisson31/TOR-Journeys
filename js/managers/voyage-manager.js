@@ -1784,7 +1784,12 @@ class VoyageManager {
         this.saveJourneyToJournal();
 
         // Réinitialiser l'état du voyage
-        this.clearJourney();
+        this.dayByDayData = [];
+        this.totalJourneyDays = 0;
+        this.currentDayIndex = 0;
+        this.journeyDescriptions = {};
+        this.randomEvents = {};
+        this.currentPathSignature = null;
 
         // Fermer la modale de voyage
         const modal = this.dom.getElementById('voyage-segments-modal');
@@ -1802,6 +1807,18 @@ class VoyageManager {
                 window.journalManager.switchTab('journal-list');
             }, 100);
         }
+    }
+
+    clearJourney() {
+        // Réinitialiser toutes les données du voyage
+        this.dayByDayData = [];
+        this.totalJourneyDays = 0;
+        this.currentDayIndex = 0;
+        this.journeyDescriptions = {};
+        this.randomEvents = {};
+        this.currentPathSignature = null;
+        
+        console.log('🧹 Journey data cleared');
     }
 
     async generateJourneyDescription() {
