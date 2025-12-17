@@ -749,12 +749,12 @@ class VoyageManager {
 
     setupTravelEventsButtons() {
         const travelEventsBtns = document.querySelectorAll('.travel-events-btn');
-        
+
         travelEventsBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const dayIndex = parseInt(btn.dataset.dayIndex);
-                
+
                 if (!isNaN(dayIndex)) {
                     console.log(`🎲 Ouverture des Tables d'Événements de Voyage pour le jour ${dayIndex + 1}`);
                     this.openTravelEventsForDay(dayIndex);
@@ -1774,61 +1774,33 @@ class VoyageManager {
     }
 
     finishJourney() {
-        console.log('🏁 Fin du voyage - Sauvegarde dans le journal');
-
-        // Récupérer les informations nécessaires
-        const startLocation = journeyPath && journeyPath.length > 0 ?
-            this.findNearestLocationName(journeyPath[0]) : 'Point de départ';
-        const endLocation = journeyPath && journeyPath.length > 0 ?
-            this.findNearestLocationName(journeyPath[journeyPath.length - 1]) : 'Point d\'arrivée';
-
-        // Construire le texte du voyage
-        let voyageText = `\n## ${startLocation} → ${endLocation}\n\n`;
-
-        this.dayByDayData.forEach(dayData => {
-            // Date en gras
-            voyageText += `**${dayData.calendarDate}** - `;
-
-            // Découvertes
-            const discoveryNames = dayData.discoveries.map(d => d.name).join(' et ');
-            if (discoveryNames) {
-                voyageText += `${discoveryNames}. `;
-            }
-
-            // Description (nettoyée)
-            const description = this.journeyDescriptions[dayData.day];
-            if (description) {
-                let cleanDesc = description.replace(/<[^>]*>/g, '').replace(/Dé du destin:\s*\d+\s*/gi, '').trim();
-                voyageText += cleanDesc;
-            }
-
-            // Événement aléatoire
-            const event = this.randomEvents[dayData.day];
-            if (event) {
-                let cleanEvent = event.replace(/<[^>]*>/g, '').trim();
-                voyageText += ` ${cleanEvent}`;
-            }
-
-            voyageText += '\n\n';
-        });
-
-        // Ajouter au journal via appendContent
-        if (window.journalManager) {
-            window.journalManager.appendContent(voyageText.trim());
-
-            console.log('✅ Voyage ajouté au journal');
-            alert('Voyage enregistré dans le journal !');
+        if (!confirm("Êtes-vous sûr de vouloir terminer ce voyage et le sauvegarder dans votre journal ?")) {
+            return;
         }
 
-        // Fermer la modale et réinitialiser
+        console.log('🏁 Terminating journey...');
+
+        // Sauvegarder le voyage dans le journal
+        this.saveJourneyToJournal();
+
+        // Réinitialiser l'état du voyage
+        this.clearJourney();
+
+        // Fermer la modale de voyage
         const modal = this.dom.getElementById('voyage-segments-modal');
         if (modal) {
             modal.classList.add('hidden');
         }
 
-        // Effacer le tracé
-        if (window.pathManager) {
-            window.pathManager.clearPath();
+        console.log('✅ Journey terminated and saved to journal');
+
+        // Ouvrir la modale du Journal d'Aventure sur l'onglet "Journal"
+        if (window.journalManager) {
+            window.journalManager.openJournal();
+            // Basculer vers l'onglet "Journal" après un court délai pour s'assurer que la modale est affichée
+            setTimeout(() => {
+                window.journalManager.switchTab('journal-list');
+            }, 100);
         }
     }
 
@@ -2523,7 +2495,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
             descriptionModal.className = 'hidden absolute inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center p-4';
 
             descriptionModal.innerHTML = `
-                <div class="bg-gray-900 border border-gray-700 rounded-lg p-6 shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col journey-description-modal-white">
+                <div class="bg-gray-900 border border-gray-700 rounded-lg p-6 shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
                     <div class="flex justify-between items-center mb-2">
                         <h3 id="journey-description-title" class="text-xl font-bold" style="color: #940000;">Description de la journée</h3>
                         <button id="close-journey-description" class="text-gray-400 hover:text-white">
