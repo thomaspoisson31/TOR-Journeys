@@ -1,3 +1,4 @@
+replit_final_file>
 import { MAP_DISTANCE_MILES } from '../utils/constants.js';
 import GeminiManager from './gemini-manager.js';
 
@@ -1774,109 +1775,23 @@ class VoyageManager {
     }
 
     finishJourney() {
-        console.log('🏁 [finishJourney] Tentative de finalisation du voyage');
+        console.log('🏁 [finishJourney] Début de la finalisation du voyage');
 
-        // Vérifier qu'il y a des données de voyage
-        if (!this.dayByDayData || this.dayByDayData.length === 0) {
-            console.warn('⚠️ [finishJourney] Aucune donnée de voyage à sauvegarder');
-            alert("Aucune donnée de voyage à enregistrer.");
-            return;
-        }
+        // Sauvegarder le voyage dans le journal avant de l'ouvrir
+        this.saveJourneyToJournal();
 
-        console.log(`📊 [finishJourney] Sauvegarde de ${this.dayByDayData.length} jours de voyage`);
-
-        // Préparer le contenu du voyage pour le journal
-        let journalContent = '\n\n---\n\n';
-
-        // Titre du voyage
-        const voyageTitle = document.querySelector('#voyage-segments-modal h3')?.textContent || 'Voyage';
-        journalContent += `## ${voyageTitle}\n\n`;
-
-        // Date de début
-        if (this.journeyStartDate && window.calendarData) {
-            const startDateStr = `${this.journeyStartDate.day} ${window.calendarData[this.journeyStartDate.monthIndex].name}`;
-            journalContent += `**Date de départ:** ${startDateStr}\n\n`;
-        }
-
-        journalContent += `**Durée:** ${this.totalJourneyDays} jour${this.totalJourneyDays > 1 ? 's' : ''}\n\n`;
-
-        // Parcourir chaque journée
-        this.dayByDayData.forEach((dayData, index) => {
-            // Titre du jour
-            journalContent += `### ${dayData.calendarDate}\n\n`;
-
-            // Météo si disponible
-            const weatherData = this.getWeatherForDay(dayData.day);
-            if (weatherData && weatherData.symbol) {
-                journalContent += `${weatherData.symbol} *${weatherData.weather || ''}*\n\n`;
-            }
-
-            // Description du jour si elle existe
-            const dayDescription = this.journeyDescriptions[dayData.day];
-            if (dayDescription) {
-                journalContent += `${dayDescription}\n\n`;
-            }
-
-            // Découvertes du jour
-            if (dayData.discoveries && dayData.discoveries.length > 0) {
-                journalContent += `**Découvertes:**\n`;
-                dayData.discoveries.forEach(discovery => {
-                    journalContent += `- ${discovery.name} (${discovery.type === 'location' ? 'Lieu' : 'Région'})\n`;
-                });
-                journalContent += '\n';
-            }
-
-            // Événement aléatoire si présent
-            const randomEvent = this.randomEvents[dayData.day];
-            if (randomEvent) {
-                journalContent += `**Événement:** ${randomEvent}\n\n`;
-            }
-
-            journalContent += '\n';
-        });
-
-        // Ajouter le contenu au journal
-        if (window.journalManager) {
-            // Charger le journal actuel
-            window.journalManager.loadJournal();
-
-            // Ajouter le nouveau contenu
-            if (window.journalManager.journal.content.trim() !== '') {
-                window.journalManager.journal.content += journalContent;
-            } else {
-                window.journalManager.journal.content = journalContent.substring(6); // Retirer les premiers \n\n---\n\n
-            }
-
-            // Mettre à jour les métadonnées
-            window.journalManager.journal.metadata.lastModified = new Date().toISOString();
-            window.journalManager.journal.metadata.wordCount = window.journalManager.journal.content.trim().split(/\s+/).filter(w => w.length > 0).length;
-
-            // Sauvegarder
-            window.journalManager.saveJournal();
-
-            console.log('✅ [finishJourney] Voyage ajouté au journal');
-        }
-
-        // Nettoyer le voyage actuel
-        if (window.pathManager) {
-            window.pathManager.clearPath();
-        }
-
-        // Fermer la modale de voyage
-        const modal = this.dom.getElementById('voyage-segments-modal');
-        if (modal) {
-            modal.classList.add('hidden');
+        // Fermer la modale du voyage
+        const voyageModal = this.dom.getElementById('voyage-segments-modal');
+        if (voyageModal) {
+            voyageModal.classList.add('hidden');
         }
 
         // Ouvrir le journal
         if (window.journalManager) {
             window.journalManager.openJournal();
-            // Passer à l'onglet journal
-            window.journalManager.switchTab('journal-list');
-            console.log('✅ [finishJourney] Journal ouvert');
-        } else {
-            console.error('❌ [finishJourney] JournalManager non disponible');
         }
+
+        console.log('✅ [finishJourney] Voyage terminé et journal ouvert');
     }
 
 
@@ -1893,46 +1808,64 @@ class VoyageManager {
     }
 
     saveJourneyToJournal() {
-        console.log('📖 Sauvegarde du voyage dans le journal...');
+        console.log('📖 [saveJourneyToJournal] Sauvegarde du voyage dans le journal');
+
+        if (!window.journalManager) {
+            console.error('❌ JournalManager non disponible');
+            return;
+        }
 
         if (!this.dayByDayData || this.dayByDayData.length === 0) {
             console.warn('⚠️ Aucune donnée de voyage à sauvegarder');
             return;
         }
 
-        // Préparer les données du voyage pour le journal
-        const journeyData = {
-            title: this.generateJourneyTitle(),
-            totalDays: this.totalJourneyDays,
-            generatedAt: new Date().toISOString(),
-            journeyType: 'voyage',
-            days: this.dayByDayData.map(dayData => {
-                const weatherData = this.getWeatherForDay(dayData.day);
+        // Construire le contenu du voyage au format Markdown
+        let journeyContent = `## Voyage terminé\n\n`;
 
-                return {
-                    dayNumber: dayData.day,
-                    calendarDate: dayData.calendarDate,
-                    weatherSymbol: weatherData?.symbol || '',
-                    weatherText: weatherData?.weather || '',
-                    discoveries: dayData.discoveries || [],
-                    description: this.journeyDescriptions[dayData.day] || '',
-                    eventResult: this.randomEvents[dayData.day] || ''
-                };
-            })
-        };
-
-        // Ajouter le voyage au journal via JournalManager
-        if (window.journalManager) {
-            // Convertir les données du voyage en texte Markdown
-            const journalContent = this.formatJourneyAsMarkdown(journeyData);
-
-            // Ajouter au journal
-            window.journalManager.appendContent(journalContent);
-
-            console.log('✅ Voyage sauvegardé dans le journal');
-        } else {
-            console.error('❌ JournalManager non disponible');
+        // Ajouter la date de début
+        if (this.journeyStartDate && window.calendarData) {
+            const startDateStr = `${this.journeyStartDate.day} ${window.calendarData[this.journeyStartDate.monthIndex].name}`;
+            journeyContent += `**Date de départ :** ${startDateStr}\n\n`;
         }
+
+        journeyContent += `**Durée :** ${this.totalJourneyDays} jour${this.totalJourneyDays > 1 ? 's' : ''}\n\n`;
+
+        // Ajouter chaque jour
+        this.dayByDayData.forEach((dayData, index) => {
+            // Ignorer les jours raccourcis
+            if (dayData.isShortened) {
+                return;
+            }
+
+            journeyContent += `### ${dayData.calendarDate}\n\n`;
+
+            // Ajouter les découvertes
+            if (dayData.discoveries && dayData.discoveries.length > 0) {
+                journeyContent += `**Découvertes :**\n`;
+                dayData.discoveries.forEach(discovery => {
+                    journeyContent += `- ${discovery.name} (${discovery.type === 'region' ? 'Région' : 'Lieu'})\n`;
+                });
+                journeyContent += '\n';
+            }
+
+            // Ajouter la description du jour si elle existe
+            const dayDescription = this.journeyDescriptions[dayData.day];
+            if (dayDescription) {
+                journeyContent += `${dayDescription}\n\n`;
+            }
+
+            // Ajouter l'événement aléatoire s'il existe
+            const randomEvent = this.randomEvents[dayData.day];
+            if (randomEvent) {
+                journeyContent += `**Événement :** ${randomEvent}\n\n`;
+            }
+        });
+
+        // Utiliser appendContent du JournalManager
+        window.journalManager.appendContent(journeyContent);
+
+        console.log('✅ [saveJourneyToJournal] Voyage sauvegardé dans le journal');
     }
 
     generateJourneyTitle() {
@@ -3087,3 +3020,4 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
 
 
 export default VoyageManager;
+</replit_final_file>
