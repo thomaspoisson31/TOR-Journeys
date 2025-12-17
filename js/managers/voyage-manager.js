@@ -1774,22 +1774,93 @@ class VoyageManager {
     }
 
     finishJourney() {
-        if (!confirm("Êtes-vous sûr de vouloir terminer ce voyage et le sauvegarder dans votre journal ?")) {
+        console.log('🏁 [finishJourney] Tentative de finalisation du voyage');
+
+        // Vérifier qu'il y a des données de voyage
+        if (!this.dayByDayData || this.dayByDayData.length === 0) {
+            console.warn('⚠️ [finishJourney] Aucune donnée de voyage à sauvegarder');
+            alert("Aucune donnée de voyage à enregistrer.");
             return;
         }
 
-        console.log('🏁 Terminating journey...');
+        console.log(`📊 [finishJourney] Sauvegarde de ${this.dayByDayData.length} jours de voyage`);
 
-        // Sauvegarder le voyage dans le journal
-        this.saveJourneyToJournal();
+        // Préparer le contenu du voyage pour le journal
+        let journalContent = '\n\n---\n\n';
 
-        // Réinitialiser l'état du voyage
-        this.dayByDayData = [];
-        this.totalJourneyDays = 0;
-        this.currentDayIndex = 0;
-        this.journeyDescriptions = {};
-        this.randomEvents = {};
-        this.currentPathSignature = null;
+        // Titre du voyage
+        const voyageTitle = document.querySelector('#voyage-segments-modal h3')?.textContent || 'Voyage';
+        journalContent += `## ${voyageTitle}\n\n`;
+
+        // Date de début
+        if (this.journeyStartDate && window.calendarData) {
+            const startDateStr = `${this.journeyStartDate.day} ${window.calendarData[this.journeyStartDate.monthIndex].name}`;
+            journalContent += `**Date de départ:** ${startDateStr}\n\n`;
+        }
+
+        journalContent += `**Durée:** ${this.totalJourneyDays} jour${this.totalJourneyDays > 1 ? 's' : ''}\n\n`;
+
+        // Parcourir chaque journée
+        this.dayByDayData.forEach((dayData, index) => {
+            // Titre du jour
+            journalContent += `### ${dayData.calendarDate}\n\n`;
+
+            // Météo si disponible
+            const weatherData = this.getWeatherForDay(dayData.day);
+            if (weatherData && weatherData.symbol) {
+                journalContent += `${weatherData.symbol} *${weatherData.weather || ''}*\n\n`;
+            }
+
+            // Description du jour si elle existe
+            const dayDescription = this.journeyDescriptions[dayData.day];
+            if (dayDescription) {
+                journalContent += `${dayDescription}\n\n`;
+            }
+
+            // Découvertes du jour
+            if (dayData.discoveries && dayData.discoveries.length > 0) {
+                journalContent += `**Découvertes:**\n`;
+                dayData.discoveries.forEach(discovery => {
+                    journalContent += `- ${discovery.name} (${discovery.type === 'location' ? 'Lieu' : 'Région'})\n`;
+                });
+                journalContent += '\n';
+            }
+
+            // Événement aléatoire si présent
+            const randomEvent = this.randomEvents[dayData.day];
+            if (randomEvent) {
+                journalContent += `**Événement:** ${randomEvent}\n\n`;
+            }
+
+            journalContent += '\n';
+        });
+
+        // Ajouter le contenu au journal
+        if (window.journalManager) {
+            // Charger le journal actuel
+            window.journalManager.loadJournal();
+
+            // Ajouter le nouveau contenu
+            if (window.journalManager.journal.content.trim() !== '') {
+                window.journalManager.journal.content += journalContent;
+            } else {
+                window.journalManager.journal.content = journalContent.substring(6); // Retirer les premiers \n\n---\n\n
+            }
+
+            // Mettre à jour les métadonnées
+            window.journalManager.journal.metadata.lastModified = new Date().toISOString();
+            window.journalManager.journal.metadata.wordCount = window.journalManager.journal.content.trim().split(/\s+/).filter(w => w.length > 0).length;
+
+            // Sauvegarder
+            window.journalManager.saveJournal();
+
+            console.log('✅ [finishJourney] Voyage ajouté au journal');
+        }
+
+        // Nettoyer le voyage actuel
+        if (window.pathManager) {
+            window.pathManager.clearPath();
+        }
 
         // Fermer la modale de voyage
         const modal = this.dom.getElementById('voyage-segments-modal');
@@ -1797,17 +1868,17 @@ class VoyageManager {
             modal.classList.add('hidden');
         }
 
-        console.log('✅ Journey terminated and saved to journal');
-
-        // Ouvrir la modale du Journal d'Aventure sur l'onglet "Journal"
+        // Ouvrir le journal
         if (window.journalManager) {
             window.journalManager.openJournal();
-            // Basculer vers l'onglet "Journal" après un court délai pour s'assurer que la modale est affichée
-            setTimeout(() => {
-                window.journalManager.switchTab('journal-list');
-            }, 100);
+            // Passer à l'onglet journal
+            window.journalManager.switchTab('journal-list');
+            console.log('✅ [finishJourney] Journal ouvert');
+        } else {
+            console.error('❌ [finishJourney] JournalManager non disponible');
         }
     }
+
 
     clearJourney() {
         // Réinitialiser toutes les données du voyage
@@ -1817,8 +1888,118 @@ class VoyageManager {
         this.journeyDescriptions = {};
         this.randomEvents = {};
         this.currentPathSignature = null;
-        
+
         console.log('🧹 Journey data cleared');
+    }
+
+    saveJourneyToJournal() {
+        console.log('📖 Sauvegarde du voyage dans le journal...');
+
+        if (!this.dayByDayData || this.dayByDayData.length === 0) {
+            console.warn('⚠️ Aucune donnée de voyage à sauvegarder');
+            return;
+        }
+
+        // Préparer les données du voyage pour le journal
+        const journeyData = {
+            title: this.generateJourneyTitle(),
+            totalDays: this.totalJourneyDays,
+            generatedAt: new Date().toISOString(),
+            journeyType: 'voyage',
+            days: this.dayByDayData.map(dayData => {
+                const weatherData = this.getWeatherForDay(dayData.day);
+
+                return {
+                    dayNumber: dayData.day,
+                    calendarDate: dayData.calendarDate,
+                    weatherSymbol: weatherData?.symbol || '',
+                    weatherText: weatherData?.weather || '',
+                    discoveries: dayData.discoveries || [],
+                    description: this.journeyDescriptions[dayData.day] || '',
+                    eventResult: this.randomEvents[dayData.day] || ''
+                };
+            })
+        };
+
+        // Ajouter le voyage au journal via JournalManager
+        if (window.journalManager) {
+            // Convertir les données du voyage en texte Markdown
+            const journalContent = this.formatJourneyAsMarkdown(journeyData);
+
+            // Ajouter au journal
+            window.journalManager.appendContent(journalContent);
+
+            console.log('✅ Voyage sauvegardé dans le journal');
+        } else {
+            console.error('❌ JournalManager non disponible');
+        }
+    }
+
+    generateJourneyTitle() {
+        // Générer un titre basé sur la date de début et les découvertes
+        const startDate = this.dayByDayData[0]?.calendarDate || 'Date inconnue';
+        const endDate = this.dayByDayData[this.dayByDayData.length - 1]?.calendarDate || '';
+
+        // Extraire les lieux principaux
+        const mainLocations = [];
+        this.dayByDayData.forEach(day => {
+            day.discoveries?.forEach(discovery => {
+                if (discovery.type === 'location' && !mainLocations.includes(discovery.name)) {
+                    mainLocations.push(discovery.name);
+                }
+            });
+        });
+
+        if (mainLocations.length > 0) {
+            return `Voyage vers ${mainLocations.slice(0, 2).join(' et ')}`;
+        }
+
+        return `Voyage du ${startDate}`;
+    }
+
+    formatJourneyAsMarkdown(journeyData) {
+        let markdown = `\n\n## ${journeyData.title}\n\n`;
+        markdown += `*Du ${journeyData.days[0].calendarDate} au ${journeyData.days[journeyData.days.length - 1].calendarDate} (${journeyData.totalDays} jour${journeyData.totalDays > 1 ? 's' : ''})*\n\n`;
+
+        journeyData.days.forEach(day => {
+            // En-tête du jour
+            markdown += `### ${day.calendarDate}`;
+            if (day.weatherSymbol) {
+                markdown += ` ${day.weatherSymbol}`;
+            }
+            markdown += '\n\n';
+
+            // Découvertes
+            if (day.discoveries && day.discoveries.length > 0) {
+                const locationNames = day.discoveries
+                    .filter(d => d.type === 'location')
+                    .map(d => d.name);
+                const regionNames = day.discoveries
+                    .filter(d => d.type === 'region')
+                    .map(d => d.name);
+
+                if (locationNames.length > 0) {
+                    markdown += `**Lieux :** ${locationNames.join(', ')}\n\n`;
+                }
+                if (regionNames.length > 0) {
+                    markdown += `**Régions :** ${regionNames.join(', ')}\n\n`;
+                }
+            }
+
+            // Description du jour
+            if (day.description) {
+                markdown += `${day.description}\n\n`;
+            }
+
+            // Événement aléatoire
+            if (day.eventResult) {
+                markdown += `**🎲 Événement :** ${day.eventResult}\n\n`;
+            }
+
+            markdown += '---\n\n';
+        });
+
+        return markdown;
     }
 
     async generateJourneyDescription() {
@@ -2253,135 +2434,6 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
     }
 
     saveJourneyToJournal() {
-        // Créer l'objet voyage pour le journal
-        const journeyData = {
-            title: `Voyage de ${this.totalJourneyDays} jours`,
-            totalDays: this.totalJourneyDays,
-            generatedAt: new Date().toISOString(),
-            journeyType: 'journey',
-            days: this.dayByDayData.map((dayData, index) => {
-                const dayNumber = index + 1;
-                const weatherData = this.getWeatherForDay(dayNumber);
-
-                return {
-                    dayNumber: dayNumber,
-                    calendarDate: dayData.calendarDate,
-                    weatherSymbol: weatherData?.symbol || null,
-                    weatherText: weatherData?.weather || null,
-                    discoveries: dayData.discoveries || [],
-                    description: this.journeyDescriptions[dayNumber] || null,
-                    eventResult: this.randomEvents[dayNumber] || null
-                };
-            })
-        };
-
-        // Charger le journal existant
-        let journal = [];
-        const savedJournal = localStorage.getItem('travelJournal');
-        if (savedJournal && savedJournal !== 'null' && savedJournal !== 'undefined') {
-            try {
-                const parsed = JSON.parse(savedJournal);
-                journal = Array.isArray(parsed) ? parsed : [];
-            } catch (e) {
-                console.error("Erreur lors du chargement du journal:", e);
-            }
-        }
-
-        // Ajouter le nouveau voyage
-        journal.push(journeyData);
-
-        // Sauvegarder dans localStorage
-        localStorage.setItem('travelJournal', JSON.stringify(journal));
-        console.log(`📖 Voyage ajouté au journal (${journal.length} voyage(s) au total)`);
-
-        // Marquer comme non sauvegardé lors de la génération d'une nouvelle entrée dans le journal
-        if (typeof window.markAsUnsaved === 'function') {
-            window.markAsUnsaved();
-        }
-
-        // Synchroniser avec le cloud
-        if (typeof window.scheduleAutoSync === 'function') {
-            window.scheduleAutoSync();
-        }
-
-        // Rafraîchir le JournalManager si disponible
-        if (window.journalManager) {
-            window.journalManager.loadJournal();
-        }
-    }
-
-
-    saveDescriptionsForMap() {
-        // Obtenir l'URL de la carte active
-        const activeMapUrl = window.settingsManager?.activeMapUrl;
-        if (!activeMapUrl) {
-            console.warn("⚠️ Impossible de sauvegarder les descriptions: URL de carte active non trouvée.");
-            return;
-        }
-
-        // Créer une clé unique pour cette carte et ce tracé
-        const pathSignature = this.createPathSignature(journeyPath);
-        const mapStorageKey = `journeyDescriptions_${activeMapUrl}_${pathSignature}`;
-
-        // Sauvegarder les descriptions (une copie pour éviter les modifications ultérieures)
-        const dataToSave = {
-            descriptions: { ...this.journeyDescriptions },
-            generatedAt: new Date().toISOString()
-        };
-
-        try {
-            localStorage.setItem(mapStorageKey, JSON.stringify(dataToSave));
-            console.log(`💾 Descriptions de voyage sauvegardées pour la carte: ${activeMapUrl} (signature: ${pathSignature})`);
-        } catch (error) {
-            console.error("❌ Erreur lors de la sauvegarde des descriptions:", error);
-        }
-    }
-
-    loadDescriptionsForMap() {
-        const activeMapUrl = window.settingsManager?.activeMapUrl;
-        if (!activeMapUrl) {
-            console.warn("⚠️ Impossible de charger les descriptions: URL de carte active non trouvée.");
-            // Réinitialiser les descriptions si pas de carte active
-            this.journeyDescriptions = {};
-            return null;
-        }
-
-        // Vérifier s'il y a un tracé
-        if (!journeyPath || journeyPath.length === 0) {
-            console.log("⚠️ Pas de tracé, réinitialisation des descriptions");
-            this.journeyDescriptions = {};
-            return null;
-        }
-
-        const pathSignature = this.createPathSignature(journeyPath);
-        const mapStorageKey = `journeyDescriptions_${activeMapUrl}_${pathSignature}`;
-
-        try {
-            const savedData = localStorage.getItem(mapStorageKey);
-            if (savedData) {
-                const parsedData = JSON.parse(savedData);
-                console.log(`💾 Descriptions de voyage chargées pour la carte: ${activeMapUrl} (signature: ${pathSignature})`);
-                // Mettre à jour les descriptions actuelles du voyageur
-                this.journeyDescriptions = { ...parsedData.descriptions };
-                return parsedData.descriptions;
-            } else {
-                console.log(`📭 Aucune description sauvegardée pour cette carte/tracé`);
-                this.journeyDescriptions = {};
-            }
-        } catch (error) {
-            console.error("❌ Erreur lors du chargement des descriptions:", error);
-            this.journeyDescriptions = {};
-        }
-        return null;
-    }
-
-    clearDescriptions() {
-        // Nettoyer les descriptions lors d'un changement de carte ou de tracé
-        this.journeyDescriptions = {};
-        console.log("🧹 Descriptions de voyage nettoyées");
-    }
-
-    saveJourneyToJournal() {
         if (!this.dayByDayData || this.dayByDayData.length === 0) {
             console.log("⚠️ Pas de données de voyage à sauvegarder");
             return;
@@ -2499,6 +2551,76 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
         if (window.journalManager) {
             window.journalManager.loadJournal();
         }
+    }
+
+    clearDescriptions() {
+        // Nettoyer les descriptions lors d'un changement de carte ou de tracé
+        this.journeyDescriptions = {};
+        console.log("🧹 Descriptions de voyage nettoyées");
+    }
+
+    saveDescriptionsForMap() {
+        // Obtenir l'URL de la carte active
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        if (!activeMapUrl) {
+            console.warn("⚠️ Impossible de sauvegarder les descriptions: URL de carte active non trouvée.");
+            return;
+        }
+
+        // Créer une clé unique pour cette carte et ce tracé
+        const pathSignature = this.createPathSignature(journeyPath);
+        const mapStorageKey = `journeyDescriptions_${activeMapUrl}_${pathSignature}`;
+
+        // Sauvegarder les descriptions (une copie pour éviter les modifications ultérieures)
+        const dataToSave = {
+            descriptions: { ...this.journeyDescriptions },
+            generatedAt: new Date().toISOString()
+        };
+
+        try {
+            localStorage.setItem(mapStorageKey, JSON.stringify(dataToSave));
+            console.log(`💾 Descriptions de voyage sauvegardées pour la carte: ${activeMapUrl} (signature: ${pathSignature})`);
+        } catch (error) {
+            console.error("❌ Erreur lors de la sauvegarde des descriptions:", error);
+        }
+    }
+
+    loadDescriptionsForMap() {
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        if (!activeMapUrl) {
+            console.warn("⚠️ Impossible de charger les descriptions: URL de carte active non trouvée.");
+            // Réinitialiser les descriptions si pas de carte active
+            this.journeyDescriptions = {};
+            return null;
+        }
+
+        // Vérifier s'il y a un tracé
+        if (!journeyPath || journeyPath.length === 0) {
+            console.log("⚠️ Pas de tracé, réinitialisation des descriptions");
+            this.journeyDescriptions = {};
+            return null;
+        }
+
+        const pathSignature = this.createPathSignature(journeyPath);
+        const mapStorageKey = `journeyDescriptions_${activeMapUrl}_${pathSignature}`;
+
+        try {
+            const savedData = localStorage.getItem(mapStorageKey);
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                console.log(`💾 Descriptions de voyage chargées pour la carte: ${activeMapUrl} (signature: ${pathSignature})`);
+                // Mettre à jour les descriptions actuelles du voyageur
+                this.journeyDescriptions = { ...parsedData.descriptions };
+                return parsedData.descriptions;
+            } else {
+                console.log(`📭 Aucune description sauvegardée pour cette carte/tracé`);
+                this.journeyDescriptions = {};
+            }
+        } catch (error) {
+            console.error("❌ Erreur lors du chargement des descriptions:", error);
+            this.journeyDescriptions = {};
+        }
+        return null;
     }
 
     displayJourneyDescription(description, isFromMultipleGeneration = false) {
