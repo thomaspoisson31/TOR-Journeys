@@ -368,7 +368,9 @@ class AuthManager {
             },
             settings: {
                 activeMapUrl: window.settingsManager?.activeMapUrl || null,
-                availableMaps: window.settingsManager?.availableMaps || []
+                availableMaps: window.settingsManager?.availableMaps || [],
+                // ✅ AJOUT : mapRandomTables pour les associations
+                mapRandomTables: window.settingsManager?.mapRandomTables || {}
             },
             // Journal de voyage, objectifs et rumeurs avec états des cases
             journal: window.journalManager ? window.journalManager.getAllData() : { journal: [], objectives: [], rumors: [], rumorsCheckboxStates: {} },
@@ -377,7 +379,7 @@ class AuthManager {
             // Ajouter l'état actuel du mode aventure
             adventureMode: window.positionManager?.adventureMode || JSON.parse(localStorage.getItem('adventurers_adventure_mode') || 'false'),
             // ✅ CORRECTION : Tables aléatoires depuis adventureData ou localStorage
-            randomTables: window.adventureManager?.adventureData?.randomTables || 
+            randomTables: window.adventureManager?.adventureData?.randomTables ||
                          (function() {
                              const saved = localStorage.getItem('adventureData');
                              if (saved) {
@@ -480,7 +482,7 @@ class AuthManager {
             if (migratedCount > 0) {
                 this.logAuth(`🔄 Migration automatique: ${migratedCount} région(s) sans type → 'wild' (Terres Sauvages)`);
             }
-            
+
             window.regionsData = data.regions;
             // IMPORTANT: Synchroniser aussi la variable locale dans main.js
             if (typeof regionsData !== 'undefined') {
@@ -549,7 +551,7 @@ class AuthManager {
         if (data.randomTables) {
             this.logAuth("🎲 [applyContextData] Restauration des tables aléatoires depuis le cloud");
             this.logAuth(`🎲 [applyContextData] Données reçues: ${data.randomTables.length} table(s)`);
-            
+
             // Charger les données d'aventure existantes ou créer une structure vide
             let adventureData = null;
             const savedAdventure = localStorage.getItem('adventureData');
@@ -560,7 +562,7 @@ class AuthManager {
                     this.logAuth("⚠️ [applyContextData] Erreur parsing adventureData, création nouvelle structure");
                 }
             }
-            
+
             if (!adventureData) {
                 adventureData = {
                     quest: '',
@@ -570,15 +572,15 @@ class AuthManager {
                     compositeTables: []
                 };
             }
-            
+
             // Restaurer les tables aléatoires
             adventureData.randomTables = data.randomTables;
-            
+
             // Sauvegarder dans localStorage IMMÉDIATEMENT
             localStorage.setItem('adventureData', JSON.stringify(adventureData));
-            
+
             this.logAuth(`✅ ${data.randomTables.length} table(s) aléatoire(s) restaurée(s) dans localStorage`);
-            
+
             // Si adventureManager existe déjà, mettre à jour aussi sa référence
             if (window.adventureManager) {
                 window.adventureManager.adventureData.randomTables = data.randomTables;
@@ -610,6 +612,13 @@ class AuthManager {
             if (data.settings.activeMapName) {
                 window.settingsManager.activeMapName = data.settings.activeMapName;
                 localStorage.setItem('activeMapName', data.settings.activeMapName);
+            }
+
+            // ✅ AJOUT : Restaurer mapRandomTables
+            if (data.settings.mapRandomTables) {
+                window.settingsManager.mapRandomTables = data.settings.mapRandomTables;
+                localStorage.setItem('mapRandomTables', JSON.stringify(data.settings.mapRandomTables));
+                this.logAuth(`🎲 ${Object.keys(data.settings.mapRandomTables).length} associations carte-table aléatoire restaurées.`);
             }
 
             this.logAuth("✅ Paramètres et cartes appliqués depuis le cloud");
@@ -1679,6 +1688,11 @@ class AuthManager {
             if (data.settings.narrationStyle) {
                 localStorage.setItem('narrationStyle', data.settings.narrationStyle);
             }
+            // ✅ AJOUT : Sauvegarder mapRandomTables
+            if (data.settings.mapRandomTables) {
+                localStorage.setItem('mapRandomTables', JSON.stringify(data.settings.mapRandomTables));
+                this.logAuth(`💾 ${Object.keys(data.settings.mapRandomTables).length} associations carte-table aléatoire sauvegardées.`);
+            }
         }
         if (data.calendar) {
             if (data.calendar.currentDate) {
@@ -1697,6 +1711,8 @@ class AuthManager {
             if (data.journal.journal) {
                 localStorage.setItem('travelJournal', JSON.stringify(data.journal.journal));
                 localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives || []));
+                localStorage.setItem('adventureRumors', JSON.stringify(data.journal.rumors || []));
+                localStorage.setItem('rumorsCheckboxStates', JSON.stringify(data.journal.rumorsCheckboxStates || {}));
                 this.logAuth(`  - ${data.journal.journal.length} entrées de journal et ${data.journal.objectives?.length || 0} objectifs sauvegardés dans localStorage.`);
             } else {
                 // Ancien format (rétrocompatibilité)
@@ -1975,9 +1991,9 @@ class AuthManager {
     showDuplicatesModal(duplicatesAnalysis) {
         const modal = document.createElement('div');
         modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[110]';
-        
+
         let duplicatesContent = '<div class="space-y-4">';
-        
+
         // Section Lieux
         if (duplicatesAnalysis.locations.duplicatedItems.length > 0) {
             duplicatesContent += `
@@ -1987,7 +2003,7 @@ class AuthManager {
                     </h4>
                     <div class="space-y-3">
             `;
-            
+
             duplicatesAnalysis.locations.duplicatedItems.forEach(dup => {
                 duplicatesContent += `
                     <div class="bg-gray-900 rounded p-3">
@@ -2000,7 +2016,7 @@ class AuthManager {
                             <summary class="cursor-pointer text-blue-400 hover:text-blue-300">Voir les ${dup.count} occurrences</summary>
                             <div class="mt-2 space-y-2 pl-4">
                 `;
-                
+
                 dup.items.forEach((item, index) => {
                     duplicatesContent += `
                         <div class="bg-gray-800 rounded p-2 border-l-2 ${index === 0 ? 'border-green-500' : 'border-red-500'}">
@@ -2011,17 +2027,17 @@ class AuthManager {
                         </div>
                     `;
                 });
-                
+
                 duplicatesContent += `
                             </div>
                         </details>
                     </div>
                 `;
             });
-            
+
             duplicatesContent += '</div></div>';
         }
-        
+
         // Section Régions
         if (duplicatesAnalysis.regions.duplicatedItems.length > 0) {
             duplicatesContent += `
@@ -2031,7 +2047,7 @@ class AuthManager {
                     </h4>
                     <div class="space-y-3">
             `;
-            
+
             duplicatesAnalysis.regions.duplicatedItems.forEach(dup => {
                 duplicatesContent += `
                     <div class="bg-gray-900 rounded p-3">
@@ -2044,7 +2060,7 @@ class AuthManager {
                             <summary class="cursor-pointer text-blue-400 hover:text-blue-300">Voir les ${dup.count} occurrences</summary>
                             <div class="mt-2 space-y-2 pl-4">
                 `;
-                
+
                 dup.items.forEach((item, index) => {
                     duplicatesContent += `
                         <div class="bg-gray-800 rounded p-2 border-l-2 ${index === 0 ? 'border-green-500' : 'border-orange-500'}">
@@ -2054,30 +2070,30 @@ class AuthManager {
                         </div>
                     `;
                 });
-                
+
                 duplicatesContent += `
                             </div>
                         </details>
                     </div>
                 `;
             });
-            
+
             duplicatesContent += '</div></div>';
         }
-        
+
         duplicatesContent += '</div>';
-        
+
         modal.innerHTML = `
             <div class="bg-gray-800 rounded-lg p-6 max-w-3xl w-full mx-4 max-h-[90vh] flex flex-col">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-bold text-white">🔍 Analyse des Doublons</h3>
                     <button class="close-duplicates-modal text-gray-400 hover:text-white text-2xl">×</button>
                 </div>
-                
+
                 <div class="flex-1 overflow-auto">
                     ${duplicatesContent}
                 </div>
-                
+
                 <div class="mt-4 pt-4 border-t border-gray-700 flex justify-end">
                     <button class="close-duplicates-modal px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg">
                         Fermer
@@ -2085,14 +2101,14 @@ class AuthManager {
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         // Ajouter les événements de fermeture
         modal.querySelectorAll('.close-duplicates-modal').forEach(btn => {
             btn.addEventListener('click', () => modal.remove());
         });
-        
+
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.remove();
@@ -2118,7 +2134,7 @@ class AuthManager {
         if (data?.locations?.locations) {
             const locations = data.locations.locations;
             result.locations.total = locations.length;
-            
+
             const idCount = {};
             locations.forEach(loc => {
                 if (loc.id) {
@@ -2144,7 +2160,7 @@ class AuthManager {
         if (data?.regions?.regions) {
             const regions = data.regions.regions;
             result.regions.total = regions.length;
-            
+
             const idCount = {};
             regions.forEach(reg => {
                 if (reg.id) {

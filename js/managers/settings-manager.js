@@ -75,6 +75,10 @@ class SettingsManager {
         this.partyDescription = localStorage.getItem('partyDescription') || '';
         this.questDescription = localStorage.getItem('questDescription') || '';
         this.narrationStyle = localStorage.getItem('narrationStyle') || 'brief';
+
+        // Charger les associations tables aléatoires par carte
+        const savedMapRandomTables = localStorage.getItem('mapRandomTables');
+        this.mapRandomTables = savedMapRandomTables ? JSON.parse(savedMapRandomTables) : {};
     }
 
     saveMapsData() {
@@ -560,6 +564,11 @@ class SettingsManager {
                                     title="Modifier l'échelle">
                                 <i class="fas fa-ruler"></i>
                             </button>
+                            <button class="p-2 text-purple-400 hover:text-purple-300 hover:bg-purple-900/20 rounded transition-colors"
+                                    onclick="event.stopPropagation(); window.settingsManager.editMapRandomTables(${index})"
+                                    title="Définir Événements de voyage">
+                                <i class="fas fa-dice"></i>
+                            </button>
                             <button class="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors"
                                     onclick="event.stopPropagation(); window.settingsManager.deleteMap(${index})"
                                     title="Supprimer">
@@ -854,6 +863,130 @@ class SettingsManager {
 
             console.log(`🏷️ Carte renommée: "${oldName}" → "${trimmedName}"`);
         }
+    }
+
+    editMapRandomTables(index) {
+        const map = this.availableMaps[index];
+
+        // Récupérer toutes les tables disponibles depuis adventureManager
+        const allTables = [];
+        if (window.adventureManager && window.adventureManager.adventureData && window.adventureManager.adventureData.randomTables) {
+            allTables.push(...window.adventureManager.adventureData.randomTables);
+        }
+
+        if (allTables.length === 0) {
+            alert('Aucune table aléatoire n\'est définie dans les Paramètres.\nVeuillez d\'abord créer des tables dans l\'onglet "Tables aléatoires".');
+            return;
+        }
+
+        // Récupérer les tables déjà associées à cette carte
+        const currentTables = this.mapRandomTables[map.url] || [];
+
+        // Créer la modale de sélection
+        const modal = document.createElement('div');
+        modal.id = 'map-random-tables-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]';
+
+        modal.innerHTML = `
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-2xl mx-4 max-h-[80vh] flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-white">Événements de voyage - ${map.name}</h3>
+                    <button id="close-map-random-tables-modal" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="text-sm text-gray-400 mb-4">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Sélectionnez les tables aléatoires qui seront disponibles pendant les voyages sur cette carte.
+                </div>
+
+                <div class="flex-1 overflow-y-auto mb-4 space-y-2">
+                    ${allTables.map((table, idx) => {
+                        const isChecked = currentTables.some(t => t.name === table.name);
+                        const tableType = table.isComposite ? 'Composite' : 'Simple';
+                        const tableIcon = table.isComposite ? 'fa-layer-group' : 'fa-list';
+                        
+                        return `
+                            <label class="flex items-center p-3 bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-600 transition-colors">
+                                <input type="checkbox" 
+                                       class="map-table-checkbox mr-3 w-5 h-5" 
+                                       data-table-index="${idx}"
+                                       ${isChecked ? 'checked' : ''}>
+                                <div class="flex-1">
+                                    <div class="flex items-center">
+                                        <i class="fas ${tableIcon} mr-2 text-purple-400"></i>
+                                        <span class="font-medium text-white">${table.name}</span>
+                                        <span class="ml-2 text-xs px-2 py-1 rounded bg-blue-900 text-blue-200">${tableType}</span>
+                                    </div>
+                                    <div class="text-xs text-gray-400 mt-1">
+                                        ${table.isComposite ? `${table.subtables?.length || 0} sous-table(s)` : `${table.entries?.length || 0} entrée(s)`}
+                                    </div>
+                                </div>
+                            </label>
+                        `;
+                    }).join('')}
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button id="cancel-map-random-tables" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg">
+                        Annuler
+                    </button>
+                    <button id="save-map-random-tables" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg">
+                        <i class="fas fa-save mr-2"></i>Enregistrer
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Gestionnaires d'événements
+        document.getElementById('close-map-random-tables-modal').addEventListener('click', () => {
+            modal.remove();
+        });
+
+        document.getElementById('cancel-map-random-tables').addEventListener('click', () => {
+            modal.remove();
+        });
+
+        document.getElementById('save-map-random-tables').addEventListener('click', () => {
+            // Récupérer les tables sélectionnées
+            const checkboxes = modal.querySelectorAll('.map-table-checkbox:checked');
+            const selectedTables = [];
+            
+            checkboxes.forEach(checkbox => {
+                const tableIndex = parseInt(checkbox.dataset.tableIndex);
+                selectedTables.push(allTables[tableIndex]);
+            });
+
+            // Sauvegarder l'association
+            this.mapRandomTables[map.url] = selectedTables;
+            localStorage.setItem('mapRandomTables', JSON.stringify(this.mapRandomTables));
+
+            console.log(`✅ ${selectedTables.length} table(s) associée(s) à la carte ${map.name}`);
+
+            // Marquer comme non sauvegardé pour sync cloud
+            if (typeof window.markAsUnsaved === 'function') {
+                window.markAsUnsaved();
+            }
+            this.scheduleAutoSync();
+
+            modal.remove();
+
+            // Afficher un message de confirmation
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg z-[90]';
+            notification.innerHTML = `
+                <i class="fas fa-check mr-2"></i>
+                ${selectedTables.length} table(s) associée(s)
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        });
     }
 
     editMapScale(index) {

@@ -115,13 +115,25 @@ class RandomTablesManager {
     collectAllTables() {
         const tables = {
             settings: [],
+            map: [],
             position: {
                 locations: [],
                 regions: []
             }
         };
 
-        // 1. Tables des paramètres
+        // 1. Tables associées à la carte active
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        if (activeMapUrl && window.settingsManager?.mapRandomTables && window.settingsManager.mapRandomTables[activeMapUrl]) {
+            const mapTables = window.settingsManager.mapRandomTables[activeMapUrl];
+            tables.map = mapTables.map(table => ({
+                ...table,
+                source: 'Carte Active',
+                sourceType: 'map'
+            }));
+        }
+
+        // 2. Tables des paramètres (globales)
         if (window.adventureManager && window.adventureManager.adventureData && window.adventureManager.adventureData.randomTables) {
             tables.settings = window.adventureManager.adventureData.randomTables.map(table => ({
                 ...table,
@@ -217,7 +229,19 @@ class RandomTablesManager {
 
         let html = '';
 
-        // Section 1: Tables des Paramètres
+        // Section 1: Tables de la Carte Active
+        if (allTables.map.length > 0) {
+            html += `
+                <div class="mb-6">
+                    <h4 class="text-lg font-semibold mb-3" style="color: #940000;">
+                        <i class="fas fa-map mr-2"></i>Événements de Voyage
+                    </h4>
+                    ${this.renderTablesList(allTables.map)}
+                </div>
+            `;
+        }
+
+        // Section 2: Tables des Paramètres
         if (allTables.settings.length > 0) {
             html += `
                 <div class="mb-6">
@@ -229,7 +253,7 @@ class RandomTablesManager {
             `;
         }
 
-        // Section 2: Tables des Régions
+        // Section 3: Tables des Régions
         if (allTables.position.regions.length > 0) {
             html += `
                 <div class="mb-6">
@@ -241,7 +265,7 @@ class RandomTablesManager {
             `;
         }
 
-        // Section 3: Tables des Lieux
+        // Section 4: Tables des Lieux
         if (allTables.position.locations.length > 0) {
             html += `
                 <div class="mb-6">
@@ -254,7 +278,7 @@ class RandomTablesManager {
         }
 
         // Message si aucune table
-        if (allTables.settings.length === 0 && allTables.position.regions.length === 0 && allTables.position.locations.length === 0) {
+        if (allTables.map.length === 0 && allTables.settings.length === 0 && allTables.position.regions.length === 0 && allTables.position.locations.length === 0) {
             html = `
                 <div class="text-center py-12 text-gray-500">
                     <i class="fas fa-dice fa-3x mb-4"></i>
