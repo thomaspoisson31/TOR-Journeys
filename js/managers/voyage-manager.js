@@ -680,6 +680,9 @@ class VoyageManager {
                                 ${!isShortened && weatherTooltip ? `<span class="text-sm italic" style="color: #6b7280; font-size: 80%;">${weatherTooltip}</span>` : ''}
                             </div>
                             <div class="flex items-center gap-2 flex-shrink-0">
+                                <button class="travel-events-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #940000;" title="Tables d'Événements de Voyage" data-day-index="${i}">
+                                    <i class="fas fa-dice text-lg" style="color: white !important;"></i>
+                                </button>
                                 <button class="shorten-day-btn w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background-color: #666666;" title="${isShortened ? 'Annuler raccourci' : 'Raccourcir (durée 0)'}" data-day-index="${i}">
                                     <i class="fas fa-${isShortened ? 'undo' : 'minus-circle'} text-lg" style="color: white !important;"></i>
                                 </button>
@@ -739,6 +742,9 @@ class VoyageManager {
 
         // Setup event listeners pour les boutons de raccourci
         this.setupShortenDayButtons();
+
+        // Setup event listeners pour les boutons d'événements de voyage
+        this.setupTravelEventsButtons();
     }
 
     renderDayContent(dayData, weatherData) {
@@ -991,6 +997,35 @@ class VoyageManager {
                 } else if (discovery.type === 'region') {
                     actionText = 'traversée';
                 } else {
+
+
+    setupTravelEventsButtons() {
+        const travelEventsBtns = document.querySelectorAll('.travel-events-btn');
+        
+        travelEventsBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const dayIndex = parseInt(btn.dataset.dayIndex);
+                
+                if (!isNaN(dayIndex)) {
+                    console.log(`🎲 Ouverture des Tables d'Événements de Voyage pour le jour ${dayIndex + 1}`);
+                    this.openTravelEventsForDay(dayIndex);
+                }
+            });
+        });
+    }
+
+    openTravelEventsForDay(dayIndex) {
+        // Ouvrir la modale des tables aléatoires filtrée sur les événements de voyage
+        if (window.randomTablesManager) {
+            // Stocker temporairement qu'on veut uniquement les tables d'événements de voyage
+            window.randomTablesManager.filterTravelEventsOnly = true;
+            window.randomTablesManager.openModal();
+        } else {
+            console.error("❌ RandomTablesManager non disponible");
+        }
+    }
+
                     actionText = 'découvert';
                 }
 

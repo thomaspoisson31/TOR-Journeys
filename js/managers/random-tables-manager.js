@@ -3,6 +3,7 @@ class RandomTablesManager {
         this.modal = null;
         this.contentDiv = null;
         this.checkedResults = {}; // {hash: boolean}
+        this.filterTravelEventsOnly = false; // Flag pour filtrer uniquement les événements de voyage
     }
 
     init() {
@@ -99,8 +100,29 @@ class RandomTablesManager {
         // Récupérer toutes les tables disponibles
         const allTables = this.collectAllTables();
 
-        // Générer le contenu
-        this.renderTables(allTables);
+        // Si on demande uniquement les tables d'événements de voyage
+        if (this.filterTravelEventsOnly) {
+            console.log("🎲 Filtrage sur Tables d'Événements de Voyage uniquement");
+            
+            // Ne garder que les tables de type "map" (événements de voyage)
+            const filteredTables = {
+                settings: [],
+                map: allTables.map || [],
+                position: {
+                    locations: [],
+                    regions: []
+                }
+            };
+            
+            // Générer le contenu avec les tables filtrées
+            this.renderTables(filteredTables);
+            
+            // Réinitialiser le flag
+            this.filterTravelEventsOnly = false;
+        } else {
+            // Générer le contenu avec toutes les tables
+            this.renderTables(allTables);
+        }
 
         // Afficher la modale
         this.modal.classList.remove('hidden');
