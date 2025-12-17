@@ -1776,21 +1776,50 @@ class VoyageManager {
     finishJourney() {
         console.log('🏁 [finishJourney] Début de la finalisation du voyage');
 
-        // Sauvegarder le voyage dans le journal avant de l'ouvrir
+        // Demander confirmation avant de terminer le voyage
+        const confirmFinish = confirm("Êtes-vous sûr de vouloir terminer ce voyage ? Il sera enregistré dans votre journal.");
+        if (!confirmFinish) {
+            console.log('🏁 [finishJourney] Annulation par l\'utilisateur');
+            return;
+        }
+
+        console.log('🏁 [finishJourney] Confirmation reçue, sauvegarde du voyage...');
+
+        // Sauvegarder le voyage dans le journal
         this.saveJourneyToJournal();
 
-        // Fermer la modale du voyage
+        // Fermer la modale de voyage
         const voyageModal = this.dom.getElementById('voyage-segments-modal');
         if (voyageModal) {
             voyageModal.classList.add('hidden');
         }
 
-        // Ouvrir le journal
-        if (window.journalManager) {
-            window.journalManager.openJournal();
-        }
+        console.log('🏁 [finishJourney] Ouverture du journal...');
 
-        console.log('✅ [finishJourney] Voyage terminé et journal ouvert');
+        // Ouvrir le journal sur l'onglet "Journal" après un court délai
+        setTimeout(() => {
+            if (window.journalManager) {
+                // Charger le journal mis à jour
+                window.journalManager.loadJournal();
+
+                // Ouvrir la modale du journal
+                if (window.journalManager.journalModal) {
+                    window.journalManager.journalModal.classList.remove('hidden');
+                }
+
+                // Basculer sur l'onglet "Journal"
+                window.journalManager.switchTab('journal-list');
+
+                // Afficher le contenu du journal
+                window.journalManager.renderJournal();
+
+                console.log('✅ [finishJourney] Journal ouvert avec le voyage sauvegardé');
+            } else {
+                console.error('❌ [finishJourney] JournalManager non disponible');
+            }
+        }, 100);
+
+        console.log('🏁 [finishJourney] Voyage terminé et sauvegardé');
     }
 
 
@@ -1807,39 +1836,37 @@ class VoyageManager {
     }
 
     saveJourneyToJournal() {
-        console.log('📖 [saveJourneyToJournal] Sauvegarde du voyage dans le journal');
+        console.log('📖 [saveJourneyToJournal] Début de la sauvegarde du voyage dans le journal');
 
         if (!window.journalManager) {
-            console.error('❌ JournalManager non disponible');
+            console.error('❌ [saveJourneyToJournal] JournalManager non disponible');
             return;
         }
 
-        if (!this.dayByDayData || this.dayByDayData.length === 0) {
-            console.warn('⚠️ Aucune donnée de voyage à sauvegarder');
-            return;
-        }
+        // Générer le titre du voyage
+        const journeyTitle = this.generateJourneyTitle();
+        console.log('📖 [saveJourneyToJournal] Titre généré:', journeyTitle);
 
         // Construire le contenu du voyage au format Markdown
-        let journeyContent = `## Voyage terminé\n\n`;
-
-        // Ajouter la date de début
-        if (this.journeyStartDate && window.calendarData) {
-            const startDateStr = `${this.journeyStartDate.day} ${window.calendarData[this.journeyStartDate.monthIndex].name}`;
-            journeyContent += `**Date de départ :** ${startDateStr}\n\n`;
-        }
-
-        journeyContent += `**Durée :** ${this.totalJourneyDays} jour${this.totalJourneyDays > 1 ? 's' : ''}\n\n`;
+        let journeyContent = `## ${journeyTitle}\n\n`;
+        journeyContent += `**Durée totale :** ${this.totalJourneyDays} jour${this.totalJourneyDays > 1 ? 's' : ''}\n\n`;
 
         // Ajouter chaque jour
         this.dayByDayData.forEach((dayData, index) => {
-            // Ignorer les jours raccourcis
-            if (dayData.isShortened) {
-                return;
+            const dayNumber = dayData.day;
+            const calendarDate = dayData.calendarDate;
+            const isShortened = dayData.isShortened || false;
+
+            // En-tête du jour
+            journeyContent += `### ${calendarDate}${isShortened ? ' (raccourci)' : ''}\n\n`;
+
+            // Météo si disponible
+            const weatherData = !isShortened ? this.getWeatherForDay(dayNumber) : null;
+            if (weatherData && (weatherData.weather || weatherData.symbol)) {
+                journeyContent += `**Météo :** ${weatherData.symbol || ''} ${weatherData.weather || ''}\n\n`;
             }
 
-            journeyContent += `### ${dayData.calendarDate}\n\n`;
-
-            // Ajouter les découvertes
+            // Découvertes du jour
             if (dayData.discoveries && dayData.discoveries.length > 0) {
                 journeyContent += `**Découvertes :**\n`;
                 dayData.discoveries.forEach(discovery => {
@@ -1848,23 +1875,27 @@ class VoyageManager {
                 journeyContent += '\n';
             }
 
-            // Ajouter la description du jour si elle existe
-            const dayDescription = this.journeyDescriptions[dayData.day];
+            // Description du jour si elle existe
+            const dayDescription = this.journeyDescriptions[dayNumber];
             if (dayDescription) {
                 journeyContent += `${dayDescription}\n\n`;
             }
 
-            // Ajouter l'événement aléatoire s'il existe
-            const randomEvent = this.randomEvents[dayData.day];
+            // Événement aléatoire si existant
+            const randomEvent = this.randomEvents[dayNumber];
             if (randomEvent) {
-                journeyContent += `**Événement :** ${randomEvent}\n\n`;
+                journeyContent += `**Événement aléatoire :** ${randomEvent}\n\n`;
             }
         });
 
-        // Utiliser appendContent du JournalManager
+        console.log('📖 [saveJourneyToJournal] Contenu du voyage généré:', journeyContent.substring(0, 200) + '...');
+        console.log('📖 [saveJourneyToJournal] Longueur totale du contenu:', journeyContent.length, 'caractères');
+
+        // Utiliser appendContent du JournalManager qui gère la date automatiquement
         window.journalManager.appendContent(journeyContent);
 
         console.log('✅ [saveJourneyToJournal] Voyage sauvegardé dans le journal');
+        console.log('📊 [saveJourneyToJournal] Nombre de mots dans le journal :', window.journalManager.journal.metadata.wordCount);
     }
 
     generateJourneyTitle() {
@@ -2436,7 +2467,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
         const savedJournal = localStorage.getItem('travelJournal');
         if (savedJournal) {
             try {
-                const parsed = JSON.parse(savedJournal);
+                const parsed = JSON.parse(savedData);
                 // S'assurer que c'est bien un tableau
                 journal = Array.isArray(parsed) ? parsed : [];
             } catch (e) {
