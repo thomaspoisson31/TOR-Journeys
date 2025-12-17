@@ -3019,4 +3019,3 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
 
 
 export default VoyageManager;
-</replit_final_file>
