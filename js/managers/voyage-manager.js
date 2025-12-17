@@ -747,6 +747,33 @@ class VoyageManager {
         this.setupTravelEventsButtons();
     }
 
+    setupTravelEventsButtons() {
+        const travelEventsBtns = document.querySelectorAll('.travel-events-btn');
+        
+        travelEventsBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const dayIndex = parseInt(btn.dataset.dayIndex);
+                
+                if (!isNaN(dayIndex)) {
+                    console.log(`🎲 Ouverture des Tables d'Événements de Voyage pour le jour ${dayIndex + 1}`);
+                    this.openTravelEventsForDay(dayIndex);
+                }
+            });
+        });
+    }
+
+    openTravelEventsForDay(dayIndex) {
+        // Ouvrir la modale des tables aléatoires filtrée sur les événements de voyage
+        if (window.randomTablesManager) {
+            // Stocker temporairement qu'on veut uniquement les tables d'événements de voyage
+            window.randomTablesManager.filterTravelEventsOnly = true;
+            window.randomTablesManager.openModal();
+        } else {
+            console.error("❌ RandomTablesManager non disponible");
+        }
+    }
+
     renderDayContent(dayData, weatherData) {
         let contentHtml = '';
 
@@ -997,35 +1024,6 @@ class VoyageManager {
                 } else if (discovery.type === 'region') {
                     actionText = 'traversée';
                 } else {
-
-
-    setupTravelEventsButtons() {
-        const travelEventsBtns = document.querySelectorAll('.travel-events-btn');
-        
-        travelEventsBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const dayIndex = parseInt(btn.dataset.dayIndex);
-                
-                if (!isNaN(dayIndex)) {
-                    console.log(`🎲 Ouverture des Tables d'Événements de Voyage pour le jour ${dayIndex + 1}`);
-                    this.openTravelEventsForDay(dayIndex);
-                }
-            });
-        });
-    }
-
-    openTravelEventsForDay(dayIndex) {
-        // Ouvrir la modale des tables aléatoires filtrée sur les événements de voyage
-        if (window.randomTablesManager) {
-            // Stocker temporairement qu'on veut uniquement les tables d'événements de voyage
-            window.randomTablesManager.filterTravelEventsOnly = true;
-            window.randomTablesManager.openModal();
-        } else {
-            console.error("❌ RandomTablesManager non disponible");
-        }
-    }
-
                     actionText = 'découvert';
                 }
 
