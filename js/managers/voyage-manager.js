@@ -1861,10 +1861,19 @@ class VoyageManager {
             }
         });
 
+        console.log('📖 [saveJourneyToJournal] Contenu du voyage généré :', journeyContent.substring(0, 200) + '...');
+
+        // Charger le journal actuel pour s'assurer qu'il est à jour
+        window.journalManager.loadJournal();
+
         // Utiliser appendContent du JournalManager
         window.journalManager.appendContent(journeyContent);
 
+        // Forcer le rendu du journal pour afficher le nouveau contenu
+        window.journalManager.renderJournal();
+
         console.log('✅ [saveJourneyToJournal] Voyage sauvegardé dans le journal');
+        console.log('📊 [saveJourneyToJournal] Nombre de mots dans le journal :', window.journalManager.journal.metadata.wordCount);
     }
 
     generateJourneyTitle() {
