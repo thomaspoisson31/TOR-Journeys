@@ -1843,6 +1843,17 @@ class VoyageManager {
             return;
         }
 
+        // Créer l'objet savedData avec toutes les informations du voyage
+        const savedData = {
+            dayByDayData: this.dayByDayData,
+            journeyDescriptions: this.journeyDescriptions,
+            randomEvents: this.randomEvents,
+            totalJourneyDays: this.totalJourneyDays,
+            journeyStartDate: this.journeyStartDate
+        };
+
+        console.log('📖 [saveJourneyToJournal] Données du voyage:', savedData);
+
         // Générer le titre du voyage
         const journeyTitle = this.generateJourneyTitle();
         console.log('📖 [saveJourneyToJournal] Titre généré:', journeyTitle);
@@ -2439,26 +2450,23 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
 
         // Ajouter chaque jour
             this.dayByDayData.forEach((dayData, index) => {
-                const dayNumber = index + 1;
-                const weatherData = this.getWeatherForDay(dayNumber);
+                const dayNumber = dayData.day;
+                const calendarDate = dayData.calendarDate;
+                const isShortened = dayData.isShortened || false;
 
-                // Récupérer l'événement aléatoire depuis le stockage
-                const eventResult = this.randomEvents[dayNumber] || null;
-
-                // Extraire les découvertes avec leur nom et type
-                const discoveries = dayData.discoveries ? dayData.discoveries.map(d => ({
-                    name: d.name,
-                    type: d.type
-                })) : [];
-
+                // En-tête du jour
                 journeyEntry.days.push({
                     dayNumber: dayNumber,
-                    calendarDate: dayData.calendarDate,
-                    weatherSymbol: weatherData ? weatherData.symbol : null,
-                    weatherText: weatherData ? weatherData.weather : null,
-                    eventResult: eventResult,
+                    calendarDate: calendarDate,
+                    weatherSymbol: !isShortened ? this.getWeatherForDay(dayNumber)?.symbol : null,
+                    weatherText: !isShortened ? this.getWeatherForDay(dayNumber)?.weather : null,
+                    eventResult: this.randomEvents[dayNumber] || null,
                     description: this.journeyDescriptions[dayNumber] || null,
-                    discoveries: discoveries
+                    discoveries: dayData.discoveries ? dayData.discoveries.map(d => ({
+                        name: d.name,
+                        type: d.type
+                    })) : [],
+                    isShortened: isShortened
                 });
             });
 
@@ -2467,7 +2475,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
         const savedJournal = localStorage.getItem('travelJournal');
         if (savedJournal) {
             try {
-                const parsed = JSON.parse(savedData);
+                const parsed = JSON.parse(savedJournal);
                 // S'assurer que c'est bien un tableau
                 journal = Array.isArray(parsed) ? parsed : [];
             } catch (e) {
@@ -2488,6 +2496,32 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
 
         if (existingIndex !== -1) {
             // Mettre à jour l'entrée existante (régénération des descriptions)
+            // Remplacer l'entrée existante avec les nouvelles données
+            journeyEntry.title = journal[existingIndex].title; // Conserver le titre original si souhaité, ou utiliser le nouveau
+            journeyEntry.generatedAt = new Date().toISOString(); // Mettre à jour la date de génération
+            journeyEntry.days = []; // Réinitialiser les jours pour reconstruire avec les données actuelles
+
+            // Reconstruire les jours avec les données actuelles
+            this.dayByDayData.forEach((dayData, index) => {
+                const dayNumber = dayData.day;
+                const calendarDate = dayData.calendarDate;
+                const isShortened = dayData.isShortened || false;
+
+                journeyEntry.days.push({
+                    dayNumber: dayNumber,
+                    calendarDate: calendarDate,
+                    weatherSymbol: !isShortened ? this.getWeatherForDay(dayNumber)?.symbol : null,
+                    weatherText: !isShortened ? this.getWeatherForDay(dayNumber)?.weather : null,
+                    eventResult: this.randomEvents[dayNumber] || null,
+                    description: this.journeyDescriptions[dayNumber] || null,
+                    discoveries: dayData.discoveries ? dayData.discoveries.map(d => ({
+                        name: d.name,
+                        type: d.type
+                    })) : [],
+                    isShortened: isShortened
+                });
+            });
+
             journal[existingIndex] = journeyEntry;
             console.log("📖 Voyage mis à jour dans le journal:", journeyEntry.title);
         } else {
