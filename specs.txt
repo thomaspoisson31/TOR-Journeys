@@ -1420,6 +1420,8 @@ PRINCIPES DE GESTION DES Z-INDEX POUR MODALES ET OVERLAYS
    - Interface de base (toolbars, panels) : z-index 10-50
    - InfoBox : z-index 80
    - Modales de résultats/actions : z-index 90+
+     * random-roll-result-modal : z-index 90
+     * random-tables-modal : z-index 90
    - Overlays plein écran : z-index 9999
    
    Règles obligatoires :
@@ -1550,6 +1552,107 @@ PRINCIPES DE GESTION DES FILTRES EN MODE AVENTURE
    - ✅ TOUJOURS désactiver la sauvegarde automatique pendant application de filtres temporaires
    - ✅ TOUJOURS prévoir une config par défaut cohérente (known=[] = tout afficher)
    - ✅ known=[] signifie "aucun filtre actif" = afficher connus ET inconnus
+
+PRINCIPES DE GESTION DES TIRAGES ALÉATOIRES
+---------------------------------------------
+
+1. PERSISTANCE DES RÉSULTATS DE TIRAGE :
+   
+   Architecture :
+   - Génération de hash unique par résultat : `generateResultHash(tableName, resultContent)`
+   - Stockage dans `localStorage` : clé `randomTablesCheckedResults`
+   - Structure : `{ hash: boolean }` pour chaque résultat coché/non coché
+   - Synchronisation cloud via `markAsUnsaved()` et `scheduleAutoSync()`
+   
+   Pattern de hash :
+   ```javascript
+   generateResultHash(tableName, resultContent) {
+       const str = `${tableName}::${resultContent}`;
+       let hash = 0;
+       for (let i = 0; i < str.length; i++) {
+           const char = str.charCodeAt(i);
+           hash = ((hash << 5) - hash) + char;
+           hash = hash & hash;
+       }
+       return `result_${Math.abs(hash)}`;
+   }
+   ```
+   
+   Utilisation dans l'UI :
+   ```html
+   <input type="checkbox" 
+          class="random-result-checkbox" 
+          data-result-hash="${resultHash}"
+          ${isChecked ? 'checked' : ''}
+          onchange="window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
+   ```
+   
+   Code concerné :
+   - random-tables-manager.js : generateResultHash(), loadCheckedResults(), saveCheckedResults()
+   - Chargement au démarrage : init() → loadCheckedResults()
+   - Sauvegarde automatique après chaque modification : toggleResultChecked() → saveCheckedResults()
+
+2. INSERTION DE RÉSULTATS DANS LE JOURNAL :
+   
+   Workflow complet :
+   a) Stockage temporaire du résultat :
+      ```javascript
+      window.settingsManager.currentRandomResult = {
+          tableName: tableName,
+          result: resultHtml
+      };
+      ```
+   
+   b) Nettoyage HTML avant insertion :
+      ```javascript
+      let cleanResult = result.result.replace(/<[^>]*>/g, '').trim();
+      ```
+   
+   c) Construction du texte formaté :
+      ```javascript
+      const textToInsert = `🎲 ${result.tableName} : ${cleanResult}`;
+      ```
+   
+   d) Insertion via JournalManager :
+      ```javascript
+      window.journalManager.appendContent(textToInsert);
+      ```
+   
+   e) Feedback utilisateur :
+      - Fermeture de la modale de résultat
+      - Alert de confirmation
+      - Sauvegarde automatique dans le journal
+   
+   Code concerné :
+   - random-tables-manager.js : insertRandomResultToJournal()
+   - settings-manager.js : Stockage de currentRandomResult dans showResult()
+   - journal-manager.js : appendContent() pour l'insertion
+
+3. FORMAT DES RÉSULTATS DE TIRAGE :
+   
+   Support de plusieurs formats :
+   a) Objet avec propriétés :
+      ```javascript
+      {
+          "Dé du destin": "6",
+          "Résultat": "Embuscade",
+          "Détails": "2d6 orques"
+      }
+      ```
+   
+   b) Chaîne simple :
+      ```javascript
+      "Rencontre amicale"
+      ```
+   
+   Affichage formaté :
+   - Dé du destin entre parenthèses : `(6) Embuscade`
+   - Propriétés supplémentaires sur la même ligne : `Détails: 2d6 orques`
+   - Poids fort sur la valeur principale (`font-weight: 600`)
+   
+   Code concerné :
+   - random-tables-manager.js : rollSimpleTable(), rollCompositeTable()
+   - settings-manager.js : rollOnSettingsTable(), rollOnSettingsCompositeTable()
 
 ENSEIGNEMENTS CLÉS DU DÉVELOPPEMENT
 ------------------------------------
