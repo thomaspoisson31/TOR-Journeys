@@ -1836,14 +1836,15 @@ class VoyageManager {
     }
 
     saveJourneyToJournal() {
-        console.log('📖 [saveJourneyToJournal] Début de la sauvegarde du voyage dans le journal');
+        console.log('📖 [saveJourneyToJournal] Début de la sauvegarde du voyage');
 
-        if (!window.journalManager) {
-            console.error('❌ [saveJourneyToJournal] JournalManager non disponible');
+        // Vérifier qu'il y a un voyage en cours
+        if (!this.dayByDayData || this.dayByDayData.length === 0) {
+            console.error('❌ Pas de données de voyage à sauvegarder');
             return;
         }
 
-        // Créer l'objet savedData avec toutes les informations du voyage
+        // Créer l'objet savedData avec toutes les données du voyage
         const savedData = {
             dayByDayData: this.dayByDayData,
             journeyDescriptions: this.journeyDescriptions,
@@ -1852,702 +1853,104 @@ class VoyageManager {
             journeyStartDate: this.journeyStartDate
         };
 
-        console.log('📖 [saveJourneyToJournal] Données du voyage:', savedData);
-
         // Générer le titre du voyage
-        const journeyTitle = this.generateJourneyTitle();
-        console.log('📖 [saveJourneyToJournal] Titre généré:', journeyTitle);
+        let journeyTitle = "Voyage sans nom";
+        if (window.journeyDiscoveries && window.journeyDiscoveries.length > 0) {
+            const discoveries = window.journeyDiscoveries.filter(d => d.type === 'location');
+            if (discoveries.length > 0) {
+                const startLocation = discoveries[0].name;
+                const endLocation = discoveries.length > 1 ? discoveries[discoveries.length - 1].name : startLocation;
+                journeyTitle = `Voyage de ${startLocation} à ${endLocation}`;
+            }
+        }
 
-        // Construire le contenu du voyage au format Markdown
-        let journeyContent = `## ${journeyTitle}\n\n`;
-        journeyContent += `**Durée totale :** ${this.totalJourneyDays} jour${this.totalJourneyDays > 1 ? 's' : ''}\n\n`;
+        console.log(`📖 [saveJourneyToJournal] Titre du voyage: ${journeyTitle}`);
 
-        // Ajouter chaque jour
-        this.dayByDayData.forEach((dayData, index) => {
+        // Préparer les données des jours
+        const journeyDays = this.dayByDayData.map((dayData, index) => {
             const dayNumber = dayData.day;
             const calendarDate = dayData.calendarDate;
+
+            // Récupérer météo
+            const weatherData = this.getWeatherForDay(dayNumber);
+            const weatherSymbol = weatherData?.symbol || '';
+            const weatherText = weatherData?.weather || '';
+
+            // Récupérer description et événement
+            const description = this.journeyDescriptions[dayNumber] || '';
+            const eventResult = this.randomEvents[dayNumber] || '';
+
+            // Vérifier si le jour est raccourci
             const isShortened = dayData.isShortened || false;
 
-            // En-tête du jour
-            journeyContent += `### ${calendarDate}${isShortened ? ' (raccourci)' : ''}\n\n`;
-
-            // Météo si disponible
-            const weatherData = !isShortened ? this.getWeatherForDay(dayNumber) : null;
-            if (weatherData && (weatherData.weather || weatherData.symbol)) {
-                journeyContent += `**Météo :** ${weatherData.symbol || ''} ${weatherData.weather || ''}\n\n`;
-            }
-
-            // Découvertes du jour
-            if (dayData.discoveries && dayData.discoveries.length > 0) {
-                journeyContent += `**Découvertes :**\n`;
-                dayData.discoveries.forEach(discovery => {
-                    journeyContent += `- ${discovery.name} (${discovery.type === 'region' ? 'Région' : 'Lieu'})\n`;
-                });
-                journeyContent += '\n';
-            }
-
-            // Description du jour si elle existe
-            const dayDescription = this.journeyDescriptions[dayNumber];
-            if (dayDescription) {
-                journeyContent += `${dayDescription}\n\n`;
-            }
-
-            // Événement aléatoire si existant
-            const randomEvent = this.randomEvents[dayNumber];
-            if (randomEvent) {
-                journeyContent += `**Événement aléatoire :** ${randomEvent}\n\n`;
-            }
-        });
-
-        console.log('📖 [saveJourneyToJournal] Contenu du voyage généré:', journeyContent.substring(0, 200) + '...');
-        console.log('📖 [saveJourneyToJournal] Longueur totale du contenu:', journeyContent.length, 'caractères');
-
-        // Utiliser appendContent du JournalManager qui gère la date automatiquement
-        window.journalManager.appendContent(journeyContent);
-
-        console.log('✅ [saveJourneyToJournal] Voyage sauvegardé dans le journal');
-        console.log('📊 [saveJourneyToJournal] Nombre de mots dans le journal :', window.journalManager.journal.metadata.wordCount);
-    }
-
-    generateJourneyTitle() {
-        // Générer un titre basé sur la date de début et les découvertes
-        const startDate = this.dayByDayData[0]?.calendarDate || 'Date inconnue';
-        const endDate = this.dayByDayData[this.dayByDayData.length - 1]?.calendarDate || '';
-
-        // Extraire les lieux principaux
-        const mainLocations = [];
-        this.dayByDayData.forEach(day => {
-            day.discoveries?.forEach(discovery => {
-                if (discovery.type === 'location' && !mainLocations.includes(discovery.name)) {
-                    mainLocations.push(discovery.name);
-                }
-            });
-        });
-
-        if (mainLocations.length > 0) {
-            return `Voyage vers ${mainLocations.slice(0, 2).join(' et ')}`;
-        }
-
-        return `Voyage du ${startDate}`;
-    }
-
-    formatJourneyAsMarkdown(journeyData) {
-        let markdown = `\n\n## ${journeyData.title}\n\n`;
-        markdown += `*Du ${journeyData.days[0].calendarDate} au ${journeyData.days[journeyData.days.length - 1].calendarDate} (${journeyData.totalDays} jour${journeyData.totalDays > 1 ? 's' : ''})*\n\n`;
-
-        journeyData.days.forEach(day => {
-            // En-tête du jour
-            markdown += `### ${day.calendarDate}`;
-            if (day.weatherSymbol) {
-                markdown += ` ${day.weatherSymbol}`;
-            }
-            markdown += '\n\n';
-
-            // Découvertes
-            if (day.discoveries && day.discoveries.length > 0) {
-                const locationNames = day.discoveries
-                    .filter(d => d.type === 'location')
-                    .map(d => d.name);
-                const regionNames = day.discoveries
-                    .filter(d => d.type === 'region')
-                    .map(d => d.name);
-
-                if (locationNames.length > 0) {
-                    markdown += `**Lieux :** ${locationNames.join(', ')}\n\n`;
-                }
-                if (regionNames.length > 0) {
-                    markdown += `**Régions :** ${regionNames.join(', ')}\n\n`;
-                }
-            }
-
-            // Description du jour
-            if (day.description) {
-                markdown += `${day.description}\n\n`;
-            }
-
-            // Événement aléatoire
-            if (day.eventResult) {
-                markdown += `**🎲 Événement :** ${day.eventResult}\n\n`;
-            }
-
-            markdown += '---\n\n';
-        });
-
-        return markdown;
-    }
-
-    async generateJourneyDescription() {
-        if (this.dayByDayData.length === 0) {
-            alert('Aucune journée de voyage à décrire.');
-            return;
-        }
-
-        if (!this.geminiManager.isAvailable()) {
-            alert('La fonction de génération de texte n\'est pas disponible. Vérifiez la configuration de l\'API Gemini.');
-            return;
-        }
-
-        // Collecter les données pour toutes les journées
-        const allJourneyData = this.collectAllJourneyDataForPrompt();
-
-        // Créer le prompt pour Gemini
-        const prompt = this.createAllJourneyDescriptionPrompt(allJourneyData);
-
-        // Afficher le prompt dans une modale pour prévisualisation/édition
-        this.showPromptPreviewModal(prompt, allJourneyData);
-    }
-
-    showPromptPreviewModal(initialPrompt, journeyData) {
-        // Créer une modale pour afficher et éditer le prompt
-        const modal = document.createElement('div');
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
-        modal.innerHTML = `
-            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
-                    <h3 class="text-lg font-bold" style="color: #940000;">
-                        <i class="fas fa-eye mr-2"></i>Prévisualisation du prompt Gemini
-                    </h3>
-                    <button id="close-prompt-preview" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                </div>
-                <div class="flex-1 overflow-y-auto p-4">
-                    <div class="mb-4">
-                        <p class="text-sm text-gray-600 mb-2">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            Vous pouvez modifier le prompt ci-dessous avant de l'envoyer à Gemini.
-                        </p>
-                    </div>
-                    <textarea id="prompt-editor" class="w-full h-96 p-3 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
-                    <div class="mt-3 text-xs text-gray-500">
-                        <i class="fas fa-ruler mr-1"></i>
-                        <span id="prompt-length"></span> caractères
-                    </div>
-                </div>
-                <div class="p-4 border-t border-gray-200 flex justify-end gap-3">
-                    <button id="cancel-prompt" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
-                        <i class="fas fa-times mr-2"></i>Annuler
-                    </button>
-                    <button id="send-prompt" class="px-4 py-2 text-white rounded hover:opacity-90 transition-colors" style="background-color: #940000;">
-                        <i class="fas fa-paper-plane mr-2"></i>Envoyer à Gemini
-                    </button>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(modal);
-
-        const textarea = modal.querySelector('#prompt-editor');
-        const lengthIndicator = modal.querySelector('#prompt-length');
-        const closeBtn = modal.querySelector('#close-prompt-preview');
-        const cancelBtn = modal.querySelector('#cancel-prompt');
-        const sendBtn = modal.querySelector('#send-prompt');
-
-        // Initialiser le textarea avec le prompt
-        textarea.value = initialPrompt;
-        lengthIndicator.textContent = initialPrompt.length;
-
-        // Mettre à jour le compteur de caractères
-        textarea.addEventListener('input', () => {
-            lengthIndicator.textContent = textarea.value.length;
-        });
-
-        // Fermer la modale
-        const closeModal = () => {
-            document.body.removeChild(modal);
-        };
-
-        closeBtn.addEventListener('click', closeModal);
-        cancelBtn.addEventListener('click', closeModal);
-
-        // Envoyer le prompt (modifié ou non)
-        sendBtn.addEventListener('click', async () => {
-            const editedPrompt = textarea.value.trim();
-            if (!editedPrompt) {
-                alert('Le prompt ne peut pas être vide.');
-                return;
-            }
-
-            // Fermer la modale
-            closeModal();
-
-            // Afficher le loader sur le bouton principal
-            const button = this.dom.getElementById('describe-journey-header-btn');
-            if (!button) return;
-
-            const originalContent = button.innerHTML;
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin text-white"></i>';
-            button.style.cursor = 'not-allowed';
-
-            try {
-                console.log('🤖 Envoi du prompt à Gemini (longueur: ' + editedPrompt.length + ' caractères)');
-
-                // Appeler Gemini avec le prompt édité
-                const response = await this.geminiManager.generateContent(editedPrompt, null, 'journey');
-                this.parseAndDisplayAllJourneyDescriptions(response);
-            } catch (error) {
-                console.error('Erreur lors de la génération de la description:', error);
-                alert(`Erreur lors de la génération de la description de voyage: ${error.message}`);
-            } finally {
-                // Restaurer le bouton à son état original
-                button.disabled = false;
-                button.innerHTML = originalContent;
-                button.style.cursor = 'pointer';
-            }
-        });
-    }
-
-    collectJourneyDataForPrompt(currentDay) {
-        // Récupérer les données du groupe d'aventuriers et de la quête
-        const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
-        const adventurersQuest = localStorage.getItem('adventurersQuest') || '';
-
-        // Récupérer la saison actuelle
-        const currentSeason = typeof window.currentSeason !== 'undefined' ? window.currentSeason : 'printemps-debut';
-        const seasonNames = {
-            'printemps-debut': 'Printemps-début',
-            'printemps-milieu': 'Printemps-milieu',
-            'printemps-fin': 'Printemps-fin',
-            'ete-debut': 'Été-début',
-            'ete-milieu': 'Été-milieu',
-            'ete-fin': 'Été-fin',
-            'automne-debut': 'Automne-début',
-            'automne-milieu': 'Automne-milieu',
-            'automne-fin': 'Automne-fin',
-            'hiver-debut': 'Hiver-début',
-            'hiver-milieu': 'Hiver-milieu',
-            'hiver-fin': 'Hiver-fin'
-        };
-        const seasonName = seasonNames[currentSeason] || currentSeason;
-
-        // Collecter les découvertes avec leurs descriptions
-        const discoveriesWithDescriptions = currentDay.discoveries.map(discovery => {
-            let description = '';
-
-            if (discovery.type === 'location' && typeof locationsData !== 'undefined') {
-                const location = locationsData.locations.find(loc => loc.name === discovery.name);
-                if (location) {
-                    description = location.description || '';
-                }
-            } else if (discovery.type === 'region' && typeof regionsData !== 'undefined') {
-                const region = regionsData.regions.find(reg => reg.name === discovery.name);
-                if (region) {
-                    description = region.description || '';
-                }
-            }
-
-            let actionText = '';
-            if (discovery.proximityType) {
-                actionText = discovery.proximityType === 'traversed' ? 'traversé' : 'passage à proximité';
-            } else if (discovery.type === 'region') {
-                actionText = 'traversé';
-            } else {
-                actionText = 'découvert';
-            }
-
             return {
-                name: discovery.name,
-                type: discovery.type === 'region' ? 'Région' : 'Lieu',
-                action: actionText,
-                description: description
+                dayNumber: dayNumber,
+                calendarDate: calendarDate,
+                weatherSymbol: weatherSymbol,
+                weatherText: weatherText,
+                description: description,
+                eventResult: eventResult,
+                discoveries: savedData.dayByDayData[index]?.discoveries || [],
+                isShortened: isShortened
             };
         });
 
-        return {
-            adventurersGroup,
-            adventurersQuest,
-            season: seasonName,
-            dayNumber: this.currentDayIndex + 1,
-            calendarDate: currentDay.calendarDate,
-            discoveries: discoveriesWithDescriptions
-        };
-    }
+        console.log(`📖 [saveJourneyToJournal] ${journeyDays.length} jours préparés`);
 
-    collectAllJourneyDataForPrompt() {
-        const allJourneyData = [];
-
-        for (let i = 0; i < this.dayByDayData.length; i++) {
-            const dayData = this.dayByDayData[i];
-            const weatherData = this.getWeatherForDay(dayData.day);
-
-            // Collecter les découvertes pour ce jour avec leurs descriptions
-            const discoveries = dayData.discoveries.map(d => {
-                let description = '';
-
-                // Récupérer la description depuis les données
-                if (d.type === 'location' && typeof locationsData !== 'undefined') {
-                    const location = locationsData.locations.find(loc => loc.name === d.name);
-                    if (location && location.description) {
-                        description = location.description;
-                    }
-                } else if (d.type === 'region' && typeof regionsData !== 'undefined') {
-                    const region = regionsData.regions.find(reg => reg.name === d.name);
-                    if (region && region.description) {
-                        description = region.description;
-                    }
-                }
-
-                return {
-                    name: d.name,
-                    type: d.type,
-                    description: description
-                };
-            });
-
-            allJourneyData.push({
-                day: dayData.day,
-                calendarDate: dayData.calendarDate,
-                weather: weatherData ? weatherData.weather : null,
-                discoveries: discoveries
-            });
-        }
-
-        return allJourneyData;
-    }
-
-    createAllJourneyDescriptionPrompt(allJourneyData) {
-        // Récupérer les données du groupe d'aventuriers
-        const adventurersGroup = localStorage.getItem('adventurersGroup') || '';
-        const adventurersQuest = localStorage.getItem('adventurersQuest') || '';
-
-        // Récupérer les personnages de la communauté (PJ uniquement)
-        let charactersInfo = '';
-        let playerCharacters = [];
-        if (window.charactersManager && window.charactersManager.characters) {
-            playerCharacters = window.charactersManager.characters.filter(char => char.type === 'PJ');
-            if (playerCharacters.length > 0) {
-                charactersInfo = '\n\nCOMMUNAUTÉ DES AVENTURIERS :\n';
-                playerCharacters.forEach(char => {
-                    charactersInfo += `- ${char.name}`;
-                    if (char.description) {
-                        charactersInfo += `: ${char.description}`;
-                    }
-                    charactersInfo += '\n';
-                });
-            }
-        }
-
-        // Déterminer si on utilise singulier ou pluriel
-        const isSingular = playerCharacters.length === 1;
-        const personnePronom = isSingular ?
-            'il/elle (selon le personnage)' :
-            'ils/elles';
-        const examplePronom = isSingular ? 'il' : 'ils';
-
-        let prompt = `Tu es un narrateur expert dans l'univers de la Terre du Milieu de J.R.R. Tolkien.
-
-Ta mission est de créer des descriptions immersives pour chaque jour d'un voyage, en tenant compte du contexte global du périple.
-
-CONTEXTE DU VOYAGE :${adventurersGroup ? `\nGroupe : ${adventurersGroup}` : ''}${adventurersQuest ? `\nQuête : ${adventurersQuest}` : ''}${charactersInfo}
-
-INSTRUCTIONS IMPORTANTES :
-1. Génère une description UNIQUE pour chaque jour
-2. Écris TOUJOURS à la TROISIÈME PERSONNE ${isSingular ? 'DU SINGULIER' : 'DU PLURIEL'} (${personnePronom}, ${isSingular ? 'son/sa, le/la' : 'leur, les'} ${isSingular ? 'voyageur, l\'aventurier' : 'compagnons, le groupe'}, etc.)
-3. Utilise le PRÉSENT DE NARRATION (${examplePronom} chemine, ${examplePronom} découvre, ${examplePronom} traverse, etc.)
-4. Varie le style et le focus d'une journée à l'autre (paysages, rencontres, réflexions, actions, détails culturels)
-5. Chaque description doit faire environ 50-80 mots
-6. Utilise un style évocateur et poétique, inspiré de Tolkien
-7. Intègre les éléments météorologiques et les lieux traversés naturellement
-8. ÉVITE ABSOLUMENT les répétitions entre les jours - change de perspective, d'angle et de vocabulaire
-9. Utilise les descriptions des lieux/régions pour enrichir ta narration
-10. Alterne entre : action, contemplation, danger, découverte, repos, mystère
-
-RÈGLES POUR LES TRANSITIONS :
-- Mentionne le fait de QUITTER un lieu/région SEULEMENT si la journée suivante se déroule dans un lieu/région DIFFÉRENT
-- Mentionne le fait de REJOINDRE un nouveau lieu/région SEULEMENT si la journée précédente se déroulait dans un lieu/région DIFFÉRENT
-- Ne fais référence qu'aux lieux/régions EXPLICITEMENT listés dans les découvertes du jour
-- Ne invente PAS de lieux qui ne sont pas mentionnés dans les données
-
-VOYAGE COMPLET (${this.totalJourneyDays} jours) :
-${allJourneyData.map((dayData, index) => {
-            const discoveries = dayData.discoveries.length > 0
-                ? dayData.discoveries.map(d => {
-                    let detail = `${d.name} (${d.type})`;
-                    if (d.description) {
-                        detail += `\n  Description: ${d.description}`;
-                    }
-                    return detail;
-                }).join('\n  - ')
-                : 'aucune découverte particulière';
-
-            const weather = dayData.weather ? ` - Météo: ${dayData.weather}` : '';
-
-            // Analyser les transitions pour aider l'IA
-            let transitionInfo = '';
-            if (index > 0) {
-                const prevDay = allJourneyData[index - 1];
-                const prevLocations = new Set(prevDay.discoveries.map(d => d.name));
-                const currentLocations = new Set(dayData.discoveries.map(d => d.name));
-                const hasNewLocation = [...currentLocations].some(loc => !prevLocations.has(loc));
-                if (hasNewLocation) {
-                    transitionInfo += '\n  ⚠️ Nouveau(x) lieu(x)/région(s) par rapport à la veille';
-                }
-            }
-            if (index < allJourneyData.length - 1) {
-                const nextDay = allJourneyData[index + 1];
-                const nextLocations = new Set(nextDay.discoveries.map(d => d.name));
-                const currentLocations = new Set(dayData.discoveries.map(d => d.name));
-                const willLeaveLocation = [...currentLocations].some(loc => !nextLocations.has(loc));
-                if (willLeaveLocation) {
-                    transitionInfo += '\n  ⚠️ Quitte ce(s) lieu(x)/région(s) demain';
-                }
-            }
-
-            return `Jour ${dayData.day} (${dayData.calendarDate})${weather}\nDécouvertes:\n  - ${discoveries}${transitionInfo}`;
-        }).join('\n\n')}
-
-CONSIGNES DE GÉNÉRATION :
-- Pour chaque jour, génère une description UNIQUE avec un angle narratif différent
-- Jours impairs (1,3,5...) : focus sur l'action et les événements
-- Jours pairs (2,4,6...) : focus sur l'atmosphère, les paysages et les réflexions
-- Utilise les descriptions fournies pour enrichir le contexte mais ne les recopie pas
-- Intègre subtilement les lieux et la météo sans formules répétitives
-- Varie le vocabulaire : évite de réutiliser les mêmes adjectifs ou tournures
-- Crée une vraie progression narrative avec des hauts et des bas
-- UTILISE UNIQUEMENT les lieux/régions listés dans les découvertes - n'en invente pas
-
-⚠️ FORMAT DE RÉPONSE OBLIGATOIRE - CRUCIAL ⚠️
-
-Tu DOIS répondre UNIQUEMENT avec un objet JSON valide, sans AUCUN texte avant ou après.
-Ne commence PAS ta réponse par "Absolument !", "Voici", ou tout autre texte.
-Ne mets PAS de commentaires, d'explications ou de formatage markdown.
-
-Réponds EXACTEMENT dans ce format JSON (et rien d'autre) :
-
-{
-  "descriptions": [
-    {"day": 1, "description": "..."},
-    {"day": 2, "description": "..."},
-    {"day": 3, "description": "..."}
-  ]
-}
-
-EXEMPLE DE RÉPONSE ATTENDUE (respecte ce format EXACT) :
-{"descriptions":[{"day":1,"description":"${examplePronom === 'il' ? 'Il chemine' : 'Ils cheminent'} sous la pluie..."},{"day":2,"description":"${examplePronom === 'il' ? 'L\'aventurier atteint' : 'Les compagnons atteignent'} les Hauts Reculés..."}]}
-
-⚠️ RAPPEL CRITIQUE : Commence ta réponse DIRECTEMENT par le caractère "{" (accolade ouvrante).
-Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclusion.`;
-
-        return prompt;
-    }
-
-    parseAndDisplayAllJourneyDescriptions(response) {
-        console.log('📖 Parsing de la réponse Gemini pour toutes les journées');
-        console.log('📥 Réponse brute reçue:', response);
-
-        try {
-            // Nettoyer la réponse pour extraire le JSON
-            let cleanedResponse = response.trim();
-
-            // Supprimer les blocs markdown si présents (```json ... ```)
-            const jsonBlockMatch = cleanedResponse.match(/```json\s*([\s\S]*?)\s*```/);
-            if (jsonBlockMatch) {
-                cleanedResponse = jsonBlockMatch[1].trim();
-                console.log('📋 JSON extrait du bloc markdown');
-            }
-
-            // Supprimer les blocs de code génériques si présents (``` ... ```)
-            const codeBlockMatch = cleanedResponse.match(/```\s*([\s\S]*?)\s*```/);
-            if (codeBlockMatch) {
-                cleanedResponse = codeBlockMatch[1].trim();
-                console.log('📋 Texte extrait du bloc de code');
-            }
-
-            console.log('🧹 Réponse nettoyée:', cleanedResponse);
-
-            // Parser la réponse JSON
-            const journeyData = JSON.parse(cleanedResponse);
-
-            // Vérifier le format de la réponse
-            if (journeyData && typeof journeyData === 'object') {
-                // La structure attendue est un objet avec une clé "descriptions" contenant un tableau d'objets {"day": N, "description": "..."}
-                let descriptionsArray = [];
-
-                if (Array.isArray(journeyData.descriptions)) {
-                    // Cas où la réponse est {"descriptions": [{"day": 1, "description": "..."}]}
-                    descriptionsArray = journeyData.descriptions;
-                    console.log('📖 Format détecté: Objet avec clé "descriptions" contenant un tableau.');
-                } else {
-                    console.error("❌ Format de réponse JSON inattendu:", journeyData);
-                    alert("Erreur: Le format de la réponse de Gemini n'est pas celui attendu (objet avec clé 'descriptions').");
-                    return;
-                }
-
-                // Réinitialiser les descriptions actuelles
-                this.journeyDescriptions = {};
-
-                // Parser et stocker chaque description
-                descriptionsArray.forEach(item => {
-                    if (item.day && item.description) {
-                        this.journeyDescriptions[item.day] = item.description;
-                        console.log(`📖 Description du jour ${item.day} ajoutée`);
-                    }
-                });
-
-                // Sauvegarder les descriptions pour cette carte/tracé
-                this.saveDescriptionsForMap();
-
-                // Sauvegarder le voyage dans le journal
-                this.saveJourneyToJournal();
-
-                console.log('✅ Toutes les descriptions ont été parsées et sauvegardées');
-
-                // Rafraîchir l'affichage de la modale pour montrer les nouvelles descriptions
-                this.renderAllDays();
-            } else {
-                console.error("❌ Format de réponse JSON inattendu:", journeyData);
-                alert("Erreur: Le format de la réponse de Gemini n'est pas celui attendu (objet avec clé 'descriptions').");
-                return;
-            }
-
-        } catch (e) {
-            console.error('❌ Erreur lors du parsing de la réponse:', e);
-            alert('Erreur lors de la génération des descriptions. La réponse de Gemini n\'est pas au format JSON attendu.');
-        }
-    }
-
-    saveJourneyToJournal() {
-        if (!this.dayByDayData || this.dayByDayData.length === 0) {
-            console.log("⚠️ Pas de données de voyage à sauvegarder");
-            return;
-        }
-
-        // Vérifier que journeyPath existe et n'est pas vide
-        if (typeof journeyPath === 'undefined' || !journeyPath || journeyPath.length === 0) {
-            console.log("⚠️ Pas de tracé de voyage disponible");
-            return;
-        }
-
-        // Créer une signature unique pour ce tracé
-        const pathSignature = this.createPathSignature(journeyPath);
-        console.log("🔑 Signature du tracé:", pathSignature);
-
-        // Trouver le lieu/région de départ
-        const firstDay = this.dayByDayData[0];
-        let startLocation = "Point de départ";
-        if (firstDay.discoveries && firstDay.discoveries.length > 0) {
-            startLocation = firstDay.discoveries[0].name;
-        }
-
-        // Trouver le lieu/région d'arrivée
-        const lastDay = this.dayByDayData[this.dayByDayData.length - 1];
-        let endLocation = "Point d'arrivée";
-        if (lastDay.discoveries && lastDay.discoveries.length > 0) {
-            const lastDiscoveries = lastDay.discoveries;
-            endLocation = lastDiscoveries[lastDiscoveries.length - 1].name;
-        }
-
-        // Construire le voyage pour le journal
+        // Créer l'entrée de journal
         const journeyEntry = {
-            title: `Voyage de ${startLocation} à ${endLocation}`,
+            id: Date.now(),
+            title: journeyTitle,
+            journeyType: 'voyage',
             generatedAt: new Date().toISOString(),
             totalDays: this.totalJourneyDays,
-            pathSignature: pathSignature, // Ajouter la signature pour identifier le tracé
-            journeyType: 'journey', // Identifier comme voyage tracé
-            days: []
+            days: journeyDays,
+            journeyDescriptions: savedData.journeyDescriptions || {},
+            randomEvents: savedData.randomEvents || {}
         };
 
-        // Ajouter chaque jour
-            this.dayByDayData.forEach((dayData, index) => {
-                const dayNumber = dayData.day;
-                const calendarDate = dayData.calendarDate;
-                const isShortened = dayData.isShortened || false;
+        console.log(`📖 [saveJourneyToJournal] Entrée de journal créée:`, journeyEntry);
 
-                // En-tête du jour
-                journeyEntry.days.push({
-                    dayNumber: dayNumber,
-                    calendarDate: calendarDate,
-                    weatherSymbol: !isShortened ? this.getWeatherForDay(dayNumber)?.symbol : null,
-                    weatherText: !isShortened ? this.getWeatherForDay(dayNumber)?.weather : null,
-                    eventResult: this.randomEvents[dayNumber] || null,
-                    description: this.journeyDescriptions[dayNumber] || null,
-                    discoveries: dayData.discoveries ? dayData.discoveries.map(d => ({
-                        name: d.name,
-                        type: d.type
-                    })) : [],
-                    isShortened: isShortened
-                });
-            });
-
-        // Récupérer le journal existant
-        let journal = [];
+        // Charger le journal existant
         const savedJournal = localStorage.getItem('travelJournal');
-        if (savedJournal) {
+        let journal = [];
+
+        if (savedJournal && savedJournal !== 'null' && savedJournal !== 'undefined') {
             try {
                 const parsed = JSON.parse(savedJournal);
-                // S'assurer que c'est bien un tableau
-                journal = Array.isArray(parsed) ? parsed : [];
+                if (Array.isArray(parsed)) {
+                    journal = parsed;
+                } else if (parsed.content !== undefined) {
+                    // Nouveau format (objet avec content) - créer un tableau vide pour les voyages
+                    journal = [];
+                }
             } catch (e) {
-                console.error("Erreur lors du chargement du journal:", e);
+                console.error('❌ Erreur lors du parsing du journal:', e);
                 journal = [];
             }
         }
 
-        // Vérifier si ce tracé existe déjà dans le journal
-        console.log("🔍 Recherche de voyage existant avec signature:", pathSignature);
-        console.log("📚 Voyages existants dans le journal:", journal.length);
-        journal.forEach((entry, idx) => {
-            console.log(`  ${idx}: ${entry.title} (signature: ${entry.pathSignature})`);
-        });
+        console.log(`📖 [saveJourneyToJournal] Journal actuel: ${journal.length} voyage(s)`);
 
-        const existingIndex = journal.findIndex(entry => entry.pathSignature === pathSignature);
-        console.log("🔍 Index trouvé:", existingIndex);
-
-        if (existingIndex !== -1) {
-            // Mettre à jour l'entrée existante (régénération des descriptions)
-            // Remplacer l'entrée existante avec les nouvelles données
-            journeyEntry.title = journal[existingIndex].title; // Conserver le titre original si souhaité, ou utiliser le nouveau
-            journeyEntry.generatedAt = new Date().toISOString(); // Mettre à jour la date de génération
-            journeyEntry.days = []; // Réinitialiser les jours pour reconstruire avec les données actuelles
-
-            // Reconstruire les jours avec les données actuelles
-            this.dayByDayData.forEach((dayData, index) => {
-                const dayNumber = dayData.day;
-                const calendarDate = dayData.calendarDate;
-                const isShortened = dayData.isShortened || false;
-
-                journeyEntry.days.push({
-                    dayNumber: dayNumber,
-                    calendarDate: calendarDate,
-                    weatherSymbol: !isShortened ? this.getWeatherForDay(dayNumber)?.symbol : null,
-                    weatherText: !isShortened ? this.getWeatherForDay(dayNumber)?.weather : null,
-                    eventResult: this.randomEvents[dayNumber] || null,
-                    description: this.journeyDescriptions[dayNumber] || null,
-                    discoveries: dayData.discoveries ? dayData.discoveries.map(d => ({
-                        name: d.name,
-                        type: d.type
-                    })) : [],
-                    isShortened: isShortened
-                });
-            });
-
-            journal[existingIndex] = journeyEntry;
-            console.log("📖 Voyage mis à jour dans le journal:", journeyEntry.title);
-        } else {
-            // Ajouter le nouveau voyage
-            journal.unshift(journeyEntry); // Ajouter au début (plus récent)
-            console.log("📖 Nouveau voyage ajouté au journal:", journeyEntry.title);
-        }
+        // Ajouter le nouveau voyage
+        journal.push(journeyEntry);
 
         // Sauvegarder
         localStorage.setItem('travelJournal', JSON.stringify(journal));
-        console.log("💾 Journal sauvegardé avec", journal.length, "voyage(s)");
+        console.log(`✅ [saveJourneyToJournal] Voyage sauvegardé dans le journal (${journal.length} voyage(s) au total)`);
 
-        // Marquer comme non sauvegardé lors de la génération d'une nouvelle entrée dans le journal
+        // Marquer comme non sauvegardé pour sync cloud
         if (typeof window.markAsUnsaved === 'function') {
             window.markAsUnsaved();
         }
 
-        // Synchroniser avec le cloud
+        // Synchroniser avec le cloud si authentifié
         if (typeof window.scheduleAutoSync === 'function') {
             window.scheduleAutoSync();
         }
 
-        // Rafraîchir le JournalManager si disponible
-        if (window.journalManager) {
-            window.journalManager.loadJournal();
-        }
+        // Afficher une notification
+        alert(`✅ Voyage "${journeyTitle}" ajouté au journal !`);
     }
 
     clearDescriptions() {
