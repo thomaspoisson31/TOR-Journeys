@@ -482,39 +482,20 @@ class JournalManager {
     }
 
     appendContent(newContent) {
-        console.log('📖 [appendContent] ========== DÉBUT AJOUT CONTENU ==========');
-        console.log('📖 [appendContent] Nouveau contenu reçu (longueur):', newContent?.length || 0);
-        console.log('📖 [appendContent] Aperçu du contenu:', newContent?.substring(0, 200));
-        
         // Ajouter du contenu en fin de journal avec la date calendrier
         const calendarDate = window.calendarManager?.currentCalendarDate;
-        console.log('📖 [appendContent] Date calendrier:', calendarDate);
         const dateStr = calendarDate ? `**${calendarDate.day} ${calendarDate.month}**` : "**Date inconnue**";
-        console.log('📖 [appendContent] Date formatée:', dateStr);
-        
-        console.log('📖 [appendContent] Contenu actuel du journal (longueur):', this.journal.content.length);
         
         if (this.journal.content.trim() !== '') {
             this.journal.content += '\n\n';
-            console.log('📖 [appendContent] Ajout de séparateur (journal non vide)');
         }
         
-        const contentToAdd = `${dateStr} - ${newContent}`;
-        console.log('📖 [appendContent] Contenu final à ajouter (longueur):', contentToAdd.length);
-        
-        this.journal.content += contentToAdd;
-        console.log('📖 [appendContent] Nouveau contenu du journal (longueur):', this.journal.content.length);
-        
+        this.journal.content += `${dateStr} - ${newContent}`;
         this.journal.metadata.lastModified = new Date().toISOString();
         this.journal.metadata.wordCount = this.journal.content.trim().split(/\s+/).filter(w => w.length > 0).length;
         
-        console.log('📖 [appendContent] Métadonnées mises à jour - mots:', this.journal.metadata.wordCount);
-        
-        console.log('📖 [appendContent] Appel de saveJournal()...');
         this.saveJournal();
-        
-        console.log("✅ [appendContent] Contenu ajouté au journal");
-        console.log('📖 [appendContent] ========== FIN AJOUT CONTENU ==========');
+        console.log("📖 Contenu ajouté au journal");
     }
 
     saveJournal() {
