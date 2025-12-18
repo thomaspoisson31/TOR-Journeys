@@ -4,6 +4,7 @@ class RandomTablesManager {
         this.contentDiv = null;
         this.checkedResults = {}; // {hash: boolean}
         this.filterTravelEventsOnly = false; // Flag pour filtrer uniquement les événements de voyage
+        this.currentDayContext = null; // Contexte de la journée de voyage
     }
 
     init() {
@@ -92,10 +93,13 @@ class RandomTablesManager {
         }
     }
 
-    openModal() {
+    openModal(dayContext = null) {
         if (!this.modal || !this.contentDiv) return;
 
-        console.log("🎲 Ouverture de la modale Tables Aléatoires");
+        console.log("🎲 Ouverture de la modale Tables Aléatoires", dayContext ? `avec contexte jour ${dayContext.dayIndex + 1}` : "sans contexte");
+
+        // Stocker le contexte de la journée
+        this.currentDayContext = dayContext;
 
         // Récupérer toutes les tables disponibles
         const allTables = this.collectAllTables();
@@ -132,6 +136,8 @@ class RandomTablesManager {
         if (this.modal) {
             this.modal.classList.add('hidden');
         }
+        // Réinitialiser le contexte de journée
+        this.currentDayContext = null;
     }
 
     collectAllTables() {
@@ -535,6 +541,36 @@ class RandomTablesManager {
             </div>
         `;
 
+        // Gérer l'affichage conditionnel des boutons
+        const insertButtonContainer = document.getElementById('insert-random-result-button-container');
+        if (insertButtonContainer) {
+            if (this.currentDayContext) {
+                // Mode contexte journée : afficher bouton "Insérer dans le voyage"
+                insertButtonContainer.innerHTML = `
+                    <button id="insert-random-result-to-voyage" class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors">
+                        <i class="fas fa-route mr-2"></i>Insérer dans le voyage, journée : ${this.currentDayContext.calendarDate}
+                    </button>
+                `;
+                // Ajouter l'écouteur pour l'insertion dans le voyage
+                const insertVoyageBtn = document.getElementById('insert-random-result-to-voyage');
+                if (insertVoyageBtn) {
+                    insertVoyageBtn.addEventListener('click', () => this.insertResultToVoyageDay());
+                }
+            } else {
+                // Mode normal : afficher bouton "Insérer dans le Journal"
+                insertButtonContainer.innerHTML = `
+                    <button id="insert-random-result-to-journal" class="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors">
+                        <i class="fas fa-journal-whills mr-2"></i>Insérer dans le Journal
+                    </button>
+                `;
+                // Ajouter l'écouteur pour l'insertion dans le journal
+                const insertJournalBtn = document.getElementById('insert-random-result-to-journal');
+                if (insertJournalBtn) {
+                    insertJournalBtn.addEventListener('click', () => this.insertRandomResultToJournal());
+                }
+            }
+        }
+
         // Afficher la modale de résultat
         resultModal.classList.remove('hidden');
     }
@@ -567,6 +603,42 @@ class RandomTablesManager {
             }
             
             alert('Résultat ajouté au journal !');
+        }
+    }
+
+    insertResultToVoyageDay() {
+        console.log('🗺️ [insertResultToVoyageDay] Début insertion dans la journée de voyage');
+
+        if (!this.currentDayContext) {
+            console.warn('⚠️ Pas de contexte de journée');
+            return;
+        }
+
+        // Récupérer le résultat depuis settingsManager
+        const result = window.settingsManager?.currentRandomResult;
+        if (!result) {
+            console.warn('⚠️ Aucun résultat aléatoire à insérer');
+            return;
+        }
+
+        // Nettoyer le HTML du résultat
+        let cleanResult = result.result.replace(/<[^>]*>/g, '').trim();
+
+        // Construire le texte Markdown à insérer
+        const markdownText = `\n\n**🎲 ${result.tableName}**\n${cleanResult}`;
+
+        // Insérer dans la description de la journée via VoyageManager
+        if (window.voyageManager) {
+            window.voyageManager.appendToDayDescription(this.currentDayContext.dayIndex, markdownText);
+            console.log(`✅ Résultat inséré dans la journée ${this.currentDayContext.dayIndex + 1}`);
+            
+            // Fermer la modale de résultat
+            const resultModal = document.getElementById('random-roll-result-modal');
+            if (resultModal) {
+                resultModal.classList.add('hidden');
+            }
+            
+            alert(`Résultat ajouté à la journée ${this.currentDayContext.calendarDate} !`);
         }
     }
 }

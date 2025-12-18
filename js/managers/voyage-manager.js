@@ -749,12 +749,12 @@ class VoyageManager {
 
     setupTravelEventsButtons() {
         const travelEventsBtns = document.querySelectorAll('.travel-events-btn');
-        
+
         travelEventsBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const dayIndex = parseInt(btn.dataset.dayIndex);
-                
+
                 if (!isNaN(dayIndex)) {
                     console.log(`🎲 Ouverture des Tables d'Événements de Voyage pour le jour ${dayIndex + 1}`);
                     this.openTravelEventsForDay(dayIndex);
@@ -1438,20 +1438,6 @@ class VoyageManager {
                 }
             });
         });
-    }
-
-    highlightDiscoveryOnMap(discoveryName, discoveryType, highlight) {
-        if (discoveryType === 'location') {
-            // Utiliser la fonction globale pour les lieux
-            if (typeof highlightDiscoveryOnMap === 'function') {
-                highlightDiscoveryOnMap(discoveryName, discoveryType, highlight);
-            }
-        } else if (discoveryType === 'region') {
-            // Utiliser la fonction globale pour les régions
-            if (typeof highlightDiscoveryOnMap === 'function') {
-                highlightDiscoveryOnMap(discoveryName, discoveryType, highlight);
-            }
-        }
     }
 
     extendDay(dayIndex) {
@@ -2270,20 +2256,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
             totalDays: this.totalJourneyDays,
             generatedAt: new Date().toISOString(),
             journeyType: 'journey',
-            days: this.dayByDayData.map((dayData, index) => {
-                const dayNumber = index + 1;
-                const weatherData = this.getWeatherForDay(dayNumber);
-
-                return {
-                    dayNumber: dayNumber,
-                    calendarDate: dayData.calendarDate,
-                    weatherSymbol: weatherData?.symbol || null,
-                    weatherText: weatherData?.weather || null,
-                    discoveries: dayData.discoveries || [],
-                    description: this.journeyDescriptions[dayNumber] || null,
-                    eventResult: this.randomEvents[dayNumber] || null
-                };
-            })
+            days: []
         };
 
         // Charger le journal existant
@@ -2349,6 +2322,8 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
     }
 
     loadDescriptionsForMap() {
+        if (!this.currentPathSignature) return;
+
         const activeMapUrl = window.settingsManager?.activeMapUrl;
         if (!activeMapUrl) {
             console.warn("⚠️ Impossible de charger les descriptions: URL de carte active non trouvée.");
@@ -2359,7 +2334,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
 
         // Vérifier s'il y a un tracé
         if (!journeyPath || journeyPath.length === 0) {
-            console.log("⚠️ Pas de tracé, réinitialisation des descriptions");
+            console.log("⚠️ Pas de tracé de voyage, réinitialisation des descriptions");
             this.journeyDescriptions = {};
             return null;
         }
@@ -2384,6 +2359,32 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
             this.journeyDescriptions = {};
         }
         return null;
+    }
+
+    appendToDayDescription(dayIndex, markdownText) {
+        console.log(`📝 [appendToDayDescription] Ajout à la journée ${dayIndex + 1}`);
+
+        if (!this.dayByDayData || dayIndex >= this.dayByDayData.length) {
+            console.error("❌ Index de jour invalide");
+            return;
+        }
+
+        const dayData = this.dayByDayData[dayIndex];
+        const dayNumber = dayData.day;
+
+        // Récupérer la description existante ou initialiser
+        const currentDescription = this.journeyDescriptions[dayNumber] || '';
+
+        // Ajouter le nouveau texte
+        this.journeyDescriptions[dayNumber] = currentDescription + markdownText;
+
+        // Sauvegarder
+        this.saveDescriptionsForMap();
+
+        // Re-render pour afficher la mise à jour
+        this.renderAllDays();
+
+        console.log(`✅ Description mise à jour pour le jour ${dayNumber}`);
     }
 
     clearDescriptions() {
