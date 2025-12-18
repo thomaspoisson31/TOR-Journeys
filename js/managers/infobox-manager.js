@@ -1863,7 +1863,7 @@ class InfoBoxManager {
             }
 
             // Re-render
-            if (typeof renderLocations === 'function') {
+            if (window.renderLocations) {
                 window.renderLocations(); // Appel explicite à la fonction globale
             }
         } else if (this.currentType === 'character') {
