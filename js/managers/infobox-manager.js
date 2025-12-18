@@ -305,7 +305,7 @@ class InfoBoxManager {
         const rumeursTabButton = document.querySelector('.tab-button[data-tab="rumeurs-traditions"]');
         if (rumeursTabButton) {
             const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
-            const rumeursValides = rumeurs.filter(r => r && r !== "A définir");
+            const rumeursValides = rumeurs.filter(r => r && r !== "A definir");
             const hasTradition = item.Tradition_Ancienne && item.Tradition_Ancienne.trim() !== '';
             const hasContent = rumeursValides.length > 0 || hasTradition;
             const icon = rumeursTabButton.querySelector('i');
@@ -874,7 +874,7 @@ class InfoBoxManager {
             if (type === 'region') {
                 // Pour les régions, on suppose que 'Rumeur' est une chaîne unique ou 'Rumeurs' un tableau
                 const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
-                rumeursArray = rumeurs.filter(r => r && r !== "A définir");
+                rumeursArray = rumeurs.filter(r => r && r !== "A definir");
             } else { // Pour les lieux, on suppose que 'Rumeurs' est déjà un tableau ou une chaîne séparée par '---'
                 const rumeursText = Array.isArray(item.Rumeurs) ? item.Rumeurs.join('\n\n---\n\n') : (item.Rumeur || '');
                 rumeursArray = rumeursText.split(/\n---\n/).map(r => r.trim()).filter(r => r !== '');
@@ -2106,7 +2106,7 @@ class InfoBoxManager {
         if (!this.currentItem) return;
 
         const rumeurs = this.currentItem.Rumeurs || (this.currentItem.Rumeur ? [this.currentItem.Rumeur] : []);
-        const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
+        const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A definir");
 
         if (rumeursValides.length === 0) return;
 
@@ -2162,7 +2162,29 @@ class InfoBoxManager {
         }
     }
 
-    async openLibraryForEdit() {
+    async openRandomTableFromInfoBox(tableData) {
+        console.log('🎲 [openRandomTableFromInfoBox] Ouverture table:', tableData.name);
+        console.log('🎲 [openRandomTableFromInfoBox] Contexte de journée actuel:', this.currentDayContext);
+
+        if (!window.randomTablesManager) {
+            console.error('❌ RandomTablesManager non disponible');
+            return;
+        }
+
+        // Transmettre le contexte de journée si présent
+        const dayContext = this.currentDayContext;
+
+        // Ouvrir la modale des tables aléatoires avec le contexte
+        window.randomTablesManager.openModal(dayContext);
+
+        // Lancer directement le tirage sur cette table
+        setTimeout(() => {
+            window.randomTablesManager.rollOnTable(tableData);
+        }, 100);
+    }
+
+
+    openLibraryForEdit() {
         const modal = document.getElementById('library-selection-modal');
         const content = document.getElementById('library-selection-content');
         const empty = document.getElementById('library-selection-empty');
