@@ -666,7 +666,7 @@ class VoyageManager {
                 // Icône de dé si des tables existent
                 const diceIcon = hasRandomTables ? ' <i class="fas fa-dice text-xs" style="color: #940000;" title="Tables d\'événements disponibles"></i>' : '';
 
-                return `<span class="discovery-badge text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" onclick="event.stopPropagation(); window.voyageManager.openDiscoveryFromHeader('${discovery.name}', '${discovery.type}')">${discovery.name}${diceIcon}</span>`;
+                return `<span class="discovery-badge text-xs px-2 py-1 bg-gray-200 rounded text-gray-700" title="${discovery.name}" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" onclick="event.stopPropagation(); window.voyageManager.openDiscoveryFromHeader('${discovery.name}', '${discovery.type}', ${i})">${discovery.name}${diceIcon}</span>`;
             }).join('');
 
             // Carte du jour avec en-tête cliquable
@@ -772,9 +772,9 @@ class VoyageManager {
                 dayIndex: dayIndex,
                 calendarDate: dayData.calendarDate
             };
-            
+
             console.log(`🎲 Ouverture des Tables d'Événements avec contexte:`, dayContext);
-            
+
             // Stocker temporairement qu'on veut uniquement les tables d'événements de voyage
             window.randomTablesManager.filterTravelEventsOnly = true;
             window.randomTablesManager.openModal(dayContext);
@@ -1660,35 +1660,40 @@ class VoyageManager {
         console.log(`✅ Événements aléatoires décalés`);
     }
 
-    openDiscoveryFromHeader(discoveryName, discoveryType) {
-        console.log(`📍 Ouverture de la découverte depuis le header: ${discoveryName} (${discoveryType})`);
+    openDiscoveryFromHeader(discoveryName, discoveryType, dayIndex = null) {
+        console.log(`📍 Ouverture de la découverte depuis l'en-tête:`, discoveryName, discoveryType, `dayIndex:`, dayIndex);
 
-        // Récupérer les données de la découverte
-        let discoveryData = null;
+        let discovery = null;
 
-        if (discoveryType === 'location' && typeof locationsData !== 'undefined') {
-            discoveryData = locationsData.locations.find(loc => loc.name === discoveryName);
-        } else if (discoveryType === 'region' && typeof regionsData !== 'undefined') {
-            discoveryData = regionsData.regions.find(reg => reg.name === discoveryName);
+        if (discoveryType === 'location') {
+            discovery = window.locationsData?.locations?.find(loc => loc.name === discoveryName);
+        } else if (discoveryType === 'region') {
+            discovery = window.regionsData?.regions?.find(reg => reg.name === discoveryName);
         }
 
-        if (!discoveryData) {
-            console.warn(`⚠️ Découverte non trouvée: ${discoveryName} (${discoveryType})`);
-            return;
-        }
-
-        // Ouvrir l'infobox avec ces données
-        if (window.infoBoxManager) {
-            // Créer un événement factice pour l'infobox
+        if (discovery && window.infoBoxManager) {
+            // Créer un événement simulé pour le positionnement
             const fakeEvent = {
-                stopPropagation: () => {},
-                preventDefault: () => {}
+                clientX: window.innerWidth / 2,
+                clientY: window.innerHeight / 2,
+                type: 'click'
             };
 
-            window.infoBoxManager.showInfoBox(fakeEvent, discoveryData, discoveryType);
-            console.log(`✅ Infobox ouverte pour ${discoveryName}`);
+            // Si un dayIndex est fourni, stocker le contexte de la journée dans l'InfoBoxManager
+            if (dayIndex !== null && this.dayByDayData && this.dayByDayData[dayIndex]) {
+                const dayContext = {
+                    dayIndex: dayIndex,
+                    calendarDate: this.dayByDayData[dayIndex].calendarDate
+                };
+                window.infoBoxManager.currentDayContext = dayContext;
+                console.log(`📅 Contexte de journée transmis à l'InfoBox:`, dayContext);
+            } else {
+                window.infoBoxManager.currentDayContext = null;
+            }
+
+            window.infoBoxManager.showInfoBox(fakeEvent, discovery, discoveryType);
         } else {
-            console.warn(`⚠️ InfoBoxManager non disponible`);
+            console.warn(`⚠️ Découverte non trouvée:`, discoveryName, discoveryType);
         }
     }
 

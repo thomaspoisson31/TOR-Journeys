@@ -17,6 +17,9 @@ class InfoBoxManager {
         // Stack pour la navigation arrière
         this.previousInfoBox = null;
 
+        // Variable pour stocker le contexte de la journée actuelle (pour les tables aléatoires)
+        this.currentDayContext = null;
+
         // Initialiser l'UploadManager
         this.uploadManager = new UploadManager();
 
@@ -99,6 +102,27 @@ class InfoBoxManager {
         this.currentType = type;
         this.isEditMode = false;
 
+        // --- Gestion du contexte de journée ---
+        // Si l'événement provient d'une journée spécifique (ex: clic sur une carte de voyage)
+        // et que l'élément lié est un lieu/région, stocker le contexte de journée.
+        if (event && event.detail && event.detail.day && (type === 'location' || type === 'region')) {
+            console.log("📅 Détection d'un contexte de journée:", event.detail.day);
+            this.currentDayContext = event.detail.day;
+        } else if (type === 'location' || type === 'region') {
+            // Si on ouvre un lieu/région sans contexte de journée explicite, réinitialiser le contexte.
+            // Cela garantit que les tirages aléatoires se font sans contexte si l'origine n'est pas une journée.
+            console.log("📅 Réinitialisation du contexte de journée car l'origine n'est pas une journée.");
+            this.currentDayContext = null;
+        } else {
+            // Pour les personnages ou si le contexte n'est pas pertinent, on le laisse tel quel ou on le réinitialise.
+            // La logique exacte dépend de si on veut *perpétuer* un contexte de journée pour un personnage lié à une journée.
+            // Pour l'instant, on le réinitialise pour les types non-lieu/région pour éviter des effets de bord.
+             console.log("📅 Réinitialisation du contexte de journée car le type n'est pas lieu/région.");
+            this.currentDayContext = null;
+        }
+        // -------------------------------------
+
+
         // Toujours forcer le mode étendu
         this.isExpanded = true;
         infoBox.classList.add('expanded');
@@ -159,6 +183,9 @@ class InfoBoxManager {
                 infoBox.classList.remove('expanded');
                 // Réinitialiser previousInfoBox dans tous les cas
                 this.previousInfoBox = null;
+                // Réinitialiser le contexte de journée lors de la fermeture complète
+                this.currentDayContext = null;
+                console.log("📅 Contexte de journée réinitialisé lors de la fermeture complète.");
 
                 // Si on ferme une infobox de personnage et que la modale personnages existe, la rouvrir
                 const charactersModal = document.getElementById('characters-modal');
@@ -632,7 +659,7 @@ class InfoBoxManager {
             if (rumeursSection && rumeursContent) {
                 // Normaliser les rumeurs en tableau
                 const rumeurs = item.Rumeurs || (item.Rumeur ? [item.Rumeur] : []);
-                const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A définir");
+                const rumeursValides = rumeurs.filter(rumeur => rumeur && rumeur !== "A definir");
 
                 // Mettre à jour le titre avec icône dé si plus d'une rumeur
                 const titleElement = document.getElementById('rumeurs-title');
@@ -835,12 +862,6 @@ class InfoBoxManager {
         const personnagesTab = document.getElementById('personnages-tab');
         if (personnagesTab && (type === 'location' || type === 'region')) {
             this.renderPersonnagesTabEdit();
-        }
-
-        // Onglet Lieux / Régions (mode édition pour les personnages)
-        const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
-        if (lieuxRegionsTab && type === 'character') {
-            this.renderLieuxRegionsTabEdit();
         }
 
         // Onglet Rumeurs et Traditions (mode édition)
@@ -2118,96 +2139,27 @@ class InfoBoxManager {
     }
 
     rollOnTable(tableIndex) {
-        console.log(`🎲 [DEBUG] rollOnTable appelé avec index: ${tableIndex}`);
-
-        const table = this.currentItem.RandomTables[tableIndex];
-        console.log(`📋 [DEBUG] Table récupérée:`, table);
-
-        if (!table || !table.entries || table.entries.length === 0) {
-            console.error('❌ Table invalide ou vide');
-            console.log('🔍 [DEBUG] État de la table:', {
-                tableExists: !!table,
-                entriesExists: !!(table?.entries),
-                entriesLength: table?.entries?.length || 0
-            });
+        if (!this.currentItem || !this.currentItem.RandomTables) {
+            console.warn('⚠️ Aucune table disponible');
             return;
         }
 
-        // Tirer un résultat aléatoire
-        const randomIndex = Math.floor(Math.random() * table.entries.length);
-        const result = table.entries[randomIndex];
-
-        console.log(`🎲 [DEBUG] Résultat du tirage:`, {
-            randomIndex,
-            result,
-            resultType: typeof result
-        });
-
-        // Formater le résultat pour l'affichage
-        let formattedResult = '';
-        let rawContent = '';
-
-        if (typeof result === 'object' && result !== null) {
-            // Si c'est un objet, formater les propriétés
-            const entries = Object.entries(result);
-
-            // Trouver le "Dé du destin" s'il existe
-            const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
-            const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
-
-            if (otherEntries.length > 0) {
-                const [mainKey, mainValue] = otherEntries[0];
-                rawContent = mainValue;
-
-                // Afficher la valeur principale avec le dé du destin entre parenthèses si présent
-                if (fateEntry) {
-                    formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
-                } else {
-                    formattedResult = `<span style="font-weight: 600;">${mainValue}</span>`;
-                }
-
-                // Ajouter les autres propriétés s'il y en a sur la même ligne
-                for (let i = 1; i < otherEntries.length; i++) {
-                    const [key, value] = otherEntries[i];
-                    formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
-                }
-            } else if (fateEntry) {
-                rawContent = fateEntry[1];
-                formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
-            }
-        } else {
-            // Si c'est une chaîne simple
-            rawContent = result;
-            formattedResult = `<span style="font-weight: 600;">${result}</span>`;
+        const table = this.currentItem.RandomTables[tableIndex];
+        if (!table) {
+            console.warn('⚠️ Table non trouvée à l\'index', tableIndex);
+            return;
         }
 
-        // Générer un hash unique pour ce résultat
-        const resultHash = window.randomTablesManager ?
-            window.randomTablesManager.generateResultHash(table.name, rawContent) :
-            `result_${Date.now()}`;
-        const isChecked = window.randomTablesManager && window.randomTablesManager.checkedResults[resultHash] || false;
+        console.log('🎲 Tirage sur la table:', table.name, 'avec contexte:', this.currentDayContext);
 
-        // Préparer le HTML du résultat avec checkbox
-        const resultHtml = `
-            <div class="p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
-                <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat (${randomIndex + 1}/${table.entries.length}) :</div>
-                <div class="flex items-start gap-3" style="color: #1f2937;">
-                    <input type="checkbox"
-                           class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer"
-                           data-result-hash="${resultHash}"
-                           ${isChecked ? 'checked' : ''}
-                           onchange="window.randomTablesManager && window.randomTablesManager.toggleResultChecked('${resultHash}', this.checked)">
-                    <div class="flex-1">${formattedResult}</div>
-                </div>
-            </div>
-        `;
-
-        // Utiliser la modale de résultat (même méthode que RandomTablesManager)
+        // Transmettre le contexte de journée au RandomTablesManager
         if (window.randomTablesManager) {
-            window.randomTablesManager.showResult(table.name, resultHtml);
+            if (this.currentDayContext) {
+                window.randomTablesManager.currentDayContext = this.currentDayContext;
+                console.log('📅 Contexte de journée transmis au RandomTablesManager:', this.currentDayContext);
+            }
+            window.randomTablesManager.rollOnTable(table);
         }
-
-        console.log(`🎲 Tirage sur "${table.name}":`, result);
     }
 
     async openLibraryForEdit() {
@@ -2911,178 +2863,6 @@ class InfoBoxManager {
         personnagesTab.innerHTML = html;
 
         console.log(`✅ [renderPersonnagesTabEdit] Rendu terminé avec ${availableCharacters.length} personnage(s)`);
-    }
-
-
-    renderLieuxRegionsTabRead() {
-        const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
-        const character = this.currentItem;
-
-        console.log('🗺️ [renderLieuxRegionsTabRead] ========== DÉBUT DU RENDU ==========');
-
-        if (!lieuxRegionsTab) {
-            console.error('❌ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab non trouvé');
-            return;
-        }
-
-        console.log('✅ [renderLieuxRegionsTabRead] Onglet lieux-regions-tab trouvé');
-
-        const textView = lieuxRegionsTab.querySelector('.text-view');
-        if (!textView) return;
-
-        console.log('🗺️ [renderLieuxRegionsTabRead] Personnage complet:', character);
-
-        if (!character) {
-            console.error('❌ [renderLieuxRegionsTabRead] Aucun personnage actuel');
-            return;
-        }
-
-        console.log(`🗺️ [renderLieuxRegionsTabRead] Rendu pour personnage "${character.name}"`);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedLocationIds:`, character.associatedLocations);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] associatedRegionIds:`, character.associatedRegions);
-        console.log(`🗺️ [renderLieuxRegionsTabRead] Type de associatedLocationIds:`, typeof character.associatedLocations, Array.isArray(character.associatedLocations));
-
-        const associatedLocationIds = character.associatedLocations || [];
-        const associatedRegionIds = character.associatedRegions || [];
-
-        // Récupérer les lieux depuis window.locationsData
-        const locationsData = window.locationsData || { locations: [] };
-        const associatedLocations = associatedLocationIds
-            .map(id => locationsData.locations.find(loc => String(loc.id) === String(id)))
-            .filter(loc => loc !== undefined);
-
-        console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedLocations.length} lieux associés trouvés`);
-
-        // Récupérer les régions depuis window.regionsData
-        const regionsData = window.regionsData || { regions: [] };
-        const associatedRegions = associatedRegionIds
-            .map(id => regionsData.regions.find(reg => String(reg.id) === String(id)))
-            .filter(reg => reg !== undefined);
-
-        console.log(`🗺️ [renderLieuxRegionsTabRead] ${associatedRegions.length} régions associées trouvées`);
-
-        let html = '<div class="p-4 space-y-4">';
-
-        // Section Lieux
-        html += '<div>';
-        html += '<h3 class="text-lg font-semibold mb-3 flex items-center"><i class="fas fa-map-marker-alt mr-2"></i>Lieux associés</h3>';
-
-        if (associatedLocations.length > 0) {
-            html += '<div class="space-y-2">';
-            associatedLocations.forEach(location => {
-                const colorClass = location.color ? `bg-${location.color}-100 border-${location.color}-500` : 'bg-gray-100 border-gray-500';
-                html += `
-                    <label class="flex items-center p-3 rounded-lg border-2 ${colorClass} cursor-pointer hover:bg-opacity-80 transition-colors" onclick="window.infoBoxManager.navigateToLocation(event, '${location.id}')">
-                        <span class="text-gray-800 font-medium">${location.name}</span>
-                    </label>
-                `;
-            });
-            html += '</div>';
-        } else {
-            html += '<p class="text-gray-500 italic">Aucun lieu associé</p>';
-        }
-
-        html += '</div>';
-
-        // Section Régions
-        html += '<div>';
-        html += '<h3 class="text-lg font-semibold mb-3 flex items-center"><i class="fas fa-mountain mr-2"></i>Régions associées</h3>';
-
-        if (associatedRegions.length > 0) {
-            html += '<div class="space-y-2">';
-            associatedRegions.forEach(region => {
-                const colorClass = region.color ? `bg-${region.color}-100 border-${region.color}-500` : 'bg-gray-100 border-gray-500';
-                html += `
-                    <label class="flex items-center p-3 rounded-lg border-2 ${colorClass} cursor-pointer hover:bg-opacity-80 transition-colors" onclick="window.infoBoxManager.navigateToRegion(event, '${region.id}')">
-                        <span class="text-gray-800 font-medium">${region.name}</span>
-                    </label>
-                `;
-            });
-            html += '</div>';
-        } else {
-            html += '<p class="text-gray-500 italic">Aucune région associée</p>';
-        }
-
-        html += '</div>';
-        html += '</div>';
-
-        textView.innerHTML = html;
-
-        console.log('🗺️ [renderLieuxRegionsTabRead] ========== FIN DU RENDU ==========');
-    }
-
-    renderLieuxRegionsTabEdit() {
-        const lieuxRegionsContent = document.getElementById('lieux-regions-content');
-        if (!lieuxRegionsContent) return;
-
-        // Récupérer les IDs des lieux/régions associés
-        const associatedLocationRegionIds = this.currentItem.associatedLocations || this.currentItem.associatedRegions || [];
-
-        if (!window.locationsManager && !window.regionsManager) {
-            lieuxRegionsContent.innerHTML = '<p class="text-gray-400 italic text-sm">Gestionnaire de lieux/régions non disponible.</p>';
-            return;
-        }
-
-        // Combiner les lieux et régions pour le filtrage
-        const allLocations = window.locationsManager?.locationsData?.locations || [];
-        const allRegions = window.regionsManager?.regionsData?.regions || [];
-        const combinedItems = [...allLocations, ...allRegions];
-
-        // Filtrer les lieux/régions de la carte active et trier par ordre alphabétique
-        const activeMapId = window.settingsManager?.activeMapUrl;
-        const availableItems = combinedItems
-            .filter(item => !item.mapId || !activeMapId || item.mapId === activeMapId)
-            .sort((a, b) => a.name.localeCompare(b.name));
-
-        if (availableItems.length === 0) {
-            lieuxRegionsContent.innerHTML = '<p class="text-gray-400 italic text-sm">Aucun lieu ou région disponible sur cette carte.</p>';
-            return;
-        }
-
-        const html = `
-            <div class="space-y-2 mb-4">
-                ${availableItems.map(item => {
-                    const isAssociated = associatedLocationRegionIds.includes(String(item.id));
-                    const isRegion = item.hasOwnProperty('Tradition_Ancienne'); // Heuristic to determine if it's a region
-                    const thumbnailImage = item.images?.find(img => img.type === 'vignette');
-                    const itemType = isRegion ? 'Région' : 'Lieu';
-
-                    return `
-                        <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
-                            <input type="checkbox"
-                                   class="location-region-checkbox h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                                   data-item-id="${item.id}"
-                                   data-item-type="${isRegion ? 'region' : 'location'}"
-                                   ${isAssociated ? 'checked' : ''}>
-                            ${thumbnailImage ? `
-                                <img src="${thumbnailImage.url}" alt="${item.name}"
-                                     class="w-10 h-10 rounded-lg object-cover border-2 border-purple-500">
-                            ` : `
-                                <div class="w-10 h-10 rounded-lg bg-gray-600 flex items-center justify-center border-2 border-purple-500">
-                                    <i class="fas ${isRegion ? 'fa-map-marked-alt' : 'fa-map-marker-alt'} text-sm text-purple-400"></i>
-                                </div>
-                            `}
-                            <div class="flex-1">
-                                <div class="font-medium text-white text-sm">${item.name}</div>
-                                <span class="inline-block px-2 py-0.5 text-xs rounded bg-purple-600 text-white">
-                                    ${itemType}
-                                </span>
-                            </div>
-                        </label>
-                    `;
-                }).join('')}
-            </div>
-            <div class="flex space-x-2">
-                <button onclick="window.infoBoxManager.saveAssociatedCharactersForCharacter()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-                    <i class="fas fa-save mr-1"></i>Sauvegarder
-                </button>
-                <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-600 text-white px-3 py-1 rounded">
-                    <i class="fas fa-times mr-1"></i>Annuler
-                </button>
-            </div>
-        `;
-
-        lieuxRegionsContent.innerHTML = html;
     }
 
 
