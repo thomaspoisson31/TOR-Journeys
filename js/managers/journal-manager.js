@@ -1,10 +1,10 @@
 class JournalManager {
     constructor() {
         this.journal = {
-            entries: [], // Tableau d'entrées séparées
+            content: '', // Texte continu du journal
             metadata: {
                 lastModified: null,
-                totalEntries: 0
+                wordCount: 0
             }
         };
         this.objectives = [];
@@ -13,7 +13,7 @@ class JournalManager {
         this.journalEmpty = null;
         this.currentTab = 'journal-list';
         this.exportJournalMarkdownBtn = null;
-        this.editingEntryId = null; // ID de l'entrée en cours d'édition
+        this.isEditMode = false; // Mode édition activé/désactivé
     }
 
     init() {
@@ -72,6 +72,12 @@ class JournalManager {
             addObjectiveBtn.addEventListener('click', () => this.addObjective());
         }
 
+        // Bouton d'édition du journal
+        const editJournalBtn = document.getElementById('edit-journal-btn');
+        if (editJournalBtn) {
+            editJournalBtn.addEventListener('click', () => this.toggleEditMode());
+        }
+
         // Écouteur pour le bouton d'export Markdown
         if (this.exportJournalMarkdownBtn) {
             this.exportJournalMarkdownBtn.addEventListener('click', () => this.exportJournalAsMarkdown());
@@ -119,37 +125,44 @@ class JournalManager {
         if (savedJournal && savedJournal !== 'null' && savedJournal !== 'undefined') {
             try {
                 const parsed = JSON.parse(savedJournal);
-                // Nouvelle structure avec entrées
-                if (parsed.entries !== undefined) {
-                    this.journal = parsed;
-                    console.log(`📖 Journal chargé : ${this.journal.entries.length} entrée(s)`);
-                } else {
-                    // Nouveau journal vide
+                // Gérer la migration de l'ancien format (tableau) vers le nouveau (objet)
+                if (Array.isArray(parsed)) {
+                    console.log(`📖 Migration de ${parsed.length} voyage(s) depuis l'ancien format`);
                     this.journal = {
-                        entries: [],
+                        content: '',
                         metadata: {
-                            lastModified: null,
-                            totalEntries: 0
+                            lastModified: new Date().toISOString(),
+                            wordCount: 0
                         }
                     };
-                    console.log("📖 Journal initialisé (ancien format ignoré)");
+                } else if (parsed.content !== undefined) {
+                    this.journal = parsed;
+                    console.log(`📖 Journal chargé : ${this.journal.metadata.wordCount} mots`);
+                } else {
+                    this.journal = {
+                        content: '',
+                        metadata: {
+                            lastModified: null,
+                            wordCount: 0
+                        }
+                    };
                 }
             } catch (e) {
                 console.error("Erreur lors du chargement du journal:", e);
                 this.journal = {
-                    entries: [],
+                    content: '',
                     metadata: {
                         lastModified: null,
-                        totalEntries: 0
+                        wordCount: 0
                     }
                 };
             }
         } else {
             this.journal = {
-                entries: [],
+                content: '',
                 metadata: {
                     lastModified: null,
-                    totalEntries: 0
+                    wordCount: 0
                 }
             };
             console.log("📖 Nouveau journal initialisé");
@@ -205,7 +218,7 @@ class JournalManager {
     renderJournal() {
         if (!this.journalContent || !this.journalEmpty) return;
 
-        if (!this.journal.entries || this.journal.entries.length === 0) {
+        if (!this.journal.content || this.journal.content.trim() === '') {
             this.journalContent.classList.add('hidden');
             this.journalEmpty.classList.remove('hidden');
             return;
@@ -214,62 +227,50 @@ class JournalManager {
         this.journalContent.classList.remove('hidden');
         this.journalEmpty.classList.add('hidden');
 
-        // Afficher toutes les entrées
-        let html = '<div class="space-y-4 p-4">';
-        
-        this.journal.entries.forEach((entry, index) => {
-            const isEditing = this.editingEntryId === entry.id;
-            
-            html += `
-                <div class="entry-card border border-gray-300 rounded-lg overflow-hidden" data-entry-id="${entry.id}">
-                    <div class="entry-header bg-gray-50 p-3 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold" style="color: #940000;">${entry.date.day} ${entry.date.month}</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            ${!isEditing ? `
-                                <button class="edit-entry-btn text-blue-600 hover:text-blue-700" data-entry-id="${entry.id}" title="Éditer">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            ` : ''}
-                            <button class="delete-entry-btn text-red-600 hover:text-red-700" data-entry-id="${entry.id}" title="Supprimer">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="entry-content p-4 bg-white">
-                        ${isEditing ? `
-                            <textarea class="entry-textarea w-full p-2 border border-gray-300 rounded resize-none" 
-                                      style="font-family: 'Merriweather', serif; font-size: 0.875rem; min-height: 100px;"
-                                      data-entry-id="${entry.id}">${this.escapeHtml(entry.content)}</textarea>
-                            <div class="mt-2 flex justify-end gap-2">
-                                <button class="cancel-edit-btn px-3 py-1 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded" data-entry-id="${entry.id}">
-                                    Annuler
-                                </button>
-                                <button class="save-edit-btn px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded" data-entry-id="${entry.id}">
-                                    <i class="fas fa-save mr-1"></i>Enregistrer
-                                </button>
-                            </div>
-                        ` : `
-                            <div class="prose prose-sm max-w-none" style="font-family: 'Merriweather', serif; font-size: 0.875rem; color: #1f2937;">
-                                ${entry.content.replace(/\n/g, '<br>')}
-                            </div>
-                        `}
+        if (this.isEditMode) {
+            // Mode édition : afficher une textarea
+            this.journalContent.innerHTML = `
+                <div class="journal-edit-container">
+                    <textarea id="journal-edit-textarea" 
+                              class="w-full p-4 border border-gray-300 rounded-lg resize-none"
+                              style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6;"
+                              placeholder="Écrivez votre journal d'aventure...">${this.escapeHtml(this.journal.content)}</textarea>
+                    <div class="mt-3 flex justify-between items-center text-sm text-gray-500 flex-shrink-0">
+                        <span>${this.journal.metadata.wordCount} mots</span>
+                        <button id="save-journal-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                            <i class="fas fa-save mr-2"></i>Enregistrer
+                        </button>
                     </div>
                 </div>
             `;
-        });
-        
-        html += '</div>';
-        html += `
-            <div class="mt-3 text-sm text-gray-500 px-4">
-                ${this.journal.entries.length} entrée(s)
-                ${this.journal.metadata.lastModified ? `• Dernière modification : ${new Date(this.journal.metadata.lastModified).toLocaleDateString('fr-FR')}` : ''}
-            </div>
-        `;
-        
-        this.journalContent.innerHTML = html;
-        this.setupEntryEventListeners();
+
+            // Ajouter l'événement de sauvegarde
+            const saveBtn = document.getElementById('save-journal-btn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => this.saveJournalContent());
+            }
+
+            // Auto-update word count
+            const textarea = document.getElementById('journal-edit-textarea');
+            if (textarea) {
+                textarea.addEventListener('input', () => {
+                    const words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+                    this.journalContent.querySelector('.text-sm.text-gray-500 span').textContent = `${words} mots`;
+                });
+            }
+        } else {
+            // Mode lecture : afficher le texte formaté en Markdown
+            const htmlContent = this.simpleMarkdown(this.journal.content);
+            this.journalContent.innerHTML = `
+                <div class="journal-read-container prose prose-sm max-w-none p-4" style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6; color: #1f2937;">
+                    ${htmlContent}
+                </div>
+                <div class="mt-3 text-sm text-gray-500 px-4">
+                    ${this.journal.metadata.wordCount} mots
+                    ${this.journal.metadata.lastModified ? `• Dernière modification : ${new Date(this.journal.metadata.lastModified).toLocaleDateString('fr-FR')}` : ''}
+                </div>
+            `;
+        }
     }
 
     openJourneyInVoyageModal(journeyIndex) {
@@ -449,132 +450,52 @@ class JournalManager {
         }
     }
 
-    setupEntryEventListeners() {
-        // Boutons d'édition
-        document.querySelectorAll('.edit-entry-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const entryId = e.currentTarget.dataset.entryId;
-                this.editingEntryId = entryId;
-                this.renderJournal();
-            });
-        });
-
-        // Boutons de sauvegarde
-        document.querySelectorAll('.save-edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const entryId = e.currentTarget.dataset.entryId;
-                this.saveEntryEdit(entryId);
-            });
-        });
-
-        // Boutons d'annulation
-        document.querySelectorAll('.cancel-edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.editingEntryId = null;
-                this.renderJournal();
-            });
-        });
-
-        // Boutons de suppression
-        document.querySelectorAll('.delete-entry-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const entryId = e.currentTarget.dataset.entryId;
-                this.deleteEntry(entryId);
-            });
-        });
+    toggleEditMode() {
+        this.isEditMode = !this.isEditMode;
+        this.renderJournal();
+        console.log(`📖 Mode édition : ${this.isEditMode ? 'activé' : 'désactivé'}`);
     }
 
-    saveEntryEdit(entryId) {
-        const textarea = document.querySelector(`.entry-textarea[data-entry-id="${entryId}"]`);
+    saveJournalContent() {
+        const textarea = document.getElementById('journal-edit-textarea');
         if (!textarea) return;
 
-        const entry = this.journal.entries.find(e => e.id === entryId);
-        if (!entry) return;
-
-        entry.content = textarea.value;
-        entry.timestamp = new Date().toISOString();
-        
+        this.journal.content = textarea.value;
         this.journal.metadata.lastModified = new Date().toISOString();
-        this.saveJournal();
-        
-        this.editingEntryId = null;
-        this.renderJournal();
-        console.log(`📖 Entrée ${entryId} mise à jour`);
-    }
+        this.journal.metadata.wordCount = textarea.value.trim().split(/\s+/).filter(w => w.length > 0).length;
 
-    deleteEntry(entryId) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cette entrée ?')) return;
+        localStorage.setItem('travelJournal', JSON.stringify(this.journal));
 
-        this.journal.entries = this.journal.entries.filter(e => e.id !== entryId);
-        this.journal.metadata.totalEntries = this.journal.entries.length;
-        this.journal.metadata.lastModified = new Date().toISOString();
-        
-        this.saveJournal();
+        // Marquer comme non sauvegardé
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        // Synchroniser avec le cloud si authentifié
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+
+        this.isEditMode = false;
         this.renderJournal();
-        console.log(`📖 Entrée ${entryId} supprimée`);
+        console.log("📖 Journal sauvegardé");
     }
 
     appendContent(newContent) {
+        // Ajouter du contenu en fin de journal avec la date calendrier
         const calendarDate = window.calendarManager?.currentCalendarDate;
+        const dateStr = calendarDate ? `**${calendarDate.day} ${calendarDate.month}**` : "**Date inconnue**";
         
-        if (!calendarDate) {
-            console.warn('📖 Pas de date calendrier disponible');
-            return;
+        if (this.journal.content.trim() !== '') {
+            this.journal.content += '\n\n';
         }
-
-        // Créer une nouvelle entrée
-        const newEntry = {
-            id: `entry_${Date.now()}`,
-            date: {
-                day: calendarDate.day,
-                month: calendarDate.month
-            },
-            content: newContent,
-            timestamp: new Date().toISOString()
-        };
-
-        // Trouver la position d'insertion chronologique
-        const insertIndex = this.findInsertionIndex(newEntry.date);
         
-        // Insérer à la bonne position
-        this.journal.entries.splice(insertIndex, 0, newEntry);
-        
-        this.journal.metadata.totalEntries = this.journal.entries.length;
+        this.journal.content += `${dateStr} - ${newContent}`;
         this.journal.metadata.lastModified = new Date().toISOString();
+        this.journal.metadata.wordCount = this.journal.content.trim().split(/\s+/).filter(w => w.length > 0).length;
         
         this.saveJournal();
-        console.log(`📖 Nouvelle entrée ajoutée à la position ${insertIndex}`);
-    }
-
-    findInsertionIndex(newDate) {
-        // Récupérer l'ordre des mois
-        const calendarData = window.calendarData;
-        if (!calendarData) return this.journal.entries.length;
-
-        const getMonthIndex = (monthName) => {
-            return calendarData.findIndex(m => m.name === monthName);
-        };
-
-        const newMonthIndex = getMonthIndex(newDate.month);
-        
-        // Parcourir les entrées pour trouver où insérer
-        for (let i = 0; i < this.journal.entries.length; i++) {
-            const entry = this.journal.entries[i];
-            const entryMonthIndex = getMonthIndex(entry.date.month);
-            
-            // Comparer les mois
-            if (newMonthIndex < entryMonthIndex) {
-                return i;
-            } else if (newMonthIndex === entryMonthIndex) {
-                // Même mois, comparer les jours
-                if (newDate.day < entry.date.day) {
-                    return i;
-                }
-            }
-        }
-        
-        // Insérer à la fin
-        return this.journal.entries.length;
+        console.log("📖 Contenu ajouté au journal");
     }
 
     saveJournal() {
@@ -592,17 +513,13 @@ class JournalManager {
     }
 
     exportJournalAsMarkdown() {
-        if (!this.journal.entries || this.journal.entries.length === 0) {
+        if (!this.journal.content || this.journal.content.trim() === '') {
             alert("Le journal est vide");
             return;
         }
 
-        // Générer le Markdown depuis les entrées
-        let markdown = '';
-        this.journal.entries.forEach((entry, index) => {
-            if (index > 0) markdown += '\n\n';
-            markdown += `**${entry.date.day} ${entry.date.month}** - ${entry.content}`;
-        });
+        // Le contenu est déjà en Markdown
+        const markdown = this.journal.content;
 
         // Créer une modale pour afficher le Markdown et le bouton copier
         this.createMarkdownExportModal(markdown);
