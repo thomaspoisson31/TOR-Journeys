@@ -766,9 +766,18 @@ class VoyageManager {
     openTravelEventsForDay(dayIndex) {
         // Ouvrir la modale des tables aléatoires filtrée sur les événements de voyage
         if (window.randomTablesManager) {
+            // Créer le contexte de la journée
+            const dayData = this.dayByDayData[dayIndex];
+            const dayContext = {
+                dayIndex: dayIndex,
+                calendarDate: dayData.calendarDate
+            };
+            
+            console.log(`🎲 Ouverture des Tables d'Événements avec contexte:`, dayContext);
+            
             // Stocker temporairement qu'on veut uniquement les tables d'événements de voyage
             window.randomTablesManager.filterTravelEventsOnly = true;
-            window.randomTablesManager.openModal();
+            window.randomTablesManager.openModal(dayContext);
         } else {
             console.error("❌ RandomTablesManager non disponible");
         }
