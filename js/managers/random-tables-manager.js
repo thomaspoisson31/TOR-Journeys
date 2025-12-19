@@ -392,6 +392,9 @@ class RandomTablesManager {
         // Formater le résultat pour l'affichage
         let formattedResult = '';
         let rawContent = '';
+        let resultLabel = '';
+        let fateValue = '';
+        let mainText = '';
 
         if (typeof result === 'object' && result !== null) {
             // Si c'est un objet avec des propriétés
@@ -399,32 +402,62 @@ class RandomTablesManager {
 
             // Trouver le "Dé du destin" s'il existe
             const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
-            const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+            const resultEntry = entries.find(([key]) => key.toLowerCase() === 'résultat' || key.toLowerCase() === 'resultat');
+            const otherEntries = entries.filter(([key]) => 
+                !key.toLowerCase().includes('destin') && 
+                !key.toLowerCase().includes('fate') &&
+                key.toLowerCase() !== 'résultat' &&
+                key.toLowerCase() !== 'resultat'
+            );
 
+            // Récupérer le label du résultat
+            if (resultEntry) {
+                resultLabel = resultEntry[1];
+            }
+
+            // Récupérer la valeur du dé du destin
+            if (fateEntry) {
+                fateValue = fateEntry[1];
+            }
+
+            // Récupérer le texte principal
             if (otherEntries.length > 0) {
                 const [mainKey, mainValue] = otherEntries[0];
+                mainText = mainValue;
                 rawContent = mainValue;
-
-                // Afficher la valeur principale avec le dé du destin entre parenthèses si présent
-                if (fateEntry) {
-                    formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
-                } else {
-                    formattedResult = `<span style="font-weight: 600;">${mainValue}</span>`;
-                }
-
-                // Ajouter les autres propriétés s'il y en a sur la même ligne
+                
+                // Ajouter les autres propriétés s'il y en a
                 for (let i = 1; i < otherEntries.length; i++) {
                     const [key, value] = otherEntries[i];
-                    formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
+                    mainText += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
                 }
-            } else if (fateEntry) {
-                rawContent = fateEntry[1];
-                formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
+            }
+
+            // Construire le résultat formaté
+            if (resultLabel) {
+                // Format: <gras>Résultat: xxx</gras> (fate) texte normal
+                formattedResult = `<span style="font-weight: 700;">Résultat: ${resultLabel}</span>`;
+                if (fateValue) {
+                    formattedResult += ` (${fateValue})`;
+                }
+                if (mainText) {
+                    formattedResult += ` ${mainText}`;
+                }
+            } else if (mainText) {
+                // Pas de label "Résultat" explicite
+                if (fateValue) {
+                    formattedResult = `(${fateValue}) ${mainText}`;
+                } else {
+                    formattedResult = mainText;
+                }
+            } else if (fateValue) {
+                rawContent = fateValue;
+                formattedResult = fateValue;
             }
         } else {
             // Si c'est une chaîne simple
             rawContent = result;
-            formattedResult = `<span style="font-weight: 600;">${result}</span>`;
+            formattedResult = result;
         }
 
         // Générer un hash unique pour ce résultat
@@ -459,32 +492,68 @@ class RandomTablesManager {
                 // Formater le résultat
                 let formattedResult = '';
                 let rawContent = '';
+                let resultLabel = '';
+                let fateValue = '';
+                let mainText = '';
 
                 if (typeof result === 'object' && result !== null) {
                     const entries = Object.entries(result);
                     const fateEntry = entries.find(([key]) => key.toLowerCase().includes('destin') || key.toLowerCase().includes('fate'));
-                    const otherEntries = entries.filter(([key]) => !key.toLowerCase().includes('destin') && !key.toLowerCase().includes('fate'));
+                    const resultEntry = entries.find(([key]) => key.toLowerCase() === 'résultat' || key.toLowerCase() === 'resultat');
+                    const otherEntries = entries.filter(([key]) => 
+                        !key.toLowerCase().includes('destin') && 
+                        !key.toLowerCase().includes('fate') &&
+                        key.toLowerCase() !== 'résultat' &&
+                        key.toLowerCase() !== 'resultat'
+                    );
 
+                    // Récupérer le label du résultat
+                    if (resultEntry) {
+                        resultLabel = resultEntry[1];
+                    }
+
+                    // Récupérer la valeur du dé du destin
+                    if (fateEntry) {
+                        fateValue = fateEntry[1];
+                    }
+
+                    // Récupérer le texte principal
                     if (otherEntries.length > 0) {
                         const [mainKey, mainValue] = otherEntries[0];
+                        mainText = mainValue;
                         rawContent = mainValue;
-
-                        if (fateEntry) {
-                            formattedResult = `<span style="font-weight: 600;">(${fateEntry[1]}) ${mainValue}</span>`;
-                        } else {
-                            formattedResult = `<span style="font-weight: 600;">${mainValue}</span>`;
-                        }
+                        
+                        // Ajouter les autres propriétés s'il y en a
                         for (let i = 1; i < otherEntries.length; i++) {
                             const [key, value] = otherEntries[i];
-                            formattedResult += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
+                            mainText += ` <span style="font-weight: 500;">${key}:</span> ${value}`;
                         }
-                    } else if (fateEntry) {
-                        rawContent = fateEntry[1];
-                        formattedResult = `<span style="font-weight: 600;">${fateEntry[1]}</span>`;
+                    }
+
+                    // Construire le résultat formaté
+                    if (resultLabel) {
+                        // Format: <gras>Résultat: xxx</gras> (fate) texte normal
+                        formattedResult = `<span style="font-weight: 700;">Résultat: ${resultLabel}</span>`;
+                        if (fateValue) {
+                            formattedResult += ` (${fateValue})`;
+                        }
+                        if (mainText) {
+                            formattedResult += ` ${mainText}`;
+                        }
+                    } else if (mainText) {
+                        // Pas de label "Résultat" explicite
+                        if (fateValue) {
+                            formattedResult = `(${fateValue}) ${mainText}`;
+                        } else {
+                            formattedResult = mainText;
+                        }
+                    } else if (fateValue) {
+                        rawContent = fateValue;
+                        formattedResult = fateValue;
                     }
                 } else {
                     rawContent = result;
-                    formattedResult = `<span style="font-weight: 600;">${result}</span>`;
+                    formattedResult = result;
                 }
 
                 // Générer un hash unique pour ce résultat
