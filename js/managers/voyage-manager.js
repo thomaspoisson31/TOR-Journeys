@@ -361,7 +361,6 @@ class VoyageManager {
     buildAbsoluteTimeline() {
         // Récupérer le mapId de la carte active
         const activeMapUrl = window.settingsManager?.activeMapUrl;
-
         console.log(`🗺️ [buildAbsoluteTimeline] Carte active: ${activeMapUrl}`);
         console.log(`🗺️ [buildAbsoluteTimeline] journeyDiscoveries total: ${journeyDiscoveries?.length || 0}`);
 
@@ -1660,40 +1659,45 @@ class VoyageManager {
         console.log(`✅ Événements aléatoires décalés`);
     }
 
-    openDiscoveryFromHeader(discoveryName, discoveryType, dayIndex = null) {
-        console.log(`📍 Ouverture de la découverte depuis l'en-tête:`, discoveryName, discoveryType, `dayIndex:`, dayIndex);
+    openDiscoveryFromHeader(discoveryName, discoveryType, dayIndex) {
+        console.log(`🔍 Ouverture de la découverte "${discoveryName}" (${discoveryType}) depuis le jour ${dayIndex + 1}`);
 
-        let discovery = null;
-
-        if (discoveryType === 'location') {
-            discovery = window.locationsData?.locations?.find(loc => loc.name === discoveryName);
-        } else if (discoveryType === 'region') {
-            discovery = window.regionsData?.regions?.find(reg => reg.name === discoveryName);
+        // Trouver l'élément correspondant
+        let item = null;
+        if (discoveryType === 'location' && typeof locationsData !== 'undefined') {
+            item = locationsData.locations.find(loc => loc.name === discoveryName);
+        } else if (discoveryType === 'region' && typeof regionsData !== 'undefined') {
+            item = regionsData.regions.find(reg => reg.name === discoveryName);
         }
 
-        if (discovery && window.infoBoxManager) {
-            // Créer un événement simulé pour le positionnement
-            const fakeEvent = {
-                clientX: window.innerWidth / 2,
-                clientY: window.innerHeight / 2,
-                type: 'click'
-            };
+        if (!item) {
+            console.warn(`⚠️ Découverte "${discoveryName}" non trouvée`);
+            return;
+        }
 
-            // Si un dayIndex est fourni, stocker le contexte de la journée dans l'InfoBoxManager
-            if (dayIndex !== null && this.dayByDayData && this.dayByDayData[dayIndex]) {
-                const dayContext = {
+        // Récupérer les données de la journée pour le contexte
+        const dayData = this.dayByDayData[dayIndex];
+
+        // Créer un événement avec le contexte de journée
+        const fakeEvent = {
+            clientX: window.innerWidth / 2,
+            clientY: window.innerHeight / 2,
+            type: 'click',
+            stopPropagation: () => {},
+            preventDefault: () => {},
+            detail: {
+                day: {
                     dayIndex: dayIndex,
-                    calendarDate: this.dayByDayData[dayIndex].calendarDate
-                };
-                window.infoBoxManager.currentDayContext = dayContext;
-                console.log(`📅 Contexte de journée transmis à l'InfoBox:`, dayContext);
-            } else {
-                window.infoBoxManager.currentDayContext = null;
+                    calendarDate: dayData.calendarDate
+                }
             }
+        };
 
-            window.infoBoxManager.showInfoBox(fakeEvent, discovery, discoveryType);
-        } else {
-            console.warn(`⚠️ Découverte non trouvée:`, discoveryName, discoveryType);
+        console.log(`📅 Transmission du contexte de journée:`, fakeEvent.detail.day);
+
+        // Ouvrir l'InfoBox
+        if (window.infoBoxManager) {
+            window.infoBoxManager.showInfoBox(fakeEvent, item, discoveryType);
         }
     }
 
@@ -1706,7 +1710,7 @@ class VoyageManager {
         if (discoveryType === 'location') {
             // Trouver le lieu et ouvrir sa modal
             if (typeof window.locationsData !== 'undefined' && window.locationsData.locations) {
-                const location = window.locationsData.locations.find(loc => loc.name === discoveryName);
+                const location = locationsData.locations.find(loc => loc.name === discoveryName);
                 if (location) {
                     console.log(`📍 [VoyageManager] Lieu trouvé:`, location);
 

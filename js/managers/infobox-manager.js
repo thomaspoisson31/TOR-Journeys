@@ -956,7 +956,7 @@ class InfoBoxManager {
             // Nettoyer complètement l'onglet
             evenementsTab.innerHTML = '';
             const editForm = document.createElement('div');
-            editForm.className = 'edit-form p-4';
+            editForm.className = 'edit-form';
             evenementsTab.appendChild(editForm);
 
             const randomTables = item.RandomTables || [];
@@ -2150,13 +2150,14 @@ class InfoBoxManager {
             return;
         }
 
-        console.log('🎲 Tirage sur la table:', table.name, 'avec contexte:', this.currentDayContext);
+        console.log('🎲 Tirage sur la table:', table.name);
+        console.log('📅 Contexte de journée actuel:', this.currentDayContext);
 
         // Transmettre le contexte de journée au RandomTablesManager
         if (window.randomTablesManager) {
+            // Si nous avons un contexte de journée, le transmettre temporairement
             if (this.currentDayContext) {
                 window.randomTablesManager.currentDayContext = this.currentDayContext;
-                console.log('📅 Contexte de journée transmis au RandomTablesManager:', this.currentDayContext);
             }
             window.randomTablesManager.rollOnTable(table);
         }
