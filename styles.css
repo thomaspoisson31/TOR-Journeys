@@ -1883,4 +1883,6 @@ body {
 }
 
 /* Random Roll Result Modal */
-        <div id="random-roll-result-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[90]">
+#random-roll-result-modal {
+    z-index: 80;
+}
