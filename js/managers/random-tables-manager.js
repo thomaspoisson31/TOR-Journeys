@@ -433,7 +433,6 @@ class RandomTablesManager {
 
         return `
             <div class="p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
-                <div class="text-sm font-semibold mb-2" style="color: #1e40af;">Résultat (${randomIndex + 1}/${table.entries.length}) :</div>
                 <div class="flex items-start gap-3" style="color: #1f2937;">
                     <input type="checkbox" 
                            class="random-result-checkbox mt-1 w-4 h-4 cursor-pointer" 
@@ -494,8 +493,8 @@ class RandomTablesManager {
 
                 html += `
                     <div class="mb-4 p-4 rounded-lg" style="background-color: #e8f4f8; border: 1px solid #3b82f6;">
-                        <div class="text-sm font-semibold mb-2" style="color: #1e40af;">
-                            ${subtable.name || `Sous-table ${idx + 1}`} (${randomIndex + 1}/${subtable.entries.length}) :
+                        <div class="text-sm font-semibold mb-1" style="color: #1e40af;">
+                            ${subtable.name || `Sous-table ${idx + 1}`}
                         </div>
                         <div class="flex items-start gap-3" style="color: #1f2937;">
                             <input type="checkbox" 
@@ -536,7 +535,7 @@ class RandomTablesManager {
         // Afficher le résultat
         resultContent.innerHTML = `
             <div class="mb-4">
-                <h4 class="text-lg font-semibold mb-3" style="color: #940000;">${tableName}</h4>
+                <h4 class="text-lg font-semibold mb-2" style="color: #940000;">${tableName}</h4>
                 ${resultHtml}
             </div>
         `;
