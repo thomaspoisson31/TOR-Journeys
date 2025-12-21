@@ -454,40 +454,54 @@ class CharactersManager {
             const cursorClass = isAdventureMode ? 'cursor-default' : 'cursor-pointer';
             const hoverClass = isAdventureMode ? '' : 'hover:bg-gray-600';
 
+            // Tronquer la description à 150 caractères
+            const shortDescription = character.description 
+                ? (character.description.length > 150 
+                    ? character.description.substring(0, 150) + '...' 
+                    : character.description)
+                : '';
+
             return `
                 <div class="character-card bg-gray-700 rounded-lg p-4 ${hoverClass} transition-colors ${cursorClass}" 
                      data-character-id="${character.id}"
                      ${clickHandler}>
                     <div class="flex items-center space-x-4">
                         ${thumbnailImage ? `
-                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass}">
+                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0">
                                 <img src="${thumbnailImage.url}" alt="${character.name}" 
                                      class="w-full h-full object-cover" ${thumbnailStyle}>
                             </div>
                         ` : `
-                            <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass}">
+                            <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass} flex-shrink-0">
                                 <i class="fas fa-user text-2xl text-gray-400"></i>
                             </div>
                         `}
-                        <div class="flex-1">
-                            <h3 class="text-lg font-bold">${character.name}</h3>
-                            <div class="flex flex-wrap gap-2 mt-1">
-                                <span class="inline-block px-2 py-1 text-xs rounded ${typeClass}">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="text-lg font-bold">${character.name}</h3>
+                                <span class="inline-block px-2 py-1 text-xs rounded ${typeClass} flex-shrink-0">
                                     ${type}
                                 </span>
-                                ${associatedLocationNames.map(name => `
-                                    <span class="inline-block px-2 py-1 text-xs rounded bg-purple-600">
-                                        <i class="fas fa-map-marker-alt mr-1"></i>${name}
-                                    </span>
-                                `).join('')}
-                                ${associatedRegionNames.map(name => `
-                                    <span class="inline-block px-2 py-1 text-xs rounded bg-orange-600">
-                                        <i class="fas fa-mountain mr-1"></i>${name}
-                                    </span>
-                                `).join('')}
                             </div>
+                            ${shortDescription ? `
+                                <p class="text-sm text-gray-300 mb-2 line-clamp-2">${shortDescription}</p>
+                            ` : ''}
+                            ${(associatedLocationNames.length > 0 || associatedRegionNames.length > 0) ? `
+                                <div class="flex flex-wrap gap-2">
+                                    ${associatedLocationNames.map(name => `
+                                        <span class="inline-block px-2 py-1 text-xs rounded bg-purple-600">
+                                            <i class="fas fa-map-marker-alt mr-1"></i>${name}
+                                        </span>
+                                    `).join('')}
+                                    ${associatedRegionNames.map(name => `
+                                        <span class="inline-block px-2 py-1 text-xs rounded bg-orange-600">
+                                            <i class="fas fa-mountain mr-1"></i>${name}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
                         </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
+                        <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
                     </div>
                 </div>
             `;
