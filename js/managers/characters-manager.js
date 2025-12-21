@@ -226,12 +226,34 @@ class CharactersManager {
                 if (filterContainer) {
                     filterContainer.style.display = 'none';
                 }
+                
+                // Masquer les boutons d'action
+                const addBtn = document.getElementById('add-character-btn');
+                const deleteAllBtn = document.getElementById('delete-all-characters-btn');
+                const exportBtn = document.getElementById('export-characters-btn');
+                const importBtn = document.getElementById('import-characters-btn');
+                
+                if (addBtn) addBtn.style.display = 'none';
+                if (deleteAllBtn) deleteAllBtn.style.display = 'none';
+                if (exportBtn) exportBtn.style.display = 'none';
+                if (importBtn) importBtn.style.display = 'none';
             } else {
-                // Mode Normal : afficher la barre de filtres
+                // Mode Normal : afficher la barre de filtres et les boutons
                 const filterContainer = modal.querySelector('.bg-gray-700.rounded-lg.p-3');
                 if (filterContainer) {
                     filterContainer.style.display = 'flex';
                 }
+                
+                // Réafficher les boutons d'action
+                const addBtn = document.getElementById('add-character-btn');
+                const deleteAllBtn = document.getElementById('delete-all-characters-btn');
+                const exportBtn = document.getElementById('export-characters-btn');
+                const importBtn = document.getElementById('import-characters-btn');
+                
+                if (addBtn) addBtn.style.display = '';
+                if (deleteAllBtn) deleteAllBtn.style.display = '';
+                if (exportBtn) exportBtn.style.display = '';
+                if (importBtn) importBtn.style.display = '';
             }
             
             this.syncFiltersUI();
