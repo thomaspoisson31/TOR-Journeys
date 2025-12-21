@@ -212,6 +212,28 @@ class CharactersManager {
         const modal = document.getElementById('characters-modal');
         if (modal) {
             modal.classList.remove('hidden');
+            
+            // Vérifier si le mode Aventure est actif
+            const adventureMode = window.positionManager?.adventureMode || false;
+            
+            if (adventureMode) {
+                // Mode Aventure : forcer le filtre "Connus" uniquement
+                this.filters.known = true;
+                this.filters.met = false;
+                
+                // Masquer la barre de filtres
+                const filterContainer = modal.querySelector('.bg-gray-700.rounded-lg.p-3');
+                if (filterContainer) {
+                    filterContainer.style.display = 'none';
+                }
+            } else {
+                // Mode Normal : afficher la barre de filtres
+                const filterContainer = modal.querySelector('.bg-gray-700.rounded-lg.p-3');
+                if (filterContainer) {
+                    filterContainer.style.display = 'flex';
+                }
+            }
+            
             this.syncFiltersUI();
             this.updateFilterUIState();
             this.renderCharactersList();
@@ -308,6 +330,9 @@ class CharactersManager {
         const listContainer = document.getElementById('characters-list');
         if (!listContainer) return;
 
+        // Vérifier si le mode Aventure est actif
+        const adventureMode = window.positionManager?.adventureMode || false;
+
         // Filtrer les personnages par carte active
         const activeMapId = window.settingsManager?.activeMapUrl;
         let filteredCharacters = this.characters.filter(character => {
@@ -316,37 +341,46 @@ class CharactersManager {
             return character.mapId === activeMapId;
         });
 
-        // Appliquer les filtres de type
-        filteredCharacters = filteredCharacters.filter(character => {
-            const type = character.type || 'PNJ';
-            if (type === 'PJ') return this.filters.pj;
-            if (type === 'PNJ') return this.filters.pnj;
-            if (type === 'Monstre') return this.filters.monstre;
-            return true;
-        });
-
-        // Appliquer les filtres de statut
-        filteredCharacters = filteredCharacters.filter(character => {
-            // Si aucun filtre n'est coché, afficher tous les personnages
-            if (!this.filters.known && !this.filters.met) return true;
-
-            // Si les deux filtres sont cochés, afficher les personnages connus OU rencontrés
-            if (this.filters.known && this.filters.met) {
-                return character.known === true || character.met === true;
-            }
-
-            // Si seulement "Connus" est coché
-            if (this.filters.known && !this.filters.met) {
+        // En mode Aventure : filtrer UNIQUEMENT les personnages connus
+        if (adventureMode) {
+            filteredCharacters = filteredCharacters.filter(character => {
                 return character.known === true;
-            }
+            });
+        } else {
+            // Mode Normal : appliquer les filtres standards
+            
+            // Appliquer les filtres de type
+            filteredCharacters = filteredCharacters.filter(character => {
+                const type = character.type || 'PNJ';
+                if (type === 'PJ') return this.filters.pj;
+                if (type === 'PNJ') return this.filters.pnj;
+                if (type === 'Monstre') return this.filters.monstre;
+                return true;
+            });
 
-            // Si seulement "Rencontrés" est coché
-            if (!this.filters.known && this.filters.met) {
-                return character.met === true;
-            }
+            // Appliquer les filtres de statut
+            filteredCharacters = filteredCharacters.filter(character => {
+                // Si aucun filtre n'est coché, afficher tous les personnages
+                if (!this.filters.known && !this.filters.met) return true;
 
-            return true;
-        });
+                // Si les deux filtres sont cochés, afficher les personnages connus OU rencontrés
+                if (this.filters.known && this.filters.met) {
+                    return character.known === true || character.met === true;
+                }
+
+                // Si seulement "Connus" est coché
+                if (this.filters.known && !this.filters.met) {
+                    return character.known === true;
+                }
+
+                // Si seulement "Rencontrés" est coché
+                if (!this.filters.known && this.filters.met) {
+                    return character.met === true;
+                }
+
+                return true;
+            });
+        }
 
         // Appliquer le tri
         filteredCharacters = this.sortCharacters(filteredCharacters);
@@ -393,10 +427,15 @@ class CharactersManager {
                 thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
             }
 
+            const isAdventureMode = window.positionManager?.adventureMode || false;
+            const clickHandler = isAdventureMode ? '' : `onclick="window.charactersManager.showCharacterInfoBox('${character.id}')"`;
+            const cursorClass = isAdventureMode ? 'cursor-default' : 'cursor-pointer';
+            const hoverClass = isAdventureMode ? '' : 'hover:bg-gray-600';
+
             return `
-                <div class="character-card bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer" 
+                <div class="character-card bg-gray-700 rounded-lg p-4 ${hoverClass} transition-colors ${cursorClass}" 
                      data-character-id="${character.id}"
-                     onclick="window.charactersManager.showCharacterInfoBox('${character.id}')">
+                     ${clickHandler}>
                     <div class="flex items-center space-x-4">
                         ${thumbnailImage ? `
                             <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass}">
