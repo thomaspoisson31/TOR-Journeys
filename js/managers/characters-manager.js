@@ -10,7 +10,8 @@ class CharactersManager {
             pnj: true,
             monstre: true,
             known: false,
-            met: false
+            met: false,
+            knownLocations: true
         };
         this.sortBy = 'name';
         // Added for Gemini integration
@@ -143,6 +144,16 @@ class CharactersManager {
             });
         }
 
+        // Filtre par lieux et régions connus
+        const filterKnownLocations = document.getElementById('filter-known-locations');
+        if (filterKnownLocations) {
+            filterKnownLocations.addEventListener('change', (e) => {
+                this.filters.knownLocations = e.target.checked;
+                this.updateFilterUIState();
+                this.renderCharactersList();
+            });
+        }
+
         // Tri
         const sortSelect = document.getElementById('sort-characters');
         if (sortSelect) {
@@ -269,12 +280,14 @@ class CharactersManager {
         const filterMonstre = document.getElementById('filter-monstre');
         const filterKnown = document.getElementById('filter-known');
         const filterMet = document.getElementById('filter-met');
+        const filterKnownLocations = document.getElementById('filter-known-locations');
 
         if (filterPJ) filterPJ.checked = this.filters.pj;
         if (filterPNJ) filterPNJ.checked = this.filters.pnj;
         if (filterMonstre) filterMonstre.checked = this.filters.monstre;
         if (filterKnown) filterKnown.checked = this.filters.known;
         if (filterMet) filterMet.checked = this.filters.met;
+        if (filterKnownLocations) filterKnownLocations.checked = this.filters.knownLocations;
     }
 
     updateFilterUIState() {
@@ -282,7 +295,7 @@ class CharactersManager {
 
         // Vérifier si au moins un filtre est actif
         const hasActiveFilters = !this.filters.pj || !this.filters.pnj || !this.filters.monstre || 
-                                  this.filters.known || this.filters.met;
+                                  this.filters.known || this.filters.met || !this.filters.knownLocations;
 
         // Mettre à jour l'icône d'entonnoir
         if (filterIcon) {
@@ -305,6 +318,7 @@ class CharactersManager {
         this.filters.monstre = true;
         this.filters.known = false;
         this.filters.met = false;
+        this.filters.knownLocations = true;
 
         this.syncFiltersUI();
         this.updateFilterUIState();
@@ -438,6 +452,10 @@ class CharactersManager {
                 character.associatedLocations.forEach(locationId => {
                     const location = locationsData.find(loc => String(loc.id) === String(locationId));
                     if (location) {
+                        // Filtrer par lieux connus si l'option est activée
+                        if (this.filters.knownLocations && !location.known) {
+                            return;
+                        }
                         const locationName = location.name;
                         if (!locationGroups[locationName]) {
                             locationGroups[locationName] = [];
@@ -452,6 +470,10 @@ class CharactersManager {
                 character.associatedRegions.forEach(regionId => {
                     const region = regionsData.find(reg => String(reg.id) === String(regionId));
                     if (region) {
+                        // Filtrer par régions connues si l'option est activée
+                        if (this.filters.knownLocations && !region.known) {
+                            return;
+                        }
                         const regionName = region.name;
                         if (!regionGroups[regionName]) {
                             regionGroups[regionName] = [];
