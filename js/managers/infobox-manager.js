@@ -2111,10 +2111,10 @@ class InfoBoxManager {
                     sourceType: 'map'
                 });
             });
-            console.log(`🎲 [loadAvailableRandomTables] ${mapTables.length} table(s) de la carte active ajoutée(s) (simples et composites)`);
+            console.log(`🎲 [loadAvailableRandomTables] ${mapTables.length} table(s) de la carte active ajoutée(s)`);
         }
 
-        // 2. Tables des paramètres (globales - simples ET composites)
+        // 2. Tables SIMPLES des paramètres
         if (window.adventureManager && window.adventureManager.adventureData && window.adventureManager.adventureData.randomTables) {
             window.adventureManager.adventureData.randomTables.forEach(table => {
                 this._availableRandomTables.push({
@@ -2123,7 +2123,20 @@ class InfoBoxManager {
                     sourceType: 'settings'
                 });
             });
-            console.log(`🎲 [loadAvailableRandomTables] ${window.adventureManager.adventureData.randomTables.length} table(s) des paramètres ajoutée(s) (simples et composites)`);
+            console.log(`🎲 [loadAvailableRandomTables] ${window.adventureManager.adventureData.randomTables.length} table(s) simples des paramètres ajoutée(s)`);
+        }
+
+        // 3. Tables COMPOSITES des paramètres
+        if (window.adventureManager && window.adventureManager.adventureData && window.adventureManager.adventureData.compositeTables) {
+            window.adventureManager.adventureData.compositeTables.forEach(table => {
+                this._availableRandomTables.push({
+                    ...table,
+                    isComposite: true,
+                    source: 'Paramètres',
+                    sourceType: 'settings'
+                });
+            });
+            console.log(`🎲 [loadAvailableRandomTables] ${window.adventureManager.adventureData.compositeTables.length} table(s) composites des paramètres ajoutée(s)`);
         }
 
         console.log(`🎲 [loadAvailableRandomTables] Total: ${this._availableRandomTables.length} table(s) disponible(s)`);
