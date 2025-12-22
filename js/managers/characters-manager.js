@@ -10,8 +10,7 @@ class CharactersManager {
             pnj: true,
             monstre: true,
             known: false,
-            met: false,
-            knownLocations: true
+            met: false
         };
         this.sortBy = 'name';
         // Added for Gemini integration
@@ -144,16 +143,6 @@ class CharactersManager {
             });
         }
 
-        // Filtre par lieux et régions connus
-        const filterKnownLocations = document.getElementById('filter-known-locations');
-        if (filterKnownLocations) {
-            filterKnownLocations.addEventListener('change', (e) => {
-                this.filters.knownLocations = e.target.checked;
-                this.updateFilterUIState();
-                this.renderCharactersList();
-            });
-        }
-
         // Tri
         const sortSelect = document.getElementById('sort-characters');
         if (sortSelect) {
@@ -280,14 +269,12 @@ class CharactersManager {
         const filterMonstre = document.getElementById('filter-monstre');
         const filterKnown = document.getElementById('filter-known');
         const filterMet = document.getElementById('filter-met');
-        const filterKnownLocations = document.getElementById('filter-known-locations');
 
         if (filterPJ) filterPJ.checked = this.filters.pj;
         if (filterPNJ) filterPNJ.checked = this.filters.pnj;
         if (filterMonstre) filterMonstre.checked = this.filters.monstre;
         if (filterKnown) filterKnown.checked = this.filters.known;
         if (filterMet) filterMet.checked = this.filters.met;
-        if (filterKnownLocations) filterKnownLocations.checked = this.filters.knownLocations;
     }
 
     updateFilterUIState() {
@@ -295,7 +282,7 @@ class CharactersManager {
 
         // Vérifier si au moins un filtre est actif
         const hasActiveFilters = !this.filters.pj || !this.filters.pnj || !this.filters.monstre || 
-                                  this.filters.known || this.filters.met || !this.filters.knownLocations;
+                                  this.filters.known || this.filters.met;
 
         // Mettre à jour l'icône d'entonnoir
         if (filterIcon) {
@@ -318,7 +305,6 @@ class CharactersManager {
         this.filters.monstre = true;
         this.filters.known = false;
         this.filters.met = false;
-        this.filters.knownLocations = true;
 
         this.syncFiltersUI();
         this.updateFilterUIState();
@@ -418,6 +404,9 @@ class CharactersManager {
             });
         }
 
+        // Appliquer le tri
+        filteredCharacters = this.sortCharacters(filteredCharacters);
+
         if (filteredCharacters.length === 0) {
             listContainer.innerHTML = `
                 <div class="text-center py-12 text-gray-400">
@@ -429,182 +418,96 @@ class CharactersManager {
             return;
         }
 
-        // Regrouper les personnages par lieu et région
-        const locationsData = window.locationsData?.locations || [];
-        const regionsData = window.regionsData?.regions || [];
+        const html = filteredCharacters.map(character => {
+            // Afficher UNIQUEMENT l'image de type "vignette"
+            const thumbnailImage = character.images?.find(img => img.type === 'vignette');
 
-        // Créer des groupes par lieu
-        const locationGroups = {};
-        const regionGroups = {};
-        const noAssociationCharacters = [];
+            // Récupérer les noms des lieux et régions associés
+            const associatedLocationNames = this.getAssociatedLocationNames(character);
+            const associatedRegionNames = this.getAssociatedRegionNames(character);
 
-        filteredCharacters.forEach(character => {
-            const hasLocations = character.associatedLocations && character.associatedLocations.length > 0;
-            const hasRegions = character.associatedRegions && character.associatedRegions.length > 0;
+            // Déterminer la couleur du cartouche selon le type
+            let typeClass = 'bg-green-600';
+            let borderClass = 'border-green-500';
+            const type = character.type || 'PNJ';
 
-            if (!hasLocations && !hasRegions) {
-                noAssociationCharacters.push(character);
-                return;
+            if (type === 'PJ') {
+                typeClass = 'bg-blue-600';
+                borderClass = 'border-blue-500';
+            } else if (type === 'Monstre') {
+                typeClass = 'bg-red-600';
+                borderClass = 'border-red-500';
             }
 
-            // Ajouter aux groupes de lieux
-            if (hasLocations) {
-                character.associatedLocations.forEach(locationId => {
-                    const location = locationsData.find(loc => String(loc.id) === String(locationId));
-                    if (location) {
-                        // Filtrer par lieux connus si l'option est activée
-                        if (this.filters.knownLocations && !location.known) {
-                            return;
-                        }
-                        const locationName = location.name;
-                        if (!locationGroups[locationName]) {
-                            locationGroups[locationName] = [];
-                        }
-                        locationGroups[locationName].push(character);
-                    }
-                });
+            // Calculer le transform CSS pour la vignette
+            let thumbnailStyle = '';
+            if (thumbnailImage?.thumbnailCrop) {
+                const crop = thumbnailImage.thumbnailCrop;
+                const zoom = crop.zoom || 1;
+                const offsetX = crop.offsetX || 0;
+                const offsetY = crop.offsetY || 0;
+                thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
             }
 
-            // Ajouter aux groupes de régions
-            if (hasRegions) {
-                character.associatedRegions.forEach(regionId => {
-                    const region = regionsData.find(reg => String(reg.id) === String(regionId));
-                    if (region) {
-                        // Filtrer par régions connues si l'option est activée
-                        if (this.filters.knownLocations && !region.known) {
-                            return;
-                        }
-                        const regionName = region.name;
-                        if (!regionGroups[regionName]) {
-                            regionGroups[regionName] = [];
-                        }
-                        regionGroups[regionName].push(character);
-                    }
-                });
-            }
-        });
+            const isAdventureMode = window.positionManager?.adventureMode || false;
+            const clickHandler = isAdventureMode ? '' : `onclick="window.charactersManager.showCharacterInfoBox('${character.id}')"`;
+            const cursorClass = isAdventureMode ? 'cursor-default' : 'cursor-pointer';
+            const hoverClass = isAdventureMode ? '' : 'hover:bg-gray-600';
 
-        // Trier les noms de lieux et régions alphabétiquement
-        const sortedLocationNames = Object.keys(locationGroups).sort((a, b) => a.localeCompare(b));
-        const sortedRegionNames = Object.keys(regionGroups).sort((a, b) => a.localeCompare(b));
+            // Tronquer la description à 150 caractères
+            const shortDescription = character.description 
+                ? (character.description.length > 150 
+                    ? character.description.substring(0, 150) + '...' 
+                    : character.description)
+                : '';
 
-        // Générer le HTML
-        let html = '';
-
-        // Afficher les groupes de lieux
-        sortedLocationNames.forEach(locationName => {
-            html += `
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-purple-400 mb-3 flex items-center">
-                        <i class="fas fa-map-marker-alt mr-2"></i>${locationName}
-                    </h3>
-                    <div class="space-y-2">
-                        ${locationGroups[locationName].map(character => this.renderCharacterCard(character)).join('')}
+            return `
+                <div class="character-card bg-gray-700 rounded-lg p-4 ${hoverClass} transition-colors ${cursorClass}" 
+                     data-character-id="${character.id}"
+                     ${clickHandler}>
+                    <div class="flex items-center space-x-4">
+                        ${thumbnailImage ? `
+                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0">
+                                <img src="${thumbnailImage.url}" alt="${character.name}" 
+                                     class="w-full h-full object-cover" ${thumbnailStyle}>
+                            </div>
+                        ` : `
+                            <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass} flex-shrink-0">
+                                <i class="fas fa-user text-2xl text-gray-400"></i>
+                            </div>
+                        `}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="text-lg font-bold">${character.name}</h3>
+                                <span class="inline-block px-2 py-1 text-xs rounded ${typeClass} flex-shrink-0">
+                                    ${type}
+                                </span>
+                            </div>
+                            ${shortDescription ? `
+                                <p class="text-sm text-gray-300 mb-2 line-clamp-2">${shortDescription}</p>
+                            ` : ''}
+                            ${(associatedLocationNames.length > 0 || associatedRegionNames.length > 0) ? `
+                                <div class="flex flex-wrap gap-2">
+                                    ${associatedLocationNames.map(name => `
+                                        <span class="inline-block px-2 py-1 text-xs rounded bg-purple-600">
+                                            <i class="fas fa-map-marker-alt mr-1"></i>${name}
+                                        </span>
+                                    `).join('')}
+                                    ${associatedRegionNames.map(name => `
+                                        <span class="inline-block px-2 py-1 text-xs rounded bg-orange-600">
+                                            <i class="fas fa-mountain mr-1"></i>${name}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
                     </div>
                 </div>
             `;
-        });
-
-        // Afficher les groupes de régions
-        sortedRegionNames.forEach(regionName => {
-            html += `
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-orange-400 mb-3 flex items-center">
-                        <i class="fas fa-mountain mr-2"></i>${regionName}
-                    </h3>
-                    <div class="space-y-2">
-                        ${regionGroups[regionName].map(character => this.renderCharacterCard(character)).join('')}
-                    </div>
-                </div>
-            `;
-        });
-
-        // Afficher les personnages sans association
-        if (noAssociationCharacters.length > 0) {
-            html += `
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-gray-400 mb-3 flex items-center">
-                        <i class="fas fa-question-circle mr-2"></i>Sans Lieu ou Région
-                    </h3>
-                    <div class="space-y-2">
-                        ${noAssociationCharacters.map(character => this.renderCharacterCard(character)).join('')}
-                    </div>
-                </div>
-            `;
-        }
+        }).join('');
 
         listContainer.innerHTML = html;
-    }
-
-    renderCharacterCard(character) {
-        // Afficher UNIQUEMENT l'image de type "vignette"
-        const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-
-        // Déterminer la couleur du cartouche selon le type
-        let typeClass = 'bg-green-600';
-        let borderClass = 'border-green-500';
-        const type = character.type || 'PNJ';
-
-        if (type === 'PJ') {
-            typeClass = 'bg-blue-600';
-            borderClass = 'border-blue-500';
-        } else if (type === 'Monstre') {
-            typeClass = 'bg-red-600';
-            borderClass = 'border-red-500';
-        }
-
-        // Calculer le transform CSS pour la vignette
-        let thumbnailStyle = '';
-        if (thumbnailImage?.thumbnailCrop) {
-            const crop = thumbnailImage.thumbnailCrop;
-            const zoom = crop.zoom || 1;
-            const offsetX = crop.offsetX || 0;
-            const offsetY = crop.offsetY || 0;
-            thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
-        }
-
-        const isAdventureMode = window.positionManager?.adventureMode || false;
-        const clickHandler = isAdventureMode ? '' : `onclick="window.charactersManager.showCharacterInfoBox('${character.id}')"`;
-        const cursorClass = isAdventureMode ? 'cursor-default' : 'cursor-pointer';
-        const hoverClass = isAdventureMode ? '' : 'hover:bg-gray-600';
-
-        // Tronquer la description à 150 caractères
-        const shortDescription = character.description 
-            ? (character.description.length > 150 
-                ? character.description.substring(0, 150) + '...' 
-                : character.description)
-            : '';
-
-        return `
-            <div class="character-card bg-gray-700 rounded-lg p-4 ${hoverClass} transition-colors ${cursorClass}" 
-                 data-character-id="${character.id}"
-                 ${clickHandler}>
-                <div class="flex items-center space-x-4">
-                    ${thumbnailImage ? `
-                        <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0">
-                            <img src="${thumbnailImage.url}" alt="${character.name}" 
-                                 class="w-full h-full object-cover" ${thumbnailStyle}>
-                        </div>
-                    ` : `
-                        <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass} flex-shrink-0">
-                            <i class="fas fa-user text-2xl text-gray-400"></i>
-                        </div>
-                    `}
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 mb-1">
-                            <h3 class="text-lg font-bold">${character.name}</h3>
-                            <span class="inline-block px-2 py-1 text-xs rounded ${typeClass} flex-shrink-0">
-                                ${type}
-                            </span>
-                        </div>
-                        ${shortDescription ? `
-                            <p class="text-sm text-gray-300 mb-2 line-clamp-2">${shortDescription}</p>
-                        ` : ''}
-                    </div>
-                    <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
-                </div>
-            </div>
-        `;
     }
 
     getAssociatedLocationNames(character) {
