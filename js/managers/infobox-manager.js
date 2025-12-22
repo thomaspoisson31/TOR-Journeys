@@ -2095,6 +2095,83 @@ class InfoBoxManager {
         this.renderEditMode();
     }
 
+    loadAvailableRandomTables() {
+        console.log("🎲 [loadAvailableRandomTables] Chargement des tables disponibles...");
+
+        this._availableRandomTables = [];
+
+        // 1. Tables de la carte active (simples ET composites)
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+        if (activeMapUrl && window.settingsManager?.mapRandomTables && window.settingsManager.mapRandomTables[activeMapUrl]) {
+            const mapTables = window.settingsManager.mapRandomTables[activeMapUrl];
+            mapTables.forEach(table => {
+                this._availableRandomTables.push({
+                    ...table,
+                    source: 'Carte Active',
+                    sourceType: 'map'
+                });
+            });
+            console.log(`🎲 [loadAvailableRandomTables] ${mapTables.length} table(s) de la carte active ajoutée(s) (simples et composites)`);
+        }
+
+        // 2. Tables des paramètres (globales - simples ET composites)
+        if (window.adventureManager && window.adventureManager.adventureData && window.adventureManager.adventureData.randomTables) {
+            window.adventureManager.adventureData.randomTables.forEach(table => {
+                this._availableRandomTables.push({
+                    ...table,
+                    source: 'Paramètres',
+                    sourceType: 'settings'
+                });
+            });
+            console.log(`🎲 [loadAvailableRandomTables] ${window.adventureManager.adventureData.randomTables.length} table(s) des paramètres ajoutée(s) (simples et composites)`);
+        }
+
+        console.log(`🎲 [loadAvailableRandomTables] Total: ${this._availableRandomTables.length} table(s) disponible(s)`);
+        return this._availableRandomTables;
+    }
+
+    renderAvailableRandomTables() {
+        const selectedIndices = (this.currentItem.RandomTables || []).map(table =>
+            this._availableRandomTables.findIndex(availableTable =>
+                availableTable.name === table.name && availableTable.source === table.source
+            )
+        ).filter(index => index !== -1); // Filtrer les indices non trouvés
+
+        console.log("📊 [renderAvailableRandomTables] Tables actuelles:", this.currentItem.RandomTables);
+        console.log("📊 [renderAvailableRandomTables] _availableRandomTables:", this._availableRandomTables);
+        console.log("📊 [renderAvailableRandomTables] Indices sélectionnés:", selectedIndices);
+
+        return this._availableRandomTables.map((table, index) => {
+            const isComposite = table.isComposite || false;
+            const tableType = isComposite ? 'Composite' : 'Simple';
+            const tableIcon = isComposite ? 'fa-layer-group' : 'fa-list';
+            const entryCount = isComposite
+                ? `${table.subtables?.length || 0} sous-table(s)`
+                : `${table.entries?.length || 0} entrée(s)`;
+
+            return `
+                    <div class="mb-3 p-3 rounded-lg border border-gray-300" style="background-color: #f5f5f5;">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center flex-1">
+                                <input type="checkbox"
+                                       class="random-table-checkbox mr-3"
+                                       data-table-index="${index}"
+                                       ${selectedIndices.includes(index) ? 'checked' : ''}>
+                                <i class="fas ${tableIcon} mr-2" style="color: #940000;"></i>
+                                <span class="font-semibold" style="color: #940000; font-family: 'Merriweather', serif;">${table.name || 'Table sans nom'}</span>
+                                <span class="ml-2 text-xs px-2 py-1 rounded" style="background-color: #e8f4f8; color: #1e40af;">${tableType}</span>
+                            </div>
+                        </div>
+                        <div class="text-xs ml-8" style="color: #6b7280;">
+                            ${table.source ? `<span><i class="fas fa-tag mr-1"></i>${table.source}</span> • ` : ''}
+                            ${entryCount}
+                        </div>
+                    </div>
+                `;
+        }).join('');
+    }
+
+
     rollRandomRumeur() {
         if (!this.currentItem) return;
 
