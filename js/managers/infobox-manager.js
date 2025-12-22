@@ -2100,11 +2100,17 @@ class InfoBoxManager {
 
         this._availableRandomTables = [];
 
-        // 1. Tables de la carte active (simples ET composites)
+        // 1. Tables SIMPLES de la carte active
         const activeMapUrl = window.settingsManager?.activeMapUrl;
+        console.log(`🎲 [loadAvailableRandomTables] activeMapUrl:`, activeMapUrl);
+        console.log(`🎲 [loadAvailableRandomTables] mapRandomTables:`, window.settingsManager?.mapRandomTables);
+        
         if (activeMapUrl && window.settingsManager?.mapRandomTables && window.settingsManager.mapRandomTables[activeMapUrl]) {
             const mapTables = window.settingsManager.mapRandomTables[activeMapUrl];
+            console.log(`🎲 [loadAvailableRandomTables] mapTables pour ${activeMapUrl}:`, mapTables);
+            
             mapTables.forEach(table => {
+                console.log(`🎲 [loadAvailableRandomTables] Ajout table carte:`, table.name, `isComposite:`, table.isComposite);
                 this._availableRandomTables.push({
                     ...table,
                     source: 'Carte Active',
@@ -2112,10 +2118,32 @@ class InfoBoxManager {
                 });
             });
             console.log(`🎲 [loadAvailableRandomTables] ${mapTables.length} table(s) de la carte active ajoutée(s)`);
+        } else {
+            console.warn(`🎲 [loadAvailableRandomTables] Aucune table pour la carte active`);
         }
 
-        // 2. Tables SIMPLES des paramètres
+        // 2. Tables COMPOSITES de la carte active
+        if (activeMapUrl && window.settingsManager?.mapCompositeTables && window.settingsManager.mapCompositeTables[activeMapUrl]) {
+            const mapCompositeTables = window.settingsManager.mapCompositeTables[activeMapUrl];
+            console.log(`🎲 [loadAvailableRandomTables] mapCompositeTables pour ${activeMapUrl}:`, mapCompositeTables);
+            
+            mapCompositeTables.forEach(table => {
+                console.log(`🎲 [loadAvailableRandomTables] Ajout table composite carte:`, table.name);
+                this._availableRandomTables.push({
+                    ...table,
+                    isComposite: true,
+                    source: 'Carte Active',
+                    sourceType: 'map'
+                });
+            });
+            console.log(`🎲 [loadAvailableRandomTables] ${mapCompositeTables.length} table(s) composites de la carte active ajoutée(s)`);
+        } else {
+            console.warn(`🎲 [loadAvailableRandomTables] Aucune table composite pour la carte active`);
+        }
+
+        // 3. Tables SIMPLES des paramètres
         if (window.adventureManager && window.adventureManager.adventureData && window.adventureManager.adventureData.randomTables) {
+            console.log(`🎲 [loadAvailableRandomTables] randomTables paramètres:`, window.adventureManager.adventureData.randomTables);
             window.adventureManager.adventureData.randomTables.forEach(table => {
                 this._availableRandomTables.push({
                     ...table,
@@ -2126,8 +2154,9 @@ class InfoBoxManager {
             console.log(`🎲 [loadAvailableRandomTables] ${window.adventureManager.adventureData.randomTables.length} table(s) simples des paramètres ajoutée(s)`);
         }
 
-        // 3. Tables COMPOSITES des paramètres
+        // 4. Tables COMPOSITES des paramètres
         if (window.adventureManager && window.adventureManager.adventureData && window.adventureManager.adventureData.compositeTables) {
+            console.log(`🎲 [loadAvailableRandomTables] compositeTables paramètres:`, window.adventureManager.adventureData.compositeTables);
             window.adventureManager.adventureData.compositeTables.forEach(table => {
                 this._availableRandomTables.push({
                     ...table,
@@ -2140,6 +2169,7 @@ class InfoBoxManager {
         }
 
         console.log(`🎲 [loadAvailableRandomTables] Total: ${this._availableRandomTables.length} table(s) disponible(s)`);
+        console.log(`🎲 [loadAvailableRandomTables] Détail:`, this._availableRandomTables.map(t => ({ name: t.name, isComposite: t.isComposite, source: t.source })));
         return this._availableRandomTables;
     }
 
