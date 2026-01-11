@@ -1,0 +1,1017 @@
+{
+  "characters": [
+    {
+      "id": "200000",
+      "name": "Nelly Brasballants",
+      "description": "Vieille matriarche Troll de pierre très intelligente, descendue de la Trouée des Trolls. Elle campe près de la Croisée des Chemins de Bree avec sa famille. Au lieu de chasser, elle utilise Jari et Diarmoc pour attirer des victimes dans son repaire. Elle se cache dans le lac pendant la journée et possède quelques sortilèges.\n\nOccupation: Matriarche Troll\nParticularités: Cruelle, Maligne",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Il paraît que cette vieille Troll est trop paresseuse pour chasser ; elle a ensorcelé un Nain pour qu'il lui rabatte le gibier directement dans la marmite ! (VRAIE)"
+      ]
+    },
+    {
+      "id": "200001",
+      "name": "Jari le Vagabond",
+      "description": "Nain rusé, exilé des Montagnes Bleues pour vol et escroquerie (potentiellement pillage de tombes). Un peu voleur, forgeron et chasseur de trésors. Pour sauver sa vie, il a passé un marché avec Nelly Brasballants pour lui amener des victimes en échange de leurs possessions. Compense son manque de courage par un caractère bruyant et exubérant.\n\nOccupation: Brigand, Complice de meurtres\nParticularités: Extravagant, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Ce Nain, Jari ? Un prince exilé ! Il aurait trouvé un trésor fabuleux dans les Montagnes Bleues et cherche des compagnons pour aller le récupérer. (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200002",
+      "name": "Diarmoc le Voyageur",
+      "description": "Homme originaire du sud (Dunlending/Gondorien), chassé de ses terres près du Rohan. Sa famille a été capturée par Nelly Brasballants. Il est forcé d'aider Jari à attirer de nouvelles victimes pour que sa famille reste en vie. Autrefois riche et respecté, il est maintenant sinistre, taciturne et accablé de culpabilité.\n\nOccupation: Complice malgré lui\nParticularités: Étranger, Secret",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Méfiez-vous de l'étranger au visage triste ; on dit qu'il travaille pour des monstres, mais seulement parce qu'ils retiennent sa femme et ses enfants en otage. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200003",
+      "name": "Elda",
+      "description": "Épouse de Diarmoc. Capturée par Nelly Brasballants et ses fils, elle est retenue prisonnière sur un radeau au milieu du lac avec ses enfants survivants.",
+      "type": "PNJ",
+      "occupation": "Prisonnière des Trolls",
+      "particularités": "Épuisée, Captive",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Des pêcheurs jurent avoir vu une femme flotter sur un radeau au milieu du lac brumeux, mais elle disparaît dès qu'on s'approche. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200004",
+      "name": "Tecca",
+      "description": "Enfant de Diarmoc et Elda. Capturé(e) par Nelly Brasballants, retenu(e) prisonnier(e) sur un radeau au milieu du lac.",
+      "type": "PNJ",
+      "occupation": "Enfant / Prisonnier(ère) des Trolls",
+      "particularités": "Épuisé(e), Captif(ve)",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "On entend parfois des pleurs d'enfants près du lac la nuit, sûrement des esprits des eaux qui cherchent à noyer les imprudents. (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200005",
+      "name": "Sulain",
+      "description": "Enfant de Diarmoc et Elda. Capturé(e) par Nelly Brasballants, retenu(e) prisonnier(e) sur un radeau au milieu du lac.",
+      "type": "PNJ",
+      "occupation": "Enfant / Prisonnier(ère) des Trolls",
+      "particularités": "Épuisé(e), Captif(ve)",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Les enfants de l'étranger ne sont pas morts, les Trolls les gardent en réserve dans un garde-manger flottant ! (VRAIE)"
+      ]
+    },
+    {
+      "id": "200006",
+      "name": "Floki",
+      "description": "Noble nain d'une maison mineure, cousin éloigné de Thorin Écu-de-Chêne. Frère de Flonar. Se distingue par son enthousiasme sans faille. Voyage fréquemment entre les Montagnes Bleues et Erebor. Sollicite l'aide des héros pour remettre une lettre à son frère disgracié, puis plus tard pour le venger.\n\nOccupation: Messager\nParticularités: Fier, Passionné",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Ce Nain Floki prétend être cousin du Roi sous la Montagne, mais il passe son temps à chercher son frère renégat sur les routes. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200007",
+      "name": "Flonar",
+      "description": "Frère aîné de Floki, chef de leur lignée. Exilé des Montagnes Bleues pour avoir bravé l'interdiction d'entrer dans la Moria et y avoir volé une clef secrète. S'est installé avec ses partisans au Val Doré, près du Lac Evendim. Torturé et tué par les Orques lors du sac du village.\n\nOccupation: Chef nain exilé\nParticularités: Insoumis, Secret",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Flonar n'a pas été exilé pour rien ; on dit qu'il a volé une clef ouvrant une porte secrète de la Moria elle-même ! (VRAIE)"
+      ]
+    },
+    {
+      "id": "200008",
+      "name": "Scylda Bruyère",
+      "description": "Jeune fille de huit ans, fille du fermier Tolgarth Bruyère. Seule survivante de l'attaque des Trolls sur sa ferme dans le Vallon Caché. Elle survit seule dans les ruines, connaissant les habitudes des Trolls et certains secrets du vallon.",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Il y a une petite sauvageonne qui vit dans les ruines au nord, elle connaîtrait des passages secrets pour échapper aux Trolls. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200009",
+      "name": "Orothel",
+      "description": "Rôdeuse du Nord expérimentée mais vieillissante. Apparence d'une femme d'une soixantaine d'années, mais bien plus âgée. Pragmatique, déterminée, chasseuse et pisteuse hors pair. Impatiente envers les imbéciles. Traque les Trolls et enquête sur les agents de l'Ombre à Tharbad, utilisant Jon-le-Cabri comme messager forcé.\n\nOccupation: Rôdeuse\nParticularités: Sage, Sévère",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La vieille Orothel ? C'est une sorcière qui parle aux bêtes et jette des sorts aux voyageurs qui la dérangent, c'est sûr. (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200010",
+      "name": "Aglaen l'Astrologue",
+      "description": "Homme nerveux aux cheveux grisonnants vivant à Lond Daer. S'est lancé tardivement dans l'art de la clairvoyance. A eu des visions concernant l'Héritier sur une île lointaine et une sombre colline menaçante.\n\nOccupation: Astrologue\nParticularités: Nerveux, Clairvoyant (peut-être)",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "L'astrologue de Lond Daer est devenu fou à force de regarder les étoiles, il marmonne des histoires de roi et d'île maudite. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200011",
+      "name": "Nimue",
+      "description": "Jeune femme courageuse, devenue reine de Lond Daer après avoir vaincu un serpent de mer. Accueille les héros et les encourage à enquêter sur les visions d'Aglaen. Gandalf est son conseiller.",
+      "type": "PNJ",
+      "occupation": "Reine de Lond Daer",
+      "particularités": "Courageuse",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La Reine de Lond Daer n'est pas une noble de naissance, elle a gagné sa couronne en tuant un serpent de mer grand comme une maison ! (VRAIE)"
+      ]
+    },
+    {
+      "id": "200012",
+      "name": "Falmir Têteblonde",
+      "description": "Jeune Hobbit aventureux, devenu un des chevaliers de Lond Daer. Enthousiaste, audacieux et téméraire. Introduit les héros à Aglaen après avoir entendu parler de la prophétie.",
+      "type": "PNJ",
+      "occupation": "Chevalier de Lond Daer",
+      "particularités": "Enthousiaste, Audacieux, Téméraire",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "J'ai entendu dire qu'un des Chevaliers de la Reine est un Hobbit géant, capable de terrasser un Orque à mains nues ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200013",
+      "name": "Eagre",
+      "description": "Marin de Lond Daer. Dans sa jeunesse, une tempête l'a emporté jusqu'à l'Île de la Mère. Il s'est vanté toute sa vie de cet exploit. Sa fille Elwing a disparu en tentant de refaire son voyage. Il guide les héros jusqu'à l'île, cachant son chagrin derrière une attitude hilare.\n\nOccupation: Marin\nParticularités: Vantard, Chagriné",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le vieux Eagre raconte qu'il a navigué jusqu'au bout du monde, mais c'est son chagrin qui parle ; sa fille a disparu en mer à cause de ses histoires. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200014",
+      "name": "Elwing",
+      "description": "Fille d'Eagre. Apprentie navigatrice, elle a voulu surpasser son père et est partie seule retrouver l'Île de la Mère. Elle a vécu parmi les Lossoth, puis a navigué avec eux jusqu'à l'île. Influencée par des rêves, elle a trouvé l'épée de l'ancêtre, réveillant les esprits. Elle est retrouvée piégée et affaiblie dans une grotte.\n\nOccupation: Navigatrice\nParticularités: Ambitieuse, Tourmentée",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La fille d'Eagre n'est pas morte, elle est devenue reine des Hommes des Glaces loin au nord ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200015",
+      "name": "Jagat",
+      "description": "Jeune chasseur Lossoth, chef d'une expédition vers l'Île de la Mère pour chasser Fastitocalon, aidé par Elwing. Se retrouve piégé sur l'île avec sa tribu par des esprits. Peut devenir un allié ou rester méfiant. Deviendra plus tard chef de sa tribu (tribu d'Egel).\n\nOccupation: Chasseur Lossoth / Chef de tribu\nParticularités: Habile, Prudent",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "On dit que des chasseurs venus du grand froid descendent parfois la côte sur des bateaux en os pour chasser des monstres marins. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200016",
+      "name": "L'Endeuillée",
+      "description": "Figure spectrale ou quasi-divine résidant près de la Pierre des Infortunés sur l'Île de la Mère. Incarnation de toutes les mères pleurant leurs enfants perdus à la guerre ou à l'aventure. Met en garde les héros contre les dangers de leur quête.",
+      "type": "PNJ",
+      "occupation": "Esprit Gardien / Incarnation du Deuil",
+      "particularités": "Spectrale, Sage, Mélancolique",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Ne t'approche pas de l'île au large, une dame fantôme y pleure éternellement et son chagrin peut te tuer. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200017",
+      "name": "Osmer le << Magicien >>",
+      "description": "Hors-la-loi qui usurpe l'identité de Gandalf pour recruter des hommes de main et commettre des méfaits. Intelligent mais sans sagesse, rusé et manipulateur. Cherche à établir une base dans une tour en ruines près de la ferme de Farrell.\n\nOccupation: Chef de bande / Imposteur\nParticularités: Charlatan, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le Magicien Gris recrute des hommes dans les bois pour une grande quête, mais curieusement, il demande surtout de voler des fermiers... (VRAIE)"
+      ]
+    },
+    {
+      "id": "200018",
+      "name": "Hamfast",
+      "description": "Jeune habitant de Bree, influençable et peu futé. Quitte sa maison pour suivre 'Gandalf' (Osmer) à l'aventure, croyant partir en quête d'un trésor. Réalise progressivement la supercherie.\n\nOccupation: Recrue de hors-la-loi (malgré lui)\nParticularités: Influençable, Naïf",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le petit Hamfast n'a pas été enlevé, il est parti à l'aventure avec un grand Magicien pour devenir riche ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200019",
+      "name": "Lucinda Dussaule",
+      "description": "Mère d'Hamfast, habitante de Bree. Inquiète pour son fils disparu, elle demande l'aide des héros pour le retrouver, accusant Gandalf de l'avoir enlevé.",
+      "type": "PNJ",
+      "occupation": "Habitante de Bree",
+      "particularités": "Inquiète",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La pauvre Lucinda crie sur tous les toits que Gandalf a kidnappé son fils, mais entre nous, le gamin avait juste envie de voir du pays. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200020",
+      "name": "Farrell l'Ancien",
+      "description": "Fermier coriace et rustre vivant isolé à l'est du Mont Venteux. Se comporte en tyran avec sa famille, méfiant envers les étrangers. Sa ferme est attaquée par la bande d'Osmer. Il est tourmenté par des rêves de la Colline de l'Effroi.\n\nOccupation: Fermier\nParticularités: Rustre, Sévère",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le vieux Farrell est devenu fou à force de vivre près du Mont Venteux, il dit que la terre elle-même lui envoie des cauchemars. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200021",
+      "name": "Farrell le Jeune",
+      "description": "Fils aîné de Farrell l'Ancien. Impatient de prendre la place de son père, qu'il juge dépassé. Craint les bandits et pourrait passer un accord avec Osmer pour protéger sa famille.",
+      "type": "PNJ",
+      "occupation": "Fils de fermier",
+      "particularités": "Nerveux, Impatient",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le fils aîné de Farrell vendrait père et mère pour récupérer la ferme plus vite, méfiez-vous de lui. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200022",
+      "name": "Farweld",
+      "description": "Fils cadet de Farrell l'Ancien. Doux rêveur, fasciné par les histoires de monstres. Néglige ses tâches. A des visions (ou rêves) d'un géant sombre et de la Colline de l'Effroi.",
+      "type": "PNJ",
+      "occupation": "Fils de fermier",
+      "particularités": "Rêveur, Négligent",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le cadet des Farrell est un simple d'esprit qui passe ses journées à parler aux corbeaux. (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200023",
+      "name": "Ernalda",
+      "description": "Épouse de Farrell l'Ancien. Calme et silencieuse, originaire de l'ancien Rhudaur. Dévouée à son mari.",
+      "type": "PNJ",
+      "occupation": "Femme de fermier",
+      "particularités": "Calme, Silencieuse, Dévouée",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La femme de Farrell vient des collines sauvages, on dit qu'elle connaît les secrets des anciens royaumes. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200024",
+      "name": "Poppy",
+      "description": "Femme de Farrell le Jeune, originaire de Bree. Pense que son beau-père devrait céder la ferme. Se dispute souvent avec Ernalda.",
+      "type": "PNJ",
+      "occupation": "Femme de fermier (par alliance)",
+      "particularités": "Ambitieuse (pour son mari)",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Poppy regrette d'avoir quitté Bree pour ce trou perdu, elle ferait n'importe quoi pour en repartir. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200025",
+      "name": "Tulla",
+      "description": "Jeune sœur de Poppy, mariée à Farweld. Déteste vivre isolée et souhaite retourner à Bree.",
+      "type": "PNJ",
+      "occupation": "Femme de fermier (par alliance)",
+      "particularités": "Mécontente",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La jeune Tulla a ensorcelé le fils Farrell pour mettre la main sur l'héritage ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200026",
+      "name": "Breghel",
+      "description": "Chef des Bandits ambitieux, se considérant comme le bras droit d'Osmer. Prêt à le trahir pour prendre le contrôle de la bande.",
+      "type": "PNJ",
+      "occupation": "Chef des Bandits",
+      "particularités": "Ambitieux",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le lieutenant du Magicien a les dents longues, il attend juste le bon moment pour planter un couteau dans le dos de son maître. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200027",
+      "name": "Tam",
+      "description": "Homme malchanceux, l'esprit confus après un coup sur la tête. Persuadé qu'Osmer est un vrai Magicien, il lui reste loyal quoi qu'il arrive.",
+      "type": "PNJ",
+      "occupation": "Hors-la-loi",
+      "particularités": "Confus, Loyal (envers Osmer)",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Ce pauvre Tam croit dur comme fer qu'il sert un grand sorcier, le coup qu'il a pris sur la caboche l'a rendu complètement gaga. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200028",
+      "name": "Jon-le-Cabri",
+      "description": "Hors-la-loi, voleur et brigand connu pour bondir par-dessus les haies. Capturé par Orothel, il est devenu son messager forcé entre Tharbad et l'extérieur. Il a ensuite volé Gurnow et fui Tharbad. Craint Orothel et Gurnow.\n\nOccupation: Hors-la-loi / Messager (forcé)\nParticularités: Peureux (malgré les apparences), Agile",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Jon-le-Cabri ? Il saute si haut qu'on dit qu'il a du sang d'Elfe ou d'oiseau dans les veines ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200029",
+      "name": "Borlas",
+      "description": "Cordonnier talentueux, originaire de la communauté qui capture Jon-le-Cabri (ou de Bree). Emprisonné à Tharbad par Gurnow pour une taxe inventée, afin de le forcer à rester. Sert de monnaie d'échange contre Jon. Dévoué à son art mais lent et maladroit.\n\nOccupation: Cordonnier\nParticularités: Docile, Méticuleux",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le cordonnier de Tharbad est retenu prisonnier par le Maître de la ville parce qu'il fabrique des bottes magiques qui permettent de marcher sans bruit. (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200030",
+      "name": "Capitaine Gurnow",
+      "description": "Ancien chef de voleurs devenu Maître de Tharbad. Dirige la ville d'une main de fer sous un vernis de légalité (l'Édit). Perspicace et rusé malgré ses origines violentes. Collectionne les artisans talentueux.\n\nOccupation: Maître de Tharbad\nParticularités: Rusé, Impitoyable",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le Capitaine de Tharbad n'a pas toujours été un seigneur ; il détroussait les voyageurs sur le Chemin Vert avant de voler une ville entière. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200031",
+      "name": "Gwilleth",
+      "description": "Fille d'Orothel, infiltrée comme espionne des Rôdeurs parmi les Éclaireurs de Gurnow à Tharbad. Communique secrètement avec sa mère via Jon-le-Cabri. Sa position est précaire.",
+      "type": "PNJ",
+      "occupation": "Espionne / Éclaireuse (infiltrée)",
+      "particularités": "Secrète, Rusée",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Cette éclaireuse à Tharbad joue un double jeu dangereux ; elle sert le Maître le jour mais envoie des messages aux Rôdeurs la nuit. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200032",
+      "name": "Dame Stock",
+      "description": "Épouse aristocrate de Gurnow, mère de ses sept fils. Rêve de restaurer la gloire passée de Tharbad. Maintient un semblant de décorum à la cour. Déteste les Rôdeurs.",
+      "type": "PNJ",
+      "occupation": "Aristocrate",
+      "particularités": "Ambitieuse (pour Tharbad)",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La femme de Gurnow se prend pour une reine d'antan, mais elle déteste les gens du Nord encore plus que les Orques. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200033",
+      "name": "Tharnow",
+      "description": "Fils aîné brutal de Gurnow et Dame Stock.",
+      "type": "PNJ",
+      "occupation": "Fils du Maître de Tharbad",
+      "particularités": "Brutal",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le fils aîné du Capitaine a hérité de la cruauté de son père, mais pas de sa ruse. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200034",
+      "name": "Valandur",
+      "description": "Geôlier de Garth Tauron, cousin de Dame Stock. Arrogant, se considère comme le Maître de la forteresse. Fier de sa lignée (prétendument) númenóréenne. Accepte les pots-de-vin.\n\nOccupation: Geôlier (Maître de Garth Tauron, selon lui)\nParticularités: Cupide, Fier",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le geôlier de Tharbad prétend descendre des Rois de la Mer, mais pour quelques pièces d'or, il oublierait même son propre nom. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200035",
+      "name": "Déor",
+      "description": "Voyageur suspect venu du sud, prétendant être du Rohan. En réalité, un espion du Mordor chargé de corrompre les peuples de l'Eriador avec de l'or de la Moria. Son imprudence (voyage avec des Nains près de la Moria) a causé sa perte. Tué par les Orques près de la Sonoronne.\n\nOccupation: Espion du Mordor\nParticularités: Secret, Imprudent",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Ce cavalier du Sud distribue de l'or nain à tour de bras, sûrement un trésor maudit qu'il a volé à un Dragon ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200036",
+      "name": "Hultmar Mille-mains",
+      "description": "Terrible capitaine orque venu du nord (Landes d'Etten). A survécu à la Bataille des Cinq Armées. Collectionne les mains coupées de ses ennemis. Dirige la forteresse de Rath Sereg. Mène l'assaut sur le Val Doré à la demande de Snava.\n\nOccupation: Chef de guerre orque\nParticularités: Audacieux, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Il y a un chef Orque dans le nord qui ne se contente pas de tuer ; il coupe les mains de ses victimes pour s'en faire un collier. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200037",
+      "name": "Vilia",
+      "description": "Naine aînée très respectée des Montagnes Bleues. Vétérane d'Azanulbizar, où elle fut blessée par une flèche empoisonnée qui l'a paralysée. Sage et mesurée, elle préside le conseil concernant Flonar et Floki.\n\nOccupation: Sage naine\nParticularités: Honorable, Patiente",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La vieille Vilia ne peut plus marcher, mais on dit que son esprit voyage hors de son corps pour espionner les Gobelins. (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200038",
+      "name": "Snava",
+      "description": "Orque du Mordor, espion de Sauron. Infiltré dans la Moria pour préparer la domination orque. S'inquiète de la découverte d'une porte secrète par Flonar. Organise le massacre du Val Doré via Hultmar. Cherche à rejoindre la Colline de l'Effroi. Possède deux poignards rituels (Angmar et Minas Morgul).\n\nOccupation: Espion du Mordor\nParticularités: Rusé, Impitoyable",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Méfiez-vous, il y a un espion gobelin qui rôde, et il ne sert pas les chefs locaux mais l'Ombre du Sud elle-même. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200039",
+      "name": "Bataur",
+      "description": "Grand Orque, gardien du corps de garde de Rath Sereg. Possède les clefs de la prison. Se bat avec son trousseau de clefs.",
+      "type": "PNJ",
+      "occupation": "Gardien Orque",
+      "particularités": "",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le gardien de la forteresse rouge est si bête qu'il utilise les clefs de la prison pour assommer les prisonniers ! (VRAIE)"
+      ]
+    },
+    {
+      "id": "200040",
+      "name": "Egel",
+      "description": "Oncle de Jagat et chef de sa tribu Lossoth. Vieil homme autoritaire et prudent, méfiant envers les étrangers et les affaires du sud. Connaît les légendes sur la Colline de l'Effroi et Sennas Gaer.\n\nOccupation: Chef Lossoth\nParticularités: Circonspect, Sévère",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le chef des Hommes des Glaces déteste les étrangers, il dit que nous apportons le feu qui fait fondre leur monde. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200041",
+      "name": "Aya (La Reine Pâle)",
+      "description": "Sorcière sans âge vivant dans les ruines de Sennas Gaer, un ancien château d'Angmar. Disciple du Roi-Sorcier, elle cherche à plaire à l'Ombre. Possède des connaissances anciennes et peut indiquer le chemin vers Amon Guruthos, mais à un prix. Apparaît comme une femme pâle et étrange.\n\nOccupation: Sorcière / Gardienne de Sennas Gaer\nParticularités: Énigmatique, Malveillante",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Dans les ruines du nord vit une dame pâle qui ne vieillit jamais ; elle vous dira votre avenir en échange d'un peu de votre vie. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200042",
+      "name": "Veriga",
+      "description": "Spectre puissant (Être des Galgals) hantant les cryptes sous Sennas Gaer. Garde le chemin secret vers Amon Guruthos. Créature ancienne et redoutable.\n\nOccupation: Gardien Spectral\nParticularités: Effroyable, Ancien",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Il y a une chose morte qui marche sous le vieux château, elle garde un passage vers l'enfer. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200043",
+      "name": "Le Gardien du Portail",
+      "description": "Spectre (Être des Galgals) gardant le Portail Noir, première porte d'Amon Guruthos. Ancien seigneur du Rhudaur corrompu par le Roi-Sorcier.\n\nOccupation: Gardien Spectral\nParticularités: Malign, Vengeur",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "L'esprit qui garde la porte noire était autrefois un roi des Hommes, mais son cœur a pourri il y a mille ans. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200044",
+      "name": "Le Gardien du Tombeau",
+      "description": "Autre spectre puissant (Être des Galgals) dans Amon Guruthos, probablement lié au tombeau qu'il garde.",
+      "type": "PNJ",
+      "occupation": "Gardien Spectral",
+      "particularités": "Effroyable",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Ne touchez pas aux tombes dans la montagne, leurs gardiens ne dorment jamais vraiment. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200045",
+      "name": "Le Veilleur Affamé",
+      "description": "Mal ancien et puissant tapi au cœur d'Amon Guruthos. Créature des temps oubliés, corrompue par Morgoth. Son pouvoir influence la région et attire les Spectres.\n\nOccupation: Mal Ancien\nParticularités: Affamé, Sans Forme Précise",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Il y a quelque chose de plus vieux que le monde caché sous la montagne, et ça a toujours faim. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200046",
+      "name": "Zoril",
+      "description": "Cheffe de guerre des Númenóréens Noirs, maniant l'épée Magolach. Pirate ayant vécu de rapines dans le sud avant de revenir en Umbar. Arrogante et épéiste hors pair, elle rêve de devenir reine du Royaume du Nord.\n\nOccupation: Cheffe de guerre, Pirate\nParticularités: Entêtée, Fière",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Cette pirate du Sud manie une épée magique qui boit le sang, elle veut se tailler un royaume ici dans le Nord ! (VRAIE)"
+      ]
+    },
+    {
+      "id": "200047",
+      "name": "Usapthon",
+      "description": "Sorcière Númenóréenne Noire, formée au Mordor. Élevée dans des catacombes, elle ne connaît que l'Ombre et trouve l'Eriador étrange et inquiétant. Elle pratique la sorcellerie pour servir Sauron.\n\nOccupation: Sorcière\nParticularités: Secrète, Troublante",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La femme en noir qui voyage avec les pirates ne parle à personne, sauf aux ombres qu'elle invoque. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200048",
+      "name": "Le Capitaine Nerek",
+      "description": "Vétéran des Corsaires d'Umbar, capitaine du Kathuphazgân. Prudent et soucieux de préserver son navire et son équipage, il doute de l'intérêt de la mission en Eriador.\n\nOccupation: Capitaine Corsaire\nParticularités: Autoritaire, Expérimenté",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le capitaine du navire noir a peur de l'eau douce, c'est pour ça qu'il ne remonte pas le fleuve ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200049",
+      "name": "Lug, le Seigneur du Fouet",
+      "description": "Orque du Mordor, maître des esclaves sur le navire. Il déteste la mer et reste dans les cales pour fouetter les rameurs. Il saisit la moindre occasion pour toucher terre.\n\nOccupation: Maître des esclaves\nParticularités: Entêté, Fier",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "L'Orque qui garde les esclaves sur le bateau est si cruel qu'il fouette même les vagues quand la mer est agitée. (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200050",
+      "name": "La Bête d'Angmar",
+      "description": "Une horreur ancienne ressemblant à un ours immense et aveugle. Elle chasse à l'odeur et hante les mines depuis des siècles, gardant les trésors d'Arvedui.\n\nOccupation: Monstre ancien\nParticularités: Affamée, Maline",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Dans les vieilles mines du nord, il y a un ours fantôme aveugle qui sent l'or et le sang à des lieues à la ronde. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200051",
+      "name": "Esprit des neiges",
+      "description": "Esprit malfaisant envoyé par le Roi-Sorcier, se créant un corps de glace pour tourmenter les vivants dans le froid du nord.\n\nOccupation: Serviteur spectral\nParticularités: Cruel, Furtif",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Si vous voyez une forme blanche dans le blizzard, fuyez, c'est un démon de glace qui gèle le cœur des hommes. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200052",
+      "name": "Braswen la Gardienne",
+      "description": "Elfe de haute taille, gardienne unique des Tours Blanches (Elostirion). Guerrière expérimentée sous des apparences d'érudite, elle protège le Palantir d'Elendil.\n\nOccupation: Défenseuse, Hôtesse\nParticularités: Circonspecte, Loyale",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La dame Elfe des Tours Blanches garde une pierre magique qui permet de voir au-delà de la mer, jusqu'au pays des Dieux. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200053",
+      "name": "Edris du Lindon",
+      "description": "Maître du savoir elfe désespéré, hanté par des visions de l'Œil après avoir tenté de contrôler le Palantir. Il refuse d'être dérangé dans ses recherches.\n\nOccupation: Maître du savoir\nParticularités: Majestueux, Méprisant",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Ce vieux sage Elfe est devenu fou, il parle tout seul et prétend qu'un Œil de feu le regarde depuis le sud. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200054",
+      "name": "Woleth d'Orthanc",
+      "description": "Agent envoyée par Saroumane pour étudier le Palantir. Impatiente et frustrée par l'attente, elle est prête à tout pour accomplir sa mission.\n\nOccupation: Agent, Érudite\nParticularités: Fière, Sévère",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "L'érudite venue du Sud est une espionne, elle cherche à voler les secrets des Elfes pour son maître à la Tour d'Orthanc. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200055",
+      "name": "Guerrier Homme Arbre",
+      "description": "Habitant cruel de la forêt d'Eryn Vorn, descendant des hommes chassés par les Númenóréens. Il se camoufle avec de la boue et des feuilles et déteste les étrangers.\n\nOccupation: Guerrier sauvage\nParticularités: Preste, Sanguinaire",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Dans la forêt sombre du cap, les arbres marchent et attaquent les voyageurs ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200056",
+      "name": "Thunir le Buveur de sang",
+      "description": "Monstre immortel, ancien humain ayant fusionné avec l'Arbre des Lamentations. Vétéran des guerres contre les Elfes, maintenu en vie par une magie sombre.\n\nOccupation: Gardien monstrueux\nParticularités: Sans pitié, Sauvage",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Il y a un monstre dans les bois du sud qui est moitié homme, moitié arbre, et qui boit le sang pour ne jamais mourir. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200057",
+      "name": "La Ruine de Nenuial",
+      "description": "Monstre aquatique gigantesque ressemblant à un poisson difforme des profondeurs. Invoqué par Sauron jadis, il hante le lac Evendim et se repaît de la chair des Dúnedain.\n\nOccupation: Monstre du lac\nParticularités: Malin, Territorial",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Ne naviguez pas sur le lac Evendim, une bête ancienne dort au fond et elle aime le goût de la chair fraîche. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200058",
+      "name": "Celerwen",
+      "description": "Rôdeuse devenue cheffe des rescapés sur l'Ultime Refuge après la mort de Targon. Elle tente de protéger son groupe affamé et blessé contre le monstre du lac.\n\nOccupation: Rescapée, Rôdeuse\nParticularités: Honorable, Patiente",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Il y a un groupe de survivants coincés sur une île du lac, menés par une femme Rôdeur qui refuse d'abandonner. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200059",
+      "name": "Herunen",
+      "description": "Esprit des eaux corrompu par la rancœur et le chagrin suite à la trahison supposée de ses amis elfes. Il contrôle les eaux de Tindailin et piège les intrus.\n\nOccupation: Esprit vengeur\nParticularités: Aigri, Vengeur",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La rivière elle-même est en colère, un esprit noyé tire les gens vers le fond par pure méchanceté. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200060",
+      "name": "Brethil",
+      "description": "Éclaireur elfe taciturne faisant partie de l'expédition venue des Havres Gris. Méfiant et observateur, il protège ses compagnons.\n\nOccupation: Éclaireur elfe\nParticularités: Observateur, Taciturne",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "J'ai vu un Elfe dans les bois qui ne faisait aucun bruit, il observait tout mais ne parlait à personne, comme une ombre. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200061",
+      "name": "Johan Fuitt",
+      "description": "Marchand le plus riche de Lond Daer, fils d'un voleur de Tharbad. Il jalouse la reine et complote pour prendre le pouvoir, tout en jouant le serviteur loyal.\n\nOccupation: Marchand\nParticularités: Fourbe, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le marchand Fuitt est plus riche que la Reine elle-même, et il se murmure qu'il aimerait bien porter sa couronne. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200062",
+      "name": "Haldane",
+      "description": "Chevalier de Lond Daer à la carrure de géant. Ancien garde du corps de Fuitt, il est désormais un défenseur farouche (et parfois cruel) de la Reine Nimue.\n\nOccupation: Chevalier, Guerrier\nParticularités: Cruel, Inébranlable",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le chevalier géant de Lond Daer mange des pierres au petit-déjeuner et il a juré de briser quiconque regarde la Reine de travers. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200063",
+      "name": "Hurin De-la-Porte",
+      "description": "Vieux gardien unijambiste des portes du Palais de la Reine. Fouineur invétéré, il connaît tous les ragots de la ville.\n\nOccupation: Chevalier, Gardien\nParticularités: Fouineur, Vieux",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Si tu veux savoir ce qui se passe au palais, paye un verre au vieux gardien unijambiste, il a des oreilles partout. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200064",
+      "name": "Nalien du Lindon",
+      "description": "Guerrière elfe survivante de la Bataille de Fornost. Hantée par le souvenir de son amie Drameth, elle erre sur le champ de bataille, confuse et perdue dans le passé.\n\nOccupation: Guérisseuse, Guerrière\nParticularités: Confuse, Entêtée",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Il y a une guerrière Elfe sur les anciens champs de bataille qui croit que la guerre contre le Roi-Sorcier n'est pas finie. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200065",
+      "name": "Drameth l'Égarée",
+      "description": "Spectre d'une guerrière elfe tombée au combat jadis. Son esprit tourmenté attaque les vivants aux côtés des spectres déchus sur les Champs Silencieux.\n\nOccupation: Spectre\nParticularités: Rapide, Tourmentée",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La dame blanche qui rôde la nuit n'est pas une Elfe, c'est un spectre qui cherche à voler la vie des guerriers. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200066",
+      "name": "Poursuivant Troll des Collines",
+      "description": "Troll affamé rôdant sur les champs de bataille à la recherche de proies faciles, attiré par la présence des Elfes et des aventuriers.\n\nOccupation: Prédateur\nParticularités: Affamé, Circonspect",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Un Troll immense rôde sur les champs de bataille, il mange les morts et chasse les vivants qui viennent piller les tombes. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200067",
+      "name": "La Mère Wendreth",
+      "description": "Doyenne des Femmes-Sages de Medcaute. Elle détient les secrets de la guérison et connaît l'existence de la Colline de l'Assoupie.\n\nOccupation: Doyenne, Guérisseuse\nParticularités: Patiente",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La vieille Wendreth connaît des remèdes oubliés, elle peut soigner des blessures que même les Elfes ne sauraient guérir. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200068",
+      "name": "L'Oiseau Cauchemar",
+      "description": "Guerrier masqué monté sur échasses, protecteur des marais. Il endosse un rôle rituel pour tuer les étrangers avec sa lance magique.\n\nOccupation: Gardien des marais\nParticularités: Furtif, Rapide",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "J'ai vu un oiseau géant marcher sur les marais avec des jambes d'homme, il empale les intrus sur son bec ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200069",
+      "name": "Nethig",
+      "description": "Dame Elfe d'Eregion endormie depuis le Deuxième Âge pour échapper à un poison mortel. Elle repose au cœur de la Colline de l'Assoupie.\n\nOccupation: Dame Elfe ancienne\nParticularités: Endormie",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Sous la colline aux fleurs, une princesse féerique dort depuis mille ans, attendant qu'un prince vienne la réveiller. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200070",
+      "name": "Le Grand Gobelin",
+      "description": "Roi gobelin résidant au Mont Gram, autoproclamé en l'honneur de celui tué à Gobelinville. Il commande aux Gobelins de la région.\n\nOccupation: Roi Gobelin\nParticularités: Vengeur",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le Roi des Gobelins est de retour ! Il s'est proclamé seigneur du Mont Gram et rassemble une armée pour se venger des Nains. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200071",
+      "name": "Agna la Bibliothécaire",
+      "description": "Vieille femme gardant la bibliothèque de Tharbad. Elle copie inlassablement les textes anciens pour les préserver.\n\nOccupation: Copiste\nParticularités: Consciencieuse, Myope",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La vieille Agna à la bibliothèque est aveugle, mais elle connaît chaque livre par cœur et peut réciter l'histoire des rois en dormant. (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200072",
+      "name": "Amélia Kern",
+      "description": "Aventurière et monte-en-l'air à la retraite vivant à Tharbad. Experte en trésors et légendes, elle peut conseiller les aventuriers.\n\nOccupation: Aventurière à la retraite\nParticularités: Honorable, Majestueuse",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Mme Kern a l'air d'une dame respectable, mais dans sa jeunesse, elle a cambriolé la tour du Roi-Sorcier lui-même ! (VRAIE)"
+      ]
+    },
+    {
+      "id": "200073",
+      "name": "Frecana, la Princesse Dunlending",
+      "description": "Descendante de Freca et protégée de Saroumane. Elle complote pour unir les tribus du Pays de Dun et revendiquer un jour le Rohan.\n\nOccupation: Conspiratrice\nParticularités: Belle, Maline",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La princesse des collines a fait un pacte avec le Magicien Blanc pour reprendre les terres de ses ancêtres aux Cavaliers. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200074",
+      "name": "Ivoch le Désossé",
+      "description": "Chef Dunlending infirme qui se déplace en chariot ou palanquin. Stratège cruel, il compense son handicap par une intelligence redoutable.\n\nOccupation: Chef de guerre\nParticularités: Infirme, Majestueux",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le chef de guerre du sud ne peut pas marcher, mais son esprit est si tordu qu'il gagne des batailles sans jamais quitter son chariot. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200075",
+      "name": "La Mangeuse d'Âmes",
+      "description": "Mystique Dunlending au visage peint de blanc, liée à la mort et aux galgals. Elle est crainte par ses propres guerriers.\n\nOccupation: Mystique\nParticularités: Malicieuse, Mystique",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "La sorcière au visage blanc mange le cœur de ses ennemis pour voler leur force, même les siens la craignent ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200076",
+      "name": "Hugues Roncenoire",
+      "description": "Ancien hors-la-loi devenu héros local sur l'Île-aux-Cygnes. Il défend sa communauté et cache son passé de brigand.\n\nOccupation: Défenseur de la ville\nParticularités: Grand",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Ce brave Hugues qui protège l'île est un héros, mais je jurerais avoir vu son visage sur une affiche de 'Recherché' il y a dix ans. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200077",
+      "name": "Sire Mjolin",
+      "description": "Seigneur nain de Durefonte. Rongé par la honte de voir ses mines d'or taries, il cherche désespérément une solution pour sauver son clan.\n\nOccupation: Seigneur de la place-forte naine\nParticularités: Sévère",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le Seigneur de Durefonte est assis sur une mine vide, il vendrait sa barbe pour trouver un nouveau filon d'or. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200078",
+      "name": "Beinion et Arin d'Evendim",
+      "description": "Un couple de Rôdeurs qui surveillent les abords du Lac Evendim et repoussent les créatures maléfiques des ruines d'Annúminas.",
+      "occupation": "Rôdeurs",
+      "particularités": "Affable, Courageux, Loyal (Arin), Sincère (Beinion)",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "N'allez pas traîner près du lac le soir ; un couple de gardiens farouches surveille les ruines et ils n'aiment pas les curieux. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200079",
+      "name": "Barnabas Poiredebeurré",
+      "description": "Le tenancier de l'auberge du Poney Fringant à Bree. Il est décrit comme vif d'esprit et perspicace malgré son apparence parfois étourdie.",
+      "occupation": "Aubergiste",
+      "particularités": "Patient, Rustre",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le vieux Barnabas a l'air d'avoir la tête en l'air, mais on dit qu'il cache un trésor de roi dans sa cave ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200080",
+      "name": "Jean Fougeron",
+      "description": "Un marchand de chevaux colérique et malhonnête vivant dans le quartier du Sentier de l'Est à Bree. Il vend des bêtes maltraitées à des prix indécents et se méfie des Rôdeurs.",
+      "occupation": "Marchand de chevaux, Palefrenier",
+      "particularités": "Rusé, Secret",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Les chevaux de Fougeron ne valent rien, mais il se fait de l'or en vendant des informations à des étrangers louches venus du Sud. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200081",
+      "name": "Oswald Briqueux",
+      "description": "Un vieillard rabougri vivant à Combe. Il est dur et exigeant, mais versé dans les connaissances anciennes et aide secrètement les Rôdeurs.",
+      "occupation": "Riche propriétaire",
+      "particularités": "Curieux, Secret, Sinistre",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le vieux Oswald à Combe est un sorcier, il passe ses nuits à lire des grimoires poussiéreux au lieu de s'occuper de ses terres. (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200082",
+      "name": "Adelard Touque",
+      "description": "Un jeune Hobbit vigoureux, champion du Festival estival des ronds de fumée à Staddel, un art qu'il a perfectionné grâce aux conseils du Nain Balin.",
+      "occupation": "Champion de ronds de fumée",
+      "particularités": "Courageux, Honorable",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Adelard ne souffle pas juste de la fumée, Gandalf lui a appris des mots magiques pour donner vie à ses ronds de pipe ! (FAUSSE)"
+      ]
+    },
+    {
+      "id": "200083",
+      "name": "Fitch Grantarbre",
+      "description": "Le Forestier d'Archet, qui dirige et protège la communauté. Il est hanté par la mort de son père tué par un Troll et cherche à se venger.",
+      "occupation": "Forestier",
+      "particularités": "Grand, Rustre, Vue perçante",
+      "type": "PNJ",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Le Forestier d'Archet est obsédé par la vengeance, il traque un Troll immense qui a tué son père il y a dix ans. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200084",
+      "name": "Le Roi des Esprits",
+      "description": "Une créature maléfique hantant les Grands Galgals, possiblement le dernier Roi du Cardolan ou un capitaine d'Angmar.",
+      "occupation": "Chef des Êtres des Galgals",
+      "particularités": "Impétueux, Malin, Vengeur",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Si vous entendez une voix froide vous appeler dans le brouillard des Hauts, ne répondez pas, c'est le Roi des Morts qui cherche de nouveaux sujets. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200085",
+      "name": "Búrzgul",
+      "description": "Un guerrier orque malicieux venu des Monts Brumeux, caché dans les Hauts du Sud. Il dirige une bande d'Orques et communique avec Angmar.",
+      "occupation": "Chef de bande Orque",
+      "particularités": "Cruel, Vue perçante",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "Les collines du sud ne sont plus sûres, une bande d'Orques y creuse des tunnels et ils préparent quelque chose de mauvais. (VRAIE)"
+      ]
+    },
+    {
+      "id": "200086",
+      "name": "Cendre",
+      "description": "Un grand Warg au pelage noir, fidèle ami de Búrzgul.",
+      "occupation": "Grand Loup (Warg)",
+      "particularités": "Malin, Rapide",
+      "type": "Monstre",
+      "images": [],
+      "associatedRegions": [],
+      "Rumeurs": [
+        "J'ai vu un loup grand comme un poney rôder la nuit, ses yeux brillaient d'une intelligence maléfique. (VRAIE)"
+      ]
+    }
+  ]
+}

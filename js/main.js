@@ -514,6 +514,30 @@ function renderLocations() {
             }
         });
 
+        marker.addEventListener('click', (e) => {
+            // Bloquer en mode ajout de lieu - priorité absolue
+            if (isLocationAddingMode) {
+                return;
+            }
+
+            // Bloquer le clic simple si on est en train de tracer une région
+            if (isRegionDrawingMode) {
+                return;
+            }
+
+            // Ne pas ouvrir l'infobox si on a dragué le marqueur (seuil de 5 pixels)
+            const dragDistance = Math.sqrt(Math.pow(e.clientX - dragStartX, 2) + Math.pow(e.clientY - dragStartY, 2));
+            if (dragDistance > 5) {
+                return;
+            }
+
+            e.stopPropagation();
+
+            if (window.infoBoxManager) {
+                window.infoBoxManager.showInfoBox(e, location, 'location');
+            }
+        });
+
         // Événements tactiles pour mobile
         let touchStartTime = 0;
         let touchHasMoved = false;

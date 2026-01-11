@@ -563,10 +563,9 @@ class CharactersManager {
             thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%); transform-origin: center;"`;
         }
 
-        const isAdventureMode = window.positionManager?.adventureMode || false;
-        const clickHandler = isAdventureMode ? '' : `onclick="window.charactersManager.showCharacterInfoBox('${character.id}')"`;
-        const cursorClass = isAdventureMode ? 'cursor-default' : 'cursor-pointer';
-        const hoverClass = isAdventureMode ? '' : 'hover:bg-gray-600';
+        const clickHandler = `onclick="window.charactersManager.showCharacterInfoBox('${character.id}')"`;
+        const cursorClass = 'cursor-pointer';
+        const hoverClass = 'hover:bg-gray-600';
 
         // Tronquer la description à 150 caractères
         const shortDescription = character.description 

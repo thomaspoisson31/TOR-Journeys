@@ -1,0 +1,169 @@
+{
+  "locations": [
+    {
+      "id": 2000000000000,
+      "name": "Le Vallon Caché (Morglynd)",
+      "description": "Morglynd est un vallon isolé sur les Collines Venteuses, jadis un avant-poste d'Arnor (la 'Verrue'). Aujourd'hui, il est le repaire d'une famille de Trolls de Pierre dirigée par la maligne Nelly Brasballants. Ils se cachent dans les tunnels de la Verrue et le lac, attirant les voyageurs dans un piège mortel pour les dévorer.",
+      "color": "orange",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3500,
+        "y": 1350
+      },
+      "Rumeurs": [
+        "Au sommet des Collines Venteuses il y a des lieux hantés, des vallées où les ombres s'enfoncent si profondément que le soleil ne les atteint jamais. J'ai entendu l'histoire d'un vieux trésor enfoui dans une de ces vallées. Certains disent que ce sont les Nains qui l'ont enterré, d'autres que c'étaient les Rois de jadis, donc j'ignore à qui il est censé revenir. Mais je vais vous dire une chose: vous ne me verrez jamais courir à la chasse au trésor sur ces collines, c'est un coup à tomber et se briser la nuque... ou que quelque chose s'en charge à votre place."
+      ],
+      "Tradition_Ancienne": "Durant le déclin du vieux royaume de l'Arthedain, alors en guerre contre le sombre pays d'Angmar, les soldats du roi érigèrent maintes forteresses et tours de guet dissimulées le long des Collines Venteuses, pour former un rempart contre l'invasion. Ils creusèrent aussi des sentiers et des escaliers secrets, afin de se mouvoir sans être vus. Ils avaient toujours une issue cachée pour sortir.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Recits/The_Hidden_Valley.jpg"
+        }
+      ]
+    },
+    {
+      "id": 2000000000001,
+      "name": "L'Île Hantée (L'Île de la Mère)",
+      "description": "L'Île de la Mère est la plus petite des îles occidentales, et la plus à l'ouest. C'est la dernière terre émergée à l'est du Royaume Béni et un vestige du Beleriand englouti. Elle abrite la tombe de Túrin Turambar, qui devint un lieu de pèlerinage pour les Númenóréens. L'ancêtre de l'Héritier y forgea une épée. Aujourd'hui, l'île est hantée par des esprits maléfiques et occupée par une tribu de Lossoth piégée.",
+      "color": "orange",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 100,
+        "y": 100
+      },
+      "Rumeurs": [
+        "Il y a dans les Mers Occidentales une petite île, à peine plus haute qu'un rocher à pic émergeant des eaux froides. On raconte qu'un grand héros y fut enterré, mais qui peut l'affirmer? Les légendes perdurent, mais au fil des années les détails s'érodent, et seuls les Elfes se souviennent."
+      ],
+      "Tradition_Ancienne": "Parmi les grands récits qui nous viennent des Temps Anciens, le plus triste est celui de Túrin, qui lutta contre l'horrible destin qui l'attendait et tua le premier des Dragons... Túrin fut inhumë au sommet d'une colline... le Beleriand fut noyé sous les flots à l'exception de la tombe de Túrin... les marins de Númenor découvrirent sa tombe el érigèrent une tour pour protéger l'ile, car Túrin était parent des ancêtres de la lignée de leurs vois. L'ile devint un lieu de pèlerinage... Númenor fut submergée... Mais Turin git toujours assoupi sous la terre, jusqu'à la Grande Fin.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Recits/The_Isle_of_the_Mother.jpg"
+        }
+      ]
+    },
+    {
+      "id": 2000000000002,
+      "name": "La Tour en Ruines (Tombe de Gwendaith)",
+      "description": "Près de la Grande Route de l'Est se trouvent les ruines d'une tour de guet. Elle fut bâtie sur le tombeau oublié de Gwendaith, une héroïne du temps d'Elendil. Aujourd'hui, le hors-la-loi Osmer l'utilise comme repaire, ignorant qu'un esprit maléfique, réveillé par la Colline de l'Effroi, s'est emparé de la dépouille de la guerrière dans la crypte.",
+      "color": "orange",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 4000,
+        "y": 1300
+      },
+      "Rumeurs": [
+        "Il est dangereux de quitter la Route. Vous pourriez tomber dans quelque cave abandonnée ou sur un chemin creux et vous briser une jambe. Comment vous trouve-t-on, ensuite? Vous finissez perdu, seul, dans l'estomac d'un Troll, voilà comment vous finissez! Ne quittez jamais la route!"
+      ],
+      "Tradition_Ancienne": "Les limites des anciens royaumes sont parsemées de vestiges de tours de guet et de forts frontaliers. Jadis, ayant fini par se méfier les uns des autres, les héritiers d'Elendil érigèrent maints châteaux aux frontières des territoires qu'ils se disputaient. Pais la guerre vint d'Angmar, et ils bâtirent d'autres bastions... Hélas! Au fil des siècles... les Hommes des royaumes qui leur succédèrent furent contraints de dépouiller de leurs bonnes pierres les anciens monuments d'Arnor... pour construire leurs petits châteaux...",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Recits/The_Ruined_Tower.jpg"
+        }
+      ]
+    },
+    {
+      "id": 2000000000003,
+      "name": "La Forteresse de Garth Tauron (Tharbad)",
+      "description": "Garth Tauron est l'antique forteresse númenóréenne qui garde le gué de Tharbad sur le Flot Gris. Jadis puissante, elle tombe aujourd'hui en ruines. Le 'Maître' de la ville, Gurnow, l'utilise comme une immense prison pour ses ennemis et ses débiteurs. Ses geôles sont un labyrinthe de salles effondrées et de tunnels inondés.",
+      "color": "orange",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3400,
+        "y": 2500
+      },
+      "Rumeurs": [
+        "C'était le château d'un roi. Quel roi? je ne sais pas exactement... Mais entre ses murs, tout est pourri: moins d'un dixième est utilisable. Quant à ces grandes tours, la moitié d'entre elles s'écrouleront à la prochaine tempête ! C'est pour ça que le Maître s'en sert de prison: si en s'effondrant les tours écrasent un prisonnier, ça permet d'économiser le coût de ses funérailles."
+      ],
+      "Tradition_Ancienne": "Garth Tauron: la Forteresse de la Forêt. Il est dit qu'autrefois une immense forêt reliait les montagnes de Lune à la Trouée du Rohan. Avides de bois, les Marins de Númenor abattirent ses arbres pour construire leurs vaisseaux. C'est ici qu'ils bâtirent la puissante Garth Tauron, à l'endroit du gué, pour pouvoir protéger leurs forestiers. Depuis, un Age s'est écoulé... mais la forteresse a perluré-or nous voilà arrivés à ses derniers jours...",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Recits/The_Fortress_of_Garth_Tauron.jpg"
+        }
+      ]
+    },
+    {
+      "id": 2000000000004,
+      "name": "Rath Sereg (Le Fort du Sang)",
+      "description": "Ancienne forteresse d'Angmar au sud de Carn Dûm, Rath Sereg fut détruite par les armées du Gondor. Elle est restée en ruines pendant des siècles. Récemment, le seigneur orque Hultmar Mille-mains a commencé à la rebâtir, l'utilisant comme base pour ses raids et comme bastion pour ses troupes, rêvant de restaurer la puissance d'Angmar.",
+      "color": "orange",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3900,
+        "y": 800
+      },
+      "Rumeurs": [
+        "Une fois de plus, le nombre d'Orques dans les Monts Brumeux ne cesse de croître, croyez-moi! Comme jadis ils descendent du nord, et bientôt ils auront bloqué tous les cols menant au Pays Sauvage. Il en vient aussi de l'ouest, le long de la Fontgrise et à travers les collines; ceux-la font leurs tanières parmi les vieilles ruines et les galgals. Si j'étais vous, je ne dormirais que d'un œil : nul ne peut prédire quand un Orque viendra roder devant sa porte...."
+      ],
+      "Tradition_Ancienne": "Jadis, au nord s'étendait le royaume d'Angmar, peuplé d'Hommes Malfaisants. Ils érigèrent à leurs frontières des tours de guet et de forteresses; de ces forts, des pillards vinrent semer le trouble sur les terres du Roi... une grande armée... vainquit Angmar. La cité de Carn Dùm fut rasée, ainsi que la plupart des forts frontaliers: les autres, abandonnés, tombèrent en ruines.",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Recits/Rath_Sereg.jpg"
+        }
+      ]
+    },
+    {
+      "id": 2000000000005,
+      "name": "Sennas Gaer (Château de la Sorcière)",
+      "description": "Sennas Gaer, le 'château des signes', est un ancien observatoire d'Angmar dans le Forodwaith. Il est habité par Aya, une 'sorcière' qui est en fait une simple mortelle ayant acquis une grande sagesse et une longue vie. Elle chérit sa solitude mais connaît les secrets du Nord, y compris le seul chemin sûr pour atteindre Amon Guruthos, qu'elle a récemment révélé à l'Orque Snava.",
+      "color": "orange",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 4300,
+        "y": 350
+      },
+      "Rumeurs": [
+        "Méfiez-vous du Château de la Sorcière. Elle n'est ni vivante ni morte... Elle est là depuis la chute d'Angmar, et elle y restera jusqu'à ce que le Roi-sorcier revienne... Elle attire les voyageurs... et se repaît de leur peur."
+      ],
+      "Tradition_Ancienne": "Sennas Gaer, le 'château des signes'... fut jadis un observatoire... Les Hommes d'Angmar l'agrandirent... Quand Angmar tomba, il fut abandonné... Une sorcière, Aya, s'y installa... Elle n'est pas maléfique, mais elle chérit sa solitude et connaît de nombreux secrets...",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Recits/Amon_Guruthos.jpg"
+        }
+      ]
+    },
+    {
+      "id": 2000000000006,
+      "name": "Amon Guruthos (La Colline de l'Effroi)",
+      "description": "Une excroissance maléfique dans le Forodwaith, née de la corruption de Morgoth avant le Premier Âge. Amon Guruthos est une entité malveillante qui se nourrit de la peur. Le Roi-sorcier y puisa son pouvoir, et d'innombrables héros y ont échoué. L'Orque Snava y est venu pour éveiller sa pleine puissance au service du Mordor.",
+      "color": "orange",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 4500,
+        "y": 250
+      },
+      "Rumeurs": [
+        "On l'appelle Amon Guruthos, la Colline de l'Effroi. C'est là que le Roi-sorcier a appris son art... C'est un lieu maudit... Personne n'en est jamais revenu. N'y allez pas. N'y pensez même pas. Vous sentez cette brise? C'est le souffle de la Colline. Elle est déjà en train de vous glacer le cœur..."
+      ],
+      "Tradition_Ancienne": "La Colline fut érigée avant le Premier Âge, quand Morgoth le Grand Ennemi... chercha à corrompre la Terre du Milieu... Amon Guruthos s'éleva alors de la terre... Le Roi-sorcier vint y puiser son pouvoir... Les Rois d'Arnor envoyèrent maints héros affronter le mal qui y résidait. Tous échouèrent. L'ancêtre de l'Héritier est le dernier à avoir tenté...",
+      "imageUrl": "",
+      "images": [
+        {
+          "url": "/uploads/101960341020312309143/locations/Recits/Amon_Guruthos.jpg"
+        },
+        {
+          "url": "/uploads/101960341020312309143/locations/Recits/The_Heart_of_the_Hill_of_Fear.jpg"
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,62 @@
+[
+  {
+    "Dé du destin": "OEIL",
+    "Résultat": "Rumeur",
+    "Description": "Quelqu'un entend la conversation des Héros et suppose qu'ils reviennent de la Moria, leurs sacs remplis de trésors. Cette nuit-là, la Compagnie est dépouillée ou attaquée."
+  },
+  {
+    "Dé du destin": "1",
+    "Résultat": "Rumeur",
+    "Description": "Parler d'un tel endroit porte malheur !"
+  },
+  {
+    "Dé du destin": "2",
+    "Résultat": "Rumeur",
+    "Description": "Des Géants vivaient jadis dans les Mont Brumeux, et leurs tombes gisent sous la montagne. Laissez-les reposer en paix jusqu'à la fin du monde."
+  },
+  {
+    "Dé du destin": "3",    
+    "Résultat": "Rumeur",
+    "Description": "La Moria ? J'en ai entendu parler, c'est tout au sud. À ce qu'il paraît, c'est plein de montagnes en flammes et de choses horribles !"
+  },
+  {
+    "Dé du destin": "4",
+    "Résultat": "Rumeur",
+    "Description": "La Moria ? J'en ai entendu parler... Les Nains en avaient été chassés par un Dragon, mais maintenant qu'il est mort, les Nains y sont retournés et leurs rivières charrient de l'or."
+  },
+  {
+    "Dé du destin": "5",
+    "Résultat": "Rumeur",
+    "Description": "Il y a un labyrinthe, sous la montagne... Si vous vous y égarez, vous serez perdu à jamais !"
+  },
+  {
+    "Dé du destin": "6",
+    "Résultat": "Rumeur",
+    "Description": "La Moria ? C'est un repaire d'Orques et de Gobelins. On n'y trouve rien d'autre que des choses maléfiques."
+  },
+  {
+    "Dé du destin": "7",
+    "Résultat": "Rumeur",
+    "Description": "Si on sait où creuser, les montagnes regorgent d'or et d'argent. Et de monceaux de bijoux, aussi. Ces trésors des Nains d'antan... ils sont tous maudits ! J'en toucherais un pour rien au monde !"
+  },
+  {
+    "Dé du destin": "8",
+    "Résultat": "Rumeur",
+    "Description": "La Moria ? C'est qu'une légende inventée par les Nains, une vision qu'ils ont eue après avoir mangé trop de champignons cavernicoles."
+  },
+  {
+    "Dé du destin": "9",
+    "Résultat": "Rumeur",
+    "Description": "D'après les récits des Nains, il existe une porte menant aux tunnels de la Moria près de la source du Glanduin. Suivez le fleuve, et vous la trouverez."
+  },
+  {
+    "Dé du destin": "10",
+    "Résultat": "Rumeur",
+    "Description": "C'est le poison et la peste qui menèrent les Nains à la ruine. L'air y est vicié, une bouffée suffit à vous tuer !"
+  },
+  {
+    "Dé du destin": "RUNE",
+    "Résultat": "Rumeur",
+    "Description": "Quelqu'un surprend la conversation des Héros et les entend mentionner la Moria : il peut s'agir d'un Garant ou d'un d'allié potentiel."
+  }
+]

@@ -1,0 +1,457 @@
+{
+  "characters": [
+    {
+      "id": "200000",
+      "name": "Nelly Brasballants",
+      "description": "Vieille matriarche Troll de pierre très intelligente, descendue de la Trouée des Trolls. Elle campe près de la Croisée des Chemins de Bree avec sa famille. Au lieu de chasser, elle utilise Jari et Diarmoc pour attirer des victimes dans son repaire. Elle se cache dans le lac pendant la journée et possède quelques sortilèges.\n\nOccupation: Matriarche Troll\nParticularités: Cruelle, Maligne",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200001",
+      "name": "Jari le Vagabond",
+      "description": "Nain rusé, exilé des Montagnes Bleues pour vol et escroquerie (potentiellement pillage de tombes). Un peu voleur, forgeron et chasseur de trésors. Pour sauver sa vie, il a passé un marché avec Nelly Brasballants pour lui amener des victimes en échange de leurs possessions. Compense son manque de courage par un caractère bruyant et exubérant.\n\nOccupation: Brigand, Complice de meurtres\nParticularités: Extravagant, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200002",
+      "name": "Diarmoc le Voyageur",
+      "description": "Homme originaire du sud (Dunlending/Gondorien), chassé de ses terres près du Rohan. Sa famille a été capturée par Nelly Brasballants. Il est forcé d'aider Jari à attirer de nouvelles victimes pour que sa famille reste en vie. Autrefois riche et respecté, il est maintenant sinistre, taciturne et accablé de culpabilité.\n\nOccupation: Complice malgré lui\nParticularités: Étranger, Secret",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200003",
+      "name": "Elda",
+      "description": "Épouse de Diarmoc. Capturée par Nelly Brasballants et ses fils, elle est retenue prisonnière sur un radeau au milieu du lac avec ses enfants survivants.",
+      "type": "PNJ",
+      "occupation": "Prisonnière des Trolls",
+      "particularités": "Épuisée, Captive",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200004",
+      "name": "Tecca",
+      "description": "Enfant de Diarmoc et Elda. Capturé(e) par Nelly Brasballants, retenu(e) prisonnier(e) sur un radeau au milieu du lac.",
+      "type": "PNJ",
+      "occupation": "Enfant / Prisonnier(ère) des Trolls",
+      "particularités": "Épuisé(e), Captif(ve)",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200005",
+      "name": "Sulain",
+      "description": "Enfant de Diarmoc et Elda. Capturé(e) par Nelly Brasballants, retenu(e) prisonnier(e) sur un radeau au milieu du lac.",
+      "type": "PNJ",
+      "occupation": "Enfant / Prisonnier(ère) des Trolls",
+      "particularités": "Épuisé(e), Captif(ve)",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200006",
+      "name": "Floki",
+      "description": "Noble nain d'une maison mineure, cousin éloigné de Thorin Écu-de-Chêne. Frère de Flonar. Se distingue par son enthousiasme sans faille. Voyage fréquemment entre les Montagnes Bleues et Erebor. Sollicite l'aide des héros pour remettre une lettre à son frère disgracié, puis plus tard pour le venger.\n\nOccupation: Messager\nParticularités: Fier, Passionné",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200007",
+      "name": "Flonar",
+      "description": "Frère aîné de Floki, chef de leur lignée. Exilé des Montagnes Bleues pour avoir bravé l'interdiction d'entrer dans la Moria et y avoir volé une clef secrète. S'est installé avec ses partisans au Val Doré, près du Lac Evendim. Torturé et tué par les Orques lors du sac du village.\n\nOccupation: Chef nain exilé\nParticularités: Insoumis, Secret",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200008",
+      "name": "Scylda Bruyère",
+      "description": "Jeune fille de huit ans, fille du fermier Tolgarth Bruyère. Seule survivante de l'attaque des Trolls sur sa ferme dans le Vallon Caché. Elle survit seule dans les ruines, connaissant les habitudes des Trolls et certains secrets du vallon.",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200009",
+      "name": "Orothel",
+      "description": "Rôdeuse du Nord expérimentée mais vieillissante. Apparence d'une femme d'une soixantaine d'années, mais bien plus âgée. Pragmatique, déterminée, chasseuse et pisteuse hors pair. Impatiente envers les imbéciles. Traque les Trolls et enquête sur les agents de l'Ombre à Tharbad, utilisant Jon-le-Cabri comme messager forcé.\n\nOccupation: Rôdeuse\nParticularités: Sage, Sévère",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200010",
+      "name": "Aglaen l'Astrologue",
+      "description": "Homme nerveux aux cheveux grisonnants vivant à Lond Daer. S'est lancé tardivement dans l'art de la clairvoyance. A eu des visions concernant l'Héritier sur une île lointaine et une sombre colline menaçante.\n\nOccupation: Astrologue\nParticularités: Nerveux, Clairvoyant (peut-être)",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200011",
+      "name": "Nimue",
+      "description": "Jeune femme courageuse, devenue reine de Lond Daer après avoir vaincu un serpent de mer. Accueille les héros et les encourage à enquêter sur les visions d'Aglaen. Gandalf est son conseiller.",
+      "type": "PNJ",
+      "occupation": "Reine de Lond Daer",
+      "particularités": "Courageuse",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200012",
+      "name": "Falmir Têteblonde",
+      "description": "Jeune Hobbit aventureux, devenu un des chevaliers de Lond Daer. Enthousiaste, audacieux et téméraire. Introduit les héros à Aglaen après avoir entendu parler de la prophétie.",
+      "type": "PNJ",
+      "occupation": "Chevalier de Lond Daer",
+      "particularités": "Enthousiaste, Audacieux, Téméraire",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200013",
+      "name": "Eagre",
+      "description": "Marin de Lond Daer. Dans sa jeunesse, une tempête l'a emporté jusqu'à l'Île de la Mère. Il s'est vanté toute sa vie de cet exploit. Sa fille Elwing a disparu en tentant de refaire son voyage. Il guide les héros jusqu'à l'île, cachant son chagrin derrière une attitude hilare.\n\nOccupation: Marin\nParticularités: Vantard, Chagriné",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200014",
+      "name": "Elwing",
+      "description": "Fille d'Eagre. Apprentie navigatrice, elle a voulu surpasser son père et est partie seule retrouver l'Île de la Mère. Elle a vécu parmi les Lossoth, puis a navigué avec eux jusqu'à l'île. Influencée par des rêves, elle a trouvé l'épée de l'ancêtre, réveillant les esprits. Elle est retrouvée piégée et affaiblie dans une grotte.\n\nOccupation: Navigatrice\nParticularités: Ambitieuse, Tourmentée",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200015",
+      "name": "Jagat",
+      "description": "Jeune chasseur Lossoth, chef d'une expédition vers l'Île de la Mère pour chasser Fastitocalon, aidé par Elwing. Se retrouve piégé sur l'île avec sa tribu par des esprits. Peut devenir un allié ou rester méfiant. Deviendra plus tard chef de sa tribu (tribu d'Egel).\n\nOccupation: Chasseur Lossoth / Chef de tribu\nParticularités: Habile, Prudent",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200016",
+      "name": "L'Endeuillée",
+      "description": "Figure spectrale ou quasi-divine résidant près de la Pierre des Infortunés sur l'Île de la Mère. Incarnation de toutes les mères pleurant leurs enfants perdus à la guerre ou à l'aventure. Met en garde les héros contre les dangers de leur quête.",
+      "type": "PNJ",
+      "occupation": "Esprit Gardien / Incarnation du Deuil",
+      "particularités": "Spectrale, Sage, Mélancolique",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200017",
+      "name": "Osmer le << Magicien >>",
+      "description": "Hors-la-loi qui usurpe l'identité de Gandalf pour recruter des hommes de main et commettre des méfaits. Intelligent mais sans sagesse, rusé et manipulateur. Cherche à établir une base dans une tour en ruines près de la ferme de Farrell.\n\nOccupation: Chef de bande / Imposteur\nParticularités: Charlatan, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200018",
+      "name": "Hamfast",
+      "description": "Jeune habitant de Bree, influençable et peu futé. Quitte sa maison pour suivre 'Gandalf' (Osmer) à l'aventure, croyant partir en quête d'un trésor. Réalise progressivement la supercherie.\n\nOccupation: Recrue de hors-la-loi (malgré lui)\nParticularités: Influençable, Naïf",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200019",
+      "name": "Lucinda Dussaule",
+      "description": "Mère d'Hamfast, habitante de Bree. Inquiète pour son fils disparu, elle demande l'aide des héros pour le retrouver, accusant Gandalf de l'avoir enlevé.",
+      "type": "PNJ",
+      "occupation": "Habitante de Bree",
+      "particularités": "Inquiète",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200020",
+      "name": "Farrell l'Ancien",
+      "description": "Fermier coriace et rustre vivant isolé à l'est du Mont Venteux. Se comporte en tyran avec sa famille, méfiant envers les étrangers. Sa ferme est attaquée par la bande d'Osmer. Il est tourmenté par des rêves de la Colline de l'Effroi.\n\nOccupation: Fermier\nParticularités: Rustre, Sévère",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200021",
+      "name": "Farrell le Jeune",
+      "description": "Fils aîné de Farrell l'Ancien. Impatient de prendre la place de son père, qu'il juge dépassé. Craint les bandits et pourrait passer un accord avec Osmer pour protéger sa famille.",
+      "type": "PNJ",
+      "occupation": "Fils de fermier",
+      "particularités": "Nerveux, Impatient",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200022",
+      "name": "Farweld",
+      "description": "Fils cadet de Farrell l'Ancien. Doux rêveur, fasciné par les histoires de monstres. Néglige ses tâches. A des visions (ou rêves) d'un géant sombre et de la Colline de l'Effroi.",
+      "type": "PNJ",
+      "occupation": "Fils de fermier",
+      "particularités": "Rêveur, Négligent",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200023",
+      "name": "Ernalda",
+      "description": "Épouse de Farrell l'Ancien. Calme et silencieuse, originaire de l'ancien Rhudaur. Dévouée à son mari.",
+      "type": "PNJ",
+      "occupation": "Femme de fermier",
+      "particularités": "Calme, Silencieuse, Dévouée",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200024",
+      "name": "Poppy",
+      "description": "Femme de Farrell le Jeune, originaire de Bree. Pense que son beau-père devrait céder la ferme. Se dispute souvent avec Ernalda.",
+      "type": "PNJ",
+      "occupation": "Femme de fermier (par alliance)",
+      "particularités": "Ambitieuse (pour son mari)",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200025",
+      "name": "Tulla",
+      "description": "Jeune sœur de Poppy, mariée à Farweld. Déteste vivre isolée et souhaite retourner à Bree.",
+      "type": "PNJ",
+      "occupation": "Femme de fermier (par alliance)",
+      "particularités": "Mécontente",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200026",
+      "name": "Breghel",
+      "description": "Chef des Bandits ambitieux, se considérant comme le bras droit d'Osmer. Prêt à le trahir pour prendre le contrôle de la bande.",
+      "type": "PNJ",
+      "occupation": "Chef des Bandits",
+      "particularités": "Ambitieux",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200027",
+      "name": "Tam",
+      "description": "Homme malchanceux, l'esprit confus après un coup sur la tête. Persuadé qu'Osmer est un vrai Magicien, il lui reste loyal quoi qu'il arrive.",
+      "type": "PNJ",
+      "occupation": "Hors-la-loi",
+      "particularités": "Confus, Loyal (envers Osmer)",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200028",
+      "name": "Jon-le-Cabri",
+      "description": "Hors-la-loi, voleur et brigand connu pour bondir par-dessus les haies. Capturé par Orothel, il est devenu son messager forcé entre Tharbad et l'extérieur. Il a ensuite volé Gurnow et fui Tharbad. Craint Orothel et Gurnow.\n\nOccupation: Hors-la-loi / Messager (forcé)\nParticularités: Peureux (malgré les apparences), Agile",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200029",
+      "name": "Borlas",
+      "description": "Cordonnier talentueux, originaire de la communauté qui capture Jon-le-Cabri (ou de Bree). Emprisonné à Tharbad par Gurnow pour une taxe inventée, afin de le forcer à rester. Sert de monnaie d'échange contre Jon. Dévoué à son art mais lent et maladroit.\n\nOccupation: Cordonnier\nParticularités: Docile, Méticuleux",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200030",
+      "name": "Capitaine Gurnow",
+      "description": "Ancien chef de voleurs devenu Maître de Tharbad. Dirige la ville d'une main de fer sous un vernis de légalité (l'Édit). Perspicace et rusé malgré ses origines violentes. Collectionne les artisans talentueux.\n\nOccupation: Maître de Tharbad\nParticularités: Rusé, Impitoyable",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200031",
+      "name": "Gwilleth",
+      "description": "Fille d'Orothel, infiltrée comme espionne des Rôdeurs parmi les Éclaireurs de Gurnow à Tharbad. Communique secrètement avec sa mère via Jon-le-Cabri. Sa position est précaire.",
+      "type": "PNJ",
+      "occupation": "Espionne / Éclaireuse (infiltrée)",
+      "particularités": "Secrète, Rusée",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200032",
+      "name": "Dame Stock",
+      "description": "Épouse aristocrate de Gurnow, mère de ses sept fils. Rêve de restaurer la gloire passée de Tharbad. Maintient un semblant de décorum à la cour. Déteste les Rôdeurs.",
+      "type": "PNJ",
+      "occupation": "Aristocrate",
+      "particularités": "Ambitieuse (pour Tharbad)",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200033",
+      "name": "Tharnow",
+      "description": "Fils aîné brutal de Gurnow et Dame Stock.",
+      "type": "PNJ",
+      "occupation": "Fils du Maître de Tharbad",
+      "particularités": "Brutal",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200034",
+      "name": "Valandur",
+      "description": "Geôlier de Garth Tauron, cousin de Dame Stock. Arrogant, se considère comme le Maître de la forteresse. Fier de sa lignée (prétendument) númenóréenne. Accepte les pots-de-vin.\n\nOccupation: Geôlier (Maître de Garth Tauron, selon lui)\nParticularités: Cupide, Fier",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200035",
+      "name": "Déor",
+      "description": "Voyageur suspect venu du sud, prétendant être du Rohan. En réalité, un espion du Mordor chargé de corrompre les peuples de l'Eriador avec de l'or de la Moria. Son imprudence (voyage avec des Nains près de la Moria) a causé sa perte. Tué par les Orques près de la Sonoronne.\n\nOccupation: Espion du Mordor\nParticularités: Secret, Imprudent",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200036",
+      "name": "Hultmar Mille-mains",
+      "description": "Terrible capitaine orque venu du nord (Landes d'Etten). A survécu à la Bataille des Cinq Armées. Collectionne les mains coupées de ses ennemis. Dirige la forteresse de Rath Sereg. Mène l'assaut sur le Val Doré à la demande de Snava.\n\nOccupation: Chef de guerre orque\nParticularités: Audacieux, Malin",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200037",
+      "name": "Vilia",
+      "description": "Naine aînée très respectée des Montagnes Bleues. Vétérane d'Azanulbizar, où elle fut blessée par une flèche empoisonnée qui l'a paralysée. Sage et mesurée, elle préside le conseil concernant Flonar et Floki.\n\nOccupation: Sage naine\nParticularités: Honorable, Patiente",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200038",
+      "name": "Snava",
+      "description": "Orque du Mordor, espion de Sauron. Infiltré dans la Moria pour préparer la domination orque. S'inquiète de la découverte d'une porte secrète par Flonar. Organise le massacre du Val Doré via Hultmar. Cherche à rejoindre la Colline de l'Effroi. Possède deux poignards rituels (Angmar et Minas Morgul).\n\nOccupation: Espion du Mordor\nParticularités: Rusé, Impitoyable",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200039",
+      "name": "Bataur",
+      "description": "Grand Orque, gardien du corps de garde de Rath Sereg. Possède les clefs de la prison. Se bat avec son trousseau de clefs.",
+      "type": "PNJ",
+      "occupation": "Gardien Orque",
+      "particularités": "",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200040",
+      "name": "Egel",
+      "description": "Oncle de Jagat et chef de sa tribu Lossoth. Vieil homme autoritaire et prudent, méfiant envers les étrangers et les affaires du sud. Connaît les légendes sur la Colline de l'Effroi et Sennas Gaer.\n\nOccupation: Chef Lossoth\nParticularités: Circonspect, Sévère",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200041",
+      "name": "Aya (La Reine Pâle)",
+      "description": "Sorcière sans âge vivant dans les ruines de Sennas Gaer, un ancien château d'Angmar. Disciple du Roi-Sorcier, elle cherche à plaire à l'Ombre. Possède des connaissances anciennes et peut indiquer le chemin vers Amon Guruthos, mais à un prix. Apparaît comme une femme pâle et étrange.\n\nOccupation: Sorcière / Gardienne de Sennas Gaer\nParticularités: Énigmatique, Malveillante",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200042",
+      "name": "Veriga",
+      "description": "Spectre puissant (Être des Galgals) hantant les cryptes sous Sennas Gaer. Garde le chemin secret vers Amon Guruthos. Créature ancienne et redoutable.\n\nOccupation: Gardien Spectral\nParticularités: Effroyable, Ancien",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200043",
+      "name": "Le Gardien du Portail",
+      "description": "Spectre (Être des Galgals) gardant le Portail Noir, première porte d'Amon Guruthos. Ancien seigneur du Rhudaur corrompu par le Roi-Sorcier.\n\nOccupation: Gardien Spectral\nParticularités: Malign, Vengeur",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200044",
+      "name": "Le Gardien du Tombeau",
+      "description": "Autre spectre puissant (Être des Galgals) dans Amon Guruthos, probablement lié au tombeau qu'il garde.",
+      "type": "PNJ",
+      "occupation": "Gardien Spectral",
+      "particularités": "Effroyable",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    },
+    {
+      "id": "200045",
+      "name": "Le Veilleur Affamé",
+      "description": "Mal ancien et puissant tapi au cœur d'Amon Guruthos. Créature des temps oubliés, corrompue par Morgoth. Son pouvoir influence la région et attire les Spectres.\n\nOccupation: Mal Ancien\nParticularités: Affamé, Sans Forme Précise",
+      "type": "PNJ",
+      "images": [],
+      "associatedLocations": [],
+      "associatedRegions": []
+    }
+  ]
+}
+

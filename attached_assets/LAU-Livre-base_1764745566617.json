@@ -1,0 +1,327 @@
+{
+  "locations": [
+    {
+      "id": 1757687068518,
+      "name": "Le Lac Evendim",
+      "description": "Vaste et paisible, le Lac Evendim, ou Nenuial en langue elfique, est le joyau des collines qui portent son nom. Ses rives sablonneuses ont jadis connu la prospérité des Hommes et des Dúnedain, mais ne sont plus aujourd'hui que le refuge de bêtes sauvages et de créatures venues du nord. Ses eaux, calmes en été et gelées en hiver, sont souvent recouvertes d'une brume épaisse qui étouffe les sons et dissimule d'antiques secrets.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2800,
+        "y": 900
+      },
+      "Rumeurs": [
+        "On dit que les brumes du lac ne sont pas naturelles, mais qu'elles sont le fruit d'une ancienne magie des Hauts Hommes, destinée à protéger les trésors engloutis d'Annúminas des regards cupides.",
+        "Des pêcheurs de la Comté racontent avoir vu des formes étranges se mouvoir sous la glace durant les hivers les plus rudes, comme si des créatures aquatiques gardaient les profondeurs.",
+        "Une rumeur tenace prétend qu'au centre du lac se trouve une île secrète, invisible depuis la rive, où serait caché le Sceptre d'Annúminas, dernier symbole de la royauté d'Arnor."
+      ],
+      "Tradition_Ancienne": "Les érudits de Fondcombe savent que les eaux du Lac Evendim sont pures et qu'elles possèdent des vertus curatives, un héritage de la présence des Dúnedain. Elendil lui-même se serait baigné dans ses eaux pour apaiser les blessures de son cœur après la submersion de Númenor. Une inscription, cachée sur la rive ouest, révèle qu'un rituel accompli à l'aube sous la première lueur d'étoile peut révéler un chemin éphémère vers les îles englouties."
+    },
+    {
+      "id": 1757687068519,
+      "name": "Annúminas, la Cité Engloutie",
+      "description": "Jadis capitale du Royaume du Nord, la grande cité d'Annúminas n'est plus qu'un squelette de pierre à demi submergé par les eaux du Lac Evendim. Ses murs déchiquetés et ses tours éventrées témoignent d'une gloire passée. Depuis les inondations du Rude Hiver, la cité est presque entièrement noyée, et rares sont ceux, même parmi les pillards, qui osent s'aventurer dans ce lieu de silence et de désolation.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2750,
+        "y": 980
+      },
+      "Rumeurs": [
+        "Des Rôdeurs affirment que la Tour de l'Ouest, seule structure encore visible toute l'année, est hantée. Par les nuits sans lune, on pourrait y entendre un chant funèbre et voir des navires fantômes glisser sur les eaux.",
+        "Il se murmure que les Orques des Monts Brumeux cherchent un artefact caché dans les cryptes inondées de la cité, une pierre qui leur permettrait de commander aux esprits des eaux.",
+        "Certains habitants de Bree prétendent qu'un trésor fabuleux, la collection de joyaux de la dernière reine d'Arnor, repose dans un coffre scellé au plus profond du palais royal, désormais accessible uniquement aux plus audacieux des plongeurs."
+      ],
+      "Tradition_Ancienne": "Les archives de Minas Tirith conservent une copie d'un plan d'Annúminas avant sa chute. Il y est fait mention d'un passage secret, partant des caves du palais et menant à une crypte située bien au-dessus du niveau actuel du lac. Ce tombeau, celui du premier roi, contiendrait non pas de l'or, mais des écrits de Númenor qui n'ont pas été vus depuis des millénaires. La clé pour ouvrir ce passage serait cachée dans la Tour de l'Ouest."
+    },
+    {
+      "id": 1757687068520,
+      "name": "Eskerdale, le Hameau Perdu",
+      "description": "Caché au fond d'une vallée des Collines d'Evendim, Eskerdale est un village d'Hommes qui ont choisi l'isolement. Ses habitants, méfiants envers les étrangers, vivent de la chasse et de la pêche, dans de petites maisons de pierre. Sous la direction de leur chef Oswin, ils ont coupé presque tout contact avec le monde extérieur, y compris avec les Rôdeurs, et une atmosphère pesante semble s'être installée sur la communauté.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 2950,
+        "y": 750
+      },
+      "Rumeurs": [
+        "Un trappeur qui s'est approché trop près du village prétend que les habitants d'Eskerdale vénèrent une ancienne idole de pierre cachée dans une grotte, et que cette pratique les a rendus sombres et hostiles.",
+        "La véritable raison de l'isolement d'Eskerdale serait un pacte passé avec une créature des collines. En échange de la paix, les villageois lui interdisent l'accès à leur vallée, et donc au reste du monde.",
+        "On raconte que les enfants d'Eskerdale naissent avec un regard étrange, comme s'ils pouvaient voir les esprits des collines. C'est pour protéger ce 'don' qu'Oswin maintient son peuple à l'écart."
+      ],
+      "Tradition_Ancienne": "Les Rôdeurs les plus âgés se souviennent d'une légende concernant Eskerdale. La vallée aurait été autrefois un lieu sacré pour les Hommes des Collines, bien avant l'arrivée des Dúnedain. Ils y auraient caché un artefact capable d'apaiser les esprits de la terre. Oswin, descendant de ces peuples, aurait redécouvert cet artefact et, craignant sa puissance, aurait décidé de sceller la vallée pour que personne ne puisse s'en emparer et perturber l'équilibre fragile de la région."
+    },
+    {
+      "id": 1757687068521,
+      "name": "Le Bois de Chet",
+      "description": "Vaste et ancien, le Bois de Chet s'étend au nord et à l'est du Pays de Bree. Si ses lisières sont familières aux habitants de la région, son cœur est un lieu sauvage et mystérieux. Ses arbres noueux et ses ombres profondes abritent de nombreux dangers. Récemment, des créatures maléfiques descendues des Collines Venteuses ont commencé à infester ses profondeurs, rendant la forêt plus périlleuse que jamais.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3500,
+        "y": 1300
+      },
+      "Rumeurs": [
+        "Des bûcherons d'Archet jurent avoir entendu des arbres chuchoter dans les parties les plus sombres du bois, comme si la forêt elle-même était consciente et hostile à leur présence.",
+        "Une bande de Gobelins aurait établi un campement secret près d'une ancienne ruine au cœur du bois, d'où ils lancent des raids sur les fermes isolées.",
+        "La légende d'un cerf blanc aux bois d'argent parcourt le Pays de Bree. On dit que celui qui parviendra à le suivre sans se faire voir sera mené à une clairière enchantée où le temps s'écoule différemment."
+      ],
+      "Tradition_Ancienne": "Les Elfes qui voyageaient autrefois à travers l'Eriador connaissaient un sentier caché dans le Bois de Chet, le 'Sentier des Murmures'. Ce chemin, marqué par des pierres gravées de symboles elfiques discrets, permet de traverser la forêt en toute sécurité, car il est protégé par une ancienne magie qui repousse les créatures maléfiques. Cependant, le sentier met à l'épreuve le cœur de ceux qui l'empruntent, révélant leurs peurs les plus profondes sous forme d'illusions."
+    },
+    {
+      "id": 1757687068522,
+      "name": "Le Marais de l'Eau-aux-Cousins",
+      "description": "À l'est du Bois de Chet s'étend une terre plate et marécageuse, un dédale de mares stagnantes et de roseaux. Le Marais de l'Eau-aux-Cousins est un lieu inhospitalier, nommé ainsi à cause des nuages de moucherons qui tourmentent les rares voyageurs assez fous pour s'y aventurer. Le son incessant des insectes et le sol détrempé en font un obstacle redoutable.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3650,
+        "y": 1250
+      },
+      "Rumeurs": [
+        "On raconte que le marais a englouti une colonne de soldats d'Angmar il y a bien longtemps, et que leurs esprits tourmentés errent encore, cherchant à entraîner les vivants dans la vase.",
+        "Un herboriste de Bree prétend qu'une fleur rare, la 'Larme de Brume', ne pousse qu'au cœur du marais. Ses pétales, une fois séchés, permettraient de créer une potion qui rend invisible pour une courte durée.",
+        "Des feux follets dansent au-dessus des eaux la nuit. Certains disent qu'ils mènent à des trésors enfouis, d'autres qu'ils sont les âmes des égarés qui cherchent à attirer de nouvelles victimes."
+      ],
+      "Tradition_Ancienne": "Ceux qui étudient les vieilles cartes savent que le marais n'a pas toujours été là. Il s'est formé après qu'une bataille antique a détourné le cours d'une rivière. Au centre du marécage se trouvent les ruines d'une petite forteresse du Cardolan, 'Barad Nimras', la Tour de la Corne Blanche. Les érudits pensent qu'une corne de guet enchantée y est toujours conservée. Si on en sonnait, son appel pourrait être entendu jusqu'au Mont Venteux, mais il pourrait aussi réveiller les gardiens spectraux de la forteresse."
+    },
+    {
+      "id": 1757687068523,
+      "name": "L'Auberge de l'Abandonné",
+      "description": "À l'extrémité orientale du Pays de Bree, au bord de la Grande Route de l'Est, se dresse une bicoque délabrée qui sert d'auberge aux voyageurs les moins recommandables. L'Auberge de l'Abandonné est un repaire de criminels et de vagabonds, où la bière est mauvaise et les lits infestés de puces. Le propriétaire, un homme taciturne connu sous le nom de 'Jack l'Abandonné', ne se soucie que de l'argent de ses clients, peu importe sa provenance.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3550,
+        "y": 1400
+      },
+      "Rumeurs": [
+        "Des rumeurs persistantes affirment que Jack l'Abandonné est de mèche avec des bandits qui attaquent les voyageurs sur la route. Il leur fournirait des informations sur les caravanes les plus riches en échange d'une part du butin.",
+        "Un marchand qui a survécu à une nuit dans l'auberge prétend avoir vu Jack parler dans une langue étrange avec un homme du sud au visage marqué de cicatrices. Il pense qu'ils complotent quelque chose de terrible.",
+        "On dit qu'un tunnel secret relie la cave de l'auberge à une grotte dans les collines voisines, permettant aux habitués de disparaître sans laisser de traces en cas de problème."
+      ],
+      "Tradition_Ancienne": "Les Rôdeurs qui surveillent la région savent que l'Auberge de l'Abandonné est construite sur les fondations d'un ancien poste de garde du royaume d'Arnor. Ce poste protégeait un puits dont l'eau, selon la tradition, ne gelait jamais. Jack l'Abandonné n'est pas un simple aubergiste ; c'est un descendant d'une lignée de gardiens déchus qui a sombré dans la criminalité. Il est possible qu'il connaisse encore certains secrets de l'ancien poste, y compris l'existence de caches oubliées dans les murs de pierre de sa cave."
+    },
+    {
+      "id": 1757687068524,
+      "name": "Le Chemin Vert",
+      "description": "Autrefois grande artère reliant les royaumes d'Arnor et de Gondor, le Chemin Vert n'est plus qu'une route délabrée et herbeuse. Très peu emprunté, il a acquis une sombre réputation, hanté par les bandits et les coupe-gorge. Pourtant, de petites communautés de fermiers, descendants des réfugiés de Tharbad, survivent le long de son tracé, vivant dans un isolement méfiant mais conservant un cœur bon et une hospitalité occasionnelle pour les voyageurs égarés.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3200,
+        "y": 1800
+      },
+      "Rumeurs": [
+        "On raconte qu'un cavalier fantôme sans tête parcourt le Chemin Vert les nuits de pleine lune, galopant à une vitesse surnaturelle. Il serait l'esprit d'un messager royal tué par des traîtres.",
+        "Des marchands de Bree qui ont osé s'aventurer un peu au sud sur le Chemin Vert parlent d'une 'reine des bandits', une femme aussi belle que cruelle qui dirigerait une bande de pillards depuis des ruines cachées.",
+        "Il se dit que le Chemin Vert est protégé par les esprits des Rôdeurs tombés au combat. Ceux qui ont le cœur pur peuvent parfois voir leur lueur argentée les guider dans la nuit, tandis que les malintentionnés sont menés à leur perte."
+      ],
+      "Tradition_Ancienne": "Les érudits savent que le Chemin Vert suit le tracé d'une voie encore plus ancienne, construite par les Elfes au Premier Âge. Le long de cette route, ils avaient placé des 'pierres de mémoire' qui, pour ceux qui connaissent les gestes et les mots appropriés, peuvent révéler des visions du passé. L'une de ces pierres, déguisée en simple borne miliaire près des Hauts des Galgals, contiendrait une vision de la chute du Cardolan et un indice sur l'emplacement d'une lame de l'Ouest qui n'a pas encore été retrouvée."
+    },
+    {
+      "id": 1757687068525,
+      "name": "Les Hauts des Galgals",
+      "description": "À l'est de la Vieille Forêt s'élèvent les Hauts des Galgals, une contrée labyrinthique de collines gris-vert couronnées de tertres funéraires et de pierres dressées. De jour, le silence y est pesant ; de nuit, un brouillard froid s'élève, et les redoutables Êtres des Galgals, esprits des anciens seigneurs d'Eriador, sortent de leurs tombes pour tourmenter les vivants. Les voyageurs avisés contournent ces terres maudites.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3250,
+        "y": 1600
+      },
+      "Rumeurs": [
+        "Un Hobbit du Pays de Bouc prétend s'être perdu dans les Hauts et avoir été sauvé par une femme mystérieuse vêtue de bleu, dont le chant tenait les esprits à distance. Il pense que c'est une magicienne ou un esprit bienveillant de la rivière.",
+        "Des nains qui ont tenté d'explorer un galgal pour ses trésors racontent que les armes forgées par les Hommes sont inutiles contre les Êtres des Galgals. Seules les lames elfiques ou celles bénies par les Dúnedain peuvent leur nuire.",
+        "Au cœur des Hauts se trouverait un galgal plus grand que les autres, le tombeau du dernier roi du Cardolan. On dit que sa couronne repose encore sur son front, et qu'elle conférerait à celui qui la porte une autorité sur les morts."
+      ],
+      "Tradition_Ancienne": "Les Maîtres du Savoir enseignent que tous les galgals ne sont pas maléfiques. Certains, les plus anciens, furent érigés par les Edain avant même la venue de Númenor. Ces tertres sont protégés par des esprits gardiens qui ne sont hostiles qu'à ceux qui viennent avec de mauvaises intentions. La 'Pierre Froide' qui se dresse au centre des Hauts n'est pas un monument funéraire, mais une ancre, un point focal du mal qui s'est répandu dans la région. Si elle pouvait être purifiée, le pouvoir des Êtres des Galgals en serait grandement diminué."
+    },
+    {
+      "id": 1757687068526,
+      "name": "Les Hauts du Nord",
+      "description": "Vaste étendue de hautes collines et de ravins herbeux, les Hauts du Nord furent jadis le cœur du royaume d'Arnor. Aujourd'hui désertée, la région est parsemée des ruines de tours et de forteresses. Récemment, des bandes de brigands et de voleurs s'y sont installées, utilisant les anciennes constructions comme repaires pour attaquer les voyageurs sur le Chemin Vert et les routes commerciales menant à Bree.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3100,
+        "y": 1050
+      },
+      "Rumeurs": [
+        "On raconte que Talandil, un Rôdeur vétéran, cherche à recruter des aventuriers pour chasser les bandits des Hauts du Nord. Il offrirait une récompense substantielle à ceux qui l'aideront à reprendre les ruines de Fornost Erain.",
+        "Les bandits des Hauts du Nord ne seraient pas de simples voleurs. Certains porteraient des emblèmes rappelant ceux d'Angmar, et il se murmure qu'ils sont à la recherche de quelque chose de précis dans les ruines.",
+        "Un berger a vu des feux étranges au sommet d'une colline isolée, accompagnés de chants gutturaux. Il craint que les bandits ne se livrent à de sombres rituels pour invoquer des forces maléfiques."
+      ],
+      "Tradition_Ancienne": "Les Rôdeurs du Nord avaient autrefois des refuges secrets disséminés dans les Hauts du Nord, reliés par un réseau de sentiers dissimulés. L'un de ces refuges, connu sous le nom de 'Taurdal', le 'Vallon des Chênes', est situé dans une petite vallée cachée que les bandits n'ont pas encore découverte. Il contient des caches d'armes et de provisions, ainsi qu'une pierre de guet qui permet d'observer discrètement une grande partie des Hauts, y compris les abords de Fornost Erain."
+    },
+    {
+      "id": 1757687068527,
+      "name": "Les Hauts du Sud",
+      "description": "Paysage monotone de collines mornes et désolées, les Hauts du Sud sont une région sauvage que la plupart des voyageurs évitent. Presque dénuée de végétation, elle est balayée par un vent d'ouest qui charrie parfois les miasmes des Hauts des Galgals. Récemment, une meute de loups venue des Monts Brumeux y a établi sa tanière, ajoutant un nouveau péril à cette terre inhospitalière.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3400,
+        "y": 1900
+      },
+      "Rumeurs": [
+        "Un chasseur de Bree prétend que les loups des Hauts du Sud ne sont pas des bêtes ordinaires. Ils seraient menés par un grand Warg noir aux yeux jaunes intelligents, qui semble comprendre le langage des Hommes.",
+        "Il se dit que les loups ne sont pas seuls. Une bande d'Orques, menée par un chef nommé Búrzgul, aurait fait une alliance avec eux et se cacherait dans les 'Creux Hurlants', un réseau de grottes sous les collines.",
+        "Certains craignent que Búrzgul ne soit qu'un éclaireur, et qu'il envoie des messagers à Angmar et Gobelinville pour préparer une attaque coordonnée sur le Pays de Bree."
+      ],
+      "Tradition_Ancienne": "Les anciens récits du Cardolan mentionnent une série de tours de guet construites dans les Hauts du Sud pour surveiller la frontière avec le Minhiriath. L'une de ces tours, la 'Tour du Vent Hurlant', aurait été bâtie sur une faille naturelle qui produit un son lugubre lorsque le vent s'y engouffre. Les Orques et les Loups, superstitieux, évitent cet endroit, ignorant qu'un passage secret dans les fondations de la tour mène directement à une sortie au cœur de leur réseau de grottes."
+    },
+    {
+      "id": 1757687068528,
+      "name": "Les Collines Venteuses",
+      "description": "Longue crête de collines nues qui s'étend vers le nord depuis le Mont Venteux, cette région est un cimetière de forts et de tours de guet en ruines. Témoins des guerres acharnées contre Angmar, ces pierres écroulées confèrent au paysage un air lugubre et menaçant. Le vent y souffle sans cesse, portant avec lui les échos d'un passé sanglant.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 3800,
+        "y": 1200
+      },
+      "Rumeurs": [
+        "On raconte que les esprits des soldats d'Arnor et du Rhudaur hantent encore les ruines, rejouant éternellement les batailles contre les armées d'Angmar.",
+        "Des Gobelins descendent parfois des Landes d'Etten pour piller les anciennes forteresses, à la recherche d'armes et de trésors oubliés.",
+        "Un ermite qui vit dans une grotte des collines prétend avoir trouvé une carte gravée sur une pierre, indiquant l'emplacement d'une cache d'armes des Dúnedain, dissimulée avant la chute d'Amon Sûl."
+      ],
+      "Tradition_Ancienne": "Les Collines Venteuses ne furent pas seulement un champ de bataille. Les Hommes d'Arnor y avaient construit un réseau de chemins secrets et de citernes souterraines pour soutenir leurs garnisons. L'une de ces citernes, connue sous le nom de 'Source du Roi', est alimentée par une source pure qui ne tarit jamais. Elle est cachée sous les ruines d'un petit fort au nord du Mont Venteux. L'eau de cette source aurait des propriétés revigorantes pour ceux qui la boivent après avoir prêté serment de défendre le Nord."
+    },
+    {
+      "id": 1757687068529,
+      "name": "Angmar",
+      "description": "Au nord-est de l'Eriador s'étend l'ancien royaume sorcier d'Angmar. Il y a bien longtemps, le Roi-Sorcier lui-même y régnait depuis sa forteresse de Carn Dûm. Bien que son royaume ait été anéanti, les ténèbres s'agitent à nouveau dans cette terre désolée. Un vent glacial souffle des montagnes, et les créatures maléfiques répondent à un nouvel appel, se rassemblant dans l'ombre de l'ancienne citadelle.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 4400,
+        "y": 500
+      },
+      "Rumeurs": [
+        "Des éclaireurs elfes rapportent avoir vu des fumées s'élever à nouveau des forges de Carn Dûm, signe qu'une armée se prépare dans l'ombre.",
+        "Les tribus de Montagnards du Rhudaur, jadis alliées d'Angmar, reçoivent des messagers venus du nord, leur promettant pouvoir et richesses s'ils se joignent à la nouvelle ombre.",
+        "Il se murmure qu'un puissant sorcier, un serviteur de Sauron, a pris possession de Carn Dûm et cherche à retrouver les anciens artefacts du Roi-Sorcier pour accroître son pouvoir."
+      ],
+      "Tradition_Ancienne": "Les Sages craignent que le nouveau mal qui s'éveille en Angmar ne soit pas seulement une résurgence du passé. Des textes anciens et fragmentaires parlent d'un pouvoir encore plus ancien endormi sous les montagnes d'Angmar, une entité que le Roi-Sorcier lui-même n'aurait fait que réveiller partiellement. Le nouveau seigneur de Carn Dûm pourrait chercher à libérer cette horreur primitive sur le monde, un fléau que même les armées des Elfes et des Hommes eurent du mal à contenir à l'aube des temps."
+    },
+    {
+      "id": 1757687068530,
+      "name": "Les Landes d'Etten",
+      "description": "Plateau montagneux lugubre et inhospitalier, les Landes d'Etten sont un domaine de brume et de marais glacials. Même les Rôdeurs du Nord hésitent à s'aventurer sur ces terres où la lumière du soleil peine à percer. C'est le repaire de nombreux Trolls, des créatures cruelles qui chassent les voyageurs égarés et se livrent parfois à des raids sanglants dans les tunnels des Gobelins du Mont Gram.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 4400,
+        "y": 900
+      },
+      "Rumeurs": [
+        "Des Gobelins capturés racontent sous la torture l'existence d'un 'Roi des Trolls' dans les Landes d'Etten, une créature monstrueuse et anormalement intelligente qui organiserait les Trolls en une véritable armée.",
+        "On raconte qu'au cœur des landes se trouve un cercle de pierres noires qui absorbe la lumière et la chaleur. Les Trolls s'y rassembleraient pour accomplir des rituels qui augmentent leur force et leur férocité.",
+        "Un géant de pierre errerait dans les brumes, un être ancien et solitaire qui ne serait ni bon ni mauvais, mais qui écraserait sans distinction tout ce qui se trouve sur son chemin."
+      ],
+      "Tradition_Ancienne": "Les Nains des Montagnes Bleues se souviennent d'histoires concernant les Landes d'Etten. Avant l'arrivée des Trolls, la région était riche en minerais rares. Ils y avaient établi une petite exploitation minière, 'Zirak-gathol', mais furent chassés par une créature des profondeurs qu'ils avaient réveillée. Ils pensent que cette créature, un 'Guetteur des Profondeurs', est la véritable raison pour laquelle les Trolls sont si nombreux et si agressifs dans cette région ; ils seraient sous son influence maléfique."
+    },
+    {
+      "id": 1757687068531,
+      "name": "La Trouée des Trolls",
+      "description": "À l'est du Dernier Pont, la Grande Route de l'Est s'enfonce dans un paysage sauvage et rocheux, parsemé de bois et de ruines. Cette région, nommée la Trouée des Trolls, est infestée de ces créatures brutales qui utilisent les nombreuses cavernes comme repaires. Les voyageurs qui s'écartent de la route le font à leurs risques et périls, car les prédateurs et les ennemis y sont nombreux et sans pitié.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 4400,
+        "y": 1500
+      },
+      "Rumeurs": [
+        "On dit que les trois Trolls que Bilbo Sacquet a rencontrés près de la route n'étaient pas seuls. Leur chef, un Troll des Collines particulièrement retors, chercherait à se venger de la disparition de ses subalternes et tendrait des embuscades aux voyageurs.",
+        "Un groupe d'aventuriers aurait découvert une grotte remplie d'un trésor amassé par des Trolls, mais gardée par une série de pièges ingénieux, ce qui est très inhabituel pour ces créatures.",
+        "Des bruits étranges, comme le son d'un marteau sur une enclume, s'échapperaient d'une tour en ruine la nuit. Certains pensent qu'un Troll a appris les rudiments de la forge et fabrique des armes grossières pour ses congénères."
+      ],
+      "Tradition_Ancienne": "Les archives d'Elrond révèlent que la Trouée des Trolls était autrefois la frontière orientale du royaume du Rhudaur. Les tours et châteaux en ruine n'ont pas tous été construits par les Dúnedain. Certains furent érigés par les Hommes des Collines alliés à Angmar. L'une de ces forteresses, 'Caer Gwilith', la 'Forteresse du Crépuscule', contiendrait une salle des cartes où seraient indiqués tous les tunnels et passages secrets de la région, y compris ceux utilisés par les Trolls. Cependant, la forteresse est protégée par de puissantes illusions qui égarent les intrus."
+    },
+    {
+      "id": 1757687068532,
+      "name": "Le Dernier Pont",
+      "description": "À une centaine de milles à l'est du Mont Venteux, un grand pont de pierre aux trois arches enjambe la Fontgrise. C'est le Dernier Pont. Le franchir, c'est quitter les dernières terres vaguement civilisées pour entrer dans les étendues sauvages de la Trouée des Trolls. Ses pierres érodées et sa rambarde basse en font un passage intimidant, un avertissement des périls à venir.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 4196,
+        "y": 1351
+      },
+      "Rumeurs": [
+        "Des voyageurs jurent avoir vu une silhouette encapuchonnée se tenir au milieu du pont les nuits de brouillard, observant silencieusement ceux qui passent avant de disparaître.",
+        "On dit que le pont est hanté par l'esprit d'un Elfe qui s'y est sacrifié pour arrêter une horde d'Orques. Son cri peut parfois être entendu, porté par le vent, lorsque le danger approche.",
+        "Une bande de Gobelins aurait établi un poste de péage improvisé sous le pont, attaquant par surprise les voyageurs qui traversent la rivière."
+      ],
+      "Tradition_Ancienne": "Le Dernier Pont fut construit par les Dúnedain d'Arnor avec l'aide des Noldor de l'Eregion. Dans sa pierre centrale, les Elfes ont scellé un enchantement. Ceux qui se tiennent au sommet de l'arche principale et prononcent les mots corrects en Sindarin peuvent voir une lueur guider leur chemin vers Fondcombe, même dans l'obscurité la plus totale. Cet enchantement faiblit avec le temps, mais il reste un dernier vestige de l'ancienne alliance entre les Elfes et les Hommes."
+    },
+    {
+      "id": 1757687068533,
+      "name": "Le Lindon",
+      "description": "Vaste région côtière à l'ouest des Montagnes Bleues, le Lindon est le dernier royaume des Elfes en Eriador. Dirigé depuis les Havres Gris par Círdan le Charpentier de Nefs, c'est une terre de beauté mélancolique, où les Elfes se préparent pour leur dernier voyage vers l'Ouest. Divisé par le Golfe de Lune en Forlindon au nord et Harlindon au sud, le royaume est une enclave de paix et de sagesse dans un monde qui s'assombrit.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 1500,
+        "y": 1400
+      },
+      "Rumeurs": [
+        "On raconte que les Elfes du Lindon possèdent des cartes marines qui montrent des îles secrètes à l'ouest, des vestiges de Beleriand qui n'ont pas été engloutis par les flots.",
+        "Un navire sans équipage accosterait parfois dans une crique isolée du Harlindon, chargé de fruits étranges et de fleurs inconnues en Terre du Milieu. Personne ne sait d'où il vient ni où il va.",
+        "Il se murmure que Círdan, le plus vieux des Elfes de la Terre du Milieu, peut lire l'avenir dans les étoiles et qu'il a prédit une nouvelle guerre qui menacera jusqu'aux rivages du Lindon."
+      ],
+      "Tradition_Ancienne": "Le Lindon est tout ce qui reste du grand royaume de Beleriand, et ses terres sont imprégnées d'une ancienne et puissante magie. Dans une vallée cachée du Forlindon, connue des Elfes sous le nom d'Imloth Melui, la 'Vallée des Fleurs Douces', poussent des arbres dont les feuilles ne tombent jamais et dont les fleurs brillent d'une douce lumière argentée. Leurs fruits peuvent guérir les maladies du corps et de l'esprit, mais les Elfes ne les offrent qu'à ceux qui ont prouvé leur amitié et leur dévouement à la cause des Peuples Libres."
+    },
+    {
+      "id": 1757687068534,
+      "name": "Les Montagnes Bleues",
+      "description": "L'Ered Luin, ou Montagnes Bleues, est une chaîne de montagnes très anciennes qui forme la frontière orientale du Lindon. Autrefois foyer des grandes cités naines de Nogrod et Belegost, elles abritent encore des communautés de Nains, principalement au sud du Golfe de Lune. Leurs mines sont toujours actives, et les Nains des Montagnes Bleues sont une source fiable de nouvelles pour les habitants de l'Eriador, grâce à leurs voyages réguliers vers Erebor et les Monts du Fer.",
+      "color": "blue",
+      "known": true,
+      "visited": false,
+      "type": "custom",
+      "coordinates": {
+        "x": 1900,
+        "y": 1800
+      },
+      "Rumeurs": [
+        "Des prospecteurs nains auraient découvert une nouvelle veine de 'fer véritable', un métal presque aussi résistant que le mithril, dans une mine abandonnée au nord du Golfe de Lune.",
+        "Un vieux Nain prétend que les ruines de Belegost ne sont pas complètement abandonnées. Un clan de Nains secrets, les 'Gardiens de la Pierre', y vivrait encore, protégeant les tombes de leurs ancêtres.",
+        "On raconte qu'un dragon de froid s'est réveillé dans les pics les plus élevés et qu'il a commencé à amasser un trésor en pillant les caches des Nains et les anciennes tombes des Hommes."
+      ],
+      "Tradition_Ancienne": "Les Nains de la Maison de Durin qui sont revenus dans les Montagnes Bleues après la chute de Smaug ont apporté avec eux des connaissances oubliées. Ils savent comment réactiver les anciennes forges de Nogrod, alimentées par la chaleur du cœur de la montagne. Pour ce faire, il faut retrouver la 'Clé de Feu', un artefact runique qui fut perdu lors de la destruction de la cité. Les légendes disent qu'elle a été emportée par un Elfe de Doriath et qu'elle pourrait se trouver quelque part en Lindon."
+    }
+  ]
+}
