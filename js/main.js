@@ -530,7 +530,10 @@ function renderLocations() {
             }
 
             // Ne pas ouvrir l'infobox si on a dragué le marqueur (seuil de 5 pixels)
-            const dragDistance = Math.sqrt(Math.pow(e.clientX - dragStartX, 2) + Math.pow(e.clientY - dragStartY, 2));
+            // On vérifie dragStartX/Y qui sont set dans mousedown
+            const dragDistance = (typeof dragStartX !== 'undefined') ? 
+                Math.sqrt(Math.pow(e.clientX - dragStartX, 2) + Math.pow(e.clientY - dragStartY, 2)) : 0;
+            
             if (dragDistance > 5) {
                 return;
             }
