@@ -515,6 +515,10 @@ function renderLocations() {
         });
 
         marker.addEventListener('click', (e) => {
+            console.log("📍 [CLICK] Marker clicked:", location.name);
+            e.stopPropagation();
+            e.preventDefault();
+
             // Bloquer en mode ajout de lieu - priorité absolue
             if (isLocationAddingMode) {
                 return;
@@ -530,8 +534,6 @@ function renderLocations() {
             if (dragDistance > 5) {
                 return;
             }
-
-            e.stopPropagation();
 
             if (window.infoBoxManager) {
                 window.infoBoxManager.showInfoBox(e, location, 'location');

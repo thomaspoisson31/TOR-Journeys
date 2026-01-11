@@ -635,7 +635,12 @@ class InfoBoxManager {
         // Onglet Lieux/Régions (uniquement pour les personnages)
         const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
         if (lieuxRegionsTab && type === 'character') {
-            this.renderLieuxRegionsTabRead();
+            if (typeof this.renderLieuxRegionsTabRead === 'function') {
+                this.renderLieuxRegionsTabRead();
+            } else {
+                console.warn("⚠️ renderLieuxRegionsTabRead is not defined on InfoBoxManager");
+                lieuxRegionsTab.innerHTML = '<div class="p-4 text-gray-400 italic">Informations sur les lieux non disponibles.</div>';
+            }
         }
 
         // Onglet Rumeurs et Traditions
@@ -2788,6 +2793,79 @@ class InfoBoxManager {
         personnagesContent.innerHTML = html;
 
         console.log(`✅ [renderPersonnagesTabRead] Rendu terminé - ${allAssociatedIds.length} personnage(s) affiché(s)`);
+    }
+
+    renderLieuxRegionsTabRead() {
+        const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
+        if (!lieuxRegionsTab) return;
+
+        console.log(`📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "${this.currentItem.name}"`);
+
+        const character = this.currentItem;
+        const associatedLocationIds = character.associatedLocations || [];
+        const associatedRegionIds = character.associatedRegions || [];
+
+        lieuxRegionsTab.innerHTML = '';
+
+        const textView = document.createElement('div');
+        textView.className = 'text-view';
+        textView.style.cssText = 'flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;';
+        lieuxRegionsTab.appendChild(textView);
+
+        const content = document.createElement('div');
+        content.style.cssText = 'flex: 1; min-height: 0; overflow-y: auto; padding: 1rem; background-color: white;';
+        textView.appendChild(content);
+
+        if (associatedLocationIds.length === 0 && associatedRegionIds.length === 0) {
+            content.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-400"><i class="fas fa-map-marker-alt fa-3x mb-4"></i><p>Aucun lieu ou région associé</p></div>';
+            return;
+        }
+
+        let html = '<h3 style="color: #940000; font-family: \'Merriweather\', serif; font-weight: 700; margin-bottom: 1rem; font-size: 1.35rem;"><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem;"></i>Lieux et Régions associés</h3>';
+
+        // Lieux
+        associatedLocationIds.forEach(id => {
+            const loc = window.locationsData?.locations?.find(l => String(l.id) === String(id));
+            if (loc) {
+                html += `
+                    <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
+                         onclick="window.infoBoxManager.navigateToLocation(event, '${loc.id}')">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-blue-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-gray-800 truncate text-sm">${loc.name}</h4>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        // Régions
+        associatedRegionIds.forEach(id => {
+            const reg = window.regionsData?.regions?.find(r => String(r.id) === String(id));
+            if (reg) {
+                html += `
+                    <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
+                         onclick="window.infoBoxManager.navigateToRegion(event, '${reg.id}')">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center border-2 border-orange-500 flex-shrink-0">
+                                <i class="fas fa-mountain text-orange-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-gray-800 truncate text-sm">${reg.name}</h4>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        content.innerHTML = html;
     }
 
     renderPersonnagesTabEdit() {
