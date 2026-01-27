@@ -279,7 +279,7 @@ class PositionManager {
 
         this.positionMarker.appendChild(img);
         this.updateMarkerPosition();
-        this.positionMarker.style.cursor = this.adventureMode ? 'default' : 'move'; // Appliquer le curseur initial
+        this.positionMarker.style.cursor = 'move'; // Le marqueur de position est toujours déplaçable
         positionLayer.appendChild(this.positionMarker);
     }
 
@@ -373,13 +373,9 @@ class PositionManager {
                 return;
             }
             
-            // Ne pas permettre le drag si le mode dessin est actif OU si le mode aventure est actif
-            if (e.button === 0 && !this.adventureMode) {
+            // Permettre le drag du marqueur de position (même en mode aventure)
+            if (e.button === 0) {
                 this.handleDragStart(e);
-            } else if (this.adventureMode) {
-                // En mode aventure, empêcher complètement le drag
-                e.preventDefault();
-                e.stopPropagation();
             }
         });
 
@@ -410,13 +406,6 @@ class PositionManager {
                 return;
             }
             
-            if (this.adventureMode) {
-                // Sauvegarder le temps pour le long press modal
-                touchStartTime = Date.now();
-                touchHasMoved = false;
-                return;
-            }
-
             touchStartTime = Date.now();
             touchHasMoved = false;
 
@@ -433,7 +422,7 @@ class PositionManager {
         }, { passive: false });
 
         this.positionMarker.addEventListener('touchmove', (e) => {
-            if (!this.isDragging || this.adventureMode) return;
+            if (!this.isDragging) return;
 
             touchHasMoved = true;
             e.preventDefault();
