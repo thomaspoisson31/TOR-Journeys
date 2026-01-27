@@ -4,6 +4,30 @@ body {
     overflow: hidden;
 }
 
+/* Map Switcher Thumbnails */
+#map-switcher-container {
+    min-height: 0;
+}
+
+.map-thumbnail-btn {
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.map-thumbnail-btn:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.map-thumbnail-btn.border-3 {
+    border-width: 3px;
+}
+
+#map-thumbnail-tooltip {
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 #viewport {
     cursor: grab;
 }

@@ -4,6 +4,20 @@
 
 /* Smartphones uniquement (portrait) */
 @media only screen and (max-width: 480px) and (orientation: portrait) {
+  /* Map Switcher - miniatures plus petites sur mobile */
+  #map-switcher-container {
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .map-thumbnail-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  #map-thumbnails {
+    gap: 0.375rem;
+  }
   /* Toolbar en bas - protection contre pinch & zoom */
   #toolbar {
     position: fixed;
