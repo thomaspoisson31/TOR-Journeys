@@ -41,13 +41,12 @@ class PositionManager {
         // Sauvegarder l'état
         localStorage.setItem('adventureModeActive', JSON.stringify(this.adventureMode));
 
-        // Si le mode aventure est activé, désactiver le glissement manuel immédiatement
+        // Réinitialiser le drag en cours si besoin
         if (this.adventureMode) {
             this.isDragging = false;
-            this.positionMarker.style.cursor = 'default'; // Changer le curseur si le mode aventure est actif
-        } else {
-            this.updateMarkerCursor(); // Réinitialiser le curseur si le mode aventure est désactivé
         }
+        // Le marqueur de position reste toujours déplaçable
+        this.positionMarker.style.cursor = 'move';
 
         // Mettre à jour la visibilité des boutons de la toolbar
         if (typeof window.updateToolbarButtonsVisibility === 'function') {
@@ -139,12 +138,8 @@ class PositionManager {
 
     updateMarkerCursor() {
         if (!this.positionMarker) return;
-
-        if (this.adventureMode) {
-            this.positionMarker.style.cursor = 'default'; // Curseur par défaut en mode aventure
-        } else {
-            this.positionMarker.style.cursor = 'move'; // Curseur de déplacement sinon
-        }
+        // Le marqueur de position est toujours déplaçable (même en mode aventure)
+        this.positionMarker.style.cursor = 'move';
     }
 
     updateAdventureModeIndicator() {

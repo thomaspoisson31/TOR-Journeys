@@ -460,22 +460,23 @@ function renderLocations() {
                     return; // Laisser le clic se propager au viewport pour l'ajout
                 }
 
-                // Bloquer le drag en mode Aventure ou en mode dessin de région
-                if (window.positionManager && window.positionManager.adventureMode) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return;
-                }
-
                 // Bloquer le drag en mode dessin de région
                 if (isRegionDrawingMode) {
                     return; // Laisser le clic se propager au viewport pour le tracé
                 }
 
+                // En mode Aventure, on enregistre la position pour le clic mais on ne permet pas le drag
+                if (window.positionManager && window.positionManager.adventureMode) {
+                    dragStartX = e.clientX;
+                    dragStartY = e.clientY;
+                    e.stopPropagation();
+                    return; // Le clic sera géré par l'événement click
+                }
+
                 e.stopPropagation();
                 e.preventDefault();
 
-                // Initialiser le drag potentiel
+                // Initialiser le drag potentiel (seulement hors mode Aventure)
                 draggedLocationMarker = marker;
                 draggedLocation = location;
                 dragStartX = e.clientX;
