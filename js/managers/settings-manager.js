@@ -320,6 +320,11 @@ class SettingsManager {
         this.saveMapsData();
         this.renderMapsGrid();
 
+        // Rafraîchir le MapSwitcherManager
+        if (window.mapSwitcherManager && typeof window.mapSwitcherManager.refresh === 'function') {
+            window.mapSwitcherManager.refresh();
+        }
+
         console.log(`✅ Carte ajoutée: ${mapName} (${newMap.width}x${newMap.height}px)`);
     }
 
@@ -442,6 +447,11 @@ class SettingsManager {
         this.availableMaps.push(newMap);
         this.saveMapsData();
         this.renderMapsGrid();
+
+        // Rafraîchir le MapSwitcherManager
+        if (window.mapSwitcherManager && typeof window.mapSwitcherManager.refresh === 'function') {
+            window.mapSwitcherManager.refresh();
+        }
 
         // Fermer les deux modales
         if (this.currentLibraryModal) {
@@ -816,6 +826,11 @@ class SettingsManager {
         // qui est appelé après le chargement de la nouvelle carte
         console.log('🔍 [switchMap] Le ZoomManager sera mis à jour par initializeMap()');
 
+        // Rafraîchir le MapSwitcherManager pour mettre à jour les miniatures
+        if (window.mapSwitcherManager && typeof window.mapSwitcherManager.refresh === 'function') {
+            window.mapSwitcherManager.refresh();
+        }
+
         // Fermer la modale des paramètres après le changement de carte
         this.closeSettings();
     }
@@ -860,6 +875,11 @@ class SettingsManager {
 
             this.saveMapsData();
             this.renderMapsGrid();
+
+            // Rafraîchir le MapSwitcherManager
+            if (window.mapSwitcherManager && typeof window.mapSwitcherManager.refresh === 'function') {
+                window.mapSwitcherManager.refresh();
+            }
 
             console.log(`🏷️ Carte renommée: "${oldName}" → "${trimmedName}"`);
         }
@@ -1131,6 +1151,11 @@ class SettingsManager {
             }
             if (typeof window.renderRegions === 'function') {
                 window.renderRegions();
+            }
+
+            // Rafraîchir le MapSwitcherManager
+            if (window.mapSwitcherManager && typeof window.mapSwitcherManager.refresh === 'function') {
+                window.mapSwitcherManager.refresh();
             }
 
             console.log(`✅ Carte "${map.name}" et ses éléments supprimés`);

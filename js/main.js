@@ -45,6 +45,7 @@ import AdventureManager from './managers/adventure-manager.js';
 import LibraryManager from './managers/library-manager.js';
 import CharactersManager from './managers/characters-manager.js'; // Import du CharactersManager
 import RandomTablesManager from './managers/random-tables-manager.js'; // Import du RandomTablesManager
+import MapSwitcherManager from './managers/map-switcher-manager.js'; // Import du MapSwitcherManager
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -1018,6 +1019,12 @@ function initializeMap() {
     randomTablesManager.init();
     window.randomTablesManager = randomTablesManager; // Exposer globalement
     console.log("✅ RandomTablesManager initialized");
+
+    // Initialiser MapSwitcherManager
+    const mapSwitcherManager = new MapSwitcherManager();
+    mapSwitcherManager.init();
+    window.mapSwitcherManager = mapSwitcherManager; // Exposer globalement
+    console.log("✅ MapSwitcherManager initialized");
 
     // LibraryManager supprimé - fonctionnalité intégrée dans les modales
 
