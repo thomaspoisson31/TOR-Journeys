@@ -768,11 +768,10 @@ class PathManager {
                 }
             }
 
-            // Vérifier si en mode Aventure et si le lieu est non connu
-            if (window.positionManager && window.positionManager.adventureMode && location.known === false) {
-                console.log(`⏭️ [detectNearbyLocations] - Lieu "${location.name}" ignoré (non connu en mode Aventure)`);
-                return;
-            }
+            // NOTE: Les lieux inconnus sont maintenant collectés dans les découvertes de voyage
+            // même en mode Aventure, afin qu'ils puissent être marqués comme "Connus" 
+            // lors de l'affichage de la modale de voyage (voir markDiscoveriesAsKnown)
+            // La visibilité sur la carte reste gérée par le FilterManager
 
             // Calculer la distance minimale entre ce lieu et tous les SEGMENTS du tracé
             let minDistance = Infinity;
