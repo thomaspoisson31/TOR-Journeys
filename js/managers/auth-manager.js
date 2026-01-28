@@ -980,6 +980,12 @@ class AuthManager {
                 window.journalManager.renderRumors();
             }
 
+            // Rafraîchir le MapSwitcherManager après chargement des cartes depuis le cloud
+            if (window.mapSwitcherManager && typeof window.mapSwitcherManager.refresh === 'function') {
+                console.log('[AuthManager] 🗺️ Rafraîchissement du MapSwitcherManager après chargement cloud');
+                window.mapSwitcherManager.refresh();
+            }
+
             // Marquer comme sauvegardé après chargement cloud
             this.markAsSaved();
 

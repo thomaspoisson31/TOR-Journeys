@@ -47,6 +47,8 @@ class VoyageManager {
                 if (modal) {
                     modal.classList.remove('hidden');
                     this.updateDisplay();
+                    // Marquer automatiquement les lieux/régions traversés comme Connus
+                    this.markDiscoveriesAsKnown();
                     // Centrer la carte sur le voyage après un court délai pour que la modale soit affichée
                     setTimeout(() => {
                         this.centerMapOnJourney();
@@ -1137,6 +1139,95 @@ class VoyageManager {
             } else {
                 finishBtn.classList.add('hidden');
             }
+        }
+    }
+
+    /**
+     * Marque automatiquement les lieux et régions traversés comme "Connus"
+     * Appelé lors de l'affichage de la modale de voyage
+     */
+    markDiscoveriesAsKnown() {
+        if (!window.journeyDiscoveries || window.journeyDiscoveries.length === 0) {
+            console.log('📍 [markDiscoveriesAsKnown] Aucune découverte à marquer');
+            return;
+        }
+
+        // Vérifier que dataManager est disponible
+        if (!window.dataManager) {
+            console.warn('⚠️ [markDiscoveriesAsKnown] DataManager non disponible, report du marquage');
+            return;
+        }
+
+        // Récupérer le mapId de la carte active pour filtrer les découvertes
+        const activeMapUrl = window.settingsManager?.activeMapUrl || null;
+        if (!activeMapUrl) {
+            console.warn('⚠️ [markDiscoveriesAsKnown] Aucune carte active, impossible de marquer les découvertes');
+            return;
+        }
+
+        let locationsMarked = 0;
+        let regionsMarked = 0;
+
+        // Parcourir les découvertes du voyage en filtrant par carte active
+        window.journeyDiscoveries.forEach(discovery => {
+            if (discovery.type === 'location') {
+                // Trouver le lieu dans locationsData
+                if (window.locationsData && window.locationsData.locations) {
+                    // Chercher par nom ET vérifier que le lieu appartient à la carte active (ou sans mapId)
+                    const location = window.locationsData.locations.find(loc => {
+                        if (loc.name !== discovery.name) return false;
+                        // Si le lieu n'a pas de mapId, il est considéré global (appartient à toutes les cartes)
+                        if (!loc.mapId) return true;
+                        // Sinon, vérifier que le mapId correspond à la carte active
+                        return String(loc.mapId) === String(activeMapUrl);
+                    });
+                    
+                    if (location && location.known !== true) {
+                        location.known = true;
+                        locationsMarked++;
+                        console.log(`✅ [markDiscoveriesAsKnown] Lieu "${discovery.name}" marqué comme Connu`);
+                    }
+                }
+            } else if (discovery.type === 'region') {
+                // Trouver la région dans regionsData
+                if (window.regionsData && window.regionsData.regions) {
+                    // Chercher par nom ET vérifier que la région appartient à la carte active (ou sans mapId)
+                    const region = window.regionsData.regions.find(reg => {
+                        if (reg.name !== discovery.name) return false;
+                        // Si la région n'a pas de mapId, elle est considérée globale
+                        if (!reg.mapId) return true;
+                        // Sinon, vérifier que le mapId correspond à la carte active
+                        return String(reg.mapId) === String(activeMapUrl);
+                    });
+                    
+                    if (region && region.known !== true) {
+                        region.known = true;
+                        regionsMarked++;
+                        console.log(`✅ [markDiscoveriesAsKnown] Région "${discovery.name}" marquée comme Connue`);
+                    }
+                }
+            }
+        });
+
+        // Si des modifications ont été faites, sauvegarder en localStorage
+        // Note: saveLocationsToLocal/saveRegionsToLocal appellent déjà markAsUnsaved() via DataManager
+        if (locationsMarked > 0 || regionsMarked > 0) {
+            console.log(`📍 [markDiscoveriesAsKnown] ${locationsMarked} lieu(x) et ${regionsMarked} région(s) marqués comme Connus`);
+
+            // Sauvegarder en localStorage (DataManager.save* appelle déjà markAsUnsaved)
+            if (locationsMarked > 0) {
+                window.dataManager.saveLocationsToLocal();
+            }
+            if (regionsMarked > 0) {
+                window.dataManager.saveRegionsToLocal();
+            }
+
+            // Rafraîchir l'affichage si en mode Aventure (pour afficher les lieux nouvellement connus)
+            if (window.filterManager && typeof window.filterManager.applyFilters === 'function') {
+                window.filterManager.applyFilters();
+            }
+        } else {
+            console.log('📍 [markDiscoveriesAsKnown] Tous les lieux/régions traversés sont déjà marqués comme Connus');
         }
     }
 
