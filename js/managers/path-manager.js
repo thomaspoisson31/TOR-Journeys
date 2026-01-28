@@ -97,6 +97,8 @@ class PathManager {
                 if (modal && window.voyageManager) {
                     modal.classList.remove('hidden');
                     window.voyageManager.updateDisplay();
+                    // Marquer automatiquement les lieux/régions traversés comme Connus
+                    window.voyageManager.markDiscoveriesAsKnown();
                     setTimeout(() => {
                         window.voyageManager.centerMapOnJourney();
                     }, 100);
