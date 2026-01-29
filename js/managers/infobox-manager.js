@@ -3487,9 +3487,17 @@ class InfoBoxManager {
 
         // Rafraîchir l'affichage sur la carte pour refléter le changement de statut
         // Cela permet aux lieux de devenir visibles/invisibles en mode Aventure
-        if (field === 'known' && window.filterManager && typeof window.filterManager.applyFilters === 'function') {
+        if (field === 'known') {
             console.log(`🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte`);
-            window.filterManager.applyFilters();
+            
+            // En mode Aventure, utiliser les filtres spécifiques du mode Aventure
+            if (window.positionManager && window.positionManager.adventureMode) {
+                console.log(`🎮 [toggleLocationKnowledge] Mode Aventure actif - application des filtres Aventure`);
+                window.positionManager.applyAdventureModeFilters();
+            } else if (window.filterManager && typeof window.filterManager.applyFilters === 'function') {
+                // Hors mode Aventure, appliquer les filtres normaux
+                window.filterManager.applyFilters();
+            }
         }
     }
 
