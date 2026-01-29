@@ -1,0 +1,1000 @@
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 42/43 regions
+ ✅ Display updated - 38 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] "Tindailin" filtré : inconnu (known=false) mais showUnknown=false
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+ 📊 Filtered: 37/38 locations, 42/43 regions
+ ✅ Display updated - 37 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = true pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 42/43 regions
+ ✅ Display updated - 38 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] "Tindailin" filtré : inconnu (known=false) mais showUnknown=false
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+ 📊 Filtered: 37/38 locations, 42/43 regions
+ ✅ Display updated - 37 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] visited = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 📋 [toggleLocationKnowledge] visited = true pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 📋 [toggleLocationKnowledge] visited = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 📋 [toggleLocationKnowledge] known = true pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 42/43 regions
+ ✅ Display updated - 38 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] "Tindailin" filtré : inconnu (known=false) mais showUnknown=false
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+ 📊 Filtered: 37/38 locations, 42/43 regions
+ ✅ Display updated - 37 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = true pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 42/43 regions
+ ✅ Display updated - 38 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] "Tindailin" filtré : inconnu (known=false) mais showUnknown=false
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+ 📊 Filtered: 37/38 locations, 42/43 regions
+ ✅ Display updated - 37 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = true pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 42/43 regions
+ ✅ Display updated - 38 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] "Tindailin" filtré : inconnu (known=false) mais showUnknown=false
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+ 📊 Filtered: 37/38 locations, 42/43 regions
+ ✅ Display updated - 37 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📅 Contexte de journée réinitialisé lors de la fermeture complète.
+ 🎨 Drawing mode is now: false
+ ❌ Canvas pointer events disabled
+ 🧹 Chemin effacé
+ ✅ Gestionnaires de pan réactivés
+ ✏️ Mode dessin désactivé - pan réactivé - tracé effacé
+ ✅ Rendered 37 location markers
+ 🎨 Drawing mode is now: true
+ ✅ Canvas pointer events enabled
+ 🚫 Gestionnaires de pan désactivés
+ ✏️ Mode dessin activé - pan désactivé
+ ✅ Rendered 37 location markers
+ 🖱️ Viewport mousedown event fired, isDrawingMode: true
+ 🎨 Starting waypoint journey...
+ 📍 Waypoint 0 (marqueur position): Object
+ 📍 Adding waypoint 1: Object
+ 📏 Calcul distance: 116px × (600 miles / 5000px) = 14 miles ÷ 20 mi/j
+ ✅ Waypoint journey initialized with first waypoint
+ 🖱️ Viewport mousedown event fired, isDrawingMode: true
+ 📍 Adding waypoint 2: Object
+ 📏 Calcul distance: 294px × (600 miles / 5000px) = 35 miles ÷ 20 mi/j
+ ✅ Waypoint 3 added - Total distance: 294px
+ 🖱️ Viewport mousedown event fired, isDrawingMode: true
+ 📍 Adding waypoint 3: Object
+ 📏 Calcul distance: 549px × (600 miles / 5000px) = 66 miles ÷ 20 mi/j
+ ✅ Waypoint 4 added - Total distance: 549px
+ 🖱️ Viewport mousedown event fired, isDrawingMode: true
+ 📍 Adding waypoint 4: Object
+ 📏 Calcul distance: 683px × (600 miles / 5000px) = 82 miles ÷ 20 mi/j
+ ✅ Waypoint 5 added - Total distance: 683px
+ 🏁 Bouton Terminer le voyage cliqué
+ 🏁 [finalizeJourney] Finalisation du voyage
+ 🏁 Voyage avec 5 waypoints
+ 🔍 Détection des lieux et régions traversés...
+ 🔍 [detectDiscoveries] DÉBUT de la détection
+ 🔄 [DataManager] locationsData synchronisé depuis window: 38 lieux
+ 🔄 [DataManager] regionsData synchronisé depuis window: 43 régions
+ 🔍 [detectDiscoveries] dataManager.locationsData: Object
+ 🔍 [detectDiscoveries] dataManager.regionsData: Object
+ 🔍 [detectDiscoveries] path.length: 5
+ 🔍 [densifyPath] Tracé densifié: 5 waypoints → 31 points (espacement: 25px)
+ 🔍 [detectDiscoveries] Appel de detectNearbyLocations...
+ 📍 [detectNearbyLocations] DÉBUT
+ 📍 [detectNearbyLocations] locationsData: Object
+ 📍 [detectNearbyLocations] locations array: Array(38)
+ 📍 [detectNearbyLocations] activeMapUrl: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] PROXIMITY_THRESHOLD: 80
+ 📍 [detectNearbyLocations] Nombre total de lieux: 38
+ 📍 [detectNearbyLocations] Nombre de points du tracé: 31
+ 📍 [detectNearbyLocations] Traitement lieu 1/38: "Le Lac Evendim"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Lac Evendim" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Lac Evendim": 827.49px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Lac Evendim" trop éloigné (827.49px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 2/38: "Annúminas, la Cité Engloutie"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Annúminas, la Cité Engloutie" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Annúminas, la Cité Engloutie": 733.16px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Annúminas, la Cité Engloutie" trop éloigné (733.16px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 3/38: "Eskerdale, le Hameau Perdu"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Eskerdale, le Hameau Perdu" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Eskerdale, le Hameau Perdu": 1034.78px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Eskerdale, le Hameau Perdu" trop éloigné (1034.78px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 4/38: "Le Bois de Chet"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Bois de Chet" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Bois de Chet": 1122.71px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Bois de Chet" trop éloigné (1122.71px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 5/38: "Le Marais de l'Eau-aux-Cousins"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Marais de l'Eau-aux-Cousins" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Marais de l'Eau-aux-Cousins": 1264.11px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Marais de l'Eau-aux-Cousins" trop éloigné (1264.11px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 6/38: "L'Auberge de l'Abandonné"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "L'Auberge de l'Abandonné" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "L'Auberge de l'Abandonné": 1089.17px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "L'Auberge de l'Abandonné" trop éloigné (1089.17px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 7/38: "Le Chemin Vert"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Chemin Vert" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Chemin Vert": 566.64px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Chemin Vert" trop éloigné (566.64px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 8/38: "Les Hauts des Galgals"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Hauts des Galgals" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Hauts des Galgals": 733.27px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Hauts des Galgals" trop éloigné (733.27px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 9/38: "Les Hauts du Nord"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Hauts du Nord" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Hauts du Nord": 918.01px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Hauts du Nord" trop éloigné (918.01px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 10/38: "Les Hauts du Sud"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Hauts du Sud" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Hauts du Sud": 703.62px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Hauts du Sud" trop éloigné (703.62px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 11/38: "Les Collines Venteuses"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Collines Venteuses" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Collines Venteuses": 1409.07px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Collines Venteuses" trop éloigné (1409.07px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 12/38: "Angmar"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Angmar" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Angmar": 2311.91px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Angmar" trop éloigné (2311.91px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 13/38: "Les Landes d'Etten"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Landes d'Etten" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Landes d'Etten": 2066.18px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Landes d'Etten" trop éloigné (2066.18px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 14/38: "La Trouée des Trolls"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "La Trouée des Trolls" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "La Trouée des Trolls": 1779.74px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "La Trouée des Trolls" trop éloigné (1779.74px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 15/38: "Le Dernier Pont"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Dernier Pont" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Dernier Pont": 1653.64px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Dernier Pont" trop éloigné (1653.64px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 16/38: "Le Lindon"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Lindon" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Lindon": 893.23px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Lindon" trop éloigné (893.23px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 17/38: "Les Montagnes Bleues"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Montagnes Bleues" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Montagnes Bleues": 444.63px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Montagnes Bleues" trop éloigné (444.63px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 18/38: "Les Anciennes Mines Naines"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Anciennes Mines Naines" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Anciennes Mines Naines": 1857.62px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Anciennes Mines Naines" trop éloigné (1857.62px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 19/38: "Les Tours Blanches"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Tours Blanches" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Tours Blanches": 845.79px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Tours Blanches" trop éloigné (845.79px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 20/38: "L'Arbre des Lamentations"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "L'Arbre des Lamentations" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "L'Arbre des Lamentations": 1070.67px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "L'Arbre des Lamentations" trop éloigné (1070.67px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 21/38: "Les Îles Embrumées"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Îles Embrumées" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Îles Embrumées": 710.84px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Îles Embrumées" trop éloigné (710.84px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 22/38: "Tindailin"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Tindailin" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Tindailin": 24.79px (seuil: 80px)
+ ✅ [detectNearbyLocations] - Lieu "Tindailin" DÉTECTÉ et AJOUTÉ aux découvertes: Object
+ 📍 [detectNearbyLocations] Traitement lieu 23/38: "Le Palais de la Reine"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Palais de la Reine" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Palais de la Reine": 834.86px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Palais de la Reine" trop éloigné (834.86px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 24/38: "Les Champs du Massacre"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Les Champs du Massacre" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Les Champs du Massacre": 565.84px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Les Champs du Massacre" trop éloigné (565.84px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 25/38: "Le Mont Venteux"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Mont Venteux" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Mont Venteux": 555.60px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Mont Venteux" trop éloigné (555.60px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 26/38: "La Colline de l'Assoupie"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "La Colline de l'Assoupie" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "La Colline de l'Assoupie": 308.08px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "La Colline de l'Assoupie" trop éloigné (308.08px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 27/38: "Le Mont Gram"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Mont Gram" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Mont Gram": 1383.47px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Mont Gram" trop éloigné (1383.47px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 28/38: "Le Fort Arlas"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Fort Arlas" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Fort Arlas": 1006.53px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Fort Arlas" trop éloigné (1006.53px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 29/38: "Le Refuge des Rôdeurs"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Refuge des Rôdeurs" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Refuge des Rôdeurs": 768.19px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Refuge des Rôdeurs" trop éloigné (768.19px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 30/38: "Tharbad"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Tharbad" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Tharbad": 153.22px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Tharbad" trop éloigné (153.22px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 31/38: "Le Royaume de Durefonte"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Royaume de Durefonte" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Royaume de Durefonte": 1065.15px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Royaume de Durefonte" trop éloigné (1065.15px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 32/38: "Le Vallon Caché (Morglynd)"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Le Vallon Caché (Morglynd)" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Le Vallon Caché (Morglynd)": 1086.82px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Le Vallon Caché (Morglynd)" trop éloigné (1086.82px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 33/38: "L'Île Hantée (L'Île de la Mère)"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "L'Île Hantée (L'Île de la Mère)" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "L'Île Hantée (L'Île de la Mère)": 2725.28px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "L'Île Hantée (L'Île de la Mère)" trop éloigné (2725.28px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 34/38: "La Tour en Ruines (Tombe de Gwendaith)"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "La Tour en Ruines (Tombe de Gwendaith)" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "La Tour en Ruines (Tombe de Gwendaith)": 1509.80px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "La Tour en Ruines (Tombe de Gwendaith)" trop éloigné (1509.80px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 35/38: "La Forteresse de Garth Tauron (Tharbad)"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "La Forteresse de Garth Tauron (Tharbad)" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "La Forteresse de Garth Tauron (Tharbad)": 770.38px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "La Forteresse de Garth Tauron (Tharbad)" trop éloigné (770.38px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 36/38: "Rath Sereg (Le Fort du Sang)"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Rath Sereg (Le Fort du Sang)" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Rath Sereg (Le Fort du Sang)": 1729.47px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Rath Sereg (Le Fort du Sang)" trop éloigné (1729.47px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 37/38: "Sennas Gaer (Château de la Sorcière)"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Sennas Gaer (Château de la Sorcière)" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Sennas Gaer (Château de la Sorcière)": 2302.98px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Sennas Gaer (Château de la Sorcière)" trop éloigné (2302.98px > 80px)
+ 📍 [detectNearbyLocations] Traitement lieu 38/38: "Amon Guruthos (La Colline de l'Effroi)"
+ 📍 [detectNearbyLocations] - coordinates: Object
+ 📍 [detectNearbyLocations] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectNearbyLocations] - Lieu "Amon Guruthos (La Colline de l'Effroi)" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 📍 [detectNearbyLocations] - Distance minimale pour "Amon Guruthos (La Colline de l'Effroi)": 2525.27px (seuil: 80px)
+ ⏭️ [detectNearbyLocations] - Lieu "Amon Guruthos (La Colline de l'Effroi)" trop éloigné (2525.27px > 80px)
+ 📍 [detectNearbyLocations] FIN - Statistiques:
+ 📍 [detectNearbyLocations] - Lieux ajoutés: 1
+ 📍 [detectNearbyLocations] - Ignorés (pas de coords): 0
+ 📍 [detectNearbyLocations] - Ignorés (mapId): 0
+ 📍 [detectNearbyLocations] - Ignorés (trop loin): 37
+ 🔍 [detectDiscoveries] Après detectNearbyLocations - discoveries.length: 1
+ 🔍 [detectDiscoveries] Appel de detectTraversedRegions...
+ 🗺️ [detectTraversedRegions] DÉBUT
+ 🗺️ [detectTraversedRegions] regionsData: Object
+ 🗺️ [detectTraversedRegions] regions array: Array(43)
+ 🗺️ [detectTraversedRegions] Tracé utilisé: 31 points (original: 5 waypoints)
+ 🗺️ [detectTraversedRegions] activeMapUrl: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🗺️ [detectTraversedRegions] Nombre total de régions: 43
+ 🗺️ [detectTraversedRegions] Nombre de points du tracé: 31
+ 🗺️ [detectTraversedRegions] Traitement région 1/43: "Hauts du Sud"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(7)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Hauts du Sud" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Hauts du Sud" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 2/43: "Trouée des Trolls"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(5)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Trouée des Trolls" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Trouée des Trolls" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 3/43: "Landes d'Etten"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(10)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Landes d'Etten" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Landes d'Etten" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 4/43: "Le Chemin Vert"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Le Chemin Vert" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Le Chemin Vert" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 5/43: "Lindon du Nord"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(21)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Lindon du Nord" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Lindon du Nord" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 6/43: "Lindon du Sud"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(14)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Lindon du Sud" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Lindon du Sud" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 7/43: "Région des Hâvres Gris"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(7)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Région des Hâvres Gris" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Région des Hâvres Gris" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 8/43: "Collines Blanches et alentours"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(12)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Collines Blanches et alentours" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Collines Blanches et alentours" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 9/43: "Collines d'Evendim"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(10)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Collines d'Evendim" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Collines d'Evendim" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 10/43: "Entre Montagnes Bleues et Collines Evendim"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(12)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Entre Montagnes Bleues et Collines Evendim" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Entre Montagnes Bleues et Collines Evendim" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 11/43: "Au sud de la Comté"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(9)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Au sud de la Comté" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🗺️ [detectTraversedRegions] - "Au sud de la Comté" ENTRÉE à l'index 16
+ 🗺️ [detectTraversedRegions] - "Au sud de la Comté" SORTIE à l'index 28 (segment 1)
+ 🗺️ [detectTraversedRegions] - Région "Au sud de la Comté" traversée 1 fois
+ ✅ [detectTraversedRegions] - "Au sud de la Comté" 1 segment(s) stocké(s): Array(1)
+ 🗺️ [detectTraversedRegions] Traitement région 12/43: "Entre le sud du Brandevin et les Montagnes Bleues"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(9)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Entre le sud du Brandevin et les Montagnes Bleues" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Entre le sud du Brandevin et les Montagnes Bleues" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 13/43: "La forêt d'Eryn Vorn"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(7)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "La forêt d'Eryn Vorn" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "La forêt d'Eryn Vorn" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 14/43: "Minhiriath"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(15)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Minhiriath" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Minhiriath" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 15/43: "Enedwaith"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(7)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Enedwaith" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Enedwaith" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 16/43: "Hauts des Galgals"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(5)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Hauts des Galgals" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Hauts des Galgals" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 17/43: "La Vieille Forêt"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(7)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "La Vieille Forêt" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "La Vieille Forêt" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 18/43: "Terres Solitaires du Nord"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(10)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Terres Solitaires du Nord" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Terres Solitaires du Nord" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 19/43: "Rhudaur"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(10)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Rhudaur" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Rhudaur" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 20/43: "Mont Gram"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Mont Gram" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Mont Gram" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 21/43: "Carn Dûm"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Carn Dûm" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Carn Dûm" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 22/43: "Angmar"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(9)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Angmar" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Angmar" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 23/43: "Forodwaith"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Forodwaith" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Forodwaith" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 24/43: "Région de Fondcombe"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(5)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Région de Fondcombe" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Région de Fondcombe" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 25/43: "L'Angle"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "L'Angle" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "L'Angle" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 26/43: "Sud des Fourrés au Trolls"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(7)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Sud des Fourrés au Trolls" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Sud des Fourrés au Trolls" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 27/43: "Contreforts des Monts Brumeus"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(10)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Contreforts des Monts Brumeus" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Contreforts des Monts Brumeus" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 28/43: "Eregion"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(7)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Eregion" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Eregion" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 29/43: "Sud de Tharbad"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Sud de Tharbad" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Sud de Tharbad" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 30/43: "Région de Khazad-Dûm"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Région de Khazad-Dûm" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Région de Khazad-Dûm" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 31/43: "Noues des Cygnes"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Noues des Cygnes" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Noues des Cygnes" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 32/43: "Hauts du Nord"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(8)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Hauts du Nord" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Hauts du Nord" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 33/43: "Collines venteuses"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Collines venteuses" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Collines venteuses" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 34/43: "Les Anciennes terres des Rois d'Arthedain"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(9)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Les Anciennes terres des Rois d'Arthedain" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Les Anciennes terres des Rois d'Arthedain" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 35/43: "Bois de Chet"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(8)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Bois de Chet" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Bois de Chet" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 36/43: "Marais aux Cousins"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(7)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Marais aux Cousins" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Marais aux Cousins" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 37/43: "Vieille route du Nord"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(11)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Vieille route du Nord" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Vieille route du Nord" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 38/43: "Pays de Bree"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Pays de Bree" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Pays de Bree" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 39/43: "GRande route de l'Est - entre Bree et Brandevin"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(10)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "GRande route de l'Est - entre Bree et Brandevin" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "GRande route de l'Est - entre Bree et Brandevin" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 40/43: "La Comté"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(12)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "La Comté" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🗺️ [detectTraversedRegions] - "La Comté" ENTRÉE à l'index 0
+ 🗺️ [detectTraversedRegions] - "La Comté" SORTIE à l'index 14 (segment 1)
+ 🗺️ [detectTraversedRegions] - Région "La Comté" traversée 1 fois
+ ✅ [detectTraversedRegions] - "La Comté" 1 segment(s) stocké(s): Array(1)
+ 🗺️ [detectTraversedRegions] Traitement région 41/43: "La grande route de l'Est - Entre Bree et le Dernier Pont"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(12)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "La grande route de l'Est - Entre Bree et le Dernier Pont" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "La grande route de l'Est - Entre Bree et le Dernier Pont" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 42/43: "Ancien royaume du Cardolan"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(12)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Ancien royaume du Cardolan" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Ancien royaume du Cardolan" non traversée
+ 🗺️ [detectTraversedRegions] Traitement région 43/43: "Le Lac Nenuial"
+ 🗺️ [detectTraversedRegions] - regionCoords: Array(6)
+ 🗺️ [detectTraversedRegions] - mapId: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ✅ [detectTraversedRegions] - Région "Le Lac Nenuial" mapId compatible: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ ⏭️ [detectTraversedRegions] - Région "Le Lac Nenuial" non traversée
+ 🗺️ [detectTraversedRegions] FIN - Statistiques:
+ 🗺️ [detectTraversedRegions] - Régions ajoutées: 2
+ 🗺️ [detectTraversedRegions] - Ignorées (pas de coords): 0
+ 🗺️ [detectTraversedRegions] - Ignorées (mapId): 0
+ 🗺️ [detectTraversedRegions] - Ignorées (pas d'intersection): 41
+ 🔍 [detectDiscoveries] Après detectTraversedRegions - discoveries.length: 3
+ 🔍 [detectDiscoveries] FIN - Total découvertes: 3
+ 📏 Calcul distance: 683px × (600 miles / 5000px) = 82 miles ÷ 20 mi/j
+ ✅ [finalizeJourney] Voyage finalisé:
+   - 5 waypoints
+   - 683 pixels
+   - 3 découvertes
+ ✅ Voyage finalisé - mode dessin reste actif mais bloqué pour ajout de waypoints
+ 💾 [PositionManager.savePosition] Sauvegarde position: Object
+ 💾 [PositionManager.savePosition] Flag cloud après save: null
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ 📍 Marqueur de position déplacé au début du tracé: (2371, 1607)
+ 👁️ Bouton Voir le voyage cliqué
+ 🔑 Signature du voyage actuel: 2371_1607_2731_2118_5
+ 📖 Nouveau voyage - aucun événement aléatoire préexistant
+ 🗺️ VoyageManager calcul: 683px × (600 miles / 5000px) = 82 miles ÷ 20 mi/j = 5 jours
+ 📅 Date de début du voyage sauvegardée : 10 Narwain
+ 🗺️ [buildAbsoluteTimeline] Carte active: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🗺️ [buildAbsoluteTimeline] journeyDiscoveries total: 3
+ ✅ [buildAbsoluteTimeline] Lieu "Tindailin" avec mapId correspondant - affiché
+ ✅ [buildAbsoluteTimeline] Région "Au sud de la Comté" avec mapId correspondant - affichée
+ ✅ [buildAbsoluteTimeline] Région "La Comté" avec mapId correspondant - affichée
+ 🗺️ [buildAbsoluteTimeline] Découvertes après filtrage: 3
+ 🗺️ [buildAbsoluteTimeline] Utilisation du tracé densifié: 31 points (au lieu de 5 waypoints)
+ 🗺️ [buildAbsoluteTimeline] Région "La Comté": 1 segment(s)
+ 🗺️ [buildAbsoluteTimeline] - Segment 1: entry=0, exit=14/31, jours=1-3
+ 📍 [buildAbsoluteTimeline] Lieu "Tindailin": index=6/31, ratio=0.194, jour=1
+ 🗺️ [buildAbsoluteTimeline] Région "Au sud de la Comté": 1 segment(s)
+ 🗺️ [buildAbsoluteTimeline] - Segment 1: entry=16, exit=28/31, jours=3-5
+ 📅 DEBUG getCalendarDateForDay(1): Object
+ 📅 Calcul initial: monthIndex=0, calendarDay=10
+ 📅 Résultat final: "10 Narwain"
+ 📅 Jour 1: date calendrier = "10 Narwain"
+ 📅 DEBUG getCalendarDateForDay(2): Object
+ 📅 Calcul initial: monthIndex=0, calendarDay=11
+ 📅 Résultat final: "11 Narwain"
+ 📅 Jour 2: date calendrier = "11 Narwain"
+ 📅 DEBUG getCalendarDateForDay(3): Object
+ 📅 Calcul initial: monthIndex=0, calendarDay=12
+ 📅 Résultat final: "12 Narwain"
+ 📅 Jour 3: date calendrier = "12 Narwain"
+ 📅 DEBUG getCalendarDateForDay(4): Object
+ 📅 Calcul initial: monthIndex=0, calendarDay=13
+ 📅 Résultat final: "13 Narwain"
+ 📅 Jour 4: date calendrier = "13 Narwain"
+ 📅 DEBUG getCalendarDateForDay(5): Object
+ 📅 Calcul initial: monthIndex=0, calendarDay=14
+ 📅 Résultat final: "14 Narwain"
+ 📅 Jour 5: date calendrier = "14 Narwain"
+ 📭 Aucune description sauvegardée pour cette carte/tracé
+ 📅 updateDisplay: Rendu de 5 jours
+ ✅ Event delegation configurée pour les en-têtes de jour
+ ⏱️ Configuration de 5 boutons de prolongation
+ ⚡ Configuration de 5 boutons de raccourci
+ 🎯 Centrage de la carte sur le voyage - Centre: (2534, 1863), Dimensions: 394x511
+ 📏 Dimensions - Toolbar: 58px, Modal: 727.5px, Disponible pour carte: 669.5px
+ 🔍 Zoom calculé: scaleX=1.529, scaleY=1.172, targetScale=1.172, constrainedScale=1.172
+ ✅ Carte centrée sur le voyage avec zoom 117%
+ 🔍 [ZoomManager] updateDisplay called: scale=1.172
+ 🔍 [ZoomManager] updateSliderPosition: scale=1.172, ratio=0.275, x=41.2px, sliderWidth=150px
+ 🔍 Ouverture de la découverte "Tindailin" (location) depuis le jour 1
+ 📅 Transmission du contexte de journée: Object
+ 📋 [InfoBoxManager] Showing info box for: Tindailin Type: location Object
+ 📅 Détection d'un contexte de journée: Object
+ 📋 [renderPersonnagesTabRead] Début du rendu pour location "Tindailin"
+ 📋 [renderPersonnagesTabRead] Associations DIRECTES (2): Array(2)
+ 🔍 [renderPersonnagesTabRead] Associations INVERSES (0): Array(0)
+ 🔍 [renderPersonnagesTabRead] Total personnages (2): Array(2)
+ ✅ [renderPersonnagesTabRead] Rendu terminé - 2 personnage(s) affiché(s)
+ 📋 [updateTabsVisibility] Type: location, isCharacter: false
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Tindailin
+ 🎨 [Description] hasDescription: true description: Près du Gué de Sarn, au cœur d'un bosquet dense, s
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: true count: 1
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #940000
+ 🎨 [Rumeurs] rumeurs brutes: Array(3) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 3
+ 🎨 [Rumeurs] hasTradition: true tradition: Au nord-ouest du Gué de Sarn, les vestiges d'un re
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] hasPersonnages: true count: 2
+ 🎨 [Personnages] icon trouvée: true
+ 🎨 [Personnages] Couleur appliquée avec !important: #940000
+ 🎨 [Lieux/Régions] Type non compatible: location
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ ✅ Info box displayed successfully in expanded mode
+ 📋 [toggleLocationKnowledge] known = true pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 42/43 regions
+ ✅ Display updated - 38 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] "Tindailin" filtré : inconnu (known=false) mais showUnknown=false
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+ 📊 Filtered: 37/38 locations, 42/43 regions
+ ✅ Display updated - 37 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = true pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 42/43 regions
+ ✅ Display updated - 38 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] "Tindailin" filtré : inconnu (known=false) mais showUnknown=false
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+ 📊 Filtered: 37/38 locations, 42/43 regions
+ ✅ Display updated - 37 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] visited = true pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 📋 [toggleLocationKnowledge] visited = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 📋 [toggleLocationKnowledge] known = true pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 42/43 regions
+ ✅ Display updated - 38 locations, 42 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📋 [toggleLocationKnowledge] known = false pour Tindailin
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée
+ 🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] "Tindailin" filtré : inconnu (known=false) mais showUnknown=false
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+filter-manager.js:392 📊 Filtered: 37/38 locations, 42/43 regions
+filter-manager.js:522 ✅ Display updated - 37 locations, 42 regions visible
+filter-manager.js:624 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+filter-manager.js:625 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+filter-manager.js:626 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+filter-manager.js:631 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:635 ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":["known"],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+filter-manager.js:642 ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+infobox-manager.js:206 📋 [switchTab] Changement d'onglet vers: image, currentType: location
+infobox-manager.js:231 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:232 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:248 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:252 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:270 🎨 [updateTabIconColors] Début de mise à jour pour: Tindailin
+infobox-manager.js:277 🎨 [Description] hasDescription: true description: Près du Gué de Sarn, au cœur d'un bosquet dense, s
+infobox-manager.js:278 🎨 [Description] icon trouvée: true
+infobox-manager.js:282 🎨 [Description] Couleur appliquée avec !important: #940000
+infobox-manager.js:293 🎨 [Images] hasImages: true count: 1
+infobox-manager.js:294 🎨 [Images] icon trouvée: true
+infobox-manager.js:298 🎨 [Images] Couleur appliquée avec !important: #940000
+infobox-manager.js:312 🎨 [Rumeurs] rumeurs brutes: Array(3) rumeur unique: undefined
+infobox-manager.js:313 🎨 [Rumeurs] rumeursValides count: 3
+infobox-manager.js:314 🎨 [Rumeurs] hasTradition: true tradition: Au nord-ouest du Gué de Sarn, les vestiges d'un re
+infobox-manager.js:315 🎨 [Rumeurs] hasContent: true
+infobox-manager.js:316 🎨 [Rumeurs] icon trouvée: true
+infobox-manager.js:320 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+infobox-manager.js:346 🎨 [Personnages] hasPersonnages: true count: 2
+infobox-manager.js:347 🎨 [Personnages] icon trouvée: true
+infobox-manager.js:351 🎨 [Personnages] Couleur appliquée avec !important: #940000
+infobox-manager.js:377 🎨 [Lieux/Régions] Type non compatible: location
+infobox-manager.js:385 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+infobox-manager.js:386 🎨 [Tables Aléatoires] icon trouvée: true
+infobox-manager.js:390 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+infobox-manager.js:396 🎨 [updateTabIconColors] Fin de mise à jour
+infobox-manager.js:206 📋 [switchTab] Changement d'onglet vers: text, currentType: location
+infobox-manager.js:231 📋 [updateTabsVisibility] Type: location, isCharacter: false
+infobox-manager.js:232 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+infobox-manager.js:248 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+infobox-manager.js:252 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+infobox-manager.js:270 🎨 [updateTabIconColors] Début de mise à jour pour: Tindailin
+infobox-manager.js:277 🎨 [Description] hasDescription: true description: Près du Gué de Sarn, au cœur d'un bosquet dense, s
+infobox-manager.js:278 🎨 [Description] icon trouvée: true
+infobox-manager.js:282 🎨 [Description] Couleur appliquée avec !important: #940000
+infobox-manager.js:293 🎨 [Images] hasImages: true count: 1
+infobox-manager.js:294 🎨 [Images] icon trouvée: true
+infobox-manager.js:298 🎨 [Images] Couleur appliquée avec !important: #940000
+infobox-manager.js:312 🎨 [Rumeurs] rumeurs brutes: Array(3) rumeur unique: undefined
+infobox-manager.js:313 🎨 [Rumeurs] rumeursValides count: 3
+infobox-manager.js:314 🎨 [Rumeurs] hasTradition: true tradition: Au nord-ouest du Gué de Sarn, les vestiges d'un re
+infobox-manager.js:315 🎨 [Rumeurs] hasContent: true
+infobox-manager.js:316 🎨 [Rumeurs] icon trouvée: true
+infobox-manager.js:320 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+infobox-manager.js:346 🎨 [Personnages] hasPersonnages: true count: 2
+infobox-manager.js:347 🎨 [Personnages] icon trouvée: true
+infobox-manager.js:351 🎨 [Personnages] Couleur appliquée avec !important: #940000
+infobox-manager.js:377 🎨 [Lieux/Régions] Type non compatible: location
+infobox-manager.js:385 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+infobox-manager.js:386 🎨 [Tables Aléatoires] icon trouvée: true
+infobox-manager.js:390 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+infobox-manager.js:396 🎨 [updateTabIconColors] Fin de mise à jour
+infobox-manager.js:188 📅 Contexte de journée réinitialisé lors de la fermeture complète.
