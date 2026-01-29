@@ -3484,6 +3484,13 @@ class InfoBoxManager {
         }
 
         console.log(`✅ [toggleLocationKnowledge] Mise à jour sauvegardée`);
+
+        // Rafraîchir l'affichage sur la carte pour refléter le changement de statut
+        // Cela permet aux lieux de devenir visibles/invisibles en mode Aventure
+        if (field === 'known' && window.filterManager && typeof window.filterManager.applyFilters === 'function') {
+            console.log(`🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte`);
+            window.filterManager.applyFilters();
+        }
     }
 
     resetZoomForFullscreen() {
