@@ -3464,30 +3464,54 @@ class InfoBoxManager {
         if (!this.currentItem || (this.currentType !== 'location' && this.currentType !== 'region')) return;
 
         console.log(`📋 [toggleLocationKnowledge] ${field} = ${value} pour ${this.currentItem.name}`);
+        console.log(`📋 [toggleLocationKnowledge] currentItem ID: ${this.currentItem.id}, Type: ${this.currentType}`);
 
         // Mettre à jour le lieu/région
         this.currentItem[field] = value;
 
+        let locationFound = false;
+
         // Sauvegarder dans le dataManager approprié
         if (this.currentType === 'location') {
-            const location = window.locationsData.locations.find(l => String(l.id) === String(this.currentItem.id));
+            // Chercher d'abord par ID, puis par nom si non trouvé (fallback pour les appels depuis la modale voyage)
+            let location = window.locationsData.locations.find(l => String(l.id) === String(this.currentItem.id));
+            
+            if (!location && this.currentItem.name) {
+                console.log(`⚠️ [toggleLocationKnowledge] Lieu non trouvé par ID, recherche par nom: ${this.currentItem.name}`);
+                location = window.locationsData.locations.find(l => l.name === this.currentItem.name);
+            }
+            
             if (location) {
                 location[field] = value;
                 this.dataManager.saveLocationsToLocal();
+                locationFound = true;
+                console.log(`✅ [toggleLocationKnowledge] Lieu trouvé et mis à jour: ${location.name} (ID: ${location.id})`);
+            } else {
+                console.error(`❌ [toggleLocationKnowledge] Lieu non trouvé ni par ID ni par nom`);
             }
         } else if (this.currentType === 'region') {
-            const region = window.regionsData.regions.find(r => String(r.id) === String(this.currentItem.id));
+            let region = window.regionsData.regions.find(r => String(r.id) === String(this.currentItem.id));
+            
+            if (!region && this.currentItem.name) {
+                console.log(`⚠️ [toggleLocationKnowledge] Région non trouvée par ID, recherche par nom: ${this.currentItem.name}`);
+                region = window.regionsData.regions.find(r => r.name === this.currentItem.name);
+            }
+            
             if (region) {
                 region[field] = value;
                 this.dataManager.saveRegionsToLocal();
+                locationFound = true;
+                console.log(`✅ [toggleLocationKnowledge] Région trouvée et mise à jour: ${region.name} (ID: ${region.id})`);
+            } else {
+                console.error(`❌ [toggleLocationKnowledge] Région non trouvée ni par ID ni par nom`);
             }
         }
 
-        console.log(`✅ [toggleLocationKnowledge] Mise à jour sauvegardée`);
+        console.log(`✅ [toggleLocationKnowledge] Mise à jour sauvegardée, locationFound: ${locationFound}`);
 
         // Rafraîchir l'affichage sur la carte pour refléter le changement de statut
         // Cela permet aux lieux de devenir visibles/invisibles en mode Aventure
-        if (field === 'known') {
+        if (field === 'known' && locationFound) {
             console.log(`🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte`);
             
             // En mode Aventure, utiliser les filtres spécifiques du mode Aventure
