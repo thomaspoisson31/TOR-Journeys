@@ -70,24 +70,21 @@ class MapSwitcherManager {
         return null;
     }
 
-    async switchToMap(index) {
+    switchToMap(index) {
         const maps = this.getAvailableMaps();
         if (index < 0 || index >= maps.length) return;
 
-        // Sauvegarde automatique vers le cloud avant changement de carte
+        // Sauvegarde automatique en arrière-plan (fire and forget)
         if (window.authManager && window.authManager.isAuthenticated) {
-            console.log('🗺️ [MapSwitcher] Sauvegarde automatique avant changement de carte...');
-            try {
-                if (typeof window.authManager.manualSync === 'function') {
-                    await window.authManager.manualSync();
-                    console.log('✅ [MapSwitcher] Sauvegarde terminée, changement de carte...');
-                }
-            } catch (error) {
-                console.error('❌ [MapSwitcher] Erreur lors de la sauvegarde:', error);
-                // Continuer le changement de carte même en cas d'erreur
+            console.log('🗺️ [MapSwitcher] Lancement de la sauvegarde en arrière-plan...');
+            if (typeof window.authManager.manualSync === 'function') {
+                window.authManager.manualSync()
+                    .then(() => console.log('✅ [MapSwitcher] Sauvegarde arrière-plan terminée'))
+                    .catch(error => console.error('❌ [MapSwitcher] Erreur sauvegarde arrière-plan:', error));
             }
         }
 
+        // Changement de carte immédiat (sans attendre la sync)
         if (window.settingsManager && typeof window.settingsManager.setActiveMap === 'function') {
             window.settingsManager.setActiveMap(index);
             this.renderThumbnails();
