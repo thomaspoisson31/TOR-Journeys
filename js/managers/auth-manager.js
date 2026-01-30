@@ -9,6 +9,7 @@ class AuthManager {
         this.lastSyncTimestamp = null; // Timestamp de dernière sync
         this.isSyncing = false; // Flag pour éviter les syncs multiples
         this.hasUnsavedChanges = false; // Flag pour détecter les modifications non sauvegardées
+        this.isLoadingFromCloud = false; // Flag pour éviter de marquer comme non sauvegardé pendant le chargement initial
 
         // Références DOM
         this.authBtn = null;
@@ -798,6 +799,9 @@ class AuthManager {
             return;
         }
 
+        // Activer le flag pour ignorer les appels à markAsUnsaved pendant le chargement
+        this.isLoadingFromCloud = true;
+        
         this.envPrefix = await this.getEnvironmentPrefix(); // Assurer que envPrefix est chargé
         this.logAuth(`📥 Chargement des données depuis le cloud (environnement: ${this.envPrefix})`);
 
@@ -994,10 +998,20 @@ class AuthManager {
         } catch (error) {
             this.logAuth(`❌ Erreur lors du chargement des données cloud: ${error.message}`);
             alert(`Impossible de charger les données du cloud: ${error.message}\n\nVeuillez rafraîchir la page.`);
+        } finally {
+            // Désactiver le flag après le chargement (réussi ou échoué)
+            this.isLoadingFromCloud = false;
+            this.logAuth("🏁 Fin du chargement cloud, isLoadingFromCloud = false");
         }
     }
 
     markAsUnsaved() {
+        // Ne pas marquer comme non sauvegardé pendant le chargement initial depuis le cloud
+        if (this.isLoadingFromCloud) {
+            this.logAuth("⏳ markAsUnsaved ignoré pendant le chargement cloud");
+            return;
+        }
+        
         if (!this.hasUnsavedChanges) {
             this.hasUnsavedChanges = true;
             this.updateCloudIconVisibility();
