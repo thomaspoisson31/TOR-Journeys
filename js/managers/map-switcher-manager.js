@@ -70,85 +70,23 @@ class MapSwitcherManager {
         return null;
     }
 
-    hasUnsavedChanges() {
-        if (window.authManager && window.authManager.hasUnsavedChanges) {
-            return true;
-        }
-        return false;
-    }
-
-    async confirmSwitchIfNeeded() {
-        if (!this.hasUnsavedChanges()) {
-            return true;
-        }
-
-        return new Promise((resolve) => {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-[300] flex items-center justify-center bg-black bg-opacity-50';
-            modal.innerHTML = `
-                <div class="bg-gray-800 rounded-lg p-6 max-w-sm mx-4 shadow-xl border border-gray-600">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-exclamation-triangle text-yellow-500 text-3xl mb-2"></i>
-                        <h3 class="text-lg font-bold text-white">Modifications non sauvegardées</h3>
-                    </div>
-                    <p class="text-gray-300 text-sm mb-6 text-center">
-                        Vous avez des modifications en cours. Voulez-vous les sauvegarder avant de changer de carte ?
-                    </p>
-                    <div class="flex gap-2 justify-center">
-                        <button id="map-switch-save" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition-colors">
-                            Sauvegarder
-                        </button>
-                        <button id="map-switch-discard" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium transition-colors">
-                            Ignorer
-                        </button>
-                        <button id="map-switch-cancel" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm font-medium transition-colors">
-                            Annuler
-                        </button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-
-            const saveBtn = modal.querySelector('#map-switch-save');
-            const discardBtn = modal.querySelector('#map-switch-discard');
-            const cancelBtn = modal.querySelector('#map-switch-cancel');
-
-            saveBtn.addEventListener('click', async () => {
-                modal.remove();
-                if (window.authManager && typeof window.authManager.manualSync === 'function') {
-                    await window.authManager.manualSync();
-                }
-                resolve(true);
-            });
-
-            discardBtn.addEventListener('click', () => {
-                modal.remove();
-                if (window.authManager) {
-                    window.authManager.hasUnsavedChanges = false;
-                }
-                resolve(true);
-            });
-
-            cancelBtn.addEventListener('click', () => {
-                modal.remove();
-                resolve(false);
-            });
-
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                    resolve(false);
-                }
-            });
-        });
-    }
-
     async switchToMap(index) {
         const maps = this.getAvailableMaps();
         if (index < 0 || index >= maps.length) return;
 
-        const canSwitch = await this.confirmSwitchIfNeeded();
-        if (!canSwitch) return;
+        // Sauvegarde automatique vers le cloud avant changement de carte
+        if (window.authManager && window.authManager.isAuthenticated) {
+            console.log('🗺️ [MapSwitcher] Sauvegarde automatique avant changement de carte...');
+            try {
+                if (typeof window.authManager.manualSync === 'function') {
+                    await window.authManager.manualSync();
+                    console.log('✅ [MapSwitcher] Sauvegarde terminée, changement de carte...');
+                }
+            } catch (error) {
+                console.error('❌ [MapSwitcher] Erreur lors de la sauvegarde:', error);
+                // Continuer le changement de carte même en cas d'erreur
+            }
+        }
 
         if (window.settingsManager && typeof window.settingsManager.setActiveMap === 'function') {
             window.settingsManager.setActiveMap(index);
