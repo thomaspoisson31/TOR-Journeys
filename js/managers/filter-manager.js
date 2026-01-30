@@ -501,12 +501,27 @@ export default class FilterManager {
     updateDisplay() {
         // Masquer/afficher les marqueurs de lieux
         const locationMarkers = document.querySelectorAll('.location-marker');
+        console.log(`🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: ${locationMarkers.length}`);
+        
+        let hiddenCount = 0;
+        let shownCount = 0;
+        
         locationMarkers.forEach(marker => {
             const locationId = marker.dataset.id;
-            const isFiltered = this.filteredLocations.some(loc => loc.id == locationId);
+            const isFiltered = this.filteredLocations.some(loc => String(loc.id) === String(locationId));
             const isVisible = this.activeFilters.showLocations && isFiltered;
-            marker.style.display = isVisible ? 'block' : 'none';
+            
+            if (isVisible) {
+                marker.style.display = 'block';
+                shownCount++;
+            } else {
+                marker.style.display = 'none';
+                hiddenCount++;
+                console.log(`🔴 [updateDisplay] Marqueur masqué: ID=${locationId}, title=${marker.title}`);
+            }
         });
+        
+        console.log(`🔄 [updateDisplay] Résultat: ${shownCount} affichés, ${hiddenCount} masqués`);
 
         // Masquer/afficher le calque de régions
         const regionsLayer = document.getElementById('regions-layer');
