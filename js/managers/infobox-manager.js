@@ -2722,77 +2722,78 @@ class InfoBoxManager {
         // Afficher le titre et la liste des personnages (style cohérent avec Lieux/Régions)
         let html = '<h3 style="color: #940000; font-family: \'Merriweather\', serif; font-weight: 700; margin-bottom: 1rem; font-size: 1.35rem;"><i class="fas fa-users" style="margin-right: 0.5rem;"></i>Personnages associés</h3>';
 
-        // Parcourir tous les personnages associés (directs + inverses)
-        allAssociatedIds.forEach(characterId => {
-            const character = window.charactersManager.characters.find(c => String(c.id) === String(characterId));
+        // Récupérer tous les personnages et les trier par ordre alphabétique
+        const sortedCharacters = allAssociatedIds
+            .map(characterId => window.charactersManager.characters.find(c => String(c.id) === String(characterId)))
+            .filter(character => character !== undefined)
+            .sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
 
-            if (character) {
-                const isDirect = directAssociatedIds.includes(characterId);
-                const isReverse = reverseAssociatedIds.includes(characterId);
+        // Parcourir tous les personnages associés triés alphabétiquement
+        sortedCharacters.forEach(character => {
+            const characterId = String(character.id);
+            const isDirect = directAssociatedIds.includes(characterId);
+            const isReverse = reverseAssociatedIds.includes(characterId);
 
-                // Badge de type d'association
-                let associationBadge = '';
-                if (isReverse) {
-                    associationBadge = '<span class="inline-block px-2 py-1 text-xs rounded bg-purple-600 text-white ml-2">Lié</span>';
-                }
-
-                // Thumbnail
-                const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-                let thumbnailStyle = '';
-                if (thumbnailImage?.thumbnailCrop) {
-                    const crop = thumbnailImage.thumbnailCrop;
-                    const zoom = crop.zoom || 1;
-                    const offsetX = crop.offsetX || 0;
-                    const offsetY = crop.offsetY || 0;
-                    thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%);"`;
-                }
-
-                // Type de personnage (PJ, PNJ, Monstre)
-                const type = character.type || 'PNJ';
-                let typeClass = 'bg-green-600';
-                let borderClass = 'border-green-500';
-
-                if (type === 'PJ') {
-                    typeClass = 'bg-blue-600';
-                    borderClass = 'border-blue-500';
-                } else if (type === 'Monstre') {
-                    typeClass = 'bg-red-600';
-                    borderClass = 'border-red-500';
-                }
-
-                html += `
-                    <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
-                         onclick="window.infoBoxManager.showCharacterFromLocationInfoBox('${character.id}')">
-                        <div class="flex items-center space-x-3">
-                            ${thumbnailImage ? `
-                                <div class="w-12 h-12 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0">
-                                    <img src="${thumbnailImage.url}" alt="${character.name}"
-                                         class="w-full h-full object-cover" ${thumbnailStyle}>
-                                </div>
-                            ` : `
-                                <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center border-2 ${borderClass} flex-shrink-0">
-                                    <i class="fas fa-user text-xl text-gray-400"></i>
-                                </div>
-                            `}
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center flex-wrap gap-2">
-                                    <h4 class="font-semibold text-gray-800 truncate text-sm">${character.name}</h4>
-                                    <span class="inline-block px-2 py-1 text-xs rounded ${typeClass} text-white">${type}</span>
-                                    ${associationBadge}
-                                </div>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
-                        </div>
-                    </div>
-                `;
-            } else {
-                console.warn(`⚠️ Personnage non trouvé avec l'ID: ${characterId}`);
+            // Badge de type d'association
+            let associationBadge = '';
+            if (isReverse) {
+                associationBadge = '<span class="inline-block px-2 py-1 text-xs rounded bg-purple-600 text-white ml-2">Lié</span>';
             }
+
+            // Thumbnail
+            const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+            let thumbnailStyle = '';
+            if (thumbnailImage?.thumbnailCrop) {
+                const crop = thumbnailImage.thumbnailCrop;
+                const zoom = crop.zoom || 1;
+                const offsetX = crop.offsetX || 0;
+                const offsetY = crop.offsetY || 0;
+                thumbnailStyle = `style="transform: scale(${zoom}) translate(${offsetX}%, ${offsetY}%);"`;
+            }
+
+            // Type de personnage (PJ, PNJ, Monstre)
+            const type = character.type || 'PNJ';
+            let typeClass = 'bg-green-600';
+            let borderClass = 'border-green-500';
+
+            if (type === 'PJ') {
+                typeClass = 'bg-blue-600';
+                borderClass = 'border-blue-500';
+            } else if (type === 'Monstre') {
+                typeClass = 'bg-red-600';
+                borderClass = 'border-red-500';
+            }
+
+            html += `
+                <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
+                     onclick="window.infoBoxManager.showCharacterFromLocationInfoBox('${character.id}')">
+                    <div class="flex items-center space-x-3">
+                        ${thumbnailImage ? `
+                            <div class="w-12 h-12 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0">
+                                <img src="${thumbnailImage.url}" alt="${character.name}"
+                                     class="w-full h-full object-cover" ${thumbnailStyle}>
+                            </div>
+                        ` : `
+                            <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center border-2 ${borderClass} flex-shrink-0">
+                                <i class="fas fa-user text-xl text-gray-400"></i>
+                            </div>
+                        `}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center flex-wrap gap-2">
+                                <h4 class="font-semibold text-gray-800 truncate text-sm">${character.name}</h4>
+                                <span class="inline-block px-2 py-1 text-xs rounded ${typeClass} text-white">${type}</span>
+                                ${associationBadge}
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
+                    </div>
+                </div>
+            `;
         });
 
         personnagesContent.innerHTML = html;
 
-        console.log(`✅ [renderPersonnagesTabRead] Rendu terminé - ${allAssociatedIds.length} personnage(s) affiché(s)`);
+        console.log(`✅ [renderPersonnagesTabRead] Rendu terminé - ${sortedCharacters.length} personnage(s) affiché(s)`);
     }
 
     renderLieuxRegionsTabRead() {
