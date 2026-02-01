@@ -3041,15 +3041,16 @@ class InfoBoxManager {
         console.log(`📋 [renderPersonnagesTabEdit] Lieu/Région: ${this.currentItem.name}`);
         console.log(`📋 [renderPersonnagesTabEdit] associatedCharacterIds:`, associatedCharacterIds);
 
-        // Filtrer les personnages selon la carte active
+        // Filtrer les personnages selon la carte active et trier par ordre alphabétique
         const activeMapId = window.settingsManager?.activeMapUrl;
-        const availableCharacters = window.charactersManager.characters.filter(char => {
-            const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
-            console.log(`🔍 [renderPersonnagesTabEdit] ${char.name} - mapId: ${char.mapId}, activeMapId: ${activeMapId}, isOnCurrentMap: ${isOnCurrentMap}`);
-            return isOnCurrentMap;
-        });
+        const availableCharacters = window.charactersManager.characters
+            .filter(char => {
+                const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
+                return isOnCurrentMap;
+            })
+            .sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
 
-        console.log(`📋 [renderPersonnagesTabEdit] ${availableCharacters.length} personnage(s) disponible(s)`);
+        console.log(`📋 [renderPersonnagesTabEdit] ${availableCharacters.length} personnage(s) disponible(s) (triés alphabétiquement)`);
 
         if (availableCharacters.length === 0) {
             personnagesTab.innerHTML = `
