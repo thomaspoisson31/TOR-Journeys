@@ -11,7 +11,8 @@ class CharactersManager {
             monstre: true,
             known: false,
             met: false,
-            knownLocations: true
+            knownLocations: true,
+            nextSession: false
         };
         this.sortBy = 'name';
         // Added for Gemini integration
@@ -154,6 +155,16 @@ class CharactersManager {
             });
         }
 
+        // Filtre par prochaine séance
+        const filterNextSession = document.getElementById('filter-next-session');
+        if (filterNextSession) {
+            filterNextSession.addEventListener('change', (e) => {
+                this.filters.nextSession = e.target.checked;
+                this.updateFilterUIState();
+                this.renderCharactersList();
+            });
+        }
+
         // Tri
         const sortSelect = document.getElementById('sort-characters');
         if (sortSelect) {
@@ -231,6 +242,7 @@ class CharactersManager {
                 // Mode Aventure : forcer le filtre "Connus" uniquement
                 this.filters.known = true;
                 this.filters.met = false;
+                this.filters.nextSession = false;
                 
                 // Masquer la barre de filtres
                 const filterContainer = modal.querySelector('.bg-gray-700.rounded-lg.p-3');
@@ -288,6 +300,9 @@ class CharactersManager {
         if (filterKnown) filterKnown.checked = this.filters.known;
         if (filterMet) filterMet.checked = this.filters.met;
         if (filterKnownLocations) filterKnownLocations.checked = this.filters.knownLocations;
+
+        const filterNextSession = document.getElementById('filter-next-session');
+        if (filterNextSession) filterNextSession.checked = this.filters.nextSession;
     }
 
     updateFilterUIState() {
@@ -295,7 +310,8 @@ class CharactersManager {
 
         // Vérifier si au moins un filtre est actif
         const hasActiveFilters = !this.filters.pj || !this.filters.pnj || !this.filters.monstre || 
-                                  this.filters.known || this.filters.met || !this.filters.knownLocations;
+                                  this.filters.known || this.filters.met || !this.filters.knownLocations ||
+                                  this.filters.nextSession;
 
         // Mettre à jour l'icône d'entonnoir
         if (filterIcon) {
@@ -319,6 +335,7 @@ class CharactersManager {
         this.filters.known = false;
         this.filters.met = false;
         this.filters.knownLocations = true;
+        this.filters.nextSession = false;
 
         this.syncFiltersUI();
         this.updateFilterUIState();
@@ -452,8 +469,10 @@ class CharactersManager {
                 character.associatedLocations.forEach(locationId => {
                     const location = locationsData.find(loc => String(loc.id) === String(locationId));
                     if (location) {
-                        // Filtrer par lieux connus si l'option est activée
                         if (this.filters.knownLocations && !location.known) {
+                            return;
+                        }
+                        if (this.filters.nextSession && !location.nextSession) {
                             return;
                         }
                         const locationName = location.name;
@@ -470,8 +489,10 @@ class CharactersManager {
                 character.associatedRegions.forEach(regionId => {
                     const region = regionsData.find(reg => String(reg.id) === String(regionId));
                     if (region) {
-                        // Filtrer par régions connues si l'option est activée
                         if (this.filters.knownLocations && !region.known) {
+                            return;
+                        }
+                        if (this.filters.nextSession && !region.nextSession) {
                             return;
                         }
                         const regionName = region.name;

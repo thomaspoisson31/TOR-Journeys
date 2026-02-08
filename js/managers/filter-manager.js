@@ -6,6 +6,7 @@ export default class FilterManager {
             colors: [], // Unifié pour lieux et régions
             visited: [], // Array: peut contenir 'visited' et/ou 'not_visited'
             known: [],   // Array: peut contenir 'known' et/ou 'unknown'
+            nextSession: [], // Array: peut contenir 'next_session' et/ou 'not_next_session'
             types: [],
             showLocations: true, // Afficher les lieux
             showRegions: false,   // Afficher les régions (désactivé par défaut)
@@ -185,6 +186,17 @@ export default class FilterManager {
         if (unknownCheckbox) {
             unknownCheckbox.addEventListener('change', () => this.updateKnownFilter());
         }
+
+        // Filtres "Prochaine Séance" - checkboxes
+        const nextSessionCheckbox = document.getElementById('next-session-checkbox');
+        const notNextSessionCheckbox = document.getElementById('not-next-session-checkbox');
+
+        if (nextSessionCheckbox) {
+            nextSessionCheckbox.addEventListener('change', () => this.updateNextSessionFilter());
+        }
+        if (notNextSessionCheckbox) {
+            notNextSessionCheckbox.addEventListener('change', () => this.updateNextSessionFilter());
+        }
     }
 
     setupTypeFilters() {
@@ -286,6 +298,21 @@ export default class FilterManager {
         this.applyFilters();
     }
 
+    updateNextSessionFilter() {
+        const nextSessionCheckbox = document.getElementById('next-session-checkbox');
+        const notNextSessionCheckbox = document.getElementById('not-next-session-checkbox');
+        
+        this.activeFilters.nextSession = [];
+        if (nextSessionCheckbox && nextSessionCheckbox.checked) {
+            this.activeFilters.nextSession.push('next_session');
+        }
+        if (notNextSessionCheckbox && notNextSessionCheckbox.checked) {
+            this.activeFilters.nextSession.push('not_next_session');
+        }
+        
+        this.applyFilters();
+    }
+
     toggleFilterPanel() {
         const filterPanel = document.getElementById('filter-panel');
         const filterBtn = document.getElementById('filter-btn');
@@ -325,6 +352,7 @@ export default class FilterManager {
             colors: [],
             visited: [],
             known: [],
+            nextSession: [],
             types: [],
             showLocations: true,
             showRegions: false,
@@ -342,11 +370,15 @@ export default class FilterManager {
         const notVisitedCheckbox = document.getElementById('not-visited-checkbox');
         const knownCheckbox = document.getElementById('known-checkbox');
         const unknownCheckbox = document.getElementById('unknown-checkbox');
+        const nextSessionCheckbox = document.getElementById('next-session-checkbox');
+        const notNextSessionCheckbox = document.getElementById('not-next-session-checkbox');
         
         if (visitedCheckbox) visitedCheckbox.checked = false;
         if (notVisitedCheckbox) notVisitedCheckbox.checked = false;
         if (knownCheckbox) knownCheckbox.checked = false;
         if (unknownCheckbox) unknownCheckbox.checked = false;
+        if (nextSessionCheckbox) nextSessionCheckbox.checked = false;
+        if (notNextSessionCheckbox) notNextSessionCheckbox.checked = false;
 
         // Types
         document.querySelectorAll('input[name="type-filter"]').forEach(cb => {
@@ -443,11 +475,23 @@ export default class FilterManager {
                 const showUnknown = this.activeFilters.known.includes('unknown');
                 
                 if (isKnown && !showKnown) {
-                    console.log(`🔍 [filterLocations] "${location.name}" filtré : connu mais showKnown=${showKnown}`);
                     return false;
                 }
                 if (!isKnown && !showUnknown) {
-                    console.log(`🔍 [filterLocations] "${location.name}" filtré : inconnu (known=${location.known}) mais showUnknown=${showUnknown}`);
+                    return false;
+                }
+            }
+
+            // Filtre par prochaine séance
+            if (this.activeFilters.nextSession?.length > 0) {
+                const isNextSession = location.nextSession === true;
+                const showNextSession = this.activeFilters.nextSession.includes('next_session');
+                const showNotNextSession = this.activeFilters.nextSession.includes('not_next_session');
+                
+                if (isNextSession && !showNextSession) {
+                    return false;
+                }
+                if (!isNextSession && !showNotNextSession) {
                     return false;
                 }
             }
@@ -492,6 +536,16 @@ export default class FilterManager {
                 
                 if (isKnown && !showKnown) return false;
                 if (!isKnown && !showUnknown) return false;
+            }
+
+            // Filtre par prochaine séance
+            if (this.activeFilters.nextSession?.length > 0) {
+                const isNextSession = region.nextSession === true;
+                const showNextSession = this.activeFilters.nextSession.includes('next_session');
+                const showNotNextSession = this.activeFilters.nextSession.includes('not_next_session');
+                
+                if (isNextSession && !showNextSession) return false;
+                if (!isNextSession && !showNotNextSession) return false;
             }
 
             return true;
@@ -688,6 +742,7 @@ export default class FilterManager {
                 colors: [],
                 visited: [],
                 known: [],
+                nextSession: [],
                 types: [],
                 showLocations: true,
                 showRegions: false,
@@ -717,6 +772,11 @@ export default class FilterManager {
         if (notVisitedCheckbox) notVisitedCheckbox.checked = this.activeFilters.visited?.includes('not_visited') || false;
         if (knownCheckbox) knownCheckbox.checked = this.activeFilters.known?.includes('known') || false;
         if (unknownCheckbox) unknownCheckbox.checked = this.activeFilters.known?.includes('unknown') || false;
+
+        const nextSessionCheckbox = document.getElementById('next-session-checkbox');
+        const notNextSessionCheckbox = document.getElementById('not-next-session-checkbox');
+        if (nextSessionCheckbox) nextSessionCheckbox.checked = this.activeFilters.nextSession?.includes('next_session') || false;
+        if (notNextSessionCheckbox) notNextSessionCheckbox.checked = this.activeFilters.nextSession?.includes('not_next_session') || false;
 
         // Cases à cocher d'affichage
         const showLocationsFilter = document.getElementById('show-locations');

@@ -585,6 +585,7 @@ class InfoBoxManager {
                 // Pour les personnages : Connu et Rencontré
                 const isKnown = item.known || false;
                 const isMet = item.met || false;
+                const isNextSession = item.nextSession || false;
 
                 knowledgeHTML += `
                     <label class="flex items-center space-x-2 cursor-pointer">
@@ -599,11 +600,18 @@ class InfoBoxManager {
                                class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                         <span>Rencontré</span>
                     </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="char-nextsession-checkbox" ${isNextSession ? 'checked' : ''}
+                               onchange="window.infoBoxManager.toggleCharacterKnowledge('nextSession', this.checked)"
+                               class="w-4 h-4 text-orange-500 rounded focus:ring-orange-400">
+                        <span>Prochaine séance</span>
+                    </label>
                 `;
             } else {
                 // Pour les lieux/régions : Connue et Visitée
                 const isKnown = item.known || false;
                 const isVisited = item.visited || false;
+                const isNextSession = item.nextSession || false;
 
                 knowledgeHTML += `
                     <label class="flex items-center space-x-2 cursor-pointer">
@@ -618,12 +626,38 @@ class InfoBoxManager {
                                class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                         <span>Visitée</span>
                     </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="location-nextsession-checkbox" ${isNextSession ? 'checked' : ''}
+                               onchange="window.infoBoxManager.toggleLocationKnowledge('nextSession', this.checked)"
+                               class="w-4 h-4 text-orange-500 rounded focus:ring-orange-400">
+                        <span>Prochaine séance</span>
+                    </label>
                 `;
             }
 
             knowledgeHTML += '</div>';
 
-            textView.innerHTML = descriptionHTML + regionTypeHTML + knowledgeHTML;
+            let gmCommentsHTML = '';
+            const gmComments = item.gmComments || '';
+            if (gmComments) {
+                gmCommentsHTML = `
+                    <div class="mt-4">
+                        <h3>Commentaires Meneur</h3>
+                        <div class="prose prose-invert text-sm bg-gray-800 rounded p-3 border border-yellow-700/50">
+                            ${this.renderMarkdown(gmComments)}
+                        </div>
+                    </div>
+                `;
+            } else {
+                gmCommentsHTML = `
+                    <div class="mt-4">
+                        <h3>Commentaires Meneur</h3>
+                        <p class="text-gray-400 italic text-sm">Aucun commentaire meneur.</p>
+                    </div>
+                `;
+            }
+
+            textView.innerHTML = descriptionHTML + regionTypeHTML + knowledgeHTML + gmCommentsHTML;
         }
 
         // Onglet Personnages (uniquement pour les lieux et régions)
@@ -850,6 +884,11 @@ class InfoBoxManager {
                         </button>
                     </div>
                     ${regionTypeHTML}
+
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium mb-2 text-yellow-400">Commentaires Meneur (Markdown supporté) :</label>
+                        <textarea id="edit-gm-comments" class="w-full p-2 border rounded h-24 bg-gray-800 text-white font-mono text-sm border-yellow-700/50" placeholder="Notes privées du meneur de jeu...">${item.gmComments || ''}</textarea>
+                    </div>
 
                     <div class="flex space-x-2">
                         <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
@@ -1583,6 +1622,7 @@ class InfoBoxManager {
         const nameInput = document.getElementById('edit-name');
         const descTextarea = document.getElementById('edit-description');
         const traditionTextarea = document.getElementById('edit-tradition');
+        const gmCommentsTextarea = document.getElementById('edit-gm-comments');
 
         // Valider les champs obligatoires
         if (nameInput && !nameInput.value.trim()) {
@@ -1593,6 +1633,7 @@ class InfoBoxManager {
         // Mettre à jour l'objet
         if (nameInput) this.currentItem.name = nameInput.value.trim();
         if (descTextarea) this.currentItem.description = descTextarea.value.trim();
+        if (gmCommentsTextarea) this.currentItem.gmComments = gmCommentsTextarea.value.trim();
 
         // Pour les régions: sauvegarder le type et synchroniser la couleur
         if (this.currentType === 'region') {

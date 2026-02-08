@@ -116,6 +116,21 @@
                 </div>
             </div>
 
+            <!-- Filtres Prochaine Séance -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Prochaine Séance</label>
+                <div class="flex space-x-4">
+                    <label class="filter-checkbox-label">
+                        <input type="checkbox" id="next-session-checkbox">
+                        <span>Prochaine séance</span>
+                    </label>
+                    <label class="filter-checkbox-label">
+                        <input type="checkbox" id="not-next-session-checkbox">
+                        <span>Pas prochaine séance</span>
+                    </label>
+                </div>
+            </div>
+
             <!-- Filtres d'affichage -->
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-300 mb-2">Affichage</label>
@@ -414,6 +429,13 @@
                             <label class="flex items-center text-sm">
                                 <input type="checkbox" id="filter-known-locations" class="mr-1" checked>
                                 <span class="text-white">Lieux et Régions Connus</span>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center space-x-2 border-l border-gray-600 pl-3">
+                            <label class="flex items-center text-sm">
+                                <input type="checkbox" id="filter-next-session" class="mr-1">
+                                <span class="text-orange-400">Prochaine Séance</span>
                             </label>
                         </div>
 
