@@ -1,0 +1,1001 @@
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 43/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔄 [updateDisplay] Résultat: 38 affichés, 0 masqués
+ ✅ Display updated - 38 locations, 43 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 🎮 Visibilité des boutons mise à jour - Mode Aventure: Actif
+ ✅ Map initialized successfully
+ 🔍 [ZoomManager] Largeur du slider calculée: 150
+ 🔍 [ZoomManager] updateDisplay called: scale=0.154
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.154, ratio=0.014, x=2.1px, sliderWidth=150px
+ 🎮 [PositionManager] Application des filtres du mode Aventure
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+ 📊 Filtered: 37/38 locations, 42/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068539, title=Tindailin
+ 🔄 [updateDisplay] Résultat: 37 affichés, 1 masqués
+ ✅ Display updated - 37 locations, 42 regions visible
+ ⚠️ [PositionManager] Sauvegarde des filtres désactivée pendant mode Aventure
+ ✅ [PositionManager] Filtres du mode Aventure appliqués: Object
+ 🔍 [main.js] wheel event: deltaY=-151.51513898339837, zoomFactor=1.05
+ 🔍 [main.js] zoomToPoint: oldScale=0.154, zoomFactor=1.050, newScale=0.162
+ 🔍 [ZoomManager] updateDisplay called: scale=0.162
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.162, ratio=0.016, x=2.4px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.162
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.162, ratio=0.016, x=2.4px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-151.51513898339837, zoomFactor=1.05
+ 🔍 [main.js] zoomToPoint: oldScale=0.162, zoomFactor=1.050, newScale=0.170
+ 🔍 [ZoomManager] updateDisplay called: scale=0.170
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.170, ratio=0.018, x=2.7px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-303.03027796679675, zoomFactor=1.05
+ 🔍 [main.js] zoomToPoint: oldScale=0.170, zoomFactor=1.050, newScale=0.179
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.179
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.179, ratio=0.020, x=3.0px, sliderWidth=150px
+ 🔍 [ZoomManager] updateDisplay called: scale=0.179
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.179, ratio=0.020, x=3.0px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.179
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.179, ratio=0.020, x=3.0px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-151.51513898339837, zoomFactor=1.05
+ 🔍 [main.js] zoomToPoint: oldScale=0.179, zoomFactor=1.050, newScale=0.188
+ 🔍 [ZoomManager] updateDisplay called: scale=0.188
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.188, ratio=0.022, x=3.4px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.188
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.188, ratio=0.022, x=3.4px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-151.51513898339837, zoomFactor=1.05
+ 🔍 [main.js] zoomToPoint: oldScale=0.188, zoomFactor=1.050, newScale=0.197
+ 🔍 [ZoomManager] updateDisplay called: scale=0.197
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.197, ratio=0.025, x=3.7px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.197
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.197, ratio=0.025, x=3.7px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-151.51513898339837, zoomFactor=1.05
+ 🔍 [main.js] zoomToPoint: oldScale=0.197, zoomFactor=1.050, newScale=0.207
+ 🔍 [ZoomManager] updateDisplay called: scale=0.207
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.207, ratio=0.027, x=4.1px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.207
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.207, ratio=0.027, x=4.1px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-151.51513898339837, zoomFactor=1.05
+ 🔍 [main.js] zoomToPoint: oldScale=0.207, zoomFactor=1.050, newScale=0.217
+ 🔍 [ZoomManager] updateDisplay called: scale=0.217
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.217, ratio=0.030, x=4.5px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.217
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.217, ratio=0.030, x=4.5px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-151.51513898339837, zoomFactor=1.05
+ 🔍 [main.js] zoomToPoint: oldScale=0.217, zoomFactor=1.050, newScale=0.228
+ 🔍 [ZoomManager] updateDisplay called: scale=0.228
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.228, ratio=0.033, x=4.9px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.228
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.228, ratio=0.033, x=4.9px, sliderWidth=150px
+ 🔍 [main.js] wheel event: deltaY=-151.51513898339837, zoomFactor=1.05
+ 🔍 [main.js] zoomToPoint: oldScale=0.228, zoomFactor=1.050, newScale=0.240
+ 🔍 [ZoomManager] updateDisplay called: scale=0.240
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.240, ratio=0.036, x=5.4px, sliderWidth=150px
+ 🔍 [main.js] Appel updateDisplay du ZoomManager après molette
+ 🔍 [ZoomManager] updateDisplay called: scale=0.240
+ 🔍 [ZoomManager] updateSliderPosition: scale=0.240, ratio=0.036, x=5.4px, sliderWidth=150px
+ 📍 [CLICK] Marker clicked: Les Montagnes Bleues
+ 📋 [InfoBoxManager] Showing info box for: Les Montagnes Bleues Type: location Object
+ 📅 Réinitialisation du contexte de journée car l'origine n'est pas une journée.
+ 📋 [renderPersonnagesTabRead] Début du rendu pour location "Les Montagnes Bleues"
+ 📋 [renderPersonnagesTabRead] Associations DIRECTES (0): Array(0)
+ 🔍 [renderPersonnagesTabRead] Associations INVERSES (0): Array(0)
+ 🔍 [renderPersonnagesTabRead] Total personnages (0): Array(0)
+ 📋 [updateTabsVisibility] Type: location, isCharacter: false
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Les Montagnes Bleues
+ 🎨 [Description] hasDescription: true description: L'Ered Luin, ou Montagnes Bleues, est une chaîne d
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: undefined count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(3) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 3
+ 🎨 [Rumeurs] hasTradition: true tradition: Les Nains de la Maison de Durin qui sont revenus d
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] hasPersonnages: false count: 0
+ 🎨 [Personnages] icon trouvée: true
+ 🎨 [Personnages] Couleur appliquée avec !important: #666666
+ 🎨 [Lieux/Régions] Type non compatible: location
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ ✅ Info box displayed successfully in expanded mode
+ 📋 [toggleLocationKnowledge] nextSession = true pour Les Montagnes Bleues
+ 📋 [toggleLocationKnowledge] currentItem ID: 1757687068534, Type: location
+ 💾 [DataManager] 38 lieux sauvegardés dans localStorage
+ ✅ [DataManager] window.locationsData synchronisé: 38 lieux
+ 🔍 [DataManager] Dernier lieu sauvegardé: Amon Guruthos (La Colline de l'Effroi) coords: Object
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✅ [toggleLocationKnowledge] Lieu trouvé et mis à jour: Les Montagnes Bleues (ID: 1757687068534)
+ ✅ [toggleLocationKnowledge] Mise à jour sauvegardée, locationFound: true
+ 📅 Contexte de journée réinitialisé lors de la fermeture complète.
+ 🎮 Mode Aventure désactivé
+ ⚠️ [PositionManager] Pas de filtres sauvegardés à restaurer
+restoreFiltersAfterAdventureMode @ position-manager.js:113
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 43/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔄 [updateDisplay] Résultat: 38 affichés, 0 masqués
+ ✅ Display updated - 38 locations, 43 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ ✅ [PositionManager] Filtres restaurés avec succès: Object
+ 🎮 Visibilité des boutons mise à jour - Mode Aventure: Inactif
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 1/38 lieux passent les filtres
+ 📊 Filtered: 1/38 locations, 0/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068518, title=Le Lac Evendim
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068519, title=Annúminas, la Cité Engloutie
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068520, title=Eskerdale, le Hameau Perdu
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068521, title=Le Bois de Chet
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068522, title=Le Marais de l'Eau-aux-Cousins
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068523, title=L'Auberge de l'Abandonné
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068524, title=Le Chemin Vert
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068525, title=Les Hauts des Galgals
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068526, title=Les Hauts du Nord
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068527, title=Les Hauts du Sud
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068528, title=Les Collines Venteuses
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068529, title=Angmar
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068530, title=Les Landes d'Etten
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068531, title=La Trouée des Trolls
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068532, title=Le Dernier Pont
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068533, title=Le Lindon
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068535, title=Les Anciennes Mines Naines
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068536, title=Les Tours Blanches
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068537, title=L'Arbre des Lamentations
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068538, title=Les Îles Embrumées
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068539, title=Tindailin
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068540, title=Le Palais de la Reine
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068541, title=Les Champs du Massacre
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068542, title=Le Mont Venteux
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068543, title=La Colline de l'Assoupie
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068544, title=Le Mont Gram
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068545, title=Le Fort Arlas
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068546, title=Le Refuge des Rôdeurs
+ 🔴 [updateDisplay] Marqueur masqué: ID=location_1763226377675, title=Tharbad
+ 🔴 [updateDisplay] Marqueur masqué: ID=location_1764676522757, title=Le Royaume de Durefonte
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000000, title=Le Vallon Caché (Morglynd)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000001, title=L'Île Hantée (L'Île de la Mère)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000002, title=La Tour en Ruines (Tombe de Gwendaith)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000003, title=La Forteresse de Garth Tauron (Tharbad)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000004, title=Rath Sereg (Le Fort du Sang)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000005, title=Sennas Gaer (Château de la Sorcière)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000006, title=Amon Guruthos (La Colline de l'Effroi)
+ 🔄 [updateDisplay] Résultat: 1 affichés, 37 masqués
+ ✅ Display updated - 1 locations, 0 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":["next_session"]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":["next_session"]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 43/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔄 [updateDisplay] Résultat: 38 affichés, 0 masqués
+ ✅ Display updated - 38 locations, 43 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 1/38 lieux passent les filtres
+ 📊 Filtered: 1/38 locations, 0/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068518, title=Le Lac Evendim
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068519, title=Annúminas, la Cité Engloutie
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068520, title=Eskerdale, le Hameau Perdu
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068521, title=Le Bois de Chet
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068522, title=Le Marais de l'Eau-aux-Cousins
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068523, title=L'Auberge de l'Abandonné
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068524, title=Le Chemin Vert
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068525, title=Les Hauts des Galgals
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068526, title=Les Hauts du Nord
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068527, title=Les Hauts du Sud
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068528, title=Les Collines Venteuses
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068529, title=Angmar
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068530, title=Les Landes d'Etten
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068531, title=La Trouée des Trolls
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068532, title=Le Dernier Pont
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068533, title=Le Lindon
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068535, title=Les Anciennes Mines Naines
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068536, title=Les Tours Blanches
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068537, title=L'Arbre des Lamentations
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068538, title=Les Îles Embrumées
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068539, title=Tindailin
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068540, title=Le Palais de la Reine
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068541, title=Les Champs du Massacre
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068542, title=Le Mont Venteux
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068543, title=La Colline de l'Assoupie
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068544, title=Le Mont Gram
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068545, title=Le Fort Arlas
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068546, title=Le Refuge des Rôdeurs
+ 🔴 [updateDisplay] Marqueur masqué: ID=location_1763226377675, title=Tharbad
+ 🔴 [updateDisplay] Marqueur masqué: ID=location_1764676522757, title=Le Royaume de Durefonte
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000000, title=Le Vallon Caché (Morglynd)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000001, title=L'Île Hantée (L'Île de la Mère)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000002, title=La Tour en Ruines (Tombe de Gwendaith)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000003, title=La Forteresse de Garth Tauron (Tharbad)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000004, title=Rath Sereg (Le Fort du Sang)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000005, title=Sennas Gaer (Château de la Sorcière)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000006, title=Amon Guruthos (La Colline de l'Effroi)
+ 🔄 [updateDisplay] Résultat: 1 affichés, 37 masqués
+ ✅ Display updated - 1 locations, 0 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":["next_session"]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":["next_session"]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 43/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔄 [updateDisplay] Résultat: 38 affichés, 0 masqués
+ ✅ Display updated - 38 locations, 43 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 37/38 lieux passent les filtres
+ 📊 Filtered: 37/38 locations, 43/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068534, title=Les Montagnes Bleues
+ 🔄 [updateDisplay] Résultat: 37 affichés, 1 masqués
+ ✅ Display updated - 37 locations, 43 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":["not_next_session"]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":["not_next_session"]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 43/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔄 [updateDisplay] Résultat: 38 affichés, 0 masqués
+ ✅ Display updated - 38 locations, 43 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 1/38 lieux passent les filtres
+ 📊 Filtered: 1/38 locations, 0/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068518, title=Le Lac Evendim
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068519, title=Annúminas, la Cité Engloutie
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068520, title=Eskerdale, le Hameau Perdu
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068521, title=Le Bois de Chet
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068522, title=Le Marais de l'Eau-aux-Cousins
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068523, title=L'Auberge de l'Abandonné
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068524, title=Le Chemin Vert
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068525, title=Les Hauts des Galgals
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068526, title=Les Hauts du Nord
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068527, title=Les Hauts du Sud
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068528, title=Les Collines Venteuses
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068529, title=Angmar
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068530, title=Les Landes d'Etten
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068531, title=La Trouée des Trolls
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068532, title=Le Dernier Pont
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068533, title=Le Lindon
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068535, title=Les Anciennes Mines Naines
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068536, title=Les Tours Blanches
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068537, title=L'Arbre des Lamentations
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068538, title=Les Îles Embrumées
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068539, title=Tindailin
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068540, title=Le Palais de la Reine
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068541, title=Les Champs du Massacre
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068542, title=Le Mont Venteux
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068543, title=La Colline de l'Assoupie
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068544, title=Le Mont Gram
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068545, title=Le Fort Arlas
+ 🔴 [updateDisplay] Marqueur masqué: ID=1757687068546, title=Le Refuge des Rôdeurs
+ 🔴 [updateDisplay] Marqueur masqué: ID=location_1763226377675, title=Tharbad
+ 🔴 [updateDisplay] Marqueur masqué: ID=location_1764676522757, title=Le Royaume de Durefonte
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000000, title=Le Vallon Caché (Morglynd)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000001, title=L'Île Hantée (L'Île de la Mère)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000002, title=La Tour en Ruines (Tombe de Gwendaith)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000003, title=La Forteresse de Garth Tauron (Tharbad)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000004, title=Rath Sereg (Le Fort du Sang)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000005, title=Sennas Gaer (Château de la Sorcière)
+ 🔴 [updateDisplay] Marqueur masqué: ID=2000000000006, title=Amon Guruthos (La Colline de l'Effroi)
+ 🔄 [updateDisplay] Résultat: 1 affichés, 37 masqués
+ ✅ Display updated - 1 locations, 0 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":["next_session"]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":["next_session"]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 🔍 Applying filters... Object
+ 🔍 Current filtersByMap: Object
+ 🔍 Active map: /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg
+ 🔍 [filterLocations] 38/38 lieux passent les filtres
+ 📊 Filtered: 38/38 locations, 43/43 regions
+ 🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: 38
+ 🔄 [updateDisplay] Résultat: 38 affichés, 0 masqués
+ ✅ Display updated - 38 locations, 43 regions visible
+ 💾 [saveFiltersForCurrentMap] Filtres sauvegardés pour la carte /uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg: Object
+ 💾 [saveFiltersForCurrentMap] Total filtersByMap: Object
+ 💾 [saveFiltersForCurrentMap] Nombre total de cartes avec filtres: 5
+ 💾 [saveFiltersForCurrentMap] filtersByMap sauvegardé dans localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":[]}}
+ ✅ [saveFiltersForCurrentMap] Vérification localStorage: {"/uploads/101960341020312309143/general/20251011_053931_c3a5caaa-cd86-4ade-8abd-7656410c8e01.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251022_212635_52b3cfdc-d748-4980-a8f2-11c67cce1a2b.jpg":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251024_212251_25b762d3-a0bf-4b80-93ca-8a0feccc60be.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":false,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/20251025_152209_22a3508c-8df3-4816-b041-0066cc3551d4.webp":{"colors":[],"known":[],"regionsOpacity":0.5,"showLocations":true,"showRegions":true,"types":[],"visited":[]},"/uploads/101960341020312309143/maps/TOR_Starter_Set_Map_of_Eriador_page-0001 (1).jpg":{"colors":[],"visited":[],"known":[],"types":[],"showLocations":true,"showRegions":false,"regionsOpacity":0.5,"nextSession":[]}}
+ ☁️ [saveFiltersForCurrentMap] Appel de markAsUnsaved pour sync cloud
+ 📚 88 personnages chargés depuis localStorage (IDs normalisés)
+ 👁️ [showCharacterInfoBox] Affichage de "Snava" avec: Object
+ 📋 [InfoBoxManager] Showing info box for: Snava Type: character Object
+ 📅 Réinitialisation du contexte de journée car le type n'est pas lieu/région.
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Snava"
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Snava
+ 🎨 [Description] hasDescription: true description: Orque du Mordor, espion de Sauron. Infiltré dans l
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: true
+ 🎨 [Lieux/Régions] locations count: 2
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #940000
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ ✅ Info box displayed successfully in expanded mode
+ 📋 [showCharacterInfoBox] Affichage forcé de l'onglet Description pour Snava
+ 📋 [switchTab] Changement d'onglet vers: text, currentType: character
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Snava
+ 🎨 [Description] hasDescription: true description: Orque du Mordor, espion de Sauron. Infiltré dans l
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: true
+ 🎨 [Lieux/Régions] locations count: 2
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #940000
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Snava"
+ 📋 [toggleCharacterKnowledge] nextSession = true pour Snava
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✏️ Personnage mis à jour: Snava
+ ✅ [toggleCharacterKnowledge] Mise à jour sauvegardée
+ 📅 Contexte de journée réinitialisé lors de la fermeture complète.
+ 🔙 Retour à la modale Personnages de l'Aventure
+ 📚 88 personnages chargés depuis localStorage (IDs normalisés)
+ 👁️ [showCharacterInfoBox] Affichage de "Snava" avec: Object
+ 📋 [InfoBoxManager] Showing info box for: Snava Type: character Object
+ 📅 Réinitialisation du contexte de journée car le type n'est pas lieu/région.
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Snava"
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Snava
+ 🎨 [Description] hasDescription: true description: Orque du Mordor, espion de Sauron. Infiltré dans l
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: true
+ 🎨 [Lieux/Régions] locations count: 2
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #940000
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ ✅ Info box displayed successfully in expanded mode
+ 📋 [showCharacterInfoBox] Affichage forcé de l'onglet Description pour Snava
+ 📋 [switchTab] Changement d'onglet vers: text, currentType: character
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Snava
+ 🎨 [Description] hasDescription: true description: Orque du Mordor, espion de Sauron. Infiltré dans l
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: true
+ 🎨 [Lieux/Régions] locations count: 2
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #940000
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Snava"
+ 📅 Contexte de journée réinitialisé lors de la fermeture complète.
+ 🔙 Retour à la modale Personnages de l'Aventure
+ 📚 88 personnages chargés depuis localStorage (IDs normalisés)
+ 👁️ [showCharacterInfoBox] Affichage de "Zoril" avec: Object
+ 📋 [InfoBoxManager] Showing info box for: Zoril Type: character Object
+ 📅 Réinitialisation du contexte de journée car le type n'est pas lieu/région.
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Zoril"
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Zoril
+ 🎨 [Description] hasDescription: true description: Cheffe de guerre des Númenóréens Noirs, maniant l'
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: false
+ 🎨 [Lieux/Régions] locations count: 0
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #666666
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ ✅ Info box displayed successfully in expanded mode
+ 📋 [showCharacterInfoBox] Affichage forcé de l'onglet Description pour Zoril
+ 📋 [switchTab] Changement d'onglet vers: text, currentType: character
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Zoril
+ 🎨 [Description] hasDescription: true description: Cheffe de guerre des Númenóréens Noirs, maniant l'
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: false
+ 🎨 [Lieux/Régions] locations count: 0
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #666666
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Zoril"
+ 📅 Contexte de journée réinitialisé lors de la fermeture complète.
+ 🔙 Retour à la modale Personnages de l'Aventure
+ 📚 88 personnages chargés depuis localStorage (IDs normalisés)
+ 👁️ [showCharacterInfoBox] Affichage de "Snava" avec: Object
+ 📋 [InfoBoxManager] Showing info box for: Snava Type: character Object
+ 📅 Réinitialisation du contexte de journée car le type n'est pas lieu/région.
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Snava"
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Snava
+ 🎨 [Description] hasDescription: true description: Orque du Mordor, espion de Sauron. Infiltré dans l
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: true
+ 🎨 [Lieux/Régions] locations count: 2
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #940000
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ ✅ Info box displayed successfully in expanded mode
+ 📋 [showCharacterInfoBox] Affichage forcé de l'onglet Description pour Snava
+ 📋 [switchTab] Changement d'onglet vers: text, currentType: character
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Snava
+ 🎨 [Description] hasDescription: true description: Orque du Mordor, espion de Sauron. Infiltré dans l
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: true
+ 🎨 [Lieux/Régions] locations count: 2
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #940000
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Snava"
+ 📋 [toggleCharacterKnowledge] known = true pour Snava
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✏️ Personnage mis à jour: Snava
+ ✅ [toggleCharacterKnowledge] Mise à jour sauvegardée
+ 📅 Contexte de journée réinitialisé lors de la fermeture complète.
+ 🔙 Retour à la modale Personnages de l'Aventure
+ 📚 88 personnages chargés depuis localStorage (IDs normalisés)
+ 👁️ [showCharacterInfoBox] Affichage de "Adelard Touque" avec: Object
+ 📋 [InfoBoxManager] Showing info box for: Adelard Touque Type: character Object
+ 📅 Réinitialisation du contexte de journée car le type n'est pas lieu/région.
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Adelard Touque"
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Adelard Touque
+ 🎨 [Description] hasDescription: true description: Un jeune Hobbit vigoureux, champion du Festival es
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: false
+ 🎨 [Lieux/Régions] locations count: 0
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #666666
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ ✅ Info box displayed successfully in expanded mode
+ 📋 [showCharacterInfoBox] Affichage forcé de l'onglet Description pour Adelard Touque
+ 📋 [switchTab] Changement d'onglet vers: text, currentType: character
+ 📋 [updateTabsVisibility] Type: character, isCharacter: true
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages MASQUÉ pour character
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions AFFICHÉ pour character
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Adelard Touque
+ 🎨 [Description] hasDescription: true description: Un jeune Hobbit vigoureux, champion du Festival es
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: false count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(1) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 1
+ 🎨 [Rumeurs] hasTradition: undefined tradition: undefined
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] Type non compatible: character
+ 🎨 [Lieux/Régions] hasLieuxRegions: false
+ 🎨 [Lieux/Régions] locations count: 0
+ 🎨 [Lieux/Régions] regions count: 0
+ 🎨 [Lieux/Régions] icon trouvée: true
+ 🎨 [Lieux/Régions] Couleur appliquée avec !important: #666666
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ 📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "Adelard Touque"
+ 📋 [toggleCharacterKnowledge] nextSession = true pour Adelard Touque
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✏️ Personnage mis à jour: Adelard Touque
+ ✅ [toggleCharacterKnowledge] Mise à jour sauvegardée
+ 📋 [toggleCharacterKnowledge] nextSession = false pour Adelard Touque
+ [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+ ✏️ Personnage mis à jour: Adelard Touque
+ ✅ [toggleCharacterKnowledge] Mise à jour sauvegardée
+ 📅 Contexte de journée réinitialisé lors de la fermeture complète.
+ 🔙 Retour à la modale Personnages de l'Aventure
+ 📋 [InfoBoxManager] Showing info box for: Les Montagnes Bleues Type: location Object
+ 📅 Réinitialisation du contexte de journée car l'origine n'est pas une journée.
+ 📋 [renderPersonnagesTabRead] Début du rendu pour location "Les Montagnes Bleues"
+ 📋 [renderPersonnagesTabRead] Associations DIRECTES (0): Array(0)
+ 🔍 [renderPersonnagesTabRead] Associations INVERSES (0): Array(0)
+ 🔍 [renderPersonnagesTabRead] Total personnages (0): Array(0)
+ 📋 [updateTabsVisibility] Type: location, isCharacter: false
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Les Montagnes Bleues
+ 🎨 [Description] hasDescription: true description: L'Ered Luin, ou Montagnes Bleues, est une chaîne d
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: undefined count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(3) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 3
+ 🎨 [Rumeurs] hasTradition: true tradition: Les Nains de la Maison de Durin qui sont revenus d
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] hasPersonnages: false count: 0
+ 🎨 [Personnages] icon trouvée: true
+ 🎨 [Personnages] Couleur appliquée avec !important: #666666
+ 🎨 [Lieux/Régions] Type non compatible: location
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ ✅ Info box displayed successfully in expanded mode
+ 📍 [CLICK] Marker clicked: Les Montagnes Bleues
+ 📋 [InfoBoxManager] Showing info box for: Les Montagnes Bleues Type: location Object
+ 📅 Réinitialisation du contexte de journée car l'origine n'est pas une journée.
+ 📋 [renderPersonnagesTabRead] Début du rendu pour location "Les Montagnes Bleues"
+ 📋 [renderPersonnagesTabRead] Associations DIRECTES (0): Array(0)
+ 🔍 [renderPersonnagesTabRead] Associations INVERSES (0): Array(0)
+ 🔍 [renderPersonnagesTabRead] Total personnages (0): Array(0)
+ 📋 [updateTabsVisibility] Type: location, isCharacter: false
+ 📋 [updateTabsVisibility] Boutons trouvés - Personnages: true, Lieux/Régions: true
+ 📋 [updateTabsVisibility] ✓ Onglet Personnages AFFICHÉ pour location/region
+ 📋 [updateTabsVisibility] ✓ Onglet Lieux/Régions MASQUÉ pour location/region
+ 🎨 [updateTabIconColors] Début de mise à jour pour: Les Montagnes Bleues
+ 🎨 [Description] hasDescription: true description: L'Ered Luin, ou Montagnes Bleues, est une chaîne d
+ 🎨 [Description] icon trouvée: true
+ 🎨 [Description] Couleur appliquée avec !important: #940000
+ 🎨 [Images] hasImages: undefined count: 0
+ 🎨 [Images] icon trouvée: true
+ 🎨 [Images] Couleur appliquée avec !important: #666666
+ 🎨 [Rumeurs] rumeurs brutes: Array(3) rumeur unique: undefined
+ 🎨 [Rumeurs] rumeursValides count: 3
+ 🎨 [Rumeurs] hasTradition: true tradition: Les Nains de la Maison de Durin qui sont revenus d
+ 🎨 [Rumeurs] hasContent: true
+ 🎨 [Rumeurs] icon trouvée: true
+ 🎨 [Rumeurs] Couleur appliquée avec !important: #940000
+ 🎨 [Personnages] hasPersonnages: false count: 0
+ 🎨 [Personnages] icon trouvée: true
+ 🎨 [Personnages] Couleur appliquée avec !important: #666666
+ 🎨 [Lieux/Régions] Type non compatible: location
+ 🎨 [Tables Aléatoires] hasTables: undefined count: 0
+ 🎨 [Tables Aléatoires] icon trouvée: true
+ 🎨 [Tables Aléatoires] Couleur appliquée avec !important: #666666
+ 🎨 [updateTabIconColors] Fin de mise à jour
+ ✅ Info box displayed successfully in expanded mode
+main.js:1373 Uncaught 
+ ✏️ Entering edit mode for: Les Montagnes Bleues
+ ✏️ [renderPersonnagesTabEdit] Début du rendu en mode édition
+ ✅ [renderPersonnagesTabEdit] Onglet personnages-tab trouvé
+ 📋 [renderPersonnagesTabEdit] Lieu/Région: Les Montagnes Bleues
+ 📋 [renderPersonnagesTabEdit] associatedCharacterIds: Array(0)
+ 📋 [renderPersonnagesTabEdit] 88 personnage(s) disponible(s) (triés alphabétiquement)
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Adelard Touque (ID: 200082) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Aglaen l'Astrologue (ID: 200010) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Agna la Bibliothécaire (ID: 200071) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Amélia Kern (ID: 200072) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Aya (La Reine Pâle) (ID: 200041) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Barnabas Poiredebeurré (ID: 200079) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Bataur (ID: 200039) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Beinion et Arin d'Evendim (ID: 200078) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Borlas (ID: 200029) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Braswen la Gardienne (ID: 200052) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Breghel (ID: 200026) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Brethil (ID: 200060) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Búrzgul (ID: 200085) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Capitaine Gurnow (ID: 200030) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Celerwen (ID: 200058) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Cendre (ID: 200086) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Dame Stock (ID: 200032) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Damrod le Rôdeur solitaire (ID: 1765579517333) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Déor (ID: 200035) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Diarmoc le Voyageur (ID: 200002) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Drameth l'Égarée (ID: 200065) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Eagre (ID: 200013) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Edris du Lindon (ID: 200053) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Egel (ID: 200040) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Elda (ID: 200003) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Elwing (ID: 200014) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Ernalda (ID: 200023) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Esprit des neiges (ID: 200051) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Falmir Têteblonde (ID: 200012) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Farrell l'Ancien (ID: 200020) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Farrell le Jeune (ID: 200021) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Farweld (ID: 200022) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Fitch Grantarbre (ID: 200083) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Floki (ID: 200006) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Flonar (ID: 200007) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Frecana, la Princesse Dunlending (ID: 200073) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Guerrier Homme Arbre (ID: 200055) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Gwilleth (ID: 200031) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Haldane (ID: 200062) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Hamfast (ID: 200018) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Herunen (ID: 200059) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Hugues Roncenoire (ID: 200076) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Hultmar Mille-mains (ID: 200036) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Hurin De-la-Porte (ID: 200063) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Ivoch le Désossé (ID: 200074) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Jagat (ID: 200015) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Jari le Vagabond (ID: 200001) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Jean Fougeron (ID: 200080) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Johan Fuitt (ID: 200061) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Jon-le-Cabri (ID: 200028) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour L'Endeuillée (ID: 200016) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour L'Oiseau Cauchemar (ID: 200068) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour La Bête d'Angmar (ID: 200050) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour La Mangeuse d'Âmes (ID: 200075) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour La Mère Wendreth (ID: 200067) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour La Ruine de Nenuial (ID: 200057) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Le Capitaine Nerek (ID: 200048) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Le Gardien du Portail (ID: 200043) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Le Gardien du Tombeau (ID: 200044) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Le Grand Gobelin (ID: 200070) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Le Roi des Esprits (ID: 200084) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Le Veilleur Affamé (ID: 200045) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Lucinda Dussaule (ID: 200019) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Lug, le Seigneur du Fouet (ID: 200049) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Nalien du Lindon (ID: 200064) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Nelly Brasballants (ID: 200000) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Nethig (ID: 200069) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Nimue (ID: 200011) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Orothel (ID: 200009) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Osmer le << Magicien >> (ID: 200017) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Oswald Briqueux (ID: 200081) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Poppy (ID: 200024) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Poursuivant Troll des Collines (ID: 200066) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Scylda Bruyère (ID: 200008) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Sire Mjolin (ID: 200077) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Snava (ID: 200038) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Sulain (ID: 200005) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Tam (ID: 200027) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Tecca (ID: 200004) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Tharnow (ID: 200033) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Thunir le Buveur de sang (ID: 200056) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Tulla (ID: 200025) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Usapthon (ID: 200047) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Valandur (ID: 200034) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Veriga (ID: 200042) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Vilia (ID: 200037) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Woleth d'Orthanc (ID: 200054) - checked: false
+ 🔍 [renderPersonnagesTabEdit] Checkbox pour Zoril (ID: 200046) - checked: false
+ ✅ [renderPersonnagesTabEdit] Rendu terminé avec 88 personnage(s)
+ ✅ Event listener pour import JSON de rumeurs configuré
+ 💾 Saving edit...
+ 🔍 [SAVE] Analyse de 88 checkbox(es):
+   Checkbox 0: Object
+   Checkbox 1: Object
+   Checkbox 2: Object
+   Checkbox 3: Object
+   Checkbox 4: Object
+   Checkbox 5: Object
+   Checkbox 6: Object
+   Checkbox 7: Object
+   Checkbox 8: Object
+   Checkbox 9: Object
+   Checkbox 10: Object
+   Checkbox 11: Object
+   Checkbox 12: Object
+   Checkbox 13: Object
+   Checkbox 14: Object
+   Checkbox 15: Object
+   Checkbox 16: Object
+   Checkbox 17: Object
+   Checkbox 18: Object
+   Checkbox 19: Object
+   Checkbox 20: Object
+   Checkbox 21: Object
+   Checkbox 22: Object
+   Checkbox 23: Object
+   Checkbox 24: Object
+   Checkbox 25: Object
+   Checkbox 26: Object
+   Checkbox 27: Object
+   Checkbox 28: Object
+   Checkbox 29: Object
+   Checkbox 30: Object
+   Checkbox 31: Object
+   Checkbox 32: Object
+   Checkbox 33: Object
+   Checkbox 34: Object
+   Checkbox 35: Object
+   Checkbox 36: Object
+   Checkbox 37: Object
+   Checkbox 38: Object
+   Checkbox 39: Object
+   Checkbox 40: Object
+   Checkbox 41: Object
+   Checkbox 42: Object
+   Checkbox 43: Object
+   Checkbox 44: Object
+   Checkbox 45: Object
+   Checkbox 46: Object
+   Checkbox 47: Object
+   Checkbox 48: Object
+   Checkbox 49: Object
+   Checkbox 50: Object
+   Checkbox 51: Object
+   Checkbox 52: Object
+   Checkbox 53: Object
+infobox-manager.js:1691   Checkbox 54: Object
+infobox-manager.js:1691   Checkbox 55: Object
+infobox-manager.js:1691   Checkbox 56: Object
+infobox-manager.js:1691   Checkbox 57: Object
+infobox-manager.js:1691   Checkbox 58: Object
+infobox-manager.js:1691   Checkbox 59: Object
+infobox-manager.js:1691   Checkbox 60: Object
+infobox-manager.js:1691   Checkbox 61: Object
+infobox-manager.js:1691   Checkbox 62: Object
+infobox-manager.js:1691   Checkbox 63: Object
+infobox-manager.js:1691   Checkbox 64: Object
+infobox-manager.js:1691   Checkbox 65: Object
+infobox-manager.js:1691   Checkbox 66: Object
+infobox-manager.js:1691   Checkbox 67: Object
+infobox-manager.js:1691   Checkbox 68: Object
+infobox-manager.js:1691   Checkbox 69: Object
+infobox-manager.js:1691   Checkbox 70: Object
+infobox-manager.js:1691   Checkbox 71: Object
+infobox-manager.js:1691   Checkbox 72: Object
+infobox-manager.js:1691   Checkbox 73: Object
+infobox-manager.js:1691   Checkbox 74: Object
+infobox-manager.js:1691   Checkbox 75: Object
+infobox-manager.js:1691   Checkbox 76: Object
+infobox-manager.js:1691   Checkbox 77: Object
+infobox-manager.js:1691   Checkbox 78: Object
+infobox-manager.js:1691   Checkbox 79: Object
+infobox-manager.js:1691   Checkbox 80: Object
+infobox-manager.js:1691   Checkbox 81: Object
+infobox-manager.js:1691   Checkbox 82: Object
+infobox-manager.js:1691   Checkbox 83: Object
+infobox-manager.js:1691   Checkbox 84: Object
+infobox-manager.js:1691   Checkbox 85: Object
+infobox-manager.js:1691   Checkbox 86: Object
+infobox-manager.js:1691   Checkbox 87: Object
+infobox-manager.js:1710 🔍 [SAVE] AVANT update - location "Les Montagnes Bleues" (id: 1757687068534)
+infobox-manager.js:1711 🔍 [SAVE] associatedCharacters AVANT: undefined
+infobox-manager.js:1712 🔍 [SAVE] Nouvelles associations cochées (0): Array(0)
+infobox-manager.js:1716 🔍 [SAVE] associatedCharacters APRÈS: Array(0)
+infobox-manager.js:1720 🔍 [SAVE] Personnages concernés - AVANT modification bidirectionnelle:
+infobox-manager.js:1733 💾 [SAVE] Objet après modification: {"Rumeurs":["Des prospecteurs nains auraient découvert une nouvelle veine de 'fer véritable', un métal presque aussi résistant que le mithril, dans une mine abandonnée au nord du Golfe de Lune.","Un v...
+infobox-manager.js:1828 🔄 [SAVE] Synchronisation AVANT recherche - window: 38 lieux, dataManager: 38 lieux
+infobox-manager.js:1836 🔍 [SAVE] Recherche du lieu ID 1757687068534 dans 38 lieux - Index trouvé: 16
+infobox-manager.js:1845 💾 [SAVE] Lieu AVANT mise à jour (index 16): {"Rumeurs":["Des prospecteurs nains auraient découvert une nouvelle veine de 'fer véritable', un métal presque aussi résistant que le mithril, dans un
+infobox-manager.js:1850 💾 [SAVE] Lieu APRÈS mise à jour (index 16): {"Rumeurs":["Des prospecteurs nains auraient découvert une nouvelle veine de 'fer véritable', un métal presque aussi résistant que le mithril, dans un
+infobox-manager.js:1851 🔍 [SAVE] location.associatedCharacters APRÈS sauvegarde: Array(0)
+auth-manager.js:2274 [AuthManager] ⏱️ Auto-sync désactivée - utiliser le bouton de sync manuelle. null
+infobox-manager.js:1894 💾 [SAVE] Personnages sauvegardés avec associations bidirectionnelles
+infobox-manager.js:1899 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+main.js:644 ✅ Rendered 38 location markers
+infobox-manager.js:1923 🔍 [SAVE] Personnages concernés - APRÈS modification bidirectionnelle:
+main.js:644 ✅ Rendered 38 location markers
+infobox-manager.js:1437 ❌ Exiting edit mode
+infobox-manager.js:2698 📋 [renderPersonnagesTabRead] Début du rendu pour location "Les Montagnes Bleues"
+infobox-manager.js:2702 📋 [renderPersonnagesTabRead] Associations DIRECTES (0): Array(0)
+infobox-manager.js:2732 🔍 [renderPersonnagesTabRead] Associations INVERSES (0): Array(0)
+infobox-manager.js:2736 🔍 [renderPersonnagesTabRead] Total personnages (0): Array(0)
+infobox-manager.js:1489 ✅ [exitEditMode] Mode lecture activé
+infobox-manager.js:1954 ✅ [SAVE] Sauvegarde locale terminée - retour en mode lecture
+infobox-manager.js:1447 🔄 [exitEditMode] Force mode lecture pour Personnages
+infobox-manager.js:2698 📋 [renderPersonnagesTabRead] Début du rendu pour location "Les Montagnes Bleues"
+infobox-manager.js:2702 📋 [renderPersonnagesTabRead] Associations DIRECTES (0): Array(0)
+infobox-manager.js:2732 🔍 [renderPersonnagesTabRead] Associations INVERSES (0): Array(0)
+infobox-manager.js:2736 🔍 [renderPersonnagesTabRead] Total personnages (0): Array(0)
+infobox-manager.js:188 📅 Contexte de journée réinitialisé lors de la fermeture complète.
