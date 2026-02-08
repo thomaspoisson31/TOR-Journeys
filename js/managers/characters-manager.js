@@ -433,6 +433,13 @@ class CharactersManager {
 
                 return true;
             });
+
+            // Appliquer le filtre "Prochaine Séance" sur le personnage lui-même (condition ET)
+            if (this.filters.nextSession) {
+                filteredCharacters = filteredCharacters.filter(character => {
+                    return character.nextSession === true;
+                });
+            }
         }
 
         if (filteredCharacters.length === 0) {
@@ -472,9 +479,6 @@ class CharactersManager {
                         if (this.filters.knownLocations && !location.known) {
                             return;
                         }
-                        if (this.filters.nextSession && !location.nextSession) {
-                            return;
-                        }
                         const locationName = location.name;
                         if (!locationGroups[locationName]) {
                             locationGroups[locationName] = [];
@@ -490,9 +494,6 @@ class CharactersManager {
                     const region = regionsData.find(reg => String(reg.id) === String(regionId));
                     if (region) {
                         if (this.filters.knownLocations && !region.known) {
-                            return;
-                        }
-                        if (this.filters.nextSession && !region.nextSession) {
                             return;
                         }
                         const regionName = region.name;
