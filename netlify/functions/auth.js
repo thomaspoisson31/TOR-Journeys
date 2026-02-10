@@ -31,6 +31,7 @@ exports.handler = async (event, context) => {
 
 async function handleGoogleAuth(event) {
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    console.error('[Auth] OAuth not configured');
     return {
       statusCode: 302,
       headers: { Location: '/?error=oauth_not_configured' }
@@ -44,13 +45,18 @@ async function handleGoogleAuth(event) {
   const host = event.headers.host;
   const redirectUri = `${protocol}://${host}/auth/google/callback`;
 
+  console.log(`[Auth] Starting OAuth flow. State: ${state}, RedirectURI: ${redirectUri}, Protocol: ${protocol}`);
+
   // Get existing session or create new object
   let session = await getSession(event) || {};
   session.state = state;
 
-  const sessionCookie = await createSessionCookie(session);
+  const isSecure = protocol === 'https';
+  // Use options to force secure flag based on protocol
+  const sessionCookie = await createSessionCookie(session, { secure: isSecure });
 
   const authUrl = getAuthorizationUrl(redirectUri, state);
+  console.log(`[Auth] Redirecting to Google: ${authUrl}`);
 
   return {
     statusCode: 302,
@@ -64,7 +70,10 @@ async function handleGoogleAuth(event) {
 async function handleGoogleCallback(event) {
   const { code, state, error, error_description } = event.queryStringParameters || {};
 
+  console.log(`[Auth] Callback received. Code: ${code ? 'Yes' : 'No'}, State: ${state}, Error: ${error}`);
+
   if (error) {
+    console.error(`[Auth] Google Error: ${error} - ${error_description}`);
     return {
       statusCode: 302,
       headers: { Location: `/?auth_error=google_error&desc=${error_description || error}` }
@@ -72,6 +81,7 @@ async function handleGoogleCallback(event) {
   }
 
   if (!code) {
+     console.error('[Auth] No code in callback');
      return {
       statusCode: 302,
       headers: { Location: '/?auth_error=no_auth_code' }
@@ -80,8 +90,16 @@ async function handleGoogleCallback(event) {
 
   const session = await getSession(event);
 
-  if (!session || !session.state) {
-     console.error('No session state found');
+  if (!session) {
+     console.error('[Auth] No session found in callback (cookie missing or invalid)');
+     return {
+      statusCode: 302,
+      headers: { Location: '/?auth_error=no_session_state' }
+    };
+  }
+
+  if (!session.state) {
+     console.error('[Auth] No state in session');
      return {
       statusCode: 302,
       headers: { Location: '/?auth_error=no_session_state' }
@@ -89,12 +107,14 @@ async function handleGoogleCallback(event) {
   }
 
   if (session.state !== state) {
-     console.error(`Invalid state: Session=${session.state}, Query=${state}`);
+     console.error(`[Auth] Invalid state mismatch. Session=${session.state}, Query=${state}`);
      return {
       statusCode: 302,
       headers: { Location: '/?auth_error=invalid_state' }
     };
   }
+
+  console.log('[Auth] State verified. Exchanging code for tokens...');
 
   try {
     const protocol = event.headers['x-forwarded-proto'] || 'https';
@@ -102,8 +122,6 @@ async function handleGoogleCallback(event) {
     const redirectUri = `${protocol}://${host}/auth/google/callback`;
 
     // Exchange code for tokens
-    // We need to use the OAuth2Client directly here because getToken in utils creates a new client
-    // which is fine, but we also want to verify the ID token.
     const client = new OAuth2Client(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
@@ -121,21 +139,22 @@ async function handleGoogleCallback(event) {
     const payload = ticket.getPayload();
 
     const googleId = payload.sub;
+    console.log(`[Auth] User authenticated: ${googleId} (${payload.email})`);
+
     const userStore = getUserStore();
     const userKey = `user:${googleId}`;
 
     // Check if user exists
     let user;
     try {
-      // Blobs get returns string or blob, we need to parse if json
       const userData = await userStore.get(userKey, { type: 'json' });
       user = userData;
     } catch (err) {
-      // Not found or error
-      console.log('User lookup error or not found:', err);
+      console.log('[Auth] User lookup error or not found:', err.message);
     }
 
     if (!user) {
+      console.log('[Auth] Creating new user record');
       user = {
         id: googleId,
         google_id: googleId,
@@ -158,7 +177,10 @@ async function handleGoogleCallback(event) {
     // Clear state
     delete newSession.state;
 
-    const newSessionCookie = await createSessionCookie(newSession);
+    const isSecure = protocol === 'https';
+    const newSessionCookie = await createSessionCookie(newSession, { secure: isSecure });
+
+    console.log('[Auth] Authentication successful. Redirecting to app.');
 
     return {
       statusCode: 302,
@@ -169,7 +191,7 @@ async function handleGoogleCallback(event) {
     };
 
   } catch (e) {
-    console.error('OAuth Error:', e);
+    console.error('[Auth] OAuth Exception:', e);
     return {
       statusCode: 302,
       headers: { Location: `/?auth_error=exception&msg=${encodeURIComponent(e.message)}` }
@@ -178,6 +200,7 @@ async function handleGoogleCallback(event) {
 }
 
 async function handleLogout(event) {
+  console.log('[Auth] Logging out');
   return {
     statusCode: 302,
     headers: {
@@ -216,8 +239,8 @@ async function handleAuthDebug(event) {
       redirect_uri: redirectUri,
       google_client_id_set: !!process.env.GOOGLE_CLIENT_ID,
       session_keys: session ? Object.keys(session) : [],
-      // Safe to show keys, but mask values if sensitive
-      session_exists: !!session
+      session_exists: !!session,
+      protocol
     })
   };
 }
@@ -247,7 +270,9 @@ async function handleSessionTest(event) {
 
   session.test_counter = (session.test_counter || 0) + 1;
 
-  const cookieVal = await createSessionCookie(session);
+  const protocol = event.headers['x-forwarded-proto'] || 'https';
+  const isSecure = protocol === 'https';
+  const cookieVal = await createSessionCookie(session, { secure: isSecure });
 
   return {
     statusCode: 200,
@@ -259,7 +284,8 @@ async function handleSessionTest(event) {
       session_works: true,
       counter: session.test_counter,
       session_id: 'encrypted-cookie',
-      all_session_data: session
+      all_session_data: session,
+      secure_cookie: isSecure
     })
   };
 }
