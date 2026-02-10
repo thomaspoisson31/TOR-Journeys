@@ -10,18 +10,21 @@ async function getSession(event) {
   const cookies = cookie.parse(event.headers.cookie || '');
   const sessionCookie = cookies[COOKIE_NAME];
 
-  if (!sessionCookie) return null;
+  if (!sessionCookie) {
+    // console.log('[Session] No session cookie found');
+    return null;
+  }
 
   try {
     const { payload } = await jwtDecrypt(sessionCookie, key);
     return payload;
   } catch (e) {
-    // console.error('Session decryption failed:', e);
+    console.error('[Session] Decryption failed:', e.message);
     return null;
   }
 }
 
-async function createSessionCookie(data) {
+async function createSessionCookie(data, options = {}) {
   // Ensure data is an object
   const payload = { ...data };
 
@@ -31,13 +34,15 @@ async function createSessionCookie(data) {
     .setExpirationTime('24h')
     .encrypt(key);
 
-  // Use secure cookies only in production or if served over HTTPS
-  const isSecure = process.env.CONTEXT === 'production' || (process.env.URL && process.env.URL.startsWith('https'));
+  // Use secure cookies only in production or if served over HTTPS, unless forced via options
+  const isSecure = options.secure !== undefined ? options.secure : (
+    process.env.CONTEXT === 'production' || (process.env.URL && process.env.URL.startsWith('https'))
+  );
 
   return cookie.serialize(COOKIE_NAME, jwt, {
     httpOnly: true,
     secure: isSecure,
-    sameSite: 'lax',
+    sameSite: options.sameSite || 'lax',
     path: '/',
     maxAge: 60 * 60 * 24 // 24 hours
   });
