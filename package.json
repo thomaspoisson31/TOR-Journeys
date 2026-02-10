@@ -1,0 +1,21 @@
+{
+  "name": "tor-journeys",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@netlify/blobs": "^7.1.0",
+    "@netlify/functions": "^2.6.0",
+    "cookie": "^0.6.0",
+    "google-auth-library": "^9.6.3",
+    "jose": "^5.2.3",
+    "sharp": "^0.33.2",
+    "busboy": "^1.6.0",
+    "uuid": "^9.0.1",
+    "mime-types": "^2.1.35",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  }
+}
