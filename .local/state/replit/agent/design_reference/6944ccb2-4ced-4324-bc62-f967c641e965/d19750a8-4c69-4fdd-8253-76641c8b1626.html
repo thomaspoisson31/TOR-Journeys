@@ -1,0 +1,636 @@
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CartaGeo - Migration PostgreSQL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                }
+            }
+        }
+    };
+    </script>
+    <style>
+        :root {
+            --background: hsl(0 0% 100%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(221.2 83.2% 53.3%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 84% 4.9%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(222.2 84% 4.9%);
+            --destructive: hsl(0 84.2% 60.2%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(221.2 83.2% 53.3%);
+            --radius: 0.75rem;
+        }
+
+        .dark {
+            --background: hsl(222.2 84% 4.9%);
+            --foreground: hsl(210 40% 98%);
+            --card: hsl(222.2 84% 4.9%);
+            --card-foreground: hsl(210 40% 98%);
+            --popover: hsl(222.2 84% 4.9%);
+            --popover-foreground: hsl(210 40% 98%);
+            --primary: hsl(217.2 91.2% 59.8%);
+            --primary-foreground: hsl(222.2 84% 4.9%);
+            --secondary: hsl(217.2 32.6% 17.5%);
+            --secondary-foreground: hsl(210 40% 98%);
+            --muted: hsl(217.2 32.6% 17.5%);
+            --muted-foreground: hsl(215 20.2% 65.1%);
+            --accent: hsl(217.2 32.6% 17.5%);
+            --accent-foreground: hsl(210 40% 98%);
+            --destructive: hsl(0 62.8% 30.6%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(217.2 32.6% 17.5%);
+            --input: hsl(217.2 32.6% 17.5%);
+            --ring: hsl(224.3 76.3% 94.1%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .migration-progress {
+            background: linear-gradient(90deg, #10b981 var(--progress, 0%), #e5e7eb var(--progress, 0%));
+        }
+
+        .sync-indicator {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .data-entry {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .data-entry:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-background text-foreground min-h-full">
+    <!-- @COMPONENT: ApplicationLayout [Main app wrapper with navigation] -->
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        
+        <!-- Navigation Header -->
+        <!-- @COMPONENT: NavigationHeader [Top navigation with user auth] -->
+        <header class="bg-card shadow-sm border-b border-border">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-map-marked-alt text-primary text-2xl"></i>
+                            <h1 class="text-xl font-bold text-foreground">CartaGeo</h1>
+                        </div>
+                        <span class="bg-primary/10 text-primary px-2 py-1 rounded-md text-sm font-medium">
+                            Migration PostgreSQL
+                        </span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Sync Status Indicator -->
+                        <div class="flex items-center space-x-2" data-bind="syncStatus">
+                            <div class="w-2 h-2 bg-green-500 rounded-full sync-indicator"></div>
+                            <span class="text-sm text-muted-foreground">Synchronisé</span>
+                        </div>
+                        
+                        <!-- User Account -->
+                        <div class="flex items-center space-x-3" data-bind="user">
+                            <!-- Profile image from Google account -->
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&w=40&h=40&fit=crop&crop=face" 
+                                 alt="Profile utilisateur" 
+                                 class="w-8 h-8 rounded-full ring-2 ring-primary/20"
+                                 data-mock="true">
+                            <div class="hidden sm:block">
+                                <p class="text-sm font-medium text-foreground" data-bind="user.name">Jean Dupont</p>
+                                <p class="text-xs text-muted-foreground" data-bind="user.email">jean@example.com</p>
+                            </div>
+                        </div>
+                        
+                        <button class="p-2 text-muted-foreground hover:text-foreground" data-event="click:toggleSettings">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- @END_COMPONENT: NavigationHeader -->
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- Migration Status Dashboard -->
+            <!-- @COMPONENT: MigrationDashboard [Shows overall migration progress and status] -->
+            <div class="mb-8">
+                <div class="bg-card rounded-lg shadow-sm border border-border p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-foreground">Migration des Données</h2>
+                            <p class="text-muted-foreground">Migration du localStorage vers PostgreSQL</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <!-- @STATE: migrationStatus:string = 'completed' -->
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800" data-bind="migrationStatus">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                Migration Terminée
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Migration Progress Summary -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-muted/30 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-muted-foreground">Lieux</p>
+                                    <p class="text-2xl font-bold text-foreground" data-bind="migrationStats.places">247</p>
+                                </div>
+                                <div class="p-3 bg-blue-100 rounded-lg">
+                                    <i class="fas fa-map-pin text-blue-600"></i>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 100%"></div>
+                                    </div>
+                                    <span class="text-xs text-muted-foreground">100%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-muted/30 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-muted-foreground">Régions</p>
+                                    <p class="text-2xl font-bold text-foreground" data-bind="migrationStats.regions">18</p>
+                                </div>
+                                <div class="p-3 bg-green-100 rounded-lg">
+                                    <i class="fas fa-draw-polygon text-green-600"></i>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-600 h-2 rounded-full" style="width: 100%"></div>
+                                    </div>
+                                    <span class="text-xs text-muted-foreground">100%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-muted/30 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-muted-foreground">Tracés</p>
+                                    <p class="text-2xl font-bold text-foreground" data-bind="migrationStats.routes">63</p>
+                                </div>
+                                <div class="p-3 bg-purple-100 rounded-lg">
+                                    <i class="fas fa-route text-purple-600"></i>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-purple-600 h-2 rounded-full" style="width: 100%"></div>
+                                    </div>
+                                    <span class="text-xs text-muted-foreground">100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Migration Actions -->
+                    <div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            <div>
+                                <p class="font-medium text-green-900">Migration réussie</p>
+                                <p class="text-sm text-green-700">Toutes vos données ont été transférées vers PostgreSQL avec succès.</p>
+                            </div>
+                        </div>
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium" data-event="click:viewMigrationReport">
+                            Voir le Rapport
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: MigrationDashboard -->
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Map Interface -->
+                <!-- @COMPONENT: InteractiveMap [Main map display with PostgreSQL integration] -->
+                <div class="lg:col-span-2">
+                    <div class="bg-card rounded-lg shadow-sm border border-border overflow-hidden">
+                        <div class="p-4 border-b border-border">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-foreground">Carte Interactive</h3>
+                                <div class="flex items-center space-x-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="fas fa-database mr-1"></i>
+                                        PostgreSQL
+                                    </span>
+                                    <button class="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md" data-event="click:refreshMapData">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Map Container -->
+                        <div class="relative h-96 bg-gray-100">
+                            <!-- Simulated map interface -->
+                            <!-- A aerial view of a city with marked locations and drawn regions -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-400 via-green-400 to-yellow-400 opacity-20"></div>
+                            
+                            <!-- Map Controls -->
+                            <div class="absolute top-4 left-4 bg-card rounded-lg shadow-lg border border-border p-2">
+                                <div class="flex flex-col space-y-2">
+                                    <button class="p-2 hover:bg-muted rounded text-muted-foreground hover:text-foreground" data-event="click:zoomIn">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="p-2 hover:bg-muted rounded text-muted-foreground hover:text-foreground" data-event="click:zoomOut">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <div class="w-px h-4 bg-border mx-auto"></div>
+                                    <button class="p-2 hover:bg-muted rounded text-muted-foreground hover:text-foreground" data-event="click:addPlace">
+                                        <i class="fas fa-map-pin"></i>
+                                    </button>
+                                    <button class="p-2 hover:bg-muted rounded text-muted-foreground hover:text-foreground" data-event="click:drawRegion">
+                                        <i class="fas fa-draw-polygon"></i>
+                                    </button>
+                                    <button class="p-2 hover:bg-muted rounded text-muted-foreground hover:text-foreground" data-event="click:drawRoute">
+                                        <i class="fas fa-route"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Sample markers and regions -->
+                            <div class="absolute top-20 left-20 w-4 h-4 bg-red-500 rounded-full border-2 border-white shadow-lg" data-mock="true"></div>
+                            <div class="absolute top-32 left-40 w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg" data-mock="true"></div>
+                            <div class="absolute top-24 right-32 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-lg" data-mock="true"></div>
+                            
+                            <!-- Sync Status Overlay -->
+                            <div class="absolute bottom-4 right-4 bg-card rounded-lg shadow-lg border border-border px-3 py-2">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span class="text-xs text-muted-foreground">Sync automatique activé</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Map Footer with Statistics -->
+                        <div class="p-4 bg-muted/30 border-t border-border">
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-muted-foreground">Dernière sync: <span class="text-foreground font-medium" data-bind="lastSync">Il y a 2 min</span></span>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-muted-foreground">Total éléments: <span class="text-foreground font-medium" data-bind="totalElements">328</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: InteractiveMap -->
+
+                <!-- Data Management Sidebar -->
+                <!-- @COMPONENT: DataManagementPanel [Sidebar for managing places, regions, routes] -->
+                <div class="space-y-6">
+                    
+                    <!-- Data Overview -->
+                    <div class="bg-card rounded-lg shadow-sm border border-border p-4">
+                        <h3 class="text-lg font-semibold text-foreground mb-4">Gestion des Données</h3>
+                        
+                        <!-- Tab Navigation -->
+                        <!-- @STATE: activeTab:string = 'places' -->
+                        <div class="flex space-x-1 bg-muted rounded-lg p-1 mb-4">
+                            <button class="flex-1 px-3 py-2 text-sm font-medium rounded-md bg-card text-foreground shadow-sm" data-event="click:setActiveTab" data-tab="places">
+                                Lieux
+                            </button>
+                            <button class="flex-1 px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground" data-event="click:setActiveTab" data-tab="regions">
+                                Régions
+                            </button>
+                            <button class="flex-1 px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground" data-event="click:setActiveTab" data-tab="routes">
+                                Tracés
+                            </button>
+                        </div>
+
+                        <!-- Places Tab Content -->
+                        <div class="space-y-3" data-tab-content="places">
+                            <!-- @MAP: places.map(place => ( -->
+                            <div class="data-entry p-3 bg-muted/30 rounded-lg border border-border hover:border-primary/50 cursor-pointer" data-event="click:selectPlace">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                        <div>
+                                            <p class="font-medium text-foreground text-sm" data-bind="place.name">Restaurant Le Jardin</p>
+                                            <p class="text-xs text-muted-foreground" data-bind="place.category">Restaurant</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <i class="fas fa-check text-green-500 text-xs" title="Synchronisé"></i>
+                                        <button class="text-muted-foreground hover:text-foreground" data-event="click:editPlace">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="data-entry p-3 bg-muted/30 rounded-lg border border-border hover:border-primary/50 cursor-pointer" data-event="click:selectPlace" data-mock="true">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                        <div>
+                                            <p class="font-medium text-foreground text-sm">Parc Central</p>
+                                            <p class="text-xs text-muted-foreground">Parc</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <i class="fas fa-check text-green-500 text-xs" title="Synchronisé"></i>
+                                        <button class="text-muted-foreground hover:text-foreground">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="data-entry p-3 bg-muted/30 rounded-lg border border-border hover:border-primary/50 cursor-pointer" data-event="click:selectPlace" data-mock="true">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                        <div>
+                                            <p class="font-medium text-foreground text-sm">Bibliothèque Municipale</p>
+                                            <p class="text-xs text-muted-foreground">Éducation</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <i class="fas fa-sync-alt text-yellow-500 text-xs spin" title="En cours de sync"></i>
+                                        <button class="text-muted-foreground hover:text-foreground">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+
+                            <button class="w-full p-3 border-2 border-dashed border-border rounded-lg text-muted-foreground hover:border-primary hover:text-primary transition-colors" data-event="click:addNewPlace">
+                                <i class="fas fa-plus mr-2"></i>
+                                Ajouter un lieu
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- API Status -->
+                    <div class="bg-card rounded-lg shadow-sm border border-border p-4">
+                        <h4 class="font-semibold text-foreground mb-3">Statut API</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-muted-foreground">Base de données</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-circle mr-1"></i>
+                                    Connecté
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-muted-foreground">Authentification</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-circle mr-1"></i>
+                                    Actif
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-muted-foreground">Synchronisation</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-circle mr-1"></i>
+                                    Temps réel
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-3 border-t border-border">
+                            <div class="flex items-center justify-between text-xs text-muted-foreground">
+                                <span>Dernière requête</span>
+                                <span data-bind="lastApiCall">12:34:56</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-muted-foreground mt-1">
+                                <span>Temps de réponse</span>
+                                <span data-bind="responseTime">45ms</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-card rounded-lg shadow-sm border border-border p-4">
+                        <h4 class="font-semibold text-foreground mb-3">Actions Rapides</h4>
+                        <div class="space-y-2">
+                            <button class="w-full px-3 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors" data-event="click:forceSync">
+                                <i class="fas fa-sync-alt mr-2"></i>
+                                Synchroniser Maintenant
+                            </button>
+                            <button class="w-full px-3 py-2 text-sm bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors" data-event="click:exportData">
+                                <i class="fas fa-download mr-2"></i>
+                                Exporter les Données
+                            </button>
+                            <button class="w-full px-3 py-2 text-sm border border-border text-foreground rounded-lg hover:bg-muted transition-colors" data-event="click:viewLogs">
+                                <i class="fas fa-list mr-2"></i>
+                                Voir les Logs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: DataManagementPanel -->
+            </div>
+
+            <!-- Migration History & Logs -->
+            <!-- @COMPONENT: MigrationHistory [Shows detailed migration logs and history] -->
+            <div class="mt-8">
+                <div class="bg-card rounded-lg shadow-sm border border-border">
+                    <div class="p-4 border-b border-border">
+                        <h3 class="text-lg font-semibold text-foreground">Historique de Migration</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="space-y-4">
+                            <!-- @MAP: migrationLogs.map(log => ( -->
+                            <div class="flex items-start space-x-3 p-3 bg-muted/30 rounded-lg" data-mock="true">
+                                <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check text-green-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-foreground">Migration des lieux terminée</p>
+                                    <p class="text-sm text-muted-foreground">247 lieux migrés avec succès vers PostgreSQL</p>
+                                    <p class="text-xs text-muted-foreground mt-1">Aujourd'hui à 14:32</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3 p-3 bg-muted/30 rounded-lg" data-mock="true">
+                                <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-info text-blue-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-foreground">Démarrage de la migration</p>
+                                    <p class="text-sm text-muted-foreground">Initialisation de la connexion PostgreSQL et préparation des données</p>
+                                    <p class="text-xs text-muted-foreground mt-1">Aujourd'hui à 14:30</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3 p-3 bg-muted/30 rounded-lg" data-mock="true">
+                                <div class="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-database text-gray-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-foreground">Schéma de base créé</p>
+                                    <p class="text-sm text-muted-foreground">Tables pour lieux, régions et tracés créées dans PostgreSQL</p>
+                                    <p class="text-xs text-muted-foreground mt-1">Aujourd'hui à 14:28</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-border">
+                            <button class="text-sm text-primary hover:text-primary/80 font-medium" data-event="click:viewFullLogs">
+                                Voir tous les logs de migration
+                                <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: MigrationHistory -->
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ApplicationLayout -->
+
+    <script>
+        (function() {
+            // TODO: Implement React state management for migration status, sync states, and data management
+            // TODO: Implement API calls for PostgreSQL data operations
+            // TODO: Implement real-time synchronization with WebSocket or polling
+            // TODO: Implement authentication flow with Google OAuth
+            // TODO: Implement map interaction handlers and data visualization
+            
+            // Mock data for demonstration
+            const mockData = {
+                migrationStats: {
+                    places: 247,
+                    regions: 18,
+                    routes: 63
+                },
+                syncStatus: 'synchronized',
+                lastSync: 'Il y a 2 min',
+                totalElements: 328,
+                user: {
+                    name: 'Jean Dupont',
+                    email: 'jean@example.com'
+                }
+            };
+
+            // Simulate real-time sync indicator
+            const syncIndicators = document.querySelectorAll('.sync-indicator');
+            setInterval(() => {
+                syncIndicators.forEach(indicator => {
+                    indicator.style.opacity = indicator.style.opacity === '0.3' ? '1' : '0.3';
+                });
+            }, 1000);
+
+            // Handle tab switching
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('[data-event*="setActiveTab"]')) {
+                    e.preventDefault();
+                    const button = e.target.closest('[data-event*="setActiveTab"]');
+                    const tab = button.getAttribute('data-tab');
+                    
+                    // Update active button
+                    document.querySelectorAll('[data-event*="setActiveTab"]').forEach(btn => {
+                        btn.className = btn.className.replace('bg-card text-foreground shadow-sm', 'text-muted-foreground hover:text-foreground');
+                    });
+                    button.className = button.className.replace('text-muted-foreground hover:text-foreground', 'bg-card text-foreground shadow-sm');
+                    
+                    // Update content (in real implementation, this would show different data)
+                    console.log('Switching to tab:', tab);
+                }
+            });
+
+            // Handle other mock interactions
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('[data-event]');
+                if (target) {
+                    e.preventDefault();
+                    const event = target.getAttribute('data-event');
+                    console.log('Mock interaction:', event);
+                    
+                    // Show user feedback for certain actions
+                    if (event.includes('forceSync')) {
+                        const syncButtons = document.querySelectorAll('[data-event*="forceSync"]');
+                        syncButtons.forEach(btn => {
+                            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Synchronisation...';
+                            setTimeout(() => {
+                                btn.innerHTML = '<i class="fas fa-check mr-2"></i>Synchronisé';
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Synchroniser Maintenant';
+                                }, 2000);
+                            }, 1500);
+                        });
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

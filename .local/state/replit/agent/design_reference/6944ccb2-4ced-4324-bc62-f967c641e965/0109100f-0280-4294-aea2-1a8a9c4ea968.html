@@ -1,0 +1,626 @@
+<html lang="fr" class="h-full bg-background">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migration Dashboard - PostgreSQL Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    success: {
+                        DEFAULT: "var(--success)",
+                        foreground: "var(--success-foreground)",
+                    },
+                    warning: {
+                        DEFAULT: "var(--warning)",
+                        foreground: "var(--warning-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                },
+                fontFamily: {
+                    sans: ["Inter", "system-ui", "sans-serif"],
+                }
+            },
+        }
+    };
+    </script>
+    <style>
+    :root {
+        --background: hsl(210 40% 98%);
+        --foreground: hsl(210 11% 15%);
+        --card: hsl(0 0% 100%);
+        --card-foreground: hsl(210 11% 15%);
+        --popover: hsl(0 0% 100%);
+        --popover-foreground: hsl(210 11% 15%);
+        --primary: hsl(214 84% 56%);
+        --primary-foreground: hsl(0 0% 100%);
+        --secondary: hsl(210 40% 96%);
+        --secondary-foreground: hsl(210 11% 15%);
+        --muted: hsl(210 40% 96%);
+        --muted-foreground: hsl(215 16% 47%);
+        --accent: hsl(210 40% 94%);
+        --accent-foreground: hsl(210 11% 15%);
+        --destructive: hsl(0 72% 51%);
+        --destructive-foreground: hsl(0 0% 100%);
+        --success: hsl(142 76% 36%);
+        --success-foreground: hsl(0 0% 100%);
+        --warning: hsl(38 92% 50%);
+        --warning-foreground: hsl(0 0% 100%);
+        --border: hsl(214 32% 91%);
+        --input: hsl(214 32% 91%);
+        --ring: hsl(214 84% 56%);
+        --radius: 0.75rem;
+    }
+    .dark {
+        --background: hsl(210 11% 9%);
+        --foreground: hsl(213 31% 91%);
+        --card: hsl(210 11% 11%);
+        --card-foreground: hsl(213 31% 91%);
+        --popover: hsl(210 11% 11%);
+        --popover-foreground: hsl(213 31% 91%);
+        --primary: hsl(214 84% 56%);
+        --primary-foreground: hsl(0 0% 100%);
+        --secondary: hsl(210 11% 15%);
+        --secondary-foreground: hsl(213 31% 91%);
+        --muted: hsl(210 11% 15%);
+        --muted-foreground: hsl(215 20% 65%);
+        --accent: hsl(210 11% 15%);
+        --accent-foreground: hsl(213 31% 91%);
+        --destructive: hsl(0 72% 51%);
+        --destructive-foreground: hsl(0 0% 100%);
+        --success: hsl(142 76% 36%);
+        --success-foreground: hsl(0 0% 100%);
+        --warning: hsl(38 92% 50%);
+        --warning-foreground: hsl(0 0% 100%);
+        --border: hsl(210 11% 20%);
+        --input: hsl(210 11% 20%);
+        --ring: hsl(214 84% 56%);
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="h-full bg-background text-foreground font-sans">
+    <!-- @COMPONENT: AppLayout -->
+    <div class="min-h-screen flex">
+        <!-- @COMPONENT: Sidebar -->
+        <div class="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
+            <div class="flex flex-col flex-grow bg-card border-r border-border pt-5 pb-4">
+                <div class="flex items-center flex-shrink-0 px-4">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-database text-primary-foreground text-sm"></i>
+                    </div>
+                    <h2 class="ml-3 text-lg font-semibold text-foreground">Migration DB</h2>
+                </div>
+                <div class="mt-8 flex-1 flex flex-col">
+                    <nav class="flex-1 px-2 space-y-1">
+                        <a href="#" class="bg-accent text-accent-foreground group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-tachometer-alt text-accent-foreground mr-3 text-sm"></i>
+                            Tableau de bord
+                        </a>
+                        <a href="#" class="text-muted-foreground hover:bg-accent hover:text-accent-foreground group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-exchange-alt text-muted-foreground group-hover:text-accent-foreground mr-3 text-sm"></i>
+                            Migration
+                        </a>
+                        <a href="#" class="text-muted-foreground hover:bg-accent hover:text-accent-foreground group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-table text-muted-foreground group-hover:text-accent-foreground mr-3 text-sm"></i>
+                            Schéma DB
+                        </a>
+                        <a href="#" class="text-muted-foreground hover:bg-accent hover:text-accent-foreground group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-plug text-muted-foreground group-hover:text-accent-foreground mr-3 text-sm"></i>
+                            APIs
+                        </a>
+                        <a href="#" class="text-muted-foreground hover:bg-accent hover:text-accent-foreground group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-shield-alt text-muted-foreground group-hover:text-accent-foreground mr-3 text-sm"></i>
+                            Authentification
+                        </a>
+                        <a href="#" class="text-muted-foreground hover:bg-accent hover:text-accent-foreground group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-chart-line text-muted-foreground group-hover:text-accent-foreground mr-3 text-sm"></i>
+                            Monitoring
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent -->
+        <div class="lg:pl-64 flex flex-col flex-1">
+            <!-- @COMPONENT: Header -->
+            <div class="sticky top-0 z-10 bg-card border-b border-border px-4 py-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button class="lg:hidden p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent">
+                            <i class="fas fa-bars text-lg"></i>
+                        </button>
+                        <h1 class="ml-2 lg:ml-0 text-2xl font-semibold text-foreground">Migration PostgreSQL</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- @COMPONENT: UserProfile -->
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-primary-foreground text-sm font-medium" data-bind="user.initials">JD</span>
+                            </div>
+                            <div class="hidden sm:block">
+                                <p class="text-sm font-medium text-foreground" data-bind="user.name">John Doe</p>
+                                <p class="text-xs text-muted-foreground" data-bind="user.email">john@example.com</p>
+                            </div>
+                        </div>
+                        <!-- @END_COMPONENT: UserProfile -->
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: Header -->
+
+            <!-- @COMPONENT: DashboardContent -->
+            <main class="flex-1 pb-8">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- @COMPONENT: StatusCards -->
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mt-8">
+                        <div class="bg-card rounded-lg border border-border p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-success rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-check text-success-foreground text-sm"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-muted-foreground truncate">Statut Migration</dt>
+                                        <dd class="text-lg font-medium text-foreground">Complétée</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-card rounded-lg border border-border p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-database text-primary-foreground text-sm"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-muted-foreground truncate">Enregistrements</dt>
+                                        <dd class="text-lg font-medium text-foreground" data-bind="totalRecords">1,247</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-card rounded-lg border border-border p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-warning rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-plug text-warning-foreground text-sm"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-muted-foreground truncate">APIs Actives</dt>
+                                        <dd class="text-lg font-medium text-foreground">8/8</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-card rounded-lg border border-border p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-users text-accent-foreground text-sm"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-muted-foreground truncate">Utilisateurs</dt>
+                                        <dd class="text-lg font-medium text-foreground" data-bind="activeUsers">156</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: StatusCards -->
+
+                    <!-- @COMPONENT: MigrationProgress -->
+                    <div class="mt-8">
+                        <div class="bg-card rounded-lg border border-border p-6">
+                            <h3 class="text-lg font-medium text-foreground mb-4">Progression de la Migration</h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-muted-foreground">Utilisateurs</span>
+                                                <span class="text-foreground">100%</span>
+                                            </div>
+                                            <div class="mt-1 bg-muted rounded-full h-2">
+                                                <div class="bg-success h-2 rounded-full" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-muted-foreground">Lieux</span>
+                                                <span class="text-foreground">100%</span>
+                                            </div>
+                                            <div class="mt-1 bg-muted rounded-full h-2">
+                                                <div class="bg-success h-2 rounded-full" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-muted-foreground">Régions</span>
+                                                <span class="text-foreground">100%</span>
+                                            </div>
+                                            <div class="mt-1 bg-muted rounded-full h-2">
+                                                <div class="bg-success h-2 rounded-full" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between text-sm">
+                                                <span class="text-muted-foreground">Tracés</span>
+                                                <span class="text-foreground">100%</span>
+                                            </div>
+                                            <div class="mt-1 bg-muted rounded-full h-2">
+                                                <div class="bg-success h-2 rounded-full" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-medium text-foreground mb-3">Actions Récentes</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                            <span class="text-sm text-muted-foreground">Migration des utilisateurs terminée</span>
+                                            <span class="text-xs text-muted-foreground">il y a 2 min</span>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                            <span class="text-sm text-muted-foreground">Validation des tracés complète</span>
+                                            <span class="text-xs text-muted-foreground">il y a 5 min</span>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                            <span class="text-sm text-muted-foreground">APIs configurées et testées</span>
+                                            <span class="text-xs text-muted-foreground">il y a 8 min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: MigrationProgress -->
+
+                    <!-- @COMPONENT: DatabaseSchema & APIs -->
+                    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- @COMPONENT: DatabaseSchema -->
+                        <div class="bg-card rounded-lg border border-border p-6">
+                            <h3 class="text-lg font-medium text-foreground mb-4">Schéma PostgreSQL</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-table text-primary"></i>
+                                        <span class="font-medium text-foreground">users</span>
+                                    </div>
+                                    <span class="text-sm text-muted-foreground">156 enregistrements</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-map-marker-alt text-primary"></i>
+                                        <span class="font-medium text-foreground">locations</span>
+                                    </div>
+                                    <span class="text-sm text-muted-foreground">734 enregistrements</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-globe text-primary"></i>
+                                        <span class="font-medium text-foreground">regions</span>
+                                    </div>
+                                    <span class="text-sm text-muted-foreground">89 enregistrements</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-route text-primary"></i>
+                                        <span class="font-medium text-foreground">routes</span>
+                                    </div>
+                                    <span class="text-sm text-muted-foreground">268 enregistrements</span>
+                                </div>
+                            </div>
+                            <button class="mt-4 w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                Voir le Schéma Complet
+                            </button>
+                        </div>
+                        <!-- @END_COMPONENT: DatabaseSchema -->
+
+                        <!-- @COMPONENT: APIEndpoints -->
+                        <div class="bg-card rounded-lg border border-border p-6">
+                            <h3 class="text-lg font-medium text-foreground mb-4">API Endpoints</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="px-2 py-1 bg-success text-success-foreground text-xs font-medium rounded">GET</span>
+                                        <span class="text-sm font-mono text-foreground">/api/locations</span>
+                                    </div>
+                                    <div class="w-2 h-2 bg-success rounded-full"></div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="px-2 py-1 bg-primary text-primary-foreground text-xs font-medium rounded">POST</span>
+                                        <span class="text-sm font-mono text-foreground">/api/locations</span>
+                                    </div>
+                                    <div class="w-2 h-2 bg-success rounded-full"></div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="px-2 py-1 bg-warning text-warning-foreground text-xs font-medium rounded">PUT</span>
+                                        <span class="text-sm font-mono text-foreground">/api/regions/:id</span>
+                                    </div>
+                                    <div class="w-2 h-2 bg-success rounded-full"></div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="px-2 py-1 bg-destructive text-destructive-foreground text-xs font-medium rounded">DEL</span>
+                                        <span class="text-sm font-mono text-foreground">/api/routes/:id</span>
+                                    </div>
+                                    <div class="w-2 h-2 bg-success rounded-full"></div>
+                                </div>
+                            </div>
+                            <button class="mt-4 w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                Documentation API
+                            </button>
+                        </div>
+                        <!-- @END_COMPONENT: APIEndpoints -->
+                    </div>
+
+                    <!-- @COMPONENT: MigrationTools -->
+                    <div class="mt-8">
+                        <div class="bg-card rounded-lg border border-border p-6">
+                            <h3 class="text-lg font-medium text-foreground mb-4">Outils de Migration</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="p-4 border border-border rounded-lg">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <i class="fas fa-download text-primary"></i>
+                                        <h4 class="font-medium text-foreground">Export LocalStorage</h4>
+                                    </div>
+                                    <p class="text-sm text-muted-foreground mb-3">Exporter les données existantes depuis localStorage</p>
+                                    <button class="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-2 rounded text-sm font-medium transition-colors" data-event="click:exportLocalStorage">
+                                        Exporter
+                                    </button>
+                                </div>
+                                
+                                <div class="p-4 border border-border rounded-lg">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <i class="fas fa-upload text-primary"></i>
+                                        <h4 class="font-medium text-foreground">Import PostgreSQL</h4>
+                                    </div>
+                                    <p class="text-sm text-muted-foreground mb-3">Importer les données dans PostgreSQL</p>
+                                    <button class="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-2 rounded text-sm font-medium transition-colors" data-event="click:importToPostgreSQL">
+                                        Importer
+                                    </button>
+                                </div>
+                                
+                                <div class="p-4 border border-border rounded-lg">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <i class="fas fa-sync-alt text-primary"></i>
+                                        <h4 class="font-medium text-foreground">Synchronisation</h4>
+                                    </div>
+                                    <p class="text-sm text-muted-foreground mb-3">Synchroniser les données en temps réel</p>
+                                    <button class="w-full bg-success text-success-foreground hover:bg-success/90 px-3 py-2 rounded text-sm font-medium transition-colors" data-event="click:enableSync">
+                                        Activer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: MigrationTools -->
+
+                    <!-- @COMPONENT: AuthenticationStatus -->
+                    <div class="mt-8">
+                        <div class="bg-card rounded-lg border border-border p-6">
+                            <h3 class="text-lg font-medium text-foreground mb-4">Authentification Google</h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div>
+                                    <div class="flex items-center space-x-3 mb-4">
+                                        <div class="w-10 h-10 bg-success rounded-lg flex items-center justify-center">
+                                            <i class="fab fa-google text-success-foreground"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-foreground">Configuration OAuth</p>
+                                            <p class="text-sm text-success">Actif et fonctionnel</p>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="text-muted-foreground">Client ID:</span>
+                                            <span class="text-foreground font-mono">***...abc123</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-muted-foreground">Domaine autorisé:</span>
+                                            <span class="text-foreground">votre-app.com</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-muted-foreground">Dernière validation:</span>
+                                            <span class="text-foreground">il y a 2 min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-foreground mb-3">Utilisateurs Connectés</h4>
+                                    <div class="space-y-3">
+                                        <!-- @MAP: connectedUsers.map(user => ( -->
+                                        <div class="flex items-center space-x-3 p-3 bg-muted rounded-lg" data-mock="true">
+                                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                                <span class="text-primary-foreground text-xs font-medium">JD</span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-foreground">John Doe</p>
+                                                <p class="text-xs text-muted-foreground">Connecté il y a 5 min</p>
+                                            </div>
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                        </div>
+                                        <div class="flex items-center space-x-3 p-3 bg-muted rounded-lg" data-mock="true">
+                                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                                <span class="text-primary-foreground text-xs font-medium">AM</span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium text-foreground">Alice Martin</p>
+                                                <p class="text-xs text-muted-foreground">Connectée il y a 12 min</p>
+                                            </div>
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                        </div>
+                                        <!-- @END_MAP )) -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: AuthenticationStatus -->
+
+                    <!-- @COMPONENT: ErrorHandling -->
+                    <div class="mt-8">
+                        <div class="bg-card rounded-lg border border-border p-6">
+                            <h3 class="text-lg font-medium text-foreground mb-4">Gestion d'Erreurs & Monitoring</h3>
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div class="space-y-3">
+                                    <h4 class="font-medium text-foreground">Erreurs Récentes</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center space-x-2 text-sm">
+                                            <div class="w-2 h-2 bg-warning rounded-full"></div>
+                                            <span class="text-muted-foreground">Timeout API (résolu)</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 text-sm">
+                                            <div class="w-2 h-2 bg-success rounded-full"></div>
+                                            <span class="text-muted-foreground">Système stable</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <h4 class="font-medium text-foreground">Performance</h4>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="text-muted-foreground">Latence API:</span>
+                                            <span class="text-success">45ms</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-muted-foreground">Uptime:</span>
+                                            <span class="text-success">99.9%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <h4 class="font-medium text-foreground">Actions</h4>
+                                    <div class="space-y-2">
+                                        <button class="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 py-2 rounded text-sm font-medium transition-colors">
+                                            Voir les Logs
+                                        </button>
+                                        <button class="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 py-2 rounded text-sm font-medium transition-colors">
+                                            Test de Charge
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: ErrorHandling -->
+
+                </div>
+            </main>
+            <!-- @END_COMPONENT: DashboardContent -->
+        </div>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: AppLayout -->
+
+    <!-- @COMPONENT: LoadingSpinner (Hidden by default) -->
+    <div id="loadingSpinner" class="fixed inset-0 bg-background/80 backdrop-blur-sm hidden items-center justify-center z-50" data-mock="true">
+        <div class="bg-card p-6 rounded-lg border border-border shadow-lg">
+            <div class="flex items-center space-x-3">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                <span class="text-foreground">Migration en cours...</span>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: LoadingSpinner -->
+
+    <script>
+        // TODO: Implement actual business logic, API calls, and state management
+        (function() {
+            // Mock interaction handlers for demonstration
+            const mockInteractions = {
+                exportLocalStorage: () => {
+                    console.log('Exporting localStorage data...');
+                    // TODO: Implement localStorage export functionality
+                },
+                importToPostgreSQL: () => {
+                    console.log('Importing to PostgreSQL...');
+                    // TODO: Implement PostgreSQL import functionality
+                },
+                enableSync: () => {
+                    console.log('Enabling real-time sync...');
+                    // TODO: Implement real-time synchronization
+                }
+            };
+
+            // Add event listeners for demo purposes
+            document.addEventListener('click', function(e) {
+                const element = e.target;
+                const eventAttr = element.getAttribute('data-event');
+                
+                if (eventAttr) {
+                    const [event, handler] = eventAttr.split(':');
+                    if (event === 'click' && mockInteractions[handler]) {
+                        e.preventDefault();
+                        mockInteractions[handler]();
+                    }
+                }
+            });
+
+            // TODO: Initialize real application state
+            // TODO: Connect to PostgreSQL APIs
+            // TODO: Implement Google Authentication
+            // TODO: Set up real-time data synchronization
+        })();
+    </script>
+</body>
+</html>
