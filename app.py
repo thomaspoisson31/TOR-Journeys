@@ -14,7 +14,7 @@ from werkzeug.datastructures import FileStorage
 import mimetypes
 from PIL import Image
 import io
-from replit_db_manager import ReplitDBManager
+from json_db_manager import JsonDBManager
 import base64
 
 # Object Storage désactivé - utilisation du système de fichiers local persistant
@@ -26,19 +26,19 @@ print("📁 Stockage local persistant activé (pas d'initialisation Object Stora
 
 app = Flask(__name__)
 
-# Initialiser le gestionnaire de base de données Replit
-db_manager = ReplitDBManager()
+# Initialiser le gestionnaire de base de données JSON local
+db_manager = JsonDBManager()
 
 # Utiliser une clé secrète fixe en développement pour la persistance
-if os.environ.get('REPLIT_DEV_DOMAIN'):
-    app.secret_key = 'dev-secret-key-for-replit-sessions'
+if os.environ.get('FLASK_ENV') == 'development':
+    app.secret_key = 'dev-secret-key-for-sessions'
 else:
     app.secret_key = secrets.token_hex(16)
 
 # Configuration ProxyFix pour Replit (gestion des headers X-Forwarded)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Configuration de session pour Replit - utiliser les sessions Flask par défaut
+# Configuration de session - utiliser les sessions Flask par défaut
 
 # Configuration Google OAuth
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
@@ -51,21 +51,20 @@ GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
 MAX_FILE_SIZE = 20 * 1024 * 1024  # 20MB
 
-# Configuration OAuth pour Replit
+# Configuration OAuth pour développement local
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Permet OAuth en développement
 
 @app.before_request
 def force_https():
-    """Force HTTPS pour toutes les requêtes sur Replit"""
-    # Sur Replit, toujours forcer HTTPS car l'accès externe est en HTTPS
+    """Force HTTPS pour toutes les requêtes derrière un proxy"""
     if request.headers.get('X-Forwarded-Proto') == 'https':
         request.environ['wsgi.url_scheme'] = 'https'
         request.environ['REQUEST_SCHEME'] = 'https'
         request.environ['SERVER_PORT'] = '443'
         request.environ['HTTPS'] = 'on'
 
-# Note: Nous utilisons maintenant Replit Database au lieu de SQLite
-# Les fonctions d'accès à la base de données sont gérées par ReplitDBManager
+# Note: Nous utilisons maintenant une base JSON locale au lieu de SQLite
+# Les fonctions d'accès à la base de données sont gérées par JsonDBManager
 
 def allowed_file(filename):
     """Vérifier si le fichier a une extension autorisée"""
@@ -649,20 +648,25 @@ def get_environment():
         })
     
     # PRIORITÉ 2 : Détection automatique basée sur plusieurs facteurs
-    # Méthode 1 : REPLIT_DEPLOYMENT est défini à "1" lors d'un déploiement Replit
-    is_deployment_var = os.environ.get('REPLIT_DEPLOYMENT') == '1'
     
-    # Méthode 2 : Vérifier le hostname - les déploiements utilisent .replit.app
+    # Méthode 1 : RENDER (pour Render)
+    is_render = os.environ.get('RENDER') == 'true'
+
+    # Méthode 2 : REPLIT_DEPLOYMENT est défini à "1" lors d'un déploiement Replit
+    is_replit_deployment = os.environ.get('REPLIT_DEPLOYMENT') == '1'
+
+    # Méthode 3 : Vérifier le hostname
     hostname = request.host
-    is_production_domain = '.replit.app' in hostname
+    is_production_domain = '.replit.app' in hostname or '.onrender.com' in hostname
     
-    # Méthode 3 : Vérifier la présence de REPLIT_DEV_DOMAIN (seulement en dev)
+    # Méthode 4 : Vérifier la présence de REPLIT_DEV_DOMAIN (seulement en dev Replit)
     is_dev_domain = os.environ.get('REPLIT_DEV_DOMAIN') is not None
     
     # On est en production si :
+    # - RENDER=true OU
     # - REPLIT_DEPLOYMENT=1 OU
-    # - hostname contient .replit.app ET pas de REPLIT_DEV_DOMAIN
-    is_deployment = is_deployment_var or (is_production_domain and not is_dev_domain)
+    # - hostname contient .replit.app/.onrender.com ET pas de REPLIT_DEV_DOMAIN
+    is_deployment = is_render or is_replit_deployment or (is_production_domain and not is_dev_domain)
     
     env_prefix = 'prod_' if is_deployment else 'dev_'
     
@@ -673,7 +677,8 @@ def get_environment():
         'prefix': env_prefix,
         'is_deployment': is_deployment,
         'detection_method': {
-            'deployment_var': is_deployment_var,
+            'render': is_render,
+            'replit_deployment': is_replit_deployment,
             'production_domain': is_production_domain,
             'dev_domain': is_dev_domain,
             'hostname': hostname
@@ -904,12 +909,12 @@ def upload_image():
         use_base64 = request.form.get('use_base64', 'false').lower() == 'true'
         
         if use_base64 and len(image_data) < 100 * 1024:
-            # Encoder l'image en Base64 et stocker dans Replit Database
+            # Encoder l'image en Base64 et stocker dans la Database JSON
             import base64
             base64_data = base64.b64encode(image_data).decode('utf-8')
             data_uri = f"data:{content_type};base64,{base64_data}"
             
-            # Stocker dans Replit Database avec un ID unique
+            # Stocker dans la Database avec un ID unique
             image_id = f"img_{google_id}_{category}_{timestamp}_{unique_id}"
             db_manager.db[image_id] = {
                 'data_uri': data_uri,
@@ -923,7 +928,7 @@ def upload_image():
             }
             
             public_url = data_uri
-            print(f"💾 Image stockée en Base64 dans Replit Database: {image_id}")
+            print(f"💾 Image stockée en Base64 dans Database: {image_id}")
             
             return jsonify({
                 'success': True,
@@ -934,7 +939,7 @@ def upload_image():
                 'category': category,
                 'width': width,
                 'height': height,
-                'storage': 'replit_database_base64',
+                'storage': 'json_database_base64',
                 'message': 'Image stockée en Base64 (< 100KB)'
             })
         
@@ -1197,14 +1202,14 @@ def verify_oauth_config():
         }), 500
 
 if __name__ == '__main__':
-    print("🚀 Serveur Flask démarré avec Replit Database")
+    print("🚀 Serveur Flask démarré avec Json Database")
     print("🔑 Prêt pour l'authentification Google et la gestion des données utilisateur")
 
-    # Configuration HTTPS pour Replit
+    # Configuration HTTPS
     app.config['PREFERRED_URL_SCHEME'] = 'https'
 
-    # Configuration des cookies de session pour Replit
-    if os.environ.get('REPLIT_DEV_DOMAIN'):
+    # Configuration des cookies de session
+    if os.environ.get('FLASK_ENV') == 'development':
         # En développement, cookies moins stricts
         app.config['SESSION_COOKIE_SECURE'] = False
         app.config['SESSION_COOKIE_HTTPONLY'] = True
