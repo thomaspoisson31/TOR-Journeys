@@ -651,10 +651,10 @@ def get_environment():
     
     # Méthode 1 : RENDER (pour Render)
     is_render = os.environ.get('RENDER') == 'true'
-
+    
     # Méthode 2 : REPLIT_DEPLOYMENT est défini à "1" lors d'un déploiement Replit
     is_replit_deployment = os.environ.get('REPLIT_DEPLOYMENT') == '1'
-
+    
     # Méthode 3 : Vérifier le hostname
     hostname = request.host
     is_production_domain = '.replit.app' in hostname or '.onrender.com' in hostname
