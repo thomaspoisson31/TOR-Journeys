@@ -50,7 +50,7 @@ class LocalJsonDB:
 
     def __contains__(self, key):
         return key in self.data
-
+    
     def get(self, key, default=None):
         return self.data.get(key, default)
 
@@ -72,7 +72,7 @@ class JsonDBManager:
                     user_data = json.loads(user_data)
                 except:
                     pass
-
+            
             print(f"✅ Utilisateur existant trouvé: {user_data.get('name')}")
             return user_data
 
@@ -102,7 +102,7 @@ class JsonDBManager:
                     data = json.loads(data)
                 except:
                     pass
-
+                    
             print(f"📥 Données {env_prefix} chargées pour {google_id}")
             return data
 
