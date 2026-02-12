@@ -847,11 +847,11 @@ window.openSettingsForMap = function() {
         // Le loader-overlay a z-50, settings-modal a z-60, donc ça devrait aller.
         // Mais si on veut que l'utilisateur puisse interagir avec la modale, il faut peut-être cacher le message d'erreur temporairement
         // ou simplement ouvrir la modale par dessus.
-
+        
         // Si on cache l'overlay, on risque de voir une page vide/cassée dessous.
         // On va essayer d'ouvrir la modale directement.
     }
-
+    
     if (window.settingsManager) {
         window.settingsManager.openSettings();
         window.settingsManager.switchTab('maps');
