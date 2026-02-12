@@ -1036,12 +1036,18 @@ def get_image_library():
         google_id = session['google_id']
 
         # Chercher le répertoire basé sur le google_id
-        user_dir = f'uploads/{google_id}'
+        # Use absolute path based on app.root_path for robustness
+        uploads_root = os.path.join(app.root_path, 'uploads')
+        user_dir = os.path.join(uploads_root, google_id)
 
-        print(f"📂 [LIBRARY DEBUG] Lecture du répertoire: {user_dir}")
+        app.logger.info(f"Scanning image library for user {google_id} in {user_dir}")
         
         if not os.path.exists(user_dir):
-            print(f"⚠️ [LIBRARY DEBUG] Le répertoire {user_dir} n'existe pas")
+            app.logger.warning(f"User directory {user_dir} does not exist.")
+            # Check if uploads root exists to give better feedback
+            if not os.path.exists(uploads_root):
+                app.logger.error(f"Uploads root directory {uploads_root} does not exist.")
+
             return jsonify({
                 'success': True,
                 'folders': {},
@@ -1057,11 +1063,8 @@ def get_image_library():
             structure = {}
             full_path = os.path.join(base_path, relative_path) if relative_path else base_path
             
-            print(f"🔍 [LIBRARY DEBUG] Scan de: {full_path}")
-            
             try:
                 items = os.listdir(full_path)
-                print(f"📋 [LIBRARY DEBUG] Contenu de {full_path}: {items}")
                 
                 for item in items:
                     item_path = os.path.join(full_path, item)
@@ -1096,7 +1099,7 @@ def get_image_library():
                                 with Image.open(item_path) as img:
                                     width, height = img.size
                             except Exception as img_e:
-                                print(f"⚠️ [LIBRARY DEBUG] Impossible de lire les dimensions de {item_path}: {img_e}")
+                                app.logger.debug(f"Could not read dimensions of {item_path}: {img_e}")
                             
                             structure[folder_key].append({
                                 'filename': item,
@@ -1106,23 +1109,17 @@ def get_image_library():
                                 'width': width,
                                 'height': height
                             })
-                        else:
-                            print(f"⏭️ [LIBRARY DEBUG] Fichier ignoré (non-image): {relative_item_path}")
                 
             except Exception as scan_e:
-                print(f"❌ [LIBRARY DEBUG] Erreur lors du scan de {full_path}: {scan_e}")
+                app.logger.error(f"Error scanning {full_path}: {scan_e}")
             
             return structure
 
         # Scanner l'arborescence complète
         folders = scan_directory(user_dir)
         
-        print(f"📊 [LIBRARY DEBUG] Structure complète des dossiers:")
-        for folder_path, images in folders.items():
-            print(f"  📁 {folder_path}: {len(images)} image(s)")
-
         total_images = sum(len(images) for images in folders.values())
-        print(f"📚 [LIBRARY DEBUG] Total: {total_images} image(s) dans {len(folders)} dossier(s) pour {google_id}")
+        app.logger.info(f"Library scan complete: {total_images} images found for {google_id}")
 
         return jsonify({
             'success': True,
@@ -1150,6 +1147,7 @@ def storage_status():
         'using_local_storage': True,
         'message': 'Stockage local persistant actif (pas d\'Object Storage)'
     })
+
 
 @app.route('/auth/verify-config')
 def verify_oauth_config():
