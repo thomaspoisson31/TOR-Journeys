@@ -5,3 +5,7 @@ node_modules/
 venv/
 __pycache__/
 *.pyc
+
+# Local data
+data/
+travel_contexts.db
