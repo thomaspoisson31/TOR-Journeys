@@ -311,9 +311,14 @@ async function initializeApp() {
                 <div class="text-2xl text-red-500 text-center p-4">
                     <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>
                     Erreur de démarrage: ${error.message}<br>
-                    <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg">
-                        Recharger
-                    </button>
+                    <div class="mt-6 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center">
+                        <button onclick="window.openSettingsForMap()" class="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center">
+                            <i class="fas fa-cog mr-2"></i>Paramètres
+                        </button>
+                        <button onclick="location.reload()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center">
+                            <i class="fas fa-sync-alt mr-2"></i>Recharger
+                        </button>
+                    </div>
                 </div>
             `;
         }
@@ -832,6 +837,28 @@ function renderRegions() {
 window.renderLocations = renderLocations;
 window.renderRegions = renderRegions;
 window.initializeMap = initializeMap;
+
+// Fonction pour ouvrir les paramètres en cas d'erreur de carte
+window.openSettingsForMap = function() {
+    const loaderOverlay = document.getElementById('loader-overlay');
+    if (loaderOverlay) {
+        // Ne pas masquer complètement, juste rendre transparent pour voir la modale par dessus
+        // Ou mieux, laisser l'overlay mais s'assurer que la modale est au-dessus (z-index)
+        // Le loader-overlay a z-50, settings-modal a z-60, donc ça devrait aller.
+        // Mais si on veut que l'utilisateur puisse interagir avec la modale, il faut peut-être cacher le message d'erreur temporairement
+        // ou simplement ouvrir la modale par dessus.
+
+        // Si on cache l'overlay, on risque de voir une page vide/cassée dessous.
+        // On va essayer d'ouvrir la modale directement.
+    }
+
+    if (window.settingsManager) {
+        window.settingsManager.openSettings();
+        window.settingsManager.switchTab('maps');
+    } else {
+        alert("Le gestionnaire de paramètres n'est pas encore initialisé. Veuillez recharger la page.");
+    }
+};
 
 // --- Initialisation carte simplifiée ---
 function initializeMap() {
