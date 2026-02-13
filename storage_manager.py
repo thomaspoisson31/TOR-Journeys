@@ -82,6 +82,23 @@ class StorageManager:
                 return open(path, 'rb')
             return None
 
+    def create_folder(self, folder_path):
+        """Crée un dossier (prefixe vide sur GCS, dossier réel en local)"""
+        if not folder_path.endswith('/'):
+            folder_path += '/'
+
+        if self.client:
+            blob = self.bucket.blob(folder_path)
+            blob.upload_from_string('')
+            return True
+        else:
+            # Local fallback
+            if '..' in folder_path:
+                 raise ValueError("Chemin invalide")
+
+            os.makedirs(folder_path, exist_ok=True)
+            return True
+
     def list_files(self, prefix=None):
         """Liste les fichiers (blobs) avec un préfixe donné"""
         if self.client:

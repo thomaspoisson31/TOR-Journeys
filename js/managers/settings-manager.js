@@ -335,98 +335,265 @@ class SettingsManager {
             return;
         }
 
-        // Créer la modale de sélection de bibliothèque
+        this.currentMapModal = mapModal;
+        this.currentLibraryPath = ''; // Start at root
+
+        // Créer la structure de la modale
         const libraryModal = document.createElement('div');
         libraryModal.id = 'library-map-selection-modal';
         libraryModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[80]';
 
         libraryModal.innerHTML = `
-            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[80vh] overflow-y-auto">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-white">
-                        <i class="fas fa-images mr-2"></i>Bibliothèque d'images
+            <div class="bg-gray-800 rounded-lg w-[90vw] max-w-5xl mx-4 h-[80vh] flex flex-col shadow-2xl">
+                <!-- Header -->
+                <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                    <h2 class="text-2xl font-bold text-white flex items-center">
+                        <i class="fas fa-images mr-3 text-blue-500"></i>Bibliothèque d'images
                     </h2>
-                    <button id="close-library-map-selection" class="text-gray-400 hover:text-white">
+                    <button id="close-library-map-selection" class="text-gray-400 hover:text-white transition-colors">
                         <i class="fas fa-times fa-lg"></i>
                     </button>
                 </div>
 
-                <div id="library-map-selection-content" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    <!-- Les images seront générées ici -->
+                <!-- Toolbar -->
+                <div class="bg-gray-750 p-3 border-b border-gray-700 flex flex-wrap gap-3 justify-between items-center bg-gray-900">
+                    <div id="library-breadcrumbs" class="flex items-center text-sm text-gray-300 overflow-x-auto whitespace-nowrap">
+                        <!-- Breadcrumbs injected here -->
+                    </div>
+
+                    <div class="flex gap-2">
+                         <button id="library-refresh-btn" class="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 rounded text-white text-sm transition-colors" title="Rafraîchir">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button id="library-new-folder-btn" class="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 rounded text-white text-sm transition-colors flex items-center">
+                            <i class="fas fa-folder-plus mr-2"></i>Dossier
+                        </button>
+                        <div class="relative">
+                            <input type="file" id="library-upload-input" multiple class="hidden" accept="image/*">
+                            <button id="library-upload-btn" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition-colors shadow-sm flex items-center">
+                                <i class="fas fa-cloud-upload-alt mr-2"></i>Uploader
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="library-map-selection-loading" class="text-center py-12">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                    <p class="text-gray-400">Chargement des images...</p>
+                <!-- Content -->
+                <div id="library-content" class="flex-1 overflow-y-auto p-4 bg-gray-900">
+                    <!-- Content injected here -->
                 </div>
 
-                <div id="library-map-selection-empty" class="hidden text-center py-12 text-gray-500">
-                    <i class="fas fa-images fa-3x mb-4"></i>
-                    <p class="text-lg">Aucune image disponible</p>
+                <!-- Footer / Status -->
+                <div class="p-2 bg-gray-800 border-t border-gray-700 text-xs text-gray-500 flex justify-between">
+                    <span id="library-status-text">Prêt</span>
                 </div>
             </div>
         `;
 
         document.body.appendChild(libraryModal);
+        this.currentLibraryModal = libraryModal;
 
-        // Charger les images
+        // Event Listeners
+        document.getElementById('close-library-map-selection').addEventListener('click', () => libraryModal.remove());
+        document.getElementById('library-refresh-btn').addEventListener('click', () => this.refreshLibrary());
+        document.getElementById('library-new-folder-btn').addEventListener('click', () => this.createNewFolder());
+
+        const uploadBtn = document.getElementById('library-upload-btn');
+        const uploadInput = document.getElementById('library-upload-input');
+
+        uploadBtn.addEventListener('click', () => uploadInput.click());
+        uploadInput.addEventListener('change', (e) => this.handleLibraryUpload(e.target.files));
+
+        // Initial Load
+        this.loadLibraryContent();
+    }
+
+    async loadLibraryContent() {
+        const contentDiv = document.getElementById('library-content');
+        const breadcrumbsDiv = document.getElementById('library-breadcrumbs');
+        const statusText = document.getElementById('library-status-text');
+
+        if(!contentDiv) return;
+
+        // Loading state
+        contentDiv.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mb-4"></div>
+                <p>Chargement...</p>
+            </div>
+        `;
+        if (statusText) statusText.textContent = 'Chargement...';
+
         try {
-            const response = await fetch('/api/images/library', {
-                method: 'GET',
-                credentials: 'include'
-            });
+            const url = `/api/images/library?path=${encodeURIComponent(this.currentLibraryPath)}`;
+            const response = await fetch(url);
 
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Erreur ${response.status}`);
 
             const data = await response.json();
 
-            const loadingDiv = document.getElementById('library-map-selection-loading');
-            const contentDiv = document.getElementById('library-map-selection-content');
-            const emptyDiv = document.getElementById('library-map-selection-empty');
-
-            loadingDiv.classList.add('hidden');
-
-            // L'API retourne maintenant {folders: {category: [images]}}
-            if (data.success && data.folders && Object.keys(data.folders).length > 0) {
-                // Récupérer uniquement les images du dossier "maps"
-                const mapsImages = data.folders['maps'] || [];
-
-                if (mapsImages.length > 0) {
-                    contentDiv.innerHTML = mapsImages.map(image => `
-                        <div class="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all"
-                             onclick="window.settingsManager.selectLibraryImageForMap('${image.url}', '${encodeURIComponent(image.filename)}')">
-                            <img src="${image.url}" alt="${image.filename}" class="w-full h-24 object-cover">
-                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity flex items-center justify-center">
-                                <div class="opacity-0 group-hover:opacity-100 transition-opacity text-white text-center p-2">
-                                    <p class="text-xs truncate">${image.filename}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    emptyDiv.classList.remove('hidden');
-                }
+            if (data.success) {
+                this.renderBreadcrumbs(breadcrumbsDiv);
+                this.renderLibraryGrid(contentDiv, data.folders, data.files);
+                if (statusText) statusText.textContent = `${data.folders.length} dossiers, ${data.files.length} fichiers`;
             } else {
-                emptyDiv.classList.remove('hidden');
+                throw new Error(data.error || 'Erreur inconnue');
             }
-
         } catch (error) {
-            console.error('❌ Erreur lors du chargement de la bibliothèque:', error);
-            alert('Erreur lors du chargement de la bibliothèque: ' + error.message);
-            libraryModal.remove();
+            console.error('Library Load Error:', error);
+            contentDiv.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-red-400">
+                    <i class="fas fa-exclamation-triangle text-3xl mb-3"></i>
+                    <p>Erreur: ${error.message}</p>
+                    <button onclick="window.settingsManager.refreshLibrary()" class="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white text-sm">Réessayer</button>
+                </div>
+            `;
+            if (statusText) statusText.textContent = 'Erreur';
+        }
+    }
+
+    renderBreadcrumbs(container) {
+        if (!container) return;
+
+        const parts = this.currentLibraryPath.split('/').filter(p => p);
+
+        let html = `
+            <button class="hover:text-white flex items-center ${parts.length === 0 ? 'font-bold text-white' : ''}" onclick="window.settingsManager.navigateTo('')">
+                <i class="fas fa-home mr-1"></i> Racine
+            </button>
+        `;
+
+        let currentPathAcc = '';
+        parts.forEach((part, index) => {
+            currentPathAcc += (index > 0 ? '/' : '') + part;
+            const isLast = index === parts.length - 1;
+            const pathForClick = currentPathAcc; // capture value
+
+            html += `
+                <span class="mx-2 text-gray-500">/</span>
+                <button class="hover:text-white ${isLast ? 'font-bold text-white' : ''}"
+                        onclick="window.settingsManager.navigateTo('${pathForClick}')">
+                    ${part}
+                </button>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    renderLibraryGrid(container, folders, files) {
+        if (folders.length === 0 && files.length === 0) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                    <i class="fas fa-folder-open text-4xl mb-3 opacity-50"></i>
+                    <p>Dossier vide</p>
+                </div>
+            `;
             return;
         }
 
-        // Gestionnaire de fermeture
-        document.getElementById('close-library-map-selection').addEventListener('click', () => {
-            libraryModal.remove();
+        let html = '<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-4">';
+
+        // Render Folders
+        // Sort folders alphabetically
+        folders.sort().forEach(folder => {
+            const folderPath = this.currentLibraryPath ? `${this.currentLibraryPath}/${folder}` : folder;
+            html += `
+                <div class="group relative bg-gray-800 hover:bg-gray-700 rounded-lg p-3 cursor-pointer transition-all border border-transparent hover:border-blue-500/50 flex flex-col items-center"
+                     onclick="window.settingsManager.navigateTo('${folderPath}')">
+                    <div class="w-16 h-16 mb-2 flex items-center justify-center text-yellow-500 group-hover:text-yellow-400 transition-colors">
+                        <i class="fas fa-folder text-4xl"></i>
+                    </div>
+                    <div class="text-center w-full">
+                        <p class="text-sm text-gray-200 truncate font-medium group-hover:text-white">${folder}</p>
+                        <p class="text-xs text-gray-500">Dossier</p>
+                    </div>
+                </div>
+            `;
         });
 
-        // Stocker la référence à la modale de carte pour la fermer après sélection
-        this.currentMapModal = mapModal;
-        this.currentLibraryModal = libraryModal;
+        // Render Files
+        files.forEach(file => {
+            // file = { filename, url, path, type }
+            html += `
+                <div class="group relative bg-gray-800 hover:bg-gray-700 rounded-lg overflow-hidden cursor-pointer transition-all border border-transparent hover:border-green-500/50"
+                     onclick="window.settingsManager.selectLibraryImageForMap('${file.url}', '${encodeURIComponent(file.filename)}')">
+                    <div class="aspect-square w-full bg-gray-900 relative">
+                        <img src="${file.url}" alt="${file.filename}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity">
+                            <span class="bg-green-600 text-white text-xs px-2 py-1 rounded shadow">Sélectionner</span>
+                        </div>
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs text-gray-300 truncate group-hover:text-white" title="${file.filename}">${file.filename}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    navigateTo(path) {
+        this.currentLibraryPath = path;
+        this.loadLibraryContent();
+    }
+
+    refreshLibrary() {
+        this.loadLibraryContent();
+    }
+
+    async createNewFolder() {
+        const name = prompt("Nom du nouveau dossier :");
+        if (!name) return;
+
+        // Basic validation
+        if (!/^[a-zA-Z0-9_\-\.]+$/.test(name)) {
+            alert("Le nom contient des caractères invalides.");
+            return;
+        }
+
+        try {
+            if (this.uploadManager) {
+                await this.uploadManager.createFolder(name, this.currentLibraryPath);
+                this.refreshLibrary();
+            } else {
+                alert("UploadManager non chargé");
+            }
+        } catch (e) {
+            alert("Erreur: " + e.message);
+        }
+    }
+
+    async handleLibraryUpload(files) {
+        if (!files || files.length === 0) return;
+
+        const statusText = document.getElementById('library-status-text');
+
+        let successCount = 0;
+        let errors = [];
+
+        // Show uploading state
+        if (statusText) statusText.innerHTML = `<span class="text-blue-400"><i class="fas fa-spinner fa-spin mr-1"></i> Upload en cours (${files.length} fichiers)...</span>`;
+
+        for (let i = 0; i < files.length; i++) {
+            try {
+                // Pass true for isPath to indicate we are sending a path, not just a category
+                await this.uploadManager.uploadFile(files[i], this.currentLibraryPath, null, true);
+                successCount++;
+            } catch (e) {
+                console.error(`Erreur upload ${files[i].name}:`, e);
+                errors.push(`${files[i].name}: ${e.message}`);
+            }
+        }
+
+        this.refreshLibrary();
+
+        if (errors.length > 0) {
+            alert(`Upload terminé avec ${errors.length} erreurs:\n${errors.join('\n')}`);
+        } else {
+            // Optional: nice toast notification
+        }
     }
 
     selectLibraryImageForMap(imageUrl, encodedFilename) {
@@ -441,7 +608,9 @@ class SettingsManager {
             id: Date.now(),
             name: mapName,
             url: imageUrl,
-            isDefault: false
+            isDefault: false,
+            width: 5000, // Défaut, sera mis à jour par loadRealMapDimensions
+            height: 3230
         };
 
         this.availableMaps.push(newMap);
