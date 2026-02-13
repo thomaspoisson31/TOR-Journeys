@@ -67,9 +67,34 @@ class UploadManager {
     }
 
     /**
+     * Créer un dossier
+     */
+    async createFolder(name, path = '') {
+        try {
+            const response = await fetch('/api/create_folder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, path })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Erreur lors de la création du dossier');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("❌ Folder creation error:", error);
+            throw error;
+        }
+    }
+
+    /**
      * Uploader un fichier
      */
-    async uploadFile(file, category = 'general', onProgress = null) {
+    async uploadFile(file, categoryOrPath = 'general', onProgress = null, isPath = false) {
         console.log("📤 Starting file upload:", file.name);
 
         // Valider le fichier
@@ -81,7 +106,13 @@ class UploadManager {
         // Créer le FormData
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('category', category);
+
+        // Gérer soit la catégorie (ancien système) soit le chemin explicite
+        if (isPath) {
+            formData.append('path', categoryOrPath);
+        } else {
+            formData.append('category', categoryOrPath);
+        }
         
         // Option pour stocker en Base64 (pour contourner Object Storage)
         // Activer uniquement pour les images < 100KB

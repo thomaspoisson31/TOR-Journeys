@@ -267,97 +267,162 @@ def logout():
     session.clear()
     return redirect('/login')
 
-@app.route('/api/upload/image', methods=['POST'])
-def upload_image():
-    """Upload d'une image vers StorageManager (GCS ou Local)"""
+@app.route('/api/create_folder', methods=['POST'])
+def create_folder():
+    """Crée un dossier dans le stockage utilisateur"""
     if 'user_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
     try:
-        if 'file' not in request.files:
-            return jsonify({'error': 'Aucun fichier fourni'}), 400
+        data = request.json
+        folder_name = data.get('name')
+        parent_path = data.get('path', '') # Relatif au dossier utilisateur
 
-        file = request.files['file']
-        if file.filename == '':
-            return jsonify({'error': 'Aucun fichier sélectionné'}), 400
+        if not folder_name:
+            return jsonify({'error': 'Nom du dossier manquant'}), 400
 
-        if not allowed_file(file.filename):
-            return jsonify({'error': 'Type de fichier non autorisé'}), 400
-
-        # Lire le fichier en mémoire
-        file_data = file.read()
-        file_size = len(file_data)
-
-        if file_size > MAX_FILE_SIZE:
-            return jsonify({'error': f'Fichier trop volumineux'}), 400
-
-        category = request.form.get('category', 'general')
-        if category not in ['locations', 'regions', 'general', 'maps']:
-            category = 'general'
+        # Nettoyage du nom de dossier
+        folder_name = secure_filename(folder_name)
 
         google_id = session['google_id']
-        filename_base = secure_filename(file.filename)
+
+        # Construction du chemin complet
+        # uploads/{google_id}/{parent_path}/{folder_name}
+
+        full_path = f'uploads/{google_id}'
+        if parent_path:
+            # Sécurité: empêcher ..
+            if '..' in parent_path:
+                return jsonify({'error': 'Chemin invalide'}), 400
+            full_path = f'{full_path}/{parent_path}'
+
+        final_path = f'{full_path}/{folder_name}/'
+
+        if storage_manager.create_folder(final_path):
+            return jsonify({'success': True, 'path': f'{parent_path}/{folder_name}' if parent_path else folder_name})
+        else:
+            return jsonify({'error': 'Erreur lors de la création du dossier'}), 500
+
+    except Exception as e:
+        print(f"❌ Erreur create_folder: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/upload/image', methods=['POST'])
+def upload_image():
+    """Upload d'une ou plusieurs images vers StorageManager (GCS ou Local)"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    try:
+        files = request.files.getlist('files')
+
+        # Support single file upload (legacy)
+        if not files and 'file' in request.files:
+            files = [request.files['file']]
+
+        if not files:
+            return jsonify({'error': 'Aucun fichier fourni'}), 400
+
+        # Récupérer le chemin cible (path) ou la catégorie (legacy)
+        target_path = request.form.get('path', '')
+        category = request.form.get('category', 'general')
+
+        # Si path n'est pas fourni mais category oui, utiliser category comme path racine
+        if not target_path and category and category != 'general':
+            target_path = category
+
+        # Sécurité path
+        if '..' in target_path:
+             return jsonify({'error': 'Chemin invalide'}), 400
+
+        google_id = session['google_id']
+        base_upload_path = f'uploads/{google_id}'
+        if target_path:
+            base_upload_path = f'{base_upload_path}/{target_path}'
+
+        results = []
         
-        # Déterminer format et extension
-        try:
-            img = Image.open(io.BytesIO(file_data))
-            width, height = img.size
-            img_format = img.format
-            file.seek(0)
-        except Exception:
+        for file in files:
+            if file.filename == '' or not allowed_file(file.filename):
+                continue
+
+            # Lire le fichier en mémoire
+            file_data = file.read()
+            file_size = len(file_data)
+
+            if file_size > MAX_FILE_SIZE:
+                continue # Skip trop gros
+
+            filename_base = secure_filename(file.filename)
+
+            # Déterminer format et extension
             width, height = 0, 0
-            img_format = None
-
-        ext = get_file_extension(filename_base)
-        if not ext:
-            ext = mimetypes.guess_extension(file.content_type) or 'bin'
-
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        unique_id = str(uuid.uuid4())
-        final_filename = f"{timestamp}_{unique_id}.{ext}"
-        
-        # Traitement spécifique pour les cartes (redimensionnement)
-        if category == 'maps':
-            print(f"🗺️ Redimensionnement de la carte...")
             try:
-                # On passe un BytesIO à resize_map_image
-                resized_buffer, width, height, saved_format = resize_map_image(io.BytesIO(file_data), target_width=5000)
-                file_data = resized_buffer.read()
-                
-                if saved_format == 'JPEG': ext = 'jpg'
-                elif saved_format == 'PNG': ext = 'png'
-                elif saved_format == 'WEBP': ext = 'webp'
-                
-                final_filename = f"{timestamp}_{unique_id}.{ext}"
-                print(f"✅ Carte redimensionnée: {width}x{height}px")
-            except Exception as e:
-                print(f"❌ Erreur resize: {e}")
-                return jsonify({'error': str(e)}), 500
+                img = Image.open(io.BytesIO(file_data))
+                width, height = img.size
+                img_format = img.format
+                file.seek(0)
+            except Exception:
+                img_format = None
 
-        # Upload via StorageManager
-        final_path = f'uploads/{google_id}/{category}/{final_filename}'
-        saved_path = storage_manager.save_file(
-            file_data,
-            final_path,
-            content_type=file.content_type,
-            is_public=False # Privé par défaut, servi via proxy
-        )
-        
-        # URL locale (proxy)
-        public_url = f"/{saved_path}"
+            ext = get_file_extension(filename_base)
+            if not ext:
+                ext = mimetypes.guess_extension(file.content_type) or 'bin'
 
-        return jsonify({
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            unique_id = str(uuid.uuid4())
+            final_filename = f"{timestamp}_{unique_id}.{ext}"
+
+            # Traitement spécifique pour les cartes (uniquement si path='maps' ou category='maps')
+            is_map = target_path == 'maps' or category == 'maps'
+
+            if is_map:
+                print(f"🗺️ Redimensionnement de la carte...")
+                try:
+                    resized_buffer, width, height, saved_format = resize_map_image(io.BytesIO(file_data), target_width=5000)
+                    file_data = resized_buffer.read()
+
+                    if saved_format == 'JPEG': ext = 'jpg'
+                    elif saved_format == 'PNG': ext = 'png'
+                    elif saved_format == 'WEBP': ext = 'webp'
+
+                    final_filename = f"{timestamp}_{unique_id}.{ext}"
+                except Exception as e:
+                    print(f"❌ Erreur resize: {e}")
+                    continue
+
+            # Upload
+            final_file_path = f'{base_upload_path}/{final_filename}'
+            saved_path = storage_manager.save_file(
+                file_data,
+                final_file_path,
+                content_type=file.content_type,
+                is_public=False
+            )
+
+            results.append({
+                'url': f"/{saved_path}",
+                'filename': final_filename,
+                'width': width,
+                'height': height
+            })
+
+        if not results:
+            return jsonify({'error': 'Aucun fichier uploadé avec succès'}), 400
+
+        # Retourner le premier résultat comme avant si un seul fichier, ou une liste
+        response = {
             'success': True,
-            'url': public_url,
-            'filename': final_filename,
-            'size': len(file_data),
-            'user_id': session['user_id'],
-            'category': category,
-            'width': width,
-            'height': height,
+            'files': results,
             'storage': 'gcs' if storage_manager.is_gcs_enabled() else 'local',
-            'message': 'Image uploadée avec succès'
-        })
+            'message': f'{len(results)} image(s) uploadée(s)'
+        }
+
+        # Compatibilité pour le frontend actuel (qui attend url, filename, etc au premier niveau)
+        if len(results) == 1:
+            response.update(results[0])
+
+        return jsonify(response)
 
     except Exception as e:
         print(f"❌ Erreur upload: {e}")
@@ -365,60 +430,81 @@ def upload_image():
 
 @app.route('/api/images/library', methods=['GET'])
 def get_image_library():
-    """Récupérer toutes les images via StorageManager"""
+    """Récupérer les images (et dossiers) pour un chemin donné"""
     if 'user_id' not in session or 'google_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
     try:
         google_id = session['google_id']
-        prefix = f'uploads/{google_id}/'
+        current_path = request.args.get('path', '')
         
-        # Lister les fichiers (chemins relatifs complets)
-        files = storage_manager.list_files(prefix=prefix)
-
-        folders = {}
-        total_images = 0
-
-        for file_path in files:
-            # file_path ressemble à "uploads/google_id/category/filename.jpg"
-            # On veut extraire la catégorie et le nom
+        # Sécurité
+        if '..' in current_path:
+            return jsonify({'error': 'Chemin invalide'}), 400
             
-            # Retirer le préfixe "uploads/google_id/"
-            if not file_path.startswith(prefix):
+        # Prefix pour storage_manager (root de l'utilisateur)
+        base_prefix = f'uploads/{google_id}/'
+
+        # Liste tous les fichiers récursivement
+        all_files = storage_manager.list_files(prefix=base_prefix)
+
+        folders = set()
+        files = []
+
+        # Path relatif qu'on cherche à explorer (ex: "maps/")
+        target_dir = current_path
+        if target_dir and not target_dir.endswith('/'):
+            target_dir += '/'
+
+        for file_path in all_files:
+            # file_path est ex: "uploads/google_id/maps/image.png"
+
+            # Enlever le prefixe base
+            if not file_path.startswith(base_prefix):
                 continue
                 
-            relative_path = file_path[len(prefix):]
-            parts = relative_path.split('/')
+            rel_path = file_path[len(base_prefix):]
+            # rel_path est ex: "maps/image.png" ou "general/sub/img.jpg"
+
+            # Si on est à la racine (path vide), on veut voir "maps", "general" (dossiers) et les fichiers directs
+            # Si on est dans "maps/", on veut voir les fichiers dans "maps/" et les sous-dossiers
+
+            if not rel_path.startswith(target_dir):
+                continue
+
+            # Reste du chemin après le dossier cible
+            rest = rel_path[len(target_dir):]
+            if not rest: # C'est le dossier lui-même (ex: objet vide "maps/")
+                continue
+
+            parts = rest.split('/')
 
             if len(parts) > 1:
-                # Il y a un dossier (ex: category/filename)
-                category = '/'.join(parts[:-1])
-                filename = parts[-1]
+                # C'est un sous-dossier ou fichier dans un sous-dossier
+                # ex: "sub/image.png" -> parts=['sub', 'image.png']
+                # On ajoute 'sub' aux dossiers
+                folders.add(parts[0])
             else:
-                # Racine
-                category = 'root'
-                filename = relative_path
-
-            if category not in folders:
-                folders[category] = []
+                # C'est un fichier direct
+                # ex: "image.png" -> parts=['image.png']
+                filename = parts[0]
+                if not filename: continue # Cas dossier trailing slash
                 
-            # URL locale (proxy)
-            public_url = f"/{file_path}"
-            
-            folders[category].append({
-                'filename': filename,
-                'url': public_url,
-                'category': category,
-                'size': 0,
-                'width': None,
-                'height': None
-            })
-            total_images += 1
+                public_url = f"/{file_path}"
+                files.append({
+                    'filename': filename,
+                    'url': public_url,
+                    'path': f"{target_dir}{filename}" if target_dir else filename,
+                    'type': 'file'
+                })
 
+        # Structure compatible avec le frontend actuel (mais améliorée)
         return jsonify({
             'success': True,
-            'folders': folders,
-            'total': total_images
+            'current_path': current_path,
+            'folders': list(sorted(folders)), # Liste simple de noms de dossiers
+            'files': sorted(files, key=lambda x: x['filename']),
+            'legacy_folders': {} # Pour compatibilité si besoin, mais on va changer le frontend
         })
 
     except Exception as e:
