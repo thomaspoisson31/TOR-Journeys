@@ -1,0 +1,37 @@
+Using CPython 3.13.11
+Removed virtual environment at: .venv
+Creating virtual environment at: .venv
+Downloading grpcio (6.1MiB)
+Downloading pandas (11.7MiB)
+Downloading pydantic-core (1.9MiB)
+Downloading numpy (15.9MiB)
+Downloading pillow (6.3MiB)
+ Downloaded pydantic-core
+ Downloaded pillow
+ Downloaded grpcio
+ Downloaded numpy
+ Downloaded pandas
+Installed 62 packages in 71ms
+⚠️ [StorageManager] GCS non configuré. Mode stockage local (éphémère sur Render).
+✅ Json Database Manager initialisé (via StorageManager)
+🚀 Serveur Flask démarré
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.0.2:8080
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Feb/2026 18:22:28] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [14/Feb/2026 18:22:28] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Feb/2026 18:22:29] "GET /api/auth/user HTTP/1.1" 200 -
+127.0.0.1 - - [14/Feb/2026 18:23:01] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [14/Feb/2026 18:23:01] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Feb/2026 18:23:02] "GET /api/auth/user HTTP/1.1" 200 -
+127.0.0.1 - - [14/Feb/2026 18:23:33] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [14/Feb/2026 18:23:33] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Feb/2026 18:23:33] "GET /api/auth/user HTTP/1.1" 200 -
+127.0.0.1 - - [14/Feb/2026 18:24:09] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [14/Feb/2026 18:24:09] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [14/Feb/2026 18:24:09] "GET /api/auth/user HTTP/1.1" 200 -
+127.0.0.1 - - [14/Feb/2026 18:25:12] "GET /api/auth/user HTTP/1.1" 200 -

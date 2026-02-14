@@ -137,7 +137,10 @@ console.log("✅ Essential DOM elements:", {
  * Met à jour la visibilité des boutons de la toolbar en fonction du mode aventure
  */
 function updateToolbarButtonsVisibility() {
-    const adventureMode = window.positionManager?.adventureMode || false;
+    // Vérifier si le mode aventure (MJ ou Player) est actif
+    const isAdventureActive = window.positionManager && typeof window.positionManager.isAdventureActive === 'function'
+        ? window.positionManager.isAdventureActive()
+        : (window.positionManager?.adventureMode === 'mj' || window.positionManager?.adventureMode === 'player' || window.positionManager?.adventureMode === true);
 
     // Boutons à masquer quand le mode aventure est INACTIF
     const drawModeBtn = document.getElementById('draw-mode');
@@ -150,7 +153,7 @@ function updateToolbarButtonsVisibility() {
     const filterBtn = document.getElementById('filter-btn');
     const settingsBtn = document.getElementById('settings-btn');
 
-    if (adventureMode) {
+    if (isAdventureActive) {
         // Mode aventure ACTIF : masquer ajout lieu/région/filtres/paramètres, afficher tracé/journal/tirage
         if (drawModeBtn) drawModeBtn.classList.remove('hidden');
         if (journalBtn) journalBtn.classList.remove('hidden');
@@ -170,7 +173,7 @@ function updateToolbarButtonsVisibility() {
         if (settingsBtn) settingsBtn.classList.remove('hidden');
     }
 
-    console.log(`🎮 Visibilité des boutons mise à jour - Mode Aventure: ${adventureMode ? 'Actif' : 'Inactif'}`);
+    console.log(`🎮 Visibilité des boutons mise à jour - Mode Aventure: ${isAdventureActive ? 'Actif' : 'Inactif'}`);
 }
 
 // Exposer la fonction globalement

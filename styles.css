@@ -1919,3 +1919,34 @@ body {
 #random-roll-result-modal {
     z-index: 80;
 }
+/* --- Player Mode Restrictions --- */
+
+/* Hide edit controls in Player Mode */
+body.mode-player #info-box-edit,
+body.mode-player #info-box-delete,
+body.mode-player .edit-btn,
+body.mode-player .thumbnail-edit-indicator,
+body.mode-player .fa-pencil-alt,
+body.mode-player .fa-edit {
+    display: none !important;
+}
+
+/* Disable interaction with checkboxes in InfoBox (read-only) */
+body.mode-player .text-view input[type="checkbox"],
+body.mode-player .rumor-item input[type="checkbox"],
+body.mode-player .threat-item input[type="checkbox"] {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Hide trash icons in lists (rumors, etc) if they are visible in read mode */
+body.mode-player .rumor-delete,
+body.mode-player .threat-delete,
+body.mode-player .fa-trash {
+    display: none !important;
+}
+
+/* Ensure background orange is available for the mode indicator if not already */
+.bg-orange-600 {
+    background-color: #ea580c !important;
+}
