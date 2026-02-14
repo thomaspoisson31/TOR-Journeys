@@ -1058,7 +1058,10 @@ function initializeMap() {
     window.mapSwitcherManager = mapSwitcherManager; // Exposer globalement
     console.log("✅ MapSwitcherManager initialized");
 
-    // LibraryManager supprimé - fonctionnalité intégrée dans les modales
+    // Initialiser LibraryManager (Unified)
+    const libraryManager = new LibraryManager();
+    window.libraryManager = libraryManager;
+    console.log("✅ LibraryManager initialized");
 
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
