@@ -2231,416 +2231,48 @@ class InfoBoxManager {
     }
 
 
-    async openLibraryForEdit() {
-        const modal = document.getElementById('library-selection-modal');
-        const content = document.getElementById('library-selection-content');
-        const empty = document.getElementById('library-selection-empty');
-        const loading = document.getElementById('library-selection-loading');
-        const authRequired = document.getElementById('library-selection-auth-required');
-        const pathInfo = document.getElementById('library-path-info');
-        const pathDisplay = document.getElementById('library-path-display');
-
-        if (!modal) {
-            console.error("❌ Modal library-selection-modal non trouvée");
+    openLibraryForEdit() {
+        if (!window.libraryManager) {
+            console.error("LibraryManager not available");
             return;
         }
 
-        console.log("🔍 selectedLibraryImagesForEdit AVANT initialisation:", this.selectedLibraryImagesForEdit);
-
-        // Toujours réinitialiser la sélection à l'ouverture de la modale
-        this.selectedLibraryImagesForEdit = [];
-        console.log("✅ Initialisation de selectedLibraryImagesForEdit à []");
-
-        this.currentLibraryFolder = null;
-        this.currentLibraryPath = [];
-        this.libraryFolders = {};
-        this.libraryStructure = {};
-
-        console.log("🔍 État après initialisation:", {
-            selectedLibraryImagesForEdit: this.selectedLibraryImagesForEdit,
-            currentLibraryFolder: this.currentLibraryFolder,
-            currentLibraryPath: this.currentLibraryPath
-        });
-
-        // Vérifier l'authentification
-        if (!window.authManager || !window.authManager.isAuthenticated) {
-            content.classList.add('hidden');
-            empty.classList.add('hidden');
-            loading.classList.add('hidden');
-            authRequired.classList.remove('hidden');
-            if (pathInfo) pathInfo.classList.add('hidden');
-            modal.classList.remove('hidden');
-            return;
-        }
-
-        // Déterminer le dossier de départ selon le type d'élément
         const isCharacter = this.currentItem && this.currentType === 'character';
-        const startPath = isCharacter ? 'people' : null;
+        const startPath = isCharacter ? 'people' : '';
 
-        console.log("🔍 Type d'élément:", this.currentType, "- Chemin de départ:", startPath);
-
-        // Afficher le chemin de stockage
-        if (pathInfo && pathDisplay && window.authManager.currentUser) {
-            const googleId = window.authManager.currentUser.google_id;
-            // Utiliser le chemin de départ déterminé
-            pathDisplay.textContent = `uploads/${googleId}/${startPath || ''}`;
-            pathInfo.classList.remove('hidden');
-        }
-
-        // Afficher le loading
-        content.classList.add('hidden');
-        empty.classList.add('hidden');
-        authRequired.classList.add('hidden');
-        loading.classList.remove('hidden');
-        modal.classList.remove('hidden');
-
-        try {
-            const response = await fetch('/api/images/library', {
-                method: 'GET',
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            if (data.success && data.folders && Object.keys(data.folders).length > 0) {
-                // Filtrer la structure selon le type d'élément
-                if (startPath) {
-                    // Pour les personnages, filtrer uniquement les dossiers commençant par 'people'
-                    const filteredFolders = {};
-                    Object.keys(data.folders).forEach(key => {
-                        if (key === startPath || key.startsWith(startPath + '/')) {
-                            // Retirer le préfixe "people/" pour commencer directement dans ce dossier
-                            const relativeKey = key === startPath ? '' : key.substring(startPath.length + 1);
-                            if (relativeKey) { // Ignorer le dossier 'people' lui-même
-                                filteredFolders[relativeKey] = data.folders[key];
-                            }
-                        }
-                    });
-                    this.buildLibraryStructure(filteredFolders);
-                    console.log("✅ Structure filtrée pour", startPath, ":", Object.keys(filteredFolders).length, "sous-dossiers");
-                } else {
-                    this.buildLibraryStructure(data.folders);
-                    console.log("✅ Structure de bibliothèque complète chargée:", Object.keys(data.folders).length, "dossiers");
-                }
-
-                this.renderLibraryNavigation(); // Utiliser la nouvelle méthode
-                content.classList.remove('hidden');
-            } else {
-                empty.classList.remove('hidden');
-            }
-
-        } catch (error) {
-            console.error("❌ Erreur lors du chargement de la bibliothèque:", error);
-            alert(`Erreur lors du chargement de la bibliothèque: ${error.message}`);
-            empty.classList.remove('hidden');
-        } finally {
-            loading.classList.add('hidden');
-        }
-    }
-
-    // Nouvelle méthode pour construire et naviguer dans la structure
-    buildLibraryStructure(folders) {
-        this.libraryStructure = {};
-
-        // Construire d'abord tous les dossiers (même vides)
-        Object.keys(folders).forEach(folderPath => {
-            const parts = folderPath.split('/').filter(p => p); // Filtrer les parties vides
-            let current = this.libraryStructure;
-
-            parts.forEach((part, index) => {
-                if (!current[part]) {
-                    current[part] = {
-                        subfolders: {},
-                        images: [],
-                        fullPath: parts.slice(0, index + 1).join('/')
-                    };
-                }
-
-                // Se déplacer vers les sous-dossiers pour la prochaine itération
-                if (index < parts.length - 1) {
-                    current = current[part].subfolders;
-                } else {
-                    // Dernier niveau : ajouter les images
-                    current[part].images = folders[folderPath] || [];
-                }
-            });
-        });
-
-        console.log('📁 Structure de bibliothèque construite:', this.libraryStructure);
-    }
-
-    // Nouvelle méthode pour rendre la navigation de la bibliothèque
-    renderLibraryNavigation(path = []) {
-        const content = document.getElementById('library-selection-content');
-        if (!content) return;
-
-        let currentLevel = this.libraryStructure;
-        let currentData = null;
-
-        // Naviguer jusqu'au niveau actuel
-        path.forEach(folder => {
-            if (currentLevel[folder]) {
-                currentData = currentLevel[folder];
-                currentLevel = currentLevel[folder].subfolders || {};
+        window.libraryManager.open({
+            title: `Choisir une image pour ${this.currentItem.name}`,
+            startPath: startPath,
+            onSelect: (file) => {
+                this.addImageFromLibrary(file);
             }
         });
-
-        const folders = Object.keys(currentLevel);
-        const currentImages = currentData ? (currentData.images || []) : [];
-
-        console.log(`📂 [renderLibraryNavigation] Chemin actuel:`, path);
-        console.log(`📂 Dossiers au niveau actuel:`, folders);
-        console.log(`📂 Images au niveau actuel:`, currentImages.length);
-
-        let breadcrumb = '';
-        if (path.length > 0) {
-            breadcrumb = `
-                <div class="col-span-full mb-4 flex items-center space-x-2">
-                    <button onclick="window.infoBoxManager.navigateLibraryUp()" class="flex items-center text-blue-400 hover:text-blue-300">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        Retour
-                    </button>
-                    <span class="text-gray-400">/</span>
-                    <span class="text-white font-medium">${path.join(' / ')}</span>
-                </div>
-            `;
-        }
-
-        content.innerHTML = `
-            ${breadcrumb}
-            ${folders.length > 0 ? `
-                <div class="col-span-full mb-4">
-                    <h3 class="text-lg font-semibold text-white mb-2">${path.length > 0 ? 'Sous-dossiers :' : 'Sélectionner un dossier :'}</h3>
-                </div>
-                ${folders.map(folder => {
-                    const info = currentLevel[folder];
-                    const imageCount = (info.images || []).length;
-                    const subfolderCount = Object.keys(info.subfolders || {}).length;
-
-                    return `
-                        <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
-                             onclick="window.infoBoxManager.navigateIntoLibraryFolder('${folder}')">
-                            <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
-                            <div class="text-white font-medium">${folder}</div>
-                            <div class="text-gray-400 text-sm">
-                                ${imageCount > 0 ? `${imageCount} image(s)` : ''}
-                                ${imageCount > 0 && subfolderCount > 0 ? ' • ' : ''}
-                                ${subfolderCount > 0 ? `${subfolderCount} dossier(s)` : ''}
-                                ${imageCount === 0 && subfolderCount === 0 ? 'Vide' : ''}
-                            </div>
-                        </div>
-                    `;
-                }).join('')}
-            ` : ''}
-            ${currentImages.length > 0 ? this.renderCurrentFolderImages(currentImages) : ''}
-        `;
-
-        console.log(`✅ [renderLibraryNavigation] Contenu HTML généré pour ${folders.length} dossier(s) et ${currentImages.length} image(s)`);
     }
 
-    renderCurrentFolderImages(images) {
-        if (!images || images.length === 0) return '';
-
-        return `
-            <div class="col-span-full mt-6 mb-2">
-                <h4 class="text-md font-semibold text-white">Images dans ce dossier :</h4>
-            </div>
-            ${images.map(image => {
-                const safeId = image.url.replace(/[^a-zA-Z0-9]/g, '_');
-                const isSelected = this.selectedLibraryImagesForEdit &&
-                                  this.selectedLibraryImagesForEdit.some(img => img.url === image.url);
-                const selectedClass = isSelected ? 'ring-2 ring-blue-500' : '';
-                const indicatorClass = isSelected ? '' : 'hidden';
-
-                // Échapper correctement l'URL et le filename pour éviter les problèmes avec les caractères spéciaux
-                const escapedUrl = image.url.replace(/'/g, "\\'");
-                const escapedFilename = encodeURIComponent(image.filename).replace(/'/g, "\\'");
-
-                return `
-                    <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card ${selectedClass}"
-                         data-url="${image.url}"
-                         data-filename="${encodeURIComponent(image.filename)}"
-                         data-safeid="${safeId}"
-                         onclick="event.preventDefault(); event.stopPropagation(); window.infoBoxManager.toggleLibraryImageSelectionForEdit('${escapedUrl}', '${escapedFilename}', '${safeId}');">
-                        <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
-                        <div class="absolute top-2 right-2 ${indicatorClass} selected-indicator-${safeId}">
-                            <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                                <i class="fas fa-check text-xs"></i>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
-                            <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
-                                <p class="text-xs truncate">${image.filename}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('')}
-        `;
-    }
-
-    navigateIntoLibraryFolder(folderName) {
-        console.log(`🔽 [navigateIntoLibraryFolder] Navigation vers: ${folderName}`);
-        if (!this.currentLibraryPath) {
-            this.currentLibraryPath = [];
-        }
-        this.currentLibraryPath.push(folderName);
-        console.log(`🔽 Nouveau chemin:`, this.currentLibraryPath);
-        this.renderLibraryNavigation(this.currentLibraryPath);
-    }
-
-    navigateLibraryUp() {
-        console.log(`🔼 [navigateLibraryUp] Retour en arrière depuis:`, this.currentLibraryPath);
-        if (!this.currentLibraryPath || this.currentLibraryPath.length === 0) return;
-        this.currentLibraryPath.pop();
-        console.log(`🔼 Nouveau chemin:`, this.currentLibraryPath);
-        this.renderLibraryNavigation(this.currentLibraryPath);
-    }
-
-
-
-
-    toggleLibraryImageSelectionForEdit(url, filename, safeId) {
-        console.log('🔍 [toggleLibraryImageSelectionForEdit] DÉBUT');
-        console.log('   url:', url);
-        console.log('   filename:', filename);
-        console.log('   safeId:', safeId);
-
-        // Initialiser le tableau si nécessaire
-        if (!this.selectedLibraryImagesForEdit) {
-            console.warn('⚠️ selectedLibraryImagesForEdit était undefined, réinitialisation');
-            this.selectedLibraryImagesForEdit = [];
-        }
-
-        console.log('🔍 État actuel: this.selectedLibraryImagesForEdit =', JSON.stringify(this.selectedLibraryImagesForEdit));
-        console.log('🔍 Nombre d\'images sélectionnées:', this.selectedLibraryImagesForEdit.length);
-
-        // Rechercher la carte par data-safeid pour éviter les problèmes d'échappement
-        const card = document.querySelector(`.library-image-card[data-safeid="${safeId}"]`);
-        if (!card) {
-            console.error('❌ Carte non trouvée pour safeId:', safeId);
-            console.error('   Toutes les cartes présentes:', document.querySelectorAll('.library-image-card'));
-            return;
-        }
-
-        const indicator = card.querySelector(`.selected-indicator-${safeId}`);
-        if (!indicator) {
-            console.error('❌ Indicateur non trouvé pour safeId:', safeId);
-            console.error('   Contenu de la carte:', card.innerHTML);
-            return;
-        }
-
-        // Vérifier si l'image est déjà sélectionnée
-        const index = this.selectedLibraryImagesForEdit.findIndex(img => img.url === url);
-        console.log('🔍 Index de l\'image dans le tableau:', index);
-
-        if (index > -1) {
-            // Désélectionner
-            this.selectedLibraryImagesForEdit.splice(index, 1);
-            indicator.classList.add('hidden');
-            card.classList.remove('ring-2', 'ring-blue-500');
-            console.log(`🔽 Image désélectionnée. Total: ${this.selectedLibraryImagesForEdit.length}`);
-        } else {
-            // Sélectionner
-            const decodedFilename = decodeURIComponent(filename);
-            this.selectedLibraryImagesForEdit.push({ url, filename: decodedFilename });
-            indicator.classList.remove('hidden');
-            card.classList.add('ring-2', 'ring-blue-500');
-            console.log(`🔼 Image sélectionnée: ${decodedFilename}. Total: ${this.selectedLibraryImagesForEdit.length}`);
-        }
-
-        console.log('📋 Images sélectionnées actuellement:', this.selectedLibraryImagesForEdit.map(img => img.filename));
-        console.log('🔍 [toggleLibraryImageSelectionForEdit] FIN');
-    }
-
-    confirmLibrarySelectionForEdit() {
-        console.log("🔍 ========== DÉBUT confirmLibrarySelectionForEdit ==========");
-        console.log("🔍 this:", this);
-        console.log("🔍 Type de selectedLibraryImagesForEdit:", typeof this.selectedLibraryImagesForEdit);
-        console.log("🔍 Est un tableau?", Array.isArray(this.selectedLibraryImagesForEdit));
-        console.log("🔍 Contenu selectedLibraryImagesForEdit:", JSON.stringify(this.selectedLibraryImagesForEdit, null, 2));
-        console.log("🔍 Longueur:", this.selectedLibraryImagesForEdit ? this.selectedLibraryImagesForEdit.length : 'undefined');
-
-        // Vérifier toutes les cartes sélectionnées dans le DOM
-        const selectedCardsInDOM = document.querySelectorAll('.library-image-card.ring-2.ring-blue-500');
-        console.log("🔍 Cartes sélectionnées dans le DOM:", selectedCardsInDOM.length);
-        selectedCardsInDOM.forEach((card, i) => {
-            console.log(`   Carte ${i + 1}:`, card.dataset.url, card.dataset.filename);
-        });
-
-        if (!this.selectedLibraryImagesForEdit) {
-            console.error("❌ selectedLibraryImagesForEdit est null ou undefined");
-            alert("Erreur: le tableau de sélection n'existe pas. Vérifiez la console.");
-            return;
-        }
-
-        if (this.selectedLibraryImagesForEdit.length === 0) {
-            console.warn("⚠️ selectedLibraryImagesForEdit est vide (longueur: 0)");
-            console.warn("   Mais", selectedCardsInDOM.length, "cartes semblent sélectionnées dans le DOM");
-            alert("Veuillez sélectionner au moins une image");
-            return;
-        }
-
-        console.log(`✅ ${this.selectedLibraryImagesForEdit.length} image(s) à ajouter`);
-        console.log("🔍 currentItem:", this.currentItem);
-        console.log("🔍 currentItem.images AVANT:", this.currentItem.images);
+    addImageFromLibrary(file) {
+        if (!this.currentItem) return;
 
         // Initialiser le tableau d'images si nécessaire
         if (!this.currentItem.images) {
-            console.log("⚠️ currentItem.images n'existe pas, initialisation...");
             this.currentItem.images = [];
         }
 
-        // Ajouter les images sélectionnées
-        this.selectedLibraryImagesForEdit.forEach((image, index) => {
-            console.log("🔍 Ajout image", index + 1, "/", this.selectedLibraryImagesForEdit.length, ":", image);
-            const newImage = {
-                url: image.url,
-                type: null,
-                thumbnailUrl: null
-            };
-            console.log("🔍 Nouvelle image créée:", newImage);
-            this.currentItem.images.push(newImage);
-            console.log("🔍 currentItem.images après ajout:", this.currentItem.images.length, "image(s)");
-        });
+        // Ajouter l'image
+        const newImage = {
+            url: file.url,
+            type: null,
+            thumbnailUrl: null
+        };
 
-        console.log("🖼️ Images ajoutées, total:", this.currentItem.images.length);
-        console.log("🔍 currentItem.images APRÈS:", JSON.stringify(this.currentItem.images, null, 2));
+        this.currentItem.images.push(newImage);
 
         // Re-render la galerie d'images
         const imagesGallery = document.getElementById('edit-images-gallery');
-        console.log("🔍 Élément edit-images-gallery trouvé?", !!imagesGallery);
         if (imagesGallery) {
-            console.log("🔍 Re-render de la galerie d'images...");
             imagesGallery.innerHTML = this.renderEditImagesGallery();
-            console.log("✅ Galerie d'images re-rendue");
-        } else {
-            console.warn("⚠️ Élément edit-images-gallery non trouvé, impossible de re-render");
         }
 
-        // Réinitialiser la sélection
-        console.log("🔍 Réinitialisation de selectedLibraryImagesForEdit...");
-        this.selectedLibraryImagesForEdit = [];
-        console.log("✅ selectedLibraryImagesForEdit réinitialisé:", this.selectedLibraryImagesForEdit);
-
-        // Fermer la modale
-        console.log("🔍 Fermeture de la modale...");
-        this.closeLibrarySelection();
-
-        console.log("✅ Images ajoutées depuis la bibliothèque");
-        console.log("🔍 ========== FIN confirmLibrarySelectionForEdit ==========");
-    }
-
-    closeLibrarySelection() {
-        const modal = document.getElementById('library-selection-modal');
-        if (modal) {
-            modal.classList.add('hidden');
-        }
-        this.selectedLibraryImagesForEdit = [];
+        console.log("🖼️ Image added from library:", file.url);
     }
 
     rollRandomEvent() {

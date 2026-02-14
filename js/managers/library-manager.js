@@ -1,203 +1,306 @@
-
+import UploadManager from './upload-manager.js';
 
 class LibraryManager {
     constructor() {
-        this.libraryBtn = null;
-        this.libraryModal = null;
-        this.closeLibraryBtn = null;
-        this.libraryContent = null;
-        this.libraryEmpty = null;
-        this.libraryLoading = null;
-        this.folders = {};
-        this.selectedFolder = null;
+        this.currentPath = '';
+        this.onSelectCallback = null;
+        this.modal = null;
+        this.uploadManager = new UploadManager();
+        this.selectedFiles = []; // For future multi-select support if needed
+        console.log("📚 LibraryManager initialized (Unified)");
     }
 
     init() {
-        console.log("📚 Initialisation LibraryManager");
-        this.setupDOMReferences();
-        this.setupEventListeners();
+        // Nothing specific to init on load, modal is created on demand
     }
 
-    setupDOMReferences() {
-        this.libraryBtn = document.getElementById('library-btn');
-        this.libraryModal = document.getElementById('library-modal');
-        this.closeLibraryBtn = document.getElementById('close-library-btn');
-        this.libraryContent = document.getElementById('library-content');
-        this.libraryEmpty = document.getElementById('library-empty');
-        this.libraryLoading = document.getElementById('library-loading');
+    /**
+     * Ouvrir la bibliothèque
+     * @param {Object} options Configuration
+     * @param {Function} options.onSelect Callback (file) => {}
+     * @param {String} options.startPath Dossier de départ (optionnel)
+     * @param {String} options.title Titre de la modale (optionnel)
+     */
+    open(options = {}) {
+        this.onSelectCallback = options.onSelect || null;
+        this.currentPath = options.startPath || '';
+        const title = options.title || "Bibliothèque d'images";
+
+        this.createModal(title);
+        this.loadLibraryContent();
     }
 
-    setupEventListeners() {
-        if (this.libraryBtn) {
-            this.libraryBtn.addEventListener('click', () => this.openLibrary());
+    createModal(title) {
+        // Supprimer l'ancienne modale si elle existe
+        if (this.modal) {
+            this.modal.remove();
         }
 
-        if (this.closeLibraryBtn) {
-            this.closeLibraryBtn.addEventListener('click', () => this.closeLibrary());
-        }
+        this.modal = document.createElement('div');
+        this.modal.id = 'unified-library-modal';
+        this.modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[80]';
 
-        // Fermer en cliquant à l'extérieur
-        if (this.libraryModal) {
-            this.libraryModal.addEventListener('click', (e) => {
-                if (e.target === this.libraryModal) {
-                    this.closeLibrary();
-                }
-            });
-        }
-    }
+        this.modal.innerHTML = `
+            <div class="bg-gray-800 rounded-lg w-[90vw] max-w-5xl mx-4 h-[80vh] flex flex-col shadow-2xl">
+                <!-- Header -->
+                <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                    <h2 class="text-2xl font-bold text-white flex items-center">
+                        <i class="fas fa-images mr-3 text-blue-500"></i>${title}
+                    </h2>
+                    <button id="library-close-btn" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
 
-    async openLibrary() {
-        if (!this.libraryModal) return;
+                <!-- Toolbar -->
+                <div class="bg-gray-750 p-3 border-b border-gray-700 flex flex-wrap gap-3 justify-between items-center bg-gray-900">
+                    <div id="library-breadcrumbs" class="flex items-center text-sm text-gray-300 overflow-x-auto whitespace-nowrap">
+                        <!-- Breadcrumbs injected here -->
+                    </div>
 
-        this.libraryModal.classList.remove('hidden');
-        await this.loadImages();
-    }
+                    <div class="flex gap-2">
+                         <button id="library-refresh-btn" class="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 rounded text-white text-sm transition-colors" title="Rafraîchir">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button id="library-new-folder-btn" class="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 rounded text-white text-sm transition-colors flex items-center">
+                            <i class="fas fa-folder-plus mr-2"></i>Dossier
+                        </button>
+                        <div class="relative">
+                            <input type="file" id="library-upload-input" multiple class="hidden" accept="image/*">
+                            <button id="library-upload-btn" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm transition-colors shadow-sm flex items-center">
+                                <i class="fas fa-cloud-upload-alt mr-2"></i>Uploader
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-    closeLibrary() {
-        if (this.libraryModal) {
-            this.libraryModal.classList.add('hidden');
-        }
-    }
+                <!-- Content -->
+                <div id="library-content" class="flex-1 overflow-y-auto p-4 bg-gray-900">
+                    <!-- Content injected here -->
+                </div>
 
-    async loadImages() {
-        console.log("📚 Chargement des images de la bibliothèque");
-
-        // Afficher le loading
-        this.libraryLoading.classList.remove('hidden');
-        this.libraryContent.classList.add('hidden');
-        this.libraryEmpty.classList.add('hidden');
-
-        try {
-            const response = await fetch('/api/images/library', {
-                method: 'GET',
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            if (data.success && data.folders && Object.keys(data.folders).length > 0) {
-                this.folders = data.folders;
-                this.renderFolders();
-                this.libraryContent.classList.remove('hidden');
-            } else {
-                this.libraryEmpty.classList.remove('hidden');
-            }
-
-        } catch (error) {
-            console.error("❌ Erreur lors du chargement de la bibliothèque:", error);
-            alert(`Erreur lors du chargement de la bibliothèque: ${error.message}`);
-            this.libraryEmpty.classList.remove('hidden');
-        } finally {
-            this.libraryLoading.classList.add('hidden');
-        }
-    }
-
-    renderFolders() {
-        if (!this.libraryContent) return;
-
-        const folderNames = Object.keys(this.folders);
-        
-        this.libraryContent.innerHTML = `
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-2">Dossier :</label>
-                <select id="folder-select" class="w-full bg-gray-700 text-white border border-gray-600 rounded px-3 py-2">
-                    <option value="">-- Sélectionner un dossier --</option>
-                    ${folderNames.map(folder => `
-                        <option value="${folder}">${folder} (${this.folders[folder].length})</option>
-                    `).join('')}
-                </select>
-            </div>
-            <div id="folder-images" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
-                <p class="text-gray-400 col-span-full text-center py-8">Sélectionnez un dossier pour voir les images</p>
+                <!-- Footer / Status -->
+                <div class="p-2 bg-gray-800 border-t border-gray-700 text-xs text-gray-500 flex justify-between">
+                    <span id="library-status-text">Prêt</span>
+                </div>
             </div>
         `;
 
-        const folderSelect = document.getElementById('folder-select');
-        folderSelect.addEventListener('change', (e) => {
-            this.selectedFolder = e.target.value;
-            if (this.selectedFolder) {
-                this.renderFolderImages(this.selectedFolder);
-            }
-        });
+        document.body.appendChild(this.modal);
 
-        console.log(`✅ ${folderNames.length} dossier(s) affichés dans la bibliothèque`);
+        // Event Listeners
+        document.getElementById('library-close-btn').addEventListener('click', () => this.close());
+        document.getElementById('library-refresh-btn').addEventListener('click', () => this.refresh());
+        document.getElementById('library-new-folder-btn').addEventListener('click', () => this.createNewFolder());
+
+        const uploadBtn = document.getElementById('library-upload-btn');
+        const uploadInput = document.getElementById('library-upload-input');
+
+        uploadBtn.addEventListener('click', () => uploadInput.click());
+        uploadInput.addEventListener('change', (e) => this.handleUpload(e.target.files));
+
+        // Close on outside click
+        this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) this.close();
+        });
     }
 
-    renderFolderImages(folderName) {
-        const folderImagesDiv = document.getElementById('folder-images');
-        if (!folderImagesDiv) return;
+    close() {
+        if (this.modal) {
+            this.modal.remove();
+            this.modal = null;
+        }
+    }
 
-        const images = this.folders[folderName] || [];
+    async loadLibraryContent() {
+        const contentDiv = document.getElementById('library-content');
+        const breadcrumbsDiv = document.getElementById('library-breadcrumbs');
+        const statusText = document.getElementById('library-status-text');
 
-        if (images.length === 0) {
-            folderImagesDiv.innerHTML = '<p class="text-gray-400 col-span-full text-center py-8">Aucune image dans ce dossier</p>';
+        if(!contentDiv) return;
+
+        // Loading state
+        contentDiv.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mb-4"></div>
+                <p>Chargement...</p>
+            </div>
+        `;
+        if (statusText) statusText.textContent = 'Chargement...';
+
+        try {
+            const url = `/api/images/library?path=${encodeURIComponent(this.currentPath)}`;
+            const response = await fetch(url);
+
+            if (!response.ok) throw new Error(`Erreur ${response.status}`);
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.renderBreadcrumbs(breadcrumbsDiv);
+                this.renderGrid(contentDiv, data.folders, data.files);
+                if (statusText) statusText.textContent = `${data.folders.length} dossiers, ${data.files.length} fichiers`;
+            } else {
+                throw new Error(data.error || 'Erreur inconnue');
+            }
+        } catch (error) {
+            console.error('Library Load Error:', error);
+            contentDiv.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-red-400">
+                    <i class="fas fa-exclamation-triangle text-3xl mb-3"></i>
+                    <p>Erreur: ${error.message}</p>
+                    <button onclick="window.libraryManager.refresh()" class="mt-4 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white text-sm">Réessayer</button>
+                </div>
+            `;
+            if (statusText) statusText.textContent = 'Erreur';
+        }
+    }
+
+    renderBreadcrumbs(container) {
+        if (!container) return;
+
+        const parts = this.currentPath.split('/').filter(p => p);
+
+        let html = `
+            <button class="hover:text-white flex items-center ${parts.length === 0 ? 'font-bold text-white' : ''}" onclick="window.libraryManager.navigateTo('')">
+                <i class="fas fa-home mr-1"></i> Racine
+            </button>
+        `;
+
+        let currentPathAcc = '';
+        parts.forEach((part, index) => {
+            currentPathAcc += (index > 0 ? '/' : '') + part;
+            const isLast = index === parts.length - 1;
+            const pathForClick = currentPathAcc;
+
+            html += `
+                <span class="mx-2 text-gray-500">/</span>
+                <button class="hover:text-white ${isLast ? 'font-bold text-white' : ''}"
+                        onclick="window.libraryManager.navigateTo('${pathForClick}')">
+                    ${part}
+                </button>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    renderGrid(container, folders, files) {
+        if (folders.length === 0 && files.length === 0) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-gray-500">
+                    <i class="fas fa-folder-open text-4xl mb-3 opacity-50"></i>
+                    <p>Dossier vide</p>
+                </div>
+            `;
             return;
         }
 
-        folderImagesDiv.innerHTML = images.map(image => `
-            <div class="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all" data-url="${image.url}" data-filename="${image.filename}">
-                <img src="${image.url}" alt="${image.filename}" class="w-full h-24 object-cover">
-                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity flex items-center justify-center">
-                    <div class="opacity-0 group-hover:opacity-100 transition-opacity text-white text-center p-2">
-                        <p class="text-xs truncate">${image.filename}</p>
-                        <p class="text-xs text-gray-300">${this.formatFileSize(image.size)}</p>
+        let html = '<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-4">';
+
+        // Render Folders
+        folders.sort().forEach(folder => {
+            const folderPath = this.currentPath ? `${this.currentPath}/${folder}` : folder;
+            html += `
+                <div class="group relative bg-gray-800 hover:bg-gray-700 rounded-lg p-3 cursor-pointer transition-all border border-transparent hover:border-blue-500/50 flex flex-col items-center"
+                     onclick="window.libraryManager.navigateTo('${folderPath}')">
+                    <div class="w-16 h-16 mb-2 flex items-center justify-center text-yellow-500 group-hover:text-yellow-400 transition-colors">
+                        <i class="fas fa-folder text-4xl"></i>
+                    </div>
+                    <div class="text-center w-full">
+                        <p class="text-sm text-gray-200 truncate font-medium group-hover:text-white">${folder}</p>
+                        <p class="text-xs text-gray-500">Dossier</p>
                     </div>
                 </div>
-            </div>
-        `).join('');
-
-        // Ajouter les événements de clic
-        folderImagesDiv.querySelectorAll('[data-url]').forEach(card => {
-            card.addEventListener('click', () => {
-                this.selectImage({
-                    url: card.dataset.url,
-                    filename: card.dataset.filename
-                });
-            });
-        });
-
-        console.log(`✅ ${images.length} image(s) affichée(s) pour le dossier "${folderName}"`);
-    }
-
-    selectImage(image) {
-        console.log("📷 Image sélectionnée:", image);
-        
-        // Copier l'URL dans le presse-papiers
-        navigator.clipboard.writeText(image.url).then(() => {
-            // Afficher une notification temporaire
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-[70]';
-            notification.innerHTML = `
-                <i class="fas fa-check mr-2"></i>
-                URL copiée dans le presse-papiers
             `;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.remove();
-            }, 2000);
-        }).catch(err => {
-            console.error("❌ Erreur lors de la copie:", err);
         });
+
+        // Render Files
+        files.forEach(file => {
+            // file = { filename, url, path, type }
+            // Encode filename properly for onclick
+            const safeFilename = file.filename.replace(/'/g, "\\'");
+            const safeUrl = file.url.replace(/'/g, "\\'");
+
+            html += `
+                <div class="group relative bg-gray-800 hover:bg-gray-700 rounded-lg overflow-hidden cursor-pointer transition-all border border-transparent hover:border-green-500/50"
+                     onclick="window.libraryManager.selectFile('${safeUrl}', '${safeFilename}')">
+                    <div class="aspect-square w-full bg-gray-900 relative">
+                        <img src="${file.url}" alt="${file.filename}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity">
+                            <span class="bg-green-600 text-white text-xs px-2 py-1 rounded shadow">Sélectionner</span>
+                        </div>
+                    </div>
+                    <div class="p-2">
+                        <p class="text-xs text-gray-300 truncate group-hover:text-white" title="${file.filename}">${file.filename}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        container.innerHTML = html;
     }
 
-    formatFileSize(bytes) {
-        if (bytes < 1024) return bytes + ' B';
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    navigateTo(path) {
+        this.currentPath = path;
+        this.loadLibraryContent();
     }
-}
 
-// Export pour utilisation en module
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = LibraryManager;
+    refresh() {
+        this.loadLibraryContent();
+    }
+
+    async createNewFolder() {
+        const name = prompt("Nom du nouveau dossier :");
+        if (!name) return;
+
+        // Basic validation
+        if (!/^[a-zA-Z0-9_\-\.]+$/.test(name)) {
+            alert("Le nom contient des caractères invalides.");
+            return;
+        }
+
+        try {
+            await this.uploadManager.createFolder(name, this.currentPath);
+            this.refresh();
+        } catch (e) {
+            alert("Erreur: " + e.message);
+        }
+    }
+
+    async handleUpload(files) {
+        if (!files || files.length === 0) return;
+
+        const statusText = document.getElementById('library-status-text');
+        let errors = [];
+
+        // Show uploading state
+        if (statusText) statusText.innerHTML = `<span class="text-blue-400"><i class="fas fa-spinner fa-spin mr-1"></i> Upload en cours (${files.length} fichiers)...</span>`;
+
+        for (let i = 0; i < files.length; i++) {
+            try {
+                // Pass true for isPath to indicate we are sending a path, not just a category
+                await this.uploadManager.uploadFile(files[i], this.currentPath, null, true);
+            } catch (e) {
+                console.error(`Erreur upload ${files[i].name}:`, e);
+                errors.push(`${files[i].name}: ${e.message}`);
+            }
+        }
+
+        this.refresh();
+
+        if (errors.length > 0) {
+            alert(`Upload terminé avec ${errors.length} erreurs:\n${errors.join('\n')}`);
+        }
+    }
+
+    selectFile(url, filename) {
+        if (this.onSelectCallback) {
+            this.onSelectCallback({ url, filename, path: this.currentPath });
+        }
+        this.close();
+    }
 }
 
 export default LibraryManager;
-
-console.log("📚 LibraryManager module loaded");
-
