@@ -7,51 +7,94 @@ class PositionManager {
         this.dragStartX = 0;
         this.dragStartY = 0;
         this.currentPosition = this.loadPosition();
-        this.adventureMode = this.loadAdventureMode(); // Nouvel état pour le mode aventure
+        this.adventureMode = this.loadAdventureMode(); // Nouvel état pour le mode aventure (string: 'admin', 'mj', 'player')
         this.savedFilters = null; // Sauvegarde des filtres avant activation du mode Aventure
     }
 
     loadAdventureMode() {
         const savedMode = localStorage.getItem('adventurers_adventure_mode');
-        return savedMode === 'true'; // Retourne true si 'true', sinon false par défaut
+        // Migration de la compatibilité ascendante
+        if (savedMode === 'true') return 'mj';
+        if (savedMode === 'false') return 'admin';
+        // Si c'est déjà une chaîne valide, la retourner, sinon par défaut 'admin'
+        if (['admin', 'mj', 'player'].includes(savedMode)) return savedMode;
+        return 'admin';
     }
 
     saveAdventureMode() {
-        localStorage.setItem('adventurers_adventure_mode', this.adventureMode.toString());
+        localStorage.setItem('adventurers_adventure_mode', this.adventureMode);
         console.log(`💾 [PositionManager.saveAdventureMode] Mode Aventure sauvegardé: ${this.adventureMode}`);
     }
 
     toggleAdventureMode() {
-        this.adventureMode = !this.adventureMode;
-        console.log(`🎮 Mode Aventure ${this.adventureMode ? 'activé' : 'désactivé'}`);
+        // Cycle : Admin -> MJ -> Player -> Admin
+        const previousMode = this.adventureMode;
 
-        if (this.adventureMode) {
-            // Sauvegarder les filtres actuels avant de les forcer
-            this.saveFiltersBeforeAdventureMode();
-            // Appliquer les filtres du mode Aventure
-            this.applyAdventureModeFilters();
+        if (this.adventureMode === 'admin') {
+            this.adventureMode = 'mj';
+        } else if (this.adventureMode === 'mj') {
+            this.adventureMode = 'player';
         } else {
-            // Restaurer les filtres sauvegardés
+            this.adventureMode = 'admin';
+        }
+
+        console.log(`🎮 Mode Aventure changé: ${previousMode} -> ${this.adventureMode}`);
+
+        // Gérer les filtres et l'état
+        const isNowActive = this.isAdventureActive();
+        const wasActive = previousMode !== 'admin';
+
+        if (isNowActive && !wasActive) {
+            // Activation du mode aventure (MJ ou Player) depuis Admin
+            this.saveFiltersBeforeAdventureMode();
+            this.applyAdventureModeFilters();
+        } else if (!isNowActive && wasActive) {
+            // Désactivation (retour à Admin)
             this.restoreFiltersAfterAdventureMode();
+        } else if (isNowActive && wasActive) {
+            // Changement entre MJ et Player : réappliquer les filtres pour être sûr
+            // (techniquement les filtres sont les mêmes, mais ça ne fait pas de mal)
+            this.applyAdventureModeFilters();
         }
 
         // Mettre à jour l'indicateur visuel
         this.updateAdventureModeIndicator();
 
+        // Mettre à jour la classe CSS du body
+        this.updateBodyClass();
+
         // Sauvegarder l'état
-        localStorage.setItem('adventureModeActive', JSON.stringify(this.adventureMode));
+        this.saveAdventureMode();
 
         // Réinitialiser le drag en cours si besoin
-        if (this.adventureMode) {
+        if (isNowActive) {
             this.isDragging = false;
         }
         // Le marqueur de position reste toujours déplaçable
-        this.positionMarker.style.cursor = 'move';
+        if (this.positionMarker) {
+            this.positionMarker.style.cursor = 'move';
+        }
 
         // Mettre à jour la visibilité des boutons de la toolbar
         if (typeof window.updateToolbarButtonsVisibility === 'function') {
             window.updateToolbarButtonsVisibility();
         }
+
+        // Si la modale de position est ouverte, la mettre à jour
+        const positionModal = document.getElementById('position-modal');
+        if (positionModal && !positionModal.classList.contains('hidden')) {
+            this.updatePositionModal(positionModal);
+        }
+    }
+
+    // Helper pour savoir si on est en mode aventure (MJ ou Player)
+    isAdventureActive() {
+        return this.adventureMode === 'mj' || this.adventureMode === 'player';
+    }
+
+    updateBodyClass() {
+        document.body.classList.remove('mode-admin', 'mode-mj', 'mode-player');
+        document.body.classList.add(`mode-${this.adventureMode}`);
     }
 
     saveFiltersBeforeAdventureMode() {
@@ -74,7 +117,7 @@ class PositionManager {
             return;
         }
 
-        console.log('🎮 [PositionManager] Application des filtres du mode Aventure');
+        console.log(`🎮 [PositionManager] Application des filtres du mode Aventure (${this.adventureMode})`);
 
         // Forcer les filtres : Régions non affichées + Lieux Connus uniquement
         filterManager.activeFilters = {
@@ -145,16 +188,18 @@ class PositionManager {
     updateAdventureModeIndicator() {
         const indicator = document.getElementById('adventure-mode-indicator');
         if (indicator) {
-            // Toujours afficher l'indicateur, juste changer la couleur
             indicator.classList.remove('hidden');
-            if (this.adventureMode) {
-                indicator.classList.remove('bg-gray-600');
+            indicator.classList.remove('bg-gray-600', 'bg-green-600', 'bg-orange-600');
+
+            if (this.adventureMode === 'mj') {
                 indicator.classList.add('bg-green-600');
-                indicator.textContent = 'Mode Aventure';
+                indicator.textContent = 'Mode MJ';
+            } else if (this.adventureMode === 'player') {
+                indicator.classList.add('bg-orange-600'); // Utiliser orange pour joueur
+                indicator.textContent = 'Mode Joueur';
             } else {
-                indicator.classList.remove('bg-green-600');
                 indicator.classList.add('bg-gray-600');
-                indicator.textContent = 'Mode Aventure';
+                indicator.textContent = 'Mode Admin';
             }
         }
     }
@@ -165,9 +210,10 @@ class PositionManager {
         this.setupEventListeners();
         this.updateMarkerCursor(); // Initialiser le curseur
         this.updateAdventureModeIndicator(); // Afficher l'indicateur dès le chargement
+        this.updateBodyClass(); // Initialiser la classe CSS du body
 
         // IMPORTANT: Appliquer les filtres du mode Aventure si actif au chargement
-        if (this.adventureMode) {
+        if (this.isAdventureActive()) {
             console.log("🎮 [PositionManager.init] Mode Aventure actif au chargement - application des filtres");
             // Attendre que FilterManager soit disponible
             setTimeout(() => {
@@ -180,7 +226,7 @@ class PositionManager {
         }
 
         console.log("✅ PositionManager initialized with position:", this.currentPosition);
-        console.log("✅ Mode Aventure initial:", this.adventureMode ? "Actif" : "Inactif");
+        console.log("✅ Mode Aventure initial:", this.adventureMode);
     }
 
     loadPosition() {
@@ -653,12 +699,16 @@ class PositionManager {
         if (!statusSpan) return;
 
         // Mise à jour de l'affichage du statut
-        if (this.adventureMode) {
-            statusSpan.textContent = "Actif";
+        if (this.adventureMode === 'mj') {
+            statusSpan.textContent = "MJ";
             statusSpan.style.backgroundColor = '#22C55E'; // Vert
             statusSpan.style.color = '#fff';
+        } else if (this.adventureMode === 'player') {
+            statusSpan.textContent = "Joueur";
+            statusSpan.style.backgroundColor = '#F97316'; // Orange (Tailwind orange-500 approx)
+            statusSpan.style.color = '#fff';
         } else {
-            statusSpan.textContent = "Inactif";
+            statusSpan.textContent = "Admin";
             statusSpan.style.backgroundColor = '#6B7280'; // Gris
             statusSpan.style.color = '#fff';
         }
@@ -747,6 +797,8 @@ class PositionManager {
             });
         }
 
+        const isAdventureActive = this.isAdventureActive();
+
         // Afficher les lieux à proximité
         if (nearbyLocations.length > 0) {
             nearbyLocationsSection.classList.remove('hidden');
@@ -755,7 +807,7 @@ class PositionManager {
                 .map(loc => {
                     const bgColor = colorMap[loc.color] || colorMap.gray;
                     const escapedName = loc.name.replace(/'/g, "\\'");
-                    const exploreIcon = this.adventureMode ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${escapedName}', 'location')" title="Explorer"></i>` : '';
+                    const exploreIcon = isAdventureActive ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${escapedName}', 'location')" title="Explorer"></i>` : '';
                     return `<div class="text-xs px-2 py-1 rounded flex items-center justify-between" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
                         <span class="font-medium text-white">${loc.name}</span>
                         ${exploreIcon}
@@ -773,7 +825,7 @@ class PositionManager {
                 .map(reg => {
                     const bgColor = colorMap[reg.color] || colorMap.gray;
                     const escapedName = reg.name.replace(/'/g, "\\'");
-                    const exploreIcon = this.adventureMode ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${escapedName}', 'region')" title="Explorer"></i>` : '';
+                    const exploreIcon = isAdventureActive ? `<i class="fas fa-compass ml-2 cursor-pointer hover:text-yellow-400 transition-colors" onclick="window.positionManager.explorePlace('${escapedName}', 'region')" title="Explorer"></i>` : '';
                     return `<div class="text-xs px-2 py-1 rounded flex items-center justify-between" style="background-color: ${bgColor}30; border-left: 3px solid ${bgColor};">
                         <span class="font-medium text-white">${reg.name}</span>
                         ${exploreIcon}
@@ -920,22 +972,6 @@ class PositionManager {
         }
         return inside;
     }
-
-    updateAdventureModeIndicator() {
-        const indicator = document.getElementById('adventure-mode-indicator');
-        if (!indicator) return;
-
-        // Toujours afficher l'indicateur, juste changer la couleur
-        indicator.classList.remove('hidden');
-        if (this.adventureMode) {
-            indicator.classList.remove('bg-gray-600');
-            indicator.classList.add('bg-green-600');
-        } else {
-            indicator.classList.remove('bg-green-600');
-            indicator.classList.add('bg-gray-600');
-        }
-    }
-
 
     centerMapOnPosition() {
         // Cette fonction est supprimée car le bouton "Centrer" a été retiré de la modal.
