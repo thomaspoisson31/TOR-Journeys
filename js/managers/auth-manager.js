@@ -394,7 +394,9 @@ class AuthManager {
                              return [];
                          })(),
             // Ajouter les états des cases à cocher des tirages aléatoires
-            randomTablesCheckedResults: JSON.parse(localStorage.getItem('randomTablesCheckedResults') || '{}')
+            randomTablesCheckedResults: JSON.parse(localStorage.getItem('randomTablesCheckedResults') || '{}'),
+            // AJOUT: Compteurs
+            counters: window.countersManager ? window.countersManager.getCounters() : []
         };
 
         this.logAuth(`📦 Données collectées pour le contexte`, Object.keys(data));
@@ -720,6 +722,12 @@ class AuthManager {
                 window.randomTablesManager.checkedResults = data.randomTablesCheckedResults;
                 this.logAuth(`✅ ${Object.keys(data.randomTablesCheckedResults).length} état(s) de cases à cocher restauré(s)`);
             }
+        }
+
+        // Restaurer les compteurs
+        if (data.counters && window.countersManager) {
+            window.countersManager.loadCounters(data.counters);
+            this.logAuth(`✅ ${data.counters.length} compteurs restaurés`);
         }
 
         // Sauvegarder les filtres pour restauration après initialisation complète
@@ -1766,6 +1774,12 @@ class AuthManager {
         if (data.adventureMode !== undefined) {
             localStorage.setItem('adventurers_adventure_mode', data.adventureMode.toString());
             this.logAuth(`  - Mode aventure (${data.adventureMode}) sauvegardé dans localStorage.`);
+        }
+
+        // Sauvegarder les compteurs
+        if (data.counters) {
+            localStorage.setItem('customCounters', JSON.stringify(data.counters));
+            this.logAuth(`  - ${data.counters.length} compteurs sauvegardés dans localStorage.`);
         }
 
         // Si ce n'est pas depuis le cloud, marquer comme modifications non sauvegardées

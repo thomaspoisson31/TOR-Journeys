@@ -210,6 +210,11 @@ class SettingsManager {
             case 'random-tables':
                 this.renderSettingsRandomTablesTab();
                 break;
+            case 'counters':
+                if (window.countersManager) {
+                    window.countersManager.render();
+                }
+                break;
         }
     }
 
