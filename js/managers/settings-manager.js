@@ -554,11 +554,18 @@ class SettingsManager {
                         <div class="text-sm text-gray-300 mb-2">
                             ${invalidMapIdLocations} lieu${invalidMapIdLocations > 1 ? 'x' : ''} et ${invalidMapIdRegions} région${invalidMapIdRegions > 1 ? 's' : ''} avec un mapID qui ne correspond à aucune carte
                         </div>
-                        <button class="w-full px-3 py-1.5 bg-orange-600 hover:bg-orange-700 rounded transition-colors flex items-center justify-center space-x-2 text-xs"
-                                onclick="window.settingsManager.deleteInvalidMapIdElements()">
-                            <i class="fas fa-trash-alt"></i>
-                            <span>Supprimer les éléments avec mapID invalide</span>
-                        </button>
+                        <div class="flex gap-2">
+                            <button class="flex-1 px-3 py-1.5 bg-orange-600 hover:bg-orange-700 rounded transition-colors flex items-center justify-center space-x-2 text-xs"
+                                    onclick="window.settingsManager.deleteInvalidMapIdElements()">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Supprimer</span>
+                            </button>
+                            <button class="flex-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded transition-colors flex items-center justify-center space-x-2 text-xs"
+                                    onclick="window.settingsManager.reassociateInvalidMapIdElements()">
+                                <i class="fas fa-sync-alt"></i>
+                                <span>Réassocier sur la carte active</span>
+                            </button>
+                        </div>
                     </div>
                     ` : ''}
                 </div>
@@ -1608,6 +1615,71 @@ class SettingsManager {
 
         console.log(`✅ Éléments avec mapID invalide supprimés: ${deletedLocations} lieux, ${deletedRegions} régions`);
         alert(`${deletedLocations} lieu${deletedLocations > 1 ? 'x' : ''} et ${deletedRegions} région${deletedRegions > 1 ? 's' : ''} avec mapID invalide supprimé${deletedLocations + deletedRegions > 1 ? 's' : ''}.`);
+    }
+
+    reassociateInvalidMapIdElements() {
+        const validMapIds = this.availableMaps.map(m => m.url);
+
+        // Count elements to be reassociated first
+        const invalidLocs = window.locationsData?.locations?.filter(loc =>
+            loc.mapId && !validMapIds.includes(loc.mapId)
+        ) || [];
+
+        const invalidRegs = window.regionsData?.regions?.filter(reg =>
+            reg.mapId && !validMapIds.includes(reg.mapId)
+        ) || [];
+
+        if (invalidLocs.length === 0 && invalidRegs.length === 0) {
+            alert("Aucun élément avec mapID invalide à réassocier.");
+            return;
+        }
+
+        if (!confirm(`Voulez-vous réassocier ${invalidLocs.length} lieu(x) et ${invalidRegs.length} région(s) à la carte active "${this.activeMapName}" ?`)) {
+            return;
+        }
+
+        let reassociatedLocations = 0;
+        let reassociatedRegions = 0;
+
+        // Reassociate locations
+        if (window.locationsData && window.locationsData.locations) {
+            window.locationsData.locations.forEach(loc => {
+                if (loc.mapId && !validMapIds.includes(loc.mapId)) {
+                    loc.mapId = this.activeMapUrl;
+                    reassociatedLocations++;
+                }
+            });
+        }
+
+        // Reassociate regions
+        if (window.regionsData && window.regionsData.regions) {
+            window.regionsData.regions.forEach(reg => {
+                if (reg.mapId && !validMapIds.includes(reg.mapId)) {
+                    reg.mapId = this.activeMapUrl;
+                    reassociatedRegions++;
+                }
+            });
+        }
+
+        // Sauvegarder les modifications
+        if (window.dataManager) {
+            window.dataManager.saveLocationsToLocal();
+            window.dataManager.saveRegionsToLocal();
+        }
+
+        // Re-render la grille pour mettre à jour l'affichage
+        this.renderMapsGrid();
+
+        // Re-render les lieux et régions sur la carte
+        if (typeof window.renderLocations === 'function') {
+            window.renderLocations();
+        }
+        if (typeof window.renderRegions === 'function') {
+            window.renderRegions();
+        }
+
+        console.log(`✅ Éléments réassociés: ${reassociatedLocations} lieux, ${reassociatedRegions} régions`);
+        alert(`${reassociatedLocations} lieu(x) et ${reassociatedRegions} région(s) ont été réassociés à la carte active.`);
     }
 
     deleteDuplicateElements() {
