@@ -46,6 +46,7 @@ import LibraryManager from './managers/library-manager.js';
 import CharactersManager from './managers/characters-manager.js'; // Import du CharactersManager
 import RandomTablesManager from './managers/random-tables-manager.js'; // Import du RandomTablesManager
 import MapSwitcherManager from './managers/map-switcher-manager.js'; // Import du MapSwitcherManager
+import CountersManager from './managers/counters-manager.js'; // Import du CountersManager
 import './managers/calendar-manager.js'; // Import du CalendarManager global
 
 console.log("✅ Constants loaded successfully");
@@ -111,6 +112,7 @@ let journalManager;
 let adventureManager;
 let charactersManager; // Déclaration du CharactersManager
 let randomTablesManager; // Déclaration du RandomTablesManager
+let countersManager; // Déclaration du CountersManager
 
 console.log("✅ Global variables initialized");
 
@@ -1057,6 +1059,12 @@ function initializeMap() {
     mapSwitcherManager.init();
     window.mapSwitcherManager = mapSwitcherManager; // Exposer globalement
     console.log("✅ MapSwitcherManager initialized");
+
+    // Initialiser CountersManager
+    countersManager = new CountersManager();
+    countersManager.init();
+    window.countersManager = countersManager; // Exposer globalement
+    console.log("✅ CountersManager initialized");
 
     // Initialiser LibraryManager (Unified)
     const libraryManager = new LibraryManager();
