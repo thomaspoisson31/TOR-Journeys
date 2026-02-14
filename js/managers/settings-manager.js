@@ -161,7 +161,8 @@ class SettingsManager {
         const tabButtons = document.querySelectorAll('.settings-tab-button');
         tabButtons.forEach(button => {
             button.addEventListener('click', (e) => {
-                const targetTab = e.target.dataset.tab;
+                // Utiliser currentTarget pour obtenir le bouton même si on clique sur l'icône
+                const targetTab = e.currentTarget.dataset.tab;
                 this.switchTab(targetTab);
             });
         });
