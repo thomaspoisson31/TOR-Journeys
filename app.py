@@ -428,6 +428,111 @@ def upload_image():
         print(f"❌ Erreur upload: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/image/create-thumbnail', methods=['POST'])
+def create_thumbnail():
+    """Crée une vignette pour une image existante"""
+    if 'user_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': 'Données manquantes'}), 400
+
+        image_url = data.get('image_url')
+
+        if not image_url:
+            return jsonify({'error': 'URL de l\'image manquante'}), 400
+
+        clean_url = image_url
+        if clean_url.startswith('/'):
+            clean_url = clean_url[1:]
+
+        # Vérifier si c'est bien une image uploadée
+        if not clean_url.startswith('uploads/'):
+             return jsonify({'error': 'Image invalide (doit être dans uploads/)'}), 400
+
+        print(f"🖼️ Création vignette pour: {clean_url}")
+
+        # Ouvrir l'image originale
+        file_obj = storage_manager.open_file(clean_url)
+        if not file_obj:
+            print(f"❌ Image introuvable: {clean_url}")
+            return jsonify({'error': 'Image introuvable'}), 404
+
+        try:
+            with file_obj:
+                img = Image.open(file_obj)
+                original_format = img.format
+
+                # Déterminer le format de sortie
+                output_format = original_format
+                ext = get_file_extension(clean_url) or 'jpg'
+
+                if original_format not in ['JPEG', 'PNG', 'WEBP']:
+                    # Convertir en JPEG par défaut pour les autres formats
+                    if img.mode != 'RGB':
+                        img = img.convert('RGB')
+                    output_format = 'JPEG'
+                    ext = 'jpg'
+
+                # Déterminer le MIME type
+                if output_format == 'JPEG':
+                    mime_type = 'image/jpeg'
+                elif output_format == 'PNG':
+                    mime_type = 'image/png'
+                elif output_format == 'WEBP':
+                    mime_type = 'image/webp'
+                else:
+                    mime_type = 'application/octet-stream'
+
+                # Redimensionner (max 300x300)
+                img.thumbnail((300, 300))
+
+                # Sauvegarder en mémoire
+                buffer = io.BytesIO()
+
+                save_args = {'format': output_format}
+                if output_format == 'JPEG':
+                    save_args['quality'] = 85
+                    save_args['optimize'] = True
+                elif output_format == 'WEBP':
+                    save_args['quality'] = 85
+                elif output_format == 'PNG':
+                    save_args['optimize'] = True
+
+                img.save(buffer, **save_args)
+                buffer.seek(0)
+
+            # Générer le nom de fichier de la vignette
+            if '.' in clean_url:
+                base_path = clean_url.rsplit('.', 1)[0]
+                thumb_path = f"{base_path}_thumb.{ext}"
+            else:
+                thumb_path = f"{clean_url}_thumb.{ext}"
+
+            print(f"💾 Sauvegarde vignette vers: {thumb_path}")
+
+            # Sauvegarder la vignette
+            storage_manager.save_file(
+                buffer.read(),
+                thumb_path,
+                content_type=mime_type
+            )
+
+            return jsonify({
+                'success': True,
+                'thumbnail_url': f"/{thumb_path}"
+            })
+
+        except Exception as e:
+            print(f"❌ Erreur traitement image: {e}")
+            return jsonify({'error': f'Erreur lors du traitement de l\'image: {str(e)}'}), 500
+
+    except Exception as e:
+        print(f"❌ Erreur create_thumbnail: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/images/library', methods=['GET'])
 def get_image_library():
     """Récupérer les images (et dossiers) pour un chemin donné"""
