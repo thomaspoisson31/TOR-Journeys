@@ -658,7 +658,12 @@ class InfoBoxManager {
                 `;
             }
 
-            textView.innerHTML = descriptionHTML + regionTypeHTML + knowledgeHTML + gmCommentsHTML;
+            // Mode Joueur : ne pas afficher Connaissance ni Commentaires Meneur
+            if (window.positionManager && window.positionManager.adventureMode === 'player') {
+                textView.innerHTML = descriptionHTML + regionTypeHTML;
+            } else {
+                textView.innerHTML = descriptionHTML + regionTypeHTML + knowledgeHTML + gmCommentsHTML;
+            }
         }
 
         // Onglet Personnages (uniquement pour les lieux et régions)
@@ -2365,7 +2370,17 @@ class InfoBoxManager {
         console.log(`🔍 [renderPersonnagesTabRead] Associations INVERSES (${reverseAssociatedIds.length}):`, reverseAssociatedIds);
 
         // Fusionner les deux listes en évitant les doublons (directAssociatedIds en premier)
-        const allAssociatedIds = [...new Set([...directAssociatedIds, ...reverseAssociatedIds])];
+        let allAssociatedIds = [...new Set([...directAssociatedIds, ...reverseAssociatedIds])];
+
+        // Mode Joueur : filtrer uniquement les personnages rencontrés
+        if (window.positionManager && window.positionManager.adventureMode === 'player') {
+            console.log(`🎮 [renderPersonnagesTabRead] Mode Joueur actif - filtrage des personnages rencontrés uniquement`);
+            allAssociatedIds = allAssociatedIds.filter(charId => {
+                const char = window.charactersManager.characters.find(c => String(c.id) === String(charId));
+                return char && char.met === true;
+            });
+        }
+
         console.log(`🔍 [renderPersonnagesTabRead] Total personnages (${allAssociatedIds.length}):`, allAssociatedIds);
 
         // Nettoyer complètement l'onglet
@@ -2501,6 +2516,12 @@ class InfoBoxManager {
         // Lieux
         associatedLocationIds.forEach(id => {
             const loc = window.locationsData?.locations?.find(l => String(l.id) === String(id));
+
+            // Mode Joueur : filtrer les lieux non visités
+            if (window.positionManager && window.positionManager.adventureMode === 'player') {
+                if (!loc || !loc.visited) return;
+            }
+
             if (loc) {
                 html += `
                     <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
@@ -2522,152 +2543,12 @@ class InfoBoxManager {
         // Régions
         associatedRegionIds.forEach(id => {
             const reg = window.regionsData?.regions?.find(r => String(r.id) === String(id));
-            if (reg) {
-                html += `
-                    <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
-                         onclick="window.infoBoxManager.navigateToRegion(event, '${reg.id}')">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center border-2 border-orange-500 flex-shrink-0">
-                                <i class="fas fa-mountain text-orange-600"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-800 truncate text-sm">${reg.name}</h4>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
-                        </div>
-                    </div>
-                `;
+
+            // Mode Joueur : filtrer les régions non visitées
+            if (window.positionManager && window.positionManager.adventureMode === 'player') {
+                if (!reg || !reg.visited) return;
             }
-        });
 
-        content.innerHTML = html;
-    }
-
-    renderLieuxRegionsTabRead() {
-        const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
-        if (!lieuxRegionsTab) return;
-
-        console.log(`📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "${this.currentItem.name}"`);
-
-        const character = this.currentItem;
-        const associatedLocationIds = character.associatedLocations || [];
-        const associatedRegionIds = character.associatedRegions || [];
-
-        lieuxRegionsTab.innerHTML = '';
-
-        const textView = document.createElement('div');
-        textView.className = 'text-view';
-        textView.style.cssText = 'flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;';
-        lieuxRegionsTab.appendChild(textView);
-
-        const content = document.createElement('div');
-        content.style.cssText = 'flex: 1; min-height: 0; overflow-y: auto; padding: 1rem; background-color: white;';
-        textView.appendChild(content);
-
-        if (associatedLocationIds.length === 0 && associatedRegionIds.length === 0) {
-            content.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-400"><i class="fas fa-map-marker-alt fa-3x mb-4"></i><p>Aucun lieu ou région associé</p></div>';
-            return;
-        }
-
-        let html = '<h3 style="color: #940000; font-family: \'Merriweather\', serif; font-weight: 700; margin-bottom: 1rem; font-size: 1.35rem;"><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem;"></i>Lieux et Régions associés</h3>';
-
-        // Lieux
-        associatedLocationIds.forEach(id => {
-            const loc = window.locationsData?.locations?.find(l => String(l.id) === String(id));
-            if (loc) {
-                html += `
-                    <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
-                         onclick="window.infoBoxManager.navigateToLocation(event, '${loc.id}')">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
-                                <i class="fas fa-map-marker-alt text-blue-600"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-800 truncate text-sm">${loc.name}</h4>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
-                        </div>
-                    </div>
-                `;
-            }
-        });
-
-        // Régions
-        associatedRegionIds.forEach(id => {
-            const reg = window.regionsData?.regions?.find(r => String(r.id) === String(id));
-            if (reg) {
-                html += `
-                    <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
-                         onclick="window.infoBoxManager.navigateToRegion(event, '${reg.id}')">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center border-2 border-orange-500 flex-shrink-0">
-                                <i class="fas fa-mountain text-orange-600"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-800 truncate text-sm">${reg.name}</h4>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
-                        </div>
-                    </div>
-                `;
-            }
-        });
-
-        content.innerHTML = html;
-    }
-
-    renderLieuxRegionsTabRead() {
-        const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
-        if (!lieuxRegionsTab) return;
-
-        console.log(`📋 [renderLieuxRegionsTabRead] Début du rendu pour personnage "${this.currentItem.name}"`);
-
-        const character = this.currentItem;
-        const associatedLocationIds = character.associatedLocations || [];
-        const associatedRegionIds = character.associatedRegions || [];
-
-        lieuxRegionsTab.innerHTML = '';
-
-        const textView = document.createElement('div');
-        textView.className = 'text-view';
-        textView.style.cssText = 'flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;';
-        lieuxRegionsTab.appendChild(textView);
-
-        const content = document.createElement('div');
-        content.style.cssText = 'flex: 1; min-height: 0; overflow-y: auto; padding: 1rem; background-color: white;';
-        textView.appendChild(content);
-
-        if (associatedLocationIds.length === 0 && associatedRegionIds.length === 0) {
-            content.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-400"><i class="fas fa-map-marker-alt fa-3x mb-4"></i><p>Aucun lieu ou région associé</p></div>';
-            return;
-        }
-
-        let html = '<h3 style="color: #940000; font-family: \'Merriweather\', serif; font-weight: 700; margin-bottom: 1rem; font-size: 1.35rem;"><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem;"></i>Lieux et Régions associés</h3>';
-
-        // Lieux
-        associatedLocationIds.forEach(id => {
-            const loc = window.locationsData?.locations?.find(l => String(l.id) === String(id));
-            if (loc) {
-                html += `
-                    <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
-                         onclick="window.infoBoxManager.navigateToLocation(event, '${loc.id}')">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
-                                <i class="fas fa-map-marker-alt text-blue-600"></i>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-800 truncate text-sm">${loc.name}</h4>
-                            </div>
-                            <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
-                        </div>
-                    </div>
-                `;
-            }
-        });
-
-        // Régions
-        associatedRegionIds.forEach(id => {
-            const reg = window.regionsData?.regions?.find(r => String(r.id) === String(id));
             if (reg) {
                 html += `
                     <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
