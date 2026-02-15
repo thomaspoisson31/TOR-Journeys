@@ -12,7 +12,8 @@ class CharactersManager {
             known: false,
             met: false,
             knownLocations: true,
-            nextSession: false
+            nextSession: false,
+            allMaps: false // Nouveau filtre pour voir tous les personnages
         };
         this.sortBy = 'name';
         // Added for Gemini integration
@@ -165,6 +166,15 @@ class CharactersManager {
             });
         }
 
+        // Filtre "Toutes les cartes"
+        const filterAllMaps = document.getElementById('filter-all-maps');
+        if (filterAllMaps) {
+            filterAllMaps.addEventListener('change', (e) => {
+                this.filters.allMaps = e.target.checked;
+                this.renderCharactersList();
+            });
+        }
+
         // Tri
         const sortSelect = document.getElementById('sort-characters');
         if (sortSelect) {
@@ -295,6 +305,7 @@ class CharactersManager {
         const filterKnown = document.getElementById('filter-known');
         const filterMet = document.getElementById('filter-met');
         const filterKnownLocations = document.getElementById('filter-known-locations');
+        const filterAllMaps = document.getElementById('filter-all-maps');
 
         if (filterPJ) filterPJ.checked = this.filters.pj;
         if (filterPNJ) filterPNJ.checked = this.filters.pnj;
@@ -302,6 +313,7 @@ class CharactersManager {
         if (filterKnown) filterKnown.checked = this.filters.known;
         if (filterMet) filterMet.checked = this.filters.met;
         if (filterKnownLocations) filterKnownLocations.checked = this.filters.knownLocations;
+        if (filterAllMaps) filterAllMaps.checked = this.filters.allMaps;
 
         const filterNextSession = document.getElementById('filter-next-session');
         if (filterNextSession) filterNextSession.checked = this.filters.nextSession;
@@ -338,6 +350,7 @@ class CharactersManager {
         this.filters.met = false;
         this.filters.knownLocations = true;
         this.filters.nextSession = false;
+        // On ne touche pas à allMaps ici car c'est un filtre structurel
 
         this.syncFiltersUI();
         this.updateFilterUIState();
@@ -393,7 +406,10 @@ class CharactersManager {
         // Filtrer les personnages par carte active
         const activeMapId = window.settingsManager?.activeMapUrl;
         let filteredCharacters = this.characters.filter(character => {
-            // Afficher les personnages sans mapId OU ceux correspondant à la carte active
+            // Si le filtre "Toutes les cartes" est actif, on ignore le mapId
+            if (this.filters.allMaps) return true;
+
+            // Sinon, afficher les personnages sans mapId OU ceux correspondant à la carte active
             if (!character.mapId || !activeMapId) return true;
             return character.mapId === activeMapId;
         });
@@ -1071,8 +1087,11 @@ class CharactersManager {
 
             console.log(`📤 [exportCharacters] Total personnages disponibles: ${this.characters?.length || 0}`);
 
-            // Filtrer les personnages par carte active
+            // Filtrer les personnages par carte active (ou tous si le filtre est actif)
             const charactersToExport = this.characters.filter(character => {
+                // Si "Toutes les cartes" est coché, tout exporter
+                if (this.filters.allMaps) return true;
+
                 // Exporter les personnages sans mapId OU ceux correspondant à la carte active
                 if (!character.mapId) return true;
                 return character.mapId === activeMapUrl;
@@ -1195,6 +1214,13 @@ class CharactersManager {
             // Récupérer la carte active pour associer les personnages importés
             const activeMapId = window.settingsManager?.activeMapUrl || 'fr_tor_2nd_eriadors_map_page-0001.webp';
 
+            // Demander à l'utilisateur s'il souhaite forcer l'association à la carte active
+            const forceMapAssociation = confirm(
+                "Voulez-vous associer tous les personnages importés à la carte active actuelle ?\n\n" +
+                "OK = Oui, ils seront visibles sur cette carte.\n" +
+                "Annuler = Non, ils conserveront leur carte d'origine (et ne seront visibles que si 'Toutes les cartes' est coché)."
+            );
+
             if (mode === 'replace') {
                 console.log("📥 Mode REPLACE - Remplacement de tous les personnages");
                 this.characters = importedCharacters.map(char => ({
@@ -1205,7 +1231,8 @@ class CharactersManager {
                     images: char.images || [],
                     associatedLocations: (char.associatedLocations || []).map(id => String(id)),
                     associatedRegions: (char.associatedRegions || []).map(id => String(id)),
-                    mapId: char.mapId || activeMapId,
+                    // Si forceMapAssociation est vrai, on utilise activeMapId, sinon on garde char.mapId (ou activeMapId par défaut si vide)
+                    mapId: forceMapAssociation ? activeMapId : (char.mapId || activeMapId),
                     Rumeurs: char.Rumeurs || (char.Rumeur ? [char.Rumeur] : [])
                 }));
             } else {
@@ -1230,7 +1257,8 @@ class CharactersManager {
                             images: normalizedImportedChar.images || existingChar.images,
                             associatedLocations: normalizedImportedChar.associatedLocations || existingChar.associatedLocations,
                             associatedRegions: normalizedImportedChar.associatedRegions || existingChar.associatedRegions,
-                            mapId: normalizedImportedChar.mapId || existingChar.mapId || activeMapId,
+                            // Si forceMapAssociation est vrai, on utilise activeMapId
+                            mapId: forceMapAssociation ? activeMapId : (normalizedImportedChar.mapId || existingChar.mapId || activeMapId),
                             Rumeurs: normalizedImportedChar.Rumeurs || existingChar.Rumeurs
                         });
                         console.log(`🔄 Personnage mis à jour: ${normalizedImportedChar.name} (ID: ${normalizedImportedChar.id})`);
@@ -1244,7 +1272,8 @@ class CharactersManager {
                             images: normalizedImportedChar.images || [],
                             associatedLocations: normalizedImportedChar.associatedLocations,
                             associatedRegions: normalizedImportedChar.associatedRegions,
-                            mapId: normalizedImportedChar.mapId || activeMapId,
+                            // Si forceMapAssociation est vrai, on utilise activeMapId
+                            mapId: forceMapAssociation ? activeMapId : (normalizedImportedChar.mapId || activeMapId),
                             Rumeurs: normalizedImportedChar.Rumeurs
                         };
                         this.characters.push(newChar);
@@ -1459,6 +1488,11 @@ class CharactersManager {
 
     // Méthode pour récupérer toutes les données (pour synchronisation)
     getAllData() {
+        return { characters: this.characters };
+    }
+
+    // Getter pour AuthManager
+    get charactersData() {
         return { characters: this.characters };
     }
 
