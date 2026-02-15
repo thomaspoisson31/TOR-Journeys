@@ -579,8 +579,35 @@ class CharactersManager {
     }
 
     renderCharacterCard(character) {
-        // Afficher UNIQUEMENT l'image de type "vignette"
-        const thumbnailImage = character.images?.find(img => img.type === 'vignette');
+        // Sélectionner l'image à afficher
+        // Priorité 1: Image marquée explicitement comme "vignette" (avec crop data)
+        // Priorité 2: Image marquée comme "principale"
+        // Priorité 3: La première image disponible
+        let displayImage = character.images?.find(img => img.type === 'vignette');
+
+        if (!displayImage) {
+            displayImage = character.images?.find(img => img.type === 'principale');
+        }
+
+        if (!displayImage && character.images?.length > 0) {
+            displayImage = character.images[0];
+        }
+
+        // Nettoyage: Si l'URL contient encore "/thumbs/", on essaie de revenir à l'image originale
+        // car on ne veut plus utiliser les fichiers physiques de thumbnails qui sont souvent manquants
+        if (displayImage && displayImage.url && displayImage.url.includes('/thumbs/')) {
+            // Tenter de reconstruire l'URL originale
+            // Ex: .../thumbs/thumb_image.png -> .../image.png
+            // Ex: .../thumbs/image_thumb.png -> .../image.png
+            // C'est une heuristique, mais ça peut sauver des affichages
+            let originalUrl = displayImage.url.replace('/thumbs/', '/');
+            originalUrl = originalUrl.replace('thumb_', '');
+            originalUrl = originalUrl.replace('_thumb', '');
+
+            // On ne modifie pas l'objet image persistant ici pour éviter des effets de bord,
+            // on crée juste un objet temporaire pour l'affichage
+            displayImage = { ...displayImage, url: originalUrl };
+        }
 
         // Déterminer la couleur du cartouche selon le type
         let typeClass = 'bg-green-600';
@@ -597,8 +624,13 @@ class CharactersManager {
 
         // Calculer le transform CSS pour la vignette
         let thumbnailStyle = '';
-        if (thumbnailImage?.thumbnailCrop) {
-            const crop = thumbnailImage.thumbnailCrop;
+        // Si on a des données de crop (soit sur une vraie vignette, soit sur une image principale utilisée comme vignette)
+        // On vérifie d'abord si une vignette explicite existe pour récupérer ses données de crop
+        const explicitVignette = character.images?.find(img => img.type === 'vignette');
+        const cropSource = explicitVignette || displayImage;
+
+        if (cropSource?.thumbnailCrop) {
+            const crop = cropSource.thumbnailCrop;
             const zoom = crop.zoom || 1;
             const offsetX = crop.offsetX || 0;
             const offsetY = crop.offsetY || 0;
@@ -621,10 +653,11 @@ class CharactersManager {
                  data-character-id="${character.id}"
                  ${clickHandler}>
                 <div class="flex items-center space-x-4">
-                    ${thumbnailImage ? `
+                    ${displayImage ? `
                         <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0">
-                            <img src="${thumbnailImage.url}" alt="${character.name}" 
-                                 class="w-full h-full object-cover" ${thumbnailStyle}>
+                            <img src="${displayImage.url}" alt="${character.name}"
+                                 class="w-full h-full object-cover" ${thumbnailStyle}
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iMjAgMjF2LTJhNCA0IDAgMCAwLTQtNEg4YTQgNCAwIDAgMC00IDR2MiIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iNyIgcj0iNCIvPjwvc3ZnPg=='; this.style.transform='none'; this.parentElement.classList.add('bg-gray-600', 'flex', 'items-center', 'justify-content');">
                         </div>
                     ` : `
                         <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass} flex-shrink-0">
