@@ -235,11 +235,13 @@ class CharactersManager {
         if (modal) {
             modal.classList.remove('hidden');
             
-            // Vérifier si le mode Aventure est actif
-            const adventureMode = window.positionManager?.adventureMode || false;
+            // Vérifier si le mode Aventure est actif (MJ ou Player)
+            const isAdventureActive = window.positionManager && typeof window.positionManager.isAdventureActive === 'function'
+                ? window.positionManager.isAdventureActive()
+                : (window.positionManager?.adventureMode === 'mj' || window.positionManager?.adventureMode === 'player');
             
-            if (adventureMode) {
-                // Mode Aventure : forcer le filtre "Connus" uniquement
+            if (isAdventureActive) {
+                // Mode Aventure (MJ/Player) : forcer le filtre "Connus" uniquement
                 this.filters.known = true;
                 this.filters.met = false;
                 this.filters.nextSession = false;
@@ -383,8 +385,10 @@ class CharactersManager {
         const listContainer = document.getElementById('characters-list');
         if (!listContainer) return;
 
-        // Vérifier si le mode Aventure est actif
-        const adventureMode = window.positionManager?.adventureMode || false;
+        // Vérifier si le mode Aventure est actif (MJ ou Player)
+        const isAdventureActive = window.positionManager && typeof window.positionManager.isAdventureActive === 'function'
+            ? window.positionManager.isAdventureActive()
+            : (window.positionManager?.adventureMode === 'mj' || window.positionManager?.adventureMode === 'player');
 
         // Filtrer les personnages par carte active
         const activeMapId = window.settingsManager?.activeMapUrl;
@@ -394,8 +398,8 @@ class CharactersManager {
             return character.mapId === activeMapId;
         });
 
-        // En mode Aventure : filtrer UNIQUEMENT les personnages connus
-        if (adventureMode) {
+        // En mode Aventure (MJ/Player) : filtrer UNIQUEMENT les personnages connus
+        if (isAdventureActive) {
             filteredCharacters = filteredCharacters.filter(character => {
                 return character.known === true;
             });
