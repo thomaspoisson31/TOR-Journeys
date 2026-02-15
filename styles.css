@@ -1950,3 +1950,21 @@ body.mode-player .fa-trash {
 .bg-orange-600 {
     background-color: #ea580c !important;
 }
+
+/* --- Mode Player Specifics --- */
+
+/* a. Hide "Tirage Aléatoire" and "Tracer un Voyage" buttons in left menu */
+body.mode-player #random-roll-btn,
+body.mode-player #draw-mode {
+    display: none !important;
+}
+
+/* c. Hide "Rumeurs et Traditions Anciennes" tab */
+body.mode-player .tab-button[data-tab="rumeurs-traditions"] {
+    display: none !important;
+}
+
+/* d. Hide "Tables Aléatoires" tab */
+body.mode-player .tab-button[data-tab="evenements-voyage"] {
+    display: none !important;
+}
