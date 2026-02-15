@@ -13,6 +13,7 @@ class InfoBoxManager {
         this.currentType = null;
         this.isEditMode = false;
         this.isExpanded = false;
+        this.editModeCharacterFilter = true; // Filtre par défaut pour l'édition des personnages
 
         // Stack pour la navigation arrière
         this.previousInfoBox = null;
@@ -2688,6 +2689,11 @@ class InfoBoxManager {
         content.innerHTML = html;
     }
 
+    toggleCharacterEditFilter(checked) {
+        this.editModeCharacterFilter = checked;
+        this.renderPersonnagesTabEdit();
+    }
+
     renderPersonnagesTabEdit() {
         console.log(`✏️ [renderPersonnagesTabEdit] Début du rendu en mode édition`);
 
@@ -2714,32 +2720,27 @@ class InfoBoxManager {
         console.log(`📋 [renderPersonnagesTabEdit] Lieu/Région: ${this.currentItem.name}`);
         console.log(`📋 [renderPersonnagesTabEdit] associatedCharacterIds:`, associatedCharacterIds);
 
-        // Filtrer les personnages selon la carte active et trier par ordre alphabétique
-        const activeMapId = window.settingsManager?.activeMapUrl;
-        const availableCharacters = window.charactersManager.characters
-            .filter(char => {
-                const isOnCurrentMap = !char.mapId || !activeMapId || char.mapId === activeMapId;
-                return isOnCurrentMap;
-            })
-            .sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
+        // Filtrer les personnages
+        // 1. Si filtre activé : (Sur carte active) OU (Déjà associé)
+        // 2. Si filtre désactivé : Tous
+        const filteredCharacters = window.charactersManager.characters.filter(char => {
+            if (this.editModeCharacterFilter) {
+                const isOnActiveMap = window.charactersManager.isCharacterOnActiveMap(char);
+                const isAssociated = associatedCharacterIds.includes(String(char.id));
+                return isOnActiveMap || isAssociated;
+            }
+            return true;
+        });
+
+        // Trier par ordre alphabétique
+        const availableCharacters = filteredCharacters.sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
 
         console.log(`📋 [renderPersonnagesTabEdit] ${availableCharacters.length} personnage(s) disponible(s) (triés alphabétiquement)`);
 
-        if (availableCharacters.length === 0) {
-            personnagesTab.innerHTML = `
-                <div class="edit-form p-4">
-                    <p class="text-gray-400 italic text-sm">Aucun personnage disponible sur cette carte</p>
-                </div>
-            `;
-            return;
-        }
-
-        const checkboxesHTML = availableCharacters.map(character => {
+        const checkboxesHTML = availableCharacters.length > 0 ? availableCharacters.map(character => {
             const charIdString = String(character.id);
             const isChecked = associatedCharacterIds.includes(charIdString);
             const thumbnailImage = character.images?.find(img => img.type === 'vignette');
-
-            console.log(`🔍 [renderPersonnagesTabEdit] Checkbox pour ${character.name} (ID: ${charIdString}) - checked: ${isChecked}`);
 
             return `
                 <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
@@ -2764,14 +2765,25 @@ class InfoBoxManager {
                     </div>
                 </label>
             `;
-        }).join('');
+        }).join('') : '<p class="text-gray-400 italic text-sm text-center py-4">Aucun personnage ne correspond aux critères.</p>';
 
         const html = `
             <div class="edit-form p-4">
-                <div class="space-y-2 mb-4">
+                <div class="mb-4 flex items-center justify-between bg-gray-700 p-2 rounded">
+                    <label class="flex items-center space-x-2 cursor-pointer text-sm text-blue-300 hover:text-blue-200">
+                        <input type="checkbox"
+                               onchange="window.infoBoxManager.toggleCharacterEditFilter(this.checked)"
+                               ${this.editModeCharacterFilter ? 'checked' : ''}
+                               class="rounded border-gray-500 bg-gray-600 text-blue-500 focus:ring-blue-500">
+                        <span>Carte active uniquement</span>
+                    </label>
+                    <span class="text-xs text-gray-400">${availableCharacters.length} affichés</span>
+                </div>
+
+                <div class="space-y-2 mb-4 max-h-[400px] overflow-y-auto">
                     ${checkboxesHTML}
                 </div>
-                <div class="flex space-x-2">
+                <div class="flex space-x-2 pt-2 border-t border-gray-600">
                     <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
                         <i class="fas fa-save mr-1"></i>Sauvegarder
                     </button>
