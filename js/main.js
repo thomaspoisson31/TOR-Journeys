@@ -887,6 +887,9 @@ function initializeMap() {
     // Mettre à jour les constantes du PathManager avec les vraies dimensions
     if (pathManager) {
         pathManager.mapConstants.MAP_WIDTH = MAP_WIDTH;
+        if (typeof pathManager.resizeCanvas === 'function') {
+            pathManager.resizeCanvas();
+        }
     }
 
     // Configuration de la couche SVG des régions

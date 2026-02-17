@@ -48,12 +48,7 @@ class PathManager {
         const setupCanvasSize = () => {
             const mapImage = document.getElementById('map-image');
             if (mapImage && mapImage.naturalWidth > 0) {
-                this.canvas.width = mapImage.naturalWidth;
-                this.canvas.height = mapImage.naturalHeight;
-                this.canvas.style.width = `${mapImage.naturalWidth}px`;
-                this.canvas.style.height = `${mapImage.naturalHeight}px`;
-                console.log(`🎨 Canvas configuré : ${this.canvas.width}x${this.canvas.height}`);
-                this.redrawAll();
+                this.resizeCanvas();
             } else {
                 // Réessayer après un court délai
                 setTimeout(setupCanvasSize, 100);
@@ -61,6 +56,18 @@ class PathManager {
         };
 
         setupCanvasSize();
+    }
+
+    resizeCanvas() {
+        const mapImage = document.getElementById('map-image');
+        if (mapImage && mapImage.naturalWidth > 0) {
+            this.canvas.width = mapImage.naturalWidth;
+            this.canvas.height = mapImage.naturalHeight;
+            this.canvas.style.width = `${mapImage.naturalWidth}px`;
+            this.canvas.style.height = `${mapImage.naturalHeight}px`;
+            console.log(`🎨 Canvas redimensionné : ${this.canvas.width}x${this.canvas.height}`);
+            this.redrawAll();
+        }
     }
 
     setupEventListeners() {
@@ -600,7 +607,7 @@ class PathManager {
     }
 
     drawPathOnCanvas(pathPoints, color) {
-        if (pathPoints.length < 2) return;
+        if (!pathPoints || pathPoints.length < 2) return;
 
         this.ctx.strokeStyle = color;
         this.ctx.lineWidth = 5;
@@ -608,9 +615,9 @@ class PathManager {
         this.ctx.lineJoin = 'round';
 
         this.ctx.beginPath();
-        this.ctx.moveTo(pathPoints[0].x, pathPoints[0].y);
+        this.ctx.moveTo(Number(pathPoints[0].x), Number(pathPoints[0].y));
         for (let i = 1; i < pathPoints.length; i++) {
-            this.ctx.lineTo(pathPoints[i].x, pathPoints[i].y);
+            this.ctx.lineTo(Number(pathPoints[i].x), Number(pathPoints[i].y));
         }
         this.ctx.stroke();
 
@@ -618,7 +625,7 @@ class PathManager {
         this.ctx.fillStyle = color;
         pathPoints.forEach(point => {
             this.ctx.beginPath();
-            this.ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+            this.ctx.arc(Number(point.x), Number(point.y), 4, 0, 2 * Math.PI);
             this.ctx.fill();
         });
     }
