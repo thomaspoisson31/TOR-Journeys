@@ -1877,42 +1877,35 @@ class VoyageManager {
         const endLocation = journeyPath && journeyPath.length > 0 ?
             this.findNearestLocationName(journeyPath[journeyPath.length - 1]) : 'Point d\'arrivée';
 
-        // Construire le texte du voyage
-        let voyageText = `\n## ${startLocation} → ${endLocation}\n\n`;
+        // Formater les dates
+        const startDateStr = this.getCalendarDateForDay(1);
+        const endDateStr = this.getCalendarDateForDay(this.totalJourneyDays);
 
-        this.dayByDayData.forEach(dayData => {
-            // Date en gras
-            voyageText += `**${dayData.calendarDate}** - `;
+        // Construire le titre selon le format demandé
+        // Exemple : "(9 Narbeleth) - Les Treize Sentinelles → La Corniche de l'Infortune - (16 Narbeleth)"
+        const title = `(${startDateStr}) - ${startLocation} → ${endLocation} - (${endDateStr})`;
 
-            // Découvertes
-            const discoveryNames = dayData.discoveries.map(d => d.name).join(' et ');
-            if (discoveryNames) {
-                voyageText += `${discoveryNames}. `;
-            }
+        // Créer l'objet entrée de journal
+        const entry = {
+            id: Date.now(),
+            title: title,
+            startDate: startDateStr,
+            endDate: endDateStr,
+            startLocation: startLocation,
+            endLocation: endLocation,
+            path: [...window.journeyPath], // Cloner le tracé
+            visible: false,
+            type: 'voyage',
+            createdAt: new Date().toISOString()
+        };
 
-            // Description (nettoyée)
-            const description = this.journeyDescriptions[dayData.day];
-            if (description) {
-                let cleanDesc = description.replace(/<[^>]*>/g, '').replace(/Dé du destin:\s*\d+\s*/gi, '').trim();
-                voyageText += cleanDesc;
-            }
-
-            // Événement aléatoire
-            const event = this.randomEvents[dayData.day];
-            if (event) {
-                let cleanEvent = event.replace(/<[^>]*>/g, '').trim();
-                voyageText += ` ${cleanEvent}`;
-            }
-
-            voyageText += '\n\n';
-        });
-
-        // Ajouter au journal via appendContent
+        // Ajouter au journal via addEntry (nouvelle méthode structurée)
         if (window.journalManager) {
-            window.journalManager.appendContent(voyageText.trim());
-
-            console.log('✅ Voyage ajouté au journal');
+            window.journalManager.addEntry(entry);
+            console.log('✅ Entrée structurée ajoutée au journal:', entry);
             alert('Voyage enregistré dans le journal !');
+        } else {
+            console.error('❌ JournalManager non disponible');
         }
 
         // Fermer la modale et réinitialiser
@@ -1921,7 +1914,7 @@ class VoyageManager {
             modal.classList.add('hidden');
         }
 
-        // Effacer le tracé
+        // Effacer le tracé (ce qui gardera les tracés sauvegardés grâce aux modifs de PathManager)
         if (window.pathManager) {
             window.pathManager.clearPath();
         }

@@ -629,17 +629,31 @@ class AuthManager {
 
         // Journal de voyage et objectifs
         if (data.journal) {
-            if (data.journal.journal) {
-                // Nouveau format avec journal, objectifs et rumeurs
-                localStorage.setItem('travelJournal', JSON.stringify(data.journal.journal));
+            // Nouveau format V2 (avec séparation Text/Entries)
+            if (data.journal.travelJournal !== undefined) {
+                localStorage.setItem('travelJournal', JSON.stringify(data.journal.travelJournal));
+                localStorage.setItem('adventureJournal', JSON.stringify(data.journal.journal || { content: '', metadata: { wordCount: 0 } }));
                 localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives || []));
                 localStorage.setItem('adventureRumors', JSON.stringify(data.journal.rumors || []));
                 localStorage.setItem('rumorsCheckboxStates', JSON.stringify(data.journal.rumorsCheckboxStates || {}));
-                console.log('[AuthManager] ✅ Journal, objectifs et rumeurs chargés depuis le cloud');
+                console.log('[AuthManager] ✅ Journal complet (V2) chargé depuis le cloud');
+            }
+            // Format intermédiaire (Objet global mais journal était encore travelJournal)
+            else if (data.journal.journal) {
+                // On migre l'ancien journal texte vers adventureJournal
+                localStorage.setItem('adventureJournal', JSON.stringify(data.journal.journal));
+                localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives || []));
+                localStorage.setItem('adventureRumors', JSON.stringify(data.journal.rumors || []));
+                localStorage.setItem('rumorsCheckboxStates', JSON.stringify(data.journal.rumorsCheckboxStates || {}));
+                // Si on a des entrées structurées, on les restaure, sinon vide
+                localStorage.setItem('travelJournal', JSON.stringify(data.journal.travelJournal || []));
+                console.log('[AuthManager] ✅ Journal chargé et migré vers V2');
             } else {
-                // Ancien format (rétrocompatibilité)
-                localStorage.setItem('travelJournal', JSON.stringify(data.journal));
-                console.log('[AuthManager] ✅ Journal de voyage chargé depuis le cloud (ancien format)');
+                // Ancien format legacy (juste l'objet journal ou array)
+                // On suppose que c'est le journal texte
+                localStorage.setItem('adventureJournal', JSON.stringify(data.journal));
+                localStorage.setItem('travelJournal', '[]'); // Initialiser vide
+                console.log('[AuthManager] ✅ Journal chargé depuis le cloud (Legacy -> Migré)');
             }
         }
 
@@ -1736,16 +1750,22 @@ class AuthManager {
         }
         if (data.journal) {
             // Journal de voyage et objectifs
-            if (data.journal.journal) {
-                localStorage.setItem('travelJournal', JSON.stringify(data.journal.journal));
+            if (data.journal.travelJournal !== undefined) {
+                localStorage.setItem('travelJournal', JSON.stringify(data.journal.travelJournal));
+                localStorage.setItem('adventureJournal', JSON.stringify(data.journal.journal));
                 localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives || []));
                 localStorage.setItem('adventureRumors', JSON.stringify(data.journal.rumors || []));
                 localStorage.setItem('rumorsCheckboxStates', JSON.stringify(data.journal.rumorsCheckboxStates || {}));
-                this.logAuth(`  - ${data.journal.journal.length} entrées de journal et ${data.journal.objectives?.length || 0} objectifs sauvegardés dans localStorage.`);
+                this.logAuth(`  - Journal V2 sauvegardé: ${data.journal.travelJournal.length} voyages`);
+            } else if (data.journal.journal) {
+                localStorage.setItem('adventureJournal', JSON.stringify(data.journal.journal));
+                localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives || []));
+                localStorage.setItem('adventureRumors', JSON.stringify(data.journal.rumors || []));
+                localStorage.setItem('rumorsCheckboxStates', JSON.stringify(data.journal.rumorsCheckboxStates || {}));
+                this.logAuth(`  - Journal sauvegardé (texte seul)`);
             } else {
-                // Ancien format (rétrocompatibilité)
-                localStorage.setItem('travelJournal', JSON.stringify(data.journal));
-                this.logAuth(`  - ${data.journal.length} entrées de journal (ancien format) sauvegardées dans localStorage.`);
+                localStorage.setItem('adventureJournal', JSON.stringify(data.journal));
+                this.logAuth(`  - Journal Legacy sauvegardé`);
             }
         }
         if (data.position) {
