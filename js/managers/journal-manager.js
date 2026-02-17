@@ -14,6 +14,7 @@ class JournalManager {
         this.currentTab = 'journal-list';
         this.exportJournalMarkdownBtn = null;
         this.isEditMode = false; // Mode édition activé/désactivé
+        this.entries = []; // Liste des entrées structurées (voyages)
     }
 
     init() {
@@ -121,51 +122,95 @@ class JournalManager {
     }
 
     loadJournal() {
-        const savedJournal = localStorage.getItem('travelJournal');
-        if (savedJournal && savedJournal !== 'null' && savedJournal !== 'undefined') {
+        // 1. Charger le journal textuel (Free Text)
+        const savedTextJournal = localStorage.getItem('adventureJournal');
+        if (savedTextJournal) {
             try {
-                const parsed = JSON.parse(savedJournal);
-                // Gérer la migration de l'ancien format (tableau) vers le nouveau (objet)
-                if (Array.isArray(parsed)) {
-                    console.log(`📖 Migration de ${parsed.length} voyage(s) depuis l'ancien format`);
-                    this.journal = {
-                        content: '',
-                        metadata: {
-                            lastModified: new Date().toISOString(),
-                            wordCount: 0
-                        }
-                    };
-                } else if (parsed.content !== undefined) {
-                    this.journal = parsed;
-                    console.log(`📖 Journal chargé : ${this.journal.metadata.wordCount} mots`);
-                } else {
-                    this.journal = {
-                        content: '',
-                        metadata: {
-                            lastModified: null,
-                            wordCount: 0
-                        }
-                    };
-                }
+                this.journal = JSON.parse(savedTextJournal);
             } catch (e) {
-                console.error("Erreur lors du chargement du journal:", e);
-                this.journal = {
-                    content: '',
-                    metadata: {
-                        lastModified: null,
-                        wordCount: 0
-                    }
-                };
+                console.error("Erreur chargement adventureJournal:", e);
+                this.journal = { content: '', metadata: { wordCount: 0 } };
             }
         } else {
-            this.journal = {
-                content: '',
-                metadata: {
-                    lastModified: null,
-                    wordCount: 0
+            // Fallback: Vérifier si l'ancien 'travelJournal' contient le texte
+            const oldJournal = localStorage.getItem('travelJournal');
+            if (oldJournal) {
+                try {
+                    const parsed = JSON.parse(oldJournal);
+                    if (parsed && parsed.content !== undefined) {
+                        this.journal = parsed;
+                        // Migrer vers la nouvelle clé
+                        localStorage.setItem('adventureJournal', JSON.stringify(this.journal));
+                    } else {
+                        this.journal = { content: '', metadata: { wordCount: 0 } };
+                    }
+                } catch (e) {
+                    this.journal = { content: '', metadata: { wordCount: 0 } };
                 }
-            };
-            console.log("📖 Nouveau journal initialisé");
+            } else {
+                this.journal = { content: '', metadata: { wordCount: 0 } };
+            }
+        }
+
+        // 2. Charger les entrées structurées (Voyages)
+        // On utilise 'travelJournal' pour stocker le tableau des voyages maintenant
+        const savedEntries = localStorage.getItem('travelJournal');
+        this.entries = [];
+
+        if (savedEntries) {
+            try {
+                const parsed = JSON.parse(savedEntries);
+                if (Array.isArray(parsed)) {
+                    this.entries = parsed;
+                } else if (parsed && parsed.content === undefined && typeof parsed === 'object') {
+                    // Si c'est un objet mais pas le journal texte, c'est peut-être un format intermédiaire ?
+                    // Pour l'instant on ignore ou on initialise vide
+                }
+            } catch (e) {
+                console.error("Erreur chargement entrées journal:", e);
+            }
+        }
+
+        console.log(`📖 Journal chargé : ${this.journal.metadata.wordCount} mots, ${this.entries.length} voyages`);
+
+        // Synchroniser les tracés visibles
+        this.syncSavedPaths();
+    }
+
+    syncSavedPaths() {
+        if (!window.pathManager) return;
+
+        // Effacer les anciens chemins sauvegardés
+        window.pathManager.clearSavedPaths();
+
+        // Ajouter les chemins visibles
+        this.entries.forEach(entry => {
+            if (entry.visible && entry.path && entry.path.length > 0) {
+                window.pathManager.addSavedPath(entry.id, entry.path);
+            }
+        });
+    }
+
+    addEntry(entry) {
+        this.entries.unshift(entry); // Ajouter au début (plus récent)
+        this.saveEntries();
+        this.renderJournal();
+    }
+
+    saveEntries() {
+        localStorage.setItem('travelJournal', JSON.stringify(this.entries));
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+    }
+
+    toggleEntryVisibility(index) {
+        if (this.entries[index]) {
+            this.entries[index].visible = !this.entries[index].visible;
+            this.saveEntries();
+            this.syncSavedPaths();
+            // Re-render pour mettre à jour la checkbox (déjà fait par le clic mais bon pour la synchro)
+            // Pas nécessaire de re-render tout le journal, juste sync les chemins
         }
     }
 
@@ -218,14 +263,61 @@ class JournalManager {
     renderJournal() {
         if (!this.journalContent || !this.journalEmpty) return;
 
-        if (!this.journal.content || this.journal.content.trim() === '') {
+        // Rendu des entrées structurées
+        const entriesList = document.getElementById('journal-entries-list');
+        if (entriesList) {
+            entriesList.innerHTML = '';
+            this.entries.forEach((entry, index) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'flex items-center space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors';
+
+                // Checkbox
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'h-5 w-5 text-red-800 rounded border-gray-300 focus:ring-red-800 cursor-pointer';
+                checkbox.checked = entry.visible || false;
+                checkbox.onchange = () => this.toggleEntryVisibility(index);
+
+                // Title
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'flex-grow text-gray-800 font-medium text-sm';
+                titleSpan.textContent = entry.title || `Voyage du ${entry.startDate}`;
+
+                // Delete button (optional but good for UX)
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'text-gray-400 hover:text-red-600 transition-colors';
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteBtn.title = 'Supprimer cette entrée';
+                deleteBtn.onclick = () => {
+                    if(confirm('Supprimer cette entrée de journal ?')) {
+                        this.entries.splice(index, 1);
+                        this.saveEntries();
+                        this.syncSavedPaths();
+                        this.renderJournal();
+                    }
+                };
+
+                entryDiv.appendChild(checkbox);
+                entryDiv.appendChild(titleSpan);
+                entryDiv.appendChild(deleteBtn);
+                entriesList.appendChild(entryDiv);
+            });
+        }
+
+        // Gestion de l'affichage vide/plein pour le texte libre
+        const hasContent = this.journal.content && this.journal.content.trim() !== '';
+        const hasEntries = this.entries.length > 0;
+
+        if (!hasContent && !hasEntries && !this.isEditMode) {
             this.journalContent.classList.add('hidden');
+            if (entriesList) entriesList.classList.add('hidden');
             this.journalEmpty.classList.remove('hidden');
             return;
         }
 
-        this.journalContent.classList.remove('hidden');
         this.journalEmpty.classList.add('hidden');
+        if (entriesList) entriesList.classList.remove('hidden');
+        this.journalContent.classList.remove('hidden');
 
         if (this.isEditMode) {
             // Mode édition : afficher une textarea
@@ -464,7 +556,7 @@ class JournalManager {
         this.journal.metadata.lastModified = new Date().toISOString();
         this.journal.metadata.wordCount = textarea.value.trim().split(/\s+/).filter(w => w.length > 0).length;
 
-        localStorage.setItem('travelJournal', JSON.stringify(this.journal));
+        localStorage.setItem('adventureJournal', JSON.stringify(this.journal));
 
         // Marquer comme non sauvegardé
         if (typeof window.markAsUnsaved === 'function') {
@@ -478,7 +570,7 @@ class JournalManager {
 
         this.isEditMode = false;
         this.renderJournal();
-        console.log("📖 Journal sauvegardé");
+        console.log("📖 Journal texte sauvegardé");
     }
 
     appendContent(newContent) {
@@ -499,7 +591,7 @@ class JournalManager {
     }
 
     saveJournal() {
-        localStorage.setItem('travelJournal', JSON.stringify(this.journal));
+        localStorage.setItem('adventureJournal', JSON.stringify(this.journal));
 
         // Marquer comme non sauvegardé
         if (typeof window.markAsUnsaved === 'function') {
@@ -1091,10 +1183,11 @@ class JournalManager {
     // Méthode pour récupérer toutes les données (pour synchronisation)
     getAllData() {
         return {
-            journal: this.journal,
+            journal: this.journal, // Texte libre (adventureJournal)
+            travelJournal: this.entries, // Entrées structurées (travelJournal)
             objectives: this.objectives,
             rumors: this.rumors,
-            rumorsCheckboxStates: this.rumorsCheckboxStates // Inclure les états des cases à cocher
+            rumorsCheckboxStates: this.rumorsCheckboxStates
         };
     }
 }

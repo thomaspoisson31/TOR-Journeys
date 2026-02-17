@@ -17,6 +17,7 @@ class PathManager {
         this.touchHasMoved = false;
         this.lastTapTime = 0;
         this.isJourneyFinalized = false; // Flag pour bloquer l'ajout de waypoints après finalisation
+        this.savedPaths = []; // Chemins sauvegardés à afficher
     }
 
     init() {
@@ -52,6 +53,7 @@ class PathManager {
                 this.canvas.style.width = `${mapImage.naturalWidth}px`;
                 this.canvas.style.height = `${mapImage.naturalHeight}px`;
                 console.log(`🎨 Canvas configuré : ${this.canvas.width}x${this.canvas.height}`);
+                this.redrawAll();
             } else {
                 // Réessayer après un court délai
                 setTimeout(setupCanvasSize, 100);
@@ -532,9 +534,6 @@ class PathManager {
         this.startPoint = null;
         this.isJourneyFinalized = false;
 
-        // Nettoyer le canvas
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
         // Mettre à jour les variables globales
         window.journeyPath = this.path;
         window.journeyDiscoveries = this.discoveries;
@@ -542,12 +541,113 @@ class PathManager {
         window.totalPathPixels = 0;
         window.lastPoint = null;
 
+        // Redessiner tout (pour garder les chemins sauvegardés)
+        this.redrawAll();
+
         // Mettre à jour l'affichage
         this.updateDistanceDisplay();
         this.hideFinishButton();
         this.hideViewJourneyButton();
 
-        console.log('🧹 Chemin effacé');
+        console.log('🧹 Chemin effacé (chemins sauvegardés conservés)');
+    }
+
+    addSavedPath(id, pathData) {
+        // Vérifier si le chemin existe déjà
+        if (this.savedPaths.some(p => p.id === id)) {
+            return;
+        }
+
+        this.savedPaths.push({
+            id: id,
+            path: pathData
+        });
+        this.redrawAll();
+        console.log(`🛤️ Chemin sauvegardé ajouté (ID: ${id})`);
+    }
+
+    removeSavedPath(id) {
+        this.savedPaths = this.savedPaths.filter(p => p.id !== id);
+        this.redrawAll();
+        console.log(`🛤️ Chemin sauvegardé retiré (ID: ${id})`);
+    }
+
+    clearSavedPaths() {
+        this.savedPaths = [];
+        this.redrawAll();
+        console.log('🧹 Tous les chemins sauvegardés ont été retirés');
+    }
+
+    redrawAll() {
+        if (!this.ctx || !this.canvas) return;
+
+        // Nettoyer tout le canvas
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Dessiner les chemins sauvegardés (en rouge un peu plus transparent ou pointillé ?)
+        // Pour l'instant on garde le même style rouge solide pour être sûr qu'ils soient visibles
+        this.savedPaths.forEach(saved => {
+            if (saved.path && saved.path.length > 0) {
+                this.drawPathOnCanvas(saved.path, 'rgba(200, 50, 50, 0.7)');
+            }
+        });
+
+        // Dessiner le chemin actif
+        if (this.path && this.path.length > 0) {
+            // Dessiner le chemin actif avec style complet (points + lignes)
+            this.drawActivePath();
+        }
+    }
+
+    drawPathOnCanvas(pathPoints, color) {
+        if (pathPoints.length < 2) return;
+
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = 5;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(pathPoints[0].x, pathPoints[0].y);
+        for (let i = 1; i < pathPoints.length; i++) {
+            this.ctx.lineTo(pathPoints[i].x, pathPoints[i].y);
+        }
+        this.ctx.stroke();
+
+        // Dessiner aussi les points pour cohérence visuelle
+        this.ctx.fillStyle = color;
+        pathPoints.forEach(point => {
+            this.ctx.beginPath();
+            this.ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI);
+            this.ctx.fill();
+        });
+    }
+
+    drawActivePath() {
+        if (this.path.length === 0) return;
+
+        // Dessiner les segments
+        if (this.path.length > 1) {
+            this.ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
+            this.ctx.lineWidth = 5;
+            this.ctx.lineCap = 'round';
+            this.ctx.lineJoin = 'round';
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.path[0].x, this.path[0].y);
+            for (let i = 1; i < this.path.length; i++) {
+                this.ctx.lineTo(this.path[i].x, this.path[i].y);
+            }
+            this.ctx.stroke();
+        }
+
+        // Dessiner les waypoints
+        this.ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+        this.path.forEach(point => {
+            this.ctx.beginPath();
+            this.ctx.arc(point.x, point.y, 6, 0, 2 * Math.PI);
+            this.ctx.fill();
+        });
     }
 
     updatePathData() {
