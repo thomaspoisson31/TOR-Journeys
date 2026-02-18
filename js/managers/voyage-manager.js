@@ -1885,28 +1885,10 @@ class VoyageManager {
         // Exemple : "(9 Narbeleth) - Les Treize Sentinelles → La Corniche de l'Infortune - (16 Narbeleth)"
         const title = `(${startDateStr}) - ${startLocation} → ${endLocation} - (${endDateStr})`;
 
-        // Créer l'objet entrée de journal
-        const entry = {
-            id: Date.now(),
-            title: title,
-            startDate: startDateStr,
-            endDate: endDateStr,
-            startLocation: startLocation,
-            endLocation: endLocation,
-            path: [...window.journeyPath], // Cloner le tracé
-            visible: false,
-            type: 'voyage',
-            createdAt: new Date().toISOString()
-        };
+        // Utiliser la méthode unifiée pour sauvegarder
+        this.saveJourneyToJournal(title);
 
-        // Ajouter au journal via addEntry (nouvelle méthode structurée)
-        if (window.journalManager) {
-            window.journalManager.addEntry(entry);
-            console.log('✅ Entrée structurée ajoutée au journal:', entry);
-            alert('Voyage enregistré dans le journal !');
-        } else {
-            console.error('❌ JournalManager non disponible');
-        }
+        alert('Voyage enregistré dans le journal !');
 
         // Fermer la modale et réinitialiser
         const modal = this.dom.getElementById('voyage-segments-modal');
@@ -2495,7 +2477,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
         console.log("🧹 Descriptions de voyage nettoyées");
     }
 
-    saveJourneyToJournal() {
+    saveJourneyToJournal(customTitle = null) {
         if (!this.dayByDayData || this.dayByDayData.length === 0) {
             console.log("⚠️ Pas de données de voyage à sauvegarder");
             return;
@@ -2511,55 +2493,75 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
         const pathSignature = this.createPathSignature(journeyPath);
         console.log("🔑 Signature du tracé:", pathSignature);
 
-        // Trouver le lieu/région de départ
-        const firstDay = this.dayByDayData[0];
+        // Trouver le lieu/région de départ et d'arrivée
         let startLocation = "Point de départ";
-        if (firstDay.discoveries && firstDay.discoveries.length > 0) {
-            startLocation = firstDay.discoveries[0].name;
+        let endLocation = "Point d'arrivée";
+
+        if (journeyPath && journeyPath.length > 0) {
+            startLocation = this.findNearestLocationName(journeyPath[0]);
+            endLocation = this.findNearestLocationName(journeyPath[journeyPath.length - 1]);
+        } else {
+            // Fallback si pas de path (cas théorique)
+            const firstDay = this.dayByDayData[0];
+            if (firstDay.discoveries && firstDay.discoveries.length > 0) {
+                startLocation = firstDay.discoveries[0].name;
+            }
+            const lastDay = this.dayByDayData[this.dayByDayData.length - 1];
+            if (lastDay.discoveries && lastDay.discoveries.length > 0) {
+                const lastDiscoveries = lastDay.discoveries;
+                endLocation = lastDiscoveries[lastDiscoveries.length - 1].name;
+            }
         }
 
-        // Trouver le lieu/région d'arrivée
-        const lastDay = this.dayByDayData[this.dayByDayData.length - 1];
-        let endLocation = "Point d'arrivée";
-        if (lastDay.discoveries && lastDay.discoveries.length > 0) {
-            const lastDiscoveries = lastDay.discoveries;
-            endLocation = lastDiscoveries[lastDiscoveries.length - 1].name;
-        }
+        // Dates
+        const startDateStr = this.getCalendarDateForDay(1);
+        const endDateStr = this.getCalendarDateForDay(this.totalJourneyDays);
+
+        // Construire le titre
+        const defaultTitle = `Voyage de ${startLocation} à ${endLocation}`;
+        const title = customTitle || defaultTitle;
 
         // Construire le voyage pour le journal
         const journeyEntry = {
-            title: `Voyage de ${startLocation} à ${endLocation}`,
-            generatedAt: new Date().toISOString(),
+            id: Date.now(), // ID par défaut pour les nouvelles entrées
+            title: title,
+            startDate: startDateStr,
+            endDate: endDateStr,
+            startLocation: startLocation,
+            endLocation: endLocation,
+            path: [...window.journeyPath], // Sauvegarder le tracé complet
+            pathSignature: pathSignature,
             totalDays: this.totalJourneyDays,
-            pathSignature: pathSignature, // Ajouter la signature pour identifier le tracé
-            journeyType: 'journey', // Identifier comme voyage tracé
+            generatedAt: new Date().toISOString(),
+            journeyType: 'journey',
+            visible: false, // Par défaut invisible
             days: []
         };
 
         // Ajouter chaque jour
-            this.dayByDayData.forEach((dayData, index) => {
-                const dayNumber = index + 1;
-                const weatherData = this.getWeatherForDay(dayNumber);
+        this.dayByDayData.forEach((dayData, index) => {
+            const dayNumber = index + 1;
+            const weatherData = this.getWeatherForDay(dayNumber);
 
-                // Récupérer l'événement aléatoire depuis le stockage
-                const eventResult = this.randomEvents[dayNumber] || null;
+            // Récupérer l'événement aléatoire depuis le stockage
+            const eventResult = this.randomEvents[dayNumber] || null;
 
-                // Extraire les découvertes avec leur nom et type
-                const discoveries = dayData.discoveries ? dayData.discoveries.map(d => ({
-                    name: d.name,
-                    type: d.type
-                })) : [];
+            // Extraire les découvertes avec leur nom et type
+            const discoveries = dayData.discoveries ? dayData.discoveries.map(d => ({
+                name: d.name,
+                type: d.type
+            })) : [];
 
-                journeyEntry.days.push({
-                    dayNumber: dayNumber,
-                    calendarDate: dayData.calendarDate,
-                    weatherSymbol: weatherData ? weatherData.symbol : null,
-                    weatherText: weatherData ? weatherData.weather : null,
-                    eventResult: eventResult,
-                    description: this.journeyDescriptions[dayNumber] || null,
-                    discoveries: discoveries
-                });
+            journeyEntry.days.push({
+                dayNumber: dayNumber,
+                calendarDate: dayData.calendarDate,
+                weatherSymbol: weatherData ? weatherData.symbol : null,
+                weatherText: weatherData ? weatherData.weather : null,
+                eventResult: eventResult,
+                description: this.journeyDescriptions[dayNumber] || null,
+                discoveries: discoveries
             });
+        });
 
         // Récupérer le journal existant
         let journal = [];
@@ -2586,9 +2588,27 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
         console.log("🔍 Index trouvé:", existingIndex);
 
         if (existingIndex !== -1) {
-            // Mettre à jour l'entrée existante (régénération des descriptions)
-            journal[existingIndex] = journeyEntry;
-            console.log("📖 Voyage mis à jour dans le journal:", journeyEntry.title);
+            // Mettre à jour l'entrée existante en préservant id, visible, etc.
+            const existingEntry = journal[existingIndex];
+
+            // Mise à jour : on fusionne les nouvelles données, mais on garde les métadonnées existantes
+            journal[existingIndex] = {
+                ...journeyEntry, // Nouvelles données (contenu, path, days...)
+                id: existingEntry.id, // Garder l'ID original
+                visible: existingEntry.visible, // Garder l'état visible
+                createdAt: existingEntry.createdAt || journeyEntry.generatedAt, // Garder la date de création originale
+            };
+
+            // Gestion intelligente du titre
+            if (customTitle) {
+                // Forcer le nouveau titre
+                journal[existingIndex].title = customTitle;
+            } else {
+                // Auto-save : garder le titre existant
+                journal[existingIndex].title = existingEntry.title;
+            }
+
+            console.log("📖 Voyage mis à jour dans le journal:", journal[existingIndex].title);
         } else {
             // Ajouter le nouveau voyage
             journal.unshift(journeyEntry); // Ajouter au début (plus récent)
