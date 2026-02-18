@@ -267,7 +267,10 @@ class JournalManager {
         const entriesList = document.getElementById('journal-entries-list');
         if (entriesList) {
             entriesList.innerHTML = '';
-            this.entries.forEach((entry, index) => {
+            // Créer une copie inversée avec les index originaux pour l'affichage (plus ancien en haut)
+            const entriesToRender = this.entries.map((entry, index) => ({ entry, index })).reverse();
+
+            entriesToRender.forEach(({ entry, index }) => {
                 const entryDiv = document.createElement('div');
                 entryDiv.className = 'flex items-center space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors';
 
