@@ -61,12 +61,20 @@ class PathManager {
     resizeCanvas() {
         const mapImage = document.getElementById('map-image');
         if (mapImage && mapImage.naturalWidth > 0) {
-            this.canvas.width = mapImage.naturalWidth;
-            this.canvas.height = mapImage.naturalHeight;
-            this.canvas.style.width = `${mapImage.naturalWidth}px`;
-            this.canvas.style.height = `${mapImage.naturalHeight}px`;
-            console.log(`🎨 Canvas redimensionné : ${this.canvas.width}x${this.canvas.height}`);
-            this.redrawAll();
+            // Lazy initialization if canvas is missing (e.g. called before init)
+            if (!this.canvas) {
+                this.canvas = document.getElementById('drawing-canvas');
+                this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
+            }
+
+            if (this.canvas) {
+                this.canvas.width = mapImage.naturalWidth;
+                this.canvas.height = mapImage.naturalHeight;
+                this.canvas.style.width = `${mapImage.naturalWidth}px`;
+                this.canvas.style.height = `${mapImage.naturalHeight}px`;
+                console.log(`🎨 Canvas redimensionné : ${this.canvas.width}x${this.canvas.height}`);
+                this.redrawAll();
+            }
         }
     }
 
