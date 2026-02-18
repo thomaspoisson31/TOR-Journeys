@@ -212,6 +212,7 @@ async function initializeApp() {
             MAP_DISTANCE_MILES,
             MAP_WIDTH: MAP_WIDTH || 5103 // Utiliser la valeur globale ou fallback
         });
+        window.pathManager = pathManager; // Exposer globalement pour JournalManager
         console.log("✅ PathManager initialized");
 
         // Initialiser CalendarManager
