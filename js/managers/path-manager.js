@@ -230,6 +230,10 @@ class PathManager {
                 this.showDistanceContainer();
                 this.calculateTotalDistance();
                 this.updateDistanceDisplay();
+
+                // Mettre à jour les données globales pour la synchronisation
+                this.updatePathData();
+
                 this.showFinishButton();
                 console.log("✅ Waypoint journey initialized with first waypoint");
             } else {
@@ -256,9 +260,12 @@ class PathManager {
 
                 this.lastPoint = clickPoint;
 
-                // Calculer la distance totale
+                // Calculer la distance totale et mettre à jour l'affichage
                 this.calculateTotalDistance();
                 this.updateDistanceDisplay();
+
+                // Mettre à jour les données globales pour la synchronisation
+                this.updatePathData();
 
                 // Ne PAS afficher le bouton Voyage pendant le tracé
                 // Il sera affiché uniquement lors de la finalisation
