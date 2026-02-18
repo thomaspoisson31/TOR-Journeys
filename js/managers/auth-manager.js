@@ -450,7 +450,8 @@ class AuthManager {
 
             // AJOUT: Voyage en cours (non terminé)
             activeJourney: {
-                path: window.journeyPath || [],
+                // Utiliser window.journeyPath en priorité, sinon fallback sur window.pathManager.path
+                path: (window.journeyPath && window.journeyPath.length > 0) ? window.journeyPath : (window.pathManager?.path || []),
                 discoveries: window.journeyDiscoveries || [],
                 dayByDayData: window.voyageManager?.dayByDayData || [],
                 descriptions: window.voyageManager?.journeyDescriptions || {},
@@ -1946,6 +1947,12 @@ class AuthManager {
         if (data.counters) {
             localStorage.setItem('customCounters', JSON.stringify(data.counters));
             this.logAuth(`  - ${data.counters.length} compteurs sauvegardés dans localStorage.`);
+        }
+
+        // Sauvegarder le voyage actif (pour résilience offline)
+        if (data.activeJourney) {
+            localStorage.setItem('activeJourney', JSON.stringify(data.activeJourney));
+            this.logAuth(`  - Voyage actif sauvegardé dans localStorage (${data.activeJourney.path?.length || 0} points).`);
         }
 
         // Si ce n'est pas depuis le cloud, marquer comme modifications non sauvegardées

@@ -1579,6 +1579,22 @@ class CharactersManager {
         return { characters: this.characters };
     }
 
+    // Setter pour AuthManager
+    set charactersData(data) {
+        this.loadCharacters(data);
+    }
+
+    // Méthode pour charger les personnages depuis des données externes (AuthManager)
+    loadCharacters(data) {
+        if (data && data.characters && Array.isArray(data.characters)) {
+            this.characters = data.characters;
+            console.log(`👥 CharactersManager: ${this.characters.length} personnages chargés via setter/loadCharacters`);
+            this.renderCharactersList();
+        } else {
+            console.warn("⚠️ Données de personnages invalides reçues via setter/loadCharacters");
+        }
+    }
+
     // Ajout de la méthode addCharacter pour normaliser les IDs
     addCharacter(characterData) {
         const newCharacter = {
