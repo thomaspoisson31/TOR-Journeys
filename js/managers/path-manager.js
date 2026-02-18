@@ -59,6 +59,12 @@ class PathManager {
     }
 
     resizeCanvas() {
+        if (!this.canvas) {
+            this.canvas = document.getElementById('drawing-canvas');
+        }
+
+        if (!this.canvas) return;
+
         const mapImage = document.getElementById('map-image');
         if (mapImage && mapImage.naturalWidth > 0) {
             this.canvas.width = mapImage.naturalWidth;
