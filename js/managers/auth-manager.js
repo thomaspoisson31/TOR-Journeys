@@ -191,6 +191,56 @@ class AuthManager {
 
         this.hideAuthStatusPanel();
         this.updateUnauthenticatedWarning(); // Mettre à jour l'avertissement
+        this.checkStorageStatus(); // Vérifier le statut du stockage
+    }
+
+    async checkStorageStatus() {
+        try {
+            const response = await fetch('/api/storage/status');
+            if (response.ok) {
+                const status = await response.json();
+                this.updateStorageIndicator(status);
+            }
+        } catch (e) {
+            console.warn('Impossible de vérifier le statut du stockage', e);
+        }
+    }
+
+    updateStorageIndicator(status) {
+        // Créer ou mettre à jour l'indicateur
+        let indicator = document.getElementById('storage-status-indicator');
+
+        if (!indicator) {
+            // Créer l'indicateur s'il n'existe pas, à côté du bouton de sync manuelle
+            const syncContainer = document.getElementById('sync-status-indicator')?.parentNode;
+            if (syncContainer) {
+                indicator = document.createElement('div');
+                indicator.id = 'storage-status-indicator';
+                indicator.className = 'flex items-center text-xs ml-3 px-2 py-1 rounded cursor-help transition-colors';
+                syncContainer.appendChild(indicator);
+            }
+        }
+
+        if (indicator) {
+            const isPersistant = status.using_object_storage;
+
+            if (isPersistant) {
+                indicator.innerHTML = '<i class="fas fa-database mr-1"></i> Stockage Sécurisé (GCS)';
+                indicator.classList.add('text-green-600', 'bg-green-100');
+                indicator.classList.remove('text-orange-600', 'bg-orange-100');
+                indicator.title = "Vos données sont sauvegardées de manière persistante sur Google Cloud Storage.";
+            } else {
+                indicator.innerHTML = '<i class="fas fa-hdd mr-1"></i> Stockage Volatile (Local)';
+                indicator.classList.add('text-orange-600', 'bg-orange-100');
+                indicator.classList.remove('text-green-600', 'bg-green-100');
+                indicator.title = "ATTENTION : Le serveur utilise un stockage temporaire. Les données seront perdues au redémarrage du serveur si elles ne sont pas synchronisées.";
+
+                // Ajouter une petite animation pour attirer l'attention si c'est volatile
+                indicator.classList.add('animate-pulse');
+                // Arrêter l'animation après 10s
+                setTimeout(() => indicator.classList.remove('animate-pulse'), 10000);
+            }
+        }
     }
 
     handleAuthCallback() {
@@ -396,7 +446,19 @@ class AuthManager {
             // Ajouter les états des cases à cocher des tirages aléatoires
             randomTablesCheckedResults: JSON.parse(localStorage.getItem('randomTablesCheckedResults') || '{}'),
             // AJOUT: Compteurs
-            counters: window.countersManager ? window.countersManager.getCounters() : []
+            counters: window.countersManager ? window.countersManager.getCounters() : [],
+
+            // AJOUT: Voyage en cours (non terminé)
+            activeJourney: {
+                path: window.journeyPath || [],
+                discoveries: window.journeyDiscoveries || [],
+                dayByDayData: window.voyageManager?.dayByDayData || [],
+                descriptions: window.voyageManager?.journeyDescriptions || {},
+                randomEvents: window.voyageManager?.randomEvents || {},
+                startDate: window.voyageManager?.journeyStartDate || null,
+                totalDays: window.voyageManager?.totalJourneyDays || 0,
+                isDrawingMode: window.pathManager?.isDrawingMode || false
+            }
         };
 
         this.logAuth(`📦 Données collectées pour le contexte`, Object.keys(data));
@@ -744,6 +806,63 @@ class AuthManager {
             this.logAuth(`✅ ${data.counters.length} compteurs restaurés`);
         }
 
+        // Restaurer le voyage en cours (non terminé)
+        if (data.activeJourney && window.pathManager && window.voyageManager) {
+            this.logAuth("🛤️ Restauration du voyage en cours...");
+
+            // 1. Restaurer le tracé dans PathManager
+            if (data.activeJourney.path && data.activeJourney.path.length > 0) {
+                window.pathManager.path = data.activeJourney.path;
+                window.journeyPath = data.activeJourney.path; // Variable globale
+                window.pathManager.redrawAll();
+
+                // Mettre à jour l'affichage de la distance
+                window.pathManager.calculateTotalDistance();
+                window.pathManager.updateDistanceDisplay();
+
+                // Afficher les boutons de contrôle
+                if (data.activeJourney.path.length >= 2) {
+                    window.pathManager.showFinishButton();
+                }
+
+                this.logAuth(`✅ Tracé actif restauré: ${data.activeJourney.path.length} points`);
+            }
+
+            // 2. Restaurer les données dans VoyageManager
+            if (data.activeJourney.dayByDayData) {
+                window.voyageManager.dayByDayData = data.activeJourney.dayByDayData;
+            }
+            if (data.activeJourney.descriptions) {
+                window.voyageManager.journeyDescriptions = data.activeJourney.descriptions;
+            }
+            if (data.activeJourney.randomEvents) {
+                window.voyageManager.randomEvents = data.activeJourney.randomEvents;
+            }
+            if (data.activeJourney.startDate) {
+                window.voyageManager.journeyStartDate = data.activeJourney.startDate;
+            }
+            if (data.activeJourney.totalDays) {
+                window.voyageManager.totalJourneyDays = data.activeJourney.totalDays;
+            }
+
+            // Restaurer les découvertes globales
+            if (data.activeJourney.discoveries) {
+                window.journeyDiscoveries = data.activeJourney.discoveries;
+                window.pathManager.discoveries = data.activeJourney.discoveries;
+            }
+
+            // 3. Restaurer le mode dessin si nécessaire
+            if (data.activeJourney.isDrawingMode) {
+                // Activer le mode dessin sans écraser le tracé
+                // Note: toggleDrawingMode() nettoie le tracé si on désactive, mais ici on veut activer
+                if (!window.pathManager.isDrawingMode) {
+                    window.pathManager.toggleDrawingMode();
+                }
+            }
+
+            this.logAuth("✅ Voyage en cours restauré complètement");
+        }
+
         // Sauvegarder les filtres pour restauration après initialisation complète
         // IMPORTANT: Toujours traiter filtersByMap, même s'il est vide ou undefined
         const filtersByMap = data.filtersByMap || {};
@@ -834,6 +953,33 @@ class AuthManager {
             });
 
             if (response.status === 404) {
+                // PROTECTION ANTI-ÉCRASEMENT
+                // Vérifier si des données locales existent avant de considérer le profil comme vide
+                const hasLocalData = localStorage.getItem('middleEarthLocations') ||
+                                   localStorage.getItem('middleEarthRegions') ||
+                                   localStorage.getItem('adventureJournal');
+
+                if (hasLocalData) {
+                    this.logAuth("🛡️ PROTECTION ACTIVE: Serveur vide mais données locales détectées");
+
+                    const shouldRestore = confirm(
+                        `⚠️ SAUVEGARDE DE SECOURS DÉTECTÉE\n\n` +
+                        `Le serveur ne contient aucune donnée pour votre profil (possible suite à un redéploiement).\n` +
+                        `Cependant, votre navigateur contient encore vos données locales.\n\n` +
+                        `Voulez-vous RESTAURER vos données locales vers le serveur ?\n\n` +
+                        `✅ OK = Restaurer mes données (Recommandé)\n` +
+                        `❌ ANNULER = Tout effacer et repartir à zéro`
+                    );
+
+                    if (shouldRestore) {
+                        this.logAuth("🔄 Restauration des données locales vers le serveur...");
+                        // Forcer une synchronisation immédiate des données locales vers le cloud
+                        await this.syncUserData();
+                        this.logAuth("✅ Restauration terminée");
+                        return;
+                    }
+                }
+
                 // Pas de données cloud encore - vérifier si on a des données dans l'autre environnement
                 const otherEnv = this.envPrefix === 'dev_' ? 'prod_' : 'dev_';
                 this.logAuth(`ℹ️ Aucune donnée trouvée pour ${this.envPrefix}, vérification de ${otherEnv}...`);
@@ -850,7 +996,7 @@ class AuthManager {
 
                     if (hasData) {
                         const shouldMigrate = confirm(
-                            `⚠️ INCOHÉRENCE DÉTECTÉE\n\n` +
+                            `⚠️ MIGRATION SUGGÉRÉE\n\n` +
                             `Environnement actuel: ${this.envPrefix === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n` +
                             `Données trouvées dans: ${otherEnv === 'dev_' ? 'DEVELOPMENT' : 'PRODUCTION'}\n\n` +
                             `Vous avez ${otherData.locations?.locations?.length || 0} lieux et ${otherData.regions?.regions?.length || 0} régions dans l'autre environnement.\n\n` +
