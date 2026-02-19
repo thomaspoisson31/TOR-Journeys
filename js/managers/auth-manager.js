@@ -123,8 +123,7 @@ class AuthManager {
             'add-region-mode',
             'draw-mode',
             'random-roll-btn',
-            'journal-btn',
-            'characters-btn'
+            'journal-btn'
         ];
 
         elementsToHide.forEach(id => {
