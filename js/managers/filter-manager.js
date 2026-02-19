@@ -445,6 +445,11 @@ export default class FilterManager {
 
     filterLocations(locations) {
         const filtered = locations.filter(location => {
+            // En mode Viewer, forcer l'affichage uniquement des lieux visités
+            if (window.isViewerMode && location.visited !== true) {
+                return false;
+            }
+
             // Filtre par couleur unifiée
             if (this.activeFilters.colors?.length > 0 && 
                 !this.activeFilters.colors.includes(location.color)) {
