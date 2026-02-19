@@ -179,6 +179,49 @@ def update_user_data():
     print(f"✅ Données sauvegardées pour {google_id} ({env_prefix})")
     return jsonify({'success': True, 'conflict_detected': False}), 200
 
+@app.route('/api/user/data/debug', methods=['GET'])
+def debug_user_data():
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    env_prefix = request.args.get('env', 'prod_')
+    google_id = session['google_id']
+
+    # Récupérer les données
+    user_data = db_manager.get_user_data(google_id, env_prefix)
+
+    if user_data is None:
+        return jsonify({'error': 'Aucune donnée trouvée'}), 404
+
+    # Calculer la taille du JSON et préparer les stats
+    try:
+        raw_json_text = json.dumps(user_data, indent=2, ensure_ascii=False)
+        raw_json_size = len(raw_json_text.encode('utf-8'))
+
+        # Résumé des données pour le frontend
+        summary = {
+            'locations_count': len(user_data.get('locations', {}).get('locations', [])),
+            'regions_count': len(user_data.get('regions', {}).get('regions', [])),
+            'characters_count': len(user_data.get('characters', {}).get('characters', [])),
+            'has_calendar': bool(user_data.get('calendar')),
+            'maps_count': len(user_data.get('settings', {}).get('availableMaps', []))
+        }
+
+        return jsonify({
+            'status': 'success',
+            'user_id': google_id,
+            'record_id': f"users/{google_id}/{env_prefix}data.json",
+            'created_at': user_data.get('_saved_at', 'Inconnu'),
+            'updated_at': user_data.get('_saved_at', 'Inconnu'),
+            'data_summary': summary,
+            'full_data': user_data,
+            'raw_json_size': raw_json_size,
+            'raw_json_text': raw_json_text
+        })
+    except Exception as e:
+        print(f"❌ Erreur lors du debug: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/<path:filename>')
 def serve_static(filename):
     if filename.startswith('uploads/'):
