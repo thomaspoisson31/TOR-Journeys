@@ -1561,6 +1561,15 @@ function setupInfoBoxListeners() {
 
     if (calendarDateIndicator) {
         calendarDateIndicator.addEventListener('click', () => {
+            // Restriction d'accès en mode Joueur et Viewer
+            const isViewerMode = window.isViewerMode === true;
+            const isPlayerMode = window.positionManager && window.positionManager.adventureMode === 'player';
+
+            if (isViewerMode || isPlayerMode) {
+                console.log("🔒 Accès aux paramètres restreint en mode Joueur/Viewer");
+                return;
+            }
+
             if (settingsManager) {
                 settingsManager.openSettings();
                 settingsManager.switchTab('season');
@@ -1570,6 +1579,15 @@ function setupInfoBoxListeners() {
 
     if (seasonIndicator) {
         seasonIndicator.addEventListener('click', () => {
+            // Restriction d'accès en mode Joueur et Viewer
+            const isViewerMode = window.isViewerMode === true;
+            const isPlayerMode = window.positionManager && window.positionManager.adventureMode === 'player';
+
+            if (isViewerMode || isPlayerMode) {
+                console.log("🔒 Accès aux paramètres restreint en mode Joueur/Viewer");
+                return;
+            }
+
             if (settingsManager) {
                 settingsManager.openSettings();
                 settingsManager.switchTab('season');
