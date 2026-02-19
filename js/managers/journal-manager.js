@@ -183,9 +183,17 @@ class JournalManager {
         // Effacer les anciens chemins sauvegardés
         window.pathManager.clearSavedPaths();
 
-        // Ajouter les chemins visibles
+        // Récupérer l'URL de la carte active
+        const activeMapUrl = window.settingsManager?.activeMapUrl;
+
+        // Ajouter les chemins visibles qui correspondent à la carte active
         this.entries.forEach(entry => {
-            if (entry.visible && entry.path && entry.path.length > 0) {
+            // Vérifier si le chemin doit être affiché sur cette carte
+            // - Si entry.mapId existe, il doit correspondre à activeMapUrl
+            // - Si entry.mapId n'existe pas (anciens voyages), on l'affiche partout (comportement legacy)
+            const isMapCompatible = !entry.mapId || entry.mapId === activeMapUrl;
+
+            if (entry.visible && entry.path && entry.path.length > 0 && isMapCompatible) {
                 window.pathManager.addSavedPath(entry.id, entry.path);
             }
         });
