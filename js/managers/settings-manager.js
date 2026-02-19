@@ -880,6 +880,11 @@ class SettingsManager {
             window.mapSwitcherManager.refresh();
         }
 
+        // Mettre à jour l'affichage des tracés de voyage pour la nouvelle carte
+        if (window.journalManager && typeof window.journalManager.syncSavedPaths === 'function') {
+            window.journalManager.syncSavedPaths();
+        }
+
         // Fermer la modale des paramètres après le changement de carte
         this.closeSettings();
     }

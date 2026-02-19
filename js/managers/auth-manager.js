@@ -74,6 +74,14 @@ class AuthManager {
             // Appliquer les données (mode viewer)
             await this.applyContextData(data);
 
+            // Forcer un rendu immédiat pour le mode Viewer (comme dans loadUserData)
+            if (typeof window.renderLocations === 'function') {
+                window.renderLocations();
+            }
+            if (typeof window.renderRegions === 'function') {
+                window.renderRegions();
+            }
+
             // Forcer le mode Viewer
             this.enableViewerMode(data.forcedActiveMapUrl);
 

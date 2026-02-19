@@ -2535,6 +2535,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
             generatedAt: new Date().toISOString(),
             journeyType: 'journey',
             visible: false, // Par défaut invisible
+            mapId: window.settingsManager?.activeMapUrl, // Sauvegarder l'ID de la carte active
             days: []
         };
 
