@@ -9,9 +9,17 @@ class PositionManager {
         this.currentPosition = this.loadPosition();
         this.adventureMode = this.loadAdventureMode(); // Nouvel état pour le mode aventure (string: 'admin', 'mj', 'player')
         this.savedFilters = null; // Sauvegarde des filtres avant activation du mode Aventure
+        this.isLocked = window.isViewerMode || false; // Verrouillage du mode (pour le viewer)
+    }
+
+    setLockedMode(locked) {
+        this.isLocked = locked;
     }
 
     loadAdventureMode() {
+        // Si le mode Viewer est actif, forcer le mode joueur
+        if (this.isLocked || window.isViewerMode) return 'player';
+
         const savedMode = localStorage.getItem('adventurers_adventure_mode');
         // Migration de la compatibilité ascendante
         if (savedMode === 'true') return 'mj';
@@ -27,6 +35,11 @@ class PositionManager {
     }
 
     toggleAdventureMode() {
+        if (this.isLocked) {
+            console.warn("🔒 Mode Aventure verrouillé, impossible de changer.");
+            return;
+        }
+
         // Cycle : Admin -> MJ -> Player -> Admin
         const previousMode = this.adventureMode;
 
@@ -697,6 +710,17 @@ class PositionManager {
         const statusSpan = modal.querySelector('#adventure-mode-status');
 
         if (!statusSpan) return;
+
+        // Gérer le verrouillage visuel
+        if (this.isLocked) {
+            statusSpan.style.pointerEvents = 'none';
+            statusSpan.style.opacity = '0.7';
+            statusSpan.title = "Mode verrouillé";
+        } else {
+            statusSpan.style.pointerEvents = 'auto';
+            statusSpan.style.opacity = '1';
+            statusSpan.title = "Cliquer pour basculer";
+        }
 
         // Mise à jour de l'affichage du statut
         if (this.adventureMode === 'mj') {
