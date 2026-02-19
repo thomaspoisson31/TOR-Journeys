@@ -81,3 +81,60 @@ class JsonDBManager:
         except Exception as e:
             print(f"❌ Erreur lors de la sauvegarde des données utilisateur: {e}")
             return False
+
+    def _load_shared_links(self):
+        """Charger les liens partagés"""
+        raw_data = storage_manager.load_file('shared_links.json')
+        if raw_data:
+            try:
+                return json.loads(raw_data)
+            except json.JSONDecodeError:
+                print("⚠️ Erreur de lecture de shared_links.json")
+        return {}
+
+    def _save_shared_links(self, links):
+        """Sauvegarder les liens partagés"""
+        try:
+            json_str = json.dumps(links, indent=2, ensure_ascii=False)
+            storage_manager.save_file(json_str.encode('utf-8'), 'shared_links.json', content_type='application/json')
+            return True
+        except Exception as e:
+            print(f"❌ Erreur sauvegarde shared_links.json: {e}")
+            return False
+
+    def create_shared_link(self, uuid, user_id, map_url, env_prefix):
+        links = self._load_shared_links()
+
+        # Supprimer tout lien existant pour cette carte et cet utilisateur
+        existing_link = self.get_link_by_user_map(user_id, map_url)
+        if existing_link:
+            self.revoke_shared_link(existing_link['uuid'])
+            links = self._load_shared_links() # Recharger après suppression
+
+        links[uuid] = {
+            'user_id': user_id,
+            'map_url': map_url,
+            'env_prefix': env_prefix,
+            'created_at': datetime.now().isoformat()
+        }
+        print(f"🔗 Lien partagé créé: {uuid} pour {user_id} (Carte: {map_url})")
+        return self._save_shared_links(links)
+
+    def get_shared_link(self, uuid):
+        links = self._load_shared_links()
+        return links.get(uuid)
+
+    def revoke_shared_link(self, uuid):
+        links = self._load_shared_links()
+        if uuid in links:
+            del links[uuid]
+            print(f"🔗 Lien partagé révoqué: {uuid}")
+            return self._save_shared_links(links)
+        return False
+
+    def get_link_by_user_map(self, user_id, map_url):
+        links = self._load_shared_links()
+        for uuid, data in links.items():
+            if data.get('user_id') == user_id and data.get('map_url') == map_url:
+                return { 'uuid': uuid, **data }
+        return None

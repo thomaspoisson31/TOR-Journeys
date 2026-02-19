@@ -694,6 +694,105 @@ def generate_with_gemini():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/share/<link_uuid>')
+def view_shared_map(link_uuid):
+    """Sert la page principale pour le mode visualiseur"""
+    return send_from_directory('.', 'index.html')
+
+@app.route('/api/share/generate', methods=['POST'])
+def generate_shared_link():
+    """Génère un lien de partage pour la carte active"""
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    data = request.json
+    map_url = data.get('map_url')
+    if not map_url:
+        return jsonify({'error': 'URL de carte manquante'}), 400
+
+    env_prefix = request.args.get('env', 'prod_')
+    google_id = session['google_id']
+
+    # Générer un UUID court
+    link_uuid = str(uuid.uuid4())[:8]
+
+    if db_manager.create_shared_link(link_uuid, google_id, map_url, env_prefix):
+        return jsonify({
+            'success': True,
+            'link_uuid': link_uuid,
+            'url': f"/share/{link_uuid}"
+        })
+    return jsonify({'error': 'Erreur lors de la création du lien'}), 500
+
+@app.route('/api/share/revoke', methods=['DELETE'])
+def revoke_shared_link():
+    """Révoque un lien de partage"""
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    data = request.json
+    link_uuid = data.get('link_uuid')
+
+    # Vérification que le lien appartient bien à l'utilisateur
+    link_data = db_manager.get_shared_link(link_uuid)
+    if not link_data or link_data['user_id'] != session['google_id']:
+        return jsonify({'error': 'Lien invalide ou non autorisé'}), 403
+
+    if db_manager.revoke_shared_link(link_uuid):
+        return jsonify({'success': True})
+    return jsonify({'error': 'Erreur lors de la suppression'}), 500
+
+@app.route('/api/share/status', methods=['GET'])
+def get_shared_link_status():
+    """Récupère le statut du lien partagé pour une carte donnée"""
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    map_url = request.args.get('map_url')
+    if not map_url:
+        return jsonify({'error': 'URL de carte manquante'}), 400
+
+    google_id = session['google_id']
+    link_data = db_manager.get_link_by_user_map(google_id, map_url)
+
+    if link_data:
+        return jsonify({
+            'has_link': True,
+            'link_uuid': link_data['uuid'],
+            'url': f"/share/{link_data['uuid']}",
+            'created_at': link_data['created_at']
+        })
+    return jsonify({'has_link': False})
+
+@app.route('/api/share/data/<link_uuid>', methods=['GET'])
+def get_shared_data(link_uuid):
+    """Récupère les données pour le mode visualiseur (public)"""
+    link_data = db_manager.get_shared_link(link_uuid)
+    if not link_data:
+        return jsonify({'error': 'Lien invalide ou expiré'}), 404
+
+    user_id = link_data['user_id']
+    env_prefix = link_data['env_prefix']
+
+    # Récupérer les données de l'utilisateur créateur
+    user_data = db_manager.get_user_data(user_id, env_prefix)
+    if not user_data:
+        return jsonify({'error': 'Données non trouvées'}), 404
+
+    # Filtrage minimal pour la sécurité
+    safe_data = {
+        'locations': user_data.get('locations', {}),
+        'regions': user_data.get('regions', {}),
+        'characters': user_data.get('characters', {}),
+        'settings': user_data.get('settings', {}),
+        'calendar': user_data.get('calendar', {}),
+        'journal': user_data.get('journal', {}),
+        'adventureMode': 'player',
+        'forcedActiveMapUrl': link_data['map_url']
+    }
+
+    return jsonify(safe_data)
+
 if __name__ == '__main__':
     print("🚀 Serveur Flask démarré")
     port = int(os.environ.get('PORT', 8080))

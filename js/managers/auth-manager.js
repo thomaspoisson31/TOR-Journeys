@@ -41,10 +41,123 @@ class AuthManager {
         this.logAuth("🔑 Initialisation AuthManager");
         this.setupDOMReferences();
         this.setupEventListeners();
-        this.checkAuthenticationStatus();
-        this.handleAuthCallback();
+
+        const sharedUuid = this.checkSharedViewMode();
+        if (sharedUuid) {
+            this.logAuth("🔗 Mode Partage détecté");
+            window.isViewerMode = true; // Set flag immediately
+            this.loadSharedData(sharedUuid);
+        } else {
+            this.checkAuthenticationStatus();
+            this.handleAuthCallback();
+        }
+
         this.setupLocalStorageListener(); // Écouter les changements de localStorage
         this.updateLastSyncDateDisplay(); // Afficher la date de dernière sync au chargement
+    }
+
+    checkSharedViewMode() {
+        const path = window.location.pathname;
+        const match = path.match(/^\/share\/([a-zA-Z0-9-]+)$/);
+        return match ? match[1] : null;
+    }
+
+    async loadSharedData(uuid) {
+        this.logAuth(`📥 Chargement des données partagées pour ${uuid}`);
+
+        try {
+            const response = await fetch(`/api/share/data/${uuid}`);
+            if (!response.ok) throw new Error("Lien invalide ou expiré");
+
+            const data = await response.json();
+
+            // Appliquer les données (mode viewer)
+            await this.applyContextData(data);
+
+            // Forcer le mode Viewer
+            this.enableViewerMode(data.forcedActiveMapUrl);
+
+        } catch (error) {
+            console.error("Erreur chargement données partagées:", error);
+            alert("Ce lien de partage est invalide ou a expiré.");
+            window.location.href = '/';
+        }
+    }
+
+    enableViewerMode(activeMapUrl) {
+        this.logAuth("🔒 Activation du mode Viewer (Lecture seule)");
+        window.isViewerMode = true; // Flag global pour les autres managers qui s'initialiseraient après
+
+        // 1. Forcer le mode Player dans PositionManager
+        if (window.positionManager) {
+            window.positionManager.setLockedMode(true);
+            // Force le mode 'player' et empêche le changement
+            window.positionManager.adventureMode = 'player';
+            window.positionManager.updateAdventureModeIndicator();
+            window.positionManager.updateBodyClass();
+
+            // Appliquer les filtres du mode aventure immédiatement
+            if (typeof window.positionManager.applyAdventureModeFilters === 'function') {
+                setTimeout(() => window.positionManager.applyAdventureModeFilters(), 100);
+            }
+
+            // Désactiver le toggle du mode
+            const indicator = document.getElementById('adventure-mode-indicator');
+            if (indicator) {
+                indicator.style.pointerEvents = 'none';
+                indicator.title = "Mode Lecture Seule";
+                // Changer le texte pour être explicite
+                indicator.textContent = "Mode Visualiseur";
+                indicator.classList.remove('bg-orange-600');
+                indicator.classList.add('bg-purple-600');
+            }
+        }
+
+        // 2. Masquer les contrôles d'édition et de navigation sensible
+        const elementsToHide = [
+            'settings-btn',
+            'auth-btn',
+            'quick-sync-btn',
+            'map-switch', // Masquer le changement de carte
+            'add-location-mode',
+            'add-region-mode',
+            'draw-mode',
+            'random-roll-btn',
+            'journal-btn',
+            'characters-btn'
+        ];
+
+        elementsToHide.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
+
+        // S'assurer que le Filter Panel est accessible mais restreint
+        const filterBtn = document.getElementById('filter-btn');
+        if (filterBtn) filterBtn.classList.remove('hidden'); // Laisser les filtres visibles
+
+        // 3. Désactiver la sauvegarde
+        this.autoSyncEnabled = false;
+
+        // 4. Forcer la carte active si fournie
+        if (activeMapUrl && window.settingsManager) {
+            window.settingsManager.activeMapUrl = activeMapUrl;
+            // Trouver le nom de la carte
+            const map = window.settingsManager.availableMaps.find(m => m.url === activeMapUrl);
+            if (map) window.settingsManager.activeMapName = map.name;
+
+            // Recharger l'image de la carte si nécessaire
+            const mapImage = document.getElementById('map-image');
+            if (mapImage) mapImage.src = activeMapUrl;
+        }
+
+        // 5. Masquer les thumbnails de carte dans le panneau de distance
+        const mapThumbnails = document.getElementById('map-thumbnails');
+        if (mapThumbnails) mapThumbnails.style.display = 'none';
+
+        // 6. Masquer le bouton "Terminer le voyage" s'il est visible
+        const finishJourneyBtn = document.getElementById('finish-journey-btn');
+        if (finishJourneyBtn) finishJourneyBtn.classList.add('hidden');
     }
 
     setupDOMReferences() {

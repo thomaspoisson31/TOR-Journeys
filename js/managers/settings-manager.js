@@ -216,6 +216,129 @@ class SettingsManager {
                     window.countersManager.render();
                 }
                 break;
+            case 'share':
+                this.renderShareTab();
+                break;
+        }
+    }
+
+    // === GESTION DU PARTAGE ===
+    async renderShareTab() {
+        const content = document.getElementById('share-content');
+        if (!content) return;
+
+        // Afficher loader
+        content.innerHTML = '<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>';
+
+        if (!this.activeMapUrl) {
+            content.innerHTML = '<p class="text-red-400">Aucune carte active sélectionnée.</p>';
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/share/status?map_url=${encodeURIComponent(this.activeMapUrl)}`);
+            const data = await response.json();
+
+            if (data.has_link) {
+                const fullUrl = window.location.origin + data.url;
+                content.innerHTML = `
+                    <div class="bg-gray-700 p-6 rounded-lg w-full max-w-2xl text-center">
+                        <div class="text-green-400 text-xl mb-4"><i class="fas fa-check-circle mr-2"></i>Lien de partage actif</div>
+                        <p class="text-gray-300 mb-4">Cette carte est partagée en lecture seule via le lien suivant :</p>
+
+                        <div class="flex items-center bg-gray-900 rounded p-2 mb-6 border border-gray-600">
+                            <input type="text" value="${fullUrl}" readonly class="bg-transparent text-white flex-grow px-2 outline-none" id="share-link-input">
+                            <button onclick="navigator.clipboard.writeText('${fullUrl}').then(() => alert('Lien copié !'))" class="text-blue-400 hover:text-blue-300 px-3 py-1">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+
+                        <div class="text-sm text-gray-400 mb-6">
+                            Créé le : ${new Date(data.created_at).toLocaleString()}
+                        </div>
+
+                        <button onclick="window.settingsManager.revokeSharedLink('${data.link_uuid}')" class="px-6 py-2 bg-red-600 hover:bg-red-700 rounded text-white transition-colors">
+                            <i class="fas fa-trash-alt mr-2"></i>Révoquer le lien
+                        </button>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `
+                    <div class="text-center max-w-md">
+                        <div class="mb-6">
+                            <i class="fas fa-share-alt text-6xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-300">
+                                Générez un lien unique pour permettre à vos joueurs de consulter cette carte ("${this.activeMapName}") en temps réel.
+                            </p>
+                            <p class="text-gray-400 text-sm mt-2">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Les visiteurs verront uniquement les éléments connus et ne pourront rien modifier.
+                            </p>
+                        </div>
+                        <button onclick="window.settingsManager.generateSharedLink()" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-bold text-lg transition-colors shadow-lg">
+                            <i class="fas fa-link mr-2"></i>Créer un lien de partage
+                        </button>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error("Erreur chargement statut partage:", error);
+            content.innerHTML = `<p class="text-red-400">Erreur lors du chargement : ${error.message}</p>`;
+        }
+    }
+
+    async generateSharedLink() {
+        const confirmMsg = "Voulez-vous créer un lien de partage public pour cette carte ?\nToute personne disposant du lien pourra voir la carte en mode Joueur.";
+        if (!confirm(confirmMsg)) return;
+
+        const content = document.getElementById('share-content');
+        if (content) content.innerHTML = '<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>';
+
+        try {
+            const response = await fetch('/api/share/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ map_url: this.activeMapUrl })
+            });
+
+            if (response.ok) {
+                this.renderShareTab();
+            } else {
+                const err = await response.json();
+                alert("Erreur : " + (err.error || "Impossible de créer le lien"));
+                this.renderShareTab(); // Restaurer l'état
+            }
+        } catch (error) {
+            console.error("Erreur génération lien:", error);
+            alert("Erreur réseau lors de la création du lien");
+            this.renderShareTab();
+        }
+    }
+
+    async revokeSharedLink(uuid) {
+        if (!confirm("Voulez-vous vraiment désactiver ce lien de partage ?\nLes utilisateurs ne pourront plus accéder à la carte via ce lien.")) return;
+
+        const content = document.getElementById('share-content');
+        if (content) content.innerHTML = '<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>';
+
+        try {
+            const response = await fetch('/api/share/revoke', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ link_uuid: uuid })
+            });
+
+            if (response.ok) {
+                this.renderShareTab();
+            } else {
+                const err = await response.json();
+                alert("Erreur : " + (err.error || "Impossible de révoquer le lien"));
+                this.renderShareTab();
+            }
+        } catch (error) {
+            console.error("Erreur révocation lien:", error);
+            alert("Erreur réseau lors de la révocation");
+            this.renderShareTab();
         }
     }
 
