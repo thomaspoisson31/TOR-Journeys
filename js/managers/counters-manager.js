@@ -16,6 +16,7 @@ class CountersManager {
             }
         }
         this.setupEventListeners();
+        this.renderVisibleCounters();
     }
 
     setupEventListeners() {
@@ -47,6 +48,13 @@ class CountersManager {
 
         container.innerHTML = this.counters.map(counter => `
             <div class="bg-gray-700 p-4 rounded-lg flex items-center space-x-4 border border-gray-600" data-id="${counter.id}">
+                <!-- Visibility Toggle -->
+                <button class="w-8 h-8 rounded-full flex items-center justify-center transition-colors ${counter.visible ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-600 text-gray-400 hover:bg-gray-500'}"
+                        onclick="window.countersManager.toggleVisibility('${counter.id}')"
+                        title="${counter.visible ? 'Masquer' : 'Afficher (Max 3)'}">
+                    <i class="fas ${counter.visible ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                </button>
+
                 <!-- Image -->
                 <div class="w-16 h-16 bg-gray-800 rounded overflow-hidden flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity relative group"
                      onclick="window.countersManager.openImageSelector('${counter.id}')"
@@ -104,16 +112,79 @@ class CountersManager {
         `).join('');
     }
 
+    renderVisibleCounters() {
+        const container = document.getElementById('active-counters-display');
+        if (!container) return;
+
+        const visibleCounters = this.counters.filter(c => c.visible);
+
+        if (visibleCounters.length === 0) {
+            container.classList.add('hidden');
+            container.innerHTML = '';
+            return;
+        }
+
+        container.classList.remove('hidden');
+        container.innerHTML = visibleCounters.map(counter => `
+            <div class="flex flex-col items-center">
+                <!-- Image -->
+                <div class="w-10 h-10 bg-gray-800 rounded overflow-hidden flex-shrink-0 mb-1 border border-gray-600">
+                    <img src="${counter.image || ''}"
+                         alt="${counter.name}"
+                         class="w-full h-full object-cover ${counter.image ? '' : 'hidden'}"
+                         onerror="this.style.display='none'">
+                    <div class="${counter.image ? 'hidden' : ''} w-full h-full flex items-center justify-center text-gray-500 text-xs">
+                        <i class="fas fa-image"></i>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center space-x-1">
+                    <button class="text-gray-400 hover:text-white text-xs px-1"
+                            onclick="window.countersManager.updateCounter('${counter.id}', 'value', ${Number(counter.value) - 1})">
+                        -
+                    </button>
+                    <span class="text-white font-bold text-sm min-w-[1.5rem] text-center">${counter.value}</span>
+                    <button class="text-gray-400 hover:text-white text-xs px-1"
+                            onclick="window.countersManager.updateCounter('${counter.id}', 'value', ${Number(counter.value) + 1})">
+                        +
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    toggleVisibility(id) {
+        const counter = this.counters.find(c => c.id === id);
+        if (!counter) return;
+
+        if (!counter.visible) {
+            // Check max limit
+            const visibleCount = this.counters.filter(c => c.visible).length;
+            if (visibleCount >= 3) {
+                alert("Vous ne pouvez afficher que 3 compteurs maximum.");
+                return;
+            }
+        }
+
+        counter.visible = !counter.visible;
+        this.save();
+        this.render(); // Update settings UI
+        this.renderVisibleCounters(); // Update main UI
+    }
+
     addCounter() {
         const newCounter = {
             id: 'counter_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
             name: 'Nouveau compteur',
             value: 0,
-            image: ''
+            image: '',
+            visible: false
         };
         this.counters.push(newCounter);
         this.save();
         this.render();
+        this.renderVisibleCounters();
         console.log('✅ Compteur ajouté:', newCounter.id);
     }
 
@@ -127,6 +198,7 @@ class CountersManager {
             this.save();
             // Re-render pour mettre à jour l'UI (notamment si value a changé via bouton)
             this.render();
+            this.renderVisibleCounters();
         }
     }
 
@@ -135,6 +207,7 @@ class CountersManager {
             this.counters = this.counters.filter(c => c.id !== id);
             this.save();
             this.render();
+            this.renderVisibleCounters();
             console.log('🗑️ Compteur supprimé:', id);
         }
     }
@@ -175,6 +248,7 @@ class CountersManager {
             if (container && container.offsetParent !== null) {
                 this.render();
             }
+            this.renderVisibleCounters();
             console.log(`✅ ${data.length} compteurs chargés`);
         }
     }
