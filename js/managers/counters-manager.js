@@ -128,7 +128,7 @@ class CountersManager {
         container.innerHTML = visibleCounters.map(counter => `
             <div class="flex flex-col items-center">
                 <!-- Image -->
-                <div class="w-10 h-10 bg-gray-800 rounded overflow-hidden flex-shrink-0 mb-1 border border-gray-600">
+                <div class="w-12 h-12 bg-gray-800 rounded overflow-hidden flex-shrink-0 mb-1 border border-gray-600">
                     <img src="${counter.image || ''}"
                          alt="${counter.name}"
                          class="w-full h-full object-cover ${counter.image ? '' : 'hidden'}"
