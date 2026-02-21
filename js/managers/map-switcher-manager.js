@@ -3,20 +3,63 @@ class MapSwitcherManager {
         this.container = null;
         this.thumbnailsContainer = null;
         this.tooltipElement = null;
+        this.navBtn = null;
+        this.sidebar = null;
+        this.closeSidebarBtn = null;
     }
 
     init() {
         console.log('🗺️ MapSwitcherManager initialized');
         this.container = document.getElementById('map-switcher-container');
         this.thumbnailsContainer = document.getElementById('map-thumbnails');
+        this.navBtn = document.getElementById('maps-nav-btn');
+        this.sidebar = document.getElementById('maps-sidebar');
+        this.closeSidebarBtn = document.getElementById('close-maps-sidebar');
         
         if (!this.container || !this.thumbnailsContainer) {
             console.warn('⚠️ MapSwitcherManager: Container not found');
             return;
         }
 
+        this.setupSidebarEvents();
         this.createTooltip();
         this.renderThumbnails();
+    }
+
+    setupSidebarEvents() {
+        if (this.navBtn && this.sidebar) {
+            this.navBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleSidebar();
+            });
+        }
+
+        if (this.closeSidebarBtn) {
+            this.closeSidebarBtn.addEventListener('click', () => {
+                this.closeSidebar();
+            });
+        }
+
+        // Fermer en cliquant à l'extérieur
+        document.addEventListener('click', (e) => {
+            if (this.sidebar && !this.sidebar.classList.contains('hidden')) {
+                if (!this.sidebar.contains(e.target) && e.target !== this.navBtn && !this.navBtn.contains(e.target)) {
+                    this.closeSidebar();
+                }
+            }
+        });
+    }
+
+    toggleSidebar() {
+        if (this.sidebar) {
+            this.sidebar.classList.toggle('hidden');
+        }
+    }
+
+    closeSidebar() {
+        if (this.sidebar) {
+            this.sidebar.classList.add('hidden');
+        }
     }
 
     createTooltip() {
@@ -74,6 +117,8 @@ class MapSwitcherManager {
         const maps = this.getAvailableMaps();
         if (index < 0 || index >= maps.length) return;
 
+        this.closeSidebar();
+
         // Sauvegarde automatique en arrière-plan (fire and forget)
         if (window.authManager && window.authManager.isAuthenticated) {
             console.log('🗺️ [MapSwitcher] Lancement de la sauvegarde en arrière-plan...');
@@ -97,28 +142,30 @@ class MapSwitcherManager {
         const maps = this.getAvailableMaps();
         const activeMapUrl = this.getActiveMapUrl();
 
-        if (maps.length <= 1) {
-            this.container.style.display = 'none';
-            return;
-        }
-
-        this.container.style.display = 'block';
+        // En mode sidebar, on affiche toujours le conteneur, sauf s'il n'y a pas de cartes
+        // Mais on peut vouloir cacher le bouton navBtn si <= 1 carte.
+        // Cela sera géré par updateToolbarButtonsVisibility ou ici.
+        // Pour l'instant, on laisse le conteneur visible si ouvert.
 
         this.thumbnailsContainer.innerHTML = maps.map((map, index) => {
             const isActive = map.url === activeMapUrl;
             const borderClass = isActive 
-                ? 'border-3 border-blue-500 ring-2 ring-blue-400' 
-                : 'border border-gray-500 hover:border-gray-300';
+                ? 'border-2 border-blue-500 ring-2 ring-blue-400 opacity-100'
+                : 'border border-gray-600 hover:border-gray-400 opacity-80 hover:opacity-100';
             
             return `
-                <div class="map-thumbnail-btn ${borderClass} rounded overflow-hidden cursor-pointer transition-all duration-200 hover:scale-105"
+                <div class="map-thumbnail-btn relative group"
                      data-map-index="${index}"
-                     data-map-name="${this.escapeHtml(map.name)}"
-                     style="width: 48px; height: 48px;">
-                    <img src="${this.escapeHtml(map.url)}" 
-                         alt="${this.escapeHtml(map.name)}"
-                         class="w-full h-full object-cover"
-                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><rect fill=%22%23374151%22 width=%2248%22 height=%2248%22/><text x=%2224%22 y=%2228%22 text-anchor=%22middle%22 fill=%22%239CA3AF%22 font-size=%2212%22>?</text></svg>'">
+                     data-map-name="${this.escapeHtml(map.name)}">
+                    <div class="${borderClass} rounded-lg overflow-hidden cursor-pointer transition-all duration-200 aspect-video w-full">
+                        <img src="${this.escapeHtml(map.url)}"
+                             alt="${this.escapeHtml(map.name)}"
+                             class="w-full h-full object-cover"
+                             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><rect fill=%22%23374151%22 width=%2248%22 height=%2248%22/><text x=%2224%22 y=%2228%22 text-anchor=%22middle%22 fill=%22%239CA3AF%22 font-size=%2212%22>?</text></svg>'">
+                    </div>
+                    <div class="text-xs text-center text-gray-300 mt-1 truncate px-1 group-hover:text-white transition-colors">
+                        ${this.escapeHtml(map.name)}
+                    </div>
                 </div>
             `;
         }).join('');

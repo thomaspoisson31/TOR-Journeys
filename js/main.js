@@ -152,6 +152,7 @@ function updateToolbarButtonsVisibility() {
     const addRegionBtn = document.getElementById('add-region-mode');
     const filterBtn = document.getElementById('filter-btn');
     const settingsBtn = document.getElementById('settings-btn');
+    const mapsNavBtn = document.getElementById('maps-nav-btn');
 
     if (isAdventureActive) {
         // Mode aventure ACTIF : masquer ajout lieu/région/filtres/paramètres, afficher tracé/journal/tirage
@@ -171,6 +172,20 @@ function updateToolbarButtonsVisibility() {
         if (addRegionBtn) addRegionBtn.classList.remove('hidden');
         if (filterBtn) filterBtn.classList.remove('hidden');
         if (settingsBtn) settingsBtn.classList.remove('hidden');
+    }
+
+    // Gestion de la visibilité du bouton Cartes (Admin et MJ uniquement)
+    if (mapsNavBtn) {
+        const isViewer = window.isViewerMode === true;
+        const mode = window.positionManager?.adventureMode;
+
+        // Masquer en mode Viewer ou Player
+        if (isViewer || mode === 'player') {
+            mapsNavBtn.classList.add('hidden');
+        } else {
+            // Afficher en mode Admin (défaut) ou MJ
+            mapsNavBtn.classList.remove('hidden');
+        }
     }
 
     console.log(`🎮 Visibilité des boutons mise à jour - Mode Aventure: ${isAdventureActive ? 'Actif' : 'Inactif'}`);

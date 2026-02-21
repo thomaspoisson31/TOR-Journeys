@@ -66,10 +66,29 @@
             <button id="import-regions" title="Importer des régions" class="w-10 h-10 bg-gray-700 hover:bg-green-600 rounded transition-colors hidden"><i class="fas fa-file-upload"></i></button>
             <input type="file" id="import-regions-input" class="hidden" accept=".json">
             <button id="export-regions" title="Exporter des régions" class="w-10 h-10 bg-gray-700 hover:bg-green-600 rounded transition-colors hidden"><i class="fas fa-file-download"></i></button>
+
+            <!-- Maps Navigation Button -->
+            <button id="maps-nav-btn" title="Cartes" class="w-10 h-10 bg-gray-700 hover:bg-blue-600 rounded transition-colors hidden">
+                <i class="fas fa-map"></i>
+            </button>
+
             <!-- Settings Button -->
             <button id="settings-btn" title="Paramètres" class="w-10 h-10 bg-gray-700 hover:bg-yellow-600 rounded transition-colors">
                 <i class="fas fa-cog"></i>
             </button>
+        </div>
+
+        <!-- Maps Sidebar -->
+        <div id="maps-sidebar" class="hidden absolute top-4 left-20 z-20 bg-gray-900 bg-opacity-95 p-4 rounded-lg shadow-xl border border-gray-700 w-64 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white">Cartes</h3>
+                <button id="close-maps-sidebar" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="map-switcher-container">
+                <div id="map-thumbnails" class="grid grid-cols-2 gap-2">
+                    <!-- Les miniatures seront générées par JavaScript -->
+                </div>
+            </div>
         </div>
 
         <!-- Filter Panel -->
@@ -194,13 +213,6 @@
                     <div id="nearby-locations-list" class="text-gray-300"></div>
                 </div>
             </div>
-            <!-- Navigation rapide entre cartes -->
-            <div id="map-switcher-container" class="border-t border-gray-600 pt-2 mt-2">
-                <div id="map-thumbnails" class="flex flex-wrap gap-2 justify-center">
-                    <!-- Les miniatures seront générées par JavaScript -->
-                </div>
-            </div>
-
             <!-- Affichage des compteurs actifs -->
             <div id="active-counters-display" class="border-t border-gray-600 pt-6 mt-2 hidden flex justify-center gap-3">
                 <!-- Les compteurs seront générés par JavaScript -->
