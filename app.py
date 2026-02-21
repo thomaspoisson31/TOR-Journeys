@@ -787,6 +787,7 @@ def get_shared_data(link_uuid):
         'settings': user_data.get('settings', {}),
         'calendar': user_data.get('calendar', {}),
         'journal': user_data.get('journal', {}),
+        'position': user_data.get('position', {}),
         'adventureMode': 'player',
         'forcedActiveMapUrl': link_data['map_url']
     }
