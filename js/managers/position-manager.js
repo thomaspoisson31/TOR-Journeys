@@ -470,6 +470,9 @@ class PositionManager {
                 // Ne pas bloquer la propagation
                 return;
             }
+
+            // En mode verrouillé (View Only), ne pas permettre le déplacement
+            if (this.isLocked) return;
             
             touchStartTime = Date.now();
             touchHasMoved = false;
@@ -579,6 +582,9 @@ class PositionManager {
     }
 
     handleDragStart(e) {
+        // En mode verrouillé (View Only), ne pas permettre le déplacement
+        if (this.isLocked) return;
+
         e.stopPropagation();
         e.preventDefault();
 
