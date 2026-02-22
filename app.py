@@ -120,6 +120,106 @@ def get_current_user():
 
 # ... (Routes contexts supprimées car obsolètes, comme dans le code original) ...
 
+# --- New Architecture Routes ---
+
+@app.route('/api/base_world', methods=['GET'])
+def get_base_world():
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    env_prefix = request.args.get('env', 'prod_')
+    google_id = session['google_id']
+
+    data = db_manager.get_base_world(google_id, env_prefix)
+
+    if data is None:
+        # Initialiser avec un monde vide si nécessaire
+        return jsonify({
+            'locations': {'locations': []},
+            'regions': {'regions': []},
+            'characters': {'characters': []},
+            'settings': {'availableMaps': []}
+        })
+
+    return jsonify(data)
+
+@app.route('/api/base_world', methods=['POST'])
+def save_base_world():
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    data = request.json
+    env_prefix = request.args.get('env', 'prod_')
+    google_id = session['google_id']
+
+    if db_manager.save_base_world(google_id, data, env_prefix):
+        return jsonify({'success': True})
+    return jsonify({'error': 'Erreur sauvegarde'}), 500
+
+@app.route('/api/campaigns', methods=['GET'])
+def list_campaigns():
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    env_prefix = request.args.get('env', 'prod_')
+    google_id = session['google_id']
+
+    campaigns = db_manager.list_campaigns(google_id, env_prefix)
+    return jsonify({'campaigns': campaigns})
+
+@app.route('/api/campaigns', methods=['POST'])
+def create_campaign():
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    data = request.json
+    name = data.get('name', 'Nouvelle Campagne')
+    env_prefix = request.args.get('env', 'prod_')
+    google_id = session['google_id']
+
+    campaign = db_manager.create_campaign(google_id, env_prefix, name)
+    if campaign:
+        return jsonify({'success': True, 'campaign': campaign})
+    return jsonify({'error': 'Erreur création'}), 500
+
+@app.route('/api/campaigns/<campaign_id>', methods=['GET'])
+def get_campaign(campaign_id):
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    env_prefix = request.args.get('env', 'prod_')
+    google_id = session['google_id']
+
+    campaign = db_manager.get_campaign(google_id, env_prefix, campaign_id)
+    if campaign:
+        return jsonify(campaign)
+    return jsonify({'error': 'Campagne introuvable'}), 404
+
+@app.route('/api/campaigns/<campaign_id>', methods=['PUT'])
+def save_campaign(campaign_id):
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    data = request.json
+    env_prefix = request.args.get('env', 'prod_')
+    google_id = session['google_id']
+
+    if db_manager.save_campaign(google_id, env_prefix, campaign_id, data):
+        return jsonify({'success': True})
+    return jsonify({'error': 'Erreur sauvegarde'}), 500
+
+@app.route('/api/campaigns/<campaign_id>', methods=['DELETE'])
+def delete_campaign(campaign_id):
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    env_prefix = request.args.get('env', 'prod_')
+    google_id = session['google_id']
+
+    if db_manager.delete_campaign(google_id, env_prefix, campaign_id):
+        return jsonify({'success': True})
+    return jsonify({'error': 'Erreur suppression'}), 500
+
 @app.route('/api/user/data', methods=['GET'])
 def get_user_data():
     if 'user_id' not in session or 'google_id' not in session:
