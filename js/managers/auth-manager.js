@@ -66,7 +66,7 @@ class AuthManager {
             window.positionManager.updateAdventureModeIndicator();
             window.positionManager.updateBodyClass();
         }
-        const elementsToHide = ['settings-btn', 'auth-btn', 'quick-sync-btn', 'map-switch', 'add-location-mode', 'add-region-mode', 'draw-mode', 'random-roll-btn', 'journal-btn'];
+        const elementsToHide = ['settings-btn', 'auth-btn', 'quick-sync-btn', 'map-switch', 'add-location-mode', 'add-region-mode', 'draw-mode', 'random-roll-btn', 'journal-btn', 'quit-save-btn'];
         elementsToHide.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.add('hidden');
@@ -101,6 +101,7 @@ class AuthManager {
         this.quickSyncBtn = document.getElementById('quick-sync-btn');
         this.modalSyncBtn = document.getElementById('modal-sync-btn');
         this.lastSyncDateDiv = document.getElementById('last-sync-date');
+        this.quitSaveBtn = document.getElementById('quit-save-btn');
     }
 
     setupEventListeners() {
@@ -109,6 +110,7 @@ class AuthManager {
         if (this.googleSigninBtn) this.googleSigninBtn.addEventListener('click', () => this.startGoogleAuth());
         if (this.manualSyncBtn) this.manualSyncBtn.addEventListener('click', () => this.manualSync());
         if (this.modalSyncBtn) this.modalSyncBtn.addEventListener('click', () => this.manualSync());
+        if (this.quitSaveBtn) this.quitSaveBtn.addEventListener('click', () => this.handleQuitAndSave());
         const logoutLink = document.getElementById('logout-link');
         if (logoutLink) logoutLink.addEventListener('click', (e) => this.handleLogout(e));
     }
@@ -217,7 +219,9 @@ class AuthManager {
             }
 
             await this.applyContextData(finalData);
-            this.updateCampaignIndicator(campaignName);
+
+            // Afficher le bouton Quitter et Enregistrer
+            if (this.quitSaveBtn) this.quitSaveBtn.classList.remove('hidden');
 
         } catch (e) {
             console.error("Erreur loadGameContext:", e);
@@ -228,24 +232,12 @@ class AuthManager {
         }
     }
 
-    updateCampaignIndicator(name) {
-        let indicator = document.getElementById('campaign-indicator');
-        if (!indicator) {
-            const container = document.getElementById('toolbar');
-            indicator = document.createElement('div');
-            indicator.id = 'campaign-indicator';
-            indicator.className = 'bg-gray-800 text-white px-3 py-2 rounded mb-2 border border-gray-600 flex items-center justify-between text-sm shadow-lg';
-            container.insertBefore(indicator, container.firstChild);
+    async handleQuitAndSave() {
+        if (confirm("Voulez-vous enregistrer et quitter la session en cours ?")) {
+            await this.manualSync();
+            this.campaignManager.showSelector();
+            if (this.quitSaveBtn) this.quitSaveBtn.classList.add('hidden');
         }
-        indicator.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas ${this.currentMode === 'base' ? 'fa-globe text-purple-400' : 'fa-dungeon text-yellow-400'} mr-2"></i>
-                <span class="font-bold truncate max-w-[120px]" title="${name}">${name}</span>
-            </div>
-            <button onclick="window.campaignManager.showSelector()" class="ml-2 text-gray-400 hover:text-white" title="Changer">
-                <i class="fas fa-exchange-alt"></i>
-            </button>
-        `;
     }
 
     collectCurrentContextData() {
