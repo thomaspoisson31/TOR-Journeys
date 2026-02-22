@@ -403,6 +403,26 @@ class AuthManager {
         }
     }
 
+    scheduleAutoSync() {
+        if (!this.isAuthenticated) return;
+
+        // Annuler le timer précédent s'il existe
+        if (this.autoSyncTimeoutId) {
+            clearTimeout(this.autoSyncTimeoutId);
+        }
+
+        // Marquer comme non sauvegardé immédiatement pour l'interface
+        this.markAsUnsaved();
+
+        // Programmer la nouvelle synchronisation
+        this.autoSyncTimeoutId = setTimeout(() => {
+            console.log("🔄 Exécution de la synchronisation automatique...");
+            this.syncUserData();
+        }, this.autoSyncDelay);
+
+        console.log(`⏳ Synchronisation automatique programmée dans ${this.autoSyncDelay}ms`);
+    }
+
     async manualSync() {
         if (this.isSyncing) return;
         this.updateSyncStatus('syncing');
