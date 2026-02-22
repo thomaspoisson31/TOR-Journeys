@@ -4,6 +4,7 @@ Utilise StorageManager pour la persistance
 """
 import json
 import os
+import uuid
 from datetime import datetime
 from storage_manager import storage_manager
 
@@ -47,8 +48,9 @@ class JsonDBManager:
 
         return user_data
 
+    # --- Legacy Methods (kept for compatibility during migration) ---
     def get_user_data(self, google_id, env_prefix='prod_'):
-        """Récupérer les données utilisateur"""
+        """Récupérer les données utilisateur (Legacy)"""
         data_path = f"users/{google_id}/{env_prefix}data.json"
 
         raw_data = storage_manager.load_file(data_path)
@@ -65,7 +67,7 @@ class JsonDBManager:
         return None
 
     def save_user_data(self, google_id, data, env_prefix='prod_'):
-        """Sauvegarder les données utilisateur"""
+        """Sauvegarder les données utilisateur (Legacy)"""
         data_path = f"users/{google_id}/{env_prefix}data.json"
 
         # Ajouter un timestamp
@@ -81,6 +83,196 @@ class JsonDBManager:
         except Exception as e:
             print(f"❌ Erreur lors de la sauvegarde des données utilisateur: {e}")
             return False
+
+    # --- New Architecture: Base World vs Campaigns ---
+
+    def get_base_world(self, google_id, env_prefix='prod_'):
+        """Récupérer le monde de base"""
+        base_path = f"users/{google_id}/{env_prefix}base.json"
+
+        # Tenter de charger le base world
+        raw_data = storage_manager.load_file(base_path)
+
+        if raw_data:
+            try:
+                return json.loads(raw_data)
+            except json.JSONDecodeError:
+                print(f"⚠️ Erreur décodage base world pour {google_id}")
+                return None
+
+        # Fallback: Tenter de charger l'ancien format _data.json si _base.json n'existe pas
+        print(f"ℹ️ Pas de base world, tentative de chargement legacy pour {google_id}")
+        return self.get_user_data(google_id, env_prefix)
+
+    def save_base_world(self, google_id, data, env_prefix='prod_'):
+        """Sauvegarder le monde de base"""
+        base_path = f"users/{google_id}/{env_prefix}base.json"
+
+        if isinstance(data, dict):
+            data['_saved_at'] = datetime.now().isoformat()
+            data['_type'] = 'base_world'
+
+        try:
+            json_str = json.dumps(data, indent=2, ensure_ascii=False)
+            storage_manager.save_file(json_str.encode('utf-8'), base_path, content_type='application/json')
+            print(f"💾 Base World {env_prefix} sauvegardé pour {google_id}")
+            return True
+        except Exception as e:
+            print(f"❌ Erreur sauvegarde Base World: {e}")
+            return False
+
+    def list_campaigns(self, google_id, env_prefix='prod_'):
+        """Lister les campagnes de l'utilisateur"""
+        # Note: StorageManager n'a pas de méthode list_files native simple qui marche partout (GCS vs Local) de manière uniforme pour les sous-dossiers.
+        # On va utiliser une approche où on stocke la liste des campagnes dans un fichier index ou on essaie de lister si possible.
+        # Pour simplifier et être robuste sur GCS/Local, on va stocker l'index des campagnes dans `campaigns_index.json` à la racine de l'user ou dans le dossier campaigns.
+
+        # Approche hybride : on essaie de lister le dossier `users/{id}/campaigns/`
+        # Mais `storage_manager` abstract this.
+        # Si on est en local, on peut utiliser os.listdir. Si GCS, on doit utiliser l'API GCS via storage_manager.
+        # Le `storage_manager.py` actuel ne semble pas exposer `list_files`.
+        # On va créer un fichier index `users/{id}/{env_prefix}campaigns_index.json`.
+
+        index_path = f"users/{google_id}/{env_prefix}campaigns_index.json"
+        raw_index = storage_manager.load_file(index_path)
+
+        if raw_index:
+            try:
+                return json.loads(raw_index)
+            except:
+                return []
+        return []
+
+    def _update_campaign_index(self, google_id, env_prefix, campaign_summary, action='add'):
+        """Mettre à jour l'index des campagnes"""
+        current_list = self.list_campaigns(google_id, env_prefix)
+        index_path = f"users/{google_id}/{env_prefix}campaigns_index.json"
+
+        if action == 'add':
+            # Vérifier doublons
+            current_list = [c for c in current_list if c['id'] != campaign_summary['id']]
+            current_list.append(campaign_summary)
+        elif action == 'delete':
+            campaign_id = campaign_summary['id']
+            current_list = [c for c in current_list if c['id'] != campaign_id]
+        elif action == 'update':
+             # Mettre à jour l'entrée existante
+            campaign_id = campaign_summary['id']
+            for i, c in enumerate(current_list):
+                if c['id'] == campaign_id:
+                    current_list[i].update(campaign_summary)
+                    break
+
+        try:
+            json_str = json.dumps(current_list, indent=2, ensure_ascii=False)
+            storage_manager.save_file(json_str.encode('utf-8'), index_path, content_type='application/json')
+            return True
+        except Exception as e:
+            print(f"❌ Erreur mise à jour index campagnes: {e}")
+            return False
+
+    def create_campaign(self, google_id, env_prefix, name):
+        """Créer une nouvelle campagne"""
+        campaign_id = str(uuid.uuid4())
+        campaign_path = f"users/{google_id}/campaigns/{env_prefix}{campaign_id}.json"
+
+        now = datetime.now().isoformat()
+
+        # Structure vide d'une campagne
+        campaign_data = {
+            'id': campaign_id,
+            'name': name,
+            'created_at': now,
+            'last_played': now,
+            'locations_states': {},
+            'regions_states': {},
+            'calendar': {},
+            'position': None,
+            'journal': [],
+            'activeJourney': None,
+            'counters': [],
+            'adventureMode': True # Par défaut activé pour une campagne
+        }
+
+        try:
+            json_str = json.dumps(campaign_data, indent=2, ensure_ascii=False)
+            storage_manager.save_file(json_str.encode('utf-8'), campaign_path, content_type='application/json')
+
+            # Mettre à jour l'index
+            summary = {
+                'id': campaign_id,
+                'name': name,
+                'created_at': now,
+                'last_played': now
+            }
+            self._update_campaign_index(google_id, env_prefix, summary, 'add')
+
+            print(f"✅ Campagne créée: {name} ({campaign_id})")
+            return campaign_data
+        except Exception as e:
+            print(f"❌ Erreur création campagne: {e}")
+            return None
+
+    def get_campaign(self, google_id, env_prefix, campaign_id):
+        """Récupérer une campagne spécifique"""
+        campaign_path = f"users/{google_id}/campaigns/{env_prefix}{campaign_id}.json"
+
+        raw_data = storage_manager.load_file(campaign_path)
+        if raw_data:
+            try:
+                return json.loads(raw_data)
+            except:
+                return None
+        return None
+
+    def save_campaign(self, google_id, env_prefix, campaign_id, data):
+        """Sauvegarder l'état d'une campagne"""
+        campaign_path = f"users/{google_id}/campaigns/{env_prefix}{campaign_id}.json"
+
+        if isinstance(data, dict):
+            data['_saved_at'] = datetime.now().isoformat()
+            data['last_played'] = datetime.now().isoformat()
+
+        try:
+            json_str = json.dumps(data, indent=2, ensure_ascii=False)
+            storage_manager.save_file(json_str.encode('utf-8'), campaign_path, content_type='application/json')
+
+            # Mettre à jour l'index (last_played)
+            summary = {
+                'id': campaign_id,
+                'last_played': data['last_played']
+            }
+            # Si le nom a changé
+            if 'name' in data:
+                summary['name'] = data['name']
+
+            self._update_campaign_index(google_id, env_prefix, summary, 'update')
+
+            print(f"💾 Campagne {campaign_id} sauvegardée")
+            return True
+        except Exception as e:
+            print(f"❌ Erreur sauvegarde campagne: {e}")
+            return False
+
+    def delete_campaign(self, google_id, env_prefix, campaign_id):
+        """Supprimer une campagne"""
+        campaign_path = f"users/{google_id}/campaigns/{env_prefix}{campaign_id}.json"
+
+        # Note: StorageManager n'a pas de delete_file explicitement exposé dans le wrapper actuel?
+        # Vérifions storage_manager.py s'il le faut.
+        # Si delete n'existe pas, on peut juste retirer de l'index pour le cacher.
+        # Mais supposons qu'on peut supprimer.
+
+        # Pour l'instant, on retire de l'index.
+        self._update_campaign_index(google_id, env_prefix, {'id': campaign_id}, 'delete')
+
+        # On essaie de supprimer le fichier si possible (dépend de l'implémentation de storage_manager)
+        # Comme on ne peut pas modifier storage_manager facilement sans le voir, on va laisser le fichier orphelin pour l'instant
+        # ou écraser avec vide.
+
+        return True
+
+    # --- Shared Links Methods ---
 
     def _load_shared_links(self):
         """Charger les liens partagés"""

@@ -1,0 +1,19 @@
+{
+  "activeJourney": null,
+  "adventureMode": true,
+  "calendar": {},
+  "counters": [],
+  "created_at": "2026-02-22T08:42:09.994494",
+  "id": "d0ccbda2-1662-457f-9eb5-60c901cfe4fa",
+  "journal": [
+    {
+      "entry": "Day 1"
+    }
+  ],
+  "last_played": "2026-02-22T08:42:09.997656",
+  "locations_states": {},
+  "name": "My Epic Campaign",
+  "position": null,
+  "regions_states": {},
+  "_saved_at": "2026-02-22T08:42:09.997648"
+}
