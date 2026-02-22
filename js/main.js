@@ -393,14 +393,15 @@ function renderLocations() {
             return;
         }
 
+        let isVisible = true;
         // IMPORTANT: Vérifier si le lieu passe les filtres actifs (incluant mode Aventure)
         if (window.filterManager) {
             const isFiltered = window.filterManager.filteredLocations.some(loc => loc.id === location.id);
             const shouldShowLocations = window.filterManager.activeFilters.showLocations;
 
             if (!shouldShowLocations || !isFiltered) {
-                // Le lieu ne passe pas les filtres actifs, ne pas l'afficher
-                return;
+                // Le lieu ne passe pas les filtres actifs, le masquer mais le créer quand même
+                isVisible = false;
             }
         }
 
@@ -413,6 +414,10 @@ function renderLocations() {
         // Positionner le marqueur
         marker.style.left = `${location.coordinates.x}px`;
         marker.style.top = `${location.coordinates.y}px`;
+
+        if (!isVisible) {
+            marker.style.display = 'none';
+        }
 
         // Chercher une image de type vignette
         let hasThumbnail = false;
@@ -1104,6 +1109,10 @@ function initializeMap() {
     if (window.filterManager) {
         window.filterManager.applyFilters();
     }
+
+    // Render initial content
+    if (typeof window.renderLocations === 'function') window.renderLocations();
+    if (typeof window.renderRegions === 'function') window.renderRegions();
 
     // Mettre à jour la visibilité des boutons de la toolbar en fonction du mode aventure
     if (typeof updateToolbarButtonsVisibility === 'function') {
