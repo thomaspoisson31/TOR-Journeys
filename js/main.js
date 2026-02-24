@@ -291,6 +291,11 @@ async function initializeApp() {
         window.importExportManager = importExportManager; // Exposer globalement pour les onclick
         console.log("✅ ImportExportManager initialized");
 
+        // Initialiser LibraryManager (Unified)
+        const libraryManager = new LibraryManager();
+        window.libraryManager = libraryManager;
+        console.log("✅ LibraryManager initialized");
+
         // Initialiser les structures vides (seront remplies par AuthManager)
         console.log("📍 Initializing data structures...");
         await dataManager.loadInitialLocations();
@@ -1114,11 +1119,6 @@ function initializeMap() {
     countersManager.init();
     window.countersManager = countersManager; // Exposer globalement
     console.log("✅ CountersManager initialized");
-
-    // Initialiser LibraryManager (Unified)
-    const libraryManager = new LibraryManager();
-    window.libraryManager = libraryManager;
-    console.log("✅ LibraryManager initialized");
 
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
