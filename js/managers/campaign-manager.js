@@ -19,11 +19,14 @@ class CampaignManager {
         return [];
     }
 
-    async createCampaign(name, initialData = null) {
+    async createCampaign(name, initialData = null, isStandalone = false) {
         try {
             const body = { name };
             if (initialData) {
                 body.initial_data = initialData;
+            }
+            if (isStandalone) {
+                body.is_standalone = true;
             }
 
             const response = await fetch('/api/campaigns', {
@@ -187,7 +190,7 @@ class CampaignManager {
                             <input type="radio" name="campaign-source" value="empty" checked class="mt-1 mr-3 text-blue-600 w-4 h-4">
                             <div>
                                 <span class="text-white font-bold block">Nouvelle Campagne</span>
-                                <span class="text-gray-400 text-sm">Commencer à zéro (Monde de Base par défaut).</span>
+                                <span class="text-gray-400 text-sm">Commencer dans un monde entièrement vide (aucune carte ni lieu).</span>
                             </div>
                         </label>
 
@@ -239,14 +242,17 @@ class CampaignManager {
 
             if (name) {
                 let initialData = null;
+                let isStandalone = false;
 
                 if (source === 'current' && window.authManager) {
                     // Collecter le contexte actuel pour le clonage
-                    initialData = window.authManager.collectCurrentContextData();
+                    initialData = window.authManager.collectCurrentContextData(true); // true = forCampaign cloning
                     console.log("Clonage du contexte actuel:", initialData);
+                } else if (source === 'empty') {
+                    isStandalone = true;
                 }
 
-                await this.createCampaign(name, initialData);
+                await this.createCampaign(name, initialData, isStandalone);
                 document.getElementById('new-campaign-modal').classList.add('hidden');
                 this.renderSelector();
             } else {

@@ -138,57 +138,59 @@ console.log("✅ Essential DOM elements:", {
  */
 function updateToolbarButtonsVisibility() {
     // Vérifier si le mode aventure (MJ ou Player) est actif
-    const isAdventureActive = window.positionManager && typeof window.positionManager.isAdventureActive === 'function'
-        ? window.positionManager.isAdventureActive()
-        : (window.positionManager?.adventureMode === 'mj' || window.positionManager?.adventureMode === 'player' || window.positionManager?.adventureMode === true);
+    const adventureMode = window.positionManager ? window.positionManager.adventureMode : 'admin';
+    const isAdventureActive = adventureMode === 'mj' || adventureMode === 'player' || adventureMode === true;
+    const isPlayerMode = adventureMode === 'player'; // Seul le mode joueur masque les outils d'édition
 
-    // Boutons à masquer quand le mode aventure est INACTIF
+    // Boutons d'aventure (Journal, Tracé, Dés)
     const drawModeBtn = document.getElementById('draw-mode');
     const journalBtn = document.getElementById('journal-btn');
     const randomRollBtn = document.getElementById('random-roll-btn');
 
-    // Boutons à masquer quand le mode aventure est ACTIF
+    // Boutons d'édition/admin (Ajout lieu, région, filtres, paramètres)
     const addLocationBtn = document.getElementById('add-location-mode');
     const addRegionBtn = document.getElementById('add-region-mode');
     const filterBtn = document.getElementById('filter-btn');
     const settingsBtn = document.getElementById('settings-btn');
     const mapsNavBtn = document.getElementById('maps-nav-btn');
 
+    // Gestion des outils d'aventure (MJ et Joueur)
     if (isAdventureActive) {
-        // Mode aventure ACTIF : masquer ajout lieu/région/filtres/paramètres, afficher tracé/journal/tirage
         if (drawModeBtn) drawModeBtn.classList.remove('hidden');
         if (journalBtn) journalBtn.classList.remove('hidden');
         if (randomRollBtn) randomRollBtn.classList.remove('hidden');
+    } else {
+        if (drawModeBtn) drawModeBtn.classList.add('hidden');
+        if (journalBtn) journalBtn.classList.add('hidden');
+        if (randomRollBtn) randomRollBtn.classList.add('hidden');
+    }
+
+    // Gestion des outils d'édition (Admin et MJ, mais PAS Joueur)
+    if (isPlayerMode) {
+        // Mode Joueur : masquer les outils d'édition
         if (addLocationBtn) addLocationBtn.classList.add('hidden');
         if (addRegionBtn) addRegionBtn.classList.add('hidden');
         if (filterBtn) filterBtn.classList.add('hidden');
         if (settingsBtn) settingsBtn.classList.add('hidden');
+        if (mapsNavBtn) mapsNavBtn.classList.add('hidden');
     } else {
-        // Mode aventure INACTIF : masquer tracé/journal/tirage, afficher ajout lieu/région/filtres/paramètres
-        if (drawModeBtn) drawModeBtn.classList.add('hidden');
-        if (journalBtn) journalBtn.classList.add('hidden');
-        if (randomRollBtn) randomRollBtn.classList.add('hidden');
+        // Mode Admin ou MJ : afficher les outils d'édition
         if (addLocationBtn) addLocationBtn.classList.remove('hidden');
         if (addRegionBtn) addRegionBtn.classList.remove('hidden');
         if (filterBtn) filterBtn.classList.remove('hidden');
         if (settingsBtn) settingsBtn.classList.remove('hidden');
+        // Le bouton cartes est géré ici aussi maintenant pour MJ/Admin
+        if (mapsNavBtn) mapsNavBtn.classList.remove('hidden');
     }
 
-    // Gestion de la visibilité du bouton Cartes (Admin et MJ uniquement)
-    if (mapsNavBtn) {
-        const isViewer = window.isViewerMode === true;
-        const mode = window.positionManager?.adventureMode;
-
-        // Masquer en mode Viewer ou Player
-        if (isViewer || mode === 'player') {
-            mapsNavBtn.classList.add('hidden');
-        } else {
-            // Afficher en mode Admin (défaut) ou MJ
-            mapsNavBtn.classList.remove('hidden');
-        }
+    // Gestion spécifique du mode Viewer (surclasse tout)
+    if (window.isViewerMode === true) {
+        if (mapsNavBtn) mapsNavBtn.classList.add('hidden');
+        if (settingsBtn) settingsBtn.classList.add('hidden');
+        if (filterBtn) filterBtn.classList.remove('hidden'); // Le viewer peut filtrer
     }
 
-    console.log(`🎮 Visibilité des boutons mise à jour - Mode Aventure: ${isAdventureActive ? 'Actif' : 'Inactif'}`);
+    console.log(`🎮 Visibilité des boutons mise à jour - Mode: ${adventureMode}`);
 }
 
 // Exposer la fonction globalement
@@ -309,22 +311,42 @@ async function initializeApp() {
                 console.log("⏳ Waiting for cloud data before rendering...");
             };
             mapImage.onerror = () => {
-                console.error("❌ Map image failed to load");
+                console.error("❌ Map image failed to load or no map selected");
                 if (loaderOverlay) {
-                    loaderOverlay.innerHTML = `
-                        <div class="text-2xl text-red-500 text-center p-4">
-                            <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>
-                            Erreur de chargement de la carte<br>
-                            <div class="mt-6 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center">
-                                <button onclick="window.openSettingsForMap()" class="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center">
-                                    <i class="fas fa-cog mr-2"></i>Paramètres
-                                </button>
-                                <button onclick="location.reload()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center">
-                                    <i class="fas fa-sync-alt mr-2"></i>Recharger
+                    const isNoMap = !window.settingsManager?.activeMapUrl;
+
+                    if (isNoMap) {
+                        loaderOverlay.innerHTML = `
+                            <div class="text-2xl text-white text-center p-8 bg-gray-900 rounded-xl shadow-2xl border border-gray-700 max-w-lg mx-auto">
+                                <i class="fas fa-map text-6xl text-gray-600 mb-6 block"></i>
+                                <h2 class="text-3xl font-bold mb-4 font-serif text-yellow-500">Bienvenue, Voyageur</h2>
+                                <p class="text-gray-300 mb-8 text-lg">Cette aventure commence dans un monde vierge. Pour débuter votre périple, vous devez d'abord ajouter une carte.</p>
+
+                                <button onclick="window.openSettingsForMap()" class="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-bold text-lg transition-all transform hover:scale-105 shadow-lg flex items-center justify-center">
+                                    <i class="fas fa-plus-circle mr-3"></i>Ajouter une carte
                                 </button>
                             </div>
-                        </div>
-                    `;
+                        `;
+                        // Ensure overlay is visible and opaque for this welcome screen
+                        loaderOverlay.style.opacity = '1';
+                        loaderOverlay.style.display = 'flex';
+                        loaderOverlay.style.background = 'rgba(0,0,0,0.85)';
+                    } else {
+                        loaderOverlay.innerHTML = `
+                            <div class="text-2xl text-red-500 text-center p-4">
+                                <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>
+                                Erreur de chargement de la carte<br>
+                                <div class="mt-6 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center">
+                                    <button onclick="window.openSettingsForMap()" class="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center">
+                                        <i class="fas fa-cog mr-2"></i>Paramètres
+                                    </button>
+                                    <button onclick="location.reload()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center">
+                                        <i class="fas fa-sync-alt mr-2"></i>Recharger
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
                 }
             };
             console.log("⏳ Waiting for SettingsManager to load active map...");
