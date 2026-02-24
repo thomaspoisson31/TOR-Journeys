@@ -66,7 +66,8 @@ class AuthManager {
             window.positionManager.updateAdventureModeIndicator();
             window.positionManager.updateBodyClass();
         }
-        const elementsToHide = ['settings-btn', 'auth-btn', 'quick-sync-btn', 'map-switch', 'add-location-mode', 'add-region-mode', 'draw-mode', 'random-roll-btn', 'journal-btn', 'quit-save-btn'];
+        // Ajouter campaigns-btn et campaign-name-display à la liste des éléments à masquer
+        const elementsToHide = ['settings-btn', 'auth-btn', 'quick-sync-btn', 'map-switch', 'add-location-mode', 'add-region-mode', 'draw-mode', 'random-roll-btn', 'journal-btn', 'quit-save-btn', 'campaigns-btn', 'campaign-name-display'];
         elementsToHide.forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.add('hidden');
@@ -102,6 +103,10 @@ class AuthManager {
         this.modalSyncBtn = document.getElementById('modal-sync-btn');
         this.lastSyncDateDiv = document.getElementById('last-sync-date');
         this.quitSaveBtn = document.getElementById('quit-save-btn');
+
+        // Nouveaux éléments
+        this.campaignsBtn = document.getElementById('campaigns-btn');
+        this.campaignNameDisplay = document.getElementById('campaign-name-display');
     }
 
     setupEventListeners() {
@@ -111,8 +116,22 @@ class AuthManager {
         if (this.manualSyncBtn) this.manualSyncBtn.addEventListener('click', () => this.manualSync());
         if (this.modalSyncBtn) this.modalSyncBtn.addEventListener('click', () => this.manualSync());
         if (this.quitSaveBtn) this.quitSaveBtn.addEventListener('click', () => this.handleQuitAndSave());
+
         const logoutLink = document.getElementById('logout-link');
         if (logoutLink) logoutLink.addEventListener('click', (e) => this.handleLogout(e));
+
+        // Listeners pour les campagnes
+        if (this.campaignsBtn) {
+            this.campaignsBtn.addEventListener('click', () => {
+                this.campaignManager.showSelector();
+            });
+        }
+
+        if (this.campaignNameDisplay) {
+            this.campaignNameDisplay.addEventListener('click', () => {
+                this.campaignManager.showSelector();
+            });
+        }
     }
 
     async checkAuthenticationStatus() {
@@ -124,7 +143,10 @@ class AuthManager {
                     this.currentUser = data.user;
                     this.isAuthenticated = true;
                     this.updateUIForAuthenticatedUser();
-                    this.campaignManager.showSelector();
+                    // Au démarrage, afficher le sélecteur si aucune campagne n'est chargée
+                    if (!this.currentCampaignId) {
+                        this.campaignManager.showSelector();
+                    }
                 } else {
                     this.updateUIForUnauthenticatedUser();
                 }
@@ -153,6 +175,9 @@ class AuthManager {
         if (this.loggedInPanel) this.loggedInPanel.classList.remove('hidden');
         if (this.loggedOutPanel) this.loggedOutPanel.classList.add('hidden');
         this.updateUnauthenticatedWarning(false);
+
+        // Afficher le bouton campagnes
+        if (this.campaignsBtn) this.campaignsBtn.classList.remove('hidden');
     }
 
     updateUIForUnauthenticatedUser() {
@@ -161,6 +186,10 @@ class AuthManager {
         if (this.loggedInPanel) this.loggedInPanel.classList.add('hidden');
         if (this.loggedOutPanel) this.loggedOutPanel.classList.remove('hidden');
         this.updateUnauthenticatedWarning(true);
+
+        // Masquer le bouton campagnes et le nom
+        if (this.campaignsBtn) this.campaignsBtn.classList.add('hidden');
+        if (this.campaignNameDisplay) this.campaignNameDisplay.classList.add('hidden');
     }
 
     updateUnauthenticatedWarning(show) {
@@ -173,6 +202,19 @@ class AuthManager {
         this.isLoadingFromCloud = true;
         this.currentMode = mode;
         this.currentCampaignId = campaignId;
+
+        // Mise à jour de l'affichage du nom de la campagne
+        if (this.campaignNameDisplay) {
+            if (campaignName) {
+                const nameSpan = this.campaignNameDisplay.querySelector('#campaign-name-text') || this.campaignNameDisplay;
+                if(nameSpan.tagName === 'SPAN') nameSpan.textContent = campaignName;
+                else this.campaignNameDisplay.textContent = campaignName;
+
+                this.campaignNameDisplay.classList.remove('hidden');
+            } else {
+                this.campaignNameDisplay.classList.add('hidden');
+            }
+        }
 
         try {
             const baseRes = await fetch('/api/base_world');
@@ -237,10 +279,12 @@ class AuthManager {
             await this.manualSync();
             this.campaignManager.showSelector();
             if (this.quitSaveBtn) this.quitSaveBtn.classList.add('hidden');
+            // Reset display
+            if (this.campaignNameDisplay) this.campaignNameDisplay.classList.add('hidden');
         }
     }
 
-    collectCurrentContextData() {
+    collectCurrentContextData(forCampaign = false) {
         const globalData = {
             locations: window.locationsData || { locations: [] },
             regions: window.regionsData || { regions: [] },
@@ -252,26 +296,33 @@ class AuthManager {
             }
         };
 
-        if (this.currentMode === 'base') {
+        if (this.currentMode === 'base' && !forCampaign) {
             return {
                 locations: globalData.locations,
                 regions: globalData.regions,
                 characters: globalData.characters,
                 settings: globalData.settings
             };
-        } else if (this.currentMode === 'campaign') {
+        } else if (this.currentMode === 'campaign' || forCampaign) {
             const locations_states = {};
             if (globalData.locations.locations) {
                 globalData.locations.locations.forEach(loc => {
-                    if (loc.known || loc.visited || loc.custom_notes) {
-                        locations_states[loc.id] = { known: loc.known, visited: loc.visited, custom_notes: loc.custom_notes };
+                    // En mode campagne ou clonage, on sauvegarde l'état
+                    // Si forCampaign est vrai (clonage), on sauvegarde tout ce qui est pertinent pour l'état
+                    if (loc.known || loc.visited || loc.custom_notes || forCampaign) {
+                        locations_states[loc.id] = {
+                            known: loc.known,
+                            visited: loc.visited,
+                            custom_notes: loc.custom_notes,
+                            coordinates: loc.coordinates // Sauvegarder les positions modifiées
+                        };
                     }
                 });
             }
             const regions_states = {};
             if (globalData.regions.regions) {
                 globalData.regions.regions.forEach(reg => {
-                    if (reg.known || reg.visited) {
+                    if (reg.known || reg.visited || forCampaign) {
                         regions_states[reg.id] = { known: reg.known, visited: reg.visited };
                     }
                 });
