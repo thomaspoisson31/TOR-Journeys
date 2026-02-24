@@ -174,10 +174,11 @@ def create_campaign():
 
     data = request.json
     name = data.get('name', 'Nouvelle Campagne')
+    initial_data = data.get('initial_data')
     env_prefix = request.args.get('env', 'prod_')
     google_id = session['google_id']
 
-    campaign = db_manager.create_campaign(google_id, env_prefix, name)
+    campaign = db_manager.create_campaign(google_id, env_prefix, name, initial_data)
     if campaign:
         return jsonify({'success': True, 'campaign': campaign})
     return jsonify({'error': 'Erreur création'}), 500

@@ -171,28 +171,38 @@ class JsonDBManager:
             print(f"❌ Erreur mise à jour index campagnes: {e}")
             return False
 
-    def create_campaign(self, google_id, env_prefix, name):
+    def create_campaign(self, google_id, env_prefix, name, initial_data=None):
         """Créer une nouvelle campagne"""
         campaign_id = str(uuid.uuid4())
         campaign_path = f"users/{google_id}/campaigns/{env_prefix}{campaign_id}.json"
 
         now = datetime.now().isoformat()
 
-        # Structure vide d'une campagne
-        campaign_data = {
-            'id': campaign_id,
-            'name': name,
-            'created_at': now,
-            'last_played': now,
-            'locations_states': {},
-            'regions_states': {},
-            'calendar': {},
-            'position': None,
-            'journal': [],
-            'activeJourney': None,
-            'counters': [],
-            'adventureMode': True # Par défaut activé pour une campagne
-        }
+        if initial_data:
+            # Cloner le contexte existant
+            campaign_data = initial_data.copy()
+            # S'assurer que les métadonnées sont correctes pour la nouvelle campagne
+            campaign_data['id'] = campaign_id
+            campaign_data['name'] = name
+            campaign_data['created_at'] = now
+            campaign_data['last_played'] = now
+            campaign_data['adventureMode'] = True
+        else:
+            # Structure vide d'une campagne
+            campaign_data = {
+                'id': campaign_id,
+                'name': name,
+                'created_at': now,
+                'last_played': now,
+                'locations_states': {},
+                'regions_states': {},
+                'calendar': {},
+                'position': None,
+                'journal': [],
+                'activeJourney': None,
+                'counters': [],
+                'adventureMode': True # Par défaut activé pour une campagne
+            }
 
         try:
             json_str = json.dumps(campaign_data, indent=2, ensure_ascii=False)
