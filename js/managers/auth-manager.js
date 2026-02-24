@@ -19,6 +19,7 @@ class AuthManager {
         this.authBtn = null;
         this.authModal = null;
         this.envPrefix = null;
+        this.isStandaloneCampaign = false;
     }
 
     init() {
@@ -217,46 +218,76 @@ class AuthManager {
         }
 
         try {
-            const baseRes = await fetch('/api/base_world');
-            let baseData = await baseRes.json();
-
-            // Legacy fallback
-            if (!baseData || !baseData.locations || baseData.locations.locations.length === 0) {
-                const legacyRes = await fetch('/api/user/data');
-                if (legacyRes.ok) {
-                    const legacyData = await legacyRes.json();
-                    if (legacyData.locations && legacyData.locations.locations.length > 0) baseData = legacyData;
-                }
-            }
-
-            let finalData = { ...baseData };
+            let finalData = {};
 
             if (mode === 'campaign' && campaignId) {
                 const campRes = await fetch(`/api/campaigns/${campaignId}`);
                 const campaignData = await campRes.json();
 
-                // Merge Locations
-                if (finalData.locations && finalData.locations.locations) {
-                    finalData.locations.locations = finalData.locations.locations.map(loc => {
-                        const state = campaignData.locations_states[loc.id];
-                        return state ? { ...loc, ...state } : { ...loc, known: false, visited: false };
-                    });
+                if (campaignData.is_standalone) {
+                    this.isStandaloneCampaign = true;
+                    finalData = campaignData;
+                    // Ensure structures for empty campaign
+                    if (!finalData.locations) finalData.locations = { locations: [] };
+                    if (!finalData.regions) finalData.regions = { regions: [] };
+                    if (!finalData.characters) finalData.characters = { characters: [] };
+                    if (!finalData.settings) finalData.settings = { availableMaps: [] };
+
+                    finalData.adventureMode = true;
+                } else {
+                    this.isStandaloneCampaign = false;
+                    const baseRes = await fetch('/api/base_world');
+                    let baseData = await baseRes.json();
+
+                    // Legacy fallback
+                    if (!baseData || !baseData.locations || baseData.locations.locations.length === 0) {
+                        const legacyRes = await fetch('/api/user/data');
+                        if (legacyRes.ok) {
+                            const legacyData = await legacyRes.json();
+                            if (legacyData.locations && legacyData.locations.locations.length > 0) baseData = legacyData;
+                        }
+                    }
+
+                    finalData = { ...baseData };
+
+                    // Merge Locations
+                    if (finalData.locations && finalData.locations.locations) {
+                        finalData.locations.locations = finalData.locations.locations.map(loc => {
+                            const state = campaignData.locations_states[loc.id];
+                            return state ? { ...loc, ...state } : { ...loc, known: false, visited: false };
+                        });
+                    }
+                    // Merge Regions
+                    if (finalData.regions && finalData.regions.regions) {
+                        finalData.regions.regions = finalData.regions.regions.map(reg => {
+                            const state = campaignData.regions_states[reg.id];
+                            return state ? { ...reg, ...state } : { ...reg, known: false, visited: false };
+                        });
+                    }
+
+                    finalData.calendar = campaignData.calendar || {};
+                    finalData.journal = campaignData.journal || [];
+                    finalData.position = campaignData.position;
+                    finalData.activeJourney = campaignData.activeJourney;
+                    finalData.counters = campaignData.counters || [];
+                    finalData.adventureMode = true;
                 }
-                // Merge Regions
-                if (finalData.regions && finalData.regions.regions) {
-                    finalData.regions.regions = finalData.regions.regions.map(reg => {
-                        const state = campaignData.regions_states[reg.id];
-                        return state ? { ...reg, ...state } : { ...reg, known: false, visited: false };
-                    });
+            } else {
+                // Base World Mode
+                this.isStandaloneCampaign = false;
+                const baseRes = await fetch('/api/base_world');
+                let baseData = await baseRes.json();
+
+                // Legacy fallback
+                if (!baseData || !baseData.locations || baseData.locations.locations.length === 0) {
+                    const legacyRes = await fetch('/api/user/data');
+                    if (legacyRes.ok) {
+                        const legacyData = await legacyRes.json();
+                        if (legacyData.locations && legacyData.locations.locations.length > 0) baseData = legacyData;
+                    }
                 }
 
-                finalData.calendar = campaignData.calendar || {};
-                finalData.journal = campaignData.journal || [];
-                finalData.position = campaignData.position;
-                finalData.activeJourney = campaignData.activeJourney;
-                finalData.counters = campaignData.counters || [];
-                finalData.adventureMode = true;
-            } else {
+                finalData = { ...baseData };
                 finalData.adventureMode = false;
             }
 
@@ -304,6 +335,43 @@ class AuthManager {
                 settings: globalData.settings
             };
         } else if (this.currentMode === 'campaign' || forCampaign) {
+            // Common dynamic data
+            const dynamicData = {
+                calendar: {
+                    currentDate: localStorage.getItem('currentDate'),
+                    isCalendarMode: localStorage.getItem('isCalendarMode') === 'true',
+                    calendarData: window.calendarManager?.calendarData,
+                    currentCalendarDate: window.calendarManager?.currentCalendarDate,
+                    currentSeason: window.calendarManager?.currentSeason
+                },
+                position: JSON.parse(localStorage.getItem('adventurers_position') || 'null'),
+                journal: window.journalManager ? window.journalManager.getAllData() : [],
+                activeJourney: {
+                    path: window.journeyPath || [],
+                    discoveries: window.journeyDiscoveries || [],
+                    dayByDayData: window.voyageManager?.dayByDayData || [],
+                    descriptions: window.voyageManager?.journeyDescriptions || {},
+                    randomEvents: window.voyageManager?.randomEvents || {},
+                    startDate: window.voyageManager?.journeyStartDate || null,
+                    totalDays: window.voyageManager?.totalJourneyDays || 0,
+                    isDrawingMode: window.pathManager?.isDrawingMode || false
+                },
+                counters: window.countersManager ? window.countersManager.getCounters() : [],
+                adventureMode: window.positionManager ? window.positionManager.adventureMode : true
+            };
+
+            if (this.isStandaloneCampaign && !forCampaign) {
+                // Pour une campagne autonome, on sauvegarde TOUT (comme le monde de base)
+                return {
+                    ...dynamicData,
+                    locations: globalData.locations,
+                    regions: globalData.regions,
+                    characters: globalData.characters,
+                    settings: globalData.settings,
+                    is_standalone: true
+                };
+            }
+
             const locations_states = {};
             if (globalData.locations.locations) {
                 globalData.locations.locations.forEach(loc => {
@@ -328,29 +396,9 @@ class AuthManager {
                 });
             }
             return {
+                ...dynamicData,
                 locations_states,
-                regions_states,
-                calendar: {
-                    currentDate: localStorage.getItem('currentDate'),
-                    isCalendarMode: localStorage.getItem('isCalendarMode') === 'true',
-                    calendarData: window.calendarManager?.calendarData,
-                    currentCalendarDate: window.calendarManager?.currentCalendarDate,
-                    currentSeason: window.calendarManager?.currentSeason
-                },
-                position: JSON.parse(localStorage.getItem('adventurers_position') || 'null'),
-                journal: window.journalManager ? window.journalManager.getAllData() : [],
-                activeJourney: {
-                    path: window.journeyPath || [],
-                    discoveries: window.journeyDiscoveries || [],
-                    dayByDayData: window.voyageManager?.dayByDayData || [],
-                    descriptions: window.voyageManager?.journeyDescriptions || {},
-                    randomEvents: window.voyageManager?.randomEvents || {},
-                    startDate: window.voyageManager?.journeyStartDate || null,
-                    totalDays: window.voyageManager?.totalJourneyDays || 0,
-                    isDrawingMode: window.pathManager?.isDrawingMode || false
-                },
-                counters: window.countersManager ? window.countersManager.getCounters() : [],
-                adventureMode: true
+                regions_states
             };
         }
         return {};

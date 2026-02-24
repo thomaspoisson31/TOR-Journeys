@@ -2778,12 +2778,28 @@ class SettingsManager {
                 milesPerDay: map.milesPerDay || 20
             }));
             console.log('✅ Cartes chargées:', this.availableMaps.length);
+
+            // Gestion du cas "Monde vide" (aucune carte)
+            if (this.availableMaps.length === 0) {
+                console.log('⚠️ Aucune carte disponible (Monde vide)');
+                this.activeMapUrl = null;
+                this.activeMapName = 'Aucune carte';
+
+                // Forcer l'erreur de chargement pour afficher l'interface "Pas de carte"
+                const mapImage = document.getElementById('map-image');
+                if (mapImage) {
+                    mapImage.removeAttribute('src');
+                    // Déclencher manuellement l'erreur car removeAttribute ne le fait pas toujours
+                    if (mapImage.onerror) mapImage.onerror();
+                }
+            }
         }
-        if (settings.activeMapUrl) {
+
+        if (settings.activeMapUrl && this.availableMaps.length > 0) {
             this.activeMapUrl = settings.activeMapUrl;
             console.log('✅ Carte active URL:', this.activeMapUrl);
         }
-        if (settings.activeMapName) {
+        if (settings.activeMapName && this.availableMaps.length > 0) {
             this.activeMapName = settings.activeMapName;
             console.log('✅ Carte active nom:', this.activeMapName);
         }
