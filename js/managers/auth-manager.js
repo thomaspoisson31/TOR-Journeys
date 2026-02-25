@@ -151,9 +151,13 @@ class AuthManager {
                 } else {
                     this.updateUIForUnauthenticatedUser();
                 }
+            } else {
+                console.error("Erreur checkAuthenticationStatus: Réponse non OK");
+                this.updateUIForUnauthenticatedUser();
             }
         } catch (error) {
-            console.error(error);
+            console.error("Erreur checkAuthenticationStatus:", error);
+            this.updateUIForUnauthenticatedUser();
         }
     }
 
@@ -168,6 +172,10 @@ class AuthManager {
     startGoogleAuth() { window.location.href = '/auth/google'; }
 
     updateUIForAuthenticatedUser() {
+        // Cacher le loader et montrer le contenu
+        if (this.authStatusPanel) this.authStatusPanel.classList.add('hidden');
+        if (this.authContentPanel) this.authContentPanel.classList.remove('hidden');
+
         if (this.authIcon) this.authIcon.style.display = 'none';
         if (this.userProfilePic && this.currentUser.picture) {
             this.userProfilePic.src = this.currentUser.picture;
@@ -182,6 +190,10 @@ class AuthManager {
     }
 
     updateUIForUnauthenticatedUser() {
+        // Cacher le loader et montrer le contenu
+        if (this.authStatusPanel) this.authStatusPanel.classList.add('hidden');
+        if (this.authContentPanel) this.authContentPanel.classList.remove('hidden');
+
         if (this.authIcon) this.authIcon.style.display = 'block';
         if (this.userProfilePic) this.userProfilePic.classList.add('hidden');
         if (this.loggedInPanel) this.loggedInPanel.classList.add('hidden');
