@@ -167,20 +167,32 @@ function updateToolbarButtonsVisibility() {
 
     // Gestion des outils d'édition (Admin et MJ, mais PAS Joueur)
     if (isPlayerMode) {
-        // Mode Joueur : masquer les outils d'édition
+        // Mode Joueur : masquer tous les outils d'édition
         if (addLocationBtn) addLocationBtn.classList.add('hidden');
         if (addRegionBtn) addRegionBtn.classList.add('hidden');
         if (filterBtn) filterBtn.classList.add('hidden');
         if (settingsBtn) settingsBtn.classList.add('hidden');
         if (mapsNavBtn) mapsNavBtn.classList.add('hidden');
     } else {
-        // Mode Admin ou MJ : afficher les outils d'édition
-        if (addLocationBtn) addLocationBtn.classList.remove('hidden');
-        if (addRegionBtn) addRegionBtn.classList.remove('hidden');
+        // Mode Admin ou MJ
+
+        // Outils communs (Filtres, Paramètres, Cartes) : Visibles pour Admin ET MJ
         if (filterBtn) filterBtn.classList.remove('hidden');
         if (settingsBtn) settingsBtn.classList.remove('hidden');
-        // Le bouton cartes est géré ici aussi maintenant pour MJ/Admin
         if (mapsNavBtn) mapsNavBtn.classList.remove('hidden');
+
+        // Outils de création (Lieu, Région) : Visibles UNIQUEMENT pour Admin (masqués pour MJ)
+        // Note: adventureMode peut être 'mj', 'admin', ou autre.
+        // Si c'est 'mj', on masque. Si c'est 'admin' (ou défaut), on affiche.
+        const isMJMode = adventureMode === 'mj';
+
+        if (isMJMode) {
+            if (addLocationBtn) addLocationBtn.classList.add('hidden');
+            if (addRegionBtn) addRegionBtn.classList.add('hidden');
+        } else {
+            if (addLocationBtn) addLocationBtn.classList.remove('hidden');
+            if (addRegionBtn) addRegionBtn.classList.remove('hidden');
+        }
     }
 
     // Gestion spécifique du mode Viewer (surclasse tout)

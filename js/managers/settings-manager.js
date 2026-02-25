@@ -749,6 +749,13 @@ class SettingsManager {
     }
 
     setActiveMap(index) {
+        // Afficher le loader pour donner un feedback immédiat
+        const loaderOverlay = document.getElementById('loader-overlay');
+        if (loaderOverlay) {
+            loaderOverlay.style.display = 'flex';
+            loaderOverlay.style.opacity = '1';
+        }
+
         const map = this.availableMaps[index];
         if (!map) return;
 
@@ -3110,6 +3117,13 @@ class SettingsManager {
 
     // Function to switch map, added based on the user's request
     switchMap(mapUrl) {
+        // Afficher le loader pour donner un feedback immédiat
+        const loaderOverlay = document.getElementById('loader-overlay');
+        if (loaderOverlay) {
+            loaderOverlay.style.display = 'flex';
+            loaderOverlay.style.opacity = '1';
+        }
+
         console.log(`🗺️ Changement de carte vers: ${mapUrl}`);
 
         this.activeMapUrl = mapUrl;
