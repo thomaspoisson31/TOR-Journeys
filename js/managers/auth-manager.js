@@ -471,6 +471,14 @@ class AuthManager {
             if (response.ok) {
                 this.markAsSaved();
                 this.updateSyncStatus('success');
+            } else {
+                if (response.status === 409) {
+                    alert("⚠️ Conflit de version détecté !\n\nLes données sur le serveur sont plus récentes que votre version locale.\nVeuillez recharger la page pour récupérer les dernières modifications avant de pouvoir sauvegarder de nouveau.");
+                    this.updateSyncStatus('conflict');
+                } else {
+                    console.error("Erreur sync:", response.status, response.statusText);
+                    this.updateSyncStatus('error');
+                }
             }
         } catch (e) {
             console.error("Erreur sync:", e);
@@ -500,10 +508,23 @@ class AuthManager {
         }
 
         if (data.journal && window.journalManager) {
-             // Basic restoration
-             if (Array.isArray(data.journal)) {
-                 localStorage.setItem('travelJournal', JSON.stringify(data.journal));
-             }
+            if (Array.isArray(data.journal)) {
+                // Format Legacy (Tableau de voyages uniquement)
+                localStorage.setItem('travelJournal', JSON.stringify(data.journal));
+                window.journalManager.loadJournal();
+            } else if (typeof data.journal === 'object') {
+                // Nouveau Format (Objet complet)
+                if (data.journal.journal) localStorage.setItem('adventureJournal', JSON.stringify(data.journal.journal));
+                if (data.journal.travelJournal) localStorage.setItem('travelJournal', JSON.stringify(data.journal.travelJournal));
+                if (data.journal.objectives) localStorage.setItem('adventureObjectives', JSON.stringify(data.journal.objectives));
+                if (data.journal.rumors) localStorage.setItem('adventureRumors', JSON.stringify(data.journal.rumors));
+                if (data.journal.rumorsCheckboxStates) localStorage.setItem('rumorsCheckboxStates', JSON.stringify(data.journal.rumorsCheckboxStates));
+
+                // Forcer le rechargement du journal complet
+                window.journalManager.loadJournal();
+                if (typeof window.journalManager.loadObjectives === 'function') window.journalManager.loadObjectives();
+                if (typeof window.journalManager.loadRumors === 'function') window.journalManager.loadRumors();
+            }
         }
 
         if (data.position) localStorage.setItem('adventurers_position', JSON.stringify(data.position));
@@ -574,8 +595,18 @@ class AuthManager {
 
     updateSyncStatus(status) {
         if (!this.syncStatusIndicator) return;
-        // Simplified status update
-        this.syncStatusIndicator.innerHTML = status === 'syncing' ? 'Synchronisation...' : 'Synchronisé';
+
+        if (status === 'syncing') {
+            this.syncStatusIndicator.innerHTML = '<span class="text-blue-600"><i class="fas fa-sync fa-spin"></i> Sync...</span>';
+        } else if (status === 'success') {
+            this.syncStatusIndicator.innerHTML = '<span class="text-green-600"><i class="fas fa-check"></i> Sauvegardé</span>';
+        } else if (status === 'error') {
+            this.syncStatusIndicator.innerHTML = '<span class="text-red-600"><i class="fas fa-exclamation-triangle"></i> Erreur</span>';
+        } else if (status === 'conflict') {
+             this.syncStatusIndicator.innerHTML = '<span class="text-red-600"><i class="fas fa-exclamation-circle"></i> Conflit!</span>';
+        } else {
+             this.syncStatusIndicator.innerHTML = '';
+        }
     }
 
     updateLastSyncDateDisplay() {
