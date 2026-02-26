@@ -1918,7 +1918,8 @@ function confirmRegionCreation() {
             y: point.y
         })),
         known: true,
-        visited: false
+        visited: false,
+        type: 'custom'
     };
 
     console.log("💾 Creating new region:", newRegion);

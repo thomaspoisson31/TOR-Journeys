@@ -264,6 +264,28 @@ class AuthManager {
 
                     finalData = { ...baseData };
 
+                    // Merge Custom Locations from Campaign
+                    if (campaignData.custom_locations && Array.isArray(campaignData.custom_locations)) {
+                        if (!finalData.locations) finalData.locations = { locations: [] };
+                        campaignData.custom_locations.forEach(customLoc => {
+                            // Check if not already present (optimization)
+                            if (!finalData.locations.locations.some(l => l.id === customLoc.id)) {
+                                finalData.locations.locations.push(customLoc);
+                            }
+                        });
+                    }
+
+                    // Merge Custom Regions from Campaign
+                    if (campaignData.custom_regions && Array.isArray(campaignData.custom_regions)) {
+                        if (!finalData.regions) finalData.regions = { regions: [] };
+                        campaignData.custom_regions.forEach(customReg => {
+                            // Check if not already present (optimization)
+                            if (!finalData.regions.regions.some(r => r.id === customReg.id)) {
+                                finalData.regions.regions.push(customReg);
+                            }
+                        });
+                    }
+
                     // Merge Locations
                     if (finalData.locations && finalData.locations.locations) {
                         finalData.locations.locations = finalData.locations.locations.map(loc => {
@@ -387,8 +409,14 @@ class AuthManager {
             }
 
             const locations_states = {};
+            const custom_locations = [];
             if (globalData.locations.locations) {
                 globalData.locations.locations.forEach(loc => {
+                    // Collect custom locations
+                    if (loc.type === 'custom') {
+                        custom_locations.push(loc);
+                    }
+
                     // En mode campagne ou clonage, on sauvegarde l'état
                     // Si forCampaign est vrai (clonage), on sauvegarde tout ce qui est pertinent pour l'état
                     if (loc.known || loc.visited || loc.custom_notes || forCampaign) {
@@ -402,8 +430,14 @@ class AuthManager {
                 });
             }
             const regions_states = {};
+            const custom_regions = [];
             if (globalData.regions.regions) {
                 globalData.regions.regions.forEach(reg => {
+                    // Collect custom regions
+                    if (reg.type === 'custom') {
+                        custom_regions.push(reg);
+                    }
+
                     if (reg.known || reg.visited || forCampaign) {
                         regions_states[reg.id] = { known: reg.known, visited: reg.visited };
                     }
@@ -412,7 +446,9 @@ class AuthManager {
             return {
                 ...dynamicData,
                 locations_states,
-                regions_states
+                regions_states,
+                custom_locations,
+                custom_regions
             };
         }
         return {};
