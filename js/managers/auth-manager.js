@@ -104,6 +104,7 @@ class AuthManager {
         this.modalSyncBtn = document.getElementById('modal-sync-btn');
         this.lastSyncDateDiv = document.getElementById('last-sync-date');
         this.quitSaveBtn = document.getElementById('quit-save-btn');
+        this.debugCloudDataBtn = document.getElementById('debug-cloud-data');
 
         // Nouveaux éléments
         this.campaignsBtn = document.getElementById('campaigns-btn');
@@ -117,6 +118,7 @@ class AuthManager {
         if (this.manualSyncBtn) this.manualSyncBtn.addEventListener('click', () => this.manualSync());
         if (this.modalSyncBtn) this.modalSyncBtn.addEventListener('click', () => this.manualSync());
         if (this.quitSaveBtn) this.quitSaveBtn.addEventListener('click', () => this.handleQuitAndSave());
+        if (this.debugCloudDataBtn) this.debugCloudDataBtn.addEventListener('click', () => this.handleDebugCloudData());
 
         const logoutLink = document.getElementById('logout-link');
         if (logoutLink) logoutLink.addEventListener('click', (e) => this.handleLogout(e));
@@ -551,6 +553,37 @@ class AuthManager {
     async handleLogout(e) {
         e.preventDefault();
         window.location.href = '/auth/logout';
+    }
+
+    async handleDebugCloudData() {
+        if (!this.isAuthenticated) return;
+
+        try {
+            const response = await fetch('/api/user/data/debug');
+            if (response.ok) {
+                const data = await response.json();
+                console.log("☁️ Données Cloud Debug:", data);
+
+                const summary = data.data_summary || {};
+                const msg = `Données Cloud récupérées avec succès!\n\n` +
+                            `ID: ${data.user_id}\n` +
+                            `Taille: ${(data.raw_json_size / 1024).toFixed(2)} KB\n\n` +
+                            `Résumé:\n` +
+                            `- Lieux: ${summary.locations_count}\n` +
+                            `- Régions: ${summary.regions_count}\n` +
+                            `- Personnages: ${summary.characters_count}\n` +
+                            `- Cartes: ${summary.maps_count}\n\n` +
+                            `Le détail complet a été affiché dans la console du navigateur (F12).`;
+
+                alert(msg);
+            } else {
+                const err = await response.json();
+                alert("Erreur debug: " + (err.error || "Erreur inconnue"));
+            }
+        } catch (e) {
+            console.error("Erreur debug cloud:", e);
+            alert("Erreur lors de la récupération des données de debug.");
+        }
     }
 
     logAuth(msg, data) { console.log(msg, data); }
