@@ -177,7 +177,6 @@ function updateToolbarButtonsVisibility() {
         // Mode Admin ou MJ
 
         // Outils communs (Filtres, Paramètres, Cartes) : Visibles pour Admin ET MJ
-        if (filterBtn) filterBtn.classList.remove('hidden');
         if (settingsBtn) settingsBtn.classList.remove('hidden');
         if (mapsNavBtn) mapsNavBtn.classList.remove('hidden');
 
@@ -185,13 +184,19 @@ function updateToolbarButtonsVisibility() {
         // Note: adventureMode peut être 'mj', 'admin', ou autre.
         // Si c'est 'mj', on masque. Si c'est 'admin' (ou défaut), on affiche.
         const isMJMode = adventureMode === 'mj';
+        const isAdminMode = adventureMode === 'admin';
 
         if (isMJMode) {
             if (addLocationBtn) addLocationBtn.classList.add('hidden');
             if (addRegionBtn) addRegionBtn.classList.add('hidden');
+            if (filterBtn) filterBtn.classList.remove('hidden');
         } else {
             if (addLocationBtn) addLocationBtn.classList.remove('hidden');
             if (addRegionBtn) addRegionBtn.classList.remove('hidden');
+            if (filterBtn) filterBtn.classList.add('hidden');
+            if (isAdminMode && window.filterManager) {
+                window.filterManager.closeFilterPanel();
+            }
         }
     }
 

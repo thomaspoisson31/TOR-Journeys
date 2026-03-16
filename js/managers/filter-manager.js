@@ -415,13 +415,22 @@ export default class FilterManager {
             return;
         }
 
-        // Filtrer les lieux
-        this.filteredLocations = this.filterLocations(locationsData.locations || []);
+        const isAdminMode = window.positionManager ? window.positionManager.adventureMode === 'admin' : false;
 
-        // Filtrer les régions
-        this.filteredRegions = this.filterRegions(regionsData.regions || []);
+        if (isAdminMode) {
+            // En mode Admin, on ignore les filtres et on affiche tout
+            this.filteredLocations = [...(locationsData.locations || [])];
+            this.filteredRegions = [...(regionsData.regions || [])];
+            console.log(`📊 Admin Mode: Bypassing filters. Showing all ${this.filteredLocations.length} locations and ${this.filteredRegions.length} regions.`);
+        } else {
+            // Filtrer les lieux
+            this.filteredLocations = this.filterLocations(locationsData.locations || []);
 
-        console.log(`📊 Filtered: ${this.filteredLocations.length}/${locationsData.locations?.length || 0} locations, ${this.filteredRegions.length}/${regionsData.regions?.length || 0} regions`);
+            // Filtrer les régions
+            this.filteredRegions = this.filterRegions(regionsData.regions || []);
+
+            console.log(`📊 Filtered: ${this.filteredLocations.length}/${locationsData.locations?.length || 0} locations, ${this.filteredRegions.length}/${regionsData.regions?.length || 0} regions`);
+        }
 
         // Mettre à jour l'affichage
         this.updateDisplay();
@@ -558,6 +567,8 @@ export default class FilterManager {
     }
 
     updateDisplay() {
+        const isAdminMode = window.positionManager ? window.positionManager.adventureMode === 'admin' : false;
+
         // Masquer/afficher les marqueurs de lieux
         const locationMarkers = document.querySelectorAll('.location-marker');
         console.log(`🔄 [updateDisplay] Nombre de marqueurs DOM trouvés: ${locationMarkers.length}`);
@@ -568,7 +579,7 @@ export default class FilterManager {
         locationMarkers.forEach(marker => {
             const locationId = marker.dataset.id;
             const isFiltered = this.filteredLocations.some(loc => String(loc.id) === String(locationId));
-            const isVisible = this.activeFilters.showLocations && isFiltered;
+            const isVisible = isAdminMode ? true : (this.activeFilters.showLocations && isFiltered);
             
             if (isVisible) {
                 marker.style.display = 'block';
@@ -585,7 +596,7 @@ export default class FilterManager {
         // Masquer/afficher le calque de régions
         const regionsLayer = document.getElementById('regions-layer');
         if (regionsLayer) {
-            if (this.activeFilters.showRegions) {
+            if (isAdminMode || this.activeFilters.showRegions) {
                 regionsLayer.style.display = 'block';
                 this.updateRegionsOpacity();
             } else {
