@@ -146,9 +146,17 @@ class AuthManager {
                     this.currentUser = data.user;
                     this.isAuthenticated = true;
                     this.updateUIForAuthenticatedUser();
-                    // Au démarrage, afficher le sélecteur si aucune campagne n'est chargée
+                    // Au démarrage, charger la dernière aventure consultée ou afficher le sélecteur
                     if (!this.currentCampaignId) {
-                        this.campaignManager.showSelector();
+                        const campaigns = await this.campaignManager.fetchCampaigns();
+                        if (campaigns && campaigns.length > 0) {
+                            // Trier par last_played décroissant (la plus récente en premier)
+                            const sortedCampaigns = campaigns.sort((a, b) => new Date(b.last_played) - new Date(a.last_played));
+                            const lastCampaign = sortedCampaigns[0];
+                            await this.loadGameContext('campaign', lastCampaign.id, lastCampaign.name);
+                        } else {
+                            this.campaignManager.showSelector();
+                        }
                     }
                 } else {
                     this.updateUIForUnauthenticatedUser();
