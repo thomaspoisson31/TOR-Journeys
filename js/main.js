@@ -207,6 +207,11 @@ function updateToolbarButtonsVisibility() {
         if (filterBtn) filterBtn.classList.remove('hidden'); // Le viewer peut filtrer
     }
 
+    // Refresh active counters display when mode changes
+    if (window.countersManager && typeof window.countersManager.renderVisibleCounters === 'function') {
+        window.countersManager.renderVisibleCounters();
+    }
+
     console.log(`🎮 Visibilité des boutons mise à jour - Mode: ${adventureMode}`);
 }
 
