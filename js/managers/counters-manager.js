@@ -116,9 +116,13 @@ class CountersManager {
         const container = document.getElementById('active-counters-display');
         if (!container) return;
 
+        // Check adventure mode
+        const adventureMode = window.positionManager ? window.positionManager.adventureMode : 'admin';
+        const isAdventureActive = adventureMode === 'mj' || adventureMode === 'player' || window.isViewerMode === true;
+
         const visibleCounters = this.counters.filter(c => c.visible);
 
-        if (visibleCounters.length === 0) {
+        if (visibleCounters.length === 0 || !isAdventureActive) {
             container.classList.add('hidden');
             container.innerHTML = '';
             return;
