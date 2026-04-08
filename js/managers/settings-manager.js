@@ -3205,7 +3205,7 @@ class SettingsManager {
         window.adventureManager.adventureData.randomTables.push(newChartopiaTable);
 
         // Save
-        window.adventureManager.saveAdventureData();
+        window.adventureManager.saveToLocalStorage();
 
         // Mark as unsaved for cloud sync
         if (window.authManager && window.authManager.isAuthenticated) {
