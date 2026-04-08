@@ -328,7 +328,11 @@ class RandomTablesManager {
             const rollBtn = e.target.closest('.roll-table-btn');
             if (rollBtn) {
                 const tableData = JSON.parse(rollBtn.dataset.table);
-                this.rollOnTable(tableData);
+                if (tableData.isChartopia) {
+                    this.openChartopiaModal(tableData);
+                } else {
+                    this.rollOnTable(tableData);
+                }
             }
         };
 
@@ -339,8 +343,26 @@ class RandomTablesManager {
     renderTablesList(tables) {
         return tables.map((table, index) => {
             const isComposite = table.isComposite || false;
-            const tableType = isComposite ? 'Composite' : 'Simple';
-            const tableIcon = isComposite ? 'fa-layer-group' : 'fa-list';
+            const isChartopia = table.isChartopia || false;
+
+            let tableType = 'Simple';
+            let tableIcon = 'fa-list';
+            if (isComposite) {
+                tableType = 'Composite';
+                tableIcon = 'fa-layer-group';
+            } else if (isChartopia) {
+                tableType = 'Chartopia';
+                tableIcon = 'fa-link';
+            }
+
+            let entriesText = '';
+            if (isComposite) {
+                entriesText = `${table.subtables?.length || 0} sous-table(s)`;
+            } else if (isChartopia) {
+                entriesText = `Table externe`;
+            } else {
+                entriesText = `${table.entries?.length || 0} entrée(s)`;
+            }
 
             return `
                 <div class="mb-4 p-3 rounded-lg border border-gray-300" style="background-color: #f5f5f5;">
@@ -350,13 +372,13 @@ class RandomTablesManager {
                             <span class="font-semibold" style="color: #940000; font-family: 'Merriweather', serif;">${table.name || 'Table sans nom'}</span>
                             <span class="ml-2 text-xs px-2 py-1 rounded" style="background-color: #e8f4f8; color: #1e40af;">${tableType}</span>
                         </div>
-                        <button class="roll-table-btn text-blue-600 hover:text-blue-700 transition-colors" title="Tirer sur cette table" data-table='${JSON.stringify(table).replace(/'/g, "&#39;")}'>
-                            <i class="fas fa-dice text-xl"></i>
+                        <button class="roll-table-btn text-blue-600 hover:text-blue-700 transition-colors" title="${isChartopia ? 'Ouvrir cette table' : 'Tirer sur cette table'}" data-table='${JSON.stringify(table).replace(/'/g, "&#39;")}'>
+                            <i class="fas ${isChartopia ? 'fa-external-link-alt' : 'fa-dice'} text-xl"></i>
                         </button>
                     </div>
                     <div class="text-xs" style="color: #6b7280;">
                         ${table.source ? `<span><i class="fas fa-tag mr-1"></i>${table.source}</span> • ` : ''}
-                        ${isComposite ? `${table.subtables?.length || 0} sous-table(s)` : `${table.entries?.length || 0} entrée(s)`}
+                        ${entriesText}
                     </div>
                 </div>
             `;
@@ -707,6 +729,24 @@ class RandomTablesManager {
             }
             
             alert(`Résultat ajouté à la journée ${this.currentDayContext.calendarDate} !`);
+        }
+    }
+
+    openChartopiaModal(tableData) {
+        console.log("🎲 Ouverture de la table Chartopia:", tableData.name);
+
+        const modal = document.getElementById('chartopia-display-modal');
+        const title = document.getElementById('chartopia-display-title');
+        const content = document.getElementById('chartopia-display-content');
+
+        if (modal && title && content) {
+            title.textContent = tableData.name;
+            content.innerHTML = tableData.embedCode;
+            modal.classList.remove('hidden');
+
+            // Si on a un contexte de journée (depuis VoyageManager), on pourrait vouloir insérer un résultat.
+            // Cependant, l'intégration Chartopia actuelle ne permet pas d'extraire automatiquement le résultat.
+            // L'utilisateur devra lire le résultat depuis l'iframe.
         }
     }
 }

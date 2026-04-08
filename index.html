@@ -523,7 +523,46 @@
             </div>
         </div>
 
-        <!-- Random Tables Modal -->
+
+        <!-- Add Chartopia Modal -->
+        <div id="add-chartopia-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70]">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6" style="font-family: 'Merriweather', serif;">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold" style="color: #940000;">Lier une table Chartopia</h3>
+                    <button id="close-add-chartopia-modal" class="text-gray-400 hover:text-gray-600" onclick="document.getElementById('add-chartopia-modal').classList.add('hidden')">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="chartopia-name">Nom de la table</label>
+                    <input type="text" id="chartopia-name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Ex: Rumeurs de l'auberge">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="chartopia-embed-code">Code "embed"</label>
+                    <textarea id="chartopia-embed-code" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32" placeholder='<div style="position:relative;...'><!-- --></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded mr-2" onclick="document.getElementById('add-chartopia-modal').classList.add('hidden')">Annuler</button>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="window.settingsManager.saveChartopiaTable()">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chartopia Display Modal -->
+        <div id="chartopia-display-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[80]">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col p-6" style="font-family: 'Merriweather', serif;">
+                <div class="flex justify-between items-center mb-4 border-b border-gray-300 pb-2">
+                    <h3 id="chartopia-display-title" class="text-2xl font-bold" style="color: #940000;">Table Chartopia</h3>
+                    <button id="close-chartopia-display-modal" class="text-gray-400 hover:text-gray-600" onclick="document.getElementById('chartopia-display-modal').classList.add('hidden')">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+                <div id="chartopia-display-content" class="flex-1 overflow-y-auto w-full h-[60vh] flex items-center justify-center">
+                    <!-- Embed will be injected here -->
+                </div>
+            </div>
+        </div>
+<!-- Random Tables Modal -->
         <div id="random-tables-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-end justify-end z-[60]">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[95vh] flex flex-col mr-5 mb-5" style="font-family: 'Merriweather', serif;">
                 <!-- Header -->

@@ -2115,6 +2115,9 @@ class SettingsManager {
                 <button onclick="document.getElementById('settings-upload-random-table').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
                     <i class="fas fa-upload mr-2"></i>Importer une table JSON
                 </button>
+                <button onclick="window.settingsManager.openAddChartopiaModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">
+                    <i class="fas fa-link mr-2"></i>Lier une table Chartopia
+                </button>
                 ${tables.length >= 2 ? `
                     <button onclick="window.settingsManager.openSettingsCompositeTableModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
                         <i class="fas fa-layer-group mr-2"></i>Créer une table composite
@@ -2169,6 +2172,25 @@ class SettingsManager {
             if (sortedTables && sortedTables.length > 0) {
                 simpleTablesHTML = sortedTables.map((table, index) => {
                     const originalIndex = tables.indexOf(table); // Utiliser l'index original
+
+                    if (table.isChartopia) {
+                        return `
+                        <div class="bg-gray-800 rounded p-2 border border-indigo-700">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-xs font-semibold">Chartopia</span>
+                                    <h5 class="font-semibold text-white">${table.name || 'Table sans nom'}</h5>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="window.settingsManager.deleteTable(${originalIndex})" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-sm" title="Supprimer cette table">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                    }
+
                     return `
                         <div class="bg-gray-800 rounded p-2 border border-gray-700">
                             <div class="flex justify-between items-center mb-2">
@@ -3150,6 +3172,55 @@ class SettingsManager {
         this.closeSettings();
 
         console.log(`✅ Carte changée: ${mapUrl}`);
+    }
+
+    openAddChartopiaModal() {
+        document.getElementById('chartopia-name').value = '';
+        document.getElementById('chartopia-embed-code').value = '';
+        document.getElementById('add-chartopia-modal').classList.remove('hidden');
+    }
+
+    saveChartopiaTable() {
+        const nameInput = document.getElementById('chartopia-name');
+        const embedInput = document.getElementById('chartopia-embed-code');
+
+        const name = nameInput.value.trim();
+        const embedCode = embedInput.value.trim();
+
+        if (!name || !embedCode) {
+            alert('Veuillez remplir le nom et le code embed de la table Chartopia.');
+            return;
+        }
+
+        const newChartopiaTable = {
+            name: name,
+            isChartopia: true,
+            embedCode: embedCode
+        };
+
+        if (!window.adventureManager.adventureData.randomTables) {
+            window.adventureManager.adventureData.randomTables = [];
+        }
+
+        window.adventureManager.adventureData.randomTables.push(newChartopiaTable);
+
+        // Save
+        window.adventureManager.saveAdventureData();
+
+        // Mark as unsaved for cloud sync
+        if (window.authManager && window.authManager.isAuthenticated) {
+            window.authManager.markAsUnsaved();
+        }
+
+        // Auto sync if available
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+
+        alert(`Table Chartopia "${name}" enregistrée avec succès !`);
+
+        document.getElementById('add-chartopia-modal').classList.add('hidden');
+        this.renderSettingsRandomTablesTab();
     }
 }
 
