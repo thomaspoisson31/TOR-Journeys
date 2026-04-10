@@ -37,6 +37,7 @@ class MapSwitcherManager {
         if (this.closeSidebarBtn) {
             this.closeSidebarBtn.addEventListener('click', () => {
                 this.closeSidebar();
+                this.hideTooltip();
             });
         }
 
@@ -45,6 +46,7 @@ class MapSwitcherManager {
             if (this.sidebar && !this.sidebar.classList.contains('hidden')) {
                 if (!this.sidebar.contains(e.target) && e.target !== this.navBtn && !this.navBtn.contains(e.target)) {
                     this.closeSidebar();
+                    this.hideTooltip();
                 }
             }
         });
@@ -118,6 +120,7 @@ class MapSwitcherManager {
         if (index < 0 || index >= maps.length) return;
 
         this.closeSidebar();
+        this.hideTooltip();
 
         // Sauvegarde automatique en arrière-plan (fire and forget)
         if (window.authManager && window.authManager.isAuthenticated) {
