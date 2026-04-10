@@ -1603,7 +1603,13 @@ function setupMapNavigation() {
 }
 
 // --- Event Listeners simplifiés ---
+let isInfoBoxListenersSetup = false;
+
 function setupInfoBoxListeners() {
+    if (isInfoBoxListenersSetup) {
+        console.log("ℹ️ Info-box listeners already setup, skipping...");
+        return;
+    }
     console.log("📋 Setting up info-box listeners...");
 
     // Gestionnaire principal pour les clics dans le viewport
@@ -1673,6 +1679,7 @@ function setupInfoBoxListeners() {
         });
     }
 
+    isInfoBoxListenersSetup = true;
     console.log("✅ Info-box listeners setup complete");
 }
 
