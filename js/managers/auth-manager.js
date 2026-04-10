@@ -197,6 +197,12 @@ class AuthManager {
 
         // Afficher le bouton campagnes
         if (this.campaignsBtn) this.campaignsBtn.classList.remove('hidden');
+
+        if (this.authUserName) {
+            this.authUserName.textContent = this.currentUser.name || this.currentUser.email;
+        }
+
+        this.updateCloudIconVisibility();
     }
 
     updateUIForUnauthenticatedUser() {
@@ -551,6 +557,9 @@ class AuthManager {
             window.positionManager.updateAdventureModeIndicator();
             window.updateToolbarButtonsVisibility();
         }
+
+        if (typeof window.renderLocations === 'function') window.renderLocations();
+        if (typeof window.renderRegions === 'function') window.renderRegions();
     }
 
     markAsUnsaved() {
@@ -608,6 +617,8 @@ class AuthManager {
             this.syncStatusIndicator.innerHTML = '<span class="text-blue-600"><i class="fas fa-sync fa-spin"></i> Sync...</span>';
         } else if (status === 'success') {
             this.syncStatusIndicator.innerHTML = '<span class="text-green-600"><i class="fas fa-check"></i> Sauvegardé</span>';
+            localStorage.setItem('lastSyncDate', Date.now());
+            this.updateLastSyncDateDisplay();
         } else if (status === 'error') {
             this.syncStatusIndicator.innerHTML = '<span class="text-red-600"><i class="fas fa-exclamation-triangle"></i> Erreur</span>';
         } else if (status === 'conflict') {
@@ -618,7 +629,16 @@ class AuthManager {
     }
 
     updateLastSyncDateDisplay() {
-        // ... implementation ...
+        if (!this.lastSyncDateDiv) return;
+        const lastSync = localStorage.getItem('lastSyncDate');
+        const span = this.lastSyncDateDiv.querySelector('span');
+        if (!span) return;
+        if (lastSync) {
+            const date = new Date(parseInt(lastSync));
+            span.textContent = date.toLocaleString();
+        } else {
+            span.textContent = 'jamais';
+        }
     }
 
     handleAuthCallback() {
