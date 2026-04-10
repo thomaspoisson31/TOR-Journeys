@@ -289,8 +289,48 @@ def debug_user_data():
     env_prefix = request.args.get('env', 'prod_')
     google_id = session['google_id']
 
-    # Récupérer les données
-    user_data = db_manager.get_user_data(google_id, env_prefix)
+    # Get campaigns to find the most recent one
+    campaigns = db_manager.list_campaigns(google_id, env_prefix)
+
+    user_data = None
+    record_id = ""
+
+    if campaigns:
+        # Sort by last_played descending
+        campaigns.sort(key=lambda x: x.get('last_played', ''), reverse=True)
+        latest_campaign_id = campaigns[0]['id']
+        user_data = db_manager.get_campaign(google_id, env_prefix, latest_campaign_id)
+
+        # Merge with base world for total count
+        base_world = db_manager.get_base_world(google_id, env_prefix)
+        if base_world and user_data:
+             if 'locations' not in user_data: user_data['locations'] = {'locations': []}
+             if 'regions' not in user_data: user_data['regions'] = {'regions': []}
+             if 'characters' not in user_data: user_data['characters'] = {'characters': []}
+             if 'settings' not in user_data: user_data['settings'] = {'availableMaps': []}
+
+             # locations base + custom (append for stats only)
+             base_locs = base_world.get('locations', {}).get('locations', [])
+             user_data['locations']['locations'].extend(base_locs)
+
+             base_regs = base_world.get('regions', {}).get('regions', [])
+             user_data['regions']['regions'].extend(base_regs)
+
+             base_chars = base_world.get('characters', {}).get('characters', [])
+             user_data['characters']['characters'].extend(base_chars)
+
+             base_maps = base_world.get('settings', {}).get('availableMaps', [])
+             user_data['settings']['availableMaps'].extend(base_maps)
+
+        record_id = f"users/{google_id}/campaigns/{env_prefix}{latest_campaign_id}.json"
+    else:
+        # Fallback to base world or legacy
+        user_data = db_manager.get_base_world(google_id, env_prefix)
+        if user_data:
+            record_id = f"users/{google_id}/{env_prefix}base.json"
+        else:
+            user_data = db_manager.get_user_data(google_id, env_prefix)
+            record_id = f"users/{google_id}/{env_prefix}data.json"
 
     if user_data is None:
         return jsonify({'error': 'Aucune donnée trouvée'}), 404
@@ -312,7 +352,7 @@ def debug_user_data():
         return jsonify({
             'status': 'success',
             'user_id': google_id,
-            'record_id': f"users/{google_id}/{env_prefix}data.json",
+            'record_id': record_id,
             'created_at': user_data.get('_saved_at', 'Inconnu'),
             'updated_at': user_data.get('_saved_at', 'Inconnu'),
             'data_summary': summary,
@@ -320,6 +360,7 @@ def debug_user_data():
             'raw_json_size': raw_json_size,
             'raw_json_text': raw_json_text
         })
+
     except Exception as e:
         print(f"❌ Erreur lors du debug: {e}")
         return jsonify({'error': str(e)}), 500
