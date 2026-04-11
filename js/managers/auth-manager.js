@@ -102,6 +102,7 @@ class AuthManager {
         this.syncStatusIndicator = document.getElementById('sync-status-indicator');
         this.quickSyncBtn = document.getElementById('quick-sync-btn');
         this.modalSyncBtn = document.getElementById('modal-sync-btn');
+        this.forceDownloadBtn = document.getElementById('force-download-btn');
         this.lastSyncDateDiv = document.getElementById('last-sync-date');
         this.quitSaveBtn = document.getElementById('quit-save-btn');
         this.debugCloudDataBtn = document.getElementById('debug-cloud-data');
@@ -117,6 +118,7 @@ class AuthManager {
         if (this.googleSigninBtn) this.googleSigninBtn.addEventListener('click', () => this.startGoogleAuth());
         if (this.manualSyncBtn) this.manualSyncBtn.addEventListener('click', () => this.manualSync());
         if (this.modalSyncBtn) this.modalSyncBtn.addEventListener('click', () => this.manualSync());
+        if (this.forceDownloadBtn) this.forceDownloadBtn.addEventListener('click', () => this.forceDownloadCloud());
         if (this.quitSaveBtn) this.quitSaveBtn.addEventListener('click', () => this.handleQuitAndSave());
         if (this.debugCloudDataBtn) this.debugCloudDataBtn.addEventListener('click', () => this.handleDebugCloudData());
 
@@ -343,6 +345,60 @@ class AuthManager {
 
             await this.applyContextData(finalData);
 
+            // Notification de chargement Cloud
+            const cloudNotification = document.getElementById('cloud-load-notification');
+            const cloudStats = document.getElementById('cloud-load-stats');
+            const cloudTime = document.getElementById('cloud-load-time');
+
+            if (cloudNotification && cloudStats && cloudTime) {
+                const numLocations = (finalData.locations && finalData.locations.locations) ? finalData.locations.locations.length : 0;
+                const numRegions = (finalData.regions && finalData.regions.regions) ? finalData.regions.regions.length : 0;
+                const numCharacters = (finalData.characters && finalData.characters.characters) ? finalData.characters.characters.length : 0;
+                const numCounters = finalData.counters ? Object.keys(finalData.counters).length : 0;
+                const numTables = (finalData.settings && finalData.settings.mapRandomTables) ? Object.keys(finalData.settings.mapRandomTables).length : 0;
+
+                let numRumors = 0;
+                let numJournal = 0;
+                if (finalData.journal) {
+                    if (Array.isArray(finalData.journal)) {
+                        numJournal = finalData.journal.length;
+                    } else if (typeof finalData.journal === 'object') {
+                        numJournal = finalData.journal.journal ? finalData.journal.journal.length : 0;
+                        numRumors = finalData.journal.rumors ? finalData.journal.rumors.length : 0;
+                    }
+                }
+
+                cloudStats.innerHTML = `
+                    <li><i class="fas fa-map-marker-alt w-5 text-center text-red-400"></i> ${numLocations} lieux</li>
+                    <li><i class="fas fa-draw-polygon w-5 text-center text-green-400"></i> ${numRegions} régions</li>
+                    <li><i class="fas fa-users w-5 text-center text-blue-400"></i> ${numCharacters} personnages</li>
+                    <li><i class="fas fa-sort-numeric-up w-5 text-center text-yellow-400"></i> ${numCounters} compteurs</li>
+                    <li><i class="fas fa-dice w-5 text-center text-purple-400"></i> ${numTables} tables aléatoires</li>
+                    <li><i class="fas fa-book w-5 text-center text-orange-400"></i> ${numJournal} entrées journal</li>
+                    <li><i class="fas fa-comment-dots w-5 text-center text-teal-400"></i> ${numRumors} rumeurs</li>
+                `;
+
+                if (finalData.last_sync) {
+                    cloudTime.innerHTML = `Dernière synchro: ${new Date(finalData.last_sync).toLocaleString()}`;
+                } else {
+                    cloudTime.innerHTML = `Dernière synchro: inconnue`;
+                }
+
+                cloudNotification.classList.remove('hidden');
+                setTimeout(() => {
+                    cloudNotification.classList.remove('opacity-0');
+                    cloudNotification.classList.add('opacity-100');
+                }, 100);
+
+                setTimeout(() => {
+                    cloudNotification.classList.remove('opacity-100');
+                    cloudNotification.classList.add('opacity-0');
+                    setTimeout(() => {
+                        cloudNotification.classList.add('hidden');
+                    }, 500); // Wait for transition
+                }, 10000);
+            }
+
             // Afficher le bouton Quitter et Enregistrer
             if (this.quitSaveBtn) this.quitSaveBtn.classList.remove('hidden');
 
@@ -352,6 +408,13 @@ class AuthManager {
             this.campaignManager.showSelector();
         } finally {
             this.isLoadingFromCloud = false;
+        }
+    }
+
+    async forceDownloadCloud() {
+        if (!this.isAuthenticated) return;
+        if (confirm("Êtes-vous sûr de vouloir écraser vos données locales avec celles du cloud ? Toutes les modifications non sauvegardées seront perdues.")) {
+            window.location.reload();
         }
     }
 
@@ -377,12 +440,15 @@ class AuthManager {
             }
         };
 
+        const timestamp = new Date().toISOString();
+
         if (this.currentMode === 'base' && !forCampaign) {
             return {
                 locations: globalData.locations,
                 regions: globalData.regions,
                 characters: globalData.characters,
-                settings: globalData.settings
+                settings: globalData.settings,
+                last_sync: timestamp
             };
         } else if (this.currentMode === 'campaign' || forCampaign) {
             // Common dynamic data
@@ -407,7 +473,8 @@ class AuthManager {
                     isDrawingMode: window.pathManager?.isDrawingMode || false
                 },
                 counters: window.countersManager ? window.countersManager.getCounters() : [],
-                adventureMode: window.positionManager ? window.positionManager.adventureMode : true
+                adventureMode: window.positionManager ? window.positionManager.adventureMode : true,
+                last_sync: timestamp
             };
 
             if (this.isStandaloneCampaign && !forCampaign) {
@@ -556,6 +623,11 @@ class AuthManager {
             window.positionManager.adventureMode = data.adventureMode;
             window.positionManager.updateAdventureModeIndicator();
             window.updateToolbarButtonsVisibility();
+        }
+
+        if (data.last_sync) {
+            localStorage.setItem('lastSyncDate', new Date(data.last_sync).getTime());
+            this.updateLastSyncDateDisplay();
         }
 
         if (typeof window.renderLocations === 'function') window.renderLocations();
