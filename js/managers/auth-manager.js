@@ -322,6 +322,16 @@ class AuthManager {
                     finalData.position = campaignData.position;
                     finalData.activeJourney = campaignData.activeJourney;
                     finalData.counters = campaignData.counters || [];
+                    finalData.randomTablesCheckedResults = campaignData.randomTablesCheckedResults || {};
+
+                    if (campaignData.characters) {
+                        finalData.characters = campaignData.characters;
+                    }
+                    if (campaignData.settings && campaignData.settings.mapRandomTables) {
+                        if (!finalData.settings) finalData.settings = {};
+                        finalData.settings.mapRandomTables = campaignData.settings.mapRandomTables;
+                    }
+
                     finalData.adventureMode = true;
                 }
             } else {
@@ -473,6 +483,7 @@ class AuthManager {
                     isDrawingMode: window.pathManager?.isDrawingMode || false
                 },
                 counters: window.countersManager ? window.countersManager.getCounters() : [],
+                randomTablesCheckedResults: window.randomTablesManager ? window.randomTablesManager.checkedResults : {},
                 adventureMode: window.positionManager ? window.positionManager.adventureMode : true,
                 last_sync: timestamp
             };
@@ -618,6 +629,11 @@ class AuthManager {
         }
 
         if (data.counters && window.countersManager) window.countersManager.loadCounters(data.counters);
+
+        if (data.randomTablesCheckedResults && window.randomTablesManager) {
+            window.randomTablesManager.checkedResults = data.randomTablesCheckedResults;
+            localStorage.setItem('randomTablesCheckedResults', JSON.stringify(data.randomTablesCheckedResults));
+        }
 
         if (data.adventureMode !== undefined && window.positionManager) {
             window.positionManager.adventureMode = data.adventureMode;
