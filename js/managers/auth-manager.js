@@ -540,7 +540,8 @@ class AuthManager {
                 locations_states,
                 regions_states,
                 custom_locations,
-                custom_regions
+                custom_regions,
+                characters: globalData.characters
             };
         }
         return {};
@@ -548,6 +549,10 @@ class AuthManager {
 
     async syncUserData() {
         if (!this.isAuthenticated || !this.currentMode) return;
+        if (this.isLoadingFromCloud || window.isApplyingCloudData) {
+            console.log("⏳ Sync ignorée car chargement depuis le cloud en cours.");
+            return;
+        }
 
         try {
             const dataToSave = this.collectCurrentContextData();
@@ -579,18 +584,23 @@ class AuthManager {
     }
 
     async applyContextData(data) {
-        if (data.locations) {
-            localStorage.setItem('middleEarthLocations', JSON.stringify(data.locations));
-            window.locationsData = data.locations;
-            if (window.dataManager) window.dataManager.locationsData = data.locations;
-        }
-        if (data.regions) {
-            localStorage.setItem('middleEarthRegions', JSON.stringify(data.regions));
-            window.regionsData = data.regions;
-            if (window.dataManager) window.dataManager.regionsData = data.regions;
-        }
-        if (data.characters && window.charactersManager) window.charactersManager.loadCharacters(data.characters);
-        if (data.settings && window.settingsManager) window.settingsManager.loadSettings(data.settings);
+        window.isApplyingCloudData = true; // Empêcher les auto-syncs déclenchées par les managers
+        try {
+            if (data.locations) {
+                localStorage.setItem('middleEarthLocations', JSON.stringify(data.locations));
+                window.locationsData = data.locations;
+                if (window.dataManager) window.dataManager.locationsData = data.locations;
+            }
+            if (data.regions) {
+                localStorage.setItem('middleEarthRegions', JSON.stringify(data.regions));
+                window.regionsData = data.regions;
+                if (window.dataManager) window.dataManager.regionsData = data.regions;
+            }
+            if (data.characters && window.charactersManager) {
+                localStorage.setItem('middleEarthCharacters', JSON.stringify(data.characters));
+                window.charactersManager.loadCharacters(data.characters);
+            }
+            if (data.settings && window.settingsManager) window.settingsManager.loadSettings(data.settings);
 
         if (data.calendar && window.calendarManager) {
             if (data.calendar.currentCalendarDate) window.calendarManager.currentCalendarDate = data.calendar.currentCalendarDate;
@@ -648,6 +658,9 @@ class AuthManager {
 
         if (typeof window.renderLocations === 'function') window.renderLocations();
         if (typeof window.renderRegions === 'function') window.renderRegions();
+        } finally {
+            window.isApplyingCloudData = false;
+        }
     }
 
     markAsUnsaved() {
@@ -672,6 +685,9 @@ class AuthManager {
 
     scheduleAutoSync() {
         if (!this.isAuthenticated) return;
+        if (window.isApplyingCloudData || this.isLoadingFromCloud) {
+            return; // Éviter de déclencher une sauvegarde pendant le chargement initial
+        }
 
         // Annuler le timer précédent s'il existe
         if (this.autoSyncTimeoutId) {
