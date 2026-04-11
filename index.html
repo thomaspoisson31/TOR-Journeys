@@ -915,9 +915,13 @@
                                 </div>
                                 <button id="modal-sync-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2">
                                     <i class="fas fa-cloud-upload-alt"></i>
-                                    <span>Synchroniser</span>
+                                    <span>Synchro Appareil > Cloud</span>
                                 </button>
                             </div>
+                            <button id="force-download-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 w-full justify-center mt-2">
+                                <i class="fas fa-cloud-download-alt"></i>
+                                <span>Synchro Cloud > Appareil</span>
+                            </button>
                             <div id="sync-status-indicator" class="mt-2 text-sm text-center h-5"></div>
                         </div>
 
@@ -946,6 +950,13 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
+        </div>
+
+        <!-- Cloud Load Notification -->
+        <div id="cloud-load-notification" class="hidden fixed top-4 right-4 z-[100] bg-gray-800 text-white p-4 rounded-lg shadow-2xl border border-gray-600 transition-opacity duration-500 opacity-0 pointer-events-none">
+            <h3 class="font-bold text-blue-400 mb-2 border-b border-gray-600 pb-1">Données Cloud Chargées</h3>
+            <ul id="cloud-load-stats" class="text-sm space-y-1"></ul>
+            <p id="cloud-load-time" class="text-xs text-gray-400 mt-2 pt-1 border-t border-gray-600"></p>
         </div>
 
         <!-- Voyage Segments Modal - DEPRECATED, kept for reference -->
