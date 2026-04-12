@@ -1115,6 +1115,9 @@
                     <button class="settings-tab-button px-3 md:px-6 py-3 text-gray-400 border-b-2 border-transparent font-medium hover:text-white" data-tab="counters">
                         <i class="fas fa-list-ol md:mr-2"></i><span class="hidden md:inline">Compteurs</span>
                     </button>
+                    <button class="settings-tab-button px-3 md:px-6 py-3 text-gray-400 border-b-2 border-transparent font-medium hover:text-white" data-tab="import-export">
+                        <i class="fas fa-file-import md:mr-2"></i><span class="hidden md:inline">Import / Export</span>
+                    </button>
                     <button class="settings-tab-button px-3 md:px-6 py-3 text-gray-400 border-b-2 border-transparent font-medium hover:text-white" data-tab="share">
                         <i class="fas fa-share-alt md:mr-2"></i><span class="hidden md:inline">Partager</span>
                     </button>
@@ -1394,7 +1397,36 @@
                         </div>
                     </div>
 
-                    <!-- Onglet Partager -->
+                    <!-- Onglet Import / Export -->
+                    <div id="import-export-tab" class="settings-tab-content hidden h-full flex flex-col" style="display: none;">
+                        <div class="p-6 h-full flex flex-col">
+                            <div class="mb-4">
+                                <h4 class="text-lg font-semibold text-white mb-2">Import / Export de Campagne</h4>
+                                <p class="text-gray-400 text-sm">Exportez l'intégralité de votre campagne actuelle ou importez-en une nouvelle.</p>
+                            </div>
+                            <div class="flex flex-col space-y-6">
+                                <!-- Section Export -->
+                                <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                                    <h5 class="text-white font-medium mb-2"><i class="fas fa-file-export mr-2 text-blue-400"></i>Exporter la Campagne</h5>
+                                    <p class="text-gray-400 text-sm mb-4">Télécharge un fichier JSON contenant toutes les données de la campagne (cartes, lieux, régions, personnages, journal, calendrier, etc.). Les images elles-mêmes ne sont pas incluses, seules leurs URLs le sont.</p>
+                                    <button id="export-campaign-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors flex items-center">
+                                        <i class="fas fa-download mr-2"></i>Exporter (JSON)
+                                    </button>
+                                </div>
+
+                                <!-- Section Import -->
+                                <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                                    <h5 class="text-white font-medium mb-2"><i class="fas fa-file-import mr-2 text-red-400"></i>Importer une Campagne</h5>
+                                    <p class="text-red-400 text-sm mb-4"><strong>ATTENTION :</strong> L'importation annulera et remplacera intégralement toutes les données de la campagne en cours.</p>
+                                    <input type="file" id="import-campaign-input" accept=".json" class="hidden">
+                                    <button id="import-campaign-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition-colors flex items-center" onclick="document.getElementById('import-campaign-input').click()">
+                                        <i class="fas fa-upload mr-2"></i>Importer (JSON)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="share-tab" class="settings-tab-content hidden h-full flex flex-col" style="display: none;">
                         <div class="p-6 h-full flex flex-col">
                             <div class="mb-4">
