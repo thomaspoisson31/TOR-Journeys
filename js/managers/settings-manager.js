@@ -143,6 +143,7 @@ class SettingsManager {
 
         // Onglet Saison - réutiliser CalendarManager
         this.setupSeasonListeners();
+        this.setupImportExportListeners();
 
         // Bouton de fermeture de la modale de résultat de tirage
         const closeRandomResultBtn = document.getElementById('close-random-roll-result');
@@ -215,6 +216,9 @@ class SettingsManager {
                 if (window.countersManager) {
                     window.countersManager.render();
                 }
+                break;
+            case 'import-export':
+                // Rien de specifique a charger pour le moment
                 break;
             case 'share':
                 this.renderShareTab();
@@ -343,6 +347,96 @@ class SettingsManager {
     }
 
     // === GESTION DES CARTES ===
+    setupImportExportListeners() {
+        const exportBtn = document.getElementById("export-campaign-btn");
+        const importInput = document.getElementById("import-campaign-input");
+
+        if (exportBtn) {
+            exportBtn.addEventListener("click", () => {
+                this.exportCampaign();
+            });
+        }
+
+        if (importInput) {
+            importInput.addEventListener("change", (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    this.importCampaign(e.target.files[0]);
+                    e.target.value = ""; // Reset input
+                }
+            });
+        }
+    }
+
+    exportCampaign() {
+        console.log("📤 Exporting full campaign...");
+        try {
+            const contextData = window.authManager.collectCurrentContextData();
+            // Build full export payload based on memory context format
+            const exportData = {
+                metadata: {
+                    exportDate: new Date().toISOString(),
+                    version: "1.0"
+                },
+                campaign: contextData
+            };
+
+            const fileName = `Campaign_Export_${new Date().toISOString().split("T")[0]}.json`;
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+            const downloadNode = document.createElement("a");
+            downloadNode.setAttribute("href", dataStr);
+            downloadNode.setAttribute("download", fileName);
+            document.body.appendChild(downloadNode);
+            downloadNode.click();
+            document.body.removeChild(downloadNode);
+
+            console.log("✅ Campaign export successful.");
+        } catch (error) {
+            console.error("❌ Failed to export campaign:", error);
+            alert("Erreur lors de l'export de la campagne.");
+        }
+    }
+
+    importCampaign(file) {
+        console.log("📥 Reading imported campaign file...");
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (!importedData.campaign) {
+                    throw new Error("Invalid campaign file format. Missing 'campaign' object.");
+                }
+                if (confirm("⚠️ ATTENTION : Êtes-vous sûr de vouloir importer cette campagne ? Cela écrasera et remplacera intégralement vos données actuelles (cartes, lieux, personnages, journal, etc.). Cette action est irréversible.")) {
+                    this.processCampaignImport(importedData.campaign);
+                }
+            } catch (error) {
+                console.error("❌ Erreur de lecture du fichier:", error);
+                alert("Erreur lors de l'importation. Le fichier n'est peut-être pas valide.");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    async processCampaignImport(campaignData) {
+        console.log("📥 Processing campaign import...");
+        try {
+            document.getElementById("loader-overlay").classList.remove("hidden");
+            // Overwrite current context data and triggers full refresh
+            if (window.authManager) {
+                 // Manually construct a simulated context structure
+                 const newContextData = { dynamicData: campaignData };
+                 await window.authManager.applyContextData(newContextData);
+                 window.markAsUnsaved();
+                 alert("✅ Campagne importée avec succès !");
+                 window.location.reload();
+            }
+        } catch (error) {
+            console.error("❌ Error applying imported campaign:", error);
+            alert("Erreur lors de l'application des données importées.");
+        } finally {
+            document.getElementById("loader-overlay").classList.add("hidden");
+        }
+    }
+
     async setupMapsListeners() {
         // Importer UploadManager dynamiquement
         const UploadManagerModule = await import('./upload-manager.js');
