@@ -266,27 +266,18 @@ async function initializeApp() {
         window.settingsManager = settingsManager; // Exposer globalement pour les onclick
         console.log("✅ SettingsManager initialized");
 
-        // Initialiser AuthManager
-        authManager = new AuthManager();
-        authManager.init();
-        window.authManager = authManager; // Exposer globalement pour les onclick
-
-        // Ajouter cette ligne après l'initialisation de l'AuthManager (vers la ligne 150)
-        // Exposer la fonction markAsUnsaved pour que les autres managers puissent signaler des modifications
+        // Définir très tôt ces stubs pour que les autres managers puissent les appeler lors de leur init() sans erreur.
         window.markAsUnsaved = () => {
             if (window.authManager && window.authManager.isAuthenticated) {
                 window.authManager.markAsUnsaved();
             }
         };
 
-        // Exposer scheduleAutoSync globalement pour les autres managers
         window.scheduleAutoSync = () => {
-            if (authManager && authManager.isAuthenticated) {
-                authManager.scheduleAutoSync();
+            if (window.authManager && window.authManager.isAuthenticated) {
+                window.authManager.scheduleAutoSync();
             }
         };
-
-        console.log("✅ AuthManager initialized");
 
         // Initialiser GeminiManager
         const GeminiManager = (await import('./managers/gemini-manager.js')).default;
@@ -1141,6 +1132,13 @@ function initializeMap() {
     countersManager.init();
     window.countersManager = countersManager; // Exposer globalement
     console.log("✅ CountersManager initialized");
+
+    // L'AuthManager doit être initialisé en dernier car il charge les données
+    // cloud au démarrage et les injecte dans tous les autres managers
+    authManager = new AuthManager();
+    authManager.init();
+    window.authManager = authManager; // Exposer globalement pour les onclick
+    console.log("✅ AuthManager initialized");
 
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
