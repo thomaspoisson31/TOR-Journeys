@@ -328,7 +328,7 @@ class JsonDBManager:
             print(f"❌ Erreur sauvegarde shared_links.json: {e}")
             return False
 
-    def create_shared_link(self, uuid, user_id, map_url, env_prefix):
+    def create_shared_link(self, uuid, user_id, map_url, env_prefix, campaign_id=None):
         links = self._load_shared_links()
 
         # Supprimer tout lien existant pour cette carte et cet utilisateur
@@ -341,6 +341,7 @@ class JsonDBManager:
             'user_id': user_id,
             'map_url': map_url,
             'env_prefix': env_prefix,
+            'campaign_id': campaign_id,
             'created_at': datetime.now().isoformat()
         }
         print(f"🔗 Lien partagé créé: {uuid} pour {user_id} (Carte: {map_url})")

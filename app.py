@@ -878,6 +878,7 @@ def generate_shared_link():
 
     data = request.json
     map_url = data.get('map_url')
+    campaign_id = data.get('campaign_id')
     if not map_url:
         return jsonify({'error': 'URL de carte manquante'}), 400
 
@@ -887,7 +888,7 @@ def generate_shared_link():
     # Générer un UUID court
     link_uuid = str(uuid.uuid4())[:8]
 
-    if db_manager.create_shared_link(link_uuid, google_id, map_url, env_prefix):
+    if db_manager.create_shared_link(link_uuid, google_id, map_url, env_prefix, campaign_id):
         return jsonify({
             'success': True,
             'link_uuid': link_uuid,
@@ -944,11 +945,51 @@ def get_shared_data(link_uuid):
 
     user_id = link_data['user_id']
     env_prefix = link_data['env_prefix']
+    campaign_id = link_data.get('campaign_id')
 
     # Récupérer les données de l'utilisateur créateur
     user_data = db_manager.get_user_data(user_id, env_prefix)
     if not user_data:
         return jsonify({'error': 'Données non trouvées'}), 404
+
+    if campaign_id:
+        campaign_data = db_manager.get_campaign(user_id, env_prefix, campaign_id)
+        if campaign_data:
+            if campaign_data.get('is_standalone'):
+                user_data = campaign_data
+            else:
+                # Merge logic
+                if 'locations' not in user_data: user_data['locations'] = {'locations': []}
+                if 'regions' not in user_data: user_data['regions'] = {'regions': []}
+
+                # Custom locations
+                if 'custom_locations' in campaign_data:
+                    user_data['locations']['locations'].extend(campaign_data['custom_locations'])
+                # States for locations
+                if 'locations_states' in campaign_data:
+                    for loc in user_data['locations']['locations']:
+                        if loc['id'] in campaign_data['locations_states']:
+                            loc.update(campaign_data['locations_states'][loc['id']])
+
+                # Custom regions
+                if 'custom_regions' in campaign_data:
+                    user_data['regions']['regions'].extend(campaign_data['custom_regions'])
+                # States for regions
+                if 'regions_states' in campaign_data:
+                    for reg in user_data['regions']['regions']:
+                        if reg['id'] in campaign_data['regions_states']:
+                            reg.update(campaign_data['regions_states'][reg['id']])
+
+                if 'characters' in campaign_data:
+                    user_data['characters'] = campaign_data['characters']
+                if 'journal' in campaign_data:
+                    user_data['journal'] = campaign_data['journal']
+                if 'calendar' in campaign_data:
+                    user_data['calendar'] = campaign_data['calendar']
+                if 'counters' in campaign_data:
+                    user_data['counters'] = campaign_data['counters']
+                if 'position' in campaign_data:
+                    user_data['position'] = campaign_data['position']
 
     # Filtrage minimal pour la sécurité
     safe_data = {
@@ -958,6 +999,7 @@ def get_shared_data(link_uuid):
         'settings': user_data.get('settings', {}),
         'calendar': user_data.get('calendar', {}),
         'journal': user_data.get('journal', {}),
+        'counters': user_data.get('counters', []),
         'position': user_data.get('position', {}),
         'adventureMode': 'player',
         'forcedActiveMapUrl': link_data['map_url']
