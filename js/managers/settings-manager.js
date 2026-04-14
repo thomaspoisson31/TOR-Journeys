@@ -299,10 +299,11 @@ class SettingsManager {
         if (content) content.innerHTML = '<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>';
 
         try {
+            const campaignId = window.authManager.currentMode === 'campaign' ? window.authManager.currentCampaignId : null;
             const response = await fetch('/api/share/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ map_url: this.activeMapUrl })
+                body: JSON.stringify({ map_url: this.activeMapUrl, campaign_id: campaignId })
             });
 
             if (response.ok) {
@@ -420,14 +421,24 @@ class SettingsManager {
         console.log("📥 Processing campaign import...");
         try {
             document.getElementById("loader-overlay").classList.remove("hidden");
-            // Overwrite current context data and triggers full refresh
-            if (window.authManager) {
-                 // Manually construct a simulated context structure
-                 const newContextData = { dynamicData: campaignData };
-                 await window.authManager.applyContextData(newContextData);
-                 window.markAsUnsaved();
-                 alert("✅ Campagne importée avec succès !");
-                 window.location.reload();
+            if (window.authManager && window.authManager.currentMode) {
+                let url = window.authManager.currentMode === 'base' ? '/api/base_world' : `/api/campaigns/${window.authManager.currentCampaignId}`;
+                let method = window.authManager.currentMode === 'base' ? 'POST' : 'PUT';
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(campaignData)
+                });
+
+                if (response.ok) {
+                    alert("✅ Campagne importée avec succès !");
+                    window.location.reload();
+                } else {
+                    throw new Error("Failed to save imported campaign to server");
+                }
+            } else {
+                 alert("❌ Erreur : le gestionnaire d'authentification n'est pas prêt.");
             }
         } catch (error) {
             console.error("❌ Error applying imported campaign:", error);
