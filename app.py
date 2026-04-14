@@ -802,6 +802,34 @@ def get_image_library():
         print(f"❌ Erreur library: {e}")
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/api/environment')
+def get_environment():
+    env_override = os.environ.get('ENV', '').lower()
+
+    environment = 'development'
+    prefix = 'dev_'
+    is_deployment = False
+
+    if env_override in ['production', 'prod']:
+        environment = 'production'
+        prefix = 'prod_'
+        is_deployment = True
+    elif os.environ.get('FLASK_ENV') == 'production':
+        environment = 'production'
+        prefix = 'prod_'
+        is_deployment = True
+
+    return jsonify({
+        'environment': environment,
+        'prefix': prefix,
+        'is_deployment': is_deployment,
+        'detection_method': {
+            'source': 'FLASK_ENV or ENV',
+            'value': os.environ.get('FLASK_ENV') or env_override
+        }
+    })
+
 @app.route('/api/storage/status')
 def storage_status():
     return jsonify({
