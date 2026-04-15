@@ -368,6 +368,19 @@ async function initializeApp() {
                 }
             };
             console.log("⏳ Waiting for SettingsManager to load active map...");
+
+            // L'AuthManager doit être initialisé en dernier car il charge les données
+            // cloud au démarrage et les injecte dans tous les autres managers
+            authManager = new AuthManager();
+            authManager.init();
+            window.authManager = authManager; // Exposer globalement pour les onclick
+            console.log("✅ AuthManager initialized");
+
+            // Déclencher le chargement de la carte si SettingsManager a une carte active
+            if (settingsManager.activeMapUrl) {
+                console.log("🗺️ Triggering initial map load:", settingsManager.activeMapUrl);
+                mapImage.src = settingsManager.activeMapUrl;
+            }
         }
 
     } catch (error) {
@@ -1133,13 +1146,6 @@ function initializeMap() {
     window.countersManager = countersManager; // Exposer globalement
     console.log("✅ CountersManager initialized");
 
-    // L'AuthManager doit être initialisé en dernier car il charge les données
-    // cloud au démarrage et les injecte dans tous les autres managers
-    authManager = new AuthManager();
-    authManager.init();
-    window.authManager = authManager; // Exposer globalement pour les onclick
-    console.log("✅ AuthManager initialized");
-
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
 
@@ -1165,6 +1171,7 @@ function initializeMap() {
 }
 
 // --- Fonctions de navigation de la carte ---
+let isMapNavigationSetup = false;
 let isPanning = false;
 let lastMouseX = 0;
 let lastMouseY = 0;
@@ -1319,6 +1326,10 @@ function handlePanStart(e) {
 
 // --- Event Listeners pour la navigation ---
 function setupMapNavigation() {
+    if (isMapNavigationSetup) {
+        console.log("🎮 Map navigation already setup, skipping...");
+        return;
+    }
     console.log("🎮 Setting up map navigation...");
 
     // Détection tactile sans perturber desktop
@@ -1597,6 +1608,7 @@ function setupMapNavigation() {
     // Curseur par défaut
     viewport.style.cursor = 'grab';
 
+    isMapNavigationSetup = true;
     console.log("✅ Map navigation setup complete");
 }
 
@@ -1682,7 +1694,12 @@ function setupInfoBoxListeners() {
 }
 
 // --- Fonctions de tracé de régions ---
+let isRegionDrawingSetup = false;
 function setupRegionDrawing() {
+    if (isRegionDrawingSetup) {
+        console.log("🎨 Region drawing already setup, skipping...");
+        return;
+    }
     console.log("🎨 Setting up region drawing...");
 
     const addRegionBtn = document.getElementById('add-region-mode');
@@ -1705,6 +1722,7 @@ function setupRegionDrawing() {
     // Setup des sélecteurs de couleur pour les régions
     setupRegionColorPicker();
 
+    isRegionDrawingSetup = true;
     console.log("✅ Region drawing setup complete");
 }
 
@@ -1979,8 +1997,13 @@ function confirmRegionCreation() {
 
 // --- Fonctions de création de lieux ---
 let isLocationAddingMode = false;
+let isLocationAddingSetup = false;
 
 function setupLocationAdding() {
+    if (isLocationAddingSetup) {
+        console.log("📍 Location adding already setup, skipping...");
+        return;
+    }
     console.log("📍 Setting up location adding...");
 
     const addLocationBtn = document.getElementById('add-location-mode');
@@ -2029,6 +2052,7 @@ function setupLocationAdding() {
     // Setup de la modale de changement de couleur
     setupColorChangeModal();
 
+    isLocationAddingSetup = true;
     console.log("✅ Location adding setup complete");
 }
 
@@ -3101,7 +3125,12 @@ function confirmColorChange() {
 }
 
 // --- Configuration des événements de dessin ---
+let isDrawingEventsSetup = false;
 function setupDrawingEvents() {
+    if (isDrawingEventsSetup) {
+        console.log("🖌️ Drawing events already setup, skipping...");
+        return;
+    }
     console.log("🖌️ Setting up drawing events...");
 
     // Configuration du VoyageManager pour le dessin
@@ -3111,6 +3140,7 @@ function setupDrawingEvents() {
         console.log("✅ VoyageManager drawing listeners added");
     }
 
+    isDrawingEventsSetup = true;
     console.log("✅ Drawing events setup complete");
 }
 

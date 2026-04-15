@@ -3005,6 +3005,31 @@ class SettingsManager {
             } else {
                 // Forcer le rechargement
                 mapImage.onload = onImageLoaded; // Assigner le callback avant de changer src
+
+                // Ajouter un gestionnaire d'erreur pour éviter le chargement infini
+                mapImage.onerror = () => {
+                    console.error("❌ Map image failed to load in loadSettings:", this.activeMapUrl);
+                    const loaderOverlay = document.getElementById('loader-overlay');
+                    if (loaderOverlay) {
+                        loaderOverlay.innerHTML = `
+                            <div class="text-2xl text-red-500 text-center p-4">
+                                <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i><br>
+                                Erreur de chargement de la carte<br>
+                                <div class="mt-6 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center">
+                                    <button onclick="window.openSettingsForMap()" class="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center">
+                                        <i class="fas fa-cog mr-2"></i>Paramètres
+                                    </button>
+                                    <button onclick="location.reload()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors flex items-center justify-center">
+                                        <i class="fas fa-sync-alt mr-2"></i>Recharger
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        loaderOverlay.style.display = 'flex';
+                        loaderOverlay.style.opacity = '1';
+                    }
+                };
+
                 mapImage.src = this.activeMapUrl;
             }
         }

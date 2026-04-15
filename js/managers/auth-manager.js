@@ -20,9 +20,14 @@ class AuthManager {
         this.authModal = null;
         this.envPrefix = null;
         this.isStandaloneCampaign = false;
+        this.isInitialized = false;
     }
 
     init() {
+        if (this.isInitialized) {
+            this.logAuth("🔑 AuthManager already initialized, skipping...");
+            return;
+        }
         this.logAuth("🔑 Initialisation AuthManager");
         window.campaignManager = this.campaignManager;
         this.setupDOMReferences();
@@ -37,6 +42,7 @@ class AuthManager {
             this.handleAuthCallback();
         }
         this.updateLastSyncDateDisplay();
+        this.isInitialized = true;
     }
 
     checkSharedViewMode() {
