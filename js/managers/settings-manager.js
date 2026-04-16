@@ -421,9 +421,9 @@ class SettingsManager {
         console.log("📥 Processing campaign import...");
         try {
             document.getElementById("loader-overlay").classList.remove("hidden");
-            if (window.authManager && window.authManager.currentMode) {
-                let url = window.authManager.currentMode === 'base' ? '/api/base_world' : `/api/campaigns/${window.authManager.currentCampaignId}`;
-                let method = window.authManager.currentMode === 'base' ? 'POST' : 'PUT';
+            if (window.authManager && window.authManager.currentCampaignId) {
+                let url = `/api/campaigns/${window.authManager.currentCampaignId}`;
+                let method = 'PUT';
 
                 const response = await fetch(url, {
                     method: method,

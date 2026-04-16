@@ -171,8 +171,8 @@ class JsonDBManager:
             print(f"❌ Erreur mise à jour index campagnes: {e}")
             return False
 
-    def create_campaign(self, google_id, env_prefix, name, initial_data=None, is_standalone=False):
-        """Créer une nouvelle campagne"""
+    def create_campaign(self, google_id, env_prefix, name, initial_data=None, is_standalone=True):
+        """Créer une nouvelle campagne (toujours autonome désormais)"""
         campaign_id = str(uuid.uuid4())
         campaign_path = f"users/{google_id}/campaigns/{env_prefix}{campaign_id}.json"
 
@@ -187,12 +187,9 @@ class JsonDBManager:
             campaign_data['created_at'] = now
             campaign_data['last_played'] = now
             campaign_data['adventureMode'] = True
+            campaign_data['is_standalone'] = True
 
-            # Si on clone une campagne standalone, on garde le flag
-            if campaign_data.get('is_standalone'):
-                campaign_data['is_standalone'] = True
-
-        elif is_standalone:
+        else:
             # Structure d'une campagne autonome (monde vide)
             campaign_data = {
                 'id': campaign_id,
@@ -210,22 +207,6 @@ class JsonDBManager:
                 'activeJourney': None,
                 'counters': [],
                 'adventureMode': True
-            }
-        else:
-            # Structure vide d'une campagne liée au monde de base
-            campaign_data = {
-                'id': campaign_id,
-                'name': name,
-                'created_at': now,
-                'last_played': now,
-                'locations_states': {},
-                'regions_states': {},
-                'calendar': {},
-                'position': None,
-                'journal': [],
-                'activeJourney': None,
-                'counters': [],
-                'adventureMode': True # Par défaut activé pour une campagne
             }
 
         try:
