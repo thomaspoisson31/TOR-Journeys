@@ -147,18 +147,6 @@ class CampaignManager {
 
                     <!-- Colonne Droite: Options & Info -->
                     <div class="flex flex-col space-y-6 h-full">
-                        <div class="bg-gray-900 rounded-lg p-6 border border-gray-700">
-                            <h3 class="text-xl font-bold text-white mb-4">
-                                <i class="fas fa-edit mr-2 text-purple-400"></i>Mode Gardien
-                            </h3>
-                            <p class="text-gray-400 text-sm mb-4">
-                                Modifiez le "Monde de Base". Les changements ici affecteront toutes les nouvelles campagnes, mais pas celles déjà créées.
-                            </p>
-                            <button id="edit-base-world-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded transition-colors flex items-center justify-center shadow-lg">
-                                <i class="fas fa-globe mr-2"></i>Éditer le Monde de Base
-                            </button>
-                        </div>
-
                         <div class="bg-gray-900 rounded-lg p-6 border border-gray-700 flex-grow">
                             <h3 class="text-xl font-bold text-white mb-4">
                                 <i class="fas fa-info-circle mr-2 text-blue-400"></i>Informations
@@ -187,18 +175,18 @@ class CampaignManager {
                         <h4 class="text-gray-300 font-semibold mb-2">Point de départ :</h4>
 
                         <label class="flex items-start p-3 bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-650 transition-colors border border-gray-600">
-                            <input type="radio" name="campaign-source" value="empty" checked class="mt-1 mr-3 text-blue-600 w-4 h-4">
+                            <input type="radio" name="campaign-source" value="current" checked class="mt-1 mr-3 text-blue-600 w-4 h-4">
                             <div>
-                                <span class="text-white font-bold block">Nouvelle Campagne</span>
-                                <span class="text-gray-400 text-sm">Commencer dans un monde entièrement vide (aucune carte ni lieu).</span>
+                                <span class="text-white font-bold block">Cloner le contexte actuel</span>
+                                <span class="text-gray-400 text-sm">Démarrer une nouvelle campagne en clonant l'état actuel (Position, Journal, Lieux...).</span>
                             </div>
                         </label>
 
                         <label class="flex items-start p-3 bg-gray-700 rounded-lg cursor-pointer hover:bg-gray-650 transition-colors border border-gray-600">
-                            <input type="radio" name="campaign-source" value="current" class="mt-1 mr-3 text-blue-600 w-4 h-4">
+                            <input type="radio" name="campaign-source" value="empty" class="mt-1 mr-3 text-blue-600 w-4 h-4">
                             <div>
-                                <span class="text-white font-bold block">Utiliser le contexte actuel</span>
-                                <span class="text-gray-400 text-sm">Cloner l'état actuel (Position, Journal, Brouillard de guerre...) pour continuer sous un autre nom.</span>
+                                <span class="text-white font-bold block">Nouvelle Campagne (Vide)</span>
+                                <span class="text-gray-400 text-sm">Commencer dans un monde entièrement vide (aucune carte ni lieu).</span>
                             </div>
                         </label>
                     </div>
@@ -246,7 +234,7 @@ class CampaignManager {
 
                 if (source === 'current' && window.authManager) {
                     // Collecter le contexte actuel pour le clonage
-                    initialData = window.authManager.collectCurrentContextData(true); // true = forCampaign cloning
+                    initialData = window.authManager.collectCurrentContextData();
                     console.log("Clonage du contexte actuel:", initialData);
                 } else if (source === 'empty') {
                     isStandalone = true;
@@ -260,9 +248,6 @@ class CampaignManager {
             }
         });
 
-        document.getElementById('edit-base-world-btn').addEventListener('click', () => {
-            this.enterBaseEditor();
-        });
 
         // Set user name if available
         if (window.authManager && window.authManager.currentUser) {
@@ -334,13 +319,6 @@ class CampaignManager {
         }
     }
 
-    async enterBaseEditor() {
-        if (this.modal) this.modal.classList.add('hidden');
-
-        if (window.authManager) {
-            await window.authManager.loadGameContext('base', null, 'Monde de Base (Édition)');
-        }
-    }
 }
 
 // Export pour utilisation module
