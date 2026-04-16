@@ -261,7 +261,7 @@ class AuthManager {
                 const campaignData = await campRes.json();
 
                 // Si la campagne est autonome ou si le Monde de Base a déjà été fusionné
-                if (campaignData.is_standalone || campaignData.locations) {
+                if (campaignData.is_standalone || (campaignData.locations && campaignData.characters)) {
                     this.isStandaloneCampaign = true;
                     finalData = campaignData;
                 } else {
@@ -538,9 +538,10 @@ class AuthManager {
                 window.regionsData = data.regions;
                 if (window.dataManager) window.dataManager.regionsData = data.regions;
             }
-            if (data.characters && window.charactersManager) {
-                localStorage.setItem('middleEarthCharacters', JSON.stringify(data.characters));
-                window.charactersManager.loadCharacters(data.characters);
+            if (window.charactersManager) {
+                const charactersToLoad = data.characters || { characters: [] };
+                localStorage.setItem('middleEarthCharacters', JSON.stringify(charactersToLoad));
+                window.charactersManager.loadCharacters(charactersToLoad);
             }
             if (data.settings && window.settingsManager) window.settingsManager.loadSettings(data.settings);
 
