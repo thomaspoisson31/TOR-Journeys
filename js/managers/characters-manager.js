@@ -221,7 +221,18 @@ class CharactersManager {
                 console.log(`📚 ${this.characters.length} personnages chargés depuis localStorage (IDs normalisés)`);
 
                 // MIGRATION : Supprimer la relation directe personnage-carte
-                this.migrateRemoveMapId();
+                // On effectue la migration en mémoire mais on ne force pas la sauvegarde cloud immédiatement
+                // pour éviter d'écraser les données du cloud au démarrage.
+                let migrationPerformed = false;
+                this.characters.forEach(char => {
+                    if (char.hasOwnProperty('mapId')) {
+                        delete char.mapId;
+                        migrationPerformed = true;
+                    }
+                });
+                if (migrationPerformed) {
+                    console.log("🔄 Migration mapId effectuée en mémoire.");
+                }
             } else {
                 this.characters = [];
             }
@@ -231,20 +242,6 @@ class CharactersManager {
         }
     }
 
-    migrateRemoveMapId() {
-        let migrationCount = 0;
-        this.characters.forEach(char => {
-            if (char.hasOwnProperty('mapId')) {
-                delete char.mapId;
-                migrationCount++;
-            }
-        });
-
-        if (migrationCount > 0) {
-            console.log(`🔄 Migration: mapId supprimé pour ${migrationCount} personnages.`);
-            this.saveCharactersToLocal();
-        }
-    }
 
     saveCharactersToLocal() {
         localStorage.setItem('middleEarthCharacters', JSON.stringify({ characters: this.characters }));

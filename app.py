@@ -91,6 +91,7 @@ def get_file_extension(filename):
 def get_or_create_user(google_id, name=None, email=None):
     return db_manager.get_or_create_user(google_id, name, email)
 
+
 @app.route('/login')
 def login_page():
     return send_from_directory('.', 'login.html')
