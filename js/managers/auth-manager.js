@@ -14,6 +14,7 @@ class AuthManager {
 
         this.currentMode = null;
         this.currentCampaignId = null;
+        this.currentCampaignName = null;
         this.campaignManager = new CampaignManager();
 
         this.authBtn = null;
@@ -239,6 +240,7 @@ class AuthManager {
         this.isLoadingFromCloud = true;
         this.currentMode = 'campaign'; // On force toujours le mode campagne
         this.currentCampaignId = campaignId;
+        this.currentCampaignName = campaignName;
 
         // Mise à jour de l'affichage du nom de la campagne
         if (this.campaignNameDisplay) {
@@ -358,8 +360,25 @@ class AuthManager {
             const cloudNotification = document.getElementById('cloud-load-notification');
             const cloudStats = document.getElementById('cloud-load-stats');
             const cloudTime = document.getElementById('cloud-load-time');
+            const cloudCampaign = document.getElementById('cloud-load-campaign');
+            const cloudCharsContainer = document.getElementById('cloud-load-chars-container');
+            const cloudChars = document.getElementById('cloud-load-chars');
 
             if (cloudNotification && cloudStats && cloudTime) {
+                if (cloudCampaign) {
+                    cloudCampaign.textContent = `Campagne: ${this.currentCampaignName || 'Inconnue'} (${this.currentCampaignId || 'N/A'})`;
+                }
+
+                if (cloudChars && cloudCharsContainer && finalData.characters && finalData.characters.characters) {
+                    const chars = finalData.characters.characters;
+                    if (chars.length > 0) {
+                        const charList = chars.slice(0, 20).map(c => `${c.name} (${c.id})`).join(', ');
+                        cloudChars.textContent = charList;
+                        cloudCharsContainer.classList.remove('hidden');
+                    } else {
+                        cloudCharsContainer.classList.add('hidden');
+                    }
+                }
                 const numLocations = (finalData.locations && finalData.locations.locations) ? finalData.locations.locations.length : 0;
                 const numRegions = (finalData.regions && finalData.regions.regions) ? finalData.regions.regions.length : 0;
                 const numCharacters = (finalData.characters && finalData.characters.characters) ? finalData.characters.characters.length : 0;
@@ -541,7 +560,7 @@ class AuthManager {
             if (window.charactersManager) {
                 const charactersToLoad = data.characters || { characters: [] };
                 localStorage.setItem('middleEarthCharacters', JSON.stringify(charactersToLoad));
-                window.charactersManager.loadCharacters(charactersToLoad);
+                window.charactersManager.loadCharacters(charactersToLoad, 'cloud', this.currentCampaignId, this.currentCampaignName);
             }
             if (data.settings && window.settingsManager) window.settingsManager.loadSettings(data.settings);
 
