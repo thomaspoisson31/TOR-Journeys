@@ -219,7 +219,10 @@ class CharactersManager {
                     associatedRegions: (char.associatedRegions || []).map(id => String(id))
                 }));
 
-                console.log(`📚 ${this.characters.length} personnages chargés depuis localStorage (IDs normalisés)`);
+                console.log(`📚 [CharactersManager.loadCharactersFromLocal] ${this.characters.length} personnages chargés depuis localStorage.`);
+                this.characters.forEach(c => {
+                    console.log(`   - Character: "${c.name}" | ID: ${c.id} | Origin: ${c.origin} | Campaign: ${c.campaignName || 'N/A'}`);
+                });
 
                 // MIGRATION : Supprimer la relation directe personnage-carte
                 // On effectue la migration en mémoire mais on ne force pas la sauvegarde cloud immédiatement
@@ -419,12 +422,26 @@ class CharactersManager {
             ? window.positionManager.isAdventureActive()
             : (window.positionManager?.adventureMode === 'mj' || window.positionManager?.adventureMode === 'player');
 
-        // Filtrer les personnages par carte active si demandé
+        const activeCampaignId = window.authManager?.currentCampaignId;
+        console.log(`👥 [CharactersManager.renderCharactersList] Rendering list for active campaign ID: ${activeCampaignId || 'NONE'}`);
+
+        // Filtrer par campagne active ET par carte active si demandé
         let filteredCharacters = this.characters.filter(character => {
+            // Filtrage par campagne : UNIQUEMENT les personnages de la campagne active
+            // Si pas de campagne active (très improbable), on montre tout pour éviter le blocage complet
+            if (activeCampaignId && character.campaignId && String(character.campaignId) !== String(activeCampaignId)) {
+                return false;
+            }
+
             if (this.filters.activeMap) {
                 return this.isCharacterOnActiveMap(character);
             }
             return true;
+        });
+
+        console.log(`👥 [CharactersManager.renderCharactersList] ${filteredCharacters.length}/${this.characters.length} personnages passent le filtre campagne/carte.`);
+        filteredCharacters.forEach(c => {
+            console.log(`   - Rendering Character: "${c.name}" | ID: ${c.id} | Origin: ${c.origin} | Campaign: ${c.campaignName} (${c.campaignId})`);
         });
 
         // En mode Aventure (MJ/Player) : filtrer UNIQUEMENT les personnages connus
@@ -1591,16 +1608,24 @@ class CharactersManager {
     // Méthode pour charger les personnages depuis des données externes (AuthManager)
     loadCharacters(data, origin = 'local', campaignId = null, campaignName = null) {
         if (data && data.characters && Array.isArray(data.characters)) {
+            // S'assurer que campaignId est une chaîne pour la cohérence
+            const normalizedCampaignId = campaignId ? String(campaignId) : null;
+
             this.characters = data.characters.map(char => ({
                 ...char,
-                origin: char.origin || origin,
-                campaignId: char.campaignId || campaignId,
-                campaignName: char.campaignName || campaignName
+                origin: origin, // On force l'origine spécifiée
+                campaignId: normalizedCampaignId || char.campaignId,
+                campaignName: campaignName || char.campaignName
             }));
-            console.log(`👥 CharactersManager: ${this.characters.length} personnages chargés via setter/loadCharacters (Origine: ${origin})`);
+
+            console.log(`👥 [CharactersManager.loadCharacters] ${this.characters.length} personnages chargés (Origine: ${origin}, Campagne: ${campaignName || 'N/A'})`);
+            this.characters.forEach(c => {
+                console.log(`   - Cloud Character: "${c.name}" | ID: ${c.id} | Campaign: ${c.campaignName} (${c.campaignId})`);
+            });
+
             this.renderCharactersList();
         } else {
-            console.warn("⚠️ Données de personnages invalides reçues via setter/loadCharacters");
+            console.warn("⚠️ [CharactersManager.loadCharacters] Données de personnages invalides reçues");
         }
     }
 

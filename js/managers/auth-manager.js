@@ -559,6 +559,7 @@ class AuthManager {
             }
             if (window.charactersManager) {
                 const charactersToLoad = data.characters || { characters: [] };
+                console.log(`☁️ [AuthManager.applyContextData] Restoration of ${charactersToLoad.characters?.length || 0} characters to cloud context (${this.currentCampaignName})`);
                 localStorage.setItem('middleEarthCharacters', JSON.stringify(charactersToLoad));
                 window.charactersManager.loadCharacters(charactersToLoad, 'cloud', this.currentCampaignId, this.currentCampaignName);
             }

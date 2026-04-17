@@ -309,6 +309,53 @@ async function initializeApp() {
         window.libraryManager = libraryManager;
         console.log("✅ LibraryManager initialized");
 
+        // Initialiser les managers dépendants des données AVANT AuthManager
+        // pour qu'ils soient prêts à recevoir les données du cloud lors de la synchronisation initiale.
+
+        // Initialiser PositionManager
+        positionManager = new PositionManager(
+            { getElementById: (id) => document.getElementById(id) },
+            { MAP_WIDTH, MAP_HEIGHT }
+        );
+        positionManager.init();
+        window.positionManager = positionManager;
+        console.log("✅ PositionManager initialized (placeholder dimensions)");
+
+        // Initialiser JournalManager
+        journalManager = new JournalManager();
+        journalManager.init();
+        window.journalManager = journalManager;
+        console.log("✅ JournalManager initialized");
+
+        // Initialiser AdventureManager
+        adventureManager = new AdventureManager();
+        window.adventureManager = adventureManager;
+        console.log("✅ AdventureManager initialized");
+
+        // Initialiser CharactersManager
+        charactersManager = new CharactersManager();
+        charactersManager.init();
+        window.charactersManager = charactersManager;
+        console.log("✅ CharactersManager initialized");
+
+        // Initialiser RandomTablesManager
+        randomTablesManager = new RandomTablesManager();
+        randomTablesManager.init();
+        window.randomTablesManager = randomTablesManager;
+        console.log("✅ RandomTablesManager initialized");
+
+        // Initialiser MapSwitcherManager
+        const mapSwitcherManager = new MapSwitcherManager();
+        mapSwitcherManager.init();
+        window.mapSwitcherManager = mapSwitcherManager;
+        console.log("✅ MapSwitcherManager initialized");
+
+        // Initialiser CountersManager
+        countersManager = new CountersManager();
+        countersManager.init();
+        window.countersManager = countersManager;
+        console.log("✅ CountersManager initialized");
+
         // Initialiser les structures vides (seront remplies par AuthManager)
         console.log("📍 Initializing data structures...");
         await dataManager.loadInitialLocations();
@@ -1078,73 +1125,21 @@ function initializeMap() {
         window.zoomManager = zoomManager; // Exposer globalement
     }
 
-    // Initialiser ou réinitialiser PositionManager
-    console.log("📍 [main.js] Création du PositionManager avec MAP_WIDTH:", MAP_WIDTH, "MAP_HEIGHT:", MAP_HEIGHT);
+    // Mettre à jour les dimensions pour PositionManager
+    if (positionManager) {
+        console.log("📍 [initializeMap] Mise à jour des dimensions pour PositionManager:", MAP_WIDTH, "x", MAP_HEIGHT);
+        positionManager.mapConstants.MAP_WIDTH = MAP_WIDTH;
+        positionManager.mapConstants.MAP_HEIGHT = MAP_HEIGHT;
 
-    // Log de l'état du localStorage avant init
-    const savedPos = localStorage.getItem('adventurers_position');
-    const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
-    console.log("📍 [main.js] État localStorage AVANT init PositionManager - position:", savedPos, "flag:", cloudFlag);
+        // Recréer le marqueur de position avec les bonnes dimensions
+        positionManager.createPositionMarker();
 
-    // Détruire l'ancien PositionManager s'il existe
-    if (window.positionManager) {
-        console.log("📍 [main.js] Destruction de l'ancien PositionManager");
-        // Nettoyer les event listeners si nécessaire
-        if (window.positionManager.positionMarker) {
-            window.positionManager.positionMarker.remove();
+        const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
+        if (cloudFlag === 'true') {
+            console.log("📍 [initializeMap] Nettoyage du flag cloud après mise à jour PositionManager");
+            localStorage.removeItem('adventurers_position_from_cloud');
         }
     }
-
-    positionManager = new PositionManager(
-        { getElementById: (id) => document.getElementById(id) },
-        { MAP_WIDTH, MAP_HEIGHT }
-    );
-    positionManager.init();
-    window.positionManager = positionManager; // Exposer globalement
-    console.log("✅ PositionManager initialized with position:", positionManager.currentPosition);
-
-    // Nettoyer le flag cloud après l'initialisation si présent
-    if (cloudFlag === 'true') {
-        console.log("📍 [main.js] Nettoyage du flag cloud après initialisation");
-        localStorage.removeItem('adventurers_position_from_cloud');
-    }
-
-    // Initialiser JournalManager
-    journalManager = new JournalManager();
-    journalManager.init();
-    window.journalManager = journalManager; // Exposer globalement
-    console.log("✅ JournalManager initialized");
-
-    // AdventureManager maintenu pour compatibilité des données (tables aléatoires)
-    // mais sans initialiser les event listeners (bouton désactivé)
-    adventureManager = new AdventureManager();
-    // adventureManager.init(); // Désactivé - fonctionnalités dans les Paramètres
-    window.adventureManager = adventureManager; // Exposer globalement pour accès aux données
-    console.log("✅ AdventureManager initialized (data-only mode)");
-
-    // Initialiser CharactersManager
-    charactersManager = new CharactersManager();
-    charactersManager.init();
-    window.charactersManager = charactersManager; // Exposer globalement
-    console.log("✅ CharactersManager initialized");
-
-    // Initialiser RandomTablesManager
-    randomTablesManager = new RandomTablesManager();
-    randomTablesManager.init();
-    window.randomTablesManager = randomTablesManager; // Exposer globalement
-    console.log("✅ RandomTablesManager initialized");
-
-    // Initialiser MapSwitcherManager
-    const mapSwitcherManager = new MapSwitcherManager();
-    mapSwitcherManager.init();
-    window.mapSwitcherManager = mapSwitcherManager; // Exposer globalement
-    console.log("✅ MapSwitcherManager initialized");
-
-    // Initialiser CountersManager
-    countersManager = new CountersManager();
-    countersManager.init();
-    window.countersManager = countersManager; // Exposer globalement
-    console.log("✅ CountersManager initialized");
 
     // Configurer les événements de dessin après que tous les managers soient initialisés
     setupDrawingEvents();
