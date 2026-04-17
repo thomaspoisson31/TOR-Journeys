@@ -1,0 +1,15 @@
+⚠️ [StorageManager] GCS non configuré. Mode stockage local (éphémère sur Render).
+✅ Json Database Manager initialisé (via StorageManager)
+🚀 Serveur Flask démarré
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.0.2:8080
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [17/Apr/2026 15:42:21] "GET /login HTTP/1.1" 200 -
+127.0.0.1 - - [17/Apr/2026 15:42:22] "GET /api/auth/user HTTP/1.1" 200 -
+127.0.0.1 - - [17/Apr/2026 15:42:22] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [17/Apr/2026 15:42:22] "[36mGET /login HTTP/1.1[0m" 304 -
+127.0.0.1 - - [17/Apr/2026 15:42:22] "GET /api/auth/user HTTP/1.1" 200 -
