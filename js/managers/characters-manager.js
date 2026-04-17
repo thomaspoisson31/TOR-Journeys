@@ -214,6 +214,7 @@ class CharactersManager {
                 this.characters = this.characters.map(char => ({
                     ...char,
                     id: String(char.id),
+                    origin: char.origin || 'local',
                     associatedLocations: (char.associatedLocations || []).map(id => String(id)),
                     associatedRegions: (char.associatedRegions || []).map(id => String(id))
                 }));
@@ -682,6 +683,9 @@ class CharactersManager {
                             <span class="inline-block px-2 py-1 text-xs rounded ${typeClass} flex-shrink-0">
                                 ${type}
                             </span>
+                            <span class="text-[10px] text-gray-400 truncate">
+                                ID: ${character.id} | ${character.campaignName || 'Sans campagne'} (${character.origin || 'local'})
+                            </span>
                         </div>
                         ${shortDescription ? `
                             <p class="text-sm text-gray-300 mb-2 line-clamp-2">${shortDescription}</p>
@@ -1027,6 +1031,9 @@ class CharactersManager {
             name: name,
             description: description,
             type: type,
+            origin: 'local',
+            campaignId: window.authManager?.currentCampaignId,
+            campaignName: window.authManager?.currentCampaignName,
             images: this.tempCharacterImages || []
             // mapId supprimé : la relation est désormais via les lieux/régions
         };
@@ -1582,10 +1589,15 @@ class CharactersManager {
     }
 
     // Méthode pour charger les personnages depuis des données externes (AuthManager)
-    loadCharacters(data) {
+    loadCharacters(data, origin = 'local', campaignId = null, campaignName = null) {
         if (data && data.characters && Array.isArray(data.characters)) {
-            this.characters = data.characters;
-            console.log(`👥 CharactersManager: ${this.characters.length} personnages chargés via setter/loadCharacters`);
+            this.characters = data.characters.map(char => ({
+                ...char,
+                origin: char.origin || origin,
+                campaignId: char.campaignId || campaignId,
+                campaignName: char.campaignName || campaignName
+            }));
+            console.log(`👥 CharactersManager: ${this.characters.length} personnages chargés via setter/loadCharacters (Origine: ${origin})`);
             this.renderCharactersList();
         } else {
             console.warn("⚠️ Données de personnages invalides reçues via setter/loadCharacters");
@@ -1599,6 +1611,9 @@ class CharactersManager {
             name: characterData.name || 'Nouveau personnage',
             description: characterData.description || '',
             type: characterData.type || 'PNJ',
+            origin: 'local',
+            campaignId: window.authManager?.currentCampaignId,
+            campaignName: window.authManager?.currentCampaignName,
             images: characterData.images || [],
             associatedLocations: (characterData.associatedLocations || []).map(id => String(id)),
             associatedRegions: (characterData.associatedRegions || []).map(id => String(id))
