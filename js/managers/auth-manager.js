@@ -601,7 +601,7 @@ class AuthManager {
              }
         }
 
-        if (data.counters && window.countersManager) window.countersManager.loadCounters(data.counters);
+        if (data.counters && window.countersManager) window.countersManager.loadCounters(data.counters, 'cloud', this.currentCampaignId, this.currentCampaignName);
 
         if (data.randomTablesCheckedResults && window.randomTablesManager) {
             window.randomTablesManager.checkedResults = data.randomTablesCheckedResults;

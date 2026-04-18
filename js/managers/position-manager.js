@@ -102,7 +102,7 @@ class PositionManager {
 
     // Helper pour savoir si on est en mode aventure (MJ ou Player)
     isAdventureActive() {
-        return this.adventureMode === 'mj' || this.adventureMode === 'player';
+        return this.adventureMode === 'mj' || this.adventureMode === 'player' || this.adventureMode === true;
     }
 
     updateBodyClass() {
