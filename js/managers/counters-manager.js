@@ -33,10 +33,23 @@ class CountersManager {
 
     render() {
         const container = document.getElementById(this.containerId);
-        console.log(`Render called. Container found: ${!!container}, Counters: ${this.counters.length}`);
         if (!container) return;
 
-        if (this.counters.length === 0) {
+        const activeCampaignId = window.authManager?.currentCampaignId;
+
+        // Filtrer par campagne active
+        const filteredCounters = this.counters.filter(counter => {
+            // Si pas de campagne active (très improbable), on montre tout
+            if (!activeCampaignId) return true;
+            // Si le compteur n'a pas de campaignId (legacy), on le montre pour éviter la perte de données
+            if (!counter.campaignId) return true;
+            // Sinon, il doit correspondre à la campagne active
+            return String(counter.campaignId) === String(activeCampaignId);
+        });
+
+        console.log(`Render called. Container found: ${!!container}, Total Counters: ${this.counters.length}, Filtered: ${filteredCounters.length}`);
+
+        if (filteredCounters.length === 0) {
             container.innerHTML = `
                 <div class="text-center py-8 text-gray-500">
                     <i class="fas fa-list-ol text-4xl mb-3 opacity-50"></i>
@@ -46,7 +59,7 @@ class CountersManager {
             return;
         }
 
-        container.innerHTML = this.counters.map(counter => `
+        container.innerHTML = filteredCounters.map(counter => `
             <div class="bg-gray-700 p-4 rounded-lg flex items-center space-x-4 border border-gray-600" data-id="${counter.id}">
                 <!-- Visibility Toggle -->
                 <button class="w-8 h-8 rounded-full flex items-center justify-center transition-colors ${counter.visible ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-600 text-gray-400 hover:bg-gray-500'}"
@@ -118,9 +131,20 @@ class CountersManager {
 
         // Check adventure mode
         const adventureMode = window.positionManager ? window.positionManager.adventureMode : 'admin';
-        const isAdventureActive = adventureMode === 'mj' || adventureMode === 'player' || window.isViewerMode === true;
+        // Support adventureMode as string or boolean
+        const isAdventureActive = adventureMode === 'mj' || adventureMode === 'player' || adventureMode === true || window.isViewerMode === true;
 
-        const visibleCounters = this.counters.filter(c => c.visible);
+        const activeCampaignId = window.authManager?.currentCampaignId;
+
+        const visibleCounters = this.counters.filter(counter => {
+            if (!counter.visible) return false;
+
+            // Filtrage par campagne pour l'affichage principal
+            if (activeCampaignId && counter.campaignId && String(counter.campaignId) !== String(activeCampaignId)) {
+                return false;
+            }
+            return true;
+        });
 
         if (visibleCounters.length === 0 || !isAdventureActive) {
             container.classList.add('hidden');
@@ -183,7 +207,9 @@ class CountersManager {
             name: 'Nouveau compteur',
             value: 0,
             image: '',
-            visible: false
+            visible: false,
+            campaignId: window.authManager?.currentCampaignId,
+            campaignName: window.authManager?.currentCampaignName
         };
         this.counters.push(newCounter);
         this.save();
@@ -243,17 +269,25 @@ class CountersManager {
         return this.counters;
     }
 
-    loadCounters(data) {
+    loadCounters(data, origin = 'local', campaignId = null, campaignName = null) {
         if (Array.isArray(data)) {
-            this.counters = data;
-            this.save(); // Save to local storage (will also trigger sync scheduling, but usually called during sync apply)
+            const normalizedCampaignId = campaignId ? String(campaignId) : null;
+
+            this.counters = data.map(counter => ({
+                ...counter,
+                campaignId: normalizedCampaignId || counter.campaignId,
+                campaignName: campaignName || counter.campaignName
+            }));
+
+            this.save(); // Save to local storage
+
             // Si l'onglet est visible, re-render
             const container = document.getElementById(this.containerId);
             if (container && container.offsetParent !== null) {
                 this.render();
             }
             this.renderVisibleCounters();
-            console.log(`✅ ${data.length} compteurs chargés`);
+            console.log(`✅ ${this.counters.length} compteurs chargés (Origine: ${origin}, Campagne: ${campaignName || 'N/A'})`);
         }
     }
 }
