@@ -10,6 +10,7 @@ class PositionManager {
         this.adventureMode = this.loadAdventureMode(); // Nouvel état pour le mode aventure (string: 'admin', 'mj', 'player')
         this.savedFilters = null; // Sauvegarde des filtres avant activation du mode Aventure
         this.isLocked = window.isViewerMode || false; // Verrouillage du mode (pour le viewer)
+        this.isGlobalEventsSetup = false; // Drapeau pour les écouteurs globaux
     }
 
     setLockedMode(locked) {
@@ -346,6 +347,9 @@ class PositionManager {
         this.updateMarkerPosition();
         this.positionMarker.style.cursor = 'move'; // Le marqueur de position est toujours déplaçable
         positionLayer.appendChild(this.positionMarker);
+
+        // Attacher les écouteurs d'événements au nouveau marqueur
+        this.setupMarkerEventListeners(this.positionMarker);
     }
 
     updateMarkerPosition() {
@@ -426,11 +430,11 @@ class PositionManager {
         }
     }
 
-    setupEventListeners() {
-        if (!this.positionMarker) return;
+    setupMarkerEventListeners(marker) {
+        if (!marker) return;
 
         // --- Gestion du glisser-déposer (souris) ---
-        this.positionMarker.addEventListener('mousedown', (e) => {
+        marker.addEventListener('mousedown', (e) => {
             // En mode dessin, laisser passer l'événement pour PathManager
             if (window.isDrawingMode) {
                 console.log("📍 [PositionManager] Mode dessin actif - propagation du clic vers PathManager");
@@ -444,26 +448,11 @@ class PositionManager {
             }
         });
 
-        this.dragMoveHandler = (e) => {
-            if (this.isDragging) {
-                this.handleDrag(e);
-            }
-        };
-
-        this.dragEndHandler = (e) => {
-            if (this.isDragging && e.button === 0) {
-                this.handleDragEnd(e);
-            }
-        };
-
-        document.addEventListener('mousemove', this.dragMoveHandler);
-        document.addEventListener('mouseup', this.dragEndHandler);
-
         // --- Événements tactiles pour mobile ---
         let touchStartTime = 0;
         let touchHasMoved = false;
 
-        this.positionMarker.addEventListener('touchstart', (e) => {
+        marker.addEventListener('touchstart', (e) => {
             if (window.isDrawingMode) {
                 // En mode dessin, laisser passer l'événement pour PathManager
                 console.log("📍 [PositionManager] Mode dessin actif - propagation du touch vers PathManager");
@@ -489,7 +478,7 @@ class PositionManager {
             e.stopPropagation();
         }, { passive: false });
 
-        this.positionMarker.addEventListener('touchmove', (e) => {
+        marker.addEventListener('touchmove', (e) => {
             if (!this.isDragging) return;
 
             touchHasMoved = true;
@@ -516,11 +505,8 @@ class PositionManager {
             this.dragStartY = touch.clientY;
         }, { passive: false });
 
-        this.positionMarker.addEventListener('touchend', (e) => {
+        marker.addEventListener('touchend', (e) => {
             const touchDuration = Date.now() - touchStartTime;
-
-            e.preventDefault();
-            e.stopPropagation();
 
             if (this.isDragging) {
                 this.isDragging = false;
@@ -541,11 +527,13 @@ class PositionManager {
             // Si c'est un long press sans mouvement, ouvrir la modal
             if (!touchHasMoved && touchDuration >= 500) {
                 this.showPositionModal(e);
+                e.preventDefault();
+                e.stopPropagation();
             }
         }, { passive: false });
 
         // Clic droit pour ouvrir la modal compacte (desktop)
-        this.positionMarker.addEventListener('contextmenu', (e) => {
+        marker.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
@@ -553,12 +541,44 @@ class PositionManager {
             return false;
         });
 
+        // Mise à jour du curseur au survol
+        marker.addEventListener('mouseenter', () => {
+            if (!this.isDragging && !window.isDrawingMode) {
+                this.updateMarkerCursor();
+            }
+        });
+
+        marker.addEventListener('mouseleave', () => {
+            if (!this.isDragging && !window.isDrawingMode) {
+                marker.style.cursor = 'pointer'; // Retour au curseur par défaut
+            }
+        });
+    }
+
+    setupEventListeners() {
+        if (this.isGlobalEventsSetup) return;
+
+        this.dragMoveHandler = (e) => {
+            if (this.isDragging) {
+                this.handleDrag(e);
+            }
+        };
+
+        this.dragEndHandler = (e) => {
+            if (this.isDragging && e.button === 0) {
+                this.handleDragEnd(e);
+            }
+        };
+
+        document.addEventListener('mousemove', this.dragMoveHandler);
+        document.addEventListener('mouseup', this.dragEndHandler);
+
         // Gestionnaire global pour fermer la modale au clic droit en dehors
         document.addEventListener('contextmenu', (e) => {
             const modal = document.getElementById('position-modal');
             if (modal && !modal.classList.contains('hidden')) {
                 // Vérifier si le clic est en dehors de la modale et du marqueur
-                if (!modal.contains(e.target) && !this.positionMarker.contains(e.target)) {
+                if (!modal.contains(e.target) && (!this.positionMarker || !this.positionMarker.contains(e.target))) {
                     e.preventDefault();
                     e.stopPropagation();
                     modal.classList.add('hidden');
@@ -567,18 +587,7 @@ class PositionManager {
             }
         });
 
-        // Mise à jour du curseur au survol
-        this.positionMarker.addEventListener('mouseenter', () => {
-            if (!this.isDragging && !window.isDrawingMode) {
-                this.updateMarkerCursor();
-            }
-        });
-
-        this.positionMarker.addEventListener('mouseleave', () => {
-            if (!this.isDragging && !window.isDrawingMode) {
-                this.positionMarker.style.cursor = 'pointer'; // Retour au curseur par défaut
-            }
-        });
+        this.isGlobalEventsSetup = true;
     }
 
     handleDragStart(e) {
