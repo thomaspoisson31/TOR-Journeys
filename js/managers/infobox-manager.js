@@ -1128,6 +1128,7 @@ class InfoBoxManager {
                         headers: {
                             'Content-Type': 'application/json'
                         },
+                        credentials: 'include',
                         body: JSON.stringify({
                             image_url: image.url,
                             category: category

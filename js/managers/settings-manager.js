@@ -240,7 +240,7 @@ class SettingsManager {
         }
 
         try {
-            const response = await fetch(`/api/share/status?map_url=${encodeURIComponent(this.activeMapUrl)}`);
+            const response = await fetch(`/api/share/status?map_url=${encodeURIComponent(this.activeMapUrl)}`, { credentials: 'include' });
             const data = await response.json();
 
             if (data.has_link) {
@@ -303,6 +303,7 @@ class SettingsManager {
             const response = await fetch('/api/share/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ map_url: this.activeMapUrl, campaign_id: campaignId })
             });
 
@@ -330,6 +331,7 @@ class SettingsManager {
             const response = await fetch('/api/share/revoke', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ link_uuid: uuid })
             });
 
@@ -428,6 +430,7 @@ class SettingsManager {
                 const response = await fetch(url, {
                     method: method,
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify(campaignData)
                 });
 

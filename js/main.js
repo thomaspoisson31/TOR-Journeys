@@ -2040,9 +2040,6 @@ function setupLocationAdding() {
         console.log("✅ Upload image button configured");
     }
 
-    // Setup de la modale de sélection de bibliothèque
-    setupLibrarySelectionModal();
-
     // Setup des sélecteurs de couleur pour les lieux
     setupLocationColorPicker();
 
@@ -2169,7 +2166,6 @@ function showLocationCreationModal() {
 
         // Réinitialiser les images sélectionnées
         window.pendingLocationImages = [];
-        selectedLibraryImages = [];
         if (selectedImagesContainer) {
             selectedImagesContainer.classList.add('hidden');
             document.getElementById('selected-images-list').innerHTML = '';
@@ -2190,7 +2186,6 @@ function cancelLocationCreation() {
     exitLocationAddingMode();
     window.pendingLocationCoordinates = null;
     window.pendingLocationImages = null; // Nettoyer les images temporaires
-    selectedLibraryImages = [];
 
     // Cacher le conteneur d'images sélectionnées
     const container = document.getElementById('selected-library-images');
@@ -2298,7 +2293,6 @@ function confirmLocationCreation() {
     exitLocationAddingMode();
     window.pendingLocationCoordinates = null;
     window.pendingLocationImages = null; // Nettoyer les images temporaires
-    selectedLibraryImages = [];
 
     // Cacher le conteneur d'images sélectionnées
     if (selectedImagesContainer) {
@@ -2317,6 +2311,7 @@ async function callGemini(prompt, type = 'description') {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({ prompt, type })
         });
 
@@ -2459,308 +2454,64 @@ function setupLocationColorPicker() {
     });
 }
 
-// --- Fonctions de gestion de la bibliothèque d'images ---
-let selectedLibraryImages = [];
-
-function setupLibrarySelectionModal() {
-    const modal = document.getElementById('library-selection-modal');
-    const closeBtn = document.getElementById('close-library-selection-btn');
-    const cancelBtn = document.getElementById('cancel-library-selection-btn');
-    const confirmBtn = document.getElementById('confirm-library-selection-btn');
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeLibrarySelection);
-    }
-
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', closeLibrarySelection);
-    }
-
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', confirmLibrarySelection);
-    }
-
-    // Fermer en cliquant à l'extérieur
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeLibrarySelection();
-            }
-        });
-    }
-}
-
-let currentLibraryFolder = null;
-let libraryFolders = {};
-
-function openLibrarySelection() {
-    loadLibraryForSelection();
-}
-
-async function loadLibraryForSelection() {
-    const modal = document.getElementById('library-selection-modal');
-    const content = document.getElementById('library-selection-content');
-    const empty = document.getElementById('library-selection-empty');
-    const loading = document.getElementById('library-selection-loading');
-    const authRequired = document.getElementById('library-selection-auth-required');
-    const pathInfo = document.getElementById('library-path-info');
-    const pathDisplay = document.getElementById('library-path-display');
-
-    if (!modal) return;
-
-    // Réinitialiser la sélection
-    selectedLibraryImages = [];
-    currentLibraryFolder = null;
-    libraryFolders = {};
-
-    // Vérifier l'authentification
-    if (!authManager || !authManager.isAuthenticated) {
-        content.classList.add('hidden');
-        empty.classList.add('hidden');
-        loading.classList.add('hidden');
-        authRequired.classList.remove('hidden');
-        if (pathInfo) pathInfo.classList.add('hidden');
-        modal.classList.remove('hidden');
-        return;
-    }
-
-    // Afficher le chemin de stockage
-    if (pathInfo && pathDisplay && authManager.currentUser) {
-        const googleId = authManager.currentUser.google_id;
-        pathDisplay.textContent = `uploads/${googleId}/`;
-        pathInfo.classList.remove('hidden');
-    }
-
-    // Afficher le loading
-    content.classList.add('hidden');
-    empty.classList.add('hidden');
-    authRequired.classList.add('hidden');
-    loading.classList.remove('hidden');
-    modal.classList.remove('hidden');
-
-    try {
-        const response = await fetch('/api/images/library', {
-            method: 'GET',
-            credentials: 'include'
-        });
-
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        loading.classList.add('hidden');
-
-        if (data.success && data.folders && Object.keys(data.folders).length > 0) {
-            libraryFolders = data.folders;
-            renderLibraryFolders();
-            content.classList.remove('hidden');
-        } else {
-            empty.classList.remove('hidden');
-        }
-
-    } catch (error) {
-        console.error("❌ Erreur lors du chargement de la bibliothèque:", error);
-        loading.classList.add('hidden');
-        empty.classList.add('hidden');
-        const errorElement = document.getElementById('library-selection-error');
-        if (errorElement) {
-            errorElement.textContent = `Impossible de charger la bibliothèque : ${error.message}`;
-            errorElement.classList.remove('hidden');
-        }
-    }
-}
-
-function renderLibraryFolders() {
-    const content = document.getElementById('library-selection-content');
-    if (!content) return;
-
-    const folderNames = Object.keys(libraryFolders);
-
-    content.innerHTML = `
-        <div class="col-span-full mb-4">
-            <h3 class="text-lg font-semibold text-white mb-2">Sélectionner un dossier :</h3>
-        </div>
-        ${folderNames.map(folder => `
-            <div class="relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all p-6 flex flex-col items-center justify-center"
-                 onclick="window.selectLibraryFolder('${folder}')">
-                <i class="fas fa-folder text-blue-400 text-4xl mb-2"></i>
-                <div class="text-white font-medium">${folder}</div>
-                <div class="text-gray-400 text-sm">${libraryFolders[folder].length} image(s)</div>
-            </div>
-        `).join('')}
-    `;
-}
-
-// Exposer globalement pour renderLibraryImagesWithBackButton
-window.renderLibraryFolders = renderLibraryFolders;
-
-function selectLibraryFolder(folderName) {
-    currentLibraryFolder = folderName;
-    const images = libraryFolders[folderName] || [];
-    renderLibraryImagesWithBackButton(images);
-}
-
-// Exposer globalement pour les onclick
-window.selectLibraryFolder = selectLibraryFolder;
-
-function renderLibraryImages(images) {
-    const content = document.getElementById('library-selection-content');
-    if (!content) return;
-
-    content.innerHTML = '';
-
-    images.forEach(image => {
-        const imageCard = document.createElement('div');
-        imageCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card';
-        imageCard.dataset.url = image.url;
-        imageCard.dataset.filename = image.filename;
-
-        imageCard.innerHTML = `
-            <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
-            <div class="absolute top-2 right-2 hidden selected-indicator">
-                <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                    <i class="fas fa-check text-xs"></i>
-                </div>
-            </div>
-            <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
-                <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
-                    <p class="text-xs truncate">${image.filename}</p>
-                </div>
-            </div>
-        `;
-
-        imageCard.addEventListener('click', () => toggleImageSelection(imageCard));
-        content.appendChild(imageCard);
-    });
-}
-
-function renderLibraryImagesWithBackButton(images) {
-    const content = document.getElementById('library-selection-content');
-    if (!content) return;
-
-    content.innerHTML = `
-        <div class="col-span-full mb-4 flex items-center">
-            <button onclick="renderLibraryFolders()" class="flex items-center text-blue-400 hover:text-blue-300">
-                <i class="fas fa-arrow-left mr-2"></i>
-                Retour aux dossiers
-            </button>
-            <h3 class="text-lg font-semibold text-white ml-4">${currentLibraryFolder || 'Images'}</h3>
-        </div>
-    `;
-
-    images.forEach(image => {
-        const imageCard = document.createElement('div');
-        imageCard.className = 'relative cursor-pointer rounded-lg overflow-hidden bg-gray-700 hover:ring-2 hover:ring-blue-500 transition-all library-image-card';
-        imageCard.dataset.url = image.url;
-        imageCard.dataset.filename = image.filename;
-
-        imageCard.innerHTML = `
-            <img src="${image.url}" alt="${image.filename}" class="w-full h-32 object-cover">
-            <div class="absolute top-2 right-2 hidden selected-indicator">
-                <div class="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                    <i class="fas fa-check text-xs"></i>
-                </div>
-            </div>
-            <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-opacity flex items-center justify-center">
-                <div class="opacity-0 hover:opacity-100 transition-opacity text-white text-center p-2">
-                    <p class="text-xs truncate">${image.filename}</p>
-                </div>
-            </div>
-        `;
-
-        imageCard.addEventListener('click', () => toggleImageSelection(imageCard));
-        content.appendChild(imageCard);
-    });
-}
-
-function toggleImageSelection(card) {
-    const url = card.dataset.url;
-    const filename = card.dataset.filename;
-    const indicator = card.querySelector('.selected-indicator');
-
-    const index = selectedLibraryImages.findIndex(img => img.url === url);
-
-    if (index > -1) {
-        // Désélectionner
-        selectedLibraryImages.splice(index, 1);
-        indicator.classList.add('hidden');
-        card.classList.remove('ring-2', 'ring-blue-500');
-    } else {
-        // Sélectionner
-        selectedLibraryImages.push({ url, filename });
-        indicator.classList.remove('hidden');
-        card.classList.add('ring-2', 'ring-blue-500');
-    }
-}
-
-function confirmLibrarySelection() {
-    if (selectedLibraryImages.length === 0) {
-        alert("Veuillez sélectionner au moins une image");
-        return;
-    }
-
-    // Ajouter les images sélectionnées au lieu
+function renderPendingLocationImages() {
     const selectedImagesContainer = document.getElementById('selected-library-images');
     const selectedImagesList = document.getElementById('selected-images-list');
 
-    if (selectedImagesContainer && selectedImagesList) {
-        selectedImagesList.innerHTML = '';
-        selectedLibraryImages.forEach((image, index) => {
-            const imageItem = document.createElement('div');
-            imageItem.className = 'flex items-center space-x-2 bg-gray-700 p-2 rounded';
-            imageItem.innerHTML = `
-                <img src="${image.url}" class="w-12 h-12 object-cover rounded">
-                <span class="text-sm text-gray-300 flex-grow truncate">${image.filename}</span>
-                <button type="button" class="text-red-400 hover:text-red-300" onclick="removeSelectedLibraryImage(${index})">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-            selectedImagesList.appendChild(imageItem);
-        });
-        selectedImagesContainer.classList.remove('hidden');
+    if (!selectedImagesList || !selectedImagesContainer) return;
+
+    selectedImagesList.innerHTML = '';
+
+    if (!window.pendingLocationImages || window.pendingLocationImages.length === 0) {
+        selectedImagesContainer.classList.add('hidden');
+        return;
     }
 
-    // Stocker temporairement pour la création du lieu
-    window.pendingLocationImages = selectedLibraryImages.map(img => ({
-        url: img.url,
-        isDefault: false
-    }));
+    window.pendingLocationImages.forEach((image, index) => {
+        const filename = image.url.split('/').pop();
+        const imageItem = document.createElement('div');
+        imageItem.className = 'flex items-center space-x-2 bg-gray-700 p-2 rounded mb-2';
+        imageItem.innerHTML = `
+            <img src="${image.url}" class="w-12 h-12 object-cover rounded">
+            <span class="text-sm text-gray-300 flex-grow truncate">${filename}</span>
+            <button type="button" class="text-red-400 hover:text-red-300" onclick="removeSelectedLibraryImage(${index})">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        selectedImagesList.appendChild(imageItem);
+    });
 
-    closeLibrarySelection();
+    selectedImagesContainer.classList.remove('hidden');
+}
+
+function openLibrarySelection() {
+    if (window.libraryManager) {
+        window.libraryManager.open({
+            title: "Choisir des images pour le lieu",
+            startPath: '',
+            onSelect: (file) => {
+                // Créer une structure compatible avec pendingLocationImages
+                if (!window.pendingLocationImages) window.pendingLocationImages = [];
+
+                const newImage = {
+                    url: file.url,
+                    isDefault: window.pendingLocationImages.length === 0
+                };
+
+                window.pendingLocationImages.push(newImage);
+                renderPendingLocationImages();
+            }
+        });
+    }
 }
 
 function removeSelectedLibraryImage(index) {
-    const selectedImagesList = document.getElementById('selected-images-list');
-    if (selectedLibraryImages[index]) {
-        selectedLibraryImages.splice(index, 1);
+    if (window.pendingLocationImages && window.pendingLocationImages[index]) {
         window.pendingLocationImages.splice(index, 1);
-
-        // Re-render la liste
-        if (selectedImagesList) {
-            const items = selectedImagesList.children;
-            if (items[index]) {
-                items[index].remove();
-            }
-        }
-
-        // Cacher le conteneur si vide
-        if (selectedLibraryImages.length === 0) {
-            const container = document.getElementById('selected-library-images');
-            if (container) {
-                container.classList.add('hidden');
-            }
-        }
+        renderPendingLocationImages();
     }
 }
 
-function closeLibrarySelection() {
-    const modal = document.getElementById('library-selection-modal');
-    if (modal) {
-        modal.classList.add('hidden');
-    }
-}
 
 // Exposer globalement
 window.removeSelectedLibraryImage = removeSelectedLibraryImage;

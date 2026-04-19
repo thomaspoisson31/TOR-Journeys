@@ -53,7 +53,7 @@ class AuthManager {
 
     async loadSharedData(uuid) {
         try {
-            const response = await fetch(`/api/share/data/${uuid}`);
+            const response = await fetch(`/api/share/data/${uuid}`, { credentials: 'include' });
             if (!response.ok) throw new Error("Lien invalide");
             const data = await response.json();
             await this.applyContextData(data);
@@ -148,7 +148,7 @@ class AuthManager {
 
     async checkAuthenticationStatus() {
         try {
-            const response = await fetch('/api/auth/user');
+            const response = await fetch('/api/auth/user', { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
                 if (data.authenticated && data.user) {
@@ -259,7 +259,7 @@ class AuthManager {
             let finalData = {};
 
             if (campaignId) {
-                const campRes = await fetch(`/api/campaigns/${campaignId}`);
+                const campRes = await fetch(`/api/campaigns/${campaignId}`, { credentials: 'include' });
                 const campaignData = await campRes.json();
 
                 // Si la campagne est autonome ou si le Monde de Base a déjà été fusionné
@@ -270,12 +270,12 @@ class AuthManager {
                     // MIGRATION : Fusionner une dernière fois avec le Monde de Base
                     console.log("🛠️ Migration de la campagne vers le format autonome...");
                     this.isStandaloneCampaign = true;
-                    const baseRes = await fetch('/api/base_world');
+                    const baseRes = await fetch('/api/base_world', { credentials: 'include' });
                     let baseData = await baseRes.json();
 
                     // Legacy fallback
                     if (!baseData || !baseData.locations || baseData.locations.locations.length === 0) {
-                        const legacyRes = await fetch('/api/user/data');
+                        const legacyRes = await fetch('/api/user/data', { credentials: 'include' });
                         if (legacyRes.ok) {
                             const legacyData = await legacyRes.json();
                             if (legacyData.locations && legacyData.locations.locations.length > 0) baseData = legacyData;
@@ -523,6 +523,7 @@ class AuthManager {
             const response = await fetch(url, {
                 method: method,
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify(dataToSave)
             });
 
@@ -721,7 +722,7 @@ class AuthManager {
         if (!this.isAuthenticated) return;
 
         try {
-            const response = await fetch('/api/user/data/debug');
+            const response = await fetch('/api/user/data/debug', { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
                 console.log("☁️ Données Cloud Debug:", data);

@@ -23,11 +23,16 @@ app = Flask(__name__)
 # Initialiser le gestionnaire de base de données JSON (Local ou GCS)
 db_manager = JsonDBManager()
 
-# Utiliser une clé secrète fixe en développement
-if os.environ.get('FLASK_ENV') == 'development':
-    app.secret_key = 'dev-secret-key-for-sessions'
-else:
-    app.secret_key = secrets.token_hex(16)
+# Utiliser une clé secrète stable pour les sessions
+app.secret_key = os.environ.get('SESSION_SECRET') or os.environ.get('SECRET_KEY')
+
+if not app.secret_key:
+    if os.environ.get('FLASK_ENV') == 'development':
+        app.secret_key = 'dev-secret-key-for-sessions'
+    else:
+        # Fallback pour éviter le crash, mais risque de déconnexion au restart si non configuré
+        app.secret_key = secrets.token_hex(16)
+        print("⚠️ WARNING: SESSION_SECRET not set. Sessions will not persist across restarts.")
 
 # Configuration ProxyFix pour Replit/Render
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)

@@ -7,7 +7,7 @@ class GeminiManager {
 
     async checkApiKey() {
         try {
-            const response = await fetch('/api/gemini/config');
+            const response = await fetch('/api/gemini/config', { credentials: 'include' });
             const config = await response.json();
             this.apiKey = config.api_key_configured;
             console.log('🤖 Gemini API disponible:', this.apiKey);
@@ -33,6 +33,7 @@ class GeminiManager {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     prompt: prompt,
                     type: type
