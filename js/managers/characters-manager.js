@@ -458,6 +458,26 @@ class CharactersManager {
     return sorted;
   }
 
+  getMapInfo(mapId) {
+    const maps = window.settingsManager?.availableMaps || [];
+    const map = maps.find((m) => m.url === mapId);
+    if (!map) return { name: "Carte inconnue", color: "#4b5563" };
+
+    const index = maps.indexOf(map);
+    const colors = [
+      "#92400e", // amber-800
+      "#1e40af", // blue-800
+      "#065f46", // emerald-800
+      "#3730a3", // indigo-800
+      "#86198f", // fuchsia-800
+      "#991b1b", // red-800
+      "#3f6212", // lime-800
+      "#115e59", // teal-800
+    ];
+    const color = colors[index % colors.length];
+    return { name: map.name, color: color };
+  }
+
   renderCharactersList() {
     const listContainer = document.getElementById("characters-list");
     if (!listContainer) return;
@@ -565,7 +585,7 @@ class CharactersManager {
     const locationsData = window.locationsData?.locations || [];
     const regionsData = window.regionsData?.regions || [];
 
-    // Créer des groupes par lieu
+    // Créer des groupes par lieu (groupés par nom de lieu et mapId)
     const locationGroups = {};
     const regionGroups = {};
     const noAssociationCharacters = [];
@@ -592,11 +612,21 @@ class CharactersManager {
             if (this.filters.knownLocations && !location.known) {
               return;
             }
-            const locationName = location.name;
-            if (!locationGroups[locationName]) {
-              locationGroups[locationName] = [];
+            const groupId = `${location.name}|${location.mapId}`;
+            if (!locationGroups[groupId]) {
+              locationGroups[groupId] = {
+                name: location.name,
+                mapId: location.mapId,
+                characters: [],
+              };
             }
-            locationGroups[locationName].push(character);
+            if (
+              !locationGroups[groupId].characters.some(
+                (c) => String(c.id) === String(character.id),
+              )
+            ) {
+              locationGroups[groupId].characters.push(character);
+            }
           }
         });
       }
@@ -611,50 +641,66 @@ class CharactersManager {
             if (this.filters.knownLocations && !region.known) {
               return;
             }
-            const regionName = region.name;
-            if (!regionGroups[regionName]) {
-              regionGroups[regionName] = [];
+            const groupId = `${region.name}|${region.mapId}`;
+            if (!regionGroups[groupId]) {
+              regionGroups[groupId] = {
+                name: region.name,
+                mapId: region.mapId,
+                characters: [],
+              };
             }
-            regionGroups[regionName].push(character);
+            if (
+              !regionGroups[groupId].characters.some(
+                (c) => String(c.id) === String(character.id),
+              )
+            ) {
+              regionGroups[groupId].characters.push(character);
+            }
           }
         });
       }
     });
 
     // Trier les noms de lieux et régions alphabétiquement
-    const sortedLocationNames = Object.keys(locationGroups).sort((a, b) =>
-      a.localeCompare(b),
+    const sortedLocationGroupIds = Object.keys(locationGroups).sort((a, b) =>
+      locationGroups[a].name.localeCompare(locationGroups[b].name),
     );
-    const sortedRegionNames = Object.keys(regionGroups).sort((a, b) =>
-      a.localeCompare(b),
+    const sortedRegionGroupIds = Object.keys(regionGroups).sort((a, b) =>
+      regionGroups[a].name.localeCompare(regionGroups[b].name),
     );
 
     // Générer le HTML
     let html = "";
 
     // Afficher les groupes de lieux
-    sortedLocationNames.forEach((locationName) => {
+    sortedLocationGroupIds.forEach((groupId) => {
+      const group = locationGroups[groupId];
+      const mapInfo = this.getMapInfo(group.mapId);
       html += `
                 <div class="mb-6">
-                    <h3 class="text-lg font-bold text-purple-400 mb-3 flex items-center">
-                        <i class="fas fa-map-marker-alt mr-2"></i>${locationName}
+                    <h3 class="text-lg font-bold text-purple-400 mb-3 flex items-center flex-wrap gap-2">
+                        <i class="fas fa-map-marker-alt mr-1"></i>${group.name}
+                        <span class="px-2 py-0.5 rounded text-xs text-white font-semibold" style="background-color: ${mapInfo.color}">${mapInfo.name}</span>
                     </h3>
                     <div class="space-y-2">
-                        ${locationGroups[locationName].map((character) => this.renderCharacterCard(character)).join("")}
+                        ${group.characters.map((character) => this.renderCharacterCard(character)).join("")}
                     </div>
                 </div>
             `;
     });
 
     // Afficher les groupes de régions
-    sortedRegionNames.forEach((regionName) => {
+    sortedRegionGroupIds.forEach((groupId) => {
+      const group = regionGroups[groupId];
+      const mapInfo = this.getMapInfo(group.mapId);
       html += `
                 <div class="mb-6">
-                    <h3 class="text-lg font-bold text-orange-400 mb-3 flex items-center">
-                        <i class="fas fa-mountain mr-2"></i>${regionName}
+                    <h3 class="text-lg font-bold text-orange-400 mb-3 flex items-center flex-wrap gap-2">
+                        <i class="fas fa-mountain mr-1"></i>${group.name}
+                        <span class="px-2 py-0.5 rounded text-xs text-white font-semibold" style="background-color: ${mapInfo.color}">${mapInfo.name}</span>
                     </h3>
                     <div class="space-y-2">
-                        ${regionGroups[regionName].map((character) => this.renderCharacterCard(character)).join("")}
+                        ${group.characters.map((character) => this.renderCharacterCard(character)).join("")}
                     </div>
                 </div>
             `;
