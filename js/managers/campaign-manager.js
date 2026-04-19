@@ -7,7 +7,7 @@ class CampaignManager {
 
     async fetchCampaigns() {
         try {
-            const response = await fetch('/api/campaigns');
+            const response = await fetch('/api/campaigns', { credentials: 'include' });
             if (response.ok) {
                 const data = await response.json();
                 this.campaigns = data.campaigns || [];
@@ -32,6 +32,7 @@ class CampaignManager {
             const response = await fetch('/api/campaigns', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify(body)
             });
             if (response.ok) {
@@ -52,6 +53,7 @@ class CampaignManager {
             const response = await fetch(`/api/campaigns/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ name: newName })
             });
             if (response.ok) {
@@ -86,7 +88,8 @@ class CampaignManager {
 
         try {
             const response = await fetch(`/api/campaigns/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                credentials: 'include'
             });
             if (response.ok) {
                 await this.fetchCampaigns(); // Rafraîchir la liste

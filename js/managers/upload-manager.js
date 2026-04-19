@@ -76,6 +76,7 @@ class UploadManager {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({ name, path })
             });
 
@@ -169,6 +170,7 @@ class UploadManager {
 
                 // Configurer et envoyer la requête
                 xhr.open('POST', this.uploadEndpoint);
+                xhr.withCredentials = true;
                 xhr.timeout = 60000; // 60 secondes
                 xhr.send(formData);
             });

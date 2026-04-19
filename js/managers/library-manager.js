@@ -130,7 +130,7 @@ class LibraryManager {
 
         try {
             const url = `/api/images/library?path=${encodeURIComponent(this.currentPath)}`;
-            const response = await fetch(url);
+            const response = await fetch(url, { credentials: 'include' });
 
             if (!response.ok) throw new Error(`Erreur ${response.status}`);
 
