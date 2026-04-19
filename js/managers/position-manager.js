@@ -206,8 +206,12 @@ class PositionManager {
 
     updateMarkerCursor() {
         if (!this.positionMarker) return;
-        // Le marqueur de position est toujours déplaçable (même en mode aventure)
-        this.positionMarker.style.cursor = 'move';
+        // En mode joueur, le marqueur n'est pas déplaçable
+        if (this.adventureMode === 'player') {
+            this.positionMarker.style.cursor = 'default';
+        } else {
+            this.positionMarker.style.cursor = 'move';
+        }
     }
 
     updateAdventureModeIndicator() {
@@ -460,8 +464,8 @@ class PositionManager {
                 return;
             }
 
-            // En mode verrouillé (View Only), ne pas permettre le déplacement
-            if (this.isLocked) return;
+            // En mode verrouillé (View Only) ou mode joueur, ne pas permettre le déplacement
+            if (this.isLocked || this.adventureMode === 'player') return;
             
             touchStartTime = Date.now();
             touchHasMoved = false;
@@ -591,8 +595,8 @@ class PositionManager {
     }
 
     handleDragStart(e) {
-        // En mode verrouillé (View Only), ne pas permettre le déplacement
-        if (this.isLocked) return;
+        // En mode verrouillé (View Only) ou mode joueur, ne pas permettre le déplacement
+        if (this.isLocked || this.adventureMode === 'player') return;
 
         e.stopPropagation();
         e.preventDefault();
