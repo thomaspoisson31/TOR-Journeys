@@ -1303,7 +1303,9 @@ window.resetView = resetView;
 
 function handlePanStart(e) {
     // Vérifier si le clic est sur un marqueur ou une région
-    if (e.target.classList.contains('location-marker') || e.target.tagName.toLowerCase() === 'polygon') {
+    if (e.target.classList.contains('location-marker') ||
+        e.target.closest('.position-marker') ||
+        e.target.tagName.toLowerCase() === 'polygon') {
         return; // Laisser l'événement se propager au marqueur/région
     }
 
