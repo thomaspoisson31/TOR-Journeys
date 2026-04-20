@@ -11,7 +11,7 @@ class JournalManager {
         this.journalModal = null;
         this.journalContent = null;
         this.journalEmpty = null;
-        this.currentTab = 'journal-list';
+        this.currentTab = 'journal-rumors';
         this.exportJournalMarkdownBtn = null;
         this.isEditMode = false; // Mode édition activé/désactivé
         this.entries = []; // Liste des entrées structurées (voyages)
@@ -84,6 +84,22 @@ class JournalManager {
             this.exportJournalMarkdownBtn.addEventListener('click', () => this.exportJournalAsMarkdown());
             console.log("📖 Écouteur d'événement ajouté pour le bouton d'export Markdown.");
         }
+
+        // --- Nouveaux écouteurs pour l'ajout de rumeurs ---
+        const openAddRumorBtn = document.getElementById('open-add-rumor-modal-btn');
+        if (openAddRumorBtn) {
+            openAddRumorBtn.addEventListener('click', () => this.openAddRumorModal());
+        }
+
+        const cancelAddRumorBtn = document.getElementById('cancel-add-rumor');
+        if (cancelAddRumorBtn) {
+            cancelAddRumorBtn.addEventListener('click', () => this.closeAddRumorModal());
+        }
+
+        const confirmAddRumorBtn = document.getElementById('confirm-add-rumor');
+        if (confirmAddRumorBtn) {
+            confirmAddRumorBtn.addEventListener('click', () => this.saveNewRumor());
+        }
     }
 
     switchTab(tabName) {
@@ -114,9 +130,9 @@ class JournalManager {
         }
 
         // Rafraîchir le contenu si nécessaire
-        if (tabName === 'objectives') {
+        if (tabName === 'journal-objectives') {
             this.renderObjectives();
-        } else if (tabName === 'rumors') {
+        } else if (tabName === 'journal-rumors') {
             this.renderRumors(); // Rendre le contenu de l'onglet rumeurs
         }
     }
@@ -230,7 +246,7 @@ class JournalManager {
         this.renderRumors(); // Afficher les rumeurs
 
         // Afficher l'onglet par défaut (Rumeurs)
-        this.switchTab('rumors');
+        this.switchTab('journal-rumors');
 
         if (this.journalModal) {
             this.journalModal.classList.remove('hidden');
@@ -816,6 +832,111 @@ class JournalManager {
 
     // --- Méthodes pour les Rumeurs ---
 
+    openAddRumorModal() {
+        const modal = document.getElementById('add-rumor-modal');
+        const select = document.getElementById('rumor-entity-select');
+        const textInput = document.getElementById('rumor-text-input');
+
+        if (!modal || !select || !textInput) return;
+
+        // Réinitialiser le texte
+        textInput.value = '';
+
+        // Peupler le select avec les lieux et régions
+        select.innerHTML = '<option value="">-- Choisir un lieu ou une région --</option>';
+
+        const locations = window.locationsData?.locations || [];
+        const regions = window.regionsData?.regions || [];
+
+        // Trier et ajouter les régions
+        const sortedRegions = [...regions].sort((a, b) => a.name.localeCompare(b.name));
+        if (sortedRegions.length > 0) {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = 'Régions';
+            sortedRegions.forEach(reg => {
+                const option = document.createElement('option');
+                option.value = `region|${reg.id}`;
+                option.textContent = reg.name;
+                optgroup.appendChild(option);
+            });
+            select.appendChild(optgroup);
+        }
+
+        // Trier et ajouter les lieux
+        const sortedLocations = [...locations].sort((a, b) => a.name.localeCompare(b.name));
+        if (sortedLocations.length > 0) {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = 'Lieux';
+            sortedLocations.forEach(loc => {
+                const option = document.createElement('option');
+                option.value = `location|${loc.id}`;
+                option.textContent = loc.name;
+                optgroup.appendChild(option);
+            });
+            select.appendChild(optgroup);
+        }
+
+        modal.classList.remove('hidden');
+    }
+
+    closeAddRumorModal() {
+        const modal = document.getElementById('add-rumor-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
+    async saveNewRumor() {
+        const textInput = document.getElementById('rumor-text-input');
+        const select = document.getElementById('rumor-entity-select');
+
+        if (!textInput || !select) return;
+
+        const text = textInput.value.trim();
+        const selectedValue = select.value;
+
+        if (!text) {
+            alert("Veuillez entrer le texte de la rumeur.");
+            return;
+        }
+
+        if (!selectedValue) {
+            alert("Veuillez sélectionner un lieu ou une région.");
+            return;
+        }
+
+        const [type, id] = selectedValue.split('|');
+        console.log(`💾 Ajout d'une rumeur pour ${type} ID ${id}: ${text}`);
+
+        let success = false;
+
+        if (type === 'location') {
+            const location = window.locationsData?.locations?.find(loc => String(loc.id) === String(id));
+            if (location) {
+                if (!location.Rumeurs) location.Rumeurs = [];
+                location.Rumeurs.push(text);
+                window.dataManager?.saveLocationsToLocal();
+                success = true;
+            }
+        } else if (type === 'region') {
+            const region = window.regionsData?.regions?.find(reg => String(reg.id) === String(id));
+            if (region) {
+                if (!region.Rumeurs) region.Rumeurs = [];
+                region.Rumeurs.push(text);
+                window.dataManager?.saveRegionsToLocal();
+                success = true;
+            }
+        }
+
+        if (success) {
+            console.log("✅ Rumeur enregistrée avec succès");
+            this.closeAddRumorModal();
+            this.renderRumors();
+        } else {
+            alert("Erreur lors de l'enregistrement de la rumeur.");
+        }
+    }
+
     loadRumors() {
         const savedRumors = localStorage.getItem('adventureRumors');
         if (savedRumors && savedRumors !== 'null' && savedRumors !== 'undefined') {
@@ -927,6 +1048,20 @@ class JournalManager {
     renderRumors() {
         console.log('📖 [renderRumors] Début du rendu des rumeurs');
 
+        // Récupérer l'onglet Rumeurs directement
+        const rumorsTab = document.getElementById('rumors-tab');
+        if (!rumorsTab) {
+            console.error('📖 [renderRumors] Onglet rumors-tab non trouvé !');
+            return;
+        }
+
+        // Utiliser rumors-list-container au lieu de remplacer tout l'onglet
+        const listContainer = document.getElementById('rumors-list-container');
+        if (!listContainer) {
+            console.error('📖 [renderRumors] Conteneur rumors-list-container non trouvé !');
+            return;
+        }
+
         // Obtenir la carte active
         const activeMapUrl = localStorage.getItem('activeMapUrl');
         console.log('📖 [renderRumors] Carte active:', activeMapUrl);
@@ -975,16 +1110,9 @@ class JournalManager {
             characters: charactersWithRumors.length
         });
 
-        // Récupérer l'onglet Rumeurs directement
-        const rumorsTab = document.getElementById('rumors-tab');
-        if (!rumorsTab) {
-            console.error('📖 [renderRumors] Onglet rumors-tab non trouvé !');
-            return;
-        }
-
         // Si aucun élément avec rumeurs
         if (regionsWithRumors.length === 0 && locationsWithRumors.length === 0 && charactersWithRumors.length === 0) {
-            rumorsTab.innerHTML = `
+            listContainer.innerHTML = `
                 <div class="flex flex-col items-center justify-center text-center py-12 text-gray-500">
                     <i class="fas fa-comments fa-3x mb-4"></i>
                     <p class="text-lg">Aucune rumeur pour cette carte</p>
@@ -998,7 +1126,7 @@ class JournalManager {
         // Charger l'état du filtre (par défaut: "selection")
         const rumorsFilter = localStorage.getItem('rumorsFilter') || 'selection';
 
-        let rumorsHTML = '<div class="p-6 space-y-6">';
+        let rumorsHTML = '<div class="space-y-6">';
 
         // Ajouter le bouton de filtre
         rumorsHTML += `
@@ -1174,7 +1302,7 @@ class JournalManager {
         }
 
         rumorsHTML += '</div>';
-        rumorsTab.innerHTML = rumorsHTML;
+        listContainer.innerHTML = rumorsHTML;
         console.log('📖 [renderRumors] Rendu terminé avec succès');
 
         // Ajouter l'event listener pour le bouton switch
