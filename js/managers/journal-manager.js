@@ -130,9 +130,9 @@ class JournalManager {
         }
 
         // Rafraîchir le contenu si nécessaire
-        if (tabName === 'journal-objectives') {
+        if (tabName === 'journal-objectives' || tabName === 'objectives') {
             this.renderObjectives();
-        } else if (tabName === 'journal-rumors') {
+        } else if (tabName === 'journal-rumors' || tabName === 'rumors') {
             this.renderRumors(); // Rendre le contenu de l'onglet rumeurs
         }
     }
@@ -909,12 +909,14 @@ class JournalManager {
         console.log(`💾 Ajout d'une rumeur pour ${type} ID ${id}: ${text}`);
 
         let success = false;
+        let itemName = '';
 
         if (type === 'location') {
             const location = window.locationsData?.locations?.find(loc => String(loc.id) === String(id));
             if (location) {
                 if (!location.Rumeurs) location.Rumeurs = [];
                 location.Rumeurs.push(text);
+                itemName = location.name;
                 window.dataManager?.saveLocationsToLocal();
                 success = true;
             }
@@ -923,12 +925,26 @@ class JournalManager {
             if (region) {
                 if (!region.Rumeurs) region.Rumeurs = [];
                 region.Rumeurs.push(text);
+                itemName = region.name;
                 window.dataManager?.saveRegionsToLocal();
                 success = true;
             }
         }
 
         if (success) {
+            // Marquer automatiquement la nouvelle rumeur comme sélectionnée
+            const entity = (type === 'location') ?
+                window.locationsData?.locations?.find(loc => String(loc.id) === String(id)) :
+                window.regionsData?.regions?.find(reg => String(reg.id) === String(id));
+
+            const rumorIndex = (entity?.Rumeurs?.length || 0) - 1;
+
+            if (rumorIndex >= 0) {
+                const key = `${type}_${itemName}_${rumorIndex}`;
+                this.rumorsCheckboxStates[key] = true;
+                this.saveRumorsCheckboxStates();
+            }
+
             console.log("✅ Rumeur enregistrée avec succès");
             this.closeAddRumorModal();
             this.renderRumors();
@@ -1049,9 +1065,9 @@ class JournalManager {
         console.log('📖 [renderRumors] Début du rendu des rumeurs');
 
         // Récupérer l'onglet Rumeurs directement
-        const rumorsTab = document.getElementById('rumors-tab');
+        const rumorsTab = document.getElementById('journal-rumors-tab') || document.getElementById('rumors-tab');
         if (!rumorsTab) {
-            console.error('📖 [renderRumors] Onglet rumors-tab non trouvé !');
+            console.error('📖 [renderRumors] Onglet rumeurs non trouvé !');
             return;
         }
 
