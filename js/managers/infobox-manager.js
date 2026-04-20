@@ -1115,39 +1115,11 @@ class InfoBoxManager {
             this.currentItem.images.forEach((img, i) => {
                 if (i !== index && img.type === 'vignette') {
                     img.type = null;
-                    img.thumbnailUrl = null;
                 }
             });
 
-            // Créer la vignette si elle n'existe pas déjà
-            if (!image.thumbnailUrl) {
-                try {
-                    const category = this.currentType === 'region' ? 'regions' : 'locations';
-                    const response = await fetch('/api/image/create-thumbnail', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        credentials: 'include',
-                        body: JSON.stringify({
-                            image_url: image.url,
-                            category: category
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Erreur lors de la création de la vignette');
-                    }
-
-                    const result = await response.json();
-                    image.thumbnailUrl = result.thumbnail_url;
-                    console.log("✅ Vignette créée:", result.thumbnail_url);
-                } catch (error) {
-                    console.error("❌ Erreur création vignette:", error);
-                    alert("Erreur lors de la création de la vignette: " + error.message);
-                    return;
-                }
-            }
+            // Note: On ne crée plus automatiquement de fichier "thumb" physique via l'API.
+            // On utilise l'URL originale et les métadonnées de crop pour l'affichage.
         }
 
         // Définir le nouveau type

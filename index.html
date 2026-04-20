@@ -396,8 +396,8 @@
 
         <!-- Characters Modal -->
         <div id="characters-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center z-[60]" style="align-items: flex-start; padding-top: 5vh;">
-            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[85vh] overflow-y-auto">
-                <div class="flex justify-between items-center mb-6">
+            <div class="bg-gray-800 rounded-lg p-6 w-[90vw] max-w-4xl mx-4 max-h-[85vh] flex flex-col overflow-hidden">
+                <div class="flex justify-between items-center mb-6 flex-shrink-0">
                     <h2 class="text-2xl font-bold">
                         <i class="fas fa-users mr-2"></i>Personnages de l'Aventure
                     </h2>
@@ -489,8 +489,10 @@
                     </div>
                 </div>
 
-                <div id="characters-list" class="space-y-3">
-                    <!-- Les personnages seront générés ici -->
+                <div class="flex-1 overflow-y-auto pr-2">
+                    <div id="characters-list" class="space-y-3">
+                        <!-- Les personnages seront générés ici -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -580,6 +582,29 @@
             </div>
         </div>
 
+        <!-- Add Rumor Modal -->
+        <div id="add-rumor-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[70]">
+            <div class="bg-white border border-gray-300 rounded-lg p-6 shadow-xl w-full max-w-md" style="font-family: 'Merriweather', serif;">
+                <h3 class="text-xl font-bold mb-4" style="color: #940000;">Ajouter une rumeur</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="rumor-text-input" class="block text-sm font-medium text-gray-700">Texte de la rumeur</label>
+                        <textarea id="rumor-text-input" rows="4" class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900 focus:outline-none focus:ring-red-800 focus:border-red-800" placeholder="Entrez le contenu de la rumeur..."></textarea>
+                    </div>
+                    <div>
+                        <label for="rumor-entity-select" class="block text-sm font-medium text-gray-700">Associer à un lieu ou une région</label>
+                        <select id="rumor-entity-select" class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900 focus:outline-none focus:ring-red-800 focus:border-red-800">
+                            <!-- Options générées dynamiquement -->
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button id="cancel-add-rumor" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors font-medium">Annuler</button>
+                    <button id="confirm-add-rumor" class="px-4 py-2 bg-red-800 hover:bg-red-900 text-white rounded-lg transition-colors font-medium">Ajouter</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Add Character Modal -->
         <div id="add-character-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[70]">
             <div class="bg-gray-900 border border-gray-700 rounded-lg p-6 shadow-xl w-full max-w-md">
@@ -647,10 +672,10 @@
 
                 <!-- Tabs -->
                 <div id="journal-tabs" class="flex border-b border-gray-300 px-6">
-                    <button class="journal-tab-button active px-6 py-3 text-gray-800 border-b-2 border-red-800 font-medium" data-tab="rumors">
+                    <button class="journal-tab-button active px-6 py-3 text-gray-800 border-b-2 border-red-800 font-medium" data-tab="journal-rumors">
                         <i class="fas fa-comments mr-2"></i>Rumeurs
                     </button>
-                    <button class="journal-tab-button px-6 py-3 text-gray-500 border-b-2 border-transparent font-medium hover:text-gray-800" data-tab="objectives">
+                    <button class="journal-tab-button px-6 py-3 text-gray-500 border-b-2 border-transparent font-medium hover:text-gray-800" data-tab="journal-objectives">
                         <i class="fas fa-bullseye mr-2"></i>Objectifs
                     </button>
                     <button class="journal-tab-button px-6 py-3 text-gray-500 border-b-2 border-transparent font-medium hover:text-gray-800" data-tab="journal-list">
@@ -661,16 +686,24 @@
                 <!-- Tab Content -->
                 <div class="flex-1 overflow-y-auto" style="min-height: 500px;">
                     <!-- Onglet Rumeurs -->
-                    <div id="rumors-tab" class="journal-tab-content active p-6">
-                        <div class="flex flex-col items-center justify-center text-center py-12 text-gray-500">
-                            <i class="fas fa-comments fa-3x mb-4"></i>
-                            <p class="text-lg">Fonctionnalité à venir</p>
-                            <p class="text-sm mt-2">La gestion des rumeurs sera bientôt disponible</p>
+                    <div id="journal-rumors-tab" class="journal-tab-content active flex flex-col h-full">
+                        <div class="p-6 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-800">Rumeurs de l'aventure</h3>
+                            <button id="open-add-rumor-modal-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+                                <i class="fas fa-plus mr-2"></i>Nouvelle rumeur
+                            </button>
+                        </div>
+                        <div id="rumors-list-container" class="flex-1 overflow-y-auto p-6">
+                            <!-- Les rumeurs seront générées ici par JournalManager -->
+                            <div class="flex flex-col items-center justify-center text-center py-12 text-gray-500">
+                                <i class="fas fa-comments fa-3x mb-4"></i>
+                                <p class="text-lg">Chargement des rumeurs...</p>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Onglet Objectifs -->
-                    <div id="objectives-tab" class="journal-tab-content hidden p-6">
+                    <div id="journal-objectives-tab" class="journal-tab-content hidden p-6">
                         <div class="mb-4">
                             <button id="add-objective-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
                                 <i class="fas fa-plus mr-2"></i>Nouvel objectif
