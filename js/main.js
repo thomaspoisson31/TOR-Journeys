@@ -55,8 +55,6 @@ console.log("✅ Constants loaded successfully");
 window.marked = window.marked || null;
 
 // --- Variables globales essentielles ---
-let locationsData;
-let regionsData = getDefaultRegions();
 let MAP_WIDTH = 0, MAP_HEIGHT = 0;
 let scale = 1, panX = 0, panY = 0;
 
@@ -359,12 +357,10 @@ async function initializeApp() {
         // Initialiser les structures vides (seront remplies par AuthManager)
         console.log("📍 Initializing data structures...");
         await dataManager.loadInitialLocations();
-        locationsData = dataManager.locationsData;
-        window.locationsData = locationsData;
+        window.locationsData = dataManager.locationsData;
 
         dataManager.loadRegionsFromLocal();
-        regionsData = dataManager.regionsData;
-        window.regionsData = regionsData;
+        window.regionsData = dataManager.regionsData;
         console.log("✅ Data structures initialized (will be populated from cloud)");
 
         // Attendre que SettingsManager charge la carte active
@@ -455,15 +451,6 @@ async function initializeApp() {
 function renderLocations() {
     // console.log("🎯 Rendering locations...");
 
-    // IMPORTANT: Synchroniser avec window.locationsData si elle existe
-    if (window.locationsData && (!locationsData || locationsData.locations?.length === 0)) {
-        locationsData = window.locationsData;
-        // console.log("🔄 Synchronisation avec window.locationsData");
-    }
-
-    // console.log("📊 locationsData:", locationsData);
-    // console.log("📊 locationsData.locations:", locationsData?.locations);
-
     const locationsLayer = document.getElementById('locations-layer');
     if (!locationsLayer) {
         console.error("❌ Locations layer not found");
@@ -473,14 +460,15 @@ function renderLocations() {
     // Nettoyer les marqueurs existants
     locationsLayer.innerHTML = '';
 
-    if (!locationsData || !locationsData.locations) {
+    const locations = window.locationsData?.locations;
+    if (!locations) {
         console.log("⚠️ No locations data to render");
         return;
     }
 
     let renderedCount = 0;
 
-    locationsData.locations.forEach(location => {
+    locations.forEach(location => {
         if (!location.coordinates || typeof location.coordinates.x !== 'number' || typeof location.coordinates.y !== 'number') {
             console.warn(`⚠️ Location ${location.name} has invalid coordinates`);
             return;
@@ -784,14 +772,6 @@ function renderLocations() {
 function renderRegions() {
     // console.log("🌍 Rendering regions...");
 
-    // IMPORTANT: Synchroniser avec window.regionsData si elle existe
-    if (window.regionsData && (!regionsData || regionsData.regions?.length === 0)) {
-        regionsData = window.regionsData;
-        // console.log("🔄 Synchronisation avec window.regionsData");
-    }
-
-    // console.log("🌍 RegionsData:", regionsData);
-
     const regionsLayer = document.getElementById('regions-layer');
     if (!regionsLayer) {
         console.error("❌ Regions layer not found");
@@ -805,7 +785,8 @@ function renderRegions() {
         regionsLayer.appendChild(tempPolygon);
     }
 
-    if (!regionsData || !regionsData.regions) {
+    const regions = window.regionsData?.regions;
+    if (!regions) {
         console.log("⚠️ No regions data to render");
         return;
     }
@@ -813,7 +794,7 @@ function renderRegions() {
     let renderedCount = 0;
     const activeMapId = window.settingsManager?.activeMapUrl;
 
-    regionsData.regions.forEach(region => {
+    regions.forEach(region => {
         // console.log('🔍 Processing region:', region.name, region);
 
         // Filtrer les régions : afficher celles sans mapId OU celles correspondant à la carte active
@@ -1956,14 +1937,13 @@ function confirmRegionCreation() {
     console.log("💾 Region points:", regionPoints);
 
     // Ajouter à la liste des régions
-    if (!regionsData.regions) {
-        regionsData.regions = [];
+    if (!window.regionsData.regions) {
+        window.regionsData.regions = [];
     }
-    regionsData.regions.push(newRegion);
+    window.regionsData.regions.push(newRegion);
 
     // Mettre à jour les données globales
-    regionsData = { ...regionsData };
-    dataManager.regionsData = regionsData;
+    dataManager.regionsData = window.regionsData;
 
     // Sauvegarder via DataManager
     if (dataManager) {
@@ -2248,14 +2228,12 @@ function confirmLocationCreation() {
 
     // IMPORTANT: Synchroniser avec window.locationsData
     if (!window.locationsData) {
-        window.locationsData = locationsData;
+        window.locationsData = { locations: [] };
     }
     window.locationsData.locations.push(newLocation);
-    locationsData = window.locationsData;
 
-    // Synchroniser avec window.locationsData ET dataManager
-    window.locationsData = locationsData;
-    dataManager.locationsData = locationsData;
+    // Synchroniser avec dataManager
+    dataManager.locationsData = window.locationsData;
 
     // Sauvegarder d'abord
     dataManager.saveLocationsToLocal();
@@ -2694,17 +2672,16 @@ function deleteFromColorChangeModal() {
 
     if (currentColorChangeType === 'location') {
         // Supprimer le lieu
-        const locationIndex = locationsData.locations.findIndex(loc =>
+        const locationIndex = window.locationsData.locations.findIndex(loc =>
             String(loc.id) === String(currentColorChangeTarget.id)
         );
 
         if (locationIndex !== -1) {
-            locationsData.locations.splice(locationIndex, 1);
-            console.log(`✅ Lieu supprimé de locationsData à l'index ${locationIndex}`);
+            window.locationsData.locations.splice(locationIndex, 1);
+            console.log(`✅ Lieu supprimé de window.locationsData à l'index ${locationIndex}`);
 
-            // Synchroniser avec window.locationsData ET dataManager
-            window.locationsData = locationsData;
-            dataManager.locationsData = locationsData;
+            // Synchroniser avec dataManager
+            dataManager.locationsData = window.locationsData;
 
             // Sauvegarder localement
             dataManager.saveLocationsToLocal();
@@ -2716,17 +2693,16 @@ function deleteFromColorChangeModal() {
         }
     } else if (currentColorChangeType === 'region') {
         // Supprimer la région
-        const regionIndex = regionsData.regions.findIndex(reg =>
+        const regionIndex = window.regionsData.regions.findIndex(reg =>
             String(reg.id) === String(currentColorChangeTarget.id)
         );
 
         if (regionIndex !== -1) {
-            regionsData.regions.splice(regionIndex, 1);
-            console.log(`✅ Région supprimée de regionsData à l'index ${regionIndex}`);
+            window.regionsData.regions.splice(regionIndex, 1);
+            console.log(`✅ Région supprimée de window.regionsData à l'index ${regionIndex}`);
 
-            // Synchroniser avec window.regionsData ET dataManager
-            window.regionsData = regionsData;
-            dataManager.regionsData = regionsData;
+            // Synchroniser avec dataManager
+            dataManager.regionsData = window.regionsData;
 
             // Sauvegarder localement
             dataManager.saveRegionsToLocal();
@@ -2815,21 +2791,20 @@ function confirmColorChange() {
     });
 
     if (currentColorChangeType === 'location') {
-        // IMPORTANT: Mettre à jour l'objet dans locationsData.locations
-        const locationIndex = locationsData.locations.findIndex(loc =>
+        // IMPORTANT: Mettre à jour l'objet dans window.locationsData.locations
+        const locationIndex = window.locationsData.locations.findIndex(loc =>
             String(loc.id) === String(currentColorChangeTarget.id)
         );
 
         if (locationIndex !== -1) {
-            locationsData.locations[locationIndex] = currentColorChangeTarget;
-            console.log(`✅ Lieu mis à jour dans locationsData à l'index ${locationIndex}`);
+            window.locationsData.locations[locationIndex] = currentColorChangeTarget;
+            console.log(`✅ Lieu mis à jour dans window.locationsData à l'index ${locationIndex}`);
         } else {
-            console.error(`❌ Lieu non trouvé dans locationsData: ${currentColorChangeTarget.id}`);
+            console.error(`❌ Lieu non trouvé dans window.locationsData: ${currentColorChangeTarget.id}`);
         }
 
-        // Synchroniser avec window.locationsData ET dataManager
-        window.locationsData = locationsData;
-        dataManager.locationsData = locationsData;
+        // Synchroniser avec dataManager
+        dataManager.locationsData = window.locationsData;
 
         // Mettre à jour les données
         dataManager.saveLocationsToLocal();
@@ -2840,21 +2815,20 @@ function confirmColorChange() {
         // Re-render
         renderLocations();
     } else if (currentColorChangeType === 'region') {
-        // IMPORTANT: Mettre à jour l'objet dans regionsData.regions
-        const regionIndex = regionsData.regions.findIndex(reg =>
+        // IMPORTANT: Mettre à jour l'objet dans window.regionsData.regions
+        const regionIndex = window.regionsData.regions.findIndex(reg =>
             String(reg.id) === String(currentColorChangeTarget.id)
         );
 
         if (regionIndex !== -1) {
-            regionsData.regions[regionIndex] = currentColorChangeTarget;
-            console.log(`✅ Région mise à jour dans regionsData à l'index ${regionIndex}`);
+            window.regionsData.regions[regionIndex] = currentColorChangeTarget;
+            console.log(`✅ Région mise à jour dans window.regionsData à l'index ${regionIndex}`);
         } else {
-            console.error(`❌ Région non trouvée dans regionsData: ${currentColorChangeTarget.id}`);
+            console.error(`❌ Région non trouvée dans window.regionsData: ${currentColorChangeTarget.id}`);
         }
 
-        // Synchroniser avec window.regionsData ET dataManager
-        window.regionsData = regionsData;
-        dataManager.regionsData = regionsData;
+        // Synchroniser avec dataManager
+        dataManager.regionsData = window.regionsData;
 
         // Mettre à jour les données
         dataManager.saveRegionsToLocal();
@@ -3029,7 +3003,7 @@ window.highlightDiscoveryOnMap = function(discoveryName, discoveryType, highligh
                 regionElement.style.fill = 'rgba(59, 130, 246, 0.3)';
             } else {
                 // Restaurer les styles originaux
-                const region = regionsData.regions.find(r => r.name === discoveryName);
+                const region = window.regionsData?.regions?.find(r => r.name === discoveryName);
                 if (region) {
                     const color = regionColorMap[region.color] || regionColorMap['gray'];
                     const fillColor = regionColorMap[region.color] || regionColorMap.gray;
