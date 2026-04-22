@@ -723,6 +723,9 @@ def get_image_library():
         # Liste tous les fichiers récursivement
         all_files = storage_manager.list_files(prefix=base_prefix)
 
+        # Charger les métadonnées pour les noms d'images
+        metadata = db_manager.get_images_metadata(google_id)
+
         folders = set()
         files = []
 
@@ -768,6 +771,7 @@ def get_image_library():
                 public_url = f"/{file_path}"
                 files.append({
                     'filename': filename,
+                    'display_name': metadata.get(public_url, filename),
                     'url': public_url,
                     'path': f"{target_dir}{filename}" if target_dir else filename,
                     'type': 'file'
@@ -778,12 +782,77 @@ def get_image_library():
             'success': True,
             'current_path': current_path,
             'folders': list(sorted(folders)), # Liste simple de noms de dossiers
-            'files': sorted(files, key=lambda x: x['filename']),
+            'files': sorted(files, key=lambda x: x['display_name']),
             'legacy_folders': {} # Pour compatibilité si besoin, mais on va changer le frontend
         })
 
     except Exception as e:
         print(f"❌ Erreur library: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/images/metadata', methods=['POST'])
+def save_image_metadata():
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    try:
+        data = request.json
+        url = data.get('url')
+        name = data.get('name')
+
+        if not url:
+            return jsonify({'error': 'URL manquante'}), 400
+
+        google_id = session['google_id']
+        metadata = db_manager.get_images_metadata(google_id)
+
+        if name:
+            metadata[url] = name
+        elif url in metadata:
+            del metadata[url]
+
+        if db_manager.save_images_metadata(google_id, metadata):
+            return jsonify({'success': True})
+        return jsonify({'error': 'Erreur sauvegarde'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/images/delete', methods=['DELETE'])
+def delete_image():
+    if 'user_id' not in session or 'google_id' not in session:
+        return jsonify({'error': 'Non authentifié'}), 401
+
+    try:
+        url = request.args.get('url')
+        if not url:
+            return jsonify({'error': 'URL manquante'}), 400
+
+        # Sécurité : vérifier que l'URL appartient à l'utilisateur
+        google_id = session['google_id']
+        user_prefix = f'/uploads/{google_id}/'
+        if not url.startswith(user_prefix):
+            return jsonify({'error': 'Accès refusé'}), 403
+
+        # Le chemin dans storage_manager est relatif à la racine, sans le / initial
+        blob_path = url[1:] if url.startswith('/') else url
+
+        if storage_manager.delete_file(blob_path):
+            # Supprimer aussi les métadonnées si elles existent
+            metadata = db_manager.get_images_metadata(google_id)
+            if url in metadata:
+                del metadata[url]
+                db_manager.save_images_metadata(google_id, metadata)
+
+            # Supprimer aussi le thumbnail s'il existe
+            if '.' in blob_path:
+                base, ext = blob_path.rsplit('.', 1)
+                thumb_path = f"{base}_thumb.{ext}"
+                storage_manager.delete_file(thumb_path)
+
+            return jsonify({'success': True})
+        return jsonify({'error': 'Fichier non trouvé ou erreur lors de la suppression'}), 404
+    except Exception as e:
+        print(f"❌ Erreur suppression image: {e}")
         return jsonify({'error': str(e)}), 500
 
 

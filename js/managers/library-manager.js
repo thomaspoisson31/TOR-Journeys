@@ -185,6 +185,48 @@ class LibraryManager {
         container.innerHTML = html;
     }
 
+    getUsedImageUrls() {
+        const urls = new Set();
+
+        // 1. Locations
+        const locations = window.locationsData?.locations || [];
+        locations.forEach(loc => {
+            if (loc.images) {
+                loc.images.forEach(img => {
+                    if (img.url) urls.add(img.url);
+                });
+            }
+        });
+
+        // 2. Regions
+        const regions = window.regionsData?.regions || [];
+        regions.forEach(reg => {
+            if (reg.images) {
+                reg.images.forEach(img => {
+                    if (img.url) urls.add(img.url);
+                });
+            }
+        });
+
+        // 3. Characters
+        const characters = window.charactersManager?.characters || [];
+        characters.forEach(char => {
+            if (char.images) {
+                char.images.forEach(img => {
+                    if (img.url) urls.add(img.url);
+                });
+            }
+        });
+
+        // 4. Maps
+        const maps = window.settingsManager?.availableMaps || [];
+        maps.forEach(map => {
+            if (map.url) urls.add(map.url);
+        });
+
+        return urls;
+    }
+
     renderGrid(container, folders, files) {
         if (folders.length === 0 && files.length === 0) {
             container.innerHTML = `
@@ -195,6 +237,8 @@ class LibraryManager {
             `;
             return;
         }
+
+        const usedUrls = this.getUsedImageUrls();
 
         let html = '<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-4">';
 
@@ -217,22 +261,47 @@ class LibraryManager {
 
         // Render Files
         files.forEach(file => {
-            // file = { filename, url, path, type }
-            // Encode filename properly for onclick
-            const safeFilename = file.filename.replace(/'/g, "\\'");
-            const safeUrl = file.url.replace(/'/g, "\\'");
+            // file = { filename, display_name, url, path, type }
+            const isUsed = usedUrls.has(file.url);
+            const displayName = file.display_name || file.filename;
+
+            // Encode names for onclick
+            const safeDisplayName = displayName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeFilename = file.filename.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeUrl = file.url.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             html += `
-                <div class="group relative bg-gray-800 hover:bg-gray-700 rounded-lg overflow-hidden cursor-pointer transition-all border border-transparent hover:border-green-500/50"
-                     onclick="window.libraryManager.selectFile('${safeUrl}', '${safeFilename}')">
-                    <div class="aspect-square w-full bg-gray-900 relative">
-                        <img src="${file.url}" alt="${file.filename}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
-                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity">
-                            <span class="bg-green-600 text-white text-xs px-2 py-1 rounded shadow">Sélectionner</span>
+                <div class="group relative bg-gray-800 hover:bg-gray-700 rounded-lg overflow-hidden cursor-pointer transition-all border border-transparent hover:border-green-500/50 flex flex-col h-full shadow-md"
+                     onclick="window.libraryManager.selectFile('${safeUrl}', '${safeDisplayName}')">
+                    <div class="aspect-square w-full bg-gray-900 relative flex-shrink-0">
+                        <img src="${file.url}" alt="${displayName}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+
+                        <!-- Overlay Sélectionner -->
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity pointer-events-none">
+                            <span class="bg-green-600 text-white text-xs px-2 py-1 rounded shadow font-bold">Sélectionner</span>
+                        </div>
+
+                        <!-- Badge Utilisé (Point Rouge) -->
+                        ${isUsed ? `
+                            <div class="absolute top-2 left-2 w-3 h-3 bg-red-500 rounded-full border-2 border-gray-800 shadow-sm" title="Cette image est utilisée"></div>
+                        ` : ''}
+
+                        <!-- Actions Hover -->
+                        <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="event.stopPropagation(); window.libraryManager.renameFile('${safeUrl}', '${safeDisplayName}')"
+                                    class="w-7 h-7 bg-gray-800/80 hover:bg-blue-600 text-white rounded-full flex items-center justify-center transition-colors shadow"
+                                    title="Renommer">
+                                <i class="fas fa-pencil-alt text-[10px]"></i>
+                            </button>
+                            <button onclick="event.stopPropagation(); window.libraryManager.deleteFile('${safeUrl}', '${safeFilename}')"
+                                    class="w-7 h-7 bg-gray-800/80 hover:bg-red-600 text-white rounded-full flex items-center justify-center transition-colors shadow"
+                                    title="Supprimer">
+                                <i class="fas fa-trash-alt text-[10px]"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="p-2">
-                        <p class="text-xs text-gray-300 truncate group-hover:text-white" title="${file.filename}">${file.filename}</p>
+                    <div class="p-2 flex-grow flex items-center bg-gray-800 group-hover:bg-gray-700 transition-colors">
+                        <p class="text-[11px] text-gray-300 truncate w-full text-center group-hover:text-white" title="${displayName}">${displayName}</p>
                     </div>
                 </div>
             `;
@@ -240,6 +309,55 @@ class LibraryManager {
 
         html += '</div>';
         container.innerHTML = html;
+    }
+
+    async renameFile(url, currentName) {
+        const newName = prompt("Nouveau nom de l'image :", currentName);
+        if (newName === null || newName === currentName) return;
+
+        try {
+            const response = await fetch('/api/images/metadata', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ url, name: newName })
+            });
+
+            if (!response.ok) throw new Error("Erreur serveur");
+            this.refresh();
+        } catch (e) {
+            alert("Erreur: " + e.message);
+        }
+    }
+
+    async deleteFile(url, filename) {
+        const usedUrls = this.getUsedImageUrls();
+        const isUsed = usedUrls.has(url);
+
+        let confirmMsg = `Êtes-vous sûr de vouloir supprimer l'image "${filename}" ?`;
+        if (isUsed) {
+            confirmMsg = `⚠️ ATTENTION : Cette image est actuellement UTILISÉE dans votre aventure.\n\n` +
+                         `Si vous la supprimez, elle disparaîtra des personnages/lieux/régions associés.\n\n` +
+                         `Voulez-vous vraiment continuer la suppression ?`;
+        }
+
+        if (!confirm(confirmMsg)) return;
+
+        try {
+            const response = await fetch(`/api/images/delete?url=${encodeURIComponent(url)}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || "Erreur lors de la suppression");
+            }
+
+            this.refresh();
+        } catch (e) {
+            alert("Erreur: " + e.message);
+        }
     }
 
     navigateTo(path) {
