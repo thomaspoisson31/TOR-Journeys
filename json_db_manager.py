@@ -346,3 +346,25 @@ class JsonDBManager:
             if data.get('user_id') == user_id and data.get('map_url') == map_url:
                 return { 'uuid': uuid, **data }
         return None
+
+    def get_images_metadata(self, google_id):
+        """Récupérer les métadonnées des images de l'utilisateur"""
+        metadata_path = f"users/{google_id}/images_metadata.json"
+        raw_data = storage_manager.load_file(metadata_path)
+        if raw_data:
+            try:
+                return json.loads(raw_data)
+            except json.JSONDecodeError:
+                print(f"⚠️ Erreur décodage métadonnées images pour {google_id}")
+        return {}
+
+    def save_images_metadata(self, google_id, metadata):
+        """Sauvegarder les métadonnées des images de l'utilisateur"""
+        metadata_path = f"users/{google_id}/images_metadata.json"
+        try:
+            json_str = json.dumps(metadata, indent=2, ensure_ascii=False)
+            storage_manager.save_file(json_str.encode('utf-8'), metadata_path, content_type='application/json')
+            return True
+        except Exception as e:
+            print(f"❌ Erreur sauvegarde métadonnées images: {e}")
+            return False
