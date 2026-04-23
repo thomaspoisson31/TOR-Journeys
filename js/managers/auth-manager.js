@@ -424,7 +424,7 @@ class AuthManager {
                     setTimeout(() => {
                         cloudNotification.classList.add('hidden');
                     }, 500); // Wait for transition
-                }, 10000);
+                }, 5000);
             }
 
             // Afficher le bouton Quitter et Enregistrer

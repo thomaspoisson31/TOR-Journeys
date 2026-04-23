@@ -1242,12 +1242,20 @@ class CharactersManager {
       name: name,
       description: description,
       type: type,
+      isDead: false,
       origin: "local",
       campaignId: window.authManager?.currentCampaignId,
       campaignName: window.authManager?.currentCampaignName,
       images: this.tempCharacterImages || [],
       // mapId supprimé : la relation est désormais via les lieux/régions
     };
+
+    // Attribution de l'attitude par défaut
+    if (type === "PNJ") {
+      newCharacter.attitude = "NEUTRE";
+    } else if (type === "Monstre") {
+      newCharacter.attitude = "ENNEMI";
+    }
 
     this.characters.push(newCharacter);
     this.saveCharactersToLocal();
@@ -1939,11 +1947,13 @@ class CharactersManager {
 
   // Ajout de la méthode addCharacter pour normaliser les IDs
   addCharacter(characterData) {
+    const type = characterData.type || "PNJ";
     const newCharacter = {
       id: String(Date.now() + Math.random()),
       name: characterData.name || "Nouveau personnage",
       description: characterData.description || "",
-      type: characterData.type || "PNJ",
+      type: type,
+      isDead: false,
       origin: "local",
       campaignId: window.authManager?.currentCampaignId,
       campaignName: window.authManager?.currentCampaignName,
@@ -1956,6 +1966,13 @@ class CharactersManager {
       ),
       // Pas de mapId
     };
+
+    // Attribution de l'attitude par défaut
+    if (type === "PNJ") {
+      newCharacter.attitude = "NEUTRE";
+    } else if (type === "Monstre") {
+      newCharacter.attitude = "ENNEMI";
+    }
 
     this.characters.push(newCharacter);
     this.saveCharactersToLocal();
