@@ -580,35 +580,69 @@ class InfoBoxManager {
             }
 
             // Section Connaissance avec cases à cocher
-            let knowledgeHTML = '<h3>Connaissance</h3><div class="flex flex-col space-y-2 mb-4">';
+            let knowledgeHTML = '<h3>Connaissance</h3>';
 
             if (type === 'character') {
-                // Pour les personnages : Connu et Rencontré
+                // Pour les personnages : Connu et Rencontré + Mort et Attitude
                 const isKnown = item.known || false;
                 const isMet = item.met || false;
                 const isNextSession = item.nextSession || false;
+                const isDead = item.isDead || false;
+                const attitude = item.attitude || 'NEUTRE';
 
                 knowledgeHTML += `
-                    <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" id="char-known-checkbox" ${isKnown ? 'checked' : ''}
-                               onchange="window.infoBoxManager.toggleCharacterKnowledge('known', this.checked)"
-                               class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-                        <span>Connu</span>
-                    </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" id="char-met-checkbox" ${isMet ? 'checked' : ''}
-                               onchange="window.infoBoxManager.toggleCharacterKnowledge('met', this.checked)"
-                               class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-                        <span>Rencontré</span>
-                    </label>
-                    <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" id="char-nextsession-checkbox" ${isNextSession ? 'checked' : ''}
-                               onchange="window.infoBoxManager.toggleCharacterKnowledge('nextSession', this.checked)"
-                               class="w-4 h-4 text-orange-500 rounded focus:ring-orange-400">
-                        <span>Prochaine séance</span>
-                    </label>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="flex flex-col space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="char-known-checkbox" ${isKnown ? 'checked' : ''}
+                                       onchange="window.infoBoxManager.toggleCharacterKnowledge('known', this.checked)"
+                                       class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                                <span>Connu</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="char-met-checkbox" ${isMet ? 'checked' : ''}
+                                       onchange="window.infoBoxManager.toggleCharacterKnowledge('met', this.checked)"
+                                       class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                                <span>Rencontré</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="char-nextsession-checkbox" ${isNextSession ? 'checked' : ''}
+                                       onchange="window.infoBoxManager.toggleCharacterKnowledge('nextSession', this.checked)"
+                                       class="w-4 h-4 text-orange-500 rounded focus:ring-orange-400">
+                                <span>Prochaine séance</span>
+                            </label>
+                        </div>
+                        <div class="flex flex-col space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="char-dead-checkbox" ${isDead ? 'checked' : ''}
+                                       onchange="window.infoBoxManager.toggleCharacterKnowledge('isDead', this.checked)"
+                                       class="w-4 h-4 text-red-600 rounded focus:ring-red-500">
+                                <span class="text-red-500 font-bold">Mort</span>
+                            </label>
+                            <div class="flex flex-col">
+                                <span class="text-xs text-gray-400 mb-1">Attitude</span>
+                                <select id="char-attitude-select"
+                                        onchange="window.infoBoxManager.changeCharacterAttitude(this.value, this)"
+                                        class="bg-gray-700 text-sm rounded px-2 py-1 border border-gray-600 outline-none">
+                                    <option value="GARANT" ${attitude === 'GARANT' ? 'selected' : ''}>GARANT</option>
+                                    <option value="AMICAL" ${attitude === 'AMICAL' ? 'selected' : ''}>AMICAL</option>
+                                    <option value="NEUTRE" ${attitude === 'NEUTRE' ? 'selected' : ''}>NEUTRE</option>
+                                    <option value="MEFIANT" ${attitude === 'MEFIANT' ? 'selected' : ''}>MEFIANT</option>
+                                    <option value="HOSTILE" ${attitude === 'HOSTILE' ? 'selected' : ''}>HOSTILE</option>
+                                    <option value="ENNEMI" ${attitude === 'ENNEMI' ? 'selected' : ''}>ENNEMI</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 `;
+
+                // Initialiser le style du select après le rendu
+                setTimeout(() => {
+                    const select = document.getElementById('char-attitude-select');
+                    if (select) this.updateAttitudeStyle(select);
+                }, 0);
             } else {
+                knowledgeHTML += '<div class="flex flex-col space-y-2 mb-4">';
                 // Pour les lieux/régions : Connue et Visitée
                 const isKnown = item.known || false;
                 const isVisited = item.visited || false;
@@ -634,9 +668,8 @@ class InfoBoxManager {
                         <span>Prochaine séance</span>
                     </label>
                 `;
+                knowledgeHTML += '</div>';
             }
-
-            knowledgeHTML += '</div>';
 
             let gmCommentsHTML = '';
             const gmComments = item.gmComments || '';
@@ -2999,6 +3032,60 @@ class InfoBoxManager {
         }
 
         console.log(`✅ [toggleCharacterKnowledge] Mise à jour sauvegardée`);
+    }
+
+    changeCharacterAttitude(value, element) {
+        if (!this.currentItem || this.currentType !== 'character') return;
+
+        console.log(`📋 [changeCharacterAttitude] attitude = ${value} pour ${this.currentItem.name}`);
+
+        // Mettre à jour le personnage
+        this.currentItem.attitude = value;
+
+        // Sauvegarder dans CharactersManager
+        if (window.charactersManager) {
+            window.charactersManager.updateCharacter(this.currentItem.id, { attitude: value });
+        }
+
+        // Mettre à jour le style du select
+        this.updateAttitudeStyle(element);
+    }
+
+    updateAttitudeStyle(element) {
+        if (!element) return;
+        const value = element.value;
+        let bgColor = '';
+        let textColor = '';
+
+        switch (value) {
+            case 'GARANT':
+                bgColor = 'darkgreen';
+                textColor = 'white';
+                break;
+            case 'AMICAL':
+                bgColor = 'lightgreen';
+                textColor = 'black';
+                break;
+            case 'NEUTRE':
+                bgColor = 'gray';
+                textColor = 'black';
+                break;
+            case 'MEFIANT':
+                bgColor = 'orange';
+                textColor = 'black';
+                break;
+            case 'HOSTILE':
+                bgColor = 'red';
+                textColor = 'white';
+                break;
+            case 'ENNEMI':
+                bgColor = 'black';
+                textColor = 'white';
+                break;
+        }
+
+        element.style.backgroundColor = bgColor;
+        element.style.color = textColor;
     }
 
     toggleLocationKnowledge(field, value) {

@@ -1,0 +1,119 @@
+⚠️ [StorageManager] GCS non configuré. Mode stockage local (éphémère sur Render).
+✅ Json Database Manager initialisé (via StorageManager)
+⚠️ WARNING: SESSION_SECRET not set. Sessions will not persist across restarts.
+🚀 Serveur Flask démarré
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.0.2:8080
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [23/Apr/2026 05:22:52] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:52] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:52] "GET /js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /styles-mobile.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/data-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/voyage-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/filter-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/settings-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/path-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/utils/constants.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/auth-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/infobox-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/import-export-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/zoom-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:53] "GET /js/managers/position-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/journal-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/characters-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/adventure-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/random-tables-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/library-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/map-switcher-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/counters-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/calendar-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/gemini-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/upload-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /js/managers/campaign-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /api/environment HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /version.json HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /api/gemini/config HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /api/gemini/config HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /api/gemini/config HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /images/markers/Position.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /api/auth/user HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "[33mGET /fr_tor_2nd_eriadors_map_page-0001.webp HTTP/1.1[0m" 404 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /api/campaigns HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:22:54] "GET /api/campaigns HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /styles-mobile.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/voyage-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/filter-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/utils/constants.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/path-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/settings-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/data-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/auth-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/infobox-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/import-export-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/zoom-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/position-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/adventure-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/library-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/journal-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/characters-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/map-switcher-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/random-tables-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/counters-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/calendar-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/campaign-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/gemini-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /js/managers/upload-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /api/environment HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /version.json HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /api/gemini/config HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /api/gemini/config HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /api/gemini/config HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /images/markers/Position.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "[33mGET /fr_tor_2nd_eriadors_map_page-0001.webp HTTP/1.1[0m" 404 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /api/auth/user HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /api/campaigns HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:20] "GET /api/campaigns HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/main.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /styles-mobile.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/data-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/filter-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/voyage-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/settings-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/utils/constants.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/path-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/auth-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/infobox-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/import-export-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/zoom-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/journal-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/position-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/adventure-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/library-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/random-tables-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/characters-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/map-switcher-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/calendar-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/counters-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/gemini-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/upload-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /js/managers/campaign-manager.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /api/environment HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /version.json HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /api/gemini/config HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /api/gemini/config HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /api/gemini/config HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /images/markers/Position.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "[33mGET /fr_tor_2nd_eriadors_map_page-0001.webp HTTP/1.1[0m" 404 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /api/auth/user HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /api/campaigns HTTP/1.1" 200 -
+127.0.0.1 - - [23/Apr/2026 05:23:46] "GET /api/campaigns HTTP/1.1" 200 -
