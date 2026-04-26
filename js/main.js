@@ -1115,6 +1115,9 @@ function initializeMap() {
         // Recréer le marqueur de position avec les bonnes dimensions
         positionManager.createPositionMarker();
 
+        // IMPORTANT: Forcer le rafraîchissement de la position pour la carte active
+        positionManager.refreshPosition();
+
         const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
         if (cloudFlag === 'true') {
             console.log("📍 [initializeMap] Nettoyage du flag cloud après mise à jour PositionManager");
