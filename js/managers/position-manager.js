@@ -259,35 +259,34 @@ class PositionManager {
     }
 
     loadPosition() {
-        const fromCloud = localStorage.getItem('adventurers_position_from_cloud');
         const activeMapId = window.settingsManager?.activeMapUrl;
-
-        console.log("📍 [PositionManager.loadPosition] État du flag cloud:", fromCloud);
-        console.log("📍 [PositionManager.loadPosition] Carte active:", activeMapId);
-
         const saved = localStorage.getItem('adventurers_position');
-        console.log("📍 [PositionManager.loadPosition] Position dans localStorage:", saved);
 
-        if (saved) {
-            try {
-                const position = JSON.parse(saved);
+        if (!saved) return this.getDefaultPosition();
 
-                if (position.mapId && activeMapId && position.mapId !== activeMapId) {
-                    console.log("📍 [PositionManager] Position d'une autre carte, utilisation position par défaut");
-                    return this.getDefaultPosition();
+        try {
+            const data = JSON.parse(saved);
+
+            // Nouveau format : Map de positions par mapId
+            if (data && typeof data === 'object' && !data.hasOwnProperty('x')) {
+                if (activeMapId && data[activeMapId]) {
+                    console.log(`📍 [PositionManager] Position trouvée pour la carte ${activeMapId}:`, data[activeMapId]);
+                    return { ...data[activeMapId], mapId: activeMapId };
                 }
-
-                if (fromCloud === 'true') {
-                    console.log("📍 [PositionManager] Position chargée depuis CLOUD via localStorage:", position);
-                } else {
-                    console.log("📍 [PositionManager] Position chargée depuis localStorage local:", position);
-                }
-
-                return position;
-            } catch (e) {
-                console.error("❌ [PositionManager] Erreur parsing position:", e);
-                localStorage.removeItem('adventurers_position_from_cloud');
+                console.log(`📍 [PositionManager] Aucune position enregistrée pour la carte ${activeMapId}`);
+                return this.getDefaultPosition();
             }
+
+            // Ancien format : Objet unique avec mapId
+            if (data && data.hasOwnProperty('x')) {
+                if (data.mapId === activeMapId) {
+                    console.log("📍 [PositionManager] Position chargée (ancien format) pour la carte active");
+                    return data;
+                }
+                console.log("📍 [PositionManager] Position ancienne d'une autre carte, retour défaut");
+            }
+        } catch (e) {
+            console.error("❌ [PositionManager] Erreur parsing position:", e);
         }
 
         return this.getDefaultPosition();
@@ -296,8 +295,8 @@ class PositionManager {
     getDefaultPosition() {
         const activeMapId = window.settingsManager?.activeMapUrl;
         const defaultPosition = {
-            x: this.mapConstants.MAP_WIDTH / 2,
-            y: this.mapConstants.MAP_HEIGHT / 2,
+            x: (this.mapConstants.MAP_WIDTH || 5000) / 2,
+            y: (this.mapConstants.MAP_HEIGHT || 3000) / 2,
             mapId: activeMapId
         };
         console.log("📍 [PositionManager] Utilisation de la position par défaut:", defaultPosition);
@@ -306,17 +305,64 @@ class PositionManager {
 
     savePosition() {
         const activeMapId = window.settingsManager?.activeMapUrl;
-        const positionToSave = {
+        if (!activeMapId) return;
+
+        let allPositions = {};
+        const saved = localStorage.getItem('adventurers_position');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                if (data && typeof data === 'object' && !data.hasOwnProperty('x')) {
+                    allPositions = data;
+                } else if (data && data.hasOwnProperty('x') && data.mapId) {
+                    // Migration de l'ancien format vers le nouveau lors du premier save
+                    allPositions[data.mapId] = { x: data.x, y: data.y };
+                }
+            } catch (e) {}
+        }
+
+        allPositions[activeMapId] = {
             x: this.currentPosition.x,
-            y: this.currentPosition.y,
-            mapId: activeMapId
+            y: this.currentPosition.y
         };
 
-        console.log("💾 [PositionManager.savePosition] Sauvegarde position:", positionToSave);
-        localStorage.setItem('adventurers_position', JSON.stringify(positionToSave));
+        console.log(`💾 [PositionManager.savePosition] Sauvegarde multi-cartes pour ${activeMapId}:`, allPositions[activeMapId]);
+        localStorage.setItem('adventurers_position', JSON.stringify(allPositions));
 
-        const cloudFlag = localStorage.getItem('adventurers_position_from_cloud');
-        console.log("💾 [PositionManager.savePosition] Flag cloud après save:", cloudFlag);
+        // Signaler le changement pour synchronisation cloud
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+        if (typeof window.scheduleAutoSync === 'function') {
+            window.scheduleAutoSync();
+        }
+    }
+
+    refreshPosition() {
+        console.log("📍 [PositionManager] Rafraîchissement de la position...");
+        this.currentPosition = this.loadPosition();
+
+        // Clamping pour s'assurer que le marqueur est toujours visible sur la carte actuelle
+        if (this.mapConstants.MAP_WIDTH > 0 && this.mapConstants.MAP_HEIGHT > 0) {
+            const oldX = this.currentPosition.x;
+            const oldY = this.currentPosition.y;
+
+            this.currentPosition.x = Math.max(0, Math.min(this.mapConstants.MAP_WIDTH, this.currentPosition.x));
+            this.currentPosition.y = Math.max(0, Math.min(this.mapConstants.MAP_HEIGHT, this.currentPosition.y));
+
+            if (oldX !== this.currentPosition.x || oldY !== this.currentPosition.y) {
+                console.log(`📍 [PositionManager] Position ajustée aux limites: (${oldX}, ${oldY}) -> (${this.currentPosition.x}, ${this.currentPosition.y})`);
+            }
+        }
+
+        if (this.positionMarker) {
+            this.updateMarkerPosition();
+            this.positionMarker.style.display = 'block';
+            this.positionMarker.style.visibility = 'visible';
+            this.positionMarker.style.opacity = '1';
+        }
+
+        this.checkRumoursProximity();
     }
 
     createPositionMarker() {
@@ -349,7 +395,7 @@ class PositionManager {
 
         this.positionMarker.appendChild(img);
         this.updateMarkerPosition();
-        this.positionMarker.style.cursor = 'move'; // Le marqueur de position est toujours déplaçable
+        this.updateMarkerCursor();
         positionLayer.appendChild(this.positionMarker);
 
         // Attacher les écouteurs d'événements au nouveau marqueur
@@ -520,12 +566,6 @@ class PositionManager {
                 }
 
                 this.savePosition();
-                if (typeof window.markAsUnsaved === 'function') {
-                    window.markAsUnsaved();
-                }
-                if (typeof window.scheduleAutoSync === 'function') {
-                    window.scheduleAutoSync();
-                }
             }
 
             // Si c'est un long press sans mouvement, ouvrir la modal
@@ -650,12 +690,6 @@ class PositionManager {
         }
 
         this.savePosition();
-        if (typeof window.markAsUnsaved === 'function') {
-            window.markAsUnsaved();
-        }
-        if (typeof window.scheduleAutoSync === 'function') {
-            window.scheduleAutoSync();
-        }
         this.updateMarkerCursor(); // Mettre à jour le curseur après le drag end
     }
 
@@ -1078,14 +1112,6 @@ class PositionManager {
                 };
                 this.updateMarkerPosition();
                 this.savePosition();
-
-                if (typeof window.markAsUnsaved === 'function') {
-                    window.markAsUnsaved();
-                }
-                if (typeof window.scheduleAutoSync === 'function') {
-                    window.scheduleAutoSync();
-                }
-
                 console.log(`📍 Marqueur de position déplacé au début du tracé: (${Math.round(targetX)}, ${Math.round(targetY)})`);
             }
         };

@@ -593,7 +593,12 @@ class AuthManager {
             }
         }
 
-        if (data.position) localStorage.setItem('adventurers_position', JSON.stringify(data.position));
+        if (data.position) {
+            localStorage.setItem('adventurers_position', JSON.stringify(data.position));
+            if (window.positionManager) {
+                window.positionManager.refreshPosition();
+            }
+        }
 
         if (data.activeJourney && window.pathManager) {
              if (data.activeJourney.path) {
