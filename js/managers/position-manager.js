@@ -414,10 +414,12 @@ class PositionManager {
         if (!this.positionMarker) return;
 
         const currentScale = window.scale || 1;
-        const zoomPercentage = currentScale * 100;
-        const sizeMultiplier = zoomPercentage < 50 ? 2 : 1;
-        const baseSize = 64;
-        const newSize = baseSize * sizeMultiplier;
+        // Pour avoir une taille constante de 15px sur l'écran :
+        // Taille sur carte * scale = Taille sur écran
+        // Taille sur carte * scale = 15
+        // Taille sur carte = 15 / scale
+        const targetScreenSize = 15;
+        const newSize = targetScreenSize / currentScale;
 
         this.positionMarker.style.width = `${newSize}px`;
         this.positionMarker.style.height = `${newSize}px`;

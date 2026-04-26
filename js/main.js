@@ -1279,6 +1279,11 @@ function resetView() {
                 zoomManager.updateDisplay();
             });
         }
+
+        // Mettre à jour la taille du marqueur de position
+        if (positionManager) {
+            positionManager.updateMarkerSize();
+        }
     }
 }
 
