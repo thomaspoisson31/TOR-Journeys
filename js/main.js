@@ -1095,12 +1095,10 @@ function initializeMap() {
             const currentScale = window.scale || scale;
             zoomToPoint(newScale / currentScale, viewportWidth / 2, viewportHeight / 2);
 
-            // Mettre à jour la taille du marqueur de position après un court délai
-            setTimeout(() => {
-                if (positionManager) {
-                    positionManager.updateMarkerSize();
-                }
-            }, 10);
+            // Mettre à jour la taille du marqueur de position immédiatement
+            if (positionManager) {
+                positionManager.updateMarkerSize();
+            }
         };
         zoomManager.init();
         window.zoomManager = zoomManager; // Exposer globalement
