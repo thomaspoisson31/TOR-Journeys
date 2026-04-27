@@ -1187,23 +1187,30 @@ function constrainPan() {
     const scaledMapWidth = MAP_WIDTH * scale;
     const scaledMapHeight = MAP_HEIGHT * scale;
 
-    // Si la carte est plus petite que le viewport, centrer
+    // Définir une marge de panning très significative (80% du viewport)
+    // Cela permet de déplacer les bords de la carte loin vers le centre pour mieux les voir
+    const marginX = viewportWidth * 0.8;
+    const marginY = viewportHeight * 0.8;
+
+    // Contraintes horizontales : la carte peut déborder largement du viewport
+    const maxPanX = marginX;
+    const minPanX = viewportWidth - scaledMapWidth - marginX;
+
+    // Si la carte est plus petite que le viewport, on permet quand même le mouvement dans la marge
     if (scaledMapWidth <= viewportWidth) {
-        panX = (viewportWidth - scaledMapWidth) / 2;
+        // Centrage par défaut si pas de mouvement, mais on laisse panX varier entre min et max
+        panX = Math.max(minPanX, Math.min(maxPanX, panX));
     } else {
-        // Contraintes horizontales : la carte peut déborder du viewport
-        const maxPanX = 0; // Bord gauche de la carte aligné avec le bord gauche du viewport
-        const minPanX = viewportWidth - scaledMapWidth; // Bord droit de la carte aligné avec le bord droit du viewport
         panX = Math.max(minPanX, Math.min(maxPanX, panX));
     }
 
-    // Si la carte est plus petite que le viewport, centrer
+    // Contraintes verticales : la carte peut déborder largement du viewport
+    const maxPanY = marginY;
+    const minPanY = viewportHeight - scaledMapHeight - marginY;
+
     if (scaledMapHeight <= viewportHeight) {
-        panY = (viewportHeight - scaledMapHeight) / 2;
+        panY = Math.max(minPanY, Math.min(maxPanY, panY));
     } else {
-        // Contraintes verticales : la carte peut déborder du viewport
-        const maxPanY = 0; // Bord haut de la carte aligné avec le bord haut du viewport
-        const minPanY = viewportHeight - scaledMapHeight; // Bord bas de la carte aligné avec le bord bas du viewport
         panY = Math.max(minPanY, Math.min(maxPanY, panY));
     }
 }
