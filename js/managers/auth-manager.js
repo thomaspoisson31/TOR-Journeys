@@ -62,6 +62,9 @@ class AuthManager {
             }
             this.enableViewerMode(data.forcedActiveMapUrl);
             await this.applyContextData(data);
+            if (window.positionManager && typeof window.positionManager.applyAdventureModeFilters === 'function') {
+                window.positionManager.applyAdventureModeFilters();
+            }
             if (typeof window.renderLocations === 'function') window.renderLocations();
             if (typeof window.renderRegions === 'function') window.renderRegions();
             if (window.countersManager && typeof window.countersManager.renderVisibleCounters === 'function') {
@@ -80,6 +83,9 @@ class AuthManager {
             window.positionManager.adventureMode = 'player';
             window.positionManager.updateAdventureModeIndicator();
             window.positionManager.updateBodyClass();
+            if (typeof window.positionManager.applyAdventureModeFilters === 'function') {
+                window.positionManager.applyAdventureModeFilters();
+            }
         }
         // Ajouter campaigns-btn et campaign-name-display à la liste des éléments à masquer
         const elementsToHide = ['settings-btn', 'auth-btn', 'quick-sync-btn', 'map-switch', 'add-location-mode', 'add-region-mode', 'draw-mode', 'random-roll-btn', 'journal-btn', 'quit-save-btn', 'campaigns-btn', 'campaign-name-display'];
@@ -574,9 +580,25 @@ class AuthManager {
             if (data.settings && window.settingsManager) window.settingsManager.loadSettings(data.settings);
 
         if (data.calendar && window.calendarManager) {
-            if (data.calendar.currentCalendarDate) window.calendarManager.currentCalendarDate = data.calendar.currentCalendarDate;
-            if (data.calendar.currentSeason) window.calendarManager.currentSeason = data.calendar.currentSeason;
-            if (data.calendar.calendarData) window.calendarManager.calendarData = data.calendar.calendarData;
+            if (data.calendar.currentCalendarDate) {
+                window.calendarManager.currentCalendarDate = data.calendar.currentCalendarDate;
+                localStorage.setItem('currentCalendarDate', JSON.stringify(data.calendar.currentCalendarDate));
+            }
+            if (data.calendar.currentSeason) {
+                window.calendarManager.currentSeason = data.calendar.currentSeason;
+                localStorage.setItem('currentSeason', data.calendar.currentSeason);
+            }
+            if (data.calendar.calendarData) {
+                window.calendarManager.calendarData = data.calendar.calendarData;
+                localStorage.setItem('calendarData', JSON.stringify(data.calendar.calendarData));
+            }
+            if (data.calendar.isCalendarMode !== undefined) {
+                window.calendarManager.isCalendarMode = data.calendar.isCalendarMode;
+                localStorage.setItem('isCalendarMode', data.calendar.isCalendarMode.toString());
+            }
+            if (typeof window.calendarManager.exposeGlobalData === 'function') {
+                window.calendarManager.exposeGlobalData();
+            }
             window.calendarManager.updateSeasonDisplay();
         }
 
