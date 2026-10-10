@@ -60,10 +60,10 @@ class AuthManager {
                 this.currentCampaignId = data.campaign_id;
                 this.currentCampaignName = data.campaign_name || "Campagne partagée";
             }
+            this.enableViewerMode(data.forcedActiveMapUrl);
             await this.applyContextData(data);
             if (typeof window.renderLocations === 'function') window.renderLocations();
             if (typeof window.renderRegions === 'function') window.renderRegions();
-            this.enableViewerMode(data.forcedActiveMapUrl);
             if (window.countersManager && typeof window.countersManager.renderVisibleCounters === 'function') {
                 window.countersManager.renderVisibleCounters();
             }
