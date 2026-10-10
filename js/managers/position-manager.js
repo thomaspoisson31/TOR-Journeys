@@ -133,19 +133,13 @@ class PositionManager {
 
         console.log(`🎮 [PositionManager] Application des filtres du mode Aventure (${this.adventureMode})`);
 
-        // Forcer les filtres : Régions non affichées + Lieux Connus uniquement (ou Visités en Viewer)
+        // Forcer les filtres : Régions non affichées + Lieux Connus uniquement (Mode MJ/Joueur/Viewer)
         let modeFilters = {
             showRegions: false,  // Masquer les régions
-            showLocations: true  // Afficher les lieux
+            showLocations: true, // Afficher les lieux
+            known: ['known'],    // Uniquement les lieux connus
+            visited: []          // Réinitialiser le filtre visité
         };
-
-        if (window.isViewerMode) {
-            console.log('🔒 [PositionManager] Mode Viewer détecté: Affichage uniquement des lieux visités');
-            modeFilters.visited = ['visited']; // Uniquement les lieux visités
-            modeFilters.known = [];            // Désactiver le filtre connu
-        } else {
-            modeFilters.known = ['known'];     // Uniquement les lieux connus (Mode MJ/Joueur standard)
-        }
 
         filterManager.activeFilters = {
             ...filterManager.activeFilters,
