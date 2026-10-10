@@ -1044,6 +1044,14 @@ def get_shared_data(link_uuid):
                 if 'position' in campaign_data:
                     user_data['position'] = campaign_data['position']
 
+    # Retrieve campaign_name if present
+    campaign_name = None
+    if campaign_id:
+        if campaign_data:
+            campaign_name = campaign_data.get('name')
+        elif user_data.get('name'):
+            campaign_name = user_data.get('name')
+
     # Filtrage minimal pour la sécurité
     safe_data = {
         'locations': user_data.get('locations', {}),
@@ -1054,6 +1062,10 @@ def get_shared_data(link_uuid):
         'journal': user_data.get('journal', {}),
         'counters': user_data.get('counters', []),
         'position': user_data.get('position', {}),
+        'activeJourney': user_data.get('activeJourney', {}),
+        'randomTablesCheckedResults': user_data.get('randomTablesCheckedResults', {}),
+        'campaign_id': campaign_id,
+        'campaign_name': campaign_name,
         'adventureMode': 'player',
         'forcedActiveMapUrl': link_data['map_url']
     }

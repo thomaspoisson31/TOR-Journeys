@@ -56,10 +56,17 @@ class AuthManager {
             const response = await fetch(`/api/share/data/${uuid}`, { credentials: 'include' });
             if (!response.ok) throw new Error("Lien invalide");
             const data = await response.json();
+            if (data.campaign_id) {
+                this.currentCampaignId = data.campaign_id;
+                this.currentCampaignName = data.campaign_name || "Campagne partagée";
+            }
             await this.applyContextData(data);
             if (typeof window.renderLocations === 'function') window.renderLocations();
             if (typeof window.renderRegions === 'function') window.renderRegions();
             this.enableViewerMode(data.forcedActiveMapUrl);
+            if (window.countersManager && typeof window.countersManager.renderVisibleCounters === 'function') {
+                window.countersManager.renderVisibleCounters();
+            }
         } catch (error) {
             console.error("Erreur shared data:", error);
             window.location.href = '/';
