@@ -309,11 +309,11 @@ class JsonDBManager:
             print(f"❌ Erreur sauvegarde shared_links.json: {e}")
             return False
 
-    def create_shared_link(self, uuid, user_id, map_url, env_prefix, campaign_id=None):
+    def create_shared_link(self, uuid, user_id, map_url, env_prefix, campaign_id=None, role='player'):
         links = self._load_shared_links()
 
-        # Supprimer tout lien existant pour cette carte et cet utilisateur
-        existing_link = self.get_link_by_user_map(user_id, map_url)
+        # Supprimer tout lien existant pour cette carte, cet utilisateur et ce rôle
+        existing_link = self.get_link_by_user_map(user_id, map_url, role=role)
         if existing_link:
             self.revoke_shared_link(existing_link['uuid'])
             links = self._load_shared_links() # Recharger après suppression
@@ -323,9 +323,10 @@ class JsonDBManager:
             'map_url': map_url,
             'env_prefix': env_prefix,
             'campaign_id': campaign_id,
+            'role': role,
             'created_at': datetime.now().isoformat()
         }
-        print(f"🔗 Lien partagé créé: {uuid} pour {user_id} (Carte: {map_url})")
+        print(f"🔗 Lien partagé ({role}) créé: {uuid} pour {user_id} (Carte: {map_url})")
         return self._save_shared_links(links)
 
     def get_shared_link(self, uuid):
@@ -340,11 +341,19 @@ class JsonDBManager:
             return self._save_shared_links(links)
         return False
 
-    def get_link_by_user_map(self, user_id, map_url):
+    def get_link_by_user_map(self, user_id, map_url, role=None):
         links = self._load_shared_links()
+        matching_links = {}
         for uuid, data in links.items():
             if data.get('user_id') == user_id and data.get('map_url') == map_url:
-                return { 'uuid': uuid, **data }
+                link_role = data.get('role', 'player')
+                if role is not None:
+                    if link_role == role:
+                        return { 'uuid': uuid, **data }
+                else:
+                    matching_links[link_role] = { 'uuid': uuid, **data }
+        if role is None:
+            return matching_links
         return None
 
     def get_images_metadata(self, google_id):

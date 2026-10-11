@@ -152,6 +152,8 @@ class CountersManager {
             return;
         }
 
+        const isPlayerMode = (adventureMode === 'player') || (window.isViewerMode && window.viewerRole === 'player');
+
         container.classList.remove('hidden');
         container.innerHTML = visibleCounters.map(counter => `
             <div class="flex flex-col items-center">
@@ -168,15 +170,19 @@ class CountersManager {
 
                 <!-- Controls -->
                 <div class="flex items-center space-x-1">
-                    <button class="text-gray-400 hover:text-white text-xs px-1"
-                            onclick="window.countersManager.updateCounter('${counter.id}', 'value', ${Number(counter.value) - 1})">
-                        -
-                    </button>
-                    <span class="text-white font-bold text-sm min-w-[1.5rem] text-center">${counter.value}</span>
-                    <button class="text-gray-400 hover:text-white text-xs px-1"
-                            onclick="window.countersManager.updateCounter('${counter.id}', 'value', ${Number(counter.value) + 1})">
-                        +
-                    </button>
+                    ${isPlayerMode ? `
+                        <span class="text-white font-bold text-sm min-w-[1.5rem] text-center">${counter.value}</span>
+                    ` : `
+                        <button class="text-gray-400 hover:text-white text-xs px-1"
+                                onclick="window.countersManager.updateCounter('${counter.id}', 'value', ${Number(counter.value) - 1})">
+                            -
+                        </button>
+                        <span class="text-white font-bold text-sm min-w-[1.5rem] text-center">${counter.value}</span>
+                        <button class="text-gray-400 hover:text-white text-xs px-1"
+                                onclick="window.countersManager.updateCounter('${counter.id}', 'value', ${Number(counter.value) + 1})">
+                            +
+                        </button>
+                    `}
                 </div>
             </div>
         `).join('');

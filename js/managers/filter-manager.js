@@ -402,9 +402,11 @@ export default class FilterManager {
     }
 
     applyFilters() {
-        // Si en mode Viewer ou Aventure (MJ/Joueur), forcer les filtres obligatoires du mode Aventure
-        const isAdventureOrViewer = window.isViewerMode || (window.positionManager && typeof window.positionManager.isAdventureActive === 'function' && window.positionManager.isAdventureActive());
-        if (isAdventureOrViewer) {
+        // En mode Joueur (standard ou via lien partagé Joueur), forcer les filtres restreints.
+        // En mode MJ (standard ou via lien partagé MJ), ne pas forcer le filtrage "known uniquement".
+        const isPlayerViewer = window.isViewerMode && window.viewerRole === 'player';
+        const isPlayerAdventure = window.positionManager && window.positionManager.adventureMode === 'player';
+        if (isPlayerViewer || isPlayerAdventure) {
             this.activeFilters.showRegions = false;
             this.activeFilters.showLocations = true;
             this.activeFilters.known = ['known'];
@@ -759,8 +761,9 @@ export default class FilterManager {
             };
         }
 
-        const isAdventureOrViewer = window.isViewerMode || (window.positionManager && typeof window.positionManager.isAdventureActive === 'function' && window.positionManager.isAdventureActive());
-        if (isAdventureOrViewer) {
+        const isPlayerViewer = window.isViewerMode && window.viewerRole === 'player';
+        const isPlayerAdventure = window.positionManager && window.positionManager.adventureMode === 'player';
+        if (isPlayerViewer || isPlayerAdventure) {
             this.activeFilters.showRegions = false;
             this.activeFilters.showLocations = true;
             this.activeFilters.known = ['known'];
