@@ -232,6 +232,7 @@ async function initializeApp() {
         dataManager = new DataManager();
         console.log("✅ DataManager initialized");
         filterManager = new FilterManager(); // DOM elements are implicitly accessed
+        window.filterManager = filterManager;
         console.log("✅ FilterManager initialized");
         voyageManager = new VoyageManager({
             getElementById: (id) => document.getElementById(id),

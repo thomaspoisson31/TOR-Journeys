@@ -145,6 +145,7 @@ class PositionManager {
             ...filterManager.activeFilters,
             ...modeFilters
         };
+        filterManager.activeFilters.known = ['known'];
 
         // Mettre à jour l'interface des filtres
         filterManager.updateFilterUI();
