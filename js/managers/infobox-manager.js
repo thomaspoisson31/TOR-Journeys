@@ -492,8 +492,8 @@ class InfoBoxManager {
                 const galleryHTML = `
                     <div class="image-gallery">
                         ${item.images.map((img, index) => `
-                            <div class="gallery-item" data-index="${index}">
-                                <img src="${img.url}" alt="${item.name}" class="gallery-image">
+                            <div class="gallery-item bg-white overflow-hidden" data-index="${index}">
+                                <img src="${img.url}" alt="${item.name}" class="gallery-image" onerror="this.onerror=null; this.style.display='none';">
                             </div>
                         `).join('')}
                     </div>
@@ -1102,8 +1102,8 @@ class InfoBoxManager {
                     const isVignette = image.type === 'vignette';
 
                     return `
-                        <div class="gallery-item-edit relative">
-                            <img src="${image.url}" alt="${item.name}" class="gallery-image">
+                        <div class="gallery-item-edit relative bg-white overflow-hidden">
+                            <img src="${image.url}" alt="${item.name}" class="gallery-image" onerror="this.onerror=null; this.style.display='none';">
                             <div class="flex items-center justify-center space-x-2 mt-2">
                                 ${isVignette ? '<span class="text-xs bg-green-500 text-white px-2 py-1 rounded">Vignette</span>' : ''}
                                 <button onclick="window.infoBoxManager.toggleImageTypeMenu(${index})" class="text-white hover:text-blue-300 p-1" title="Changer le type">
@@ -1271,6 +1271,10 @@ class InfoBoxManager {
             img.style.objectFit = 'cover';
             img.style.transformOrigin = 'center';
             img.style.transition = 'transform 0.1s ease-out';
+            img.onerror = () => {
+                img.style.display = 'none';
+                circle.style.border = '2px solid transparent';
+            };
 
             // Appliquer les métadonnées de cadrage si elles existent
             const crop = thumbnailImage.thumbnailCrop || { zoom: 1, offsetX: 0, offsetY: 0 };
@@ -2464,13 +2468,13 @@ class InfoBoxManager {
                      onclick="window.infoBoxManager.showCharacterFromLocationInfoBox('${character.id}')">
                     <div class="flex items-center space-x-3">
                         ${thumbnailImage ? `
-                            <div class="w-12 h-12 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0">
+                            <div class="w-12 h-12 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0 bg-white">
                                 <img src="${thumbnailImage.url}" alt="${character.name}"
-                                     class="w-full h-full object-cover" ${thumbnailStyle}>
+                                     class="w-full h-full object-cover" ${thumbnailStyle}
+                                     onerror="this.onerror=null; this.style.display='none';">
                             </div>
                         ` : `
-                            <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center border-2 ${borderClass} flex-shrink-0">
-                                <i class="fas fa-user text-xl text-gray-400"></i>
+                            <div class="w-12 h-12 rounded-full bg-white border-2 ${borderClass} flex-shrink-0">
                             </div>
                         `}
                         <div class="flex-1 min-w-0">
@@ -2638,10 +2642,10 @@ class InfoBoxManager {
                            ${isChecked ? 'checked' : ''}>
                     ${thumbnailImage ? `
                         <img src="${thumbnailImage.url}" alt="${character.name}"
-                             class="w-10 h-10 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
+                             class="w-10 h-10 rounded-full object-cover border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'} flex-shrink-0 bg-white"
+                             onerror="this.onerror=null; this.style.display='none';">
                     ` : `
-                        <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'}">
-                            <i class="fas fa-user text-sm text-gray-600"></i>
+                        <div class="w-10 h-10 rounded-full bg-white border-2 ${character.type === 'PJ' ? 'border-blue-500' : 'border-green-500'} flex-shrink-0">
                         </div>
                     `}
                     <div class="flex-1">
