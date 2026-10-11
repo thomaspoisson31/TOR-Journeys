@@ -402,6 +402,15 @@ export default class FilterManager {
     }
 
     applyFilters() {
+        // Si en mode Viewer ou Aventure (MJ/Joueur), forcer les filtres obligatoires du mode Aventure
+        const isAdventureOrViewer = window.isViewerMode || (window.positionManager && typeof window.positionManager.isAdventureActive === 'function' && window.positionManager.isAdventureActive());
+        if (isAdventureOrViewer) {
+            this.activeFilters.showRegions = false;
+            this.activeFilters.showLocations = true;
+            this.activeFilters.known = ['known'];
+            this.activeFilters.visited = [];
+        }
+
         console.log("🔍 Applying filters...", this.activeFilters);
         console.log("🔍 Current filtersByMap:", this.filtersByMap);
         console.log("🔍 Active map:", window.settingsManager?.activeMapUrl);
@@ -735,17 +744,6 @@ export default class FilterManager {
             console.log(`📥 [loadFiltersForMap] Filtres trouvés:`, this.filtersByMap[mapUrl]);
             this.activeFilters = { ...this.filtersByMap[mapUrl] };
             console.log(`📥 [loadFiltersForMap] activeFilters après copie:`, this.activeFilters);
-            
-            // Mettre à jour l'UI
-            console.log(`🎨 [loadFiltersForMap] Mise à jour de l'UI...`);
-            this.updateFilterUI();
-            console.log(`✅ [loadFiltersForMap] Appel de applyFilters...`);
-            this.applyFilters();
-            
-            // Les filtres sont déjà appliqués par applyFilters() ci-dessus
-            // Pas besoin de forcer un rendu supplémentaire
-            
-            return true;
         } else {
             console.warn(`⚠️ [loadFiltersForMap] Aucun filtre trouvé pour la carte ${mapUrl}`);
             // Si aucun filtre, réinitialiser aux valeurs par défaut et afficher tout
@@ -759,10 +757,23 @@ export default class FilterManager {
                 showRegions: false,
                 regionsOpacity: 0.5
             };
-            this.updateFilterUI();
-            this.applyFilters();
         }
-        return false;
+
+        const isAdventureOrViewer = window.isViewerMode || (window.positionManager && typeof window.positionManager.isAdventureActive === 'function' && window.positionManager.isAdventureActive());
+        if (isAdventureOrViewer) {
+            this.activeFilters.showRegions = false;
+            this.activeFilters.showLocations = true;
+            this.activeFilters.known = ['known'];
+            this.activeFilters.visited = [];
+        }
+
+        // Mettre à jour l'UI
+        console.log(`🎨 [loadFiltersForMap] Mise à jour de l'UI...`);
+        this.updateFilterUI();
+        console.log(`✅ [loadFiltersForMap] Appel de applyFilters...`);
+        this.applyFilters();
+
+        return !!this.filtersByMap[mapUrl];
     }
 
     // Mettre à jour l'interface des filtres
