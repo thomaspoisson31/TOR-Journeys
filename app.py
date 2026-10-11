@@ -932,6 +932,10 @@ def generate_shared_link():
     data = request.json
     map_url = data.get('map_url')
     campaign_id = data.get('campaign_id')
+    role = data.get('role', 'player')
+    if role not in ['player', 'mj']:
+        role = 'player'
+
     if not map_url:
         return jsonify({'error': 'URL de carte manquante'}), 400
 
@@ -941,10 +945,11 @@ def generate_shared_link():
     # Générer un UUID court
     link_uuid = str(uuid.uuid4())[:8]
 
-    if db_manager.create_shared_link(link_uuid, google_id, map_url, env_prefix, campaign_id):
+    if db_manager.create_shared_link(link_uuid, google_id, map_url, env_prefix, campaign_id, role=role):
         return jsonify({
             'success': True,
             'link_uuid': link_uuid,
+            'role': role,
             'url': f"/share/{link_uuid}"
         })
     return jsonify({'error': 'Erreur lors de la création du lien'}), 500
@@ -969,7 +974,7 @@ def revoke_shared_link():
 
 @app.route('/api/share/status', methods=['GET'])
 def get_shared_link_status():
-    """Récupère le statut du lien partagé pour une carte donnée"""
+    """Récupère le statut des liens partagés pour une carte donnée"""
     if 'user_id' not in session or 'google_id' not in session:
         return jsonify({'error': 'Non authentifié'}), 401
 
@@ -978,16 +983,32 @@ def get_shared_link_status():
         return jsonify({'error': 'URL de carte manquante'}), 400
 
     google_id = session['google_id']
-    link_data = db_manager.get_link_by_user_map(google_id, map_url)
+    links_by_role = db_manager.get_link_by_user_map(google_id, map_url) # returns dict of roles if role=None
 
-    if link_data:
-        return jsonify({
-            'has_link': True,
-            'link_uuid': link_data['uuid'],
-            'url': f"/share/{link_data['uuid']}",
-            'created_at': link_data['created_at']
-        })
-    return jsonify({'has_link': False})
+    response_data = {
+        'player': None,
+        'mj': None
+    }
+
+    if links_by_role and isinstance(links_by_role, dict):
+        if 'player' in links_by_role:
+            link_data = links_by_role['player']
+            response_data['player'] = {
+                'link_uuid': link_data['uuid'],
+                'url': f"/share/{link_data['uuid']}",
+                'created_at': link_data['created_at'],
+                'role': 'player'
+            }
+        if 'mj' in links_by_role:
+            link_data = links_by_role['mj']
+            response_data['mj'] = {
+                'link_uuid': link_data['uuid'],
+                'url': f"/share/{link_data['uuid']}",
+                'created_at': link_data['created_at'],
+                'role': 'mj'
+            }
+
+    return jsonify(response_data)
 
 @app.route('/api/share/data/<link_uuid>', methods=['GET'])
 def get_shared_data(link_uuid):
@@ -999,6 +1020,7 @@ def get_shared_data(link_uuid):
     user_id = link_data['user_id']
     env_prefix = link_data['env_prefix']
     campaign_id = link_data.get('campaign_id')
+    role = link_data.get('role', 'player')
 
     # Récupérer les données de l'utilisateur créateur
     user_data = db_manager.get_user_data(user_id, env_prefix)
@@ -1066,7 +1088,8 @@ def get_shared_data(link_uuid):
         'randomTablesCheckedResults': user_data.get('randomTablesCheckedResults', {}),
         'campaign_id': campaign_id,
         'campaign_name': campaign_name,
-        'adventureMode': 'player',
+        'role': role,
+        'adventureMode': role,
         'forcedActiveMapUrl': link_data['map_url']
     }
 

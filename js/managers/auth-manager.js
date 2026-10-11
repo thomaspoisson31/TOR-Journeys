@@ -60,10 +60,13 @@ class AuthManager {
                 this.currentCampaignId = data.campaign_id;
                 this.currentCampaignName = data.campaign_name || "Campagne partagée";
             }
-            this.enableViewerMode(data.forcedActiveMapUrl);
+            const role = data.role || 'player';
+            this.enableViewerMode(data.forcedActiveMapUrl, role);
             await this.applyContextData(data);
-            if (window.positionManager && typeof window.positionManager.applyAdventureModeFilters === 'function') {
-                window.positionManager.applyAdventureModeFilters();
+            if (role === 'player') {
+                if (window.positionManager && typeof window.positionManager.applyAdventureModeFilters === 'function') {
+                    window.positionManager.applyAdventureModeFilters();
+                }
             }
             if (typeof window.renderLocations === 'function') window.renderLocations();
             if (typeof window.renderRegions === 'function') window.renderRegions();
@@ -76,15 +79,18 @@ class AuthManager {
         }
     }
 
-    enableViewerMode(activeMapUrl) {
+    enableViewerMode(activeMapUrl, role = 'player') {
         window.isViewerMode = true;
+        window.viewerRole = role;
         if (window.positionManager) {
             window.positionManager.setLockedMode(true);
-            window.positionManager.adventureMode = 'player';
+            window.positionManager.adventureMode = role;
             window.positionManager.updateAdventureModeIndicator();
             window.positionManager.updateBodyClass();
-            if (typeof window.positionManager.applyAdventureModeFilters === 'function') {
-                window.positionManager.applyAdventureModeFilters();
+            if (role === 'player') {
+                if (typeof window.positionManager.applyAdventureModeFilters === 'function') {
+                    window.positionManager.applyAdventureModeFilters();
+                }
             }
         }
         // Ajouter campaigns-btn et campaign-name-display à la liste des éléments à masquer
