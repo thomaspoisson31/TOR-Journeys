@@ -591,8 +591,10 @@ function renderLocations() {
                     return; // Laisser le clic se propager au viewport pour le tracé
                 }
 
-                // En mode Aventure, on enregistre la position pour le clic mais on ne permet pas le drag
-                if (window.positionManager && window.positionManager.adventureMode) {
+                // Le déplacement des lieux est autorisé uniquement en mode Admin (pas en mode MJ, Joueur ou Viewer)
+                const canDrag = !window.isViewerMode && (!window.positionManager || window.positionManager.adventureMode === 'admin');
+
+                if (!canDrag) {
                     dragStartX = e.clientX;
                     dragStartY = e.clientY;
                     e.stopPropagation();
@@ -602,7 +604,7 @@ function renderLocations() {
                 e.stopPropagation();
                 e.preventDefault();
 
-                // Initialiser le drag potentiel (seulement hors mode Aventure)
+                // Initialiser le drag potentiel (seulement en mode Admin)
                 draggedLocationMarker = marker;
                 draggedLocation = location;
                 dragStartX = e.clientX;
@@ -620,12 +622,13 @@ function renderLocations() {
                 // Curseur croix en mode ajout de lieu
                 if (isLocationAddingMode) {
                     marker.style.cursor = 'crosshair';
-                }
-                // Ne pas afficher le curseur "move" en mode Aventure
-                else if (window.positionManager && window.positionManager.adventureMode) {
-                    marker.style.cursor = 'pointer';
                 } else {
-                    marker.style.cursor = 'move';
+                    const canDrag = !window.isViewerMode && (!window.positionManager || window.positionManager.adventureMode === 'admin');
+                    if (canDrag) {
+                        marker.style.cursor = 'move';
+                    } else {
+                        marker.style.cursor = 'pointer';
+                    }
                 }
             }
         });
@@ -678,8 +681,10 @@ function renderLocations() {
             touchStartTime = Date.now();
             touchHasMoved = false;
 
-            // Bloquer le drag tactile en mode Aventure (mais permettre le tap pour ouvrir l'infobox)
-            if (window.positionManager && window.positionManager.adventureMode) {
+            const canDrag = !window.isViewerMode && (!window.positionManager || window.positionManager.adventureMode === 'admin');
+
+            // Bloquer le drag tactile si pas en mode Admin (mais permettre le tap pour ouvrir l'infobox)
+            if (!canDrag) {
                 // On laisse passer pour détecter le tap, mais on ne permet pas le drag
                 e.stopPropagation();
                 return;
