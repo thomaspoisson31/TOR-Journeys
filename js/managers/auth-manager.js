@@ -87,6 +87,7 @@ class AuthManager {
             window.positionManager.adventureMode = role;
             window.positionManager.updateAdventureModeIndicator();
             window.positionManager.updateBodyClass();
+            window.positionManager.updateMarkerCursor();
             if (role === 'player') {
                 if (typeof window.positionManager.applyAdventureModeFilters === 'function') {
                     window.positionManager.applyAdventureModeFilters();
