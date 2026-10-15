@@ -18,8 +18,8 @@ class PositionManager {
     }
 
     loadAdventureMode() {
-        // Si le mode Viewer est actif, forcer le mode joueur
-        if (this.isLocked || window.isViewerMode) return 'player';
+        // Si le mode Viewer est actif, utiliser le rôle du viewer (ou 'player' par défaut)
+        if (this.isLocked || window.isViewerMode) return window.viewerRole || 'player';
 
         const savedMode = localStorage.getItem('adventurers_adventure_mode');
         // Migration de la compatibilité ascendante
@@ -507,8 +507,8 @@ class PositionManager {
                 return;
             }
 
-            // En mode verrouillé (View Only) ou mode joueur, ne pas permettre le déplacement
-            if (this.isLocked || this.adventureMode === 'player') return;
+            // En mode joueur, ne pas permettre le déplacement
+            if (this.adventureMode === 'player') return;
             
             touchStartTime = Date.now();
             touchHasMoved = false;
@@ -632,8 +632,8 @@ class PositionManager {
     }
 
     handleDragStart(e) {
-        // En mode verrouillé (View Only) ou mode joueur, ne pas permettre le déplacement
-        if (this.isLocked || this.adventureMode === 'player') return;
+        // En mode joueur, ne pas permettre le déplacement
+        if (this.adventureMode === 'player') return;
 
         e.stopPropagation();
         e.preventDefault();
