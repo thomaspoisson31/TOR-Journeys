@@ -807,15 +807,14 @@ class CharactersManager {
                     ${
                       displayImage
                         ? `
-                        <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0">
+                        <div class="w-16 h-16 rounded-full overflow-hidden border-2 ${borderClass} flex-shrink-0 bg-white">
                             <img src="${displayImage.url}" alt="${character.name}"
                                  class="w-full h-full object-cover" ${thumbnailStyle}
-                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iMjAgMjF2LTJhNCA0IDAgMCAwLTQtNEg4YTQgNCAwIDAgMC00IDR2MiIvPjxjaXJjbGUgY3g9IjEyIiBjeT0iNyIgcj0iNCIvPjwvc3ZnPg=='; this.style.transform='none'; this.parentElement.classList.add('bg-gray-600', 'flex', 'items-center', 'justify-content');">
+                                 onerror="this.onerror=null; this.style.display='none';">
                         </div>
                     `
                         : `
-                        <div class="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center border-2 ${borderClass} flex-shrink-0">
-                            <i class="fas fa-user text-2xl text-gray-400"></i>
+                        <div class="w-16 h-16 rounded-full bg-white border-2 ${borderClass} flex-shrink-0">
                         </div>
                     `
                     }

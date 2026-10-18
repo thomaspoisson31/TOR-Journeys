@@ -1053,7 +1053,7 @@ class VoyageManager {
                 return `
                     <div class="inline-block m-2 p-3 rounded-lg cursor-pointer transition-colors discovery-item text-center" data-discovery-name="${discovery.name}" data-discovery-type="${discovery.type}" style="width: 180px; vertical-align: top; background-color: white;">
                         <div class="w-[150px] h-[150px] mx-auto mb-2 rounded-lg overflow-hidden" style="background-color: white;">
-                            ${imageUrl ? `<img src="${imageUrl}" alt="${discovery.name}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-gray-400 text-sm">Aucune image</div>'}
+                            ${imageUrl ? `<img src="${imageUrl}" alt="${discovery.name}" class="w-full h-full object-cover" onerror="this.onerror=null; this.style.display='none';">` : ''}
                         </div>
                         <div class="font-medium text-sm mb-1 flex items-center justify-center gap-1" style="color: black;">
                             ${discovery.name}
