@@ -257,9 +257,11 @@ class InfoBoxManager {
         // Onglet "Lieux associés" : uniquement pour les lieux
         const lieuxAssociesTabButton = document.querySelector('.tab-button[data-tab="lieux-associes"]');
         if (lieuxAssociesTabButton) {
-            lieuxAssociesTabButton.style.display = this.currentType === 'location' ? 'block' : 'none';
+            const showLinks = this.currentType === 'location' || this.currentType === 'character';
+            lieuxAssociesTabButton.style.display = showLinks ? 'block' : 'none';
+            lieuxAssociesTabButton.title = this.currentType === 'character' ? 'Liens associés' : 'Lieux associés';
             // Si l'onglet actif est masqué, revenir à la description
-            if (this.currentType !== 'location' && lieuxAssociesTabButton.classList.contains('active')) {
+            if (!showLinks && lieuxAssociesTabButton.classList.contains('active')) {
                 lieuxAssociesTabButton.classList.remove('active');
                 document.getElementById('lieux-associes-tab')?.classList.remove('active');
                 document.querySelector('.tab-button[data-tab="text"]')?.classList.add('active');
@@ -393,8 +395,8 @@ class InfoBoxManager {
 
         // Onglet Lieux associés (pour lieux)
         const lieuxAssociesTabButton = document.querySelector('.tab-button[data-tab="lieux-associes"]');
-        if (lieuxAssociesTabButton && this.currentType === 'location') {
-            const hasLinks = (item.linkedLocations || []).length > 0;
+        if (lieuxAssociesTabButton && (this.currentType === 'location' || this.currentType === 'character')) {
+            const hasLinks = (item[this.getLinkProp()] || []).length > 0;
             const icon = lieuxAssociesTabButton.querySelector('i');
             if (icon) icon.style.setProperty('color', hasLinks ? redColor : defaultColor, 'important');
         }
@@ -727,7 +729,7 @@ class InfoBoxManager {
         }
 
         // Onglet Lieux associés (uniquement pour les lieux)
-        if (type === 'location' && document.getElementById('lieux-associes-tab')) {
+        if ((type === 'location' || type === 'character') && document.getElementById('lieux-associes-tab')) {
             this.renderLieuxAssociesTabRead();
         }
 
@@ -974,7 +976,7 @@ class InfoBoxManager {
         }
 
         // Onglet Lieux associés (mode édition, lieux uniquement)
-        if (type === 'location' && document.getElementById('lieux-associes-tab')) {
+        if ((type === 'location' || type === 'character') && document.getElementById('lieux-associes-tab')) {
             this.renderLieuxAssociesTabEdit();
         }
 
@@ -1774,10 +1776,10 @@ class InfoBoxManager {
         }
 
         // Lieux associés (uniquement pour les lieux, si l'onglet a été rendu en édition)
-        if (this.currentType === 'location') {
+        if (this.currentType === 'location' || this.currentType === 'character') {
             const linkCheckboxes = document.querySelectorAll('.linked-location-checkbox');
             if (document.getElementById('lieux-associes-edit-form')) {
-                this.currentItem.linkedLocations = Array.from(linkCheckboxes)
+                this.currentItem[this.getLinkProp()] = Array.from(linkCheckboxes)
                     .filter(cb => cb.checked)
                     .map(cb => {
                         const id = String(cb.value);
@@ -1976,6 +1978,7 @@ class InfoBoxManager {
             if (window.charactersManager) {
                 window.charactersManager.updateCharacter(this.currentItem.id, this.currentItem);
             }
+            this.syncLinkedLocationsBidirectional();
         }
 
         // Log des personnages APRÈS modification bidirectionnelle
@@ -2549,8 +2552,18 @@ class InfoBoxManager {
             .replace(/"/g, '&quot;');
     }
 
+    getLinkTargets() {
+        return this.currentType === 'character'
+            ? (window.charactersManager?.characters || [])
+            : (window.locationsData?.locations || []);
+    }
+
+    getLinkProp() {
+        return this.currentType === 'character' ? 'linkedCharacters' : 'linkedLocations';
+    }
+
     getLinkedLocationEntries() {
-        return (this.currentItem?.linkedLocations || [])
+        return (this.currentItem?.[this.getLinkProp()] || [])
             .map(l => (typeof l === 'object' ? { id: String(l.id), comment: l.comment || '' } : { id: String(l), comment: '' }));
     }
 
@@ -2570,24 +2583,25 @@ class InfoBoxManager {
         textView.appendChild(content);
 
         const isPlayer = window.positionManager && window.positionManager.adventureMode === 'player';
+        const isChar = this.currentType === 'character';
         const entries = this.getLinkedLocationEntries()
-            .map(e => ({ ...e, loc: window.locationsData?.locations?.find(l => String(l.id) === e.id) }))
-            .filter(e => e.loc && (!isPlayer || e.loc.visited))
+            .map(e => ({ ...e, loc: this.getLinkTargets().find(l => String(l.id) === e.id) }))
+            .filter(e => e.loc && (!isPlayer || (isChar ? e.loc.met === true : e.loc.visited)))
             .sort((a, b) => a.loc.name.localeCompare(b.loc.name, 'fr', { sensitivity: 'base' }));
 
         if (entries.length === 0) {
-            content.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-400"><i class="fas fa-link fa-3x mb-4"></i><p class="text-sm">Aucun lieu associé</p></div>';
+            content.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-gray-400"><i class="fas fa-link fa-3x mb-4"></i><p class="text-sm">${isChar ? 'Aucun lien associé' : 'Aucun lieu associé'}</p></div>`;
             return;
         }
 
-        let html = '<h3 style="color: #940000; font-family: \'Merriweather\', serif; font-weight: 700; margin-bottom: 1rem; font-size: 1.35rem;"><i class="fas fa-link" style="margin-right: 0.5rem;"></i>Lieux associés</h3>';
+        let html = '<h3 style="color: #940000; font-family: \'Merriweather\', serif; font-weight: 700; margin-bottom: 1rem; font-size: 1.35rem;"><i class="fas fa-link" style="margin-right: 0.5rem;"></i>' + (isChar ? 'Liens associés' : 'Lieux associés') + '</h3>';
         entries.forEach(({ loc, comment }) => {
             html += `
                 <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
-                     onclick="window.infoBoxManager.navigateToLocation(event, '${loc.id}')">
+                     onclick="${isChar ? `window.charactersManager.showCharacterInfoBox('${loc.id}')` : `window.infoBoxManager.navigateToLocation(event, '${loc.id}')`}">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
-                            <i class="fas fa-map-marker-alt text-blue-600"></i>
+                            <i class="fas ${isChar ? 'fa-user' : 'fa-map-marker-alt'} text-blue-600"></i>
                         </div>
                         <div class="flex-1 min-w-0">
                             <h4 class="font-semibold text-gray-800 truncate text-sm">${this.escapeHtmlLL(loc.name)}</h4>
@@ -2610,9 +2624,10 @@ class InfoBoxManager {
         const linkedIds = entries.map(e => e.id);
         const commentOf = id => entries.find(e => e.id === id)?.comment || '';
 
-        const candidates = (window.locationsData?.locations || [])
+        const isChar = this.currentType === 'character';
+        const candidates = this.getLinkTargets()
             .filter(l => String(l.id) !== String(current.id))
-            .filter(l => String(l.mapId || '') === String(current.mapId || '') || linkedIds.includes(String(l.id)))
+            .filter(l => isChar || String(l.mapId || '') === String(current.mapId || '') || linkedIds.includes(String(l.id)))
             .sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
 
         const itemsHTML = candidates.length > 0 ? candidates.map(loc => {
@@ -2624,7 +2639,7 @@ class InfoBoxManager {
                         <input type="checkbox" class="linked-location-checkbox w-4 h-4 cursor-pointer" value="${this.escapeHtmlLL(id)}" ${checked ? 'checked' : ''}
                                onchange="document.getElementById('linked-comment-wrap-${this.escapeHtmlLL(id)}').style.display = this.checked ? 'block' : 'none'">
                         <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
-                            <i class="fas fa-map-marker-alt text-blue-600 text-xs"></i>
+                            <i class="fas ${isChar ? 'fa-user' : 'fa-map-marker-alt'} text-blue-600 text-xs"></i>
                         </div>
                         <span class="font-semibold text-gray-800 text-sm">${this.escapeHtmlLL(loc.name)}</span>
                     </label>
@@ -2634,7 +2649,7 @@ class InfoBoxManager {
                     </div>
                 </div>
             `;
-        }).join('') : '<p class="text-gray-400 italic text-sm text-center py-4">Aucun autre lieu sur cette carte.</p>';
+        }).join('') : `<p class="text-gray-400 italic text-sm text-center py-4">${isChar ? 'Aucun autre personnage.' : 'Aucun autre lieu sur cette carte.'}</p>`;
 
         tab.innerHTML = `
             <div id="lieux-associes-edit-form" class="edit-form p-4">
@@ -2654,8 +2669,10 @@ class InfoBoxManager {
     }
 
     syncLinkedLocationsBidirectional() {
-        const locations = window.locationsData?.locations;
-        if (!locations || !this.currentItem) return;
+        const isChar = this.currentType === 'character';
+        const prop = this.getLinkProp();
+        const locations = this.getLinkTargets();
+        if (!locations || !locations.length || !this.currentItem) return;
 
         const currentId = String(this.currentItem.id);
         const desired = this.getLinkedLocationEntries();
@@ -2665,7 +2682,7 @@ class InfoBoxManager {
             const locId = String(loc.id);
             if (locId === currentId) return;
 
-            const existing = (loc.linkedLocations || [])
+            const existing = (loc[prop] || [])
                 .map(l => (typeof l === 'object' ? { id: String(l.id), comment: l.comment || '' } : { id: String(l), comment: '' }));
             const mine = desired.find(d => d.id === locId);
             const idx = existing.findIndex(e => e.id === currentId);
@@ -2674,18 +2691,22 @@ class InfoBoxManager {
                 if (idx === -1) existing.push({ id: currentId, comment: mine.comment });
                 else if (existing[idx].comment === mine.comment) return;
                 else existing[idx].comment = mine.comment;
-                loc.linkedLocations = existing;
+                loc[prop] = existing;
                 changed = true;
             } else if (idx !== -1) {
                 existing.splice(idx, 1);
-                loc.linkedLocations = existing;
+                loc[prop] = existing;
                 changed = true;
             }
         });
 
-        if (changed && window.dataManager) {
-            window.dataManager.locationsData = window.locationsData;
-            window.dataManager.saveLocationsToLocal();
+        if (changed) {
+            if (isChar) {
+                window.charactersManager?.saveCharactersToLocal();
+            } else if (window.dataManager) {
+                window.dataManager.locationsData = window.locationsData;
+                window.dataManager.saveLocationsToLocal();
+            }
         }
     }
 
