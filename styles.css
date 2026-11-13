@@ -1967,3 +1967,35 @@ body.mode-player .tab-button[data-tab="rumeurs-traditions"] {
 body.mode-player .tab-button[data-tab="evenements-voyage"] {
     display: none !important;
 }
+
+/* Onglet Lieux associés - même présentation que l'onglet Personnages */
+#lieux-associes-tab .text-view {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#lieux-associes-tab .edit-form {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+#lieux-associes-tab .edit-form .space-y-2 {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+#lieux-associes-tab .edit-form > .flex.space-x-2 {
+    flex-shrink: 0;
+    margin-top: 0 !important;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+    background-color: white;
+}

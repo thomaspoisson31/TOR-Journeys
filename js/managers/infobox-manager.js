@@ -254,6 +254,19 @@ class InfoBoxManager {
             }
         }
 
+        // Onglet "Lieux associés" : uniquement pour les lieux
+        const lieuxAssociesTabButton = document.querySelector('.tab-button[data-tab="lieux-associes"]');
+        if (lieuxAssociesTabButton) {
+            lieuxAssociesTabButton.style.display = this.currentType === 'location' ? 'block' : 'none';
+            // Si l'onglet actif est masqué, revenir à la description
+            if (this.currentType !== 'location' && lieuxAssociesTabButton.classList.contains('active')) {
+                lieuxAssociesTabButton.classList.remove('active');
+                document.getElementById('lieux-associes-tab')?.classList.remove('active');
+                document.querySelector('.tab-button[data-tab="text"]')?.classList.add('active');
+                document.getElementById('text-tab')?.classList.add('active');
+            }
+        }
+
         // Mettre à jour les couleurs des icônes selon le contenu
         this.updateTabIconColors();
     }
@@ -376,6 +389,14 @@ class InfoBoxManager {
             console.log('🎨 [Lieux/Régions] Bouton non trouvé');
         } else {
             console.log('🎨 [Lieux/Régions] Type non compatible:', this.currentType);
+        }
+
+        // Onglet Lieux associés (pour lieux)
+        const lieuxAssociesTabButton = document.querySelector('.tab-button[data-tab="lieux-associes"]');
+        if (lieuxAssociesTabButton && this.currentType === 'location') {
+            const hasLinks = (item.linkedLocations || []).length > 0;
+            const icon = lieuxAssociesTabButton.querySelector('i');
+            if (icon) icon.style.setProperty('color', hasLinks ? redColor : defaultColor, 'important');
         }
 
         // Onglet Tables Aléatoires (événements-voyage)
@@ -677,7 +698,7 @@ class InfoBoxManager {
                 gmCommentsHTML = `
                     <div class="mt-4">
                         <h3>Commentaires Meneur</h3>
-                        <div class="prose prose-invert text-sm bg-gray-800 rounded p-3 border border-yellow-700/50">
+                        <div class="prose text-sm bg-white text-black rounded p-3 border border-gray-300" style="background-color:#fff;color:#000;">
                             ${this.renderMarkdown(gmComments)}
                         </div>
                     </div>
@@ -703,6 +724,11 @@ class InfoBoxManager {
         const personnagesTab = document.getElementById('personnages-tab');
         if (personnagesTab && (type === 'location' || type === 'region')) {
             this.renderPersonnagesTabRead();
+        }
+
+        // Onglet Lieux associés (uniquement pour les lieux)
+        if (type === 'location' && document.getElementById('lieux-associes-tab')) {
+            this.renderLieuxAssociesTabRead();
         }
 
         // Onglet Lieux/Régions (uniquement pour les personnages)
@@ -926,7 +952,7 @@ class InfoBoxManager {
 
                     <div class="mb-3">
                         <label class="block text-sm font-medium mb-2 text-yellow-400">Commentaires Meneur (Markdown supporté) :</label>
-                        <textarea id="edit-gm-comments" class="w-full p-2 border rounded h-24 bg-gray-800 text-white font-mono text-sm border-yellow-700/50" placeholder="Notes privées du meneur de jeu...">${item.gmComments || ''}</textarea>
+                        <textarea id="edit-gm-comments" class="w-full p-2 border rounded h-24 bg-white text-black font-mono text-sm" placeholder="Notes privées du meneur de jeu...">${item.gmComments || ''}</textarea>
                     </div>
 
                     <div class="flex space-x-2">
@@ -945,6 +971,11 @@ class InfoBoxManager {
         const personnagesTab = document.getElementById('personnages-tab');
         if (personnagesTab && (type === 'location' || type === 'region')) {
             this.renderPersonnagesTabEdit();
+        }
+
+        // Onglet Lieux associés (mode édition, lieux uniquement)
+        if (type === 'location' && document.getElementById('lieux-associes-tab')) {
+            this.renderLieuxAssociesTabEdit();
         }
 
         // Onglet Rumeurs et Traditions (mode édition)
@@ -1742,6 +1773,20 @@ class InfoBoxManager {
             }
         }
 
+        // Lieux associés (uniquement pour les lieux, si l'onglet a été rendu en édition)
+        if (this.currentType === 'location') {
+            const linkCheckboxes = document.querySelectorAll('.linked-location-checkbox');
+            if (document.getElementById('lieux-associes-edit-form')) {
+                this.currentItem.linkedLocations = Array.from(linkCheckboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => {
+                        const id = String(cb.value);
+                        const ta = document.querySelector(`.linked-location-comment[data-location-id="${id}"]`);
+                        return { id, comment: ta ? ta.value.trim() : '' };
+                    });
+            }
+        }
+
         console.log("💾 [SAVE] Objet après modification:", JSON.stringify(this.currentItem).substring(0, 200) + "...");
 
         // Sauvegarder via DataManager
@@ -1919,6 +1964,9 @@ class InfoBoxManager {
                     }
                 });
             }
+
+            // Synchroniser les liens entre lieux (bidirectionnel)
+            this.syncLinkedLocationsBidirectional();
 
             // Re-render
             if (window.renderLocations) {
@@ -2489,6 +2537,156 @@ class InfoBoxManager {
         personnagesContent.innerHTML = html;
 
         console.log(`✅ [renderPersonnagesTabRead] Rendu terminé - ${sortedCharacters.length} personnage(s) affiché(s)`);
+    }
+
+    // ===== Onglet "Lieux associés" (lieux uniquement) =====
+
+    escapeHtmlLL(str) {
+        return String(str ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    getLinkedLocationEntries() {
+        return (this.currentItem?.linkedLocations || [])
+            .map(l => (typeof l === 'object' ? { id: String(l.id), comment: l.comment || '' } : { id: String(l), comment: '' }));
+    }
+
+    renderLieuxAssociesTabRead() {
+        const tab = document.getElementById('lieux-associes-tab');
+        if (!tab) return;
+
+        tab.innerHTML = '';
+        const textView = document.createElement('div');
+        textView.className = 'text-view';
+        textView.style.cssText = 'flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;';
+        tab.appendChild(textView);
+
+        const content = document.createElement('div');
+        content.id = 'lieux-associes-content';
+        content.style.cssText = 'flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 1rem; background-color: white;';
+        textView.appendChild(content);
+
+        const isPlayer = window.positionManager && window.positionManager.adventureMode === 'player';
+        const entries = this.getLinkedLocationEntries()
+            .map(e => ({ ...e, loc: window.locationsData?.locations?.find(l => String(l.id) === e.id) }))
+            .filter(e => e.loc && (!isPlayer || e.loc.visited))
+            .sort((a, b) => a.loc.name.localeCompare(b.loc.name, 'fr', { sensitivity: 'base' }));
+
+        if (entries.length === 0) {
+            content.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-gray-400"><i class="fas fa-link fa-3x mb-4"></i><p class="text-sm">Aucun lieu associé</p></div>';
+            return;
+        }
+
+        let html = '<h3 style="color: #940000; font-family: \'Merriweather\', serif; font-weight: 700; margin-bottom: 1rem; font-size: 1.35rem;"><i class="fas fa-link" style="margin-right: 0.5rem;"></i>Lieux associés</h3>';
+        entries.forEach(({ loc, comment }) => {
+            html += `
+                <div class="bg-white rounded-lg p-3 hover:bg-gray-100 transition-colors cursor-pointer mb-3 border border-gray-200"
+                     onclick="window.infoBoxManager.navigateToLocation(event, '${loc.id}')">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
+                            <i class="fas fa-map-marker-alt text-blue-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-gray-800 truncate text-sm">${this.escapeHtmlLL(loc.name)}</h4>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
+                    </div>
+                    ${comment ? `<div class="text-sm text-gray-700 mt-2" style="white-space: pre-line; color:#000;">${this.escapeHtmlLL(comment)}</div>` : ''}
+                </div>
+            `;
+        });
+        content.innerHTML = html;
+    }
+
+    renderLieuxAssociesTabEdit() {
+        const tab = document.getElementById('lieux-associes-tab');
+        if (!tab) return;
+
+        const current = this.currentItem;
+        const entries = this.getLinkedLocationEntries();
+        const linkedIds = entries.map(e => e.id);
+        const commentOf = id => entries.find(e => e.id === id)?.comment || '';
+
+        const candidates = (window.locationsData?.locations || [])
+            .filter(l => String(l.id) !== String(current.id))
+            .filter(l => String(l.mapId || '') === String(current.mapId || '') || linkedIds.includes(String(l.id)))
+            .sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
+
+        const itemsHTML = candidates.length > 0 ? candidates.map(loc => {
+            const id = String(loc.id);
+            const checked = linkedIds.includes(id);
+            return `
+                <div class="bg-white rounded border border-gray-200 p-2">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" class="linked-location-checkbox w-4 h-4 cursor-pointer" value="${this.escapeHtmlLL(id)}" ${checked ? 'checked' : ''}
+                               onchange="document.getElementById('linked-comment-wrap-${this.escapeHtmlLL(id)}').style.display = this.checked ? 'block' : 'none'">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
+                            <i class="fas fa-map-marker-alt text-blue-600 text-xs"></i>
+                        </div>
+                        <span class="font-semibold text-gray-800 text-sm">${this.escapeHtmlLL(loc.name)}</span>
+                    </label>
+                    <div id="linked-comment-wrap-${this.escapeHtmlLL(id)}" class="mt-2" style="display: ${checked ? 'block' : 'none'};">
+                        <label class="block text-xs font-medium mb-1 text-gray-700">Commentaire :</label>
+                        <textarea rows="5" class="linked-location-comment w-full p-2 border rounded bg-white text-black text-sm" data-location-id="${this.escapeHtmlLL(id)}" placeholder="Décrire l'association...">${this.escapeHtmlLL(commentOf(id))}</textarea>
+                    </div>
+                </div>
+            `;
+        }).join('') : '<p class="text-gray-400 italic text-sm text-center py-4">Aucun autre lieu sur cette carte.</p>';
+
+        tab.innerHTML = `
+            <div id="lieux-associes-edit-form" class="edit-form p-4">
+                <div class="space-y-2 mb-4">
+                    ${itemsHTML}
+                </div>
+                <div class="flex space-x-2 pt-2 border-t border-gray-600">
+                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-save mr-1"></i>Sauvegarder
+                    </button>
+                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-times mr-1"></i>Annuler
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    syncLinkedLocationsBidirectional() {
+        const locations = window.locationsData?.locations;
+        if (!locations || !this.currentItem) return;
+
+        const currentId = String(this.currentItem.id);
+        const desired = this.getLinkedLocationEntries();
+        let changed = false;
+
+        locations.forEach(loc => {
+            const locId = String(loc.id);
+            if (locId === currentId) return;
+
+            const existing = (loc.linkedLocations || [])
+                .map(l => (typeof l === 'object' ? { id: String(l.id), comment: l.comment || '' } : { id: String(l), comment: '' }));
+            const mine = desired.find(d => d.id === locId);
+            const idx = existing.findIndex(e => e.id === currentId);
+
+            if (mine) {
+                if (idx === -1) existing.push({ id: currentId, comment: mine.comment });
+                else if (existing[idx].comment === mine.comment) return;
+                else existing[idx].comment = mine.comment;
+                loc.linkedLocations = existing;
+                changed = true;
+            } else if (idx !== -1) {
+                existing.splice(idx, 1);
+                loc.linkedLocations = existing;
+                changed = true;
+            }
+        });
+
+        if (changed && window.dataManager) {
+            window.dataManager.locationsData = window.locationsData;
+            window.dataManager.saveLocationsToLocal();
+        }
     }
 
     renderLieuxRegionsTabRead() {
