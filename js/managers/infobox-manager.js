@@ -975,6 +975,11 @@ class InfoBoxManager {
             this.renderPersonnagesTabEdit();
         }
 
+        // Onglet Lieux/Régions (mode édition, personnages : commentaires des associations)
+        if (type === 'character' && document.getElementById('lieux-regions-tab')) {
+            this.renderLieuxRegionsTabEdit();
+        }
+
         // Onglet Lieux associés (mode édition, lieux uniquement)
         if ((type === 'location' || type === 'character') && document.getElementById('lieux-associes-tab')) {
             this.renderLieuxAssociesTabEdit();
@@ -1758,6 +1763,19 @@ class InfoBoxManager {
 
             this.currentItem.associatedCharacters = associatedCharacterIds;
 
+            // Commentaires des associations Lieu - Personnage (lieux uniquement)
+            if (this.currentType === 'location') {
+                const commentAreas = document.querySelectorAll('.assoc-char-comment');
+                if (commentAreas.length > 0) {
+                    const newComments = {};
+                    commentAreas.forEach(ta => {
+                        const cid = String(ta.dataset.characterId);
+                        const val = ta.value.trim();
+                        if (val && associatedCharacterIds.includes(cid)) newComments[cid] = val;
+                    });
+                    this.currentItem.characterComments = newComments;
+                }
+            }
             console.log(`🔍 [SAVE] associatedCharacters APRÈS:`, this.currentItem.associatedCharacters);
 
             // Log des personnages concernés AVANT modification
@@ -1975,6 +1993,23 @@ class InfoBoxManager {
                 window.renderLocations(); // Appel explicite à la fonction globale
             }
         } else if (this.currentType === 'character') {
+            // Commentaires des associations Personnage - Lieu (stockés sur le lieu)
+            const locCommentAreas = document.querySelectorAll('.assoc-loc-comment');
+            if (locCommentAreas.length > 0 && window.locationsData?.locations) {
+                const charId = String(this.currentItem.id);
+                locCommentAreas.forEach(ta => {
+                    const loc = window.locationsData.locations.find(l => String(l.id) === String(ta.dataset.locationId));
+                    if (!loc) return;
+                    const val = ta.value.trim();
+                    const map = { ...(loc.characterComments || {}) };
+                    if (val) map[charId] = val; else delete map[charId];
+                    loc.characterComments = map;
+                });
+                if (window.dataManager) {
+                    window.dataManager.locationsData = window.locationsData;
+                    window.dataManager.saveLocationsToLocal();
+                }
+            }
             if (window.charactersManager) {
                 window.charactersManager.updateCharacter(this.currentItem.id, this.currentItem);
             }
@@ -2533,6 +2568,10 @@ class InfoBoxManager {
                         </div>
                         <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
                     </div>
+                    ${(() => {
+                        const cm = this.currentType === 'location' ? ((this.currentItem.characterComments || {})[characterId] || '') : '';
+                        return cm ? `<div class="text-sm mt-2" style="white-space: pre-line; color:#000;">${this.escapeHtmlLL(cm)}</div>` : '';
+                    })()}
                 </div>
             `;
         });
@@ -2710,6 +2749,49 @@ class InfoBoxManager {
         }
     }
 
+    renderLieuxRegionsTabEdit() {
+        const tab = document.getElementById('lieux-regions-tab');
+        if (!tab) return;
+
+        const character = this.currentItem;
+        const charId = String(character.id);
+        const locations = (character.associatedLocations || [])
+            .map(id => window.locationsData?.locations?.find(l => String(l.id) === String(id)))
+            .filter(Boolean)
+            .sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
+
+        const itemsHTML = locations.length > 0 ? locations.map(loc => `
+            <div class="bg-white rounded border border-gray-200 p-2">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-500 flex-shrink-0">
+                        <i class="fas fa-map-marker-alt text-blue-600 text-xs"></i>
+                    </div>
+                    <span class="font-semibold text-gray-800 text-sm">${this.escapeHtmlLL(loc.name)}</span>
+                </div>
+                <div class="mt-2">
+                    <span class="block text-xs font-medium mb-1 text-gray-700">Commentaire :</span>
+                    <textarea rows="5" class="assoc-loc-comment w-full p-2 border rounded bg-white text-black text-sm" data-location-id="${this.escapeHtmlLL(String(loc.id))}" placeholder="Décrire l'association...">${this.escapeHtmlLL((loc.characterComments || {})[charId] || '')}</textarea>
+                </div>
+            </div>
+        `).join('') : '<p class="text-gray-400 italic text-sm text-center py-4">Aucun lieu associé. Les associations se définissent depuis la fenêtre du lieu.</p>';
+
+        tab.innerHTML = `
+            <div class="edit-form p-4" style="display:flex; flex-direction:column; min-height:0; flex:1;">
+                <div class="space-y-2 mb-4" style="flex:1; min-height:0; overflow-y:auto;">
+                    ${itemsHTML}
+                </div>
+                <div class="flex space-x-2 pt-2 border-t border-gray-600" style="background-color:white;">
+                    <button onclick="window.infoBoxManager.saveEdit()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-save mr-1"></i>Sauvegarder
+                    </button>
+                    <button onclick="window.infoBoxManager.exitEditMode()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+                        <i class="fas fa-times mr-1"></i>Annuler
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
     renderLieuxRegionsTabRead() {
         const lieuxRegionsTab = document.getElementById('lieux-regions-tab');
         if (!lieuxRegionsTab) return;
@@ -2760,6 +2842,10 @@ class InfoBoxManager {
                             </div>
                             <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
                         </div>
+                        ${(() => {
+                            const cm = (loc.characterComments || {})[String(character.id)] || '';
+                            return cm ? `<div class="text-sm mt-2" style="white-space: pre-line; color:#000;">${this.escapeHtmlLL(cm)}</div>` : '';
+                        })()}
                     </div>
                 `;
             }
@@ -2848,12 +2934,22 @@ class InfoBoxManager {
             const isChecked = associatedCharacterIds.includes(charIdString);
             const thumbnailImage = character.images?.find(img => img.type === 'vignette');
 
+            const isLocationItem = this.currentType === 'location';
+            const existingComment = (this.currentItem.characterComments || {})[charIdString] || '';
+            const commentHTML = isLocationItem ? `
+                    <div id="assoc-char-comment-wrap-${charIdString}" class="mt-1 p-2 bg-white rounded border border-gray-200" style="display: ${isChecked ? 'block' : 'none'};">
+                        <span class="block text-xs font-medium mb-1 text-gray-700">Commentaire :</span>
+                        <textarea rows="5" class="assoc-char-comment w-full p-2 border rounded bg-white text-black text-sm" data-character-id="${charIdString}" placeholder="Décrire l'association...">${this.escapeHtmlLL(existingComment)}</textarea>
+                    </div>` : '';
+
             return `
+                <div class="assoc-wrap">
                 <label class="flex items-center space-x-3 p-2 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-colors">
                     <input type="checkbox"
                            class="character-checkbox w-4 h-4 cursor-pointer"
                            value="${charIdString}"
                            data-character-id="${charIdString}"
+                           ${isLocationItem ? `onchange="document.getElementById('assoc-char-comment-wrap-${charIdString}').style.display = this.checked ? 'block' : 'none'"` : ''}
                            ${isChecked ? 'checked' : ''}>
                     ${thumbnailImage ? `
                         <img src="${thumbnailImage.url}" alt="${character.name}"
@@ -2870,6 +2966,8 @@ class InfoBoxManager {
                         </span>
                     </div>
                 </label>
+                ${commentHTML}
+                </div>
             `;
         }).join('') : '<p class="text-gray-400 italic text-sm text-center py-4">Aucun personnage ne correspond aux critères.</p>';
 
