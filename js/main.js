@@ -526,7 +526,13 @@ function renderLocations() {
         marker.style.backgroundImage = 'none';
         marker.style.width = '64px';
         marker.style.height = '64px';
-        marker.style.border = 'none';
+        if (location.nextSession === true) {
+            marker.classList.add('next-session');
+            marker.style.border = '2px solid red';
+            marker.style.boxSizing = 'border-box';
+        } else {
+            marker.style.border = 'none';
+        }
         marker.style.borderRadius = '50%';
         marker.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4)';
         marker.style.opacity = opacity;
@@ -661,9 +667,9 @@ function renderLocations() {
 
             // Ne pas ouvrir l'infobox si on a dragué le marqueur (seuil de 5 pixels)
             // On vérifie dragStartX/Y qui sont set dans mousedown
-            const dragDistance = (typeof dragStartX !== 'undefined') ? 
+            const dragDistance = (typeof dragStartX !== 'undefined') ?
                 Math.sqrt(Math.pow(e.clientX - dragStartX, 2) + Math.pow(e.clientY - dragStartY, 2)) : 0;
-            
+
             if (dragDistance > 5) {
                 return;
             }
@@ -957,7 +963,7 @@ window.renderRegions = renderRegions;
 window.initializeMap = initializeMap;
 
 // Fonction pour ouvrir les paramètres en cas d'erreur de carte
-window.openSettingsForMap = function() {
+window.openSettingsForMap = function () {
     const loaderOverlay = document.getElementById('loader-overlay');
     if (loaderOverlay) {
         // Ne pas masquer complètement, juste rendre transparent pour voir la modale par dessus
@@ -965,11 +971,11 @@ window.openSettingsForMap = function() {
         // Le loader-overlay a z-50, settings-modal a z-60, donc ça devrait aller.
         // Mais si on veut que l'utilisateur puisse interagir avec la modale, il faut peut-être cacher le message d'erreur temporairement
         // ou simplement ouvrir la modale par dessus.
-        
+
         // Si on cache l'overlay, on risque de voir une page vide/cassée dessous.
         // On va essayer d'ouvrir la modale directement.
     }
-    
+
     if (window.settingsManager) {
         window.settingsManager.openSettings();
         window.settingsManager.switchTab('maps');
@@ -1039,21 +1045,21 @@ function initializeMap() {
     setupLocationAdding(); // Nouveau : ajout de lieux
 
     // Configurer le système de filtres
-        if (filterManager) {
-            console.log("🔍 Setting up FilterManager...");
-            // Exposer filterManager globalement AVANT setupFilterListeners
-            window.filterManager = filterManager;
-            filterManager.setupFilterListeners();
-            // N'appliquer les filtres initiaux que si aucun filtre sauvegardé n'existe
-            // (les filtres sauvegardés seront restaurés par AuthManager si nécessaire)
-            const hasSavedFilters = localStorage.getItem('middleEarthLocations') !== null;
-            if (!hasSavedFilters) {
-                filterManager.applyFilters();
-            }
-            console.log("✅ FilterManager setup complete");
-        } else {
-            console.error("❌ FilterManager not initialized");
+    if (filterManager) {
+        console.log("🔍 Setting up FilterManager...");
+        // Exposer filterManager globalement AVANT setupFilterListeners
+        window.filterManager = filterManager;
+        filterManager.setupFilterListeners();
+        // N'appliquer les filtres initiaux que si aucun filtre sauvegardé n'existe
+        // (les filtres sauvegardés seront restaurés par AuthManager si nécessaire)
+        const hasSavedFilters = localStorage.getItem('middleEarthLocations') !== null;
+        if (!hasSavedFilters) {
+            filterManager.applyFilters();
         }
+        console.log("✅ FilterManager setup complete");
+    } else {
+        console.error("❌ FilterManager not initialized");
+    }
 
     // Initialiser les gestionnaires après chargement de la carte
     if (voyageManager) {
@@ -1548,7 +1554,7 @@ function setupMapNavigation() {
         const panSpeed = 50;
         let moved = false;
 
-        switch(e.key) {
+        switch (e.key) {
             case 'ArrowUp':
             case 'w':
             case 'W':
@@ -2986,20 +2992,20 @@ window.scheduleAutoSync = scheduleAutoSync;
 window.voyageManager = voyageManager;
 
 // Fonctions utilitaires pour la compatibilité avec l'ancien code
-window.updateDistanceDisplay = function() {
+window.updateDistanceDisplay = function () {
     if (pathManager) {
         pathManager.updateDistanceDisplay();
     }
 };
 
-window.updateJourneyInfo = function() {
+window.updateJourneyInfo = function () {
     if (pathManager) {
         pathManager.updatePathData();
     }
 };
 
 // Fonction pour mettre en surbrillance les découvertes sur la carte
-window.highlightDiscoveryOnMap = function(discoveryName, discoveryType, highlight) {
+window.highlightDiscoveryOnMap = function (discoveryName, discoveryType, highlight) {
     if (discoveryType === 'location') {
         const marker = document.querySelector(`[data-id*="${discoveryName}"]`);
         if (marker) {

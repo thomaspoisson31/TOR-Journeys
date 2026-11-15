@@ -118,7 +118,7 @@ class InfoBoxManager {
             // Pour les personnages ou si le contexte n'est pas pertinent, on le laisse tel quel ou on le réinitialise.
             // La logique exacte dépend de si on veut *perpétuer* un contexte de journée pour un personnage lié à une journée.
             // Pour l'instant, on le réinitialise pour les types non-lieu/région pour éviter des effets de bord.
-             console.log("📅 Réinitialisation du contexte de journée car le type n'est pas lieu/région.");
+            console.log("📅 Réinitialisation du contexte de journée car le type n'est pas lieu/région.");
             this.currentDayContext = null;
         }
         // -------------------------------------
@@ -376,7 +376,7 @@ class InfoBoxManager {
         const lieuxRegionsTabButton = document.querySelector('.tab-button[data-tab="lieux-regions"]');
         if (lieuxRegionsTabButton && this.currentType === 'character') {
             const hasLieuxRegions = (item.associatedLocations && item.associatedLocations.length > 0) ||
-                                    (item.associatedRegions && item.associatedRegions.length > 0);
+                (item.associatedRegions && item.associatedRegions.length > 0);
             const icon = lieuxRegionsTabButton.querySelector('i');
             console.log('🎨 [Lieux/Régions] hasLieuxRegions:', hasLieuxRegions);
             console.log('🎨 [Lieux/Régions] locations count:', item.associatedLocations?.length || 0);
@@ -1137,9 +1137,9 @@ class InfoBoxManager {
         return `
             <div class="image-gallery">
                 ${item.images.map((image, index) => {
-                    const isVignette = image.type === 'vignette';
+            const isVignette = image.type === 'vignette';
 
-                    return `
+            return `
                         <div class="gallery-item-edit relative">
                             <img src="${image.url}" alt="${item.name}" class="gallery-image">
                             <div class="flex items-center justify-center space-x-2 mt-2">
@@ -1157,7 +1157,7 @@ class InfoBoxManager {
                             </div>
                         </div>
                     `;
-                }).join('')}
+        }).join('')}
             </div>
         `;
     }
@@ -1224,7 +1224,7 @@ class InfoBoxManager {
             .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
             // Paragraphes
             .replace(/\n\n/g, '</p><p>')
-            .replace(/^(.*)$/gim, function(match) {
+            .replace(/^(.*)$/gim, function (match) {
                 if (match.startsWith('<h') || match.startsWith('<ul') || match.startsWith('<li') || match.startsWith('</')) {
                     return match;
                 }
@@ -2569,9 +2569,9 @@ class InfoBoxManager {
                         <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
                     </div>
                     ${(() => {
-                        const cm = this.currentType === 'location' ? ((this.currentItem.characterComments || {})[characterId] || '') : '';
-                        return cm ? `<div class="text-sm mt-2" style="white-space: pre-line; color:#000;">${this.escapeHtmlLL(cm)}</div>` : '';
-                    })()}
+                    const cm = this.currentType === 'location' ? ((this.currentItem.characterComments || {})[characterId] || '') : '';
+                    return cm ? `<div class="text-sm mt-2" style="white-space: pre-line; color:#000;">${this.escapeHtmlLL(cm)}</div>` : '';
+                })()}
                 </div>
             `;
         });
@@ -2843,9 +2843,9 @@ class InfoBoxManager {
                             <i class="fas fa-chevron-right text-gray-400 flex-shrink-0"></i>
                         </div>
                         ${(() => {
-                            const cm = (loc.characterComments || {})[String(character.id)] || '';
-                            return cm ? `<div class="text-sm mt-2" style="white-space: pre-line; color:#000;">${this.escapeHtmlLL(cm)}</div>` : '';
-                        })()}
+                        const cm = (loc.characterComments || {})[String(character.id)] || '';
+                        return cm ? `<div class="text-sm mt-2" style="white-space: pre-line; color:#000;">${this.escapeHtmlLL(cm)}</div>` : '';
+                    })()}
                     </div>
                 `;
             }
@@ -3183,7 +3183,7 @@ class InfoBoxManager {
             const characterId = String(this.currentEntity.id);
             window.regionsManager.regionsData.regions.forEach(region => {
                 const isAssociated = associatedRegions.includes(String(region.id));
-                 const characterManager = window.charactersManager; // Ensure charactersManager is available
+                const characterManager = window.charactersManager; // Ensure charactersManager is available
 
                 if (!region.associatedCharacters) {
                     region.associatedCharacters = [];
@@ -3199,7 +3199,7 @@ class InfoBoxManager {
                     console.log(`❌ Région ${region.name} dissociée du personnage ${this.currentEntity.name}`);
                 }
             });
-             window.regionsManager.saveRegionsToLocal();
+            window.regionsManager.saveRegionsToLocal();
         }
 
 
@@ -3420,12 +3420,12 @@ class InfoBoxManager {
         if (this.currentType === 'location') {
             // Chercher d'abord par ID, puis par nom si non trouvé (fallback pour les appels depuis la modale voyage)
             let location = window.locationsData.locations.find(l => String(l.id) === String(this.currentItem.id));
-            
+
             if (!location && this.currentItem.name) {
                 console.log(`⚠️ [toggleLocationKnowledge] Lieu non trouvé par ID, recherche par nom: ${this.currentItem.name}`);
                 location = window.locationsData.locations.find(l => l.name === this.currentItem.name);
             }
-            
+
             if (location) {
                 location[field] = value;
                 this.dataManager.saveLocationsToLocal();
@@ -3436,12 +3436,12 @@ class InfoBoxManager {
             }
         } else if (this.currentType === 'region') {
             let region = window.regionsData.regions.find(r => String(r.id) === String(this.currentItem.id));
-            
+
             if (!region && this.currentItem.name) {
                 console.log(`⚠️ [toggleLocationKnowledge] Région non trouvée par ID, recherche par nom: ${this.currentItem.name}`);
                 region = window.regionsData.regions.find(r => r.name === this.currentItem.name);
             }
-            
+
             if (region) {
                 region[field] = value;
                 this.dataManager.saveRegionsToLocal();
@@ -3456,173 +3456,177 @@ class InfoBoxManager {
 
         // Rafraîchir l'affichage sur la carte pour refléter le changement de statut
         // Cela permet aux lieux de devenir visibles/invisibles en mode Aventure
-        if (field === 'known' && locationFound) {
-            console.log(`🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte`);
-            
-            // En mode Aventure, utiliser les filtres spécifiques du mode Aventure
-            if (window.positionManager && window.positionManager.adventureMode) {
-                console.log(`🎮 [toggleLocationKnowledge] Mode Aventure actif - application des filtres Aventure`);
-                window.positionManager.applyAdventureModeFilters();
-            } else if (window.filterManager && typeof window.filterManager.applyFilters === 'function') {
-                // Hors mode Aventure, appliquer les filtres normaux
-                window.filterManager.applyFilters();
+            if ((field === 'known' || field === 'nextSession') && locationFound) {
+                console.log(`🔄 [toggleLocationKnowledge] Rafraîchissement de l'affichage carte`);
+
+                if (field === 'nextSession' && this.currentType === 'location' && typeof window.renderLocations === 'function') {
+                    window.renderLocations();
+                }
+
+                // En mode Aventure, utiliser les filtres spécifiques du mode Aventure
+                if (window.positionManager && window.positionManager.adventureMode) {
+                    console.log(`🎮 [toggleLocationKnowledge] Mode Aventure actif - application des filtres Aventure`);
+                    window.positionManager.applyAdventureModeFilters();
+                } else if (window.filterManager && typeof window.filterManager.applyFilters === 'function') {
+                    // Hors mode Aventure, appliquer les filtres normaux
+                    window.filterManager.applyFilters();
+                }
             }
         }
+
+        resetZoomForFullscreen() {
+            // Cette méthode sera définie dans setupFullscreenImageListeners()
+        }
+
+        navigateToLocation(event, locationId) {
+            console.log(`📍 [navigateToLocation] Navigation vers le lieu ID: ${locationId}`);
+
+            // Vérifier que locationsData est disponible via window.locationsData
+            if (!window.locationsData || !window.locationsData.locations) {
+                console.error('❌ [navigateToLocation] window.locationsData non disponible');
+                return;
+            }
+
+            // Chercher le lieu
+            const location = window.locationsData.locations.find(loc => String(loc.id) === String(locationId));
+
+            if (!location) {
+                console.warn(`⚠️ [navigateToLocation] Lieu non trouvé avec l'ID: ${locationId}`);
+                return;
+            }
+
+            console.log(`✅ [navigateToLocation] Lieu trouvé: ${location.name}`);
+
+            // Sauvegarder l'InfoBox actuelle dans previousInfoBox avec un flag pour afficher l'onglet Personnages
+            this.previousInfoBox = {
+                item: this.currentItem,
+                type: this.currentType,
+                fromInfoBox: true, // FLAG IMPORTANT : indique qu'on vient d'une InfoBox
+                shouldShowPersonnagesTab: true // FLAG pour afficher l'onglet Personnages au retour
+            };
+
+            console.log(`💾 [navigateToLocation] InfoBox précédente sauvegardée:`, this.previousInfoBox);
+
+            // Créer un événement simulé pour le positionnement
+            const fakeEvent = event || {
+                clientX: window.innerWidth / 2,
+                clientY: window.innerHeight / 2,
+                type: 'click'
+            };
+
+            // Ouvrir l'infobox du lieu
+            this.showInfoBox(fakeEvent, location, 'location');
+
+            // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+            setTimeout(() => {
+                console.log(`📋 [navigateToLocation] Affichage forcé de l'onglet Description pour ${location.name}`);
+                this.switchTab('text');
+                // Forcer le re-render du contenu de l'onglet Description
+                this.renderReadMode();
+            }, 100);
+        }
+
+        navigateToRegion(event, regionId) {
+            console.log(`🗺️ [navigateToRegion] Navigation vers la région ID: ${regionId}`);
+
+            // Vérifier que regionsData est disponible via window.regionsData
+            if (!window.regionsData || !window.regionsData.regions) {
+                console.error('❌ [navigateToRegion] window.regionsData non disponible');
+                return;
+            }
+
+            // Chercher la région
+            const region = window.regionsData.regions.find(reg => String(reg.id) === String(regionId));
+
+            if (!region) {
+                console.warn(`⚠️ [navigateToRegion] Région non trouvée avec l'ID: ${regionId}`);
+                return;
+            }
+
+            console.log(`✅ [navigateToRegion] Région trouvée: ${region.name}`);
+
+            // Sauvegarder l'InfoBox actuelle dans previousInfoBox avec un flag pour afficher l'onglet Personnages
+            this.previousInfoBox = {
+                item: this.currentItem,
+                type: this.currentType,
+                fromInfoBox: true, // FLAG IMPORTANT : indique qu'on vient d'une InfoBox
+                shouldShowPersonnagesTab: true // FLAG pour afficher l'onglet Personnages au retour
+            };
+
+            console.log(`💾 [navigateToRegion] InfoBox précédente sauvegardée:`, this.previousInfoBox);
+
+            // Créer un événement simulé pour le positionnement
+            const fakeEvent = event || {
+                clientX: window.innerWidth / 2,
+                clientY: window.innerHeight / 2,
+                type: 'click'
+            };
+
+            // Ouvrir l'infobox de la région
+            this.showInfoBox(fakeEvent, region, 'region');
+
+            // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+            setTimeout(() => {
+                console.log(`📋 [navigateToRegion] Affichage forcé de l'onglet Description pour ${region.name}`);
+                this.switchTab('text');
+                // Forcer le re-render du contenu de l'onglet Description
+                this.renderReadMode();
+            }, 100);
+        }
+
+        navigateToCharacter(event, characterId) {
+            console.log(`👤 [navigateToCharacter] Navigation vers le personnage ID: ${characterId}`);
+
+            if (!window.charactersManager || !window.charactersManager.characters) {
+                console.error("❌ [navigateToCharacter] charactersManager non disponible");
+                return;
+            }
+
+            // Normaliser l'ID
+            const normalizedId = String(characterId);
+
+            // Trouver le personnage
+            const character = window.charactersManager.characters.find(char => String(char.id) === normalizedId);
+
+            if (!character) {
+                console.warn(`⚠️ [navigateToCharacter] Personnage non trouvé avec l'ID: ${normalizedId}`);
+                return;
+            }
+
+            console.log(`✅ [navigateToCharacter] Personnage trouvé: ${character.name}`);
+
+            // Sauvegarder l'infobox actuelle pour pouvoir y revenir
+            this.previousInfoBox = {
+                item: this.currentItem,
+                type: this.currentType,
+                fromInfoBox: true,
+                shouldShowPersonnagesTab: true // Retourner à l'onglet Personnages
+            };
+
+            console.log(`💾 [navigateToCharacter] InfoBox précédente sauvegardée:`, this.previousInfoBox);
+
+            // Créer un événement simulé pour le positionnement
+            const fakeEvent = event || {
+                clientX: window.innerWidth / 2,
+                clientY: window.innerHeight / 2,
+                type: 'click'
+            };
+
+            // Ouvrir l'infobox du personnage
+            this.showInfoBox(fakeEvent, character, 'character');
+
+            // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
+            setTimeout(() => {
+                console.log(`📋 [navigateToCharacter] Affichage forcé de l'onglet Description pour ${character.name}`);
+                this.switchTab('text');
+                // Forcer le re-render du contenu de l'onglet Description
+                this.renderReadMode();
+            }, 100);
+        }
     }
 
-    resetZoomForFullscreen() {
-        // Cette méthode sera définie dans setupFullscreenImageListeners()
-    }
-
-    navigateToLocation(event, locationId) {
-        console.log(`📍 [navigateToLocation] Navigation vers le lieu ID: ${locationId}`);
-
-        // Vérifier que locationsData est disponible via window.locationsData
-        if (!window.locationsData || !window.locationsData.locations) {
-            console.error('❌ [navigateToLocation] window.locationsData non disponible');
-            return;
-        }
-
-        // Chercher le lieu
-        const location = window.locationsData.locations.find(loc => String(loc.id) === String(locationId));
-
-        if (!location) {
-            console.warn(`⚠️ [navigateToLocation] Lieu non trouvé avec l'ID: ${locationId}`);
-            return;
-        }
-
-        console.log(`✅ [navigateToLocation] Lieu trouvé: ${location.name}`);
-
-        // Sauvegarder l'InfoBox actuelle dans previousInfoBox avec un flag pour afficher l'onglet Personnages
-        this.previousInfoBox = {
-            item: this.currentItem,
-            type: this.currentType,
-            fromInfoBox: true, // FLAG IMPORTANT : indique qu'on vient d'une InfoBox
-            shouldShowPersonnagesTab: true // FLAG pour afficher l'onglet Personnages au retour
-        };
-
-        console.log(`💾 [navigateToLocation] InfoBox précédente sauvegardée:`, this.previousInfoBox);
-
-        // Créer un événement simulé pour le positionnement
-        const fakeEvent = event || {
-            clientX: window.innerWidth / 2,
-            clientY: window.innerHeight / 2,
-            type: 'click'
-        };
-
-        // Ouvrir l'infobox du lieu
-        this.showInfoBox(fakeEvent, location, 'location');
-
-        // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
-        setTimeout(() => {
-            console.log(`📋 [navigateToLocation] Affichage forcé de l'onglet Description pour ${location.name}`);
-            this.switchTab('text');
-            // Forcer le re-render du contenu de l'onglet Description
-            this.renderReadMode();
-        }, 100);
-    }
-
-    navigateToRegion(event, regionId) {
-        console.log(`🗺️ [navigateToRegion] Navigation vers la région ID: ${regionId}`);
-
-        // Vérifier que regionsData est disponible via window.regionsData
-        if (!window.regionsData || !window.regionsData.regions) {
-            console.error('❌ [navigateToRegion] window.regionsData non disponible');
-            return;
-        }
-
-        // Chercher la région
-        const region = window.regionsData.regions.find(reg => String(reg.id) === String(regionId));
-
-        if (!region) {
-            console.warn(`⚠️ [navigateToRegion] Région non trouvée avec l'ID: ${regionId}`);
-            return;
-        }
-
-        console.log(`✅ [navigateToRegion] Région trouvée: ${region.name}`);
-
-        // Sauvegarder l'InfoBox actuelle dans previousInfoBox avec un flag pour afficher l'onglet Personnages
-        this.previousInfoBox = {
-            item: this.currentItem,
-            type: this.currentType,
-            fromInfoBox: true, // FLAG IMPORTANT : indique qu'on vient d'une InfoBox
-            shouldShowPersonnagesTab: true // FLAG pour afficher l'onglet Personnages au retour
-        };
-
-        console.log(`💾 [navigateToRegion] InfoBox précédente sauvegardée:`, this.previousInfoBox);
-
-        // Créer un événement simulé pour le positionnement
-        const fakeEvent = event || {
-            clientX: window.innerWidth / 2,
-            clientY: window.innerHeight / 2,
-            type: 'click'
-        };
-
-        // Ouvrir l'infobox de la région
-        this.showInfoBox(fakeEvent, region, 'region');
-
-        // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
-        setTimeout(() => {
-            console.log(`📋 [navigateToRegion] Affichage forcé de l'onglet Description pour ${region.name}`);
-            this.switchTab('text');
-            // Forcer le re-render du contenu de l'onglet Description
-            this.renderReadMode();
-        }, 100);
-    }
-
-    navigateToCharacter(event, characterId) {
-        console.log(`👤 [navigateToCharacter] Navigation vers le personnage ID: ${characterId}`);
-
-        if (!window.charactersManager || !window.charactersManager.characters) {
-            console.error("❌ [navigateToCharacter] charactersManager non disponible");
-            return;
-        }
-
-        // Normaliser l'ID
-        const normalizedId = String(characterId);
-
-        // Trouver le personnage
-        const character = window.charactersManager.characters.find(char => String(char.id) === normalizedId);
-
-        if (!character) {
-            console.warn(`⚠️ [navigateToCharacter] Personnage non trouvé avec l'ID: ${normalizedId}`);
-            return;
-        }
-
-        console.log(`✅ [navigateToCharacter] Personnage trouvé: ${character.name}`);
-
-        // Sauvegarder l'infobox actuelle pour pouvoir y revenir
-        this.previousInfoBox = {
-            item: this.currentItem,
-            type: this.currentType,
-            fromInfoBox: true,
-            shouldShowPersonnagesTab: true // Retourner à l'onglet Personnages
-        };
-
-        console.log(`💾 [navigateToCharacter] InfoBox précédente sauvegardée:`, this.previousInfoBox);
-
-        // Créer un événement simulé pour le positionnement
-        const fakeEvent = event || {
-            clientX: window.innerWidth / 2,
-            clientY: window.innerHeight / 2,
-            type: 'click'
-        };
-
-        // Ouvrir l'infobox du personnage
-        this.showInfoBox(fakeEvent, character, 'character');
-
-        // Forcer l'affichage de l'onglet Description avec rafraîchissement du contenu
-        setTimeout(() => {
-            console.log(`📋 [navigateToCharacter] Affichage forcé de l'onglet Description pour ${character.name}`);
-            this.switchTab('text');
-            // Forcer le re-render du contenu de l'onglet Description
-            this.renderReadMode();
-        }, 100);
-    }
-}
-
-// Export pour utilisation en module
-if (typeof module !== 'undefined' && module.exports) {
+    // Export pour utilisation en module
+    if(typeof module !== 'undefined' && module.exports) {
     module.exports = InfoBoxManager;
 }
 
