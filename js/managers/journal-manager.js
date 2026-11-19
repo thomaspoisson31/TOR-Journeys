@@ -373,11 +373,24 @@ class JournalManager {
 
                 // Ligne principale de l'entrée
                 const headerDiv = document.createElement('div');
-                headerDiv.className = `flex items-center space-x-3 p-3 hover:bg-gray-100 transition-colors ${(hasEntryText && !isEditingEntry) ? 'cursor-pointer select-none' : ''}`;
+                headerDiv.className = `flex items-center space-x-3 p-3 hover:bg-gray-100 transition-colors cursor-pointer ${!isEditingEntry ? 'select-none' : ''}`;
+
+                headerDiv.onclick = () => {
+                    if (!isEditingEntry) {
+                        this.handleEntryHeaderClick(index, hasEntryText);
+                    } else if (!entry.visible) {
+                        this.selectEntry(index);
+                        radio.checked = true;
+                        entriesList.querySelectorAll('input[name="journal-entry-selection"]').forEach((r) => {
+                            if (r !== radio) r.checked = false;
+                        });
+                    }
+                };
 
                 if (hasEntryText && !isEditingEntry) {
-                    headerDiv.onclick = () => this.toggleEntryExpand(index);
-                    headerDiv.title = isExpandedEntry ? 'Cliquer pour replier le texte associé' : 'Cliquer pour déplier le texte associé';
+                    headerDiv.title = isExpandedEntry ? 'Cliquer pour sélectionner et replier le texte associé' : 'Cliquer pour sélectionner et déplier le texte associé';
+                } else if (!isEditingEntry) {
+                    headerDiv.title = 'Cliquer pour sélectionner cette entrée';
                 }
 
                 // Radio bouton (une seule sélection à la fois)
@@ -401,7 +414,16 @@ class JournalManager {
                     titleInput.value = currentTitle;
                     titleInput.className = 'flex-grow px-2 py-1 bg-white border border-gray-300 rounded text-gray-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-red-800';
                     titleInput.placeholder = "Titre de l'entrée de journal";
-                    titleInput.onclick = (e) => e.stopPropagation();
+                    titleInput.onclick = (e) => {
+                        e.stopPropagation();
+                        if (!entry.visible) {
+                            this.selectEntry(index);
+                            radio.checked = true;
+                            entriesList.querySelectorAll('input[name="journal-entry-selection"]').forEach((r) => {
+                                if (r !== radio) r.checked = false;
+                            });
+                        }
+                    };
                     headerDiv.appendChild(titleInput);
                 } else {
                     const titleSpan = document.createElement('span');
@@ -800,12 +822,39 @@ class JournalManager {
         }
     }
 
-    toggleEntryExpand(index) {
-        if (this.expandedEntryIndexes.has(index)) {
-            this.expandedEntryIndexes.delete(index);
-        } else {
-            this.expandedEntryIndexes.add(index);
+    selectEntry(index) {
+        if (!this.entries[index]) return;
+        if (!this.entries[index].visible) {
+            this.entries.forEach((entry, idx) => {
+                entry.visible = (idx === index);
+            });
+            this.saveEntries();
+            this.syncSavedPaths();
         }
+    }
+
+    handleEntryHeaderClick(index, hasEntryText) {
+        if (!this.entries[index]) return;
+        const wasVisible = Boolean(this.entries[index].visible);
+
+        // Toujours activer le bouton radio associé lors du clic sur la zone du titre
+        if (!wasVisible) {
+            this.entries.forEach((entry, idx) => {
+                entry.visible = (idx === index);
+            });
+            this.saveEntries();
+            this.syncSavedPaths();
+        }
+
+        // Déplier/replier également le texte associé s'il existe
+        if (hasEntryText) {
+            if (this.expandedEntryIndexes.has(index)) {
+                this.expandedEntryIndexes.delete(index);
+            } else {
+                this.expandedEntryIndexes.add(index);
+            }
+        }
+
         this.renderJournal();
     }
 
