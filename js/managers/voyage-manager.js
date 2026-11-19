@@ -2589,7 +2589,7 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
         console.log("🔍 Index trouvé:", existingIndex);
 
         if (existingIndex !== -1) {
-            // Mettre à jour l'entrée existante en préservant id, visible, etc.
+            // Mettre à jour l'entrée existante en préservant id, visible, content, etc.
             const existingEntry = journal[existingIndex];
 
             // Mise à jour : on fusionne les nouvelles données, mais on garde les métadonnées existantes
@@ -2597,6 +2597,8 @@ Ne mets RIEN avant ou après le JSON. Pas de texte d'introduction, pas de conclu
                 ...journeyEntry, // Nouvelles données (contenu, path, days...)
                 id: existingEntry.id, // Garder l'ID original
                 visible: existingEntry.visible, // Garder l'état visible
+                content: existingEntry.content, // Garder le texte associé de l'entrée
+                lastModified: existingEntry.lastModified, // Garder la date de modification du texte associé
                 createdAt: existingEntry.createdAt || journeyEntry.generatedAt, // Garder la date de création originale
             };
 

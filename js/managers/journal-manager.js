@@ -13,7 +13,9 @@ class JournalManager {
         this.journalEmpty = null;
         this.currentTab = 'journal-rumors';
         this.exportJournalMarkdownBtn = null;
-        this.isEditMode = false; // Mode édition activé/désactivé
+        this.isEditMode = false; // Mode édition du texte libre activé/désactivé
+        this.editingEntryIndexes = new Set(); // Index des entrées de voyage en cours d'édition
+        this.expandedEntryIndexes = new Set(); // Index des entrées de voyage dont le texte est déplié
         this.entries = []; // Liste des entrées structurées (voyages)
     }
 
@@ -239,6 +241,9 @@ class JournalManager {
     }
 
     openJournal() {
+        this.editingEntryIndexes.clear();
+        this.expandedEntryIndexes.clear();
+        this.isEditMode = false;
         this.loadJournal();
         this.loadObjectives();
         this.loadRumors(); // Charger les rumeurs à l'ouverture
@@ -295,14 +300,29 @@ class JournalManager {
             const entriesToRender = this.entries.map((entry, index) => ({ entry, index })).reverse();
 
             entriesToRender.forEach(({ entry, index }) => {
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'flex items-center space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors';
+                const hasEntryText = Boolean(entry.content && entry.content.trim() !== '');
+                const isEditingEntry = this.editingEntryIndexes.has(index);
+                const isExpandedEntry = this.expandedEntryIndexes.has(index);
+
+                // Zone englobante de l'entrée de voyage (header + texte/champ texte associé)
+                const entryContainer = document.createElement('div');
+                entryContainer.className = 'bg-gray-50 border border-gray-200 rounded-lg overflow-hidden transition-colors';
+
+                // Ligne principale de l'entrée
+                const headerDiv = document.createElement('div');
+                headerDiv.className = `flex items-center space-x-3 p-3 hover:bg-gray-100 transition-colors ${(hasEntryText && !isEditingEntry) ? 'cursor-pointer select-none' : ''}`;
+
+                if (hasEntryText && !isEditingEntry) {
+                    headerDiv.onclick = () => this.toggleEntryExpand(index);
+                    headerDiv.title = isExpandedEntry ? 'Cliquer pour replier le texte associé' : 'Cliquer pour déplier le texte associé';
+                }
 
                 // Checkbox
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
-                checkbox.className = 'h-5 w-5 text-red-800 rounded border-gray-300 focus:ring-red-800 cursor-pointer';
+                checkbox.className = 'h-5 w-5 text-red-800 rounded border-gray-300 focus:ring-red-800 cursor-pointer flex-shrink-0';
                 checkbox.checked = entry.visible || false;
+                checkbox.onclick = (e) => e.stopPropagation();
                 checkbox.onchange = () => this.toggleEntryVisibility(index);
 
                 // Title
@@ -310,32 +330,122 @@ class JournalManager {
                 titleSpan.className = 'flex-grow text-gray-800 font-medium text-sm';
                 titleSpan.textContent = entry.title || `Voyage du ${entry.startDate}`;
 
-                // Delete button (optional but good for UX)
+                headerDiv.appendChild(checkbox);
+                headerDiv.appendChild(titleSpan);
+
+                // Indicateur visuel de texte associé (icône chevron déplier/replier)
+                if (hasEntryText && !isEditingEntry) {
+                    const expandIndicator = document.createElement('span');
+                    expandIndicator.className = 'text-gray-500 text-xs flex items-center space-x-1 px-2 py-1 rounded bg-gray-200/70';
+                    expandIndicator.innerHTML = `<i class="fas fa-align-left mr-1"></i><i class="fas fa-chevron-${isExpandedEntry ? 'up' : 'down'}"></i>`;
+                    headerDiv.appendChild(expandIndicator);
+                }
+
+                // Delete button
                 const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'text-gray-400 hover:text-red-600 transition-colors';
+                deleteBtn.className = 'text-gray-400 hover:text-red-600 transition-colors flex-shrink-0';
                 deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
                 deleteBtn.title = 'Supprimer cette entrée';
-                deleteBtn.onclick = () => {
-                    if(confirm('Supprimer cette entrée de journal ?')) {
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (confirm('Supprimer cette entrée de journal ?')) {
                         this.entries.splice(index, 1);
+                        this.editingEntryIndexes.clear();
+                        this.expandedEntryIndexes.clear();
                         this.saveEntries();
                         this.syncSavedPaths();
                         this.renderJournal();
                     }
                 };
 
-                entryDiv.appendChild(checkbox);
-                entryDiv.appendChild(titleSpan);
-                entryDiv.appendChild(deleteBtn);
-                entriesList.appendChild(entryDiv);
+                headerDiv.appendChild(deleteBtn);
+                entryContainer.appendChild(headerDiv);
+
+                // Zone du champ texte en mode édition (associé à cette entrée de voyage)
+                if (isEditingEntry) {
+                    const editSection = document.createElement('div');
+                    editSection.className = 'p-4 bg-white border-t border-gray-200';
+                    const currentText = entry.content || '';
+                    const wordCount = currentText.trim() ? currentText.trim().split(/\s+/).filter(w => w.length > 0).length : 0;
+
+                    editSection.innerHTML = `
+                        <div class="journal-entry-edit-container">
+                            <textarea id="journal-entry-textarea-${index}"
+                                      rows="6"
+                                      class="w-full p-3 border border-gray-300 rounded-lg resize-y text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-800"
+                                      style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6;"
+                                      placeholder="Écrivez le récit associé à ce voyage...">${this.escapeHtml(currentText)}</textarea>
+                            <div class="mt-2 flex justify-between items-center text-sm text-gray-500">
+                                <span class="entry-word-count">${wordCount} mots</span>
+                                <div class="flex space-x-2">
+                                    <button type="button" class="cancel-entry-btn px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors text-xs font-medium">
+                                        Annuler
+                                    </button>
+                                    <button type="button" class="save-entry-btn px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-xs font-medium flex items-center">
+                                        <i class="fas fa-save mr-1.5"></i>Enregistrer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    const textarea = editSection.querySelector(`#journal-entry-textarea-${index}`);
+                    const wordCountSpan = editSection.querySelector('.entry-word-count');
+                    const saveBtn = editSection.querySelector('.save-entry-btn');
+                    const cancelBtn = editSection.querySelector('.cancel-entry-btn');
+
+                    if (textarea && wordCountSpan) {
+                        textarea.addEventListener('input', () => {
+                            const words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+                            wordCountSpan.textContent = `${words} mots`;
+                        });
+                    }
+
+                    if (saveBtn) {
+                        saveBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.saveEntryContent(index, textarea ? textarea.value : '');
+                        });
+                    }
+
+                    if (cancelBtn) {
+                        cancelBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.editingEntryIndexes.delete(index);
+                            this.renderJournal();
+                        });
+                    }
+
+                    entryContainer.appendChild(editSection);
+                } else if (hasEntryText && isExpandedEntry) {
+                    // Zone du texte associé en mode lecture (affiché uniquement lorsque déplié)
+                    const readSection = document.createElement('div');
+                    readSection.className = 'p-4 bg-white border-t border-gray-200';
+                    const htmlContent = this.simpleMarkdown(entry.content);
+                    const words = entry.content.trim().split(/\s+/).filter(w => w.length > 0).length;
+
+                    readSection.innerHTML = `
+                        <div class="journal-read-container prose prose-sm max-w-none" style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6; color: #1f2937;">
+                            ${htmlContent}
+                        </div>
+                        <div class="mt-2 text-xs text-gray-400">
+                            ${words} mots
+                            ${entry.lastModified ? `• Dernière modification : ${new Date(entry.lastModified).toLocaleDateString('fr-FR')}` : ''}
+                        </div>
+                    `;
+                    entryContainer.appendChild(readSection);
+                }
+
+                entriesList.appendChild(entryContainer);
             });
         }
 
-        // Gestion de l'affichage vide/plein pour le texte libre
+        // Gestion de l'affichage vide/plein pour le texte libre et les entrées
         const hasContent = this.journal.content && this.journal.content.trim() !== '';
         const hasEntries = this.entries.length > 0;
+        const hasEditingEntries = this.editingEntryIndexes.size > 0;
 
-        if (!hasContent && !hasEntries && !this.isEditMode) {
+        if (!hasContent && !hasEntries && !this.isEditMode && !hasEditingEntries) {
             this.journalContent.classList.add('hidden');
             if (entriesList) entriesList.classList.add('hidden');
             this.journalEmpty.classList.remove('hidden');
@@ -343,15 +453,22 @@ class JournalManager {
         }
 
         this.journalEmpty.classList.add('hidden');
-        if (entriesList) entriesList.classList.remove('hidden');
-        this.journalContent.classList.remove('hidden');
+        if (entriesList) {
+            if (hasEntries) {
+                entriesList.classList.remove('hidden');
+            } else {
+                entriesList.classList.add('hidden');
+            }
+        }
 
+        // Texte non associé à une entrée : toujours visible au-dessous des entrées de voyage (ou en mode édition globale)
         if (this.isEditMode) {
-            // Mode édition : afficher une textarea
+            this.journalContent.classList.remove('hidden');
+            // Mode édition : afficher une textarea pour le texte non associé
             this.journalContent.innerHTML = `
                 <div class="journal-edit-container">
                     <textarea id="journal-edit-textarea" 
-                              class="w-full p-4 border border-gray-300 rounded-lg resize-none"
+                              class="w-full p-4 border border-gray-300 rounded-lg resize-none text-gray-900"
                               style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6;"
                               placeholder="Écrivez votre journal d'aventure...">${this.escapeHtml(this.journal.content)}</textarea>
                     <div class="mt-3 flex justify-between items-center text-sm text-gray-500 flex-shrink-0">
@@ -377,8 +494,9 @@ class JournalManager {
                     this.journalContent.querySelector('.text-sm.text-gray-500 span').textContent = `${words} mots`;
                 });
             }
-        } else {
-            // Mode lecture : afficher le texte formaté en Markdown
+        } else if (hasContent) {
+            this.journalContent.classList.remove('hidden');
+            // Mode lecture : afficher le texte non associé formaté en Markdown, toujours visible au-dessous des entrées
             const htmlContent = this.simpleMarkdown(this.journal.content);
             this.journalContent.innerHTML = `
                 <div class="journal-read-container prose prose-sm max-w-none p-4" style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6; color: #1f2937;">
@@ -389,6 +507,9 @@ class JournalManager {
                     ${this.journal.metadata.lastModified ? `• Dernière modification : ${new Date(this.journal.metadata.lastModified).toLocaleDateString('fr-FR')}` : ''}
                 </div>
             `;
+        } else {
+            this.journalContent.innerHTML = '';
+            this.journalContent.classList.add('hidden');
         }
     }
 
@@ -569,10 +690,58 @@ class JournalManager {
         }
     }
 
-    toggleEditMode() {
-        this.isEditMode = !this.isEditMode;
+    toggleEntryExpand(index) {
+        if (this.expandedEntryIndexes.has(index)) {
+            this.expandedEntryIndexes.delete(index);
+        } else {
+            this.expandedEntryIndexes.add(index);
+        }
         this.renderJournal();
-        console.log(`📖 Mode édition : ${this.isEditMode ? 'activé' : 'désactivé'}`);
+    }
+
+    toggleEditMode() {
+        // Identifier les entrées de voyage sélectionnées via leur case à cocher
+        const selectedIndexes = [];
+        this.entries.forEach((entry, index) => {
+            if (entry.visible) {
+                selectedIndexes.push(index);
+            }
+        });
+
+        if (selectedIndexes.length > 0) {
+            // Si au moins une entrée de voyage est cochée, activer/basculer l'édition associée à ces entrées
+            const allSelectedAlreadyEditing = selectedIndexes.every(idx => this.editingEntryIndexes.has(idx));
+            if (allSelectedAlreadyEditing) {
+                selectedIndexes.forEach(idx => this.editingEntryIndexes.delete(idx));
+            } else {
+                selectedIndexes.forEach(idx => this.editingEntryIndexes.add(idx));
+            }
+            this.isEditMode = false;
+        } else {
+            // Si aucune entrée de voyage n'est cochée, éditer le texte libre non associé
+            this.editingEntryIndexes.clear();
+            this.isEditMode = !this.isEditMode;
+        }
+
+        this.renderJournal();
+        console.log(`📖 Mode édition : global=${this.isEditMode}, entrées=${Array.from(this.editingEntryIndexes).join(',')}`);
+    }
+
+    saveEntryContent(index, content) {
+        if (!this.entries[index]) return;
+
+        this.entries[index].content = content;
+        this.entries[index].lastModified = new Date().toISOString();
+
+        this.saveEntries();
+
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+
+        this.editingEntryIndexes.delete(index);
+        this.renderJournal();
+        console.log(`📖 Texte associé à l'entrée ${index} sauvegardé`);
     }
 
     saveJournalContent() {
@@ -632,13 +801,28 @@ class JournalManager {
     }
 
     exportJournalAsMarkdown() {
-        if (!this.journal.content || this.journal.content.trim() === '') {
+        const parts = [];
+
+        // Exporter les textes associés aux entrées de voyage (du plus ancien au plus récent)
+        const entriesChronological = [...this.entries].reverse();
+        entriesChronological.forEach(entry => {
+            if (entry.content && entry.content.trim() !== '') {
+                const title = entry.title || `Voyage du ${entry.startDate}`;
+                parts.push(`## ${title}\n\n${entry.content.trim()}`);
+            }
+        });
+
+        // Ajouter le texte non associé à une entrée
+        if (this.journal.content && this.journal.content.trim() !== '') {
+            parts.push(this.journal.content.trim());
+        }
+
+        if (parts.length === 0) {
             alert("Le journal est vide");
             return;
         }
 
-        // Le contenu est déjà en Markdown
-        const markdown = this.journal.content;
+        const markdown = parts.join('\n\n---\n\n');
 
         // Créer une modale pour afficher le Markdown et le bouton copier
         this.createMarkdownExportModal(markdown);
