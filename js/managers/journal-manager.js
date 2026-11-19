@@ -180,6 +180,17 @@ class JournalManager {
                 const parsed = JSON.parse(savedEntries);
                 if (Array.isArray(parsed)) {
                     this.entries = parsed;
+                    // S'assurer qu'une seule entrée au maximum est sélectionnée (radio bouton)
+                    let foundSelected = false;
+                    this.entries.forEach(entry => {
+                        if (entry.visible) {
+                            if (!foundSelected) {
+                                foundSelected = true;
+                            } else {
+                                entry.visible = false;
+                            }
+                        }
+                    });
                 } else if (parsed && parsed.content === undefined && typeof parsed === 'object') {
                     // Si c'est un objet mais pas le journal texte, c'est peut-être un format intermédiaire ?
                     // Pour l'instant on ignore ou on initialise vide
@@ -232,11 +243,14 @@ class JournalManager {
 
     toggleEntryVisibility(index) {
         if (this.entries[index]) {
-            this.entries[index].visible = !this.entries[index].visible;
+            const wasVisible = Boolean(this.entries[index].visible);
+            // Comportement radio bouton : une seule sélection à la fois (recliquer sur le bouton actif permet de désélectionner)
+            this.entries.forEach((entry, idx) => {
+                entry.visible = (idx === index) ? !wasVisible : false;
+            });
             this.saveEntries();
             this.syncSavedPaths();
-            // Re-render pour mettre à jour la checkbox (déjà fait par le clic mais bon pour la synchro)
-            // Pas nécessaire de re-render tout le journal, juste sync les chemins
+            this.renderJournal();
         }
     }
 
@@ -283,10 +297,58 @@ class JournalManager {
                 return match.trim() ? `<p>${match}</p>` : '';
             })
             .replace(/<p><\/p>/g, '')
-            .replace(/<p>(<h[1-6]>)>/g, '$1')
+            .replace(/<p>(<h[1-6]>)/g, '$1')
             .replace(/(<\/h[1-6]>)<\/p>/g, '$1')
             .replace(/<p>(<ul>)/g, '$1')
             .replace(/(<\/ul>)<\/p>/g, '$1');
+    }
+
+    applyMarkdownToTextarea(textarea, action) {
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const value = textarea.value;
+        const selected = value.substring(start, end);
+
+        let replacement = '';
+        let cursorStart = start;
+        let cursorEnd = end;
+
+        if (action === 'bold') {
+            const text = selected || 'texte en gras';
+            replacement = `**${text}**`;
+            cursorStart = start + 2;
+            cursorEnd = cursorStart + text.length;
+        } else if (action === 'italic') {
+            const text = selected || 'texte en italique';
+            replacement = `*${text}*`;
+            cursorStart = start + 1;
+            cursorEnd = cursorStart + text.length;
+        } else if (action === 'h1' || action === 'h2' || action === 'h3') {
+            const prefix = action === 'h1' ? '# ' : (action === 'h2' ? '## ' : '### ');
+            const text = selected || 'Titre';
+            const linePrefix = (start > 0 && value[start - 1] !== '\n') ? '\n' : '';
+            replacement = `${linePrefix}${prefix}${text}`;
+            cursorStart = start + linePrefix.length + prefix.length;
+            cursorEnd = cursorStart + text.length;
+        } else if (action === 'list') {
+            if (selected && selected.includes('\n')) {
+                replacement = selected.split('\n').map(line => line.trim() ? `- ${line}` : line).join('\n');
+                cursorStart = start;
+                cursorEnd = start + replacement.length;
+            } else {
+                const text = selected || 'Élément de liste';
+                const linePrefix = (start > 0 && value[start - 1] !== '\n') ? '\n' : '';
+                replacement = `${linePrefix}- ${text}`;
+                cursorStart = start + linePrefix.length + 2;
+                cursorEnd = cursorStart + text.length;
+            }
+        }
+
+        textarea.value = value.substring(0, start) + replacement + value.substring(end);
+        textarea.focus();
+        textarea.setSelectionRange(cursorStart, cursorEnd);
+        textarea.dispatchEvent(new Event('input'));
     }
 
     renderJournal() {
@@ -303,6 +365,7 @@ class JournalManager {
                 const hasEntryText = Boolean(entry.content && entry.content.trim() !== '');
                 const isEditingEntry = this.editingEntryIndexes.has(index);
                 const isExpandedEntry = this.expandedEntryIndexes.has(index);
+                const currentTitle = entry.title || `Voyage du ${entry.startDate}`;
 
                 // Zone englobante de l'entrée de voyage (header + texte/champ texte associé)
                 const entryContainer = document.createElement('div');
@@ -317,21 +380,35 @@ class JournalManager {
                     headerDiv.title = isExpandedEntry ? 'Cliquer pour replier le texte associé' : 'Cliquer pour déplier le texte associé';
                 }
 
-                // Checkbox
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.className = 'h-5 w-5 text-red-800 rounded border-gray-300 focus:ring-red-800 cursor-pointer flex-shrink-0';
-                checkbox.checked = entry.visible || false;
-                checkbox.onclick = (e) => e.stopPropagation();
-                checkbox.onchange = () => this.toggleEntryVisibility(index);
+                // Radio bouton (une seule sélection à la fois)
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'journal-entry-selection';
+                radio.className = 'h-5 w-5 text-red-800 border-gray-300 focus:ring-red-800 cursor-pointer flex-shrink-0';
+                radio.checked = Boolean(entry.visible);
+                radio.onclick = (e) => {
+                    e.stopPropagation();
+                    this.toggleEntryVisibility(index);
+                };
 
-                // Title
-                const titleSpan = document.createElement('span');
-                titleSpan.className = 'flex-grow text-gray-800 font-medium text-sm';
-                titleSpan.textContent = entry.title || `Voyage du ${entry.startDate}`;
+                headerDiv.appendChild(radio);
 
-                headerDiv.appendChild(checkbox);
-                headerDiv.appendChild(titleSpan);
+                // Titre de l'entrée (modifiable en mode édition)
+                if (isEditingEntry) {
+                    const titleInput = document.createElement('input');
+                    titleInput.type = 'text';
+                    titleInput.id = `journal-entry-title-input-${index}`;
+                    titleInput.value = currentTitle;
+                    titleInput.className = 'flex-grow px-2 py-1 bg-white border border-gray-300 rounded text-gray-900 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-red-800';
+                    titleInput.placeholder = "Titre de l'entrée de journal";
+                    titleInput.onclick = (e) => e.stopPropagation();
+                    headerDiv.appendChild(titleInput);
+                } else {
+                    const titleSpan = document.createElement('span');
+                    titleSpan.className = 'flex-grow text-gray-800 font-medium text-sm';
+                    titleSpan.textContent = currentTitle;
+                    headerDiv.appendChild(titleSpan);
+                }
 
                 // Indicateur visuel de texte associé (icône chevron déplier/replier)
                 if (hasEntryText && !isEditingEntry) {
@@ -361,7 +438,7 @@ class JournalManager {
                 headerDiv.appendChild(deleteBtn);
                 entryContainer.appendChild(headerDiv);
 
-                // Zone du champ texte en mode édition (associé à cette entrée de voyage)
+                // Zone du champ texte en mode édition (associé à cette entrée de voyage, format Markdown)
                 if (isEditingEntry) {
                     const editSection = document.createElement('div');
                     editSection.className = 'p-4 bg-white border-t border-gray-200';
@@ -370,11 +447,34 @@ class JournalManager {
 
                     editSection.innerHTML = `
                         <div class="journal-entry-edit-container">
+                            <div class="flex items-center justify-between mb-2 pb-2 border-b border-gray-200">
+                                <div class="flex items-center space-x-1">
+                                    <button type="button" data-md-action="bold" class="md-tool-btn px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300" title="Gras (**texte**)">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" data-md-action="italic" class="md-tool-btn px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300" title="Italique (*texte*)">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" data-md-action="h1" class="md-tool-btn px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300 font-bold" title="Titre 1 (# Titre)">
+                                        H1
+                                    </button>
+                                    <button type="button" data-md-action="h2" class="md-tool-btn px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300 font-bold" title="Titre 2 (## Titre)">
+                                        H2
+                                    </button>
+                                    <button type="button" data-md-action="h3" class="md-tool-btn px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300 font-bold" title="Titre 3 (### Titre)">
+                                        H3
+                                    </button>
+                                    <button type="button" data-md-action="list" class="md-tool-btn px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300" title="Liste à puces (- élément)">
+                                        <i class="fas fa-list-ul"></i>
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 italic">Markdown supporté (**gras**, *italique*, # Titres, - listes)</span>
+                            </div>
                             <textarea id="journal-entry-textarea-${index}"
                                       rows="6"
-                                      class="w-full p-3 border border-gray-300 rounded-lg resize-y text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-800"
-                                      style="font-family: 'Merriweather', serif; font-size: 0.875rem; line-height: 1.6;"
-                                      placeholder="Écrivez le récit associé à ce voyage...">${this.escapeHtml(currentText)}</textarea>
+                                      class="w-full p-3 border border-gray-300 rounded-lg resize-y text-gray-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-red-800"
+                                      style="line-height: 1.6;"
+                                      placeholder="Écrivez le récit associé à ce voyage en Markdown (**gras**, *italique*, # Titre, - liste)...">${this.escapeHtml(currentText)}</textarea>
                             <div class="mt-2 flex justify-between items-center text-sm text-gray-500">
                                 <span class="entry-word-count">${wordCount} mots</span>
                                 <div class="flex space-x-2">
@@ -393,6 +493,14 @@ class JournalManager {
                     const wordCountSpan = editSection.querySelector('.entry-word-count');
                     const saveBtn = editSection.querySelector('.save-entry-btn');
                     const cancelBtn = editSection.querySelector('.cancel-entry-btn');
+                    const mdButtons = editSection.querySelectorAll('.md-tool-btn');
+
+                    mdButtons.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.applyMarkdownToTextarea(textarea, btn.dataset.mdAction);
+                        });
+                    });
 
                     if (textarea && wordCountSpan) {
                         textarea.addEventListener('input', () => {
@@ -404,7 +512,9 @@ class JournalManager {
                     if (saveBtn) {
                         saveBtn.addEventListener('click', (e) => {
                             e.stopPropagation();
-                            this.saveEntryContent(index, textarea ? textarea.value : '');
+                            const titleInput = headerDiv.querySelector(`#journal-entry-title-input-${index}`);
+                            const newTitle = titleInput ? titleInput.value : currentTitle;
+                            this.saveEntryContent(index, textarea ? textarea.value : '', newTitle);
                         });
                     }
 
@@ -700,25 +810,20 @@ class JournalManager {
     }
 
     toggleEditMode() {
-        // Identifier les entrées de voyage sélectionnées via leur case à cocher
-        const selectedIndexes = [];
-        this.entries.forEach((entry, index) => {
-            if (entry.visible) {
-                selectedIndexes.push(index);
-            }
-        });
+        // Identifier l'entrée de voyage sélectionnée via le radio bouton
+        const selectedIndex = this.entries.findIndex(entry => entry.visible);
 
-        if (selectedIndexes.length > 0) {
-            // Si au moins une entrée de voyage est cochée, activer/basculer l'édition associée à ces entrées
-            const allSelectedAlreadyEditing = selectedIndexes.every(idx => this.editingEntryIndexes.has(idx));
-            if (allSelectedAlreadyEditing) {
-                selectedIndexes.forEach(idx => this.editingEntryIndexes.delete(idx));
+        if (selectedIndex !== -1) {
+            // Si une entrée de voyage est sélectionnée, activer/basculer l'édition associée à cette entrée
+            if (this.editingEntryIndexes.has(selectedIndex)) {
+                this.editingEntryIndexes.delete(selectedIndex);
             } else {
-                selectedIndexes.forEach(idx => this.editingEntryIndexes.add(idx));
+                this.editingEntryIndexes.clear();
+                this.editingEntryIndexes.add(selectedIndex);
             }
             this.isEditMode = false;
         } else {
-            // Si aucune entrée de voyage n'est cochée, éditer le texte libre non associé
+            // Si aucune entrée de voyage n'est sélectionnée, éditer le texte libre non associé
             this.editingEntryIndexes.clear();
             this.isEditMode = !this.isEditMode;
         }
@@ -727,9 +832,12 @@ class JournalManager {
         console.log(`📖 Mode édition : global=${this.isEditMode}, entrées=${Array.from(this.editingEntryIndexes).join(',')}`);
     }
 
-    saveEntryContent(index, content) {
+    saveEntryContent(index, content, newTitle = null) {
         if (!this.entries[index]) return;
 
+        if (newTitle !== null && newTitle.trim() !== '') {
+            this.entries[index].title = newTitle.trim();
+        }
         this.entries[index].content = content;
         this.entries[index].lastModified = new Date().toISOString();
 
@@ -741,7 +849,7 @@ class JournalManager {
 
         this.editingEntryIndexes.delete(index);
         this.renderJournal();
-        console.log(`📖 Texte associé à l'entrée ${index} sauvegardé`);
+        console.log(`📖 Entrée ${index} sauvegardée (titre: "${this.entries[index].title}")`);
     }
 
     saveJournalContent() {
