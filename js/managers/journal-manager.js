@@ -11,12 +11,13 @@ class JournalManager {
         this.journalModal = null;
         this.journalContent = null;
         this.journalEmpty = null;
-        this.currentTab = 'journal-rumors';
+        this.currentTab = 'journal-list';
         this.exportJournalMarkdownBtn = null;
         this.isEditMode = false; // Mode édition du texte libre activé/désactivé
         this.editingEntryIndexes = new Set(); // Index des entrées de voyage en cours d'édition
         this.expandedEntryIndexes = new Set(); // Index des entrées de voyage dont le texte est déplié
         this.entries = []; // Liste des entrées structurées (voyages)
+        this.draggedEntryIndex = null;
     }
 
     init() {
@@ -264,8 +265,8 @@ class JournalManager {
         this.renderJournal();
         this.renderRumors(); // Afficher les rumeurs
 
-        // Afficher l'onglet par défaut (Rumeurs)
-        this.switchTab('journal-rumors');
+        // Afficher l'onglet par défaut (Journal)
+        this.switchTab('journal-list');
 
         if (this.journalModal) {
             this.journalModal.classList.remove('hidden');
@@ -369,11 +370,61 @@ class JournalManager {
 
                 // Zone englobante de l'entrée de voyage (header + texte/champ texte associé)
                 const entryContainer = document.createElement('div');
-                entryContainer.className = 'bg-gray-50 border border-gray-200 rounded-lg overflow-hidden transition-colors';
+                entryContainer.className = 'bg-gray-50 border border-gray-200 rounded-lg overflow-hidden transition-all';
+                entryContainer.dataset.entryIndex = index;
 
                 // Ligne principale de l'entrée
                 const headerDiv = document.createElement('div');
-                headerDiv.className = `flex items-center space-x-3 p-3 hover:bg-gray-100 transition-colors cursor-pointer ${!isEditingEntry ? 'select-none' : ''}`;
+                headerDiv.className = `flex items-center space-x-3 p-3 hover:bg-gray-100 transition-colors ${!isEditingEntry ? 'cursor-grab active:cursor-grabbing select-none' : 'cursor-pointer'}`;
+
+                if (!isEditingEntry) {
+                    headerDiv.draggable = true;
+                    headerDiv.addEventListener('dragstart', (e) => {
+                        this.draggedEntryIndex = index;
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', String(index));
+                        setTimeout(() => {
+                            entryContainer.classList.add('opacity-50');
+                        }, 0);
+                    });
+
+                    headerDiv.addEventListener('dragend', () => {
+                        this.draggedEntryIndex = null;
+                        entryContainer.classList.remove('opacity-50');
+                        entriesList.querySelectorAll('[data-entry-index]').forEach(el => {
+                            el.classList.remove('border-t-2', 'border-b-2', 'border-red-800');
+                        });
+                    });
+                }
+
+                entryContainer.addEventListener('dragover', (e) => {
+                    if (this.draggedEntryIndex === null || this.draggedEntryIndex === index) return;
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+
+                    const rect = entryContainer.getBoundingClientRect();
+                    const isAfter = (e.clientY - rect.top) > (rect.height / 2);
+
+                    entryContainer.classList.remove('border-t-2', 'border-b-2', 'border-red-800');
+                    entryContainer.classList.add(isAfter ? 'border-b-2' : 'border-t-2', 'border-red-800');
+                });
+
+                entryContainer.addEventListener('dragleave', (e) => {
+                    if (!entryContainer.contains(e.relatedTarget)) {
+                        entryContainer.classList.remove('border-t-2', 'border-b-2', 'border-red-800');
+                    }
+                });
+
+                entryContainer.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    entryContainer.classList.remove('border-t-2', 'border-b-2', 'border-red-800');
+                    const fromIndex = this.draggedEntryIndex !== null ? this.draggedEntryIndex : parseInt(e.dataTransfer.getData('text/plain'), 10);
+                    if (isNaN(fromIndex) || fromIndex === index) return;
+
+                    const rect = entryContainer.getBoundingClientRect();
+                    const isAfter = (e.clientY - rect.top) > (rect.height / 2);
+                    this.reorderEntries(fromIndex, index, isAfter);
+                });
 
                 headerDiv.onclick = () => {
                     if (!isEditingEntry) {
@@ -831,6 +882,37 @@ class JournalManager {
             this.saveEntries();
             this.syncSavedPaths();
         }
+    }
+
+    reorderEntries(fromIndex, targetIndex, placeVisuallyAfter) {
+        if (fromIndex === targetIndex || !this.entries[fromIndex] || !this.entries[targetIndex]) return;
+
+        // Sauvegarder les références d'objets pour conserver l'état déplié/édité après réordonnancement
+        const expandedEntries = new Set(Array.from(this.expandedEntryIndexes).map(i => this.entries[i]).filter(Boolean));
+        const editingEntries = new Set(Array.from(this.editingEntryIndexes).map(i => this.entries[i]).filter(Boolean));
+
+        const targetEntry = this.entries[targetIndex];
+        const [movedEntry] = this.entries.splice(fromIndex, 1);
+
+        const newTargetIndex = this.entries.indexOf(targetEntry);
+        // L'affichage est inversé (index N-1 en haut, index 0 en bas) :
+        // - Placer visuellement APRES (plus bas) correspond à un index plus petit dans this.entries (newTargetIndex)
+        // - Placer visuellement AVANT (plus haut) correspond à un index plus grand dans this.entries (newTargetIndex + 1)
+        const insertIndex = placeVisuallyAfter ? newTargetIndex : newTargetIndex + 1;
+        this.entries.splice(insertIndex, 0, movedEntry);
+
+        this.expandedEntryIndexes.clear();
+        this.editingEntryIndexes.clear();
+        this.entries.forEach((entry, idx) => {
+            if (expandedEntries.has(entry)) this.expandedEntryIndexes.add(idx);
+            if (editingEntries.has(entry)) this.editingEntryIndexes.add(idx);
+        });
+
+        this.saveEntries();
+        if (typeof window.markAsUnsaved === 'function') {
+            window.markAsUnsaved();
+        }
+        this.renderJournal();
     }
 
     handleEntryHeaderClick(index, hasEntryText) {
